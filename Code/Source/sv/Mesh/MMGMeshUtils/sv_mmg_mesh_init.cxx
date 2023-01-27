@@ -75,7 +75,7 @@ int Mmgmesh_Init( Tcl_Interp *interp )
 {
 
   Tcl_CreateCommand( interp, "mmg_remesh", MMG_RemeshCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   return TCL_OK;
 }
@@ -95,18 +95,18 @@ int MMG_RemeshCmd( ClientData clientData, Tcl_Interp *interp,
   double hgrad = 1.1;
   double hausd = 0.01;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 7;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-hmin", DOUBLE_Type, &hmin, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-hmax", DOUBLE_Type, &hmax, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-angle", DOUBLE_Type, &angle, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-hgrad", DOUBLE_Type, &hgrad, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-hausd", DOUBLE_Type, &hausd, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-hmin", DOUBLE_Type, &hmin, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-hmax", DOUBLE_Type, &hmax, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-angle", DOUBLE_Type, &angle, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-hgrad", DOUBLE_Type, &hgrad, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-hausd", DOUBLE_Type, &hausd, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -123,22 +123,22 @@ int MMG_RemeshCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -147,7 +147,7 @@ int MMG_RemeshCmd( ClientData clientData, Tcl_Interp *interp,
   surfacepd->BuildLinks();
   int useSizingFunction = 0;
   int numAddedRefines = 0;
-  vtkDoubleArray *meshSizingFunction = NULL;
+  vtkDoubleArray *meshSizingFunction = nullptr;
   if ( MMGUtils_SurfaceRemeshing( surfacepd, hmin, hmax, hausd, angle, hgrad,
 	useSizingFunction, meshSizingFunction, numAddedRefines) != SV_OK ) {
     Tcl_SetResult( interp, "remeshing error", TCL_STATIC );
@@ -155,15 +155,15 @@ int MMG_RemeshCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   dst = new cvPolyData(surfacepd);
-  if ( dst == NULL ) {
+  if ( dst == nullptr ) {
     Tcl_AppendResult( interp, "error remeshing obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     return TCL_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }

@@ -52,13 +52,13 @@ vtkStandardNewMacro(vtkSVCellComplexThinner);
 // ----------------------
 vtkSVCellComplexThinner::vtkSVCellComplexThinner()
 {
-  this->InputEdgePd = NULL;
+  this->InputEdgePd = nullptr;
   this->OutputEdgePd = vtkPolyData::New();
 
   this->WorkTriPd = vtkPolyData::New();
   this->WorkEdgePd = vtkPolyData::New();
 
-  this->PreserveEdgeCellsArrayName = NULL;
+  this->PreserveEdgeCellsArrayName = nullptr;
 }
 
 // ----------------------
@@ -66,15 +66,15 @@ vtkSVCellComplexThinner::vtkSVCellComplexThinner()
 // ----------------------
 vtkSVCellComplexThinner::~vtkSVCellComplexThinner()
 {
-  if (this->OutputEdgePd != NULL)
+  if (this->OutputEdgePd != nullptr)
   {
     this->OutputEdgePd->Delete();
   }
-  if (this->WorkTriPd != NULL)
+  if (this->WorkTriPd != nullptr)
   {
     this->WorkTriPd->Delete();
   }
-  if (this->WorkEdgePd != NULL)
+  if (this->WorkEdgePd != nullptr)
   {
     this->WorkEdgePd->Delete();
   }
@@ -121,7 +121,7 @@ int vtkSVCellComplexThinner::RequestData(
 // ----------------------
 int vtkSVCellComplexThinner::PrepFilter()
 {
-  if (this->InputEdgePd != NULL)
+  if (this->InputEdgePd != nullptr)
   {
     this->WorkEdgePd->DeepCopy(this->InputEdgePd);
   }
@@ -130,7 +130,7 @@ int vtkSVCellComplexThinner::PrepFilter()
     vtkSVGeneralUtils::GetEdgePolyData(this->WorkTriPd, this->WorkEdgePd);
   }
 
-  if (this->PreserveEdgeCellsArrayName != NULL)
+  if (this->PreserveEdgeCellsArrayName != nullptr)
   {
     if (vtkSVGeneralUtils::CheckArrayExists(this->WorkEdgePd, 1, this->PreserveEdgeCellsArrayName) != SV_OK)
     {

@@ -72,7 +72,7 @@ public:
     
     void SetLevelSetParas(svLSParam* paras){return;};
     
-    svLSParam* GetLevelSetParas(){return NULL;};
+    svLSParam* GetLevelSetParas(){return nullptr;};
     
     virtual void SetThresholdValue(double thresholdValue) override;
     

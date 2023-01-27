@@ -35,7 +35,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkCallbackCommand.h>
 
-sv4guiMeshEdit* sv4guiVtkMeshSphereWidget::m_MeshEdit=NULL;
+sv4guiMeshEdit* sv4guiVtkMeshSphereWidget::m_MeshEdit=nullptr;
 
 vtkStandardNewMacro(sv4guiVtkMeshSphereWidget);
 

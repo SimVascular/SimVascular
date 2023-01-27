@@ -33,7 +33,7 @@
 #define SV4GUI_QMITKFUNCTIONALITY_H
 
 #include "org_sv_gui_qt_datamanager_Export.h"
-#include <org_mitk_gui_qt_common_legacy_Export.h>
+// #include <org_mitk_gui_qt_common_legacy_Export.h>
 #include <org_mitk_gui_qt_common_Export.h>
 
 #include <QmitkFunctionality.h>

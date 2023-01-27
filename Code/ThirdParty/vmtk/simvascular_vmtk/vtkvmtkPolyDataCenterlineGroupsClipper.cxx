@@ -44,12 +44,12 @@ vtkStandardNewMacro(vtkvmtkPolyDataCenterlineGroupsClipper);
 
 vtkvmtkPolyDataCenterlineGroupsClipper::vtkvmtkPolyDataCenterlineGroupsClipper()
 {
-  this->Centerlines = NULL;
-  this->CenterlineGroupIdsArrayName = NULL;
-  this->CenterlineRadiusArrayName = NULL;
-  this->GroupIdsArrayName = NULL;
-  this->BlankingArrayName = NULL;
-  this->CenterlineGroupIds = NULL;
+  this->Centerlines = nullptr;
+  this->CenterlineGroupIdsArrayName = nullptr;
+  this->CenterlineRadiusArrayName = nullptr;
+  this->GroupIdsArrayName = nullptr;
+  this->BlankingArrayName = nullptr;
+  this->CenterlineGroupIds = nullptr;
   this->ClipAllCenterlineGroupIds = 0;
   this->CutoffRadiusFactor = VTK_VMTK_LARGE_DOUBLE;
   this->ClipValue = 0.0;
@@ -67,37 +67,37 @@ vtkvmtkPolyDataCenterlineGroupsClipper::~vtkvmtkPolyDataCenterlineGroupsClipper(
   if (this->Centerlines)
     {
     this->Centerlines->Delete();
-    this->Centerlines = NULL;
+    this->Centerlines = nullptr;
     }
 
   if (this->CenterlineGroupIds)
     {
     this->CenterlineGroupIds->Delete();
-    this->CenterlineGroupIds = NULL;
+    this->CenterlineGroupIds = nullptr;
     }
 
   if (this->CenterlineGroupIdsArrayName)
     {
     delete[] this->CenterlineGroupIdsArrayName;
-    this->CenterlineGroupIdsArrayName = NULL;
+    this->CenterlineGroupIdsArrayName = nullptr;
     }
 
   if (this->CenterlineRadiusArrayName)
     {
     delete[] this->CenterlineRadiusArrayName;
-    this->CenterlineRadiusArrayName = NULL;
+    this->CenterlineRadiusArrayName = nullptr;
     }
 
   if (this->GroupIdsArrayName)
     {
     delete[] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
     }
 
   if (this->BlankingArrayName)
     {
     delete[] this->BlankingArrayName;
-    this->BlankingArrayName = NULL;
+    this->BlankingArrayName = nullptr;
     }
 }
 
@@ -105,7 +105,7 @@ vtkPolyData *vtkvmtkPolyDataCenterlineGroupsClipper::GetClippedOutput()
 {
   if (this->GetNumberOfOutputPorts() < 2)
     {
-    return NULL;
+    return nullptr;
     }
 
   return vtkPolyData::SafeDownCast(this->GetExecutive()->GetOutputData(1));
@@ -199,7 +199,7 @@ int vtkvmtkPolyDataCenterlineGroupsClipper::RequestData(
     }
 
   vtkAppendPolyData* appendBranches = vtkAppendPolyData::New();
-  vtkAppendPolyData* appendClippedOutput = NULL;
+  vtkAppendPolyData* appendClippedOutput = nullptr;
   if (this->GenerateClippedOutput)
     {
     appendClippedOutput = vtkAppendPolyData::New();

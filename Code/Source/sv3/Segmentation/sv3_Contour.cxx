@@ -154,13 +154,13 @@ void Contour::SetContourID(int contourID)
 void Contour::SetPlaneGeometry(vtkPlane * planeGeometry)
 {
 
-    if(planeGeometry!=NULL)
+    if(planeGeometry!=nullptr)
     {
         m_vtkPlaneGeometry = vtkPlane::New();
         m_vtkPlaneGeometry->SetOrigin(planeGeometry->GetOrigin());
         m_vtkPlaneGeometry->SetNormal(planeGeometry->GetNormal());
     }else{
-        m_vtkPlaneGeometry = NULL;
+        m_vtkPlaneGeometry = nullptr;
     }
 
 }

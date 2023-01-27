@@ -87,11 +87,11 @@ vtkCxxSetObjectMacro(vtkSVCenterlines,CapCenterIds,vtkIdList);
 // ----------------------
 vtkSVCenterlines::vtkSVCenterlines()
 {
-  this->SourceSeedIds = NULL;
-  this->TargetSeedIds = NULL;
-  this->CapCenterIds = NULL;
+  this->SourceSeedIds = nullptr;
+  this->TargetSeedIds = nullptr;
+  this->CapCenterIds = nullptr;
 
-  this->RadiusArrayName = NULL;
+  this->RadiusArrayName = nullptr;
   this->CostFunction = new char[16];
   strcpy(this->CostFunction,"1/R");
 
@@ -121,7 +121,7 @@ vtkSVCenterlines::vtkSVCenterlines()
   this->RelativeThreshold = 0.5;
   this->MedialEdgeThreshold = 5;
 
-  this->DelaunayTessellation = NULL;
+  this->DelaunayTessellation = nullptr;
   this->DelaunayTolerance = 1E-3;
 
   this->VoronoiDiagram = vtkPolyData::New();
@@ -137,79 +137,79 @@ vtkSVCenterlines::~vtkSVCenterlines()
   if (this->SourceSeedIds)
   {
     this->SourceSeedIds->Delete();
-    this->SourceSeedIds = NULL;
+    this->SourceSeedIds = nullptr;
   }
 
   if (this->TargetSeedIds)
   {
     this->TargetSeedIds->Delete();
-    this->TargetSeedIds = NULL;
+    this->TargetSeedIds = nullptr;
   }
 
   if (this->CapCenterIds)
   {
     this->CapCenterIds->Delete();
-    this->CapCenterIds = NULL;
+    this->CapCenterIds = nullptr;
   }
 
   if (this->CostFunction)
   {
     delete[] this->CostFunction;
-    this->CostFunction = NULL;
+    this->CostFunction = nullptr;
   }
 
   if (this->CostFunctionArrayName)
   {
     delete[] this->CostFunctionArrayName;
-    this->CostFunctionArrayName = NULL;
+    this->CostFunctionArrayName = nullptr;
   }
 
   if (this->EikonalSolutionArrayName)
   {
     delete[] this->EikonalSolutionArrayName;
-    this->EikonalSolutionArrayName = NULL;
+    this->EikonalSolutionArrayName = nullptr;
   }
 
   if (this->EdgeArrayName)
   {
     delete[] this->EdgeArrayName;
-    this->EdgeArrayName = NULL;
+    this->EdgeArrayName = nullptr;
   }
 
   if (this->EdgePCoordArrayName)
   {
     delete[] this->EdgePCoordArrayName;
-    this->EdgePCoordArrayName = NULL;
+    this->EdgePCoordArrayName = nullptr;
   }
 
   if (this->RadiusArrayName)
   {
     delete[] this->RadiusArrayName;
-    this->RadiusArrayName = NULL;
+    this->RadiusArrayName = nullptr;
   }
 
   if (this->DelaunayTessellation)
   {
     this->DelaunayTessellation->Delete();
-    this->DelaunayTessellation = NULL;
+    this->DelaunayTessellation = nullptr;
   }
 
-  if (this->RawCenterlines != NULL)
+  if (this->RawCenterlines != nullptr)
   {
     this->RawCenterlines->Delete();
-    this->RawCenterlines = NULL;
+    this->RawCenterlines = nullptr;
   }
 
-  if (this->VoronoiDiagram != NULL)
+  if (this->VoronoiDiagram != nullptr)
   {
     this->VoronoiDiagram->Delete();
-    this->VoronoiDiagram = NULL;
+    this->VoronoiDiagram = nullptr;
   }
 
-  if (this->PoleIds != NULL)
+  if (this->PoleIds != nullptr)
   {
     this->PoleIds->Delete();
-    this->PoleIds = NULL;
+    this->PoleIds = nullptr;
   }
 }
 
@@ -319,7 +319,7 @@ int vtkSVCenterlines::RequestData(
   surfaceNormals->ConsistencyOn();
   surfaceNormals->Update();
   // ------------------------------------------------------------------------
-  if (this->SourceSeedIds != NULL)
+  if (this->SourceSeedIds != nullptr)
   {
     vtkDebugMacro("SOURCE POINTS");
     for (int i=0; i<this->SourceSeedIds->GetNumberOfIds(); i++)
@@ -328,7 +328,7 @@ int vtkSVCenterlines::RequestData(
     }
   }
 
-  if (this->TargetSeedIds != NULL)
+  if (this->TargetSeedIds != nullptr)
   {
     vtkDebugMacro("TARGET POINTS");
     for (int i=0; i<this->TargetSeedIds->GetNumberOfIds(); i++)
@@ -337,7 +337,7 @@ int vtkSVCenterlines::RequestData(
     }
   }
 
-  if (this->CapCenterIds != NULL)
+  if (this->CapCenterIds != nullptr)
   {
     vtkDebugMacro("CAP CENTER POINTS");
     for (int i=0; i<this->CapCenterIds->GetNumberOfIds(); i++)

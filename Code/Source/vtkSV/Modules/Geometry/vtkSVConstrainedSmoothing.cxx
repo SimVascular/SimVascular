@@ -73,8 +73,8 @@ vtkStandardNewMacro(vtkSVConstrainedSmoothing);
 // ----------------------
 vtkSVConstrainedSmoothing::vtkSVConstrainedSmoothing()
 {
-    this->CellArrayName  = NULL;
-    this->PointArrayName = NULL;
+    this->CellArrayName  = nullptr;
+    this->PointArrayName = nullptr;
 
     this->UsePointArray = 0;
     this->UseCellArray  = 0;
@@ -83,7 +83,7 @@ vtkSVConstrainedSmoothing::vtkSVConstrainedSmoothing()
     this->NumSmoothOperations = 5;
     this->NumGradientSolves = 20;
 
-    this->fixedPt = NULL;
+    this->fixedPt = nullptr;
     this->NumFixedPoints = 0;
 }
 
@@ -92,15 +92,15 @@ vtkSVConstrainedSmoothing::vtkSVConstrainedSmoothing()
 // ----------------------
 vtkSVConstrainedSmoothing::~vtkSVConstrainedSmoothing()
 {
-  if (this->CellArrayName != NULL)
+  if (this->CellArrayName != nullptr)
   {
     delete [] this->CellArrayName;
-    this->CellArrayName = NULL;
+    this->CellArrayName = nullptr;
   }
-  if (this->PointArrayName != NULL)
+  if (this->PointArrayName != nullptr)
   {
     delete [] this->PointArrayName;
-    this->PointArrayName = NULL;
+    this->PointArrayName = nullptr;
   }
 }
 
@@ -111,9 +111,9 @@ void vtkSVConstrainedSmoothing::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
-  if (this->CellArrayName != NULL)
+  if (this->CellArrayName != nullptr)
     os << indent << "Cell array name: " << this->CellArrayName << "\n";
-  if (this->PointArrayName != NULL)
+  if (this->PointArrayName != nullptr)
     os << indent << "Point array name: " << this->PointArrayName << "\n";
 
   os << indent << "Weight: " << this->Weight << "\n";
@@ -160,7 +160,7 @@ int vtkSVConstrainedSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
 
     if (this->UsePointArray)
     {
-      if (this->PointArrayName == NULL)
+      if (this->PointArrayName == nullptr)
       {
         vtkErrorMacro("No PointArrayName given.");
         this->SetErrorCode(vtkErrorCode::UserError + 1);
@@ -175,7 +175,7 @@ int vtkSVConstrainedSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
     }
     if (this->UseCellArray)
     {
-      if (this->CellArrayName == NULL)
+      if (this->CellArrayName == nullptr)
       {
         std::cout<<"No CellArrayName given." << endl;
         this->SetErrorCode(vtkErrorCode::UserError + 1);

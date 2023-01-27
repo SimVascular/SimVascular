@@ -152,7 +152,7 @@ Math_fft(PyObject *self, PyObject *args)
 
   // Perform the fft operation.
   auto mathObj = cvMath();
-  double **terms = NULL;
+  double **terms = nullptr;
   if (mathObj.FFT(pts, nlistpts, numInterpPoints, nterms, &terms) == SV_ERROR) {
        mathObj.deleteArray(pts,nlistpts,dim);
        api.error("Error calculating the fft.");
@@ -211,7 +211,7 @@ Math_inverse_fft(PyObject *self, PyObject *args)
   // Perform inverse fft operation.
   //
   auto mathObj = cvMath();
-  double **pts = NULL;
+  double **pts = nullptr;
   if (mathObj.inverseFFT(terms, nlistterms, t0, dt, omega, numPts, &pts) == SV_ERROR) {
        mathObj.deleteArray(terms,nlistterms,dim);
        api.error("Error calculating the inverse fft.");
@@ -330,7 +330,7 @@ Math_linear_interpolate(PyObject *self, PyObject *args)
   // Calculate dt so that our time series will go from 0 to T.
   double t0 = pts[0][0];
   double dt = (pts[nlistpts-1][0]-t0)/(numInterpPoints-1);
-  double **outPts = NULL;
+  double **outPts = nullptr;
 
   // Perform the linear interpolation.
   auto mathObj = cvMath();
@@ -374,7 +374,7 @@ Math_curve_length(PyObject *self, PyObject *args, PyObject* kwargs)
 {
   std::cout << "========== Math_curve_length ==========" << std::endl;
   auto api = PyUtilApiFunction("O!|O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"points", "closed", NULL};
+  static char *keywords[] = {"points", "closed", nullptr};
   PyObject *pointsArg;
   PyObject *closedArg = nullptr;
 
@@ -447,7 +447,7 @@ Math_linear_interpolate_curve(PyObject *self, PyObject *args)
   // Interpolate the curve.
   //
   auto mathObj = cvMath();
-  double **outPts = NULL;
+  double **outPts = nullptr;
   if (mathObj.linearInterpolateCurve(pts, nlistpts, closed, numInterpPoints, &outPts) == SV_ERROR) {
       mathObj.deleteArray(pts,nlistpts,dim);
       api.error("Error interpolating the curve length.");
@@ -586,7 +586,7 @@ Math_smooth_curve(PyObject *self, PyObject *args)
   // Smooth the curve.
   //
   auto mathObj = cvMath();
-  double **outPts = NULL;
+  double **outPts = nullptr;
   if (mathObj.smoothCurve(pts, nlistpts, closed, numModes, numInterpPoints, &outPts) == SV_ERROR) {
       mathObj.deleteArray(pts,nlistpts,dim);
       api.error("Error soothing the curve.");
@@ -647,7 +647,7 @@ static PyMethodDef PyMathMethods[] = {
    {"smooth_curve", Math_smooth_curve, METH_VARARGS, Math_smooth_curve_doc},
 */
 
-  {NULL,       NULL},
+  {nullptr,       nullptr},
   };
 
 
@@ -690,14 +690,14 @@ PyInit_PyMath(void)
 {
   std::cout << "========== load math module ==========" << std::endl;
   auto module = PyModule_Create(&PyMathModule);
-  if (module == NULL) {
+  if (module == nullptr) {
     printf("Error creating Python math module!\n");
-    return NULL;
+    return nullptr;
   }
 
   // Add math.MathException exception.
   //
-  PyRunTimeErr = PyErr_NewException(MATH_MODULE_EXCEPTION, NULL, NULL);
+  PyRunTimeErr = PyErr_NewException(MATH_MODULE_EXCEPTION, nullptr, nullptr);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(module, MATH_MODULE_EXCEPTION_OBJECT, PyRunTimeErr);
 
@@ -722,7 +722,7 @@ PyObject *pyMth;
 pyMth = Py_InitModule("pyMath",Math_methods);
 
 
-PyRunTimeErr = PyErr_NewException("pyMath.error",NULL,NULL);
+PyRunTimeErr = PyErr_NewException("pyMath.error",nullptr,nullptr);
 Py_INCREF(PyRunTimeErr );
 PyModule_AddObject(pyMth, "error", PyRunTimeErr);
 

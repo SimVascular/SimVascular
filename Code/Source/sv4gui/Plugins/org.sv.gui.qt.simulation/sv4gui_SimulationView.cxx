@@ -88,25 +88,25 @@ const QString sv4guiSimulationView::MsgTitle = "SimVascular SV Simulation";
 sv4guiSimulationView::sv4guiSimulationView() :
     ui(new Ui::sv4guiSimulationView)
 {
-    m_MitkJob=NULL;
-    m_Model=NULL;
-    m_JobNode=NULL;
-    m_ModelNode=NULL;
+    m_MitkJob=nullptr;
+    m_Model=nullptr;
+    m_JobNode=nullptr;
+    m_ModelNode=nullptr;
 
-    m_DataInteractor=NULL;
+    m_DataInteractor=nullptr;
     m_ModelSelectFaceObserverTag=-1;
 
-    m_TableModelBasic=NULL;
+    m_TableModelBasic=nullptr;
 
-    m_TableModelCap=NULL;
-    m_TableMenuCap=NULL;
+    m_TableModelCap=nullptr;
+    m_TableMenuCap=nullptr;
 
-    m_TableModelVar=NULL;
-    m_TableMenuVar=NULL;
+    m_TableModelVar=nullptr;
+    m_TableMenuVar=nullptr;
 
-    m_CapBCWidget=NULL;
+    m_CapBCWidget=nullptr;
 
-    m_TableModelSolver=NULL;
+    m_TableModelSolver=nullptr;
 
     m_PresolverPath="";
     m_FlowsolverPath="";
@@ -344,7 +344,7 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 //
 void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
 {
-    if (prefs == NULL) {
+    if (prefs == nullptr) {
         return;
     }
 
@@ -393,7 +393,7 @@ void sv4guiSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes
     }
 
     std::string modelName=mitkJob->GetModelName();
-    mitk::DataNode::Pointer modelNode=NULL;
+    mitk::DataNode::Pointer modelNode=nullptr;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (jobNode,isProjFolder,false);
 
@@ -409,7 +409,7 @@ void sv4guiSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes
         }
     }
 
-    sv4guiModel* model=NULL;
+    sv4guiModel* model=nullptr;
     if(modelNode.IsNotNull())
     {
         model=dynamic_cast<sv4guiModel*>(modelNode->GetData());
@@ -423,7 +423,7 @@ void sv4guiSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes
     m_JobNode=jobNode;
     m_MitkJob=mitkJob;
 
-    if(m_Model==NULL)
+    if(m_Model==nullptr)
     {
         EnableTool(false);
     }
@@ -441,7 +441,7 @@ void sv4guiSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes
     if(m_ModelNode.IsNotNull())
     {
         ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
-        if(m_ModelNode->IsVisible(NULL))
+        if(m_ModelNode->IsVisible(nullptr))
             ui->checkBoxShowModel->setChecked(true);
     }
     else
@@ -546,17 +546,17 @@ void sv4guiSimulationView::RemoveObservers()
         std::string user="";
         m_ModelNode->GetStringProperty("interactor user", user);
         if(user=="simulation")
-            m_ModelNode->SetDataInteractor(NULL);
+            m_ModelNode->SetDataInteractor(nullptr);
     }
-    m_DataInteractor=NULL;
+    m_DataInteractor=nullptr;
 }
 
 void sv4guiSimulationView::ClearAll()
 {
-    m_Model=NULL;
-    m_JobNode=NULL;
-    m_MitkJob=NULL;
-    m_ModelNode=NULL;
+    m_Model=nullptr;
+    m_JobNode=nullptr;
+    m_MitkJob=nullptr;
+    m_ModelNode=nullptr;
 
     ui->labelJobName->setText("");
     ui->labelJobStatus->setText("");
@@ -569,7 +569,7 @@ void sv4guiSimulationView::UpdateGUIBasic()
         return;
 
     sv4guiSimJob* job=m_MitkJob->GetSimJob();
-    if(job==NULL)
+    if(job==nullptr)
     {
         job=new sv4guiSimJob();
     }
@@ -684,7 +684,7 @@ void sv4guiSimulationView::UpdateFaceListSelection()
         return;
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
 
     //for tableViewCap
@@ -752,7 +752,7 @@ void sv4guiSimulationView::TableCapSelectionChanged( const QItemSelection & /*se
         return;
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewCap->selectionModel()->selectedRows();
 
@@ -964,7 +964,7 @@ void  sv4guiSimulationView::SplitCapBC()
         return;
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL)
+    if(modelElement==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewCap->selectionModel()->selectedRows();
@@ -1086,10 +1086,10 @@ void sv4guiSimulationView::UpdateGUICap()
         return;
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     sv4guiSimJob* job=m_MitkJob->GetSimJob();
-    if(job==NULL)
+    if(job==nullptr)
     {
         job=new sv4guiSimJob();
     }
@@ -1109,7 +1109,7 @@ void sv4guiSimulationView::UpdateGUICap()
     for(int i=0;i<ids.size();i++)
     {
         sv4guiModelElement::svFace* face=modelElement->GetFace(ids[i]);
-        if(face==NULL )
+        if(face==nullptr )
             continue;
 
         rowIndex++;
@@ -1232,7 +1232,7 @@ void sv4guiSimulationView::TableVarSelectionChanged( const QItemSelection & /*se
         return;
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewVar->selectionModel()->selectedRows();
 
@@ -1304,7 +1304,7 @@ void sv4guiSimulationView::UpdateGUIWall()
         return;
 
     sv4guiSimJob* job=m_MitkJob->GetSimJob();
-    if(job==NULL)
+    if(job==nullptr)
     {
         job=new sv4guiSimJob();
     }
@@ -1338,7 +1338,7 @@ void sv4guiSimulationView::UpdateGUIWall()
         return;
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     m_TableModelVar->clear();
 
@@ -1352,7 +1352,7 @@ void sv4guiSimulationView::UpdateGUIWall()
     for(int i=0;i<faces.size();i++)
     {
         sv4guiModelElement::svFace* face=faces[i];
-        if(face==NULL )
+        if(face==nullptr )
             continue;
 
         rowIndex++;
@@ -1389,7 +1389,7 @@ void sv4guiSimulationView::UpdateGUISolver()
         return;
 
     sv4guiSimJob* job=m_MitkJob->GetSimJob();
-    if(job==NULL)
+    if(job==nullptr)
     {
         job=new sv4guiSimJob();
     }
@@ -1414,7 +1414,7 @@ void sv4guiSimulationView::UpdateGUISolver()
     }
 
     QDomDocument doc("solvertemplate");
-    //    QString *em=NULL;
+    //    QString *em=nullptr;
     if(!doc.setContent(&xmlFile))
     {
         QMessageBox::warning(m_Parent,"File Template Error","Format Error.");
@@ -1522,7 +1522,7 @@ void sv4guiSimulationView::UpdateGUIJob()
     ui->sliderNumProcs->setMaximum(coreNum);
 
     sv4guiSimJob* job=m_MitkJob->GetSimJob();
-    if(job==NULL)
+    if(job==nullptr)
         return;
 
     std::string pNum=job->GetRunProp("Number of Processes");
@@ -1544,7 +1544,7 @@ void sv4guiSimulationView::UpdateGUIRunDir()
         return;
 
     sv4guiSimJob* job=m_MitkJob->GetSimJob();
-    if(job==NULL)
+    if(job==nullptr)
         return;
 
     std::string pNum=job->GetRunProp("Number of Processes");
@@ -1977,12 +1977,12 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
     if(outputDir=="")
         return false;
 
-    sv4guiModelElement* modelElement=NULL;
+    sv4guiModelElement* modelElement=nullptr;
 
     if(m_Model)
         modelElement=m_Model->GetModelElement();
 
-    if(modelElement==NULL)
+    if(modelElement==nullptr)
     {
         QMessageBox::warning(m_Parent,"Model Unavailable","Please make sure the model exists ans is valid.");
         return false;
@@ -1993,7 +1993,7 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
 
     sv4guiSimJob* job=CreateJob(msg);
 
-    if(job==NULL)
+    if(job==nullptr)
     {
         QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(msg));
         return false;
@@ -2081,9 +2081,9 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
         mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
         mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
 
-        sv4guiMesh* mesh=NULL;
-        mitk::DataNode::Pointer projFolderNode=NULL;
-        mitk::DataNode::Pointer meshNode=NULL;
+        sv4guiMesh* mesh=nullptr;
+        mitk::DataNode::Pointer projFolderNode=nullptr;
+        mitk::DataNode::Pointer meshNode=nullptr;
 
         if(rs->size()>0)
         {
@@ -2106,7 +2106,7 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
             }
         }
 
-        if(mesh==NULL)
+        if(mesh==nullptr)
         {
             QMessageBox::warning(m_Parent,"Mesh Unavailable","Please make sure the mesh exists and is valid.");
             return false;
@@ -2240,7 +2240,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
                 {
                     msg=par + " value error: " + values;
                     delete job;
-                    return NULL;
+                    return nullptr;
                 }
             }
             else if(par=="Initial Velocities")
@@ -2254,7 +2254,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
                 {
                     msg=par + " value error: " + values;
                     delete job;
-                    return NULL;
+                    return nullptr;
                 }
             }
         }
@@ -2279,14 +2279,14 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
                 {
                     msg=capName + ": no flowrate data";
                     delete job;
-                    return NULL;
+                    return nullptr;
                 }
 
                 if(period=="")
                 {
                     msg=capName + ": no period for flowrate data";
                     delete job;
-                    return NULL;
+                    return nullptr;
                 }
             }
 
@@ -2324,7 +2324,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
                     {
                         msg=capName + " R value error: " + values;
                         delete job;
-                        return NULL;
+                        return nullptr;
                     }
                 }
                 else if(bcType=="RCR")
@@ -2338,7 +2338,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
                     {
                         msg=capName + " RCR values error: " + values;
                         delete job;
-                        return NULL;
+                        return nullptr;
                     }
                 }
                 else if(bcType=="Coronary")
@@ -2352,28 +2352,28 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
                     {
                         msg=capName + " Coronary values error: " + values;
                         delete job;
-                        return NULL;
+                        return nullptr;
                     }
 
                     if(timedPressure=="")
                     {
                         msg=capName + ": no Pim data";
                         delete job;
-                        return NULL;
+                        return nullptr;
                     }
 
                     if(pressurePeriod=="" || !IsDouble(pressurePeriod))
                     {
                         msg=capName + " coronary period error: " + pressurePeriod;
                         delete job;
-                        return NULL;
+                        return nullptr;
                     }
 
                     if(pressureScaling=="" || !IsDouble(pressureScaling))
                     {
                         msg=capName + " coronary pressure scaling error: " + pressureScaling;
                         delete job;
-                        return NULL;
+                        return nullptr;
                     }
                 }
 
@@ -2383,7 +2383,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
                     {
                         msg=capName + " pressure error: " + pressure;
                         delete job;
-                        return NULL;
+                        return nullptr;
                     }
                 }
                 else
@@ -2433,28 +2433,28 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
             {
                 msg="wall thickness error: " + thickness;
                 delete job;
-                return NULL;
+                return nullptr;
             }
 
             if(!IsDouble(modulus))
             {
                 msg="wall elastic modulus error: " + modulus;
                 delete job;
-                return NULL;
+                return nullptr;
             }
 
             if(!IsDouble(nu))
             {
                 msg="wall Poisson ratio error: " + nu;
                 delete job;
-                return NULL;
+                return nullptr;
             }
 
             if(!IsDouble(kcons))
             {
                 msg="wall shear constant error: " + kcons;
                 delete job;
-                return NULL;
+                return nullptr;
             }
 
             if(wallDensity!="")
@@ -2463,7 +2463,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
                 {
                     msg="wall density error: " + wallDensity;
                     delete job;
-                    return NULL;
+                    return nullptr;
                 }
             }
             else
@@ -2475,7 +2475,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
             {
                 msg="wall pressure error: " + pressure;
                 delete job;
-                return NULL;
+                return nullptr;
             }
         }
 
@@ -2500,14 +2500,14 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
             {
                 msg="wall Poisson ratio error: " + nu;
                 delete job;
-                return NULL;
+                return nullptr;
             }
 
             if(!IsDouble(kcons))
             {
                 msg="wall shear constant error: " + kcons;
                 delete job;
-                return NULL;
+                return nullptr;
             }
 
             if(wallDensity!="")
@@ -2516,7 +2516,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
                 {
                     msg="wall density error: " + wallDensity;
                     delete job;
-                    return NULL;
+                    return nullptr;
                 }
             }
             else
@@ -2528,7 +2528,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
             {
                 msg="wall pressure error: " + pressure;
                 delete job;
-                return NULL;
+                return nullptr;
             }
         }
 
@@ -2550,14 +2550,14 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
                 {
                     msg="wall thickness error: " + thickness;
                     delete job;
-                    return NULL;
+                    return nullptr;
                 }
 
                 if(modulus!="" && !IsDouble(modulus))
                 {
                     msg="wall elastic modulus error: " + modulus;
                     delete job;
-                    return NULL;
+                    return nullptr;
                 }
             }
 
@@ -2570,7 +2570,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
     {
         std::string parName=m_TableModelSolver->item(i,0)->text().trimmed().toStdString();
         QStandardItem* valueItem=m_TableModelSolver->item(i,1);
-        if(valueItem==NULL)
+        if(valueItem==nullptr)
             continue;
 
         std::string value=valueItem->text().trimmed().toStdString();
@@ -2582,19 +2582,19 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
             {
                 msg=parName+ " missing value";
                 delete job;
-                return NULL;
+                return nullptr;
             }
             else if(type=="int"&&!IsInt(value))
             {
                 msg=parName+ " value error: " + value;
                 delete job;
-                return NULL;
+                return nullptr;
             }
             else if(type=="double"&&!IsDouble(value))
             {
                 msg=parName+ " value error: " + value;
                 delete job;
-                return NULL;
+                return nullptr;
             }
         }
 
@@ -2614,7 +2614,7 @@ void sv4guiSimulationView::SaveToManager()
 
     sv4guiSimJob* job=CreateJob(msg);
 
-    if(job==NULL)
+    if(job==nullptr)
     {
         QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(msg));
         return;
@@ -2929,7 +2929,7 @@ bool sv4guiSimulationView::AreDouble(std::string values, int* count)
         if(!ok) return false;
     }
 
-    if(count!=NULL)
+    if(count!=nullptr)
         (*count)=list.size();
 
     return true;
@@ -2959,7 +2959,7 @@ void sv4guiSimulationView::UpdateSimJob()
 
     std::string msg="";
     sv4guiSimJob* newJob=CreateJob(msg,false);
-    if(newJob==NULL)
+    if(newJob==nullptr)
         return;
 
     newJob->SetRunProp("Number of Processes",numProcsStr);

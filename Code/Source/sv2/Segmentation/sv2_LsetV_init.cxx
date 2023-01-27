@@ -269,7 +269,7 @@ static int NewName( CONST84 char *name, Tcl_Interp *interp )
 {
   int code;
 
-  code = Tcl_VarEval( interp, "info commands ", name, (char *)NULL );
+  code = Tcl_VarEval( interp, "info commands ", name, (char *)nullptr );
   if ( code != TCL_OK ) {
     return SV_ERROR;
   }
@@ -298,28 +298,28 @@ int Lsetv_Init( Tcl_Interp *interp )
   Tcl_InitHashTable( &gLsetVTable, TCL_STRING_KEYS );
 
   Tcl_CreateCommand( interp, "lsetVKGI", LsetVKGI_NewCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   Tcl_CreateCommand( interp, "lsetVConst", LsetVConst_NewCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   Tcl_CreateCommand( interp, "lsetVThr", LsetVThr_NewCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   Tcl_CreateCommand( interp, "lsetVPotential", LsetVPotential_NewCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   Tcl_CreateCommand( interp, "lsetVExpDecay", LsetVExpDecay_NewCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   Tcl_CreateCommand( interp, "lsetVSmooth", LsetVSmooth_NewCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   Tcl_CreateCommand( interp, "lsetV_instances", LsetV_ListInstancesCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   Tcl_CreateCommand( interp, "lsetV_methods", LsetVKGI_ListMethodsCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   return TCL_OK;
 }
@@ -340,7 +340,7 @@ int LsetVKGI_NewCmd( ClientData clientData, Tcl_Interp *interp,
   // Check syntax:
   if (argc != 2) {
     Tcl_AppendResult( interp, "usage: ", argv[0], " <objName>",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -348,15 +348,15 @@ int LsetVKGI_NewCmd( ClientData clientData, Tcl_Interp *interp,
   vName = argv[1];
   if ( !NewName( vName, interp ) ) {
     Tcl_AppendResult( interp, "object \"", vName,
-		      "\" already exists", (char *)NULL );
+		      "\" already exists", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Allocate new cvLevelSetVelocity object (of class cvLevelSetVelocityKGI):
   v = new cvLevelSetVelocityKGI;
-  if ( v == NULL ) {
+  if ( v == nullptr ) {
     Tcl_AppendResult( interp, "error allocating object \"", vName,
-		      "\"", (char *)NULL );
+		      "\"", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -396,7 +396,7 @@ int LsetVConst_NewCmd( ClientData clientData, Tcl_Interp *interp,
   // Check syntax:
   if (argc != 2) {
     Tcl_AppendResult( interp, "usage: ", argv[0], " <objName>",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -404,15 +404,15 @@ int LsetVConst_NewCmd( ClientData clientData, Tcl_Interp *interp,
   vName = argv[1];
   if ( !NewName( vName, interp ) ) {
     Tcl_AppendResult( interp, "object \"", vName,
-		      "\" already exists", (char *)NULL );
+		      "\" already exists", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Allocate new cvLevelSetVelocity object (of class cvLevelSetVelocityConstant):
   v = new cvLevelSetVelocityConstant;
-  if ( v == NULL ) {
+  if ( v == nullptr ) {
     Tcl_AppendResult( interp, "error allocating object \"", vName,
-		      "\"", (char *)NULL );
+		      "\"", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -450,7 +450,7 @@ int LsetVThr_NewCmd( ClientData clientData, Tcl_Interp *interp,
   // Check syntax:
   if (argc != 2) {
     Tcl_AppendResult( interp, "usage: ", argv[0], " <objName>",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -458,15 +458,15 @@ int LsetVThr_NewCmd( ClientData clientData, Tcl_Interp *interp,
   vName = argv[1];
   if ( !NewName( vName, interp ) ) {
     Tcl_AppendResult( interp, "object \"", vName,
-		      "\" already exists", (char *)NULL );
+		      "\" already exists", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Allocate new cvLevelSetVelocity object (of class cvLevelSetVelocityThreshold):
   v = new cvLevelSetVelocityThreshold;
-  if ( v == NULL ) {
+  if ( v == nullptr ) {
     Tcl_AppendResult( interp, "error allocating object \"", vName,
-		      "\"", (char *)NULL );
+		      "\"", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -504,7 +504,7 @@ int LsetVPotential_NewCmd( ClientData clientData, Tcl_Interp *interp,
   // Check syntax:
   if (argc != 2) {
     Tcl_AppendResult( interp, "usage: ", argv[0], " <objName>",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -512,15 +512,15 @@ int LsetVPotential_NewCmd( ClientData clientData, Tcl_Interp *interp,
   vName = argv[1];
   if ( !NewName( vName, interp ) ) {
     Tcl_AppendResult( interp, "object \"", vName,
-		      "\" already exists", (char *)NULL );
+		      "\" already exists", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Allocate new cvLevelSetVelocity object (of class cvLevelSetVelocityPotential):
   v = new cvLevelSetVelocityPotential;
-  if ( v == NULL ) {
+  if ( v == nullptr ) {
     Tcl_AppendResult( interp, "error allocating object \"", vName,
-		      "\"", (char *)NULL );
+		      "\"", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -558,7 +558,7 @@ int LsetVExpDecay_NewCmd( ClientData clientData, Tcl_Interp *interp,
   // Check syntax:
   if (argc != 2) {
     Tcl_AppendResult( interp, "usage: ", argv[0], " <objName>",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -566,15 +566,15 @@ int LsetVExpDecay_NewCmd( ClientData clientData, Tcl_Interp *interp,
   vName = argv[1];
   if ( !NewName( vName, interp ) ) {
     Tcl_AppendResult( interp, "object \"", vName,
-		      "\" already exists", (char *)NULL );
+		      "\" already exists", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Allocate new cvLevelSetVelocity object (of class cvLevelSetVelocityExponentialDecay):
   v = new cvLevelSetVelocityExponentialDecay;
-  if ( v == NULL ) {
+  if ( v == nullptr ) {
     Tcl_AppendResult( interp, "error allocating object \"", vName,
-		      "\"", (char *)NULL );
+		      "\"", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -612,7 +612,7 @@ int LsetVSmooth_NewCmd( ClientData clientData, Tcl_Interp *interp,
   // Check syntax:
   if (argc != 2) {
     Tcl_AppendResult( interp, "usage: ", argv[0], " <objName>",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -620,15 +620,15 @@ int LsetVSmooth_NewCmd( ClientData clientData, Tcl_Interp *interp,
   vName = argv[1];
   if ( !NewName( vName, interp ) ) {
     Tcl_AppendResult( interp, "object \"", vName,
-		      "\" already exists", (char *)NULL );
+		      "\" already exists", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Allocate new cvLevelSetVelocity object (of class cvLevelSetVelocitySmooth):
   v = new cvLevelSetVelocitySmooth;
-  if ( v == NULL ) {
+  if ( v == nullptr ) {
     Tcl_AppendResult( interp, "error allocating object \"", vName,
-		      "\"", (char *)NULL );
+		      "\"", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -663,7 +663,7 @@ void DeleteLsetV( ClientData clientData )
   Tcl_HashEntry *entryPtr;
 
   entryPtr = Tcl_FindHashEntry( &gLsetVTable, v->tclName_ );
-  if ( entryPtr == NULL ) {
+  if ( entryPtr == nullptr ) {
     printf("Error looking up lsetV object %s for deletion.\n",
 	   v->tclName_);
   } else {
@@ -681,7 +681,7 @@ int LsetVKGI_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
 			  int argc, CONST84 char *argv[] )
 {
   if ( argc != 1 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -700,7 +700,7 @@ int LsetVConst_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
 			       int argc, CONST84 char *argv[] )
 {
   if ( argc != 1 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -718,7 +718,7 @@ int LsetVThr_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
 			     int argc, CONST84 char *argv[] )
 {
   if ( argc != 1 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -737,7 +737,7 @@ int LsetVPotential_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
 				   int argc, CONST84 char *argv[] )
 {
   if ( argc != 1 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -756,7 +756,7 @@ int LsetVExpDecay_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
 				  int argc, CONST84 char *argv[] )
 {
   if ( argc != 1 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -775,7 +775,7 @@ int LsetVSmooth_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
 				int argc, CONST84 char *argv[] )
 {
   if ( argc != 1 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -796,12 +796,12 @@ int LsetV_ListInstancesCmd( ClientData clientData, Tcl_Interp *interp,
   Tcl_HashSearch search;
 
   if ( argc != 1 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
   for ( entryPtr = Tcl_FirstHashEntry( &gLsetVTable, &search );
-	entryPtr != NULL;
+	entryPtr != nullptr;
 	entryPtr = Tcl_NextHashEntry( &search ) ) {
     Tcl_AppendElement( interp, (char*)(Tcl_GetHashKey( &gLsetVTable, entryPtr )) );
   }
@@ -961,7 +961,7 @@ int LsetV_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
     }
   } else {
     Tcl_AppendResult( interp, "\"", argv[1],
-		      "\" not a recognized lsetV method", (char *)NULL );
+		      "\" not a recognized lsetV method", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -982,7 +982,7 @@ int LsetV_SetStopVMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-value", DOUBLE_Type, &stopV, NULL, REQUIRED, 0, { 0 } }
+    { "-value", DOUBLE_Type, &stopV, nullptr, REQUIRED, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -1017,7 +1017,7 @@ int LsetV_GetStopVMtd( ClientData clientData, Tcl_Interp *interp,
   char *usage;
   double stopV;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -1044,7 +1044,7 @@ int LsetV_GetMemoryUsageMtd( ClientData clientData, Tcl_Interp *interp,
   cvLevelSetVelocity *vel = (cvLevelSetVelocity *)clientData;
   char *usage;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -1082,15 +1082,15 @@ int LsetVImage_SetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
   vtkFloatingPointType originF[3];
   double originD[3];
   int imgDims[3];
-  short *imgData = NULL;
-  float *fimgData = NULL;
+  short *imgData = nullptr;
+  float *fimgData = nullptr;
   int numImgData;
   vtkStructuredPoints *vtksp;
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &imgName, NULL, REQUIRED, 0, { 0 } },
-    { "-closed", INT_Type, &closed, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &imgName, nullptr, REQUIRED, 0, { 0 } },
+    { "-closed", INT_Type, &closed, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -1107,8 +1107,8 @@ int LsetVImage_SetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
 
   // Look up given image object:
   img = gRepository->GetObject( imgName );
-  if ( img == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", imgName, (char *)NULL );
+  if ( img == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", imgName, (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1116,7 +1116,7 @@ int LsetVImage_SetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
   type = img->GetType();
   if ( type != STRUCTURED_PTS_T ) {
     Tcl_AppendResult( interp, "error: object ", imgName,
-		      "not of type StructuredPts", (char *)NULL );
+		      "not of type StructuredPts", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1143,12 +1143,12 @@ int LsetVImage_SetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
     if ( VtkUtils_MakeShortArray( vtksp->GetPointData()->GetScalars(),
 				  &numImgData, &imgData ) != SV_OK ) {
       Tcl_AppendResult( interp, "error accessing short data in object ",
-			imgName, (char *)NULL );
+			imgName, (char *)nullptr );
       return TCL_ERROR;
     }
     if ( (imgDims[0] * imgDims[1] * imgDims[2]) != numImgData ) {
       Tcl_AppendResult( interp, "image size mismatch in object ",
-			imgName, (char *)NULL );
+			imgName, (char *)nullptr );
       delete [] imgData;
       return TCL_ERROR;
     }
@@ -1164,12 +1164,12 @@ int LsetVImage_SetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
     if ( VtkUtils_MakeFloatArray( vtksp->GetPointData()->GetScalars(),
 				  &numImgData, &fimgData ) != SV_OK ) {
       Tcl_AppendResult( interp, "error accessing float data in object ",
-			imgName, (char *)NULL );
+			imgName, (char *)nullptr );
       return TCL_ERROR;
     }
     if ( (imgDims[0] * imgDims[1] * imgDims[2]) != numImgData ) {
       Tcl_AppendResult( interp, "image size mismatch in object ",
-			imgName, (char *)NULL );
+			imgName, (char *)nullptr );
       delete [] fimgData;
       return TCL_ERROR;
     }
@@ -1187,8 +1187,8 @@ int LsetVImage_SetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( imgData != NULL ) delete [] imgData;
-  if ( fimgData != NULL ) delete [] fimgData;
+  if ( imgData != nullptr ) delete [] imgData;
+  if ( fimgData != nullptr ) delete [] fimgData;
   return TCL_OK;
 }
 
@@ -1210,7 +1210,7 @@ int LsetVImage_GetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-dst", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -1228,7 +1228,7 @@ int LsetVImage_GetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
   // Check for given object name:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1265,7 +1265,7 @@ int LsetVImage_GetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
   sp->SetName( objName );
   if ( ! ( gRepository->Register( sp->GetName(), sp ) ) ) {
     Tcl_AppendResult( interp, "error registering object ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete sp;
     return TCL_ERROR;
   }
@@ -1386,12 +1386,12 @@ static int LsetVKGI_SetConstMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 6;
   ARG_Entry arg_table[] = {
-    { "-eK", DOUBLE_Type, &eK, NULL, REQUIRED, 0, { 0 } },
-    { "-eI", DOUBLE_Type, &eI, NULL, REQUIRED, 0, { 0 } },
-    { "-balloon", DOUBLE_Type, &balloon, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-gradIPow", DOUBLE_Type, &gradIPow, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-beta", DOUBLE_Type, &beta, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-localStop", INT_Type, &localStop, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-eK", DOUBLE_Type, &eK, nullptr, REQUIRED, 0, { 0 } },
+    { "-eI", DOUBLE_Type, &eI, nullptr, REQUIRED, 0, { 0 } },
+    { "-balloon", DOUBLE_Type, &balloon, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-gradIPow", DOUBLE_Type, &gradIPow, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-beta", DOUBLE_Type, &beta, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-localStop", INT_Type, &localStop, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -1453,7 +1453,7 @@ static int LsetVKGI_GetConstMtd( ClientData clientData, Tcl_Interp *interp,
   int localStop;
   char dummyStr[CV_STRLEN];
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
 
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
@@ -1512,7 +1512,7 @@ static int LsetVImage_GetMagGradRangeMtd( ClientData clientData,
   char *usage;
   double rng[2];
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -1544,7 +1544,7 @@ static int LsetVImage_GetXYMagGradRangeMtd( ClientData clientData,
   char *usage;
   double rng[2];
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -1576,7 +1576,7 @@ static int LsetVImage_GetZMagGradRangeMtd( ClientData clientData,
   char *usage;
   double rng[2];
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -1608,7 +1608,7 @@ static int LsetVImage_GetIntensityRangeMtd( ClientData clientData,
   char *usage;
   double rng[2];
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -1680,7 +1680,7 @@ static int LsetVConst_SetConstMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-v", DOUBLE_Type, &vel, NULL, REQUIRED, 0, { 0 } },
+    { "-v", DOUBLE_Type, &vel, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -1715,7 +1715,7 @@ static int LsetVConst_GetConstMtd( ClientData clientData, Tcl_Interp *interp,
   double vel;
   char tmpStr[CV_STRLEN];
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -1785,8 +1785,8 @@ static int LsetVThr_SetConstMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-balloon", DOUBLE_Type, &balloon, NULL, REQUIRED, 0, { 0 } },
-    { "-threshold", DOUBLE_Type, &thr, NULL, REQUIRED, 0, { 0 } },
+    { "-balloon", DOUBLE_Type, &balloon, nullptr, REQUIRED, 0, { 0 } },
+    { "-threshold", DOUBLE_Type, &thr, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -1825,7 +1825,7 @@ static int LsetVThr_GetConstMtd( ClientData clientData, Tcl_Interp *interp,
   double balloon, thr;
   char dummyStr[CV_STRLEN];
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
 
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
@@ -1903,11 +1903,11 @@ static int LsetVPotential_SetConstMtd( ClientData clientData,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-eP", DOUBLE_Type, &eP, NULL, REQUIRED, 0, { 0 } },
-    { "-eK", DOUBLE_Type, &eK, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-Klow", DOUBLE_Type, &Klow, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-Kupp", DOUBLE_Type, &Kupp, NULL, SV_OPTIONAL, 0, { 0 } },
-    //    { "-balloon", DOUBLE_Type, &balloon, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-eP", DOUBLE_Type, &eP, nullptr, REQUIRED, 0, { 0 } },
+    { "-eK", DOUBLE_Type, &eK, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-Klow", DOUBLE_Type, &Klow, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-Kupp", DOUBLE_Type, &Kupp, nullptr, SV_OPTIONAL, 0, { 0 } },
+    //    { "-balloon", DOUBLE_Type, &balloon, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -1968,7 +1968,7 @@ static int LsetVPotential_GetConstMtd( ClientData clientData,
   char *usage;
   char dummyStr[CV_STRLEN];
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
 
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
@@ -2054,13 +2054,13 @@ static int LsetVExpDecay_SetConstMtd( ClientData clientData,
 
   int table_size = 6;
   ARG_Entry arg_table[] = {
-    { "-eI", DOUBLE_Type, &eI, NULL, REQUIRED, 0, { 0 } },
-    { "-Kt", DOUBLE_Type, &Kt, NULL, REQUIRED, 0, { 0 } },
-    { "-clamp", BOOL_Type, &clamp, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-expand", BOOL_Type, &expand, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-eIneg", DOUBLE_Type, &eIneg, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-3d_curv", STRING_Type, &kt_name, NULL, SV_OPTIONAL, 0, { 0 } },
-    //    { "-monotonic", BOOL_Type, &monotonic, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-eI", DOUBLE_Type, &eI, nullptr, REQUIRED, 0, { 0 } },
+    { "-Kt", DOUBLE_Type, &Kt, nullptr, REQUIRED, 0, { 0 } },
+    { "-clamp", BOOL_Type, &clamp, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-expand", BOOL_Type, &expand, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-eIneg", DOUBLE_Type, &eIneg, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-3d_curv", STRING_Type, &kt_name, nullptr, SV_OPTIONAL, 0, { 0 } },
+    //    { "-monotonic", BOOL_Type, &monotonic, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -2121,7 +2121,7 @@ static int LsetVExpDecay_GetConstMtd( ClientData clientData,
   double eIneg;
   cvLevelSetVelocityExponentialDecay3DKT ktype;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
 
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
@@ -2196,10 +2196,10 @@ static int LsetVImage_SetImageMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-base", STRING_Type, &fb, NULL, REQUIRED, 0, { 0 } },
-    { "-numRange", LIST_Type, &numRangeList, NULL, REQUIRED, 0, { 0 } },
-    { "-pix", LIST_Type, &pixDimsList, NULL, REQUIRED, 0, { 0 } },
-    { "-img", LIST_Type, &imgDimsList, NULL, REQUIRED, 0, { 0 } },
+    { "-base", STRING_Type, &fb, nullptr, REQUIRED, 0, { 0 } },
+    { "-numRange", LIST_Type, &numRangeList, nullptr, REQUIRED, 0, { 0 } },
+    { "-pix", LIST_Type, &pixDimsList, nullptr, REQUIRED, 0, { 0 } },
+    { "-img", LIST_Type, &imgDimsList, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -2252,13 +2252,13 @@ static int LsetVImage_SetImageMtd( ClientData clientData, Tcl_Interp *interp,
 
   // Do file name expansion:
   expFn = Tcl_TildeSubst( interp, fb, &buffer );
-  if ( expFn == NULL ) {
-    Tcl_AppendResult( interp, "error expanding filebase: ", fb, (char *)NULL );
+  if ( expFn == nullptr ) {
+    Tcl_AppendResult( interp, "error expanding filebase: ", fb, (char *)nullptr );
     return TCL_ERROR;
   }
 
   if ( v->SetImage( expFn, numRange, imgDims, pixDims ) != SV_OK ) {
-    Tcl_AppendResult( interp, "error reading image ", expFn, (char *)NULL );
+    Tcl_AppendResult( interp, "error reading image ", expFn, (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2280,7 +2280,7 @@ static int LsetVImage_GetImageMtd( ClientData clientData, Tcl_Interp *interp,
   Image_T *image;
   char tmpStr[CV_STRLEN];
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
 
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
@@ -2365,9 +2365,9 @@ static int LsetVSmooth_SetConstMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-lower_Kt", DOUBLE_Type, &lower_kt, NULL, REQUIRED, 0, { 0 } },
-    { "-upper_Kt", DOUBLE_Type, &upper_kt, NULL, REQUIRED, 0, { 0 } },
-    { "-3d_curv", STRING_Type, &kt_name, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-lower_Kt", DOUBLE_Type, &lower_kt, nullptr, REQUIRED, 0, { 0 } },
+    { "-upper_Kt", DOUBLE_Type, &upper_kt, nullptr, REQUIRED, 0, { 0 } },
+    { "-3d_curv", STRING_Type, &kt_name, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -2409,7 +2409,7 @@ static int LsetVSmooth_GetConstMtd( ClientData clientData, Tcl_Interp *interp,
   cvLevelSetVelocitySmooth3DKT ktype;
   char dummyStr[CV_STRLEN];
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
 
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );

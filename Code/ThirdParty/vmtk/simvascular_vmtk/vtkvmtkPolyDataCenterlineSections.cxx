@@ -68,21 +68,21 @@ vtkvmtkPolyDataCenterlineSections::vtkvmtkPolyDataCenterlineSections()
     n_centerlines = 0;
     this->Centerlines = vtkPolyData::New();
     this->Surface = vtkPolyData::New();
-    this->RadiusArrayName = NULL;
-    this->GlobalNodeIdArrayName = NULL;
-    this->BifurcationIdArrayNameTmp = NULL;
-    this->BifurcationIdArrayName = NULL;
-    this->BranchIdArrayNameTmp = NULL;
-    this->BranchIdArrayName = NULL;
-    this->PathArrayName = NULL;
-    this->CenterlineIdArrayName = NULL;
-    this->CenterlineSectionAreaArrayName = NULL;
-    this->CenterlineSectionMinSizeArrayName = NULL;
-    this->CenterlineSectionMaxSizeArrayName = NULL;
-    this->CenterlineSectionShapeArrayName = NULL;
-    this->CenterlineSectionNormalArrayName = NULL;
-    this->CenterlineSectionClosedArrayName = NULL;
-    this->CenterlineSectionBifurcationArrayName = NULL;
+    this->RadiusArrayName = nullptr;
+    this->GlobalNodeIdArrayName = nullptr;
+    this->BifurcationIdArrayNameTmp = nullptr;
+    this->BifurcationIdArrayName = nullptr;
+    this->BranchIdArrayNameTmp = nullptr;
+    this->BranchIdArrayName = nullptr;
+    this->PathArrayName = nullptr;
+    this->CenterlineIdArrayName = nullptr;
+    this->CenterlineSectionAreaArrayName = nullptr;
+    this->CenterlineSectionMinSizeArrayName = nullptr;
+    this->CenterlineSectionMaxSizeArrayName = nullptr;
+    this->CenterlineSectionShapeArrayName = nullptr;
+    this->CenterlineSectionNormalArrayName = nullptr;
+    this->CenterlineSectionClosedArrayName = nullptr;
+    this->CenterlineSectionBifurcationArrayName = nullptr;
 }
 
 vtkvmtkPolyDataCenterlineSections::~vtkvmtkPolyDataCenterlineSections()
@@ -90,103 +90,103 @@ vtkvmtkPolyDataCenterlineSections::~vtkvmtkPolyDataCenterlineSections()
     if (this->Centerlines)
     {
         this->Centerlines->Delete();
-        this->Centerlines = NULL;
+        this->Centerlines = nullptr;
     }
 
     if (this->Surface)
     {
         this->Surface->Delete();
-        this->Surface = NULL;
+        this->Surface = nullptr;
     }
 
     if (this->RadiusArrayName)
     {
         delete[] this->RadiusArrayName;
-        this->RadiusArrayName = NULL;
+        this->RadiusArrayName = nullptr;
     }
 
     if (this->GlobalNodeIdArrayName)
     {
         delete[] this->GlobalNodeIdArrayName;
-        this->GlobalNodeIdArrayName = NULL;
+        this->GlobalNodeIdArrayName = nullptr;
     }
 
     if (this->BifurcationIdArrayNameTmp)
     {
         delete[] this->BifurcationIdArrayNameTmp;
-        this->BifurcationIdArrayNameTmp = NULL;
+        this->BifurcationIdArrayNameTmp = nullptr;
     }
 
     if (this->BifurcationIdArrayName)
     {
         delete[] this->BifurcationIdArrayName;
-        this->BifurcationIdArrayName = NULL;
+        this->BifurcationIdArrayName = nullptr;
     }
 
     if (this->BranchIdArrayNameTmp)
     {
         delete[] this->BranchIdArrayNameTmp;
-        this->BranchIdArrayNameTmp = NULL;
+        this->BranchIdArrayNameTmp = nullptr;
     }
 
     if (this->BranchIdArrayName)
     {
         delete[] this->BranchIdArrayName;
-        this->BranchIdArrayName = NULL;
+        this->BranchIdArrayName = nullptr;
     }
 
     if (this->PathArrayName)
     {
         delete[] this->PathArrayName;
-        this->PathArrayName = NULL;
+        this->PathArrayName = nullptr;
     }
 
     if (this->CenterlineIdArrayName)
     {
         delete[] this->CenterlineIdArrayName;
-        this->CenterlineIdArrayName = NULL;
+        this->CenterlineIdArrayName = nullptr;
     }
 
     if (this->CenterlineSectionAreaArrayName)
     {
         delete[] this->CenterlineSectionAreaArrayName;
-        this->CenterlineSectionAreaArrayName = NULL;
+        this->CenterlineSectionAreaArrayName = nullptr;
     }
 
     if (this->CenterlineSectionMinSizeArrayName)
     {
         delete[] this->CenterlineSectionMinSizeArrayName;
-        this->CenterlineSectionMinSizeArrayName = NULL;
+        this->CenterlineSectionMinSizeArrayName = nullptr;
     }
 
     if (this->CenterlineSectionMaxSizeArrayName)
     {
         delete[] this->CenterlineSectionMaxSizeArrayName;
-        this->CenterlineSectionMaxSizeArrayName = NULL;
+        this->CenterlineSectionMaxSizeArrayName = nullptr;
     }
 
     if (this->CenterlineSectionShapeArrayName)
     {
         delete[] this->CenterlineSectionShapeArrayName;
-        this->CenterlineSectionShapeArrayName = NULL;
+        this->CenterlineSectionShapeArrayName = nullptr;
     }
 
     if (this->CenterlineSectionClosedArrayName)
     {
         delete[] this->CenterlineSectionClosedArrayName;
-        this->CenterlineSectionClosedArrayName = NULL;
+        this->CenterlineSectionClosedArrayName = nullptr;
     }
 
     if (this->CenterlineSectionBifurcationArrayName)
     {
         delete[] this->CenterlineSectionBifurcationArrayName;
-        this->CenterlineSectionBifurcationArrayName = NULL;
+        this->CenterlineSectionBifurcationArrayName = nullptr;
     }
 
     if (this->CenterlineSectionNormalArrayName)
     {
         delete[] this->CenterlineSectionNormalArrayName;
-        this->CenterlineSectionNormalArrayName = NULL;
+        this->CenterlineSectionNormalArrayName = nullptr;
     }
 }
 

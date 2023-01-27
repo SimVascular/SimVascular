@@ -57,8 +57,8 @@
 // ----------------------
 vtkSVLocalInterpolatingSubdivisionFilter::vtkSVLocalInterpolatingSubdivisionFilter()
 {
-  this->SubdivideCellArrayName  = NULL;
-  this->SubdividePointArrayName = NULL;
+  this->SubdivideCellArrayName  = nullptr;
+  this->SubdividePointArrayName = nullptr;
 
   this->NumberOfSubdivisions = 1;
   this->UseCellArray = 0;
@@ -70,15 +70,15 @@ vtkSVLocalInterpolatingSubdivisionFilter::vtkSVLocalInterpolatingSubdivisionFilt
 // ----------------------
 vtkSVLocalInterpolatingSubdivisionFilter::~vtkSVLocalInterpolatingSubdivisionFilter()
 {
-  if (this->SubdivideCellArrayName != NULL)
+  if (this->SubdivideCellArrayName != nullptr)
   {
     delete [] this->SubdivideCellArrayName;
-    this->SubdivideCellArrayName = NULL;
+    this->SubdivideCellArrayName = nullptr;
   }
-  if (this->SubdividePointArrayName != NULL)
+  if (this->SubdividePointArrayName != nullptr)
   {
     delete [] this->SubdividePointArrayName;
-    this->SubdividePointArrayName = NULL;
+    this->SubdividePointArrayName = nullptr;
   }
 }
 
@@ -158,7 +158,7 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
 
     if (this->UsePointArray)
     {
-      if (this->SubdividePointArrayName == NULL)
+      if (this->SubdividePointArrayName == nullptr)
       {
         std::cout<<"No PointArrayName given." << endl;
         this->SetErrorCode(vtkErrorCode::UserError + 1);
@@ -167,7 +167,7 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
     }
     if (this->UseCellArray)
     {
-      if (this->SubdivideCellArrayName == NULL)
+      if (this->SubdivideCellArrayName == nullptr)
       {
         std::cout<<"No CellArrayName given." << endl;
         this->SetErrorCode(vtkErrorCode::UserError + 1);

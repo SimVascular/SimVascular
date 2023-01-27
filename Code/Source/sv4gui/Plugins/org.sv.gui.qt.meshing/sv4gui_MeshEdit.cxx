@@ -75,24 +75,24 @@ const QString sv4guiMeshEdit::EXTENSION_ID = "org.sv.views.meshing";
 sv4guiMeshEdit::sv4guiMeshEdit() :
     ui(new Ui::sv4guiMeshEdit)
 {
-    m_MitkMesh=NULL;
-    m_Model=NULL;
-    m_MeshNode=NULL;
-    m_ModelNode=NULL;
+    m_MitkMesh=nullptr;
+    m_Model=nullptr;
+    m_MeshNode=nullptr;
+    m_ModelNode=nullptr;
 
-    m_DataInteractor=NULL;
+    m_DataInteractor=nullptr;
     m_ModelSelectFaceObserverTag=-1;
 
-    m_TableModelLocal=NULL;
-    m_TableMenuLocal=NULL;
+    m_TableModelLocal=nullptr;
+    m_TableMenuLocal=nullptr;
 
-    m_TableModelRegion=NULL;
-    m_TableMenuRegion=NULL;
+    m_TableModelRegion=nullptr;
+    m_TableMenuRegion=nullptr;
 
-    m_TableModelDomains=NULL;
-    m_TableMenuDomains=NULL;
+    m_TableModelDomains=nullptr;
+    m_TableMenuDomains=nullptr;
 
-    m_SphereWidget=NULL;
+    m_SphereWidget=nullptr;
 
     m_SelectedRegionIndex=-1;
     m_SelectedDomainsIndex=-1;
@@ -143,7 +143,7 @@ void sv4guiMeshEdit::CreateQtPartControl( QWidget *parent )
 
     m_DisplayWidget=GetActiveStdMultiWidget();
 
-    if(m_DisplayWidget==NULL)
+    if(m_DisplayWidget==nullptr)
     {
         parent->setEnabled(false);
         MITK_ERROR << "Plugin MeshEdit Init Error: No QmitkStdMultiWidget Available!";
@@ -154,7 +154,7 @@ void sv4guiMeshEdit::CreateQtPartControl( QWidget *parent )
 
     SetupGUI(parent);
 
-    if(m_SphereWidget==NULL)
+    if(m_SphereWidget==nullptr)
     {
         m_SphereWidget = vtkSmartPointer<sv4guiVtkMeshSphereWidget>::New();
         m_SphereWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
@@ -263,12 +263,12 @@ void sv4guiMeshEdit::TableFaceListSelectionChanged( const QItemSelection & /*sel
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QStandardItemModel* tableModel=m_TableModelLocal;
     QTableView* tableView=ui->tableViewLocal;
 
-    if(tableModel==NULL || tableView==NULL)
+    if(tableModel==nullptr || tableView==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = tableView->selectionModel()->selectedRows();
@@ -296,12 +296,12 @@ void sv4guiMeshEdit::SetLocal(bool)
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QStandardItemModel* tableModel=m_TableModelLocal;
     QTableView* tableView=ui->tableViewLocal;
 
-    if(tableModel==NULL || tableView==NULL)
+    if(tableModel==nullptr || tableView==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = tableView->selectionModel()->selectedRows();
@@ -345,12 +345,12 @@ void sv4guiMeshEdit::ClearLocal(bool)
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QStandardItemModel* tableModel=m_TableModelLocal;
     QTableView* tableView=ui->tableViewLocal;
 
-    if(tableModel==NULL || tableView==NULL)
+    if(tableModel==nullptr || tableView==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = tableView->selectionModel()->selectedRows();
@@ -389,12 +389,12 @@ void sv4guiMeshEdit::TableRegionListSelectionChanged( const QItemSelection & /*s
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QStandardItemModel* tableModel=m_TableModelRegion;
     QTableView* tableView=ui->tableViewRegion;
 
-    if(tableModel==NULL || tableView==NULL)
+    if(tableModel==nullptr || tableView==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = tableView->selectionModel()->selectedRows();
@@ -442,12 +442,12 @@ void sv4guiMeshEdit::TableDomainsListSelectionChanged( const QItemSelection & /*
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QStandardItemModel* tableModel=m_TableModelDomains;
     QTableView* tableView=ui->tableViewDomains;
 
-    if(tableModel==NULL || tableView==NULL)
+    if(tableModel==nullptr || tableView==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = tableView->selectionModel()->selectedRows();
@@ -490,12 +490,12 @@ void sv4guiMeshEdit::SetRegion(bool)
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QStandardItemModel* tableModel=m_TableModelRegion;
     QTableView* tableView=ui->tableViewRegion;
 
-    if(tableModel==NULL || tableView==NULL)
+    if(tableModel==nullptr || tableView==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = tableView->selectionModel()->selectedRows();
@@ -530,12 +530,12 @@ void sv4guiMeshEdit::SetSubDomainSize(bool)
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QStandardItemModel* tableModel=m_TableModelDomains;
     QTableView* tableView=ui->tableViewDomains;
 
-    if(tableModel==NULL || tableView==NULL)
+    if(tableModel==nullptr || tableView==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = tableView->selectionModel()->selectedRows();
@@ -576,12 +576,12 @@ void sv4guiMeshEdit::DeleteSelectedRegions(bool)
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QStandardItemModel* tableModel=m_TableModelRegion;
     QTableView* tableView=ui->tableViewRegion;
 
-    if(tableModel==NULL || tableView==NULL)
+    if(tableModel==nullptr || tableView==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = tableView->selectionModel()->selectedRows();
@@ -608,12 +608,12 @@ void sv4guiMeshEdit::DeleteSelectedDomains(bool)
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QStandardItemModel* tableModel=m_TableModelDomains;
     QTableView* tableView=ui->tableViewDomains;
 
-    if(tableModel==NULL || tableView==NULL)
+    if(tableModel==nullptr || tableView==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = tableView->selectionModel()->selectedRows();
@@ -678,7 +678,7 @@ void sv4guiMeshEdit::RunCommands(bool fromGUI)
 {
     int timeStep=GetTimeStep();
     sv4guiMesh* originalMesh=m_MitkMesh->GetMesh(timeStep);
-    if(originalMesh&&originalMesh->GetSurfaceMesh()==NULL)
+    if(originalMesh&&originalMesh->GetSurfaceMesh()==nullptr)
     {
         std::string path="";
         m_MeshNode->GetStringProperty("path",path);
@@ -715,13 +715,13 @@ void sv4guiMeshEdit::RunCommands(bool fromGUI)
 
     if( m_MeshType=="MeshSim" && (modelType=="PolyData" || modelType=="OpenCASCADE") )
     {
-        QMessageBox::warning(NULL,"Not Compatible!", QString::fromStdString(m_MeshType)+ " doesn't work with " +QString::fromStdString(modelType) + " model.");
+        QMessageBox::warning(nullptr,"Not Compatible!", QString::fromStdString(m_MeshType)+ " doesn't work with " +QString::fromStdString(modelType) + " model.");
         return;
     }
 
     if( m_MeshType=="TetGen" && modelType!="PolyData")
     {
-        QMessageBox::warning(NULL,"Not Compatible!", QString::fromStdString(m_MeshType)+ " only works with PolyData model.");
+        QMessageBox::warning(nullptr,"Not Compatible!", QString::fromStdString(m_MeshType)+ " only works with PolyData model.");
         return;
     }
 
@@ -741,7 +741,7 @@ void sv4guiMeshEdit::RunCommands(bool fromGUI)
 
     sv4guiMesh* newMesh=sv4guiMeshFactory::CreateMesh(m_MeshType);
 
-    if(newMesh==NULL)
+    if(newMesh==nullptr)
         return;
 
     //add fake progress
@@ -1157,7 +1157,7 @@ void sv4guiMeshEdit::Hidden()
 
 int sv4guiMeshEdit::GetTimeStep()
 {
-    mitk::SliceNavigationController* timeNavigationController = NULL;
+    mitk::SliceNavigationController* timeNavigationController = nullptr;
     if(m_DisplayWidget)
     {
         timeNavigationController=m_DisplayWidget->GetTimeNavigationController();
@@ -1203,7 +1203,7 @@ void sv4guiMeshEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     std::string modelName=mitkMesh->GetModelName();
 
-    mitk::DataNode::Pointer modelNode=NULL;
+    mitk::DataNode::Pointer modelNode=nullptr;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (meshNode,isProjFolder,false);
 
@@ -1219,7 +1219,7 @@ void sv4guiMeshEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         }
     }
 
-    sv4guiModel* model=NULL;
+    sv4guiModel* model=nullptr;
     if(modelNode.IsNotNull())
     {
         model=dynamic_cast<sv4guiModel*>(modelNode->GetData());
@@ -1234,7 +1234,7 @@ void sv4guiMeshEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     m_MitkMesh=mitkMesh;
     m_MeshType=m_MitkMesh->GetType();
 
-    if(m_Model==NULL)
+    if(m_Model==nullptr)
     {
         m_Parent->setEnabled(false);
         QMessageBox::warning(m_Parent,"No Model Found","No model found for this mesh!");
@@ -1260,7 +1260,7 @@ void sv4guiMeshEdit::UpdateGUI()
     if(m_ModelNode.IsNotNull())
     {
         ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
-        if(m_ModelNode->IsVisible(NULL))
+        if(m_ModelNode->IsVisible(nullptr))
             ui->checkBoxShowModel->setChecked(true);
     }
     else
@@ -1324,7 +1324,7 @@ void sv4guiMeshEdit::UpdateTetGenGUI()
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     std::vector<sv4guiModelElement::svFace*> faces=modelElement->GetFaces();
 
@@ -1337,7 +1337,7 @@ void sv4guiMeshEdit::UpdateTetGenGUI()
 
     for(int i=0;i<faces.size();i++)
     {
-        if(faces[i]==NULL )
+        if(faces[i]==nullptr )
             continue;
 
         rowIndex++;
@@ -1422,7 +1422,7 @@ void sv4guiMeshEdit::UpdateTetGenGUI()
     //then udpate with command history
     //========================================
     sv4guiMesh* mesh=m_MitkMesh->GetMesh(GetTimeStep());
-    if(mesh==NULL)
+    if(mesh==nullptr)
         return;
 
     std::vector<std::string> cmdHistory=mesh->GetCommandHistory();
@@ -1644,7 +1644,7 @@ void sv4guiMeshEdit::UpdateMeshSimGUI()
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     std::vector<sv4guiModelElement::svFace*> faces=modelElement->GetFaces();
 
@@ -1670,7 +1670,7 @@ void sv4guiMeshEdit::UpdateMeshSimGUI()
 
     for(int i=0;i<faces.size();i++)
     {
-        if(faces[i]==NULL )
+        if(faces[i]==nullptr )
             continue;
 
         rowIndex++;
@@ -1762,7 +1762,7 @@ void sv4guiMeshEdit::UpdateMeshSimGUI()
     //then udpate with command history
     //========================================
     sv4guiMesh* mesh=m_MitkMesh->GetMesh(GetTimeStep());
-    if(mesh==NULL)
+    if(mesh==nullptr)
         return;
 
     std::vector<std::string> cmdHistory=mesh->GetCommandHistory();
@@ -1950,7 +1950,7 @@ void sv4guiMeshEdit::UpdateMeshSimGUI()
 
 void sv4guiMeshEdit::AddSphere()
 {
-    if(m_SphereWidget==NULL || !m_SphereWidget->GetEnabled() || m_SphereWidget->GetRadius()==0)
+    if(m_SphereWidget==nullptr || !m_SphereWidget->GetEnabled() || m_SphereWidget->GetRadius()==0)
         return;
 
     int regionRowIndex=m_TableModelRegion->rowCount();
@@ -2015,7 +2015,7 @@ void sv4guiMeshEdit::ShowSphereInteractor(bool checked)
 {
     if(!checked)
     {
-        if(m_SphereWidget!=NULL)
+        if(m_SphereWidget!=nullptr)
         {
             m_SphereWidget->Off();
         }
@@ -2023,14 +2023,14 @@ void sv4guiMeshEdit::ShowSphereInteractor(bool checked)
         return;
     }
 
-    if(m_Model==NULL) return;
+    if(m_Model==nullptr) return;
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=dynamic_cast<sv4guiModelElement*>(m_Model->GetModelElement(timeStep));
 
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
-    if(modelElement->GetWholeVtkPolyData()==NULL) return;
+    if(modelElement->GetWholeVtkPolyData()==nullptr) return;
 
     m_SphereWidget->SetInputData(modelElement->GetWholeVtkPolyData());
     m_SphereWidget->PlaceWidget();
@@ -2061,12 +2061,12 @@ void sv4guiMeshEdit::UpdateFaceListSelection()
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QStandardItemModel* tableModel=m_TableModelLocal;
     QTableView* tableView=ui->tableViewLocal;
 
-    if(tableModel==NULL || tableView==NULL)
+    if(tableModel==nullptr || tableView==nullptr)
         return;
 
     disconnect( tableView->selectionModel()
@@ -2156,9 +2156,9 @@ void sv4guiMeshEdit::RemoveObservers()
         std::string user="";
         m_ModelNode->GetStringProperty("interactor user", user);
         if(user=="meshing")
-            m_ModelNode->SetDataInteractor(NULL);
+            m_ModelNode->SetDataInteractor(nullptr);
     }
-    m_DataInteractor=NULL;
+    m_DataInteractor=nullptr;
 
     sv4guiVtkMeshSphereWidget* sphereWidget=dynamic_cast<sv4guiVtkMeshSphereWidget*>(m_SphereWidget.GetPointer());
     if(sphereWidget)
@@ -2169,10 +2169,10 @@ void sv4guiMeshEdit::RemoveObservers()
 
 void sv4guiMeshEdit::ClearAll()
 {
-    m_Model=NULL;
-    m_MeshNode=NULL;
-    m_MitkMesh=NULL;
-    m_ModelNode=NULL;
+    m_Model=nullptr;
+    m_MeshNode=nullptr;
+    m_MitkMesh=nullptr;
+    m_ModelNode=nullptr;
 
     ui->labelMeshName->setText("");
     ui->labelMeshType->setText("");
@@ -2198,13 +2198,13 @@ void sv4guiMeshEdit::DisplayMeshInfo()
     std::string volumeFileName = path+"/"+m_MeshNode->GetName()+".vtu";
 
     vtkSmartPointer<vtkPolyData> surfaceMesh=mesh->GetSurfaceMesh();
-    if(surfaceMesh==NULL && path!="")
+    if(surfaceMesh==nullptr && path!="")
     {
         surfaceMesh=mesh->CreateSurfaceMeshFromFile(surfaceFileName);
     }
 
     vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=mesh->GetVolumeMesh();
-    if(volumeMesh==NULL && path!="")
+    if(volumeMesh==nullptr && path!="")
     {
         volumeMesh=mesh->CreateVolumeMeshFromFile(volumeFileName);
     }
@@ -2303,11 +2303,11 @@ void sv4guiMeshEdit::Adapt()
     if(m_ModelNode.IsNull())
         return;
 
-    if(m_Model==NULL)
+    if(m_Model==nullptr)
         return;
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL)
+    if(modelElement==nullptr)
         return;
 
     bool ok;
@@ -2317,7 +2317,7 @@ void sv4guiMeshEdit::Adapt()
     if (!ok || adaptedMeshName.isEmpty())
         return;
 
-    mitk::DataNode::Pointer meshFolderNode=NULL;
+    mitk::DataNode::Pointer meshFolderNode=nullptr;
     std::string meshFolderPath="";
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources(m_MeshNode,isProjFolder,false);
@@ -2395,7 +2395,7 @@ void sv4guiMeshEdit::Adapt()
     }
 
     sv4guiMeshAdaptor* adaptor=sv4guiMeshFactory::CreateAdaptor(m_MeshType);
-    if(adaptor==NULL)
+    if(adaptor==nullptr)
     {
         QMessageBox::warning(m_Parent,"No Adaptor","Failed in creating adaptor!");
         return;
@@ -2460,7 +2460,7 @@ void sv4guiMeshEdit::Adapt()
     }
 
     sv4guiMesh* adaptedMesh=adaptor->GetAdaptedMesh();
-    if(adaptedMesh==NULL)
+    if(adaptedMesh==nullptr)
     {
         QMessageBox::warning(m_Parent,"Error","Failed in getting adapted mesh.");
         return;

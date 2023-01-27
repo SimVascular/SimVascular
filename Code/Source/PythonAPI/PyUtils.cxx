@@ -145,7 +145,7 @@ std::string PyUtilGetFunctionName(const char* functionName)
 // Get the string used to prefix an error message for the Python API. 
 //
 // When an error occurs in the API PyErr_SetString() is called with an error message and 
-// the enclosing function returns NULL. The Python API does not automatically print the 
+// the enclosing function returns nullptr. The Python API does not automatically print the 
 // function name where an exception occurs so add it to the string passed to PyErr_SetString()
 // using the prefix created here.
 //

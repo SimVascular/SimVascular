@@ -109,24 +109,24 @@ int Vmtkutils_pyInit()
 PyMethodDef VMTKUtils_methods[]=
 {
 #ifdef SV_USE_VMTK
-  { "Centerlines", Geom_CenterlinesCmd, METH_VARARGS,NULL},
-  { "Grouppolydata", Geom_GroupPolyDataCmd, METH_VARARGS,NULL},
-  { "Distancetocenterlines", Geom_DistanceToCenterlinesCmd, METH_VARARGS,NULL},
-  { "Separatecenterlines", Geom_SeparateCenterlinesCmd, METH_VARARGS,NULL},
-  { "Mergecenterlines", Geom_MergeCenterlinesCmd, METH_VARARGS,NULL},
-  { "CenterlineSections", Geom_CenterlineSectionsCmd, METH_VARARGS,NULL},
-  { "Cap", Geom_CapCmd, METH_VARARGS,NULL},
-  { "Cap_with_ids", Geom_CapWIdsCmd, METH_VARARGS,NULL},
-  { "Mapandcorrectids", Geom_MapAndCorrectIdsCmd, METH_VARARGS,NULL},
+  { "Centerlines", Geom_CenterlinesCmd, METH_VARARGS,nullptr},
+  { "Grouppolydata", Geom_GroupPolyDataCmd, METH_VARARGS,nullptr},
+  { "Distancetocenterlines", Geom_DistanceToCenterlinesCmd, METH_VARARGS,nullptr},
+  { "Separatecenterlines", Geom_SeparateCenterlinesCmd, METH_VARARGS,nullptr},
+  { "Mergecenterlines", Geom_MergeCenterlinesCmd, METH_VARARGS,nullptr},
+  { "CenterlineSections", Geom_CenterlineSectionsCmd, METH_VARARGS,nullptr},
+  { "Cap", Geom_CapCmd, METH_VARARGS,nullptr},
+  { "Cap_with_ids", Geom_CapWIdsCmd, METH_VARARGS,nullptr},
+  { "Mapandcorrectids", Geom_MapAndCorrectIdsCmd, METH_VARARGS,nullptr},
 #endif
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyVMTKUtilsmodule = {
    PyModuleDef_HEAD_INIT,
    "pyVMTKUtils",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    VMTKUtils_methods
@@ -141,13 +141,13 @@ PyMODINIT_FUNC initpyVMTKUtils()
   PyObject* pythonC;
   pythonC=Py_InitModule("pyVMTKUtils",VMTKUtils_methods);
 
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error initializing pyVMTKUtils.\n");
     return;
 
   }
-  PyRunTimeErr=PyErr_NewException("pyVMTKUtils.error",NULL,NULL);
+  PyRunTimeErr=PyErr_NewException("pyVMTKUtils.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   return;
 }
@@ -159,12 +159,12 @@ PyMODINIT_FUNC PyInit_pyVMTKUtils()
   PyObject* pythonC;
 
   pythonC = PyModule_Create(&pyVMTKUtilsmodule);
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error initializing pyVMTKUtils.\n");
     return SV_PYTHON_ERROR;
   }
-  PyRunTimeErr=PyErr_NewException("pyVMTKUtils.error",NULL,NULL);
+  PyRunTimeErr=PyErr_NewException("pyVMTKUtils.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
 
   return pythonC;
@@ -184,8 +184,8 @@ PyObject* Geom_CenterlinesCmd( PyObject* self, PyObject* args)
   char *voronoiName;
   char *geomName;
   cvRepositoryData *geomSrc;
-  cvRepositoryData *linesDst = NULL;
-  cvRepositoryData *voronoiDst = NULL;
+  cvRepositoryData *linesDst = nullptr;
+  cvRepositoryData *voronoiDst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sOOss",&geomName,&sourceList,&targetList,
@@ -199,7 +199,7 @@ PyObject* Geom_CenterlinesCmd( PyObject* self, PyObject* args)
 
   // Retrieve source object:
   geomSrc = gRepository->GetObject( geomName );
-  if ( geomSrc == NULL ) {
+  if ( geomSrc == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object" );
     
   }
@@ -279,7 +279,7 @@ PyObject* Geom_GroupPolyDataCmd( PyObject* self, PyObject* args)
   char *groupedName;
   cvRepositoryData *geomSrc;
   cvRepositoryData *linesSrc;
-  cvRepositoryData *groupedDst = NULL;
+  cvRepositoryData *groupedDst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sss",&geomName,
@@ -291,7 +291,7 @@ PyObject* Geom_GroupPolyDataCmd( PyObject* self, PyObject* args)
   }
   // Retrieve source object:
   geomSrc = gRepository->GetObject( geomName );
-  if ( geomSrc == NULL ) {
+  if ( geomSrc == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -304,7 +304,7 @@ PyObject* Geom_GroupPolyDataCmd( PyObject* self, PyObject* args)
 
   // Retrieve source object:
   linesSrc = gRepository->GetObject( linesName );
-  if ( linesSrc == NULL ) {
+  if ( linesSrc == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -341,7 +341,7 @@ PyObject* Geom_DistanceToCenterlinesCmd( PyObject* self, PyObject* args)
   char *distanceName;
   cvRepositoryData *geomSrc;
   cvRepositoryData *linesSrc;
-  cvRepositoryData *distanceDst = NULL;
+  cvRepositoryData *distanceDst = nullptr;
   RepositoryDataT type;
   if (!PyArg_ParseTuple(args,"sss",&geomName,
 	&linesName, &distanceName))
@@ -353,7 +353,7 @@ PyObject* Geom_DistanceToCenterlinesCmd( PyObject* self, PyObject* args)
 
   // Retrieve source object:
   geomSrc = gRepository->GetObject( geomName );
-  if ( geomSrc == NULL ) {
+  if ( geomSrc == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object" );
     
   }
@@ -366,7 +366,7 @@ PyObject* Geom_DistanceToCenterlinesCmd( PyObject* self, PyObject* args)
 
   // Retrieve source object:
   linesSrc = gRepository->GetObject( linesName );
-  if ( linesSrc == NULL ) {
+  if ( linesSrc == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -401,7 +401,7 @@ PyObject* Geom_SeparateCenterlinesCmd( PyObject* self, PyObject* args)
   char *linesName;
   char *separateName;
   cvRepositoryData *linesSrc;
-  cvRepositoryData *separateDst = NULL;
+  cvRepositoryData *separateDst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ss",&linesName, &separateName))
@@ -412,7 +412,7 @@ PyObject* Geom_SeparateCenterlinesCmd( PyObject* self, PyObject* args)
   }
   // Retrieve source object:
   linesSrc = gRepository->GetObject( linesName );
-  if ( linesSrc == NULL ) {
+  if ( linesSrc == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
     
   }
@@ -447,7 +447,7 @@ PyObject* Geom_MergeCenterlinesCmd( PyObject* self, PyObject* args)
   char *mergeName;
   int mergeblanked = 1;
   cvRepositoryData *linesSrc;
-  cvRepositoryData *mergeDst = NULL;
+  cvRepositoryData *mergeDst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ssi",&linesName,
@@ -459,7 +459,7 @@ PyObject* Geom_MergeCenterlinesCmd( PyObject* self, PyObject* args)
   }
   // Retrieve source object:
   linesSrc = gRepository->GetObject( linesName );
-  if ( linesSrc == NULL ) {
+  if ( linesSrc == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
     
   }
@@ -499,7 +499,7 @@ PyObject* Geom_CapCmd( PyObject* self, PyObject* args)
   char *geomName;
   char idstring[256];
   cvRepositoryData *geomSrc;
-  cvRepositoryData *cappedDst = NULL;
+  cvRepositoryData *cappedDst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sss",&geomName,
@@ -511,7 +511,7 @@ PyObject* Geom_CapCmd( PyObject* self, PyObject* args)
   }
   // Retrieve source object:
   geomSrc = gRepository->GetObject( geomName );
-  if ( geomSrc == NULL ) {
+  if ( geomSrc == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
     
   }
@@ -569,7 +569,7 @@ PyObject* Geom_CapWIdsCmd( PyObject* self, PyObject* args)
   int num_filled = 0;
   int filltype = 0;
   cvRepositoryData *geomSrc;
-  cvRepositoryData *cappedDst = NULL;
+  cvRepositoryData *cappedDst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ssii",&geomName,
@@ -581,7 +581,7 @@ PyObject* Geom_CapWIdsCmd( PyObject* self, PyObject* args)
   }
   // Retrieve source object:
   geomSrc = gRepository->GetObject( geomName );
-  if ( geomSrc == NULL ) {
+  if ( geomSrc == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -626,7 +626,7 @@ PyObject* Geom_MapAndCorrectIdsCmd( PyObject* self, PyObject* args)
   char *newArray;
   cvRepositoryData *geomSrc;
   cvRepositoryData *geomNew;
-  cvRepositoryData *geomDst = NULL;
+  cvRepositoryData *geomDst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sssss",&originalName,
@@ -639,14 +639,14 @@ PyObject* Geom_MapAndCorrectIdsCmd( PyObject* self, PyObject* args)
   }
   // Retrieve source object:
   geomSrc = gRepository->GetObject( originalName );
-  if ( geomSrc == NULL ) {
+  if ( geomSrc == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
     
   }
 
   // Retrieve source object:
   geomNew = gRepository->GetObject( newName );
-  if ( geomNew == NULL ) {
+  if ( geomNew == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -699,9 +699,9 @@ PyObject* Geom_CenterlineSectionsCmd( PyObject* self, PyObject* args)
   char *sectionsName;
   cvRepositoryData *centSrc;
   cvRepositoryData *surfSrc;
-  cvRepositoryData *centDst = NULL;
-  cvRepositoryData *surfDst = NULL;
-  cvRepositoryData *sectionsDst = NULL;
+  cvRepositoryData *centDst = nullptr;
+  cvRepositoryData *surfDst = nullptr;
+  cvRepositoryData *sectionsDst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sssss",&centInName,&surfInName,&centOutName,&surfOutName,&sectionsName))
@@ -712,7 +712,7 @@ PyObject* Geom_CenterlineSectionsCmd( PyObject* self, PyObject* args)
 
   // Retrieve source object:
   centSrc = gRepository->GetObject( centInName );
-  if ( centSrc == NULL ) {
+  if ( centSrc == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object" );
 
   }
@@ -724,7 +724,7 @@ PyObject* Geom_CenterlineSectionsCmd( PyObject* self, PyObject* args)
   }
 
   surfSrc = gRepository->GetObject( surfInName );
-  if ( surfSrc == NULL ) {
+  if ( surfSrc == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object" );
 
   }

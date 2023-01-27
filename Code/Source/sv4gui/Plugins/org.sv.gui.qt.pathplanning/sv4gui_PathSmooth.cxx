@@ -86,19 +86,19 @@ void sv4guiPathSmooth::SmoothPath()
     }
 
     sv4guiPath* path=dynamic_cast<sv4guiPath*>(m_SelecteNode->GetData());
-    if(path==NULL) return;
+    if(path==nullptr) return;
 
     int timeStep=m_TimeStep;
     sv4guiPathElement* pathElement=path->GetPathElement(timeStep);
-    if(pathElement==NULL)
+    if(pathElement==nullptr)
     {
-        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
+        QMessageBox::information(nullptr,"No Path Selected","Please select a path in data manager!");
         return;
     }
 
     int numModes=ui->lineEditNumber->text().trimmed().toInt();
     if(numModes<2){
-        QMessageBox::warning(NULL,"Not Enough Modes","Number of fourier mode must be greater than 1.");
+        QMessageBox::warning(nullptr,"Not Enough Modes","Number of fourier mode must be greater than 1.");
         return;
     }
 

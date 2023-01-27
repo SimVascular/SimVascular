@@ -56,17 +56,17 @@ sv4guiMitkROMSimulationObjectFactory::~sv4guiMitkROMSimulationObjectFactory()
 
 mitk::Mapper::Pointer sv4guiMitkROMSimulationObjectFactory::CreateMapper(mitk::DataNode* node, MapperSlotId id)
 {
-  mitk::Mapper::Pointer newMapper=NULL;
+  mitk::Mapper::Pointer newMapper=nullptr;
 
   if ( id == mitk::BaseRenderer::Standard2D )
   {
-    if( dynamic_cast<sv4guiMitkROMSimJob*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiMitkROMSimJob*>(node->GetData())!=nullptr )
     {
     }
   }
   else if ( id == mitk::BaseRenderer::Standard3D )
   {
-    if( dynamic_cast<sv4guiMitkROMSimJob*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiMitkROMSimJob*>(node->GetData())!=nullptr )
     {
     }
   }
@@ -76,18 +76,18 @@ mitk::Mapper::Pointer sv4guiMitkROMSimulationObjectFactory::CreateMapper(mitk::D
 void sv4guiMitkROMSimulationObjectFactory::SetDefaultProperties(mitk::DataNode* node)
 {
 
-  if(node==NULL)
+  if(node==nullptr)
     return;
 
-  if(node->GetData() ==NULL)
+  if(node->GetData() ==nullptr)
     return;
 
-  if( dynamic_cast<sv4guiMitkROMSimJob*>(node->GetData())!=NULL )
+  if( dynamic_cast<sv4guiMitkROMSimJob*>(node->GetData())!=nullptr )
   {
   }
 }
 
-const char* sv4guiMitkROMSimulationObjectFactory::GetFileExtensions()
+std::string sv4guiMitkROMSimulationObjectFactory::GetFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_FileExtensionsMap, fileExtension);
@@ -108,7 +108,7 @@ void sv4guiMitkROMSimulationObjectFactory::CreateFileExtensionsMap()
 {
 }
 
-const char* sv4guiMitkROMSimulationObjectFactory::GetSaveFileExtensions()
+std::string sv4guiMitkROMSimulationObjectFactory::GetSaveFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_SaveFileExtensionsMap, fileExtension);

@@ -51,7 +51,7 @@ sv4guiModel::sv4guiModel(const sv4guiModel &other)
         if(other.m_ModelElementSet[t])
             m_ModelElementSet[t]=other.m_ModelElementSet[t]->Clone();
 //        else
-//            m_ModelElementSet.push_back(NULL);
+//            m_ModelElementSet.push_back(nullptr);
     }
 }
 
@@ -81,12 +81,12 @@ void sv4guiModel::InitializeEmpty()
 
 bool sv4guiModel::IsEmptyTimeStep(unsigned int t) const
 {
-//    return IsInitialized() && (GetModelElement(t) == NULL);
+//    return IsInitialized() && (GetModelElement(t) == nullptr);
 
 //    if(!IsInitialized())
 //        return false;
 
-//    return GetModelElement(t) == NULL || GetModelElement(t)->GetWholeVtkPolyData() == NULL || (
+//    return GetModelElement(t) == nullptr || GetModelElement(t)->GetWholeVtkPolyData() == nullptr || (
 //                GetModelElement(t)->GetWholeVtkPolyData()->GetNumberOfLines() == 0 &&
 //                GetModelElement(t)->GetWholeVtkPolyData()->GetNumberOfPolys() == 0 &&
 //                GetModelElement(t)->GetWholeVtkPolyData()->GetNumberOfStrips() == 0 &&
@@ -125,7 +125,7 @@ sv4guiModelElement* sv4guiModel::GetModelElement(unsigned int t) const
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -181,7 +181,7 @@ void sv4guiModel::ExecuteOperation( mitk::Operation* operation )
 
     case sv4guiModelOperation::OpSETVTKPOLYDATA:
     {
-        if(GetModelElement(timeStep)==NULL)
+        if(GetModelElement(timeStep)==nullptr)
             return;
 
         GetModelElement(timeStep)->SetWholeVtkPolyData(newVpd);

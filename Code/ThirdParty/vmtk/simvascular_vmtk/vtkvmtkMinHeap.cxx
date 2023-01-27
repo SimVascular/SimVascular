@@ -30,7 +30,7 @@ vtkStandardNewMacro(vtkvmtkMinHeap);
 
 vtkvmtkMinHeap::vtkvmtkMinHeap()
 {
-  this->MinHeapScalars = NULL;
+  this->MinHeapScalars = nullptr;
   this->Heap = vtkIdList::New();
   this->BackPointers = vtkIdList::New();
 }
@@ -40,7 +40,7 @@ vtkvmtkMinHeap::~vtkvmtkMinHeap()
   if (this->MinHeapScalars)
     {
     this->MinHeapScalars->Delete();
-    this->MinHeapScalars = NULL;
+    this->MinHeapScalars = nullptr;
     }
 
   this->Heap->Delete();
@@ -51,7 +51,7 @@ void vtkvmtkMinHeap::Initialize()
 {
   vtkIdType i;
 
-  if (this->MinHeapScalars == NULL)
+  if (this->MinHeapScalars == nullptr)
     {
     vtkErrorMacro(<< "No HeapScalars.");
     return;
@@ -70,7 +70,7 @@ void vtkvmtkMinHeap::Initialize()
 
 void vtkvmtkMinHeap::InsertNextId(vtkIdType id)
 {
-  if (this->MinHeapScalars == NULL)
+  if (this->MinHeapScalars == nullptr)
     {
     vtkErrorMacro(<< "No MinHeapScalars.");
     return;
@@ -110,7 +110,7 @@ int  vtkvmtkMinHeap::GetSize()
 
 void vtkvmtkMinHeap::UpdateId(vtkIdType id)
 {
-  if (this->MinHeapScalars == NULL)
+  if (this->MinHeapScalars == nullptr)
     {
     vtkErrorMacro(<<"No MinHeapScalars.");
     return;
@@ -193,7 +193,7 @@ vtkIdType vtkvmtkMinHeap::GetParent(vtkIdType loc)
 
 void vtkvmtkMinHeap::SiftUp(vtkIdType loc)
 {
-  if (this->MinHeapScalars == NULL)
+  if (this->MinHeapScalars == nullptr)
     {
     vtkErrorMacro(<<"No MinHeapScalars.");
     return;
@@ -226,7 +226,7 @@ void vtkvmtkMinHeap::SiftUp(vtkIdType loc)
 
 void vtkvmtkMinHeap::SiftDown(vtkIdType loc)
 {
-  if (this->MinHeapScalars == NULL)
+  if (this->MinHeapScalars == nullptr)
     {
     vtkErrorMacro(<<"No MinHeapScalars.");
     return;

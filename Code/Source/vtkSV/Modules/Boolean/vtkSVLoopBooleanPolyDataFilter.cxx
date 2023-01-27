@@ -159,10 +159,10 @@ vtkSVLoopBooleanPolyDataFilter::Impl::Impl() :
     this->BoundaryCellArray[i] = vtkIntArray::New();
     this->NewCellIds[i] = vtkIntArray::New();
 
-    this->Checked[i] = NULL;
-    this->CheckedCarefully[i] = NULL;
-    this->PointMapper[i] = NULL;
-    this->ReversePointMapper[i] = NULL;
+    this->Checked[i] = nullptr;
+    this->CheckedCarefully[i] = nullptr;
+    this->PointMapper[i] = nullptr;
+    this->ReversePointMapper[i] = nullptr;
     }
   this->IntersectionLines = vtkPolyData::New();
   this->CheckCells = vtkIdList::New();
@@ -190,19 +190,19 @@ vtkSVLoopBooleanPolyDataFilter::Impl::~Impl()
     this->BoundaryCellArray[i]->Delete();
     this->NewCellIds[i]->Delete();
 
-    if (this->Checked[i] != NULL)
+    if (this->Checked[i] != nullptr)
       {
       delete [] this->Checked[i];
       }
-    if (this->CheckedCarefully[i] != NULL)
+    if (this->CheckedCarefully[i] != nullptr)
       {
       delete [] this->CheckedCarefully[i];
       }
-    if (this->PointMapper[i] != NULL)
+    if (this->PointMapper[i] != nullptr)
       {
       delete [] this->PointMapper[i];
       }
-    if (this->ReversePointMapper[i] != NULL)
+    if (this->ReversePointMapper[i] != nullptr)
       {
       delete [] this->ReversePointMapper[i];
       }

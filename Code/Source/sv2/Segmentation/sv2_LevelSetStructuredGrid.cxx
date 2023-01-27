@@ -102,10 +102,10 @@ cvLevelSetStructuredGrid::cvLevelSetStructuredGrid( double h[], int dims[], doub
     assert(0);
   }
 
-  grid_ = NULL;  // May be overridden in a moment if derived class
+  grid_ = nullptr;  // May be overridden in a moment if derived class
                  // constructor allocates nodes.
   init_ = 0;
-  curr_ = NULL;
+  curr_ = nullptr;
 
   //  tol_ = 0.000001;
   tol_ = 1e6 * FindMachineEpsilon();
@@ -125,13 +125,13 @@ cvLevelSetStructuredGrid::cvLevelSetStructuredGrid( double h[], int dims[], doub
   k3dgValid_ = 0;
 
   phiVtkValid_ = 0;
-  phiVtk_ = NULL;
+  phiVtk_ = nullptr;
 
-  velocity_ = NULL;
-  velocityVectors_ = NULL;
+  velocity_ = nullptr;
+  velocityVectors_ = nullptr;
 
-  ixBuffer_ = NULL;
-  nodeSets_ = NULL;
+  ixBuffer_ = nullptr;
+  nodeSets_ = nullptr;
   pSetsValid_ = 0;
 
   return;
@@ -309,7 +309,7 @@ int cvLevelSetStructuredGrid::EvaluateV( cvLevelSetVelocity *vfn, double factor 
   pd->SetPoints( pts );
   pd->GetPointData()->SetVectors( vec );
 
-  if ( velocityVectors_ != NULL ) delete velocityVectors_;
+  if ( velocityVectors_ != nullptr ) delete velocityVectors_;
   velocityVectors_ = new cvPolyData( pd );
 
   pts->Delete();
@@ -1386,8 +1386,8 @@ int cvLevelSetStructuredGrid::FindEdge( double pos[], cvLevelSetNode **a, cvLeve
   cvLevelSetNode *anchor;
   double tol;
 
-  *a = NULL;
-  *b = NULL;
+  *a = nullptr;
+  *b = nullptr;
 
   if ( GetAnchorIx( pos, &anchorIx ) != SV_OK ) {
     return SV_ERROR;
@@ -1415,8 +1415,8 @@ int cvLevelSetStructuredGrid::FindEdge( double pos[], cvLevelSetNode **a, cvLeve
 	*dir = 'z';
 	break;
       default:
-	*a = NULL;
-	*b = NULL;
+	*a = nullptr;
+	*b = nullptr;
 	return SV_ERROR;
       }
       *a = anchor;
@@ -1429,7 +1429,7 @@ int cvLevelSetStructuredGrid::FindEdge( double pos[], cvLevelSetNode **a, cvLeve
   // If pos did not lie towards any of the "next" nodes (i.e. next in
   // x-dir, y-dir, z-dir), then pos must lie ~on the anchor node:
   *a = anchor;
-  *b = NULL;
+  *b = nullptr;
 
   return SV_OK;
 }
@@ -1447,11 +1447,11 @@ int cvLevelSetStructuredGrid::InterpZLS( cvLevelSetNode *a, cvLevelSetNode *b, c
   tol = relTol_ * minh_;
   phia = a->phi_;
 
-  if ( a == NULL ) return SV_ERROR;
+  if ( a == nullptr ) return SV_ERROR;
 
-  if ( b == NULL ) {
+  if ( b == nullptr ) {
 
-    // If b is NULL, then phi at a is expected to be ~0:
+    // If b is nullptr, then phi at a is expected to be ~0:
     if ( fabs(phia) >= tol ) {
       return SV_ERROR;
     }
@@ -1509,10 +1509,10 @@ int cvLevelSetStructuredGrid::InterpK( double pos[], double *k )
   if ( FindEdge( pos, &a, &b, &dir ) != SV_OK ) {
     return SV_ERROR;
   }
-  if ( a == NULL ) {
+  if ( a == nullptr ) {
     return SV_ERROR;
   }
-  if ( b == NULL ) {
+  if ( b == nullptr ) {
     *k = a->K_;
     return SV_OK;
   }
@@ -1545,10 +1545,10 @@ int cvLevelSetStructuredGrid::InterpKm( double pos[], double *k )
   if ( FindEdge( pos, &a, &b, &dir ) != SV_OK ) {
     return SV_ERROR;
   }
-  if ( a == NULL ) {
+  if ( a == nullptr ) {
     return SV_ERROR;
   }
-  if ( b == NULL ) {
+  if ( b == nullptr ) {
     *k = a->K3dm_;
     return SV_OK;
   }
@@ -1581,10 +1581,10 @@ int cvLevelSetStructuredGrid::InterpKg( double pos[], double *k )
   if ( FindEdge( pos, &a, &b, &dir ) != SV_OK ) {
     return SV_ERROR;
   }
-  if ( a == NULL ) {
+  if ( a == nullptr ) {
     return SV_ERROR;
   }
-  if ( b == NULL ) {
+  if ( b == nullptr ) {
     *k = a->K3dg_;
     return SV_OK;
   }
@@ -1615,10 +1615,10 @@ int cvLevelSetStructuredGrid::InterpN( double pos[], double n[] )
   char dir;
 
   FindEdge( pos, &a, &b, &dir );
-  if ( a == NULL ) {
+  if ( a == nullptr ) {
     return SV_ERROR;
   }
-  if ( b == NULL ) {
+  if ( b == nullptr ) {
     n[0] = a->n_[0];
     n[1] = a->n_[1];
     n[2] = a->n_[2];
@@ -1674,8 +1674,8 @@ cvPolyData *cvLevelSetStructuredGrid::GetVelocityVectors()
 {
   cvPolyData *result;
 
-  if ( velocityVectors_ == NULL ) {
-    return NULL;
+  if ( velocityVectors_ == nullptr ) {
+    return nullptr;
   }
   result = new cvPolyData( velocityVectors_ );
   return result;
@@ -1728,7 +1728,7 @@ cvPolyData *cvLevelSetStructuredGrid::GetActiveNodes()
 
   SaveActiveNodes();
   if ( GetNodeSets( &nodeSets, &numSets ) != SV_OK ) {
-    return NULL;
+    return nullptr;
   }
 
   if ( numSets != 1 ) {
@@ -1736,7 +1736,7 @@ cvPolyData *cvLevelSetStructuredGrid::GetActiveNodes()
       delete nodeSets[i];
       delete [] nodeSets;
     }
-    return NULL;
+    return nullptr;
   }
 
   result = nodeSets[0];
@@ -1768,8 +1768,8 @@ cvPolyData *cvLevelSetStructuredGrid::GetBoundaryData( GridScalarT t )
   double pt[3];
   vtkDataArray *data;
   double datumA, datumB, datum;
-  cvLevelSetNode *a = NULL;
-  cvLevelSetNode *b = NULL;
+  cvLevelSetNode *a = nullptr;
+  cvLevelSetNode *b = nullptr;
   char dir;
 
   switch (t) {
@@ -1790,7 +1790,7 @@ cvPolyData *cvLevelSetStructuredGrid::GetBoundaryData( GridScalarT t )
     FindK3dg();
     break;
   default:
-    return NULL;
+    return nullptr;
     break;
   }
 
@@ -1804,12 +1804,12 @@ cvPolyData *cvLevelSetStructuredGrid::GetBoundaryData( GridScalarT t )
     pt[1] = ptf[1];
     pt[2] = ptf[2];
     if ( ( FindEdge( pt, &a, &b, &dir ) != SV_OK ) ||
-	 ( a == NULL ) ) {
+	 ( a == nullptr ) ) {
       data->Delete();
       delete zls;
-      return NULL;
+      return nullptr;
     }
-    if ( b == NULL ) {
+    if ( b == nullptr ) {
       datum = a->GetDoubleDatum( t, tol_ );
       data->InsertTuple1( i, (vtkFloatingPointType)datum );
       continue;
@@ -1836,7 +1836,7 @@ cvPolyData *cvLevelSetStructuredGrid::GetBoundaryData( GridScalarT t )
     default:
       data->Delete();
       delete zls;
-      return NULL;
+      return nullptr;
     }
     data->InsertTuple1( i, (vtkFloatingPointType)datum );
   }
@@ -1980,7 +1980,7 @@ cvPolyData *cvLevelSetStructuredGrid::CreateGridPolyData()
 {
   printf("ERR: cvLevelSetStructuredGrid's do not in general generate cvPolyData's.\n");
   printf("  Only objects of certain derived classes (e.g. cvLevelSetSparseGrid) do.\n");
-  return NULL;
+  return nullptr;
 }
 
 
@@ -2112,7 +2112,7 @@ int cvLevelSetStructuredGrid::ProjectV( int posFlag, int save )
 
   pSetsValid_ = 0;
 
-  if ( ( save ) && ( nodeSets_ == NULL ) ) {
+  if ( ( save ) && ( nodeSets_ == nullptr ) ) {
     return SV_ERROR;
   }
 
@@ -2343,7 +2343,7 @@ void cvLevelSetStructuredGrid::ResetNodeSets()
 {
   int i;
 
-  if ( nodeSets_ != NULL ) {
+  if ( nodeSets_ != nullptr ) {
     for (i = 0; i < nodeSetsSize_; i++) {
       nodeSets_[i] = -1;
     }

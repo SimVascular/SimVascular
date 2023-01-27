@@ -29,10 +29,10 @@ vtkStandardNewMacro(vtkvmtkPolyBallLine);
 
 vtkvmtkPolyBallLine::vtkvmtkPolyBallLine()
 {
-  this->Input = NULL;
-  this->InputCellIds = NULL;
+  this->Input = nullptr;
+  this->InputCellIds = nullptr;
   this->InputCellId = -1;
-  this->PolyBallRadiusArrayName = NULL;
+  this->PolyBallRadiusArrayName = nullptr;
   this->LastPolyBallCellId = -1;
   this->LastPolyBallCellSubId = -1;
   this->LastPolyBallCellPCoord = 0.0;
@@ -46,19 +46,19 @@ vtkvmtkPolyBallLine::~vtkvmtkPolyBallLine()
   if (this->Input)
     {
     this->Input->Delete();
-    this->Input = NULL;
+    this->Input = nullptr;
     }
 
   if (this->InputCellIds)
     {
     this->InputCellIds->Delete();
-    this->InputCellIds = NULL;
+    this->InputCellIds = nullptr;
     }
 
   if (this->PolyBallRadiusArrayName)
     {
     delete[] this->PolyBallRadiusArrayName;
-    this->PolyBallRadiusArrayName = NULL;
+    this->PolyBallRadiusArrayName = nullptr;
     }
 }
 
@@ -78,7 +78,7 @@ double vtkvmtkPolyBallLine::EvaluateFunction(double x[3])
   double vector0[4], vector1[4], closestPoint[4];
   double t;
   double num, den;
-  vtkDataArray *polyballRadiusArray = NULL;
+  vtkDataArray *polyballRadiusArray = nullptr;
 
   if (!this->Input)
     {
@@ -102,14 +102,14 @@ double vtkvmtkPolyBallLine::EvaluateFunction(double x[3])
 
     polyballRadiusArray = this->Input->GetPointData()->GetArray(this->PolyBallRadiusArrayName);
 
-    if (polyballRadiusArray==NULL)
+    if (polyballRadiusArray==nullptr)
       {
       vtkErrorMacro(<<"PolyBallRadiusArray with name specified does not exist!");
       return 0.0;
       }
     }
 
-  if (this->Input->GetLines()==NULL)
+  if (this->Input->GetLines()==nullptr)
     {
     vtkWarningMacro(<<"No lines in Input dataset.");
     return 0.0;

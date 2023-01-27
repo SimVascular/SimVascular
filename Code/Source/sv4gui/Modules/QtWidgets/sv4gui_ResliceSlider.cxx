@@ -45,7 +45,7 @@
 
 sv4guiResliceSlider::sv4guiResliceSlider(QWidget *parent)
     : QWidget(parent)
-    , currentDataNode(NULL)
+    , currentDataNode(nullptr)
     , resliceSize(5.0)
     , m_UseGeometrySize(true)
     , m_UseGeometrySpacing(false)
@@ -59,7 +59,7 @@ void sv4guiResliceSlider::SetDisplayWidget(QmitkStdMultiWidget* widget)
 {
     displayWidget=widget;
 
-    currentSlicedGeometry=NULL;
+    currentSlicedGeometry=nullptr;
 
     stepperSynchronized=false;
 
@@ -170,8 +170,8 @@ void sv4guiResliceSlider::updateReslice()
     if(m_PathPoints.size()==0) return;
 
 //    if(!currentDataNode) return;
-    mitk::Image* image=NULL;
-    mitk::BaseData* baseData=NULL;
+    mitk::Image* image=nullptr;
+    mitk::BaseData* baseData=nullptr;
     if(currentDataNode.IsNotNull())
     {
         image= dynamic_cast<mitk::Image*>(currentDataNode->GetData());
@@ -182,7 +182,7 @@ void sv4guiResliceSlider::updateReslice()
     //    if(currentSlicedGeometry)
     //    {
     //        currentSlicedGeometry->Delete();
-    //        currentSlicedGeometry=NULL;
+    //        currentSlicedGeometry=nullptr;
     //    }
 
     currentSlicedGeometry=sv4guiSegmentationUtils::CreateSlicedGeometry(m_PathPoints, baseData, resliceSize);
@@ -314,8 +314,8 @@ void sv4guiResliceSlider::restoreDisplayWidget()
         stepperSynchronized=false;
     }
 
-    mitk::Image* image=NULL;
-    mitk::BaseData* baseData=NULL;
+    mitk::Image* image=nullptr;
+    mitk::BaseData* baseData=nullptr;
     if(currentDataNode.IsNotNull())
     {
         image= dynamic_cast<mitk::Image*>(currentDataNode->GetData());
@@ -346,7 +346,7 @@ void sv4guiResliceSlider::restoreDisplayWidget()
     //    if(currentSlicedGeometry)
     //    {
     //        currentSlicedGeometry->Delete();
-    //        currentSlicedGeometry=NULL;
+    //        currentSlicedGeometry=nullptr;
     //    }
 
     displayWidget->changeLayoutToDefault();

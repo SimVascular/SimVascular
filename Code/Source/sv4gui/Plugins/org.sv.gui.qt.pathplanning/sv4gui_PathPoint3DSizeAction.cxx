@@ -38,7 +38,7 @@
 #include <QInputDialog>
 
 sv4guiPathPoint3DSizeAction::sv4guiPathPoint3DSizeAction()
-    : m_Functionality(NULL)
+    : m_Functionality(nullptr)
 {
 }
 
@@ -57,12 +57,12 @@ void sv4guiPathPoint3DSizeAction::Run(const QList<mitk::DataNode::Pointer> &sele
         selectedNode->GetFloatProperty ("point size", initialValue);
 
     bool ok;
-    float size=QInputDialog::getDouble(NULL, "Point 3D Size", "Size:", initialValue, 0.01, 50.0, 2, &ok);
+    float size=QInputDialog::getDouble(nullptr, "Point 3D Size", "Size:", initialValue, 0.01, 50.0, 2, &ok);
 
     if(!ok)
         return;
 
-    mitk::DataNode::Pointer pathFolderNode=NULL;
+    mitk::DataNode::Pointer pathFolderNode=nullptr;
     if(selectedNode.IsNotNull())
     {
         mitk::DataStorage::SetOfObjects::ConstPointer rs = m_DataStorage->GetSources(selectedNode);

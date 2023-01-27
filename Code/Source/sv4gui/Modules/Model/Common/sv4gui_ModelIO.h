@@ -44,6 +44,9 @@ public:
 
     using mitk::AbstractFileReader::Read;
     std::vector<mitk::BaseData::Pointer> Read() override;
+    std::vector<mitk::BaseData::Pointer> DoRead() override {
+        std::cout << "Should implement this?" << std::endl << std::flush;
+    }
     static std::vector<mitk::BaseData::Pointer> ReadFile(std::string fileName);
     static sv4guiModel::Pointer CreateGroupFromFile(std::string fileName);
     mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;

@@ -53,23 +53,23 @@ vtkvmtkPolyDataSurfaceRemeshing::vtkvmtkPolyDataSurfaceRemeshing()
   this->MinAreaFactor = 0.5;
   this->MaxArea = VTK_VMTK_LARGE_FLOAT;
   this->MinArea = 0.0;
-  this->TargetAreaArrayName = NULL;
-  this->TargetAreaArray = NULL;
+  this->TargetAreaArrayName = nullptr;
+  this->TargetAreaArray = nullptr;
   this->NumberOfConnectivityOptimizationIterations = 20;
   this->NumberOfIterations = 10;
   this->ElementSizeMode = TARGET_AREA;
   this->PreserveBoundaryEdges = 0;
-  this->CellEntityIdsArrayName = NULL;
-  this->CellEntityIdsArray = NULL;
+  this->CellEntityIdsArrayName = nullptr;
+  this->CellEntityIdsArray = nullptr;
 
-  this->Mesh = NULL;
-  this->InputBoundary = NULL;
-  this->InputEntityBoundary = NULL;
-  this->Locator = NULL;
-  this->BoundaryLocator = NULL;
-  this->EntityBoundaryLocator = NULL;
+  this->Mesh = nullptr;
+  this->InputBoundary = nullptr;
+  this->InputEntityBoundary = nullptr;
+  this->Locator = nullptr;
+  this->BoundaryLocator = nullptr;
+  this->EntityBoundaryLocator = nullptr;
 
-  this->ExcludedEntityIds = NULL;
+  this->ExcludedEntityIds = nullptr;
 }
 
 vtkvmtkPolyDataSurfaceRemeshing::~vtkvmtkPolyDataSurfaceRemeshing()
@@ -77,61 +77,61 @@ vtkvmtkPolyDataSurfaceRemeshing::~vtkvmtkPolyDataSurfaceRemeshing()
   if (this->Mesh)
     {
     this->Mesh->Delete();
-    this->Mesh = NULL;
+    this->Mesh = nullptr;
     }
 
   if (this->InputBoundary)
     {
     this->InputBoundary->Delete();
-    this->InputBoundary = NULL;
+    this->InputBoundary = nullptr;
     }
 
   if (this->InputEntityBoundary)
     {
     this->InputEntityBoundary->Delete();
-    this->InputEntityBoundary = NULL;
+    this->InputEntityBoundary = nullptr;
     }
 
   if (this->Locator)
     {
     this->Locator->Delete();
-    this->Locator = NULL;
+    this->Locator = nullptr;
     }
 
   if (this->BoundaryLocator)
     {
     this->BoundaryLocator->Delete();
-    this->BoundaryLocator = NULL;
+    this->BoundaryLocator = nullptr;
     }
 
   if (this->EntityBoundaryLocator)
     {
     this->EntityBoundaryLocator->Delete();
-    this->EntityBoundaryLocator = NULL;
+    this->EntityBoundaryLocator = nullptr;
     }
 
   if (this->TargetAreaArrayName)
     {
     delete[] this->TargetAreaArrayName;
-    this->TargetAreaArrayName = NULL;
+    this->TargetAreaArrayName = nullptr;
     }
 
   if (this->CellEntityIdsArrayName)
     {
     delete[] this->CellEntityIdsArrayName;
-    this->CellEntityIdsArrayName = NULL;
+    this->CellEntityIdsArrayName = nullptr;
     }
 
   if (this->CellEntityIdsArray)
     {
     this->CellEntityIdsArray->Delete();
-    this->CellEntityIdsArray = NULL;
+    this->CellEntityIdsArray = nullptr;
     }
 
   if (this->ExcludedEntityIds)
     {
     this->ExcludedEntityIds->Delete();
-    this->ExcludedEntityIds = NULL;
+    this->ExcludedEntityIds = nullptr;
     }
 }
 
@@ -166,7 +166,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   if (this->CellEntityIdsArray)
     {
     this->CellEntityIdsArray->Delete();
-    this->CellEntityIdsArray = NULL;
+    this->CellEntityIdsArray = nullptr;
     }
 
   this->CellEntityIdsArray = vtkIntArray::New();
@@ -189,7 +189,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   if (this->Mesh)
     {
     this->Mesh->Delete();
-    this->Mesh = NULL;
+    this->Mesh = nullptr;
     }
 
   vtkPolyDataNormals* normals = vtkPolyDataNormals::New();
@@ -251,7 +251,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   if (this->Locator)
     {
     this->Locator->Delete();
-    this->Locator = NULL;
+    this->Locator = nullptr;
     }
 
   this->Locator = vtkCellLocator::New();
@@ -263,7 +263,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   if (this->InputBoundary)
     {
     this->InputBoundary->Delete();
-    this->InputBoundary = NULL;
+    this->InputBoundary = nullptr;
     }
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
@@ -279,7 +279,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   if (this->BoundaryLocator)
     {
     this->BoundaryLocator->Delete();
-    this->BoundaryLocator = NULL;
+    this->BoundaryLocator = nullptr;
     }
 
   if (this->InputBoundary->GetNumberOfCells() > 0)
@@ -292,7 +292,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   if (this->InputEntityBoundary)
     {
     this->InputEntityBoundary->Delete();
-    this->InputEntityBoundary = NULL;
+    this->InputEntityBoundary = nullptr;
     }
 
   this->InputEntityBoundary = vtkPolyData::New();
@@ -301,7 +301,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   if (this->EntityBoundaryLocator)
     {
     this->EntityBoundaryLocator->Delete();
-    this->EntityBoundaryLocator = NULL;
+    this->EntityBoundaryLocator = nullptr;
     }
 
   if (this->InputEntityBoundary->GetNumberOfCells() > 0)
@@ -640,7 +640,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::PointRelocationIteration(bool projectToSurf
 int vtkvmtkPolyDataSurfaceRemeshing::IsElementExcluded(vtkIdType cellId)
 {
   int isElementExcluded = 0;
-  if (this->ExcludedEntityIds == NULL)
+  if (this->ExcludedEntityIds == nullptr)
     {
     return isElementExcluded;
     }
@@ -737,7 +737,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::FindOneRingNeighbors(vtkIdType pointId, vtk
   bp1 = p2;
 
   // walk around the neighborhood counter-clockwise and get cells
-  vtkCell* cell = NULL;
+  vtkCell* cell = nullptr;
   for (j=0; j<numberOfCells; j++)
     {
     cell = this->Mesh->GetCell(nextCell);
@@ -1027,7 +1027,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(vtkIdType pt1, 
   vtkIdType pt4tmp = -1;
   bool reverse = false;
   vtkIdType npts;
-  const vtkIdType *pts;
+  const vtkIdType *pts = new vtkIdType;
   this->Mesh->GetCellPoints(cell1,npts,pts);
   for (int i=0; i<3; i++)
     {
@@ -1622,7 +1622,7 @@ double vtkvmtkPolyDataSurfaceRemeshing::ComputeTriangleTargetArea(vtkIdType cell
     this->Locator->FindClosestPoint(center,projectedCenter,centerCellId,subId,dist2);
     vtkTriangle* centerCell = vtkTriangle::SafeDownCast(vtkPolyData::SafeDownCast(this->Locator->GetDataSet())->GetCell(centerCellId));
     double pcoords[3], weights[3];
-    centerCell->EvaluatePosition(projectedCenter,NULL,subId,pcoords,dist2,weights);
+    centerCell->EvaluatePosition(projectedCenter,nullptr,subId,pcoords,dist2,weights);
     for (int i=0; i<3; i++)
       {
       targetArea += weights[i] * this->TargetAreaArray->GetTuple1(centerCell->GetPointId(i));

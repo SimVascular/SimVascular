@@ -76,8 +76,8 @@ vtkSVPickPointSeedSelector::vtkSVPickPointSeedSelector()
 
   this->SVRenderer = vtkSVRenderer::New();
 
-  this->UndoCallbackCommand = NULL;
-  this->PickCallbackCommand = NULL;
+  this->UndoCallbackCommand = nullptr;
+  this->PickCallbackCommand = nullptr;
 }
 
 // ----------------------
@@ -85,30 +85,30 @@ vtkSVPickPointSeedSelector::vtkSVPickPointSeedSelector()
 // ----------------------
 vtkSVPickPointSeedSelector::~vtkSVPickPointSeedSelector()
 {
-  if (this->PickedSeeds != NULL)
+  if (this->PickedSeeds != nullptr)
   {
     this->PickedSeeds->Delete();
-    this->PickedSeeds = NULL;
+    this->PickedSeeds = nullptr;
   }
-  if (this->PickedSeedIds != NULL)
+  if (this->PickedSeedIds != nullptr)
   {
     this->PickedSeedIds->Delete();
-    this->PickedSeedIds = NULL;
+    this->PickedSeedIds = nullptr;
   }
-  if (this->SVRenderer != NULL)
+  if (this->SVRenderer != nullptr)
   {
     this->SVRenderer->Delete();
-    this->SVRenderer = NULL;
+    this->SVRenderer = nullptr;
   }
-  if (this->UndoCallbackCommand != NULL)
+  if (this->UndoCallbackCommand != nullptr)
   {
     this->UndoCallbackCommand->Delete();
-    this->UndoCallbackCommand = NULL;
+    this->UndoCallbackCommand = nullptr;
   }
-  if (this->PickCallbackCommand != NULL)
+  if (this->PickCallbackCommand != nullptr)
   {
     this->PickCallbackCommand->Delete();
-    this->PickCallbackCommand = NULL;
+    this->PickCallbackCommand = nullptr;
   }
 }
 

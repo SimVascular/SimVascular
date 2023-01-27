@@ -48,7 +48,7 @@
 
 cvLevelSetVelocityKGI::cvLevelSetVelocityKGI()
 {
-  potential_ = NULL;
+  potential_ = nullptr;
   eKvalid_ = 0;
   eIvalid_ = 0;
   balloonFvalid_ = 0;
@@ -86,7 +86,7 @@ void cvLevelSetVelocityKGI::PostSetImageAction()
 
 int cvLevelSetVelocityKGI::GetMaxImageIGrad( double *maxGrad )
 {
-  if ( image_ == NULL ) {
+  if ( image_ == nullptr ) {
     return SV_ERROR;
   }
   (*maxGrad) = GetMaxGrad( image_ );
@@ -114,7 +114,7 @@ void cvLevelSetVelocityKGI::SetUpPotentialField( Image_T *img )
   double mag;
   double *data;
 
-  if ( potential_ != NULL ) {
+  if ( potential_ != nullptr ) {
     Image_Delete( potential_ );
   }
   ComputeImageGrad( img );
@@ -131,7 +131,7 @@ void cvLevelSetVelocityKGI::SetUpPotentialField( Image_T *img )
   tmp = CreateImage( (void*)data, numPix, "-double", img->imgDims,
 		     img->pixelDims );
   delete [] data;
-  if ( tmp == NULL ) {
+  if ( tmp == nullptr ) {
     printf("ERR: SetUpPotentialField failed.\n");
     return;
   }
@@ -333,7 +333,7 @@ int cvLevelSetVelocityKGI::Valid()
   if ( ! (this->cvLevelSetVelocity::Valid()) ) {
     return SV_ERROR;
   }
-  if ( image_ == NULL ) return SV_ERROR;
+  if ( image_ == nullptr ) return SV_ERROR;
   if ( ! eKvalid_ ) return SV_ERROR;
   if ( ! eIvalid_ ) return SV_ERROR;
   if ( ! balloonFvalid_ ) return SV_ERROR;
@@ -405,7 +405,7 @@ int cvLevelSetVelocityKGI::Evaluate( double pos[], double *f0, double *f1, doubl
     toDot[2] = 0.0;
     *f0 = 0.0;
     *f1 = 0.0;
-    if ( v != NULL ) {
+    if ( v != nullptr ) {
       v[0] = 0.0;
       v[1] = 0.0;
       v[2] = 0.0;
@@ -489,7 +489,7 @@ int cvLevelSetVelocityKGI::Evaluate( double pos[], double *f0, double *f1, doubl
   *f1 = tmpF1;
   mag = (*f0) + (*f1);
 
-  if ( v != NULL ) {
+  if ( v != nullptr ) {
     v[0] = n[0] * mag;
     v[1] = n[1] * mag;
     v[2] = n[2] * mag;

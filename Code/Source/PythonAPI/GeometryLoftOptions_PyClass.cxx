@@ -169,7 +169,7 @@ PyLoftOptions_get_values(PyLoftOptions* self, PyObject* args)
 //
 static PyMethodDef PyLoftOptionsMethods[] = {
   {"get_values", (PyCFunction)PyLoftOptions_get_values, METH_NOARGS, PyLoftOptions_get_values_doc},
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -213,7 +213,7 @@ static PyMemberDef PyLoftOptionsMembers[] = {
     //{LoftOptions::TENSION, T_DOUBLE, offsetof(PyLoftOptions, tension), 0, "first name"},
     //{LoftOptions::USE_FFT, T_BOOL, offsetof(PyLoftOptions, use_fft), 0, "first name"},
     {LoftOptions::USE_LINEAR_SAMPLE_ALONG_LENGTH, T_BOOL, offsetof(PyLoftOptions, interpolate_spline_points), 0, interpolate_spline_points_doc},
-    {NULL}
+    {nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -245,7 +245,7 @@ PyDoc_STRVAR(LoftOptionsClass_doc,
 // Define the Python type object that implements the geometry.LoftOptions class.
 //
 static PyTypeObject PyLoftOptionsType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   GEOMETRY_LOFT_OPTIONS_MODULE_CLASS,
   sizeof(PyLoftOptions)
 };
@@ -268,7 +268,7 @@ PyLoftOptionsInit(PyLoftOptions* self, PyObject* args, PyObject* kwargs)
   //std::cout << "[PyLoftOptionsInit] New LoftOptions object: " << std::endl;
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   /*
-  static char *keywords[] = { NULL};
+  static char *keywords[] = { nullptr};
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &num_profile_points)) {
       api.argsError();
       return -1;
@@ -303,7 +303,7 @@ PyLoftOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyLoftOptionsNew] PyLoftOptionsNew " << std::endl;
   auto self = (PyLoftOptions*)type->tp_alloc(type, 0);
-  if (self == NULL) {
+  if (self == nullptr) {
       std::cout << "[PyLoftOptionsNew] ERROR: Can't allocate type." << std::endl;
       return nullptr;
   }

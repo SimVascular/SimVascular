@@ -127,13 +127,13 @@ LoftNurbsOptionsSetDefaults(PyLoftNurbsOptions* self)
   //
   // [DavdeP] Another more comlicated way to define types.
   //
-  self->knot_span_types = PyObject_CallObject((PyObject *) &PyLoftNurbsOptions_KnotSpanType, NULL);
+  self->knot_span_types = PyObject_CallObject((PyObject *) &PyLoftNurbsOptions_KnotSpanType, nullptr);
 
   // ParametricSpanTypes: centripetal, chord, equal
   //
   // [DavdeP] Another more comlicated way to define types.
   //
-  self->parametric_span_types = PyObject_CallObject((PyObject *) &PyLoftNurbsOptions_ParametricSpanType, NULL);
+  self->parametric_span_types = PyObject_CallObject((PyObject *) &PyLoftNurbsOptions_ParametricSpanType, nullptr);
 
   Py_RETURN_NONE;
 }
@@ -216,7 +216,7 @@ PyLoftNurbsOptions_get_values(PyLoftNurbsOptions* self, PyObject* args)
 //
 static PyMethodDef PyLoftNurbsOptionsMethods[] = {
   {"get_values", (PyCFunction)PyLoftNurbsOptions_get_values, METH_NOARGS, PyLoftNurbsOptions_get_values_doc},
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -316,7 +316,7 @@ static PyMemberDef PyLoftNurbsOptionsMembers[] = {
     {LoftNurbsOptions::KNOT_SPAN_TYPES, T_OBJECT_EX, offsetof(PyLoftNurbsOptions, knot_span_types), 0, knot_span_types_doc},
     {LoftNurbsOptions::PARAMETRIC_SPAN_TYPES, T_OBJECT_EX, offsetof(PyLoftNurbsOptions, parametric_span_types), 0, paramertic_span_types_doc},
 
-    {NULL}
+    {nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -348,7 +348,7 @@ PyDoc_STRVAR(LoftNurbsOptionsClass_doc,
 // Define the Python type object that implements the geometry.LoftNurbsOptions class.
 //
 static PyTypeObject PyLoftNurbsOptionsType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   GEOMETRY_LOFT_NURBS_OPTIONS_MODULE_CLASS,
   sizeof(PyLoftNurbsOptions)
 };
@@ -368,7 +368,7 @@ PyLoftNurbsOptionsInit(PyLoftNurbsOptions* self, PyObject* args, PyObject* kwarg
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   // [DaveP] No args for now.
   /*
-  static char *keywords[] = {"u_knot_span_type", NULL};
+  static char *keywords[] = {"u_knot_span_type", nullptr};
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &u_knot_span_type)) {
       api.argsError();
       return -1;
@@ -391,7 +391,7 @@ PyLoftNurbsOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyLoftNurbsOptionsNew] PyLoftNurbsOptionsNew " << std::endl;
   auto self = (PyLoftNurbsOptions*)type->tp_alloc(type, 0);
-  if (self == NULL) {
+  if (self == nullptr) {
       std::cout << "[PyLoftNurbsOptionsNew] ERROR: Can't allocate type." << std::endl;
       return nullptr;
   }

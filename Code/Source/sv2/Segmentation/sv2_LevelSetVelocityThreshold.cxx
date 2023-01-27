@@ -119,7 +119,7 @@ int cvLevelSetVelocityThreshold::Valid()
   if ( ! (this->cvLevelSetVelocity::Valid()) ) {
     return SV_ERROR;
   }
-  if ( image_ == NULL ) return SV_ERROR;
+  if ( image_ == nullptr ) return SV_ERROR;
   if ( thr_ <= 0.0 ) return SV_ERROR;
   if ( ! balloonFvalid_ ) return SV_ERROR;
   return SV_OK;
@@ -195,7 +195,7 @@ int cvLevelSetVelocityThreshold::Evaluate( double pos[], double *f0, double *f1,
   *f1 = 0.0;
   mag = (*f0) + (*f1);
 
-  if ( v != NULL ) {
+  if ( v != nullptr ) {
     v[0] = n[0] * mag;
     v[1] = n[1] * mag;
     v[2] = n[2] * mag;

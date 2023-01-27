@@ -271,7 +271,7 @@ int VtkUtils_FixTopology( vtkPolyData *pd, double tol )
   int oldId, mappedId;
   vtkPoints *compressedPts;
 
-  if ( pd == NULL ) return SV_ERROR;
+  if ( pd == nullptr ) return SV_ERROR;
 
   preNumPts = pd->GetNumberOfPoints();
   preNumElems = pd->GetNumberOfLines() + pd->GetNumberOfPolys();
@@ -748,7 +748,7 @@ static void MarkDeadEnd( int *state, int stateSz )
 static int GetNextPt( int prev, int curr, int *state, int stateSz,
 		      vtkIdType *lines, int numLines )
 {
-  int *linkedLineIxs = NULL;
+  int *linkedLineIxs = nullptr;
   int numLinkedLineIxs;
   int next;
   int a1, a2, b1, b2;
@@ -757,7 +757,7 @@ static int GetNextPt( int prev, int curr, int *state, int stateSz,
 			   &numLinkedLineIxs );
 
   if ( numLinkedLineIxs != 2 ) {
-    if ( linkedLineIxs != NULL ) delete [] linkedLineIxs;
+    if ( linkedLineIxs != nullptr ) delete [] linkedLineIxs;
     return -1;
   }
 
@@ -1127,7 +1127,7 @@ int VtkUtils_MakeShortArray( vtkDataArray *s, int *num, short **dataOut )
 
   sz = s->GetNumberOfTuples();
   *dataOut = new short [sz];
-  if ( *dataOut == NULL ) {
+  if ( *dataOut == nullptr ) {
     return SV_ERROR;
   }
 
@@ -1157,7 +1157,7 @@ int VtkUtils_MakeFloatArray( vtkDataArray *s, int *num, float **dataOut )
 
   sz = s->GetNumberOfTuples();
   *dataOut = new float [sz];
-  if ( *dataOut == NULL ) {
+  if ( *dataOut == nullptr ) {
     return SV_ERROR;
   }
 
@@ -1181,8 +1181,8 @@ vtkPoints *VtkUtils_DeepCopyPoints( vtkPoints *ptsIn )
   vtkFloatingPointType pt[3];
   int i;
 
-  if ( ptsIn == NULL ) {
-    return NULL;
+  if ( ptsIn == nullptr ) {
+    return nullptr;
   }
 
   numPts = ptsIn->GetNumberOfPoints();
@@ -1208,8 +1208,8 @@ vtkCellArray *VtkUtils_DeepCopyCells( vtkCellArray *cellsIn )
   vtkIdType npts;
   const vtkIdType *idlist = new vtkIdType;
 
-  if ( cellsIn == NULL ) {
-    return NULL;
+  if ( cellsIn == nullptr ) {
+    return nullptr;
   }
 
   cellsOut = vtkCellArray::New();

@@ -68,22 +68,22 @@ cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp,
 {
   // Get the adapt object factory registrar associated with this Tcl interpreter.
   cvFactoryRegistrar* adaptObjectRegistrar;
-  if (interp == NULL) {
+  if (interp == nullptr) {
     fprintf(stdout,"WARNING:  Null interpreter passed to AdaptObject.  Overriding with default.\n");
     fflush(stdout);
   }
-  Tcl_Interp* myinterp = NULL;
+  Tcl_Interp* myinterp = nullptr;
   myinterp = gVtkTclInterp;
   assert(myinterp);
 
-  adaptObjectRegistrar = (cvFactoryRegistrar *) Tcl_GetAssocData( myinterp, "AdaptObjectRegistrar", NULL);
+  adaptObjectRegistrar = (cvFactoryRegistrar *) Tcl_GetAssocData( myinterp, "AdaptObjectRegistrar", nullptr);
 
-  cvAdaptObject* adaptor = NULL;
+  cvAdaptObject* adaptor = nullptr;
   if (t == KERNEL_TETGEN ||
       t == KERNEL_MESHSIM)
   {
     adaptor = (cvAdaptObject *) (adaptObjectRegistrar->UseFactoryMethod( t ));
-    if (adaptor == NULL) {
+    if (adaptor == nullptr) {
 		  fprintf( stdout, "Unable to create adaptor object for kernel (%i)\n",cvAdaptObject::gCurrentKernel);
     }
 
@@ -106,16 +106,16 @@ cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject(KernelType t )
   PyObject* pyGlobal = PySys_GetObject("AdaptObjectRegistrar");
   pyAdaptObjectRegistrar* tmp = (pyAdaptObjectRegistrar *) pyGlobal;
   cvFactoryRegistrar* adaptObjectRegistrar =tmp->registrar;
-  if (adaptObjectRegistrar==NULL)
+  if (adaptObjectRegistrar==nullptr)
   {
     fprintf(stdout,"Cannot get AdaptObjectRegistrar from pySys");
   }
-  cvAdaptObject* adaptor = NULL;
+  cvAdaptObject* adaptor = nullptr;
   if (t == KERNEL_TETGEN ||
       t == KERNEL_MESHSIM)
   {
     adaptor = (cvAdaptObject *) (adaptObjectRegistrar->UseFactoryMethod( t ));
-    if (adaptor == NULL) {
+    if (adaptor == nullptr) {
 		  fprintf( stdout, "Unable to create adaptor object for kernel (%i)\n",cvAdaptObject::gCurrentKernel);
     }
 

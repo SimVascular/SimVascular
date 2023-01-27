@@ -1332,7 +1332,7 @@ int OCCTUtils_ReLabelFace( TopoDS_Shape &shape,
 {
   if (shape.IsNull())
   {
-    fprintf(stderr,"Face is NULL, cannot add\n");
+    fprintf(stderr,"Face is nullptr, cannot add\n");
     return SV_ERROR;
   }
 

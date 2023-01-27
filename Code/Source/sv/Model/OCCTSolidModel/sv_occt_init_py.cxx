@@ -107,10 +107,10 @@ double *getArrayFromDoubleList(PyObject* listObj,int &len);
 double **getArrayFromDoubleList2D(PyObject* listObj,int &lenx,int &leny);
 
 PyMethodDef SolidOCCT_methods[] = {
-  {"Available", OCCTSolidModel_AvailableCmd,METH_NOARGS,NULL},
-  {"Registrars", OCCTSolidModel_RegistrarsListCmd,METH_NOARGS,NULL},
+  {"Available", OCCTSolidModel_AvailableCmd,METH_NOARGS,nullptr},
+  {"Registrars", OCCTSolidModel_RegistrarsListCmd,METH_NOARGS,nullptr},
   {"convertListsToOCCT", convertListsToOCCTObject, METH_VARARGS,"Converts X,Y,Z,uKnots,vKnots,uMults,vMults,p,q to OCCT"},
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
@@ -118,7 +118,7 @@ PyMethodDef SolidOCCT_methods[] = {
 static struct PyModuleDef pySolidOCCTmodule = {
    PyModuleDef_HEAD_INIT,
    "pySolidOCCT",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    SolidOCCT_methods
@@ -130,7 +130,7 @@ PyObject* Occtsolid_pyInit()
   Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
   //gOCCTManager = new AppStd_Application;
   OCCTManager = XCAFApp_Application::GetApplication();
-  //if ( gOCCTManager == NULL ) {
+  //if ( gOCCTManager == nullptr ) {
   //  fprintf( stderr, "error allocating gOCCTManager\n" );
   //  return TCL_ERROR;
   //}
@@ -147,7 +147,7 @@ PyObject* Occtsolid_pyInit()
   PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
   pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
-  if (pySolidModelRegistrar != NULL) {
+  if (pySolidModelRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr(  SM_KT_OCCT,
             (FactoryMethodPtr) &pyCreateOCCTSolidModel );
@@ -163,7 +163,7 @@ PyObject* Occtsolid_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
   pythonC = PyModule_Create(&pySolidOCCTmodule);
 #endif  
-if (pythonC==NULL)
+if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pySolid");
     return SV_PYTHON_ERROR;
@@ -178,7 +178,7 @@ initpySolidOCCT()
   Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
   //gOCCTManager = new AppStd_Application;
   OCCTManager = XCAFApp_Application::GetApplication();
-  //if ( gOCCTManager == NULL ) {
+  //if ( gOCCTManager == nullptr ) {
   //  fprintf( stderr, "error allocating gOCCTManager\n" );
   //  return TCL_ERROR;
   //}
@@ -195,7 +195,7 @@ initpySolidOCCT()
   PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
   pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
-  if (pySolidModelRegistrar != NULL) {
+  if (pySolidModelRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr(  SM_KT_OCCT,
             (FactoryMethodPtr) &pyCreateOCCTSolidModel );
@@ -207,7 +207,7 @@ initpySolidOCCT()
   PySys_SetObject("solidModelRegistrar",(PyObject*)tmp); 
   PyObject *pythonC;
   pythonC = Py_InitModule("pySolidOCCT", SolidOCCT_methods);
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pySolid");
     return ;
@@ -222,7 +222,7 @@ PyInit_pySolidOCCT()
   Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
   //gOCCTManager = new AppStd_Application;
   OCCTManager = XCAFApp_Application::GetApplication();
-  //if ( gOCCTManager == NULL ) {
+  //if ( gOCCTManager == nullptr ) {
   //  fprintf( stderr, "error allocating gOCCTManager\n" );
   //  return TCL_ERROR;
   //}
@@ -239,7 +239,7 @@ PyInit_pySolidOCCT()
   PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
   pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
-  if (pySolidModelRegistrar != NULL) {
+  if (pySolidModelRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr(  SM_KT_OCCT,
             (FactoryMethodPtr) &pyCreateOCCTSolidModel );
@@ -252,7 +252,7 @@ PyInit_pySolidOCCT()
   PyObject *pythonC;
 
   pythonC = PyModule_Create(&pySolidOCCTmodule);
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pySolid");
     pythonC;
@@ -299,7 +299,7 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
   if (cvSolidModel::gCurrentKernel != SM_KT_OCCT)
   {
     fprintf(stderr,"Solid Model kernel must be OCCT\n");
-    return NULL;
+    return nullptr;
   }
 
   char *objName;
@@ -316,16 +316,16 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
 						&p,&q))
   {
     fprintf(stderr,"Could not import 1 char, 7 tuples, and 2 ints: X,Y,Z,uKnots,vKnots,uMults,vMults,uDeg,vDeg");
-    return NULL;
+    return nullptr;
   }
 
   geom = (cvOCCTSolidModel *)gRepository->GetObject( objName );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     fprintf(stderr,"Object is not in repository\n");
-    return NULL;
+    return nullptr;
   }
   //Get X,Y,Z arrays
-  double **Xarr=NULL,**Yarr=NULL,**Zarr=NULL;
+  double **Xarr=nullptr,**Yarr=nullptr,**Zarr=nullptr;
   int Xlen1=0,Xlen2=0,Ylen1=0,Ylen2=0,Zlen1=0,Zlen2=0;
   Py_INCREF(X); Py_INCREF(Y); Py_INCREF(Z);
   Xarr = getArrayFromDoubleList2D(X,Xlen1,Xlen2);
@@ -346,11 +346,11 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
     for (int i=0;i<Zlen1;i++)
       delete [] Zarr[i];
     delete [] Zarr;
-    return NULL;
+    return nullptr;
   }
 
   //Get knots and multiplicity arrays
-  double *uKarr=NULL,*vKarr=NULL,*uMarr=NULL,*vMarr=NULL;
+  double *uKarr=nullptr,*vKarr=nullptr,*uMarr=nullptr,*vMarr=nullptr;
   int uKlen=0,vKlen=0,uMlen=0,vMlen=0;
   uKarr = getArrayFromDoubleList(uKnots,uKlen);
   vKarr = getArrayFromDoubleList(vKnots,vKlen);
@@ -377,7 +377,7 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
     delete [] uMarr;
     delete [] vMarr;
     fprintf(stderr,"Conversion to BSpline surface didn't work\n");
-    return NULL;
+    return nullptr;
   }
 
   //Clean up

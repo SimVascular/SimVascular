@@ -369,7 +369,7 @@ mitk::SlicedGeometry3D::Pointer sv4guiSegmentationUtils::CreateSlicedGeometry(st
 //
 mitk::Image::Pointer sv4guiSegmentationUtils::GetSliceImage(const mitk::PlaneGeometry* planeGeometry, const mitk::Image* image, unsigned int timeStep)
 {
-    if ( !image || !planeGeometry ) return NULL;
+    if ( !image || !planeGeometry ) return nullptr;
 
     //    //Make sure that for reslicing and overwriting the same alogrithm is used. We can specify the mode of the vtk reslicer
     //    vtkSmartPointer<mitkVtkImageOverwrite> reslice = vtkSmartPointer<mitkVtkImageOverwrite>::New();
@@ -404,7 +404,7 @@ mitk::Image::Pointer sv4guiSegmentationUtils::GetSliceImage(const mitk::PlaneGeo
 vtkImageData * 
 sv4guiSegmentationUtils::GetSlicevtkImage(const mitk::PlaneGeometry* planeGeometry, const mitk::Image* image, unsigned int timeStep)
 {
-    if ( !image || !planeGeometry ) return NULL;
+    if ( !image || !planeGeometry ) return nullptr;
 
     //    //Make sure that for reslicing and overwriting the same alogrithm is used. We can specify the mode of the vtk reslicer
     //    vtkSmartPointer<mitkVtkImageOverwrite> reslice = vtkSmartPointer<mitkVtkImageOverwrite>::New();
@@ -689,7 +689,7 @@ sv4guiSegmentationUtils::CreateLSContour(sv4guiPathElement::sv4guiPathPoint path
     }
 
     // Create seed curve.
-    cvPolyData *seedPd = NULL;
+    cvPolyData *seedPd = nullptr;
     double center[3];
     center[0] = param->ctrx;
     center[1] = param->ctry;
@@ -916,7 +916,7 @@ sv4guiContour* sv4guiSegmentationUtils::CreateThresholdContour(sv4guiPathElement
 std::deque<int> sv4guiSegmentationUtils::GetOrderedPtIDs(vtkCellArray* lines, bool& ifClosed)
 {
 
-    vtkIdType *ptIds;
+    const vtkIdType *ptIds = new vtkIdType;
     vtkIdType npts;
 
     lines->InitTraversal();

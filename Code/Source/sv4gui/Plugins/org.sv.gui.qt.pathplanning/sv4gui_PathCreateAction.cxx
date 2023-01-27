@@ -36,8 +36,8 @@
 //#include <QmitkDataManagerView.h>
 
 sv4guiPathCreateAction::sv4guiPathCreateAction()
-    : m_PathCreateWidget(NULL)
-    , m_Functionality(NULL)
+    : m_PathCreateWidget(nullptr)
+    , m_Functionality(nullptr)
 {
 }
 

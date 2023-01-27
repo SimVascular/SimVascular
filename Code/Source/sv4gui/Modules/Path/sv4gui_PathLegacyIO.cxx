@@ -277,7 +277,7 @@ void sv4guiPathLegacyIO::WriteFile(mitk::DataStorage::SetOfObjects::ConstPointer
                     out<<"set gPathPoints("<<path->GetPathID()<<",name) {"<<node->GetName().c_str()<<"}"<<endl;
 
                     sv4guiPathElement* pe=path->GetPathElement();
-                    if(pe==NULL) continue;
+                    if(pe==nullptr) continue;
 
                     for(int i=0;i<pe->GetControlPointNumber();i++)
                     {

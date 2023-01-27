@@ -71,13 +71,13 @@ vtkStandardNewMacro(vtkSVUpdeSmoothing);
 vtkSVUpdeSmoothing::vtkSVUpdeSmoothing()
 {
   this->WorkPd = vtkPolyData::New();
-  this->SourcePd = NULL;
+  this->SourcePd = nullptr;
 
   this->CellLocator = vtkCellLocator::New();
-  this->SourceCellNormals = NULL;
-  this->SourcePointNormals = NULL;
-  this->OriginalCellNormals = NULL;
-  this->OriginalPointNormals = NULL;
+  this->SourceCellNormals = nullptr;
+  this->SourcePointNormals = nullptr;
+  this->OriginalCellNormals = nullptr;
+  this->OriginalPointNormals = nullptr;
 
   this->UseInputAsSource = 0;
   this->NumberOfOuterSmoothOperations = 1;
@@ -85,7 +85,7 @@ vtkSVUpdeSmoothing::vtkSVUpdeSmoothing()
   this->Alpha = 0.5;
   this->Beta = 0.8;
 
-  this->SmoothPointArrayName = NULL;
+  this->SmoothPointArrayName = nullptr;
 }
 
 // ----------------------
@@ -93,28 +93,28 @@ vtkSVUpdeSmoothing::vtkSVUpdeSmoothing()
 // ----------------------
 vtkSVUpdeSmoothing::~vtkSVUpdeSmoothing()
 {
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
 
-  if (this->SourcePd != NULL)
+  if (this->SourcePd != nullptr)
   {
     this->SourcePd->Delete();
-    this->SourcePd = NULL;
+    this->SourcePd = nullptr;
   }
 
-  if (this->CellLocator != NULL)
+  if (this->CellLocator != nullptr)
   {
     this->CellLocator->Delete();
-    this->CellLocator = NULL;
+    this->CellLocator = nullptr;
   }
 
-  if (this->SmoothPointArrayName != NULL)
+  if (this->SmoothPointArrayName != nullptr)
   {
     delete [] this->SmoothPointArrayName;
-    this->SmoothPointArrayName = NULL;
+    this->SmoothPointArrayName = nullptr;
   }
 }
 
@@ -168,7 +168,7 @@ int vtkSVUpdeSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
 
   if (this->UseInputAsSource)
   {
-    if (this->SourcePd == NULL)
+    if (this->SourcePd == nullptr)
     {
       this->SourcePd = vtkPolyData::New();
     }
@@ -181,7 +181,7 @@ int vtkSVUpdeSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
     this->SourcePd->DeepCopy(triangulator->GetOutput());
     this->SourcePd->BuildLinks();
 
-    //srand(time(NULL));
+    //srand(time(nullptr));
     //for (int i=0; i<this->SourcePd->GetNumberOfPoints(); i++)
     //{
     //  if (i != 12 && i != 22 && i != 27 && i != 33)
@@ -204,7 +204,7 @@ int vtkSVUpdeSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
   }
 
   // Build locator if source given
-  if (this->SourcePd != NULL)
+  if (this->SourcePd != nullptr)
   {
     this->CellLocator->SetDataSet(this->SourcePd);
     this->CellLocator->BuildLocator();
@@ -280,11 +280,11 @@ int vtkSVUpdeSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
   // ========================= FEATURE EDGES ===============================
 
 
-  if (this->SmoothPointArrayName != NULL)
+  if (this->SmoothPointArrayName != nullptr)
   {
     this->SmoothPointArray = vtkIntArray::SafeDownCast(this->WorkPd->GetPointData()->GetArray(this->SmoothPointArrayName));
 
-    if (this->SmoothPointArray == NULL)
+    if (this->SmoothPointArray == nullptr)
     {
       vtkErrorMacro("Error getting array indicating the points to smooth on mesh");
       return SV_ERROR;
@@ -302,7 +302,7 @@ int vtkSVUpdeSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
   }
 
   //// =========================== INITIAL ONE ===============================
-  //if (this->SourcePd != NULL)
+  //if (this->SourcePd != nullptr)
   //{
   //  int subId;
   //  double pt[3];
@@ -487,12 +487,12 @@ int vtkSVUpdeSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
     vtkNew(vtkSVLocalSmoothPolyDataFilter, smoother);
     smoother->SetInputData(tmp);
     smoother->SetNumberOfIterations(this->NumberOfInnerSmoothOperations);
-    if (this->SmoothPointArrayName != NULL)
+    if (this->SmoothPointArrayName != nullptr)
     {
       smoother->SetUsePointArray(1);
       smoother->SetSmoothPointArrayName(this->SmoothPointArrayName);
     }
-    //if (this->SourcePd != NULL)
+    //if (this->SourcePd != nullptr)
     //{
     //  smoother->SetSourceData(this->SourcePd);
     //}
@@ -513,7 +513,7 @@ int vtkSVUpdeSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
       tmpNormaler->GetOutput()->GetCellData()->GetArray("Normals");
 
     //// ================ OLD FIND CLOSEST ===================================
-    //if (this->SourcePd != NULL)
+    //if (this->SourcePd != nullptr)
     //{
     //  int numPts = tmp->GetNumberOfPoints();
     //  int subId;
@@ -547,7 +547,7 @@ int vtkSVUpdeSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
     //}
     //// ================ OLD FIND CLOSEST ===================================
 
-    //if (this->SourcePd != NULL)
+    //if (this->SourcePd != nullptr)
     //{
     //  int worked;
     //  int numPts = tmp->GetNumberOfPoints();
@@ -850,7 +850,7 @@ int vtkSVUpdeSmoothing::UntangleSurface(vtkDoubleArray *shapeImproveFunction,
 
       this->WorkPd->GetPoint(i, pt0);
 
-      if (this->SourcePd != NULL)
+      if (this->SourcePd != nullptr)
       {
         this->CellLocator->FindClosestPoint(pt0, closestPt, genericCell, closestCellId, subId, distance);
 
@@ -990,7 +990,7 @@ int vtkSVUpdeSmoothing::SmoothSurface(vtkDoubleArray *shapeImproveFunction,
       fprintf(stdout,"MOVING POINT: %d\n", i);
       fprintf(stdout,"POINT IMP DIR: %.6f %.6f %.6f\n", pointImproveDir[0], pointImproveDir[1], pointImproveDir[2]);
 //=============================ONE==========================================
-      if (this->SourcePd == NULL)
+      if (this->SourcePd == nullptr)
       {
         vtkMath::MultiplyScalar(pointImproveDir, moveStep);
         this->WorkPd->GetPoint(i, pt0);

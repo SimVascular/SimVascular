@@ -438,7 +438,7 @@ MesherTetGen_generate_mesh(PyMeshingMesher* self, PyObject* args, PyObject* kwar
   //std::cout << "========= MesherTetGen_generate_mesh =========" << std::endl;
   using namespace MeshingTetGen;
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"options", NULL};
+  static char *keywords[] = {"options", nullptr};
   PyObject* options;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyTetGenOptionsType, &options)) {
@@ -499,7 +499,7 @@ static PyObject *
 MesherTetGen_set_model(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
-  static char *keywords[] = {"model", NULL};
+  static char *keywords[] = {"model", nullptr};
   PyObject* modelArg;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &modelArg)) {
@@ -568,7 +568,7 @@ PyDoc_STRVAR(PyMeshingTetGen_doc,
 static PyMethodDef PyMeshingTetGenMethods[] = {
  { "generate_mesh", (PyCFunction)MesherTetGen_generate_mesh, METH_VARARGS|METH_KEYWORDS, MesherTetGen_generate_mesh_doc},
  { "set_model", (PyCFunction)MesherTetGen_set_model, METH_VARARGS|METH_KEYWORDS, MesherTetGen_set_model_doc},
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //---------------------
@@ -605,7 +605,7 @@ PyMeshingTetGenNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   auto self = (PyMeshingMesher*)type->tp_alloc(type, 0);
 
   // [TODO:DaveP] Keep this for now, maybe want to add something here later.
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->super.id = 2;
   }
   return (PyObject*)self;
@@ -632,7 +632,7 @@ PyMeshingTetGenDealloc(PyMeshingTetGen* self)
 // designated initializers.
 //
 PyTypeObject PyMeshingTetGenType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   MESHING_TETGEN_MODULE_CLASS,
@@ -677,6 +677,6 @@ SetMeshingTetGenTypeFields(PyTypeObject& mesherType)
 void
 PyAPI_InitTetGen()
 {
-  PyMesherCtorMap[cvMeshObject::KERNEL_TETGEN] = []()->PyObject* {return PyObject_CallObject((PyObject*)&PyMeshingTetGenType, NULL);};
+  PyMesherCtorMap[cvMeshObject::KERNEL_TETGEN] = []()->PyObject* {return PyObject_CallObject((PyObject*)&PyMeshingTetGenType, nullptr);};
 }
 

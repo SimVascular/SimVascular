@@ -113,23 +113,23 @@ PyObject *PyRunTimeErrU;
 /*! A more elaborate description... TBD
 */
 PyMethodDef Itkutils_methods[] = {
-	{"GenerateCircle", itkutils_GenerateCircleCmd, METH_VARARGS,NULL},
-	{"PdToImg", itkutils_PdToImgCmd, METH_VARARGS,NULL},
-	{"PdToVol", itkutils_PdToVolCmd, METH_VARARGS,NULL},
-	{"WriteImage", itkutils_WriteImageCmd, METH_VARARGS,NULL},
-	{"GradientMagnitudeGaussian",itkutils_GradientMagnitudeGaussianCmd,METH_VARARGS,NULL},
-	{"GaussianBlur", itkutils_GaussianCmd, METH_VARARGS,NULL},
-	{"DistanceImage",itkutils_DistanceImageCmd,METH_VARARGS,NULL},
-	{"ThresholdImage",itkutils_ThresholdImageCmd,METH_VARARGS,NULL},
-	{"FractEdgeProximity3D",itkutils_FractEdgeProximity3DCmd,METH_VARARGS,NULL},
-	{NULL, NULL,0,NULL},
+	{"GenerateCircle", itkutils_GenerateCircleCmd, METH_VARARGS,nullptr},
+	{"PdToImg", itkutils_PdToImgCmd, METH_VARARGS,nullptr},
+	{"PdToVol", itkutils_PdToVolCmd, METH_VARARGS,nullptr},
+	{"WriteImage", itkutils_WriteImageCmd, METH_VARARGS,nullptr},
+	{"GradientMagnitudeGaussian",itkutils_GradientMagnitudeGaussianCmd,METH_VARARGS,nullptr},
+	{"GaussianBlur", itkutils_GaussianCmd, METH_VARARGS,nullptr},
+	{"DistanceImage",itkutils_DistanceImageCmd,METH_VARARGS,nullptr},
+	{"ThresholdImage",itkutils_ThresholdImageCmd,METH_VARARGS,nullptr},
+	{"FractEdgeProximity3D",itkutils_FractEdgeProximity3DCmd,METH_VARARGS,nullptr},
+	{nullptr, nullptr,0,nullptr},
 	};
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef Itkutilsmodule = {
    PyModuleDef_HEAD_INIT,
    "Itkutils",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    Itkutils_methods
@@ -146,7 +146,7 @@ PyObject*  Itkutils_pyInit( ){
 #elif PYTHON_MAJOR_VERSION == 3
     pyItklsUtils= PyModule_Create(&Itkutilsmodule);
 #endif
-    PyRunTimeErrU = PyErr_NewException("Itkutils.error",NULL,NULL);
+    PyRunTimeErrU = PyErr_NewException("Itkutils.error",nullptr,nullptr);
     PyModule_AddObject(pyItklsUtils,"error",PyRunTimeErrU);
 
 	return pyItklsUtils;
@@ -162,11 +162,11 @@ static PyObject* itkutils_GenerateCircleCmd( CXX_PYTHON_STDARGS )
 
  /*	int table_size = 5;
 	ARG_Entry arg_table[] = {
-			{ "-result", STRING_Type, &result, NULL, REQUIRED, 0, { 0 } },
-			{ "-r", DOUBLE_Type, &r, NULL, REQUIRED, 0, { 0 } },
-			{ "-x", DOUBLE_Type, &x, NULL, REQUIRED, 0, { 0 } },
-			{ "-y", DOUBLE_Type, &y, NULL, REQUIRED, 0, { 0 } },
-			{ "-z", DOUBLE_Type, &z, NULL, REQUIRED, 0, { 0 } },
+			{ "-result", STRING_Type, &result, nullptr, REQUIRED, 0, { 0 } },
+			{ "-r", DOUBLE_Type, &r, nullptr, REQUIRED, 0, { 0 } },
+			{ "-x", DOUBLE_Type, &x, nullptr, REQUIRED, 0, { 0 } },
+			{ "-y", DOUBLE_Type, &y, nullptr, REQUIRED, 0, { 0 } },
+			{ "-z", DOUBLE_Type, &z, nullptr, REQUIRED, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
@@ -181,7 +181,7 @@ static PyObject* itkutils_GenerateCircleCmd( CXX_PYTHON_STDARGS )
 	// Make sure the specified result object does not exist:
 	CVPYTHONRepositoryExistsMacro(result,PyRunTimeErrU)
 
-	cvPolyData *obj = NULL;
+	cvPolyData *obj = nullptr;
 	int loc[3];
 	loc[0] = x;
 	loc[1] = y;
@@ -193,7 +193,7 @@ static PyObject* itkutils_GenerateCircleCmd( CXX_PYTHON_STDARGS )
 	// Do work of command
 	cvITKLSUtil::vtkGenerateCircle(r,center,50,&obj);
 
-    if (obj == NULL) {
+    if (obj == nullptr) {
         PyErr_SetString( PyRunTimeErrU, "Problem generating circle" );
         
     }
@@ -229,10 +229,10 @@ static PyObject* itkutils_PdToImgCmd( CXX_PYTHON_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *pd;
 	vtkPolyData *vtkpd;
-	if (inputPdName != NULL) {
+	if (inputPdName != nullptr) {
 		// Look up given image object:
 		pd = gRepository->GetObject( inputPdName );
-		if ( pd == NULL ) {
+		if ( pd == nullptr ) {
 
 			PyErr_SetString(PyRunTimeErrU,"couldn't find object." );
 			
@@ -251,7 +251,7 @@ static PyObject* itkutils_PdToImgCmd( CXX_PYTHON_STDARGS )
 	CVPYTHONRepositoryExistsMacro(result,PyRunTimeErrU)
 
 	// Do work of command
-	cvStrPts *obj = NULL;
+	cvStrPts *obj = nullptr;
 	ImgInfo tempInfo;
 
 	cvITKLSUtil::DefaultImgInfo.Print(std::cout);
@@ -288,10 +288,10 @@ static PyObject* itkutils_PdToVolCmd( CXX_PYTHON_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *pd;
 	vtkPolyData *vtkpd;
-	if (inputPdName != NULL) {
+	if (inputPdName != nullptr) {
 		// Look up given image object:
 		pd = gRepository->GetObject( inputPdName );
-		if ( pd == NULL ) {
+		if ( pd == nullptr ) {
 
 			PyErr_SetString(PyRunTimeErrU,"couldn't find object." );
 			
@@ -308,10 +308,10 @@ static PyObject* itkutils_PdToVolCmd( CXX_PYTHON_STDARGS )
 
 	cvRepositoryData *ref;
 	vtkStructuredPoints *vtkref;
-	if (refName != NULL) {
+	if (refName != nullptr) {
 		// Look up given image object:
 		ref = gRepository->GetObject( refName );
-		if ( ref == NULL ) {
+		if ( ref == nullptr ) {
 			PyErr_SetString(PyRunTimeErrU,"couldn't find object ");
 			
 		}
@@ -329,7 +329,7 @@ static PyObject* itkutils_PdToVolCmd( CXX_PYTHON_STDARGS )
 	CVPYTHONRepositoryExistsMacro(result,PyRunTimeErrU)
 
 	// Do work of command
-	cvStrPts *obj = NULL;
+	cvStrPts *obj = nullptr;
 	ImgInfo tempInfo = ImgInfo(vtkref);
 	vtkref->Delete();
 	//tempInfo.Print(std::cout);
@@ -364,8 +364,8 @@ static PyObject* itkutils_WriteImageCmd(CXX_PYTHON_STDARGS)
 	/*
 	int table_size = 2;
 	ARG_Entry arg_table[] = {
-			{ "-src", STRING_Type, &inputImgName, NULL, REQUIRED, 0, { 0 } },
-			{ "-fname", STRING_Type, &fname, NULL, REQUIRED, 0, { 0 } },
+			{ "-src", STRING_Type, &inputImgName, nullptr, REQUIRED, 0, { 0 } },
+			{ "-fname", STRING_Type, &fname, nullptr, REQUIRED, 0, { 0 } },
 	};
 	usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
 
@@ -376,10 +376,10 @@ static PyObject* itkutils_WriteImageCmd(CXX_PYTHON_STDARGS)
 	RepositoryDataT type;
 	cvRepositoryData *img;
 	vtkStructuredPoints *vtksp;
-	if (inputImgName != NULL) {
+	if (inputImgName != nullptr) {
 		// Look up given image object:
 		img = gRepository->GetObject( inputImgName );
-		if ( img == NULL ) {
+		if ( img == nullptr ) {
 			PyErr_SetString(PyRunTimeErrU, "couldn't find object ");
 			
 		}
@@ -421,10 +421,10 @@ PyObject* itkutils_GradientMagnitudeGaussianCmd( CXX_PYTHON_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *img;
 	vtkStructuredPoints *vtksp;
-	if (inputImgName != NULL) {
+	if (inputImgName != nullptr) {
 		// Look up given image object:
 		img = gRepository->GetObject( inputImgName );
-		if ( img == NULL ) {
+		if ( img == nullptr ) {
 			PyErr_SetString(PyRunTimeErrU, "couldn't find object " );
 			
 		}
@@ -484,10 +484,10 @@ PyObject* itkutils_GaussianCmd( CXX_PYTHON_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *img;
 	vtkStructuredPoints *vtksp;
-	if (inputImgName != NULL) {
+	if (inputImgName != nullptr) {
 		// Look up given image object:
 		img = gRepository->GetObject( inputImgName );
-		if ( img == NULL ) {
+		if ( img == nullptr ) {
 			PyErr_SetString(PyRunTimeErrU, "couldn't find object ");
 			
 		}
@@ -547,10 +547,10 @@ PyObject* itkutils_DistanceImageCmd( CXX_PYTHON_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *img;
 	vtkStructuredPoints *vtksp;
-	if (inputImgName != NULL) {
+	if (inputImgName != nullptr) {
 		// Look up given image object:
 		img = gRepository->GetObject( inputImgName );
-		if ( img == NULL ) {
+		if ( img == nullptr ) {
 			PyErr_SetString(PyRunTimeErrU, "couldn't find object ");
 			
 		}
@@ -611,10 +611,10 @@ PyObject* itkutils_ThresholdImageCmd( CXX_PYTHON_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *img;
 	vtkStructuredPoints *vtksp;
-	if (inputImgName != NULL) {
+	if (inputImgName != nullptr) {
 		// Look up given image object:
 		img = gRepository->GetObject( inputImgName );
-		if ( img == NULL ) {
+		if ( img == nullptr ) {
 			PyErr_SetString(PyRunTimeErrU, "couldn't find object " );
 			
 		}
@@ -675,10 +675,10 @@ PyObject* itkutils_FractEdgeProximity3DCmd( CXX_PYTHON_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *img;
 	vtkStructuredPoints *vtksp;
-	if (inputImgName != NULL) {
+	if (inputImgName != nullptr) {
 		// Look up given image object:
 		img = gRepository->GetObject( inputImgName );
-		if ( img == NULL ) {
+		if ( img == nullptr ) {
 			PyErr_SetString(PyRunTimeErrU, "couldn't find object ");
 			
 		}

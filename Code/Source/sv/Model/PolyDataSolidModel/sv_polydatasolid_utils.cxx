@@ -110,7 +110,7 @@ int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces)
   int check = 0;
   int faceid = 0;
   double range[2];
-  *v_faces = NULL;
+  *v_faces = nullptr;
 
   boundaryScalars = vtkSmartPointer<vtkIntArray>::New();
   if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != SV_OK)
@@ -329,7 +329,7 @@ int PlyDtaUtils_ReadNative( char *filename, vtkPolyData *result)
  * @param *filename Pointer to a char filename of the file to write
  * @param file_version int for filetype
  * @param *geom vtkPolyData that contains the info to be written to file
- * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the write function does not return properly.
  */
 
@@ -419,7 +419,7 @@ int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename
  * @brief Function to combine the ids of two faces in the polydata
  * @param targetface id of the face to set the two faces to have new id of
  * @param loseface id of the second face, id will be lost
- * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the function does not return properly.
  */
 
@@ -465,7 +465,7 @@ int PlyDtaUtils_CombineFaces(vtkPolyData *geom,int *targetface,int *loseface )
  * @brief Function to delete the cells in the polydata
  * @param numfaces this is the number of cells to delete from the polydata
  * @param faces this is an array containing the ids of the cells to delete
- * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the function does not return properly.
  */
 
@@ -492,7 +492,7 @@ int PlyDtaUtils_DeleteCells(vtkPolyData *geom,int *numcells,int *cells )
 /**
  * @brief Function to delete a region in the polydata
  * @param regionid this is the region id to delete all of the cells in
- * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the function does not return properly.
  */
 

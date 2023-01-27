@@ -56,9 +56,9 @@ vtkStandardNewMacro(vtkSVPointSetBoundaryMapper);
 // ----------------------
 vtkSVPointSetBoundaryMapper::vtkSVPointSetBoundaryMapper()
 {
-  this->PointSet = NULL;
+  this->PointSet = nullptr;
   this->BoundaryLengths = vtkDoubleArray::New();
-  this->PointSetBoundaryIds = NULL;
+  this->PointSetBoundaryIds = nullptr;
 }
 
 // ----------------------
@@ -66,7 +66,7 @@ vtkSVPointSetBoundaryMapper::vtkSVPointSetBoundaryMapper()
 // ----------------------
 vtkSVPointSetBoundaryMapper::~vtkSVPointSetBoundaryMapper()
 {
-  if (this->BoundaryLengths != NULL)
+  if (this->BoundaryLengths != nullptr)
   {
     this->BoundaryLengths->Delete();
   }

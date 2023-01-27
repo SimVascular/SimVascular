@@ -54,7 +54,7 @@ class sv4guiConvertProcessHandlerROM : public QObject
     Q_OBJECT
 
 public:
-    sv4guiConvertProcessHandlerROM(QProcess* process, int startStep, int totalSteps, QString runDir, QWidget* parent=NULL);
+    sv4guiConvertProcessHandlerROM(QProcess* process, int startStep, int totalSteps, QString runDir, QWidget* parent=nullptr);
     virtual ~sv4guiConvertProcessHandlerROM();
 
     void Start();

@@ -60,7 +60,7 @@ void sv4guiProjectDuplicateAction::Run(const QList<mitk::DataNode::Pointer> &sel
         return;
 
     bool ok;
-    QString text = QInputDialog::getText(NULL, tr("Duplicate Project"),
+    QString text = QInputDialog::getText(nullptr, tr("Duplicate Project"),
                                          tr("New Project Name:"), QLineEdit::Normal,
                                          QString::fromStdString(selectedNode->GetName())+"_Copy", &ok);
     QString newName=text.trimmed();
@@ -75,7 +75,7 @@ void sv4guiProjectDuplicateAction::Run(const QList<mitk::DataNode::Pointer> &sel
     QString newPath=dir.absolutePath()+"/"+newName;
     if(QDir(newPath).exists())
     {
-        QMessageBox::warning(NULL, "Warning", "A project with the same name already exists!");
+        QMessageBox::warning(nullptr, "Warning", "A project with the same name already exists!");
         return;
     }
 
@@ -90,7 +90,7 @@ void sv4guiProjectDuplicateAction::Run(const QList<mitk::DataNode::Pointer> &sel
     catch(std::exception& e)
     {
         MITK_ERROR << "Project duplicating failed!";
-        QMessageBox::warning(NULL, "Error", QString("An error occurred during duplicating project: %1").arg(e.what()));
+        QMessageBox::warning(nullptr, "Error", QString("An error occurred during duplicating project: %1").arg(e.what()));
     }
 
     mitk::ProgressBar::GetInstance()->Progress(2);

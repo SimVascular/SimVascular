@@ -66,11 +66,11 @@ vtkStandardNewMacro(vtkSVCenterlineMerger);
 // ----------------------
 vtkSVCenterlineMerger::vtkSVCenterlineMerger()
 {
-  this->RadiusArrayName = NULL;
-  this->GroupIdsArrayName = NULL;
-  this->CenterlineIdsArrayName = NULL;
-  this->TractIdsArrayName = NULL;
-  this->BlankingArrayName = NULL;
+  this->RadiusArrayName = nullptr;
+  this->GroupIdsArrayName = nullptr;
+  this->CenterlineIdsArrayName = nullptr;
+  this->TractIdsArrayName = nullptr;
+  this->BlankingArrayName = nullptr;
   this->ResamplingStepLength = 0.0;
   this->MergeBlanked = 1;
 }
@@ -83,31 +83,31 @@ vtkSVCenterlineMerger::~vtkSVCenterlineMerger()
   if (this->RadiusArrayName)
     {
     delete[] this->RadiusArrayName;
-    this->RadiusArrayName = NULL;
+    this->RadiusArrayName = nullptr;
     }
 
   if (this->GroupIdsArrayName)
     {
     delete[] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
     }
 
   if (this->CenterlineIdsArrayName)
     {
     delete[] this->CenterlineIdsArrayName;
-    this->CenterlineIdsArrayName = NULL;
+    this->CenterlineIdsArrayName = nullptr;
     }
 
   if (this->TractIdsArrayName)
     {
     delete[] this->TractIdsArrayName;
-    this->TractIdsArrayName = NULL;
+    this->TractIdsArrayName = nullptr;
     }
 
   if (this->BlankingArrayName)
     {
     delete[] this->BlankingArrayName;
-    this->BlankingArrayName = NULL;
+    this->BlankingArrayName = nullptr;
     }
 }
 
@@ -483,7 +483,7 @@ int vtkSVCenterlineMerger::RequestData(vtkInformation *vtkNotUsed(request), vtkI
     vtkIdType npts;
     const vtkIdType *pts = new vtkIdType;
     npts = 0;
-    pts = NULL;
+    pts = nullptr;
     outputLines->GetNextCell(npts,pts);
     vtkIdType tupleValue[2];
 #if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1

@@ -291,7 +291,7 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
   char *usage;
 
   char *magname;
-  magname = NULL;
+  magname = nullptr;
   char *phasename;
   char *result;
   double venc,vencscale;
@@ -311,11 +311,11 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
   cvRepositoryData *img;
   vtkStructuredPoints *vtkspMag, *vtkspPhase;
 
-  if (magname != NULL) {
+  if (magname != nullptr) {
     mag_weight_flag = 1;
     // Look up given image object:
     img = gRepository->GetObject( magname );
-    if ( img == NULL ) {
+    if ( img == nullptr ) {
       sprintf(tmpStr,"couldn't find object ", magname );
       PyErr_SetString( ImgErr, tmpStr );
       tmpStr[0]='\0';
@@ -337,7 +337,7 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
 
   // Look up given image object:
   img = gRepository->GetObject( phasename );
-  if ( img == NULL ) {
+  if ( img == nullptr ) {
     sprintf(tmpStr,"couldn't find object ", phasename );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
@@ -360,7 +360,7 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( result ) ) {
     sprintf(tmpStr,"object ", result, " already exists",
-		      (char *)NULL);
+		      (char *)nullptr);
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
 
@@ -376,8 +376,8 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
   }
 
   if ( status == SV_ERROR ) {
-    sprintf(tmpStr,"Problem decoding ", magname, " and ",phasename,(char *)NULL ,
-    (char *)NULL);
+    sprintf(tmpStr,"Problem decoding ", magname, " and ",phasename,(char *)nullptr ,
+    (char *)nullptr);
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
     
@@ -453,10 +453,10 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
   vtkStructuredPoints **listImg = new vtkStructuredPoints* [numImages];
   for (i = 0; i < numRegions; i++)
   {
-    if (PyString_AsString(PyList_GetItem(regionsArg,i))  != NULL)
+    if (PyString_AsString(PyList_GetItem(regionsArg,i))  != nullptr)
     {
       pd = gRepository->GetObject( PyString_AsString(PyList_GetItem(regionsArg,i)) );
-      if ( pd == NULL )
+      if ( pd == nullptr )
       {
         sprintf(tmpStr,"couldn't find object ", PyString_AsString(PyList_GetItem(regionsArg,i))  );
         PyErr_SetString( ImgErr, tmpStr );
@@ -482,7 +482,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
     }
     else
     {
-      sprintf(tmpStr,"NULL region pointer encountered ");
+      sprintf(tmpStr,"nullptr region pointer encountered ");
       PyErr_SetString( ImgErr, tmpStr );
       tmpStr[0]='\0';
       delete [] listPd;
@@ -494,10 +494,10 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
   // find the corresponding repository objects to each name
   for (i = 0; i < numImages; i++)
   {
-    if (PyString_AsString(PyList_GetItem(imagesArg,i))  != NULL)
+    if (PyString_AsString(PyList_GetItem(imagesArg,i))  != nullptr)
     {
       img = gRepository->GetObject( PyString_AsString(PyList_GetItem(imagesArg,i)) );
-      if ( img == NULL )
+      if ( img == nullptr )
       {
         sprintf(tmpStr,"couldn't find object ", PyString_AsString(PyList_GetItem(imagesArg,i)));
         PyErr_SetString( ImgErr, tmpStr );
@@ -524,7 +524,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
     }
     else
     {
-      sprintf(tmpStr,"NULL image pointer encountered ");
+      sprintf(tmpStr,"nullptr image pointer encountered ");
       PyErr_SetString( ImgErr, tmpStr );
       tmpStr[0]='\0';
       delete [] listPd;
@@ -650,10 +650,10 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
   // find the corresponding repository objects to each name
   for (i = 0; i < numImages; i++)
   {
-    if (PyString_AsString(PyList_GetItem(imagesArg,i))!= NULL)
+    if (PyString_AsString(PyList_GetItem(imagesArg,i))!= nullptr)
     {
       img = gRepository->GetObject( PyString_AsString(PyList_GetItem(imagesArg,i)));
-      if ( img == NULL )
+      if ( img == nullptr )
       {
         sprintf(tmpStr,"couldn't find object ", PyString_AsString(PyList_GetItem(imagesArg,i)));
         PyErr_SetString( ImgErr, tmpStr );
@@ -678,7 +678,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
     }
     else
     {
-      sprintf(tmpStr, "NULL image pointer encountered ");
+      sprintf(tmpStr, "nullptr image pointer encountered ");
       PyErr_SetString( ImgErr, tmpStr );
       tmpStr[0]='\0';
       delete [] listImg;
@@ -686,16 +686,16 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
     }
   }
 
-  vtkPolyData **listPd = NULL;
+  vtkPolyData **listPd = nullptr;
   if (numRegions > 0)
   {
     listPd = new vtkPolyData* [numRegions];
     for (i = 0; i < numRegions; i++)
     {
-      if (PyString_AsString(PyList_GetItem(regionsArg,i))!= NULL)
+      if (PyString_AsString(PyList_GetItem(regionsArg,i))!= nullptr)
       {
         pd = gRepository->GetObject( PyString_AsString(PyList_GetItem(regionsArg,i)));
-        if ( pd == NULL )
+        if ( pd == nullptr )
         {
           sprintf(tmpStr, "couldn't find object ", PyString_AsString(PyList_GetItem(regionsArg,i)));
           PyErr_SetString( ImgErr, tmpStr );
@@ -720,7 +720,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
       }
       else
       {
-      sprintf(tmpStr, "NULL region pointer encountered " );
+      sprintf(tmpStr, "nullptr region pointer encountered " );
       PyErr_SetString( ImgErr, tmpStr );
       tmpStr[0]='\0';
       delete [] listPd;
@@ -742,7 +742,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
 
   // classify points and calculate correction equation
   double results[6];
-  vtkStructuredPoints* maskImg = NULL;
+  vtkStructuredPoints* maskImg = nullptr;
   int status = img_calcCorrectionEqnAuto(numRegions,listPd,numImages,listImg,order,factor,results,&maskImg);
 
   // clean up
@@ -808,9 +808,9 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
 {
 
   char *imagename;
-  imagename = NULL;
+  imagename = nullptr;
   char *result;
-  result = NULL;
+  result = nullptr;
 
   double thrMin,thrMax;
   int max_num_pts;
@@ -830,11 +830,11 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
   cvRepositoryData *img;
   vtkStructuredPoints *vtksp;
 
-  if (imagename != NULL)
+  if (imagename != nullptr)
   {
     // Look up given image object:
     img = gRepository->GetObject( imagename );
-    if ( img == NULL )
+    if ( img == nullptr )
     {
       sprintf(tmpStr, "couldn't find object %s", imagename);
       PyErr_SetString( ImgErr, tmpStr );
@@ -864,10 +864,10 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
     
   }
 
-  cvPolyData *obj = NULL;
+  cvPolyData *obj = nullptr;
   int status = img_threshold(vtksp, thrMin, thrMax, max_num_pts, &obj);
 
-  if ( status == SV_ERROR || obj == NULL)
+  if ( status == SV_ERROR || obj == nullptr)
   {
     sprintf(tmpStr, "Problem thresholding %s", imagename);
     PyErr_SetString( ImgErr, tmpStr );
@@ -906,7 +906,7 @@ PyObject* Image_ComputeStructuredCoordCmd(PyObject *self, PyObject *args )
   char *imagename;
   PyObject* ptList;
 
-  imagename = NULL;
+  imagename = nullptr;
 
   if (!PyArg_ParseTuple(args,"sO",&imagename, &ptList))
   {
@@ -933,11 +933,11 @@ PyObject* Image_ComputeStructuredCoordCmd(PyObject *self, PyObject *args )
   cvRepositoryData *img;
   vtkStructuredPoints *vtksp;
 
-  if (imagename != NULL)
+  if (imagename != nullptr)
   {
     // Look up given image object:
     img = gRepository->GetObject( imagename );
-    if ( img == NULL )
+    if ( img == nullptr )
     {
       sprintf(tmpStr, "couldn't find object ", imagename);
       PyErr_SetString( ImgErr, tmpStr );
@@ -1031,7 +1031,7 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
 
   // Look up given image object:
   img = gRepository->GetObject( srcName );
-  if ( img == NULL )
+  if ( img == nullptr )
   {
     sprintf(tmpStr,  "couldn't find object ", srcName  );
     PyErr_SetString( ImgErr, tmpStr );
@@ -1071,13 +1071,13 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
   if ( gRepository->Exists( dstName ) )
   {
     sprintf(tmpStr,  "object ", dstName, " already exists",
-    (char *)NULL);
+    (char *)nullptr);
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
     
   }
 
-  vtkStructuredPoints *mapsp = NULL;
+  vtkStructuredPoints *mapsp = nullptr;
   vtkFloatingPointType thrval = thr;
 
   cvDistanceMap* distmap = new cvDistanceMap();
@@ -1147,7 +1147,7 @@ PyObject *Image_FindPathCmd( PyObject *self, PyObject *args )
 
   // Look up given image object:
   img = gRepository->GetObject( srcName );
-  if ( img == NULL )
+  if ( img == nullptr )
   {
     sprintf(tmpStr, "couldn't find object ", srcName  );
     PyErr_SetString( ImgErr, tmpStr );
@@ -1191,7 +1191,7 @@ PyObject *Image_FindPathCmd( PyObject *self, PyObject *args )
     
   }
 
-  vtkStructuredPoints *mapsp = NULL;
+  vtkStructuredPoints *mapsp = nullptr;
 
   cvDistanceMap* distmap = new cvDistanceMap();
   distmap->setDistanceMap(sp);
@@ -1205,7 +1205,7 @@ PyObject *Image_FindPathCmd( PyObject *self, PyObject *args )
     pd = distmap->getPathByThinning(stop,minqstop,maxIter);
   }
 
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     sprintf(tmpStr, "Problem finding path for ", srcName);
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
@@ -1261,7 +1261,7 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
 
   // Look up given image object:
   img = gRepository->GetObject( objName );
-  if ( img == NULL )
+  if ( img == nullptr )
   {
     sprintf(tmpStr, "couldn't find object ", objName  );
     PyErr_SetString( ImgErr, tmpStr );
@@ -1283,7 +1283,7 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
 
   // Look up given mask object:
   mask = gRepository->GetObject( maskName );
-  if ( mask == NULL )
+  if ( mask == nullptr )
   {
     sprintf(tmpStr, "couldn't find object ", maskName   );
     PyErr_SetString( ImgErr, tmpStr );
@@ -1328,23 +1328,23 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
 // pyImage_methods
 // --------------------
 PyMethodDef pyImage_methods[] = {
-  {"ReadHeader_5X", Image_ReadHeaderCmd, METH_VARARGS,NULL},
-  {"Decode", Image_DecodeCmd, METH_VARARGS,NULL},
-  {"CalcCorrectionEqn", Image_CalcCorrectionEqnCmd, METH_VARARGS,NULL},
-  {"CalcCorrectionEqnAuto", Image_CalcCorrectionEqnAutoCmd, METH_VARARGS,NULL},
-  {"SetImageThreshold", Image_ThresholdCmd, METH_VARARGS,NULL},
-  {"ComputeStructuredCoord", Image_ComputeStructuredCoordCmd, METH_VARARGS,NULL},
-  {"CreateDistanceMap", Image_CreateDistanceMapCmd, METH_VARARGS,NULL},
-  {"FindPath", Image_FindPathCmd, METH_VARARGS,NULL},
-  {"Mask", Image_MaskInPlaceCmd, METH_VARARGS,NULL},
-  {NULL, NULL,0,NULL},
+  {"ReadHeader_5X", Image_ReadHeaderCmd, METH_VARARGS,nullptr},
+  {"Decode", Image_DecodeCmd, METH_VARARGS,nullptr},
+  {"CalcCorrectionEqn", Image_CalcCorrectionEqnCmd, METH_VARARGS,nullptr},
+  {"CalcCorrectionEqnAuto", Image_CalcCorrectionEqnAutoCmd, METH_VARARGS,nullptr},
+  {"SetImageThreshold", Image_ThresholdCmd, METH_VARARGS,nullptr},
+  {"ComputeStructuredCoord", Image_ComputeStructuredCoordCmd, METH_VARARGS,nullptr},
+  {"CreateDistanceMap", Image_CreateDistanceMapCmd, METH_VARARGS,nullptr},
+  {"FindPath", Image_FindPathCmd, METH_VARARGS,nullptr},
+  {"Mask", Image_MaskInPlaceCmd, METH_VARARGS,nullptr},
+  {nullptr, nullptr,0,nullptr},
   };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyImagemodule = {
    PyModuleDef_HEAD_INIT,
    "pyImage",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    pyImage_methods
@@ -1363,7 +1363,7 @@ initpyImage(void)
 
   pyIm = Py_InitModule("pyImage",pyImage_methods);
 
-  ImgErr = PyErr_NewException("pyImage.error",NULL,NULL);
+  ImgErr = PyErr_NewException("pyImage.error",nullptr,nullptr);
   Py_INCREF(ImgErr);
   PyModule_AddObject(pyIm,"error",ImgErr);
   return;
@@ -1377,7 +1377,7 @@ PyInit_pyImage(void)
   PyObject *pyIm;
 
   pyIm = PyModule_Create(&pyImagemodule);
-  ImgErr = PyErr_NewException("pyImage.error",NULL,NULL);
+  ImgErr = PyErr_NewException("pyImage.error",nullptr,nullptr);
   Py_INCREF(ImgErr);
   PyModule_AddObject(pyIm,"error",ImgErr);
 

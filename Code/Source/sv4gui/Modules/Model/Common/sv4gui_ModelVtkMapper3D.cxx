@@ -99,7 +99,7 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
 {
     // std::cout << "========== sv4guiModelVtkMapper3D::GenerateDataForRenderer ==========" << std::endl;
     mitk::DataNode* node = GetDataNode();
-    if (node == NULL) {
+    if (node == nullptr) {
         return;
     }
 
@@ -133,7 +133,7 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
     // [TODO:DaveP] I don't think 'wholePolyData'  is ever used. 
     //
     auto wholePolyData = modelElem->GetWholeVtkPolyData();
-    if (wholePolyData == NULL) {
+    if (wholePolyData == nullptr) {
         localStorage->m_PropAssembly->VisibilityOff();
         return;
     }
@@ -640,7 +640,7 @@ void sv4guiModelVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vt
         }
         //pass the texture to the actor
         actor->SetTexture(vtkTxture);
-        if(mapper->GetInput()->GetPointData()->GetTCoords() == NULL)
+        if(mapper->GetInput()->GetPointData()->GetTCoords() == nullptr)
         {
             MITK_ERROR << "Surface.Texture property was set, but there are no texture coordinates. Please provide texture coordinates for the vtkPolyData via vtkPolyData->GetPointData()->SetTCoords().";
         }
@@ -670,11 +670,11 @@ void sv4guiModelVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vt
     else if (deprecatedUsePointData)
     {
         float scalarsMin = 0;
-        if (dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("ScalarsRangeMinimum")) != NULL)
+        if (dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("ScalarsRangeMinimum")) != nullptr)
             scalarsMin = dynamic_cast<mitk::FloatProperty*>(this->GetDataNode()->GetProperty("ScalarsRangeMinimum"))->GetValue();
 
         float scalarsMax = 0.1;
-        if (dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("ScalarsRangeMaximum")) != NULL)
+        if (dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("ScalarsRangeMaximum")) != nullptr)
             scalarsMax = dynamic_cast<mitk::FloatProperty*>(this->GetDataNode()->GetProperty("ScalarsRangeMaximum"))->GetValue();
 
         mapper->SetScalarRange(scalarsMin,scalarsMax);
@@ -698,7 +698,7 @@ void sv4guiModelVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vt
     // this node. Check both renderer specific and global property lists, since
     // properties in both should be considered.
     const mitk::PropertyList::PropertyMap *rendererProperties = this->GetDataNode()->GetPropertyList( renderer )->GetMap();
-    const mitk::PropertyList::PropertyMap *globalProperties = this->GetDataNode()->GetPropertyList( NULL )->GetMap();
+    const mitk::PropertyList::PropertyMap *globalProperties = this->GetDataNode()->GetPropertyList( nullptr )->GetMap();
 
     // Add clipping planes (if any)
     ls->m_ClippingPlaneCollection->RemoveAllItems();
@@ -737,7 +737,7 @@ void sv4guiModelVtkMapper3D::CheckForClippingProperty( mitk::BaseRenderer* rende
 
     mitk::ClippingProperty *clippingProperty = dynamic_cast< mitk::ClippingProperty * >( property );
 
-    if ( (clippingProperty != NULL)
+    if ( (clippingProperty != nullptr)
          && (clippingProperty->GetClippingEnabled()) )
     {
         const mitk::Point3D &origin = clippingProperty->GetOrigin();
@@ -801,7 +801,7 @@ void sv4guiModelVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::Ba
         sv4guiModelElement* modelElement=model->GetModelElement();
 
         if(modelElement && (modelElement->GetWholeVtkPolyData() != 0) && 
-          (modelElement->GetWholeVtkPolyData()->GetPointData() != NULL) && 
+          (modelElement->GetWholeVtkPolyData()->GetPointData() != nullptr) && 
           (modelElement->GetWholeVtkPolyData()->GetPointData()->GetScalars() != 0)) {
             node->AddProperty( "scalar visibility", mitk::BoolProperty::New(true), renderer, overwrite );
             node->AddProperty( "color mode", mitk::BoolProperty::New(true), renderer, overwrite );

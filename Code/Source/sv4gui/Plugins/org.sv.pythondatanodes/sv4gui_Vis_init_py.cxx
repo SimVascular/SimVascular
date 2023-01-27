@@ -119,25 +119,25 @@ PyMODINIT_FUNC PyInit_pyGUI();
 
 PyMethodDef pyGUI_methods[] =
 {
-    {"ImportImg",GUI_ImportImageFromFile,METH_VARARGS,NULL},
-    {"ImportPolyDataFromRepos",GUI_ImportPolyDataFromRepos,METH_VARARGS,NULL},
-    {"ImportUnstructedGridFromRepos",GUI_ImportUnstructuredGridFromRepos,METH_VARARGS,NULL},
-    {"ImportPathFromRepos", GUI_ImportPathFromRepos, METH_VARARGS,NULL},
-    {"ImportContoursFromRepos", GUI_ImportContourFromRepos, METH_VARARGS, NULL},
-    {"ExportModelToRepos",GUI_ExportModelToRepos,METH_VARARGS,NULL},
-    {"ExportMeshToRepos",GUI_ExportMeshToRepos,METH_VARARGS,NULL},
-    {"ExportImageToRepos",GUI_ExportImageToRepos,METH_VARARGS,NULL},
-    {"ExportPathToRepos",GUI_ExportPathToRepos,METH_VARARGS,NULL},
-    {"ExportContourToRepos", GUI_ExportContourToRepos, METH_VARARGS, NULL},
-    {"RemoveDataNode", GUI_RemoveDataNode, METH_VARARGS, NULL},
-    {NULL, NULL,0,NULL},
+    {"ImportImg",GUI_ImportImageFromFile,METH_VARARGS,nullptr},
+    {"ImportPolyDataFromRepos",GUI_ImportPolyDataFromRepos,METH_VARARGS,nullptr},
+    {"ImportUnstructedGridFromRepos",GUI_ImportUnstructuredGridFromRepos,METH_VARARGS,nullptr},
+    {"ImportPathFromRepos", GUI_ImportPathFromRepos, METH_VARARGS,nullptr},
+    {"ImportContoursFromRepos", GUI_ImportContourFromRepos, METH_VARARGS, nullptr},
+    {"ExportModelToRepos",GUI_ExportModelToRepos,METH_VARARGS,nullptr},
+    {"ExportMeshToRepos",GUI_ExportMeshToRepos,METH_VARARGS,nullptr},
+    {"ExportImageToRepos",GUI_ExportImageToRepos,METH_VARARGS,nullptr},
+    {"ExportPathToRepos",GUI_ExportPathToRepos,METH_VARARGS,nullptr},
+    {"ExportContourToRepos", GUI_ExportContourToRepos, METH_VARARGS, nullptr},
+    {"RemoveDataNode", GUI_RemoveDataNode, METH_VARARGS, nullptr},
+    {nullptr, nullptr,0,nullptr},
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyGUImodule = {
    PyModuleDef_HEAD_INIT,
    "pyGUI",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    pyGUI_methods
@@ -154,7 +154,7 @@ PyMODINIT_FUNC initpyGUI(void)
 
   PyObject *pyGUI;
 
-  if ( gRepository == NULL ) {
+  if ( gRepository == nullptr ) {
     gRepository = new cvRepository();
     fprintf( stdout, "gRepository created from pyGUI\n" );
     return;
@@ -162,7 +162,7 @@ PyMODINIT_FUNC initpyGUI(void)
 
   pyGUI = Py_InitModule("pyGUI",pyGUI_methods);
 
-  PyRunTimeErr = PyErr_NewException("pyGUI.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyGUI.error",nullptr,nullptr);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(pyGUI,"error",PyRunTimeErr);
 
@@ -180,12 +180,12 @@ PyMODINIT_FUNC PyInit_pyGUI(void)
   PyObject *pyGUI;
   pyGUI = PyModule_Create(&pyGUImodule);
 
-  if ( gRepository == NULL ) {
+  if ( gRepository == nullptr ) {
     gRepository = new cvRepository();
     fprintf( stdout, "gRepository created from pyGUI\n" );
   }
 
-  PyRunTimeErr = PyErr_NewException("pyGUI.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyGUI.error",nullptr,nullptr);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(pyGUI,"error",PyRunTimeErr);
 
@@ -528,7 +528,7 @@ mitk::DataNode::Pointer searchDataNode(mitk::DataStorage::Pointer dataStorage, m
 
     mitk::DataNode::Pointer pathFolderNode =
             getFolderNode(dataStorage,projFolderNode,folderName);
-    mitk::DataNode::Pointer exitingNode=NULL;
+    mitk::DataNode::Pointer exitingNode=nullptr;
     if(pathFolderNode.IsNull())
         exitingNode=dataStorage->GetNamedNode(nodeName);
     else
@@ -711,7 +711,7 @@ PyObject* GUI_ImportImageFromFile( PyObject* self, PyObject* args)
 PyObject* GUI_ImportPolyDataFromRepos( PyObject* self, PyObject* args)
 {
     char* childName;
-    char* parentName=NULL;
+    char* parentName=nullptr;
     cvRepositoryData *obj;
     mitk::DataNode::Pointer folderNode;
 
@@ -722,7 +722,7 @@ PyObject* GUI_ImportPolyDataFromRepos( PyObject* self, PyObject* args)
     }
 
     obj = gRepository->GetObject( childName );
-    if ( obj == NULL )
+    if ( obj == nullptr )
     {
         PyErr_SetString(PyRunTimeErr, "couldn't find PolyData" );
 
@@ -808,7 +808,7 @@ PyObject* GUI_ImportPolyDataFromRepos( PyObject* self, PyObject* args)
 PyObject* GUI_ImportUnstructuredGridFromRepos( PyObject* self, PyObject* args)
 {
     char* childName;
-    char* parentName=NULL;
+    char* parentName=nullptr;
     cvRepositoryData *obj;
     mitk::DataNode::Pointer folderNode;
 
@@ -819,7 +819,7 @@ PyObject* GUI_ImportUnstructuredGridFromRepos( PyObject* self, PyObject* args)
     }
 
     obj = gRepository->GetObject( childName );
-    if ( obj == NULL )
+    if ( obj == nullptr )
     {
         PyErr_SetString(PyRunTimeErr, "couldn't find unstructured grid" );
 
@@ -975,7 +975,7 @@ PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
     sv4guiModel* model = dynamic_cast<sv4guiModel*> (node->GetData());
     sv4guiModelElement* me = model->GetModelElement();
     vtkSmartPointer<vtkPolyData> pd = me->GetWholeVtkPolyData();
-    if (pd == NULL)
+    if (pd == nullptr)
     {
         PyErr_SetString(PyRunTimeErr, "Error getting polydata from data storage");
 
@@ -1074,7 +1074,7 @@ PyObject* GUI_ExportMeshToRepos( PyObject* self, PyObject* args)
     if (!mitkMesh) return SV_PYTHON_ERROR;
     sv4guiMesh* mesh = mitkMesh->GetMesh();
     vtkSmartPointer<vtkUnstructuredGrid> ug = mesh->GetVolumeMesh();
-    if(ug == NULL)
+    if(ug == nullptr)
     {
         PyErr_SetString(PyRunTimeErr, "Error getting data from data storage");
 
@@ -1228,8 +1228,8 @@ PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
 // -----------------------
 PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
 {
-    char* childName=NULL;
-    char* reposName=NULL;
+    char* childName=nullptr;
+    char* reposName=nullptr;
 
     if(!PyArg_ParseTuple(args,"ss", &childName,&reposName))
     {
@@ -1293,7 +1293,7 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
         }
     }
     sv4guiPath* path = dynamic_cast<sv4guiPath*> (node->GetData());
-    if (path==NULL)
+    if (path==nullptr)
     {
         PyErr_SetString(PyRunTimeErr, "Error getting path from data storage");
 
@@ -1347,7 +1347,7 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
 PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
 {
     char* childName;
-    char* parentName=NULL;
+    char* parentName=nullptr;
     RepositoryDataT type;
     cvRepositoryData *obj;
     mitk::DataNode::Pointer folderNode;
@@ -1359,7 +1359,7 @@ PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
     }
 
     obj = gRepository->GetObject( childName );
-    if ( obj == NULL )
+    if ( obj == nullptr )
     {
         PyErr_SetString(PyRunTimeErr, "couldn't find path" );
 
@@ -1454,8 +1454,8 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
 {
     char* childName;
     char* pathName;
-    char* parentName=NULL;
-    PyObject* srcList=NULL;
+    char* parentName=nullptr;
+    PyObject* srcList=nullptr;
     RepositoryDataT type;
 
     mitk::DataNode::Pointer folderNode;
@@ -1479,7 +1479,7 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
         char* srcName = PyBytes_AsString(PyUnicode_AsUTF8String(PyList_GetItem(srcList,i)));
 #endif
         objs[i] = gRepository->GetObject( srcName );
-        if ( objs[i] == NULL )
+        if ( objs[i] == nullptr )
         {
             sprintf(r, "Couldn't find contour %s", srcName);
             PyErr_SetString(PyRunTimeErr, r );
@@ -1585,8 +1585,8 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
 // -----------------------
 PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
 {
-    char* childName=NULL;
-    PyObject* dstList=NULL;
+    char* childName=nullptr;
+    PyObject* dstList=nullptr;
 
 
     if(!PyArg_ParseTuple(args,"sO", &childName,&dstList))
@@ -1664,7 +1664,7 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
         }
     }
     sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*> (node->GetData());
-    if (group==NULL)
+    if (group==nullptr)
     {
         PyErr_SetString(PyRunTimeErr, "Error getting contour group from data storage");
 
@@ -1675,7 +1675,7 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
         sv4guiContour* contour = group->GetContour(i);
         vtkSmartPointer<vtkPolyData> contourPd = contour->CreateVtkPolyDataFromContour();
         r[0] = '\0';
-        if (contourPd==NULL)
+        if (contourPd==nullptr)
         {
             sprintf(r, "Error getting polydata from contour %s", r);
             PyErr_SetString(PyRunTimeErr, r);
@@ -1697,8 +1697,8 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
 // -----------------------
 PyObject* GUI_RemoveDataNode( PyObject* self, PyObject* args)
 {
-    char* childName=NULL;
-    char* parentName=NULL;
+    char* childName=nullptr;
+    char* parentName=nullptr;
 
 
     if(!PyArg_ParseTuple(args,"ss", &childName,&parentName))

@@ -58,23 +58,23 @@ vtkStandardNewMacro(vtkvmtkPolyDataBranchSections);
 
 vtkvmtkPolyDataBranchSections::vtkvmtkPolyDataBranchSections()
 {
-  this->GroupIdsArrayName = NULL;
+  this->GroupIdsArrayName = nullptr;
 
-  this->Centerlines = NULL;
+  this->Centerlines = nullptr;
 
-  this->CenterlineRadiusArrayName = NULL;
-  this->CenterlineGroupIdsArrayName = NULL;
-  this->CenterlineIdsArrayName = NULL;
-  this->CenterlineTractIdsArrayName = NULL;
-  this->BlankingArrayName = NULL;
+  this->CenterlineRadiusArrayName = nullptr;
+  this->CenterlineGroupIdsArrayName = nullptr;
+  this->CenterlineIdsArrayName = nullptr;
+  this->CenterlineTractIdsArrayName = nullptr;
+  this->BlankingArrayName = nullptr;
 
-  this->BranchSectionGroupIdsArrayName = NULL;
-  this->BranchSectionAreaArrayName = NULL;
-  this->BranchSectionMinSizeArrayName = NULL;
-  this->BranchSectionMaxSizeArrayName = NULL;
-  this->BranchSectionShapeArrayName = NULL;
-  this->BranchSectionClosedArrayName = NULL;
-  this->BranchSectionDistanceSpheresArrayName = NULL;
+  this->BranchSectionGroupIdsArrayName = nullptr;
+  this->BranchSectionAreaArrayName = nullptr;
+  this->BranchSectionMinSizeArrayName = nullptr;
+  this->BranchSectionMaxSizeArrayName = nullptr;
+  this->BranchSectionShapeArrayName = nullptr;
+  this->BranchSectionClosedArrayName = nullptr;
+  this->BranchSectionDistanceSpheresArrayName = nullptr;
 
   this->NumberOfDistanceSpheres = 1;
   this->ReverseDirection = 0;
@@ -85,85 +85,85 @@ vtkvmtkPolyDataBranchSections::~vtkvmtkPolyDataBranchSections()
   if (this->GroupIdsArrayName)
     {
     delete[] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
     }
 
   if (this->Centerlines)
     {
     this->Centerlines->Delete();
-    this->Centerlines = NULL;
+    this->Centerlines = nullptr;
     }
 
   if (this->CenterlineRadiusArrayName)
     {
     delete[] this->CenterlineRadiusArrayName;
-    this->CenterlineRadiusArrayName = NULL;
+    this->CenterlineRadiusArrayName = nullptr;
     }
 
   if (this->CenterlineGroupIdsArrayName)
     {
     delete[] this->CenterlineGroupIdsArrayName;
-    this->CenterlineGroupIdsArrayName = NULL;
+    this->CenterlineGroupIdsArrayName = nullptr;
     }
 
   if (this->CenterlineIdsArrayName)
     {
     delete[] this->CenterlineIdsArrayName;
-    this->CenterlineIdsArrayName = NULL;
+    this->CenterlineIdsArrayName = nullptr;
     }
 
   if (this->CenterlineTractIdsArrayName)
     {
     delete[] this->CenterlineTractIdsArrayName;
-    this->CenterlineTractIdsArrayName = NULL;
+    this->CenterlineTractIdsArrayName = nullptr;
     }
 
   if (this->BlankingArrayName)
     {
     delete[] this->BlankingArrayName;
-    this->BlankingArrayName = NULL;
+    this->BlankingArrayName = nullptr;
     }
 
   if (this->BranchSectionGroupIdsArrayName)
     {
     delete[] this->BranchSectionGroupIdsArrayName;
-    this->BranchSectionGroupIdsArrayName = NULL;
+    this->BranchSectionGroupIdsArrayName = nullptr;
     }
 
   if (this->BranchSectionAreaArrayName)
     {
     delete[] this->BranchSectionAreaArrayName;
-    this->BranchSectionAreaArrayName = NULL;
+    this->BranchSectionAreaArrayName = nullptr;
     }
 
   if (this->BranchSectionMinSizeArrayName)
     {
     delete[] this->BranchSectionMinSizeArrayName;
-    this->BranchSectionMinSizeArrayName = NULL;
+    this->BranchSectionMinSizeArrayName = nullptr;
     }
 
   if (this->BranchSectionMaxSizeArrayName)
     {
     delete[] this->BranchSectionMaxSizeArrayName;
-    this->BranchSectionMaxSizeArrayName = NULL;
+    this->BranchSectionMaxSizeArrayName = nullptr;
     }
 
   if (this->BranchSectionShapeArrayName)
     {
     delete[] this->BranchSectionShapeArrayName;
-    this->BranchSectionShapeArrayName = NULL;
+    this->BranchSectionShapeArrayName = nullptr;
     }
 
   if (this->BranchSectionClosedArrayName)
     {
     delete[] this->BranchSectionClosedArrayName;
-    this->BranchSectionClosedArrayName = NULL;
+    this->BranchSectionClosedArrayName = nullptr;
     }
 
   if (this->BranchSectionDistanceSpheresArrayName)
     {
     delete[] this->BranchSectionDistanceSpheresArrayName;
-    this->BranchSectionDistanceSpheresArrayName = NULL;
+    this->BranchSectionDistanceSpheresArrayName = nullptr;
     }
 }
 

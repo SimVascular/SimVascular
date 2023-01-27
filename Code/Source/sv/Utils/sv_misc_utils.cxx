@@ -158,7 +158,7 @@ int CountLines( char *filename )
 
   prevC = EOF;
   fp = fopen( filename, "r" );
-  if (fp == NULL) return -1;
+  if (fp == nullptr) return -1;
   while ( (c = fgetc(fp)) != EOF ) {
     if (c == '\n') {
       count++;

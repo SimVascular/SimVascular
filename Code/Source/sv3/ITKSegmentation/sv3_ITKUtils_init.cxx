@@ -131,11 +131,11 @@ static int itkutils_GenerateCircleCmd( CXX_TCL_STDARGS )
 
 	int table_size = 5;
 	ARG_Entry arg_table[] = {
-			{ "-result", STRING_Type, &result, NULL, REQUIRED, 0, { 0 } },
-			{ "-r", DOUBLE_Type, &r, NULL, REQUIRED, 0, { 0 } },
-			{ "-x", DOUBLE_Type, &x, NULL, REQUIRED, 0, { 0 } },
-			{ "-y", DOUBLE_Type, &y, NULL, REQUIRED, 0, { 0 } },
-			{ "-z", DOUBLE_Type, &z, NULL, REQUIRED, 0, { 0 } },
+			{ "-result", STRING_Type, &result, nullptr, REQUIRED, 0, { 0 } },
+			{ "-r", DOUBLE_Type, &r, nullptr, REQUIRED, 0, { 0 } },
+			{ "-x", DOUBLE_Type, &x, nullptr, REQUIRED, 0, { 0 } },
+			{ "-y", DOUBLE_Type, &y, nullptr, REQUIRED, 0, { 0 } },
+			{ "-z", DOUBLE_Type, &z, nullptr, REQUIRED, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
@@ -145,7 +145,7 @@ static int itkutils_GenerateCircleCmd( CXX_TCL_STDARGS )
 	// Make sure the specified result object does not exist:
 	CVTCLRepositoryExistsMacro(result)
 
-	cvPolyData *obj = NULL;
+	cvPolyData *obj = nullptr;
 	int loc[3];
 	loc[0] = x;
 	loc[1] = y;
@@ -161,7 +161,7 @@ static int itkutils_GenerateCircleCmd( CXX_TCL_STDARGS )
 	obj->SetName( result );
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		Tcl_AppendResult( interp, "error registering obj ", result,
-				" in repository", (char *)NULL );
+				" in repository", (char *)nullptr );
 		delete obj;
 		return TCL_ERROR;
 	}
@@ -179,8 +179,8 @@ static int itkutils_PdToImgCmd( CXX_TCL_STDARGS )
 
 	int table_size = 2;
 	ARG_Entry arg_table[] = {
-			{ "-src", STRING_Type, &inputPdName, NULL, REQUIRED, 0, { 0 } },
-			{ "-dst", STRING_Type, &result, NULL, REQUIRED, 0, { 0 } },
+			{ "-src", STRING_Type, &inputPdName, nullptr, REQUIRED, 0, { 0 } },
+			{ "-dst", STRING_Type, &result, nullptr, REQUIRED, 0, { 0 } },
 	};
 	usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
 
@@ -191,18 +191,18 @@ static int itkutils_PdToImgCmd( CXX_TCL_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *pd;
 	vtkPolyData *vtkpd;
-	if (inputPdName != NULL) {
+	if (inputPdName != nullptr) {
 		// Look up given image object:
 		pd = gRepository->GetObject( inputPdName );
-		if ( pd == NULL ) {
-			Tcl_AppendResult( interp, "couldn't find object ", inputPdName, (char *)NULL );
+		if ( pd == nullptr ) {
+			Tcl_AppendResult( interp, "couldn't find object ", inputPdName, (char *)nullptr );
 			return TCL_ERROR;
 		}
 		// Make sure image is of type STRUCTURED_PTS_T:
 		type = pd->GetType();
 		if ( type != POLY_DATA_T ) {
 			Tcl_AppendResult( interp, "error: object ", inputPdName,
-					"not of type PolyData", (char *)NULL );
+					"not of type PolyData", (char *)nullptr );
 			return TCL_ERROR;
 		}
 		// Retrive geometric information:
@@ -213,7 +213,7 @@ static int itkutils_PdToImgCmd( CXX_TCL_STDARGS )
 	CVTCLRepositoryExistsMacro(result)
 
 	// Do work of command
-	cvStrPts *obj = NULL;
+	cvStrPts *obj = nullptr;
 	ImgInfo tempInfo;
 
 	cvITKLSUtil::DefaultImgInfo.Print(std::cout);
@@ -225,7 +225,7 @@ static int itkutils_PdToImgCmd( CXX_TCL_STDARGS )
 	obj->SetName( result );
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		Tcl_AppendResult( interp, "error registering obj ", result,
-				" in repository", (char *)NULL );
+				" in repository", (char *)nullptr );
 		delete obj;
 		return TCL_ERROR;
 	}
@@ -246,9 +246,9 @@ static int itkutils_PdToVolCmd( CXX_TCL_STDARGS )
 
 	int table_size = 3;
 	ARG_Entry arg_table[] = {
-			{ "-src", STRING_Type, &inputPdName, NULL, REQUIRED, 0, { 0 } },
-			{ "-dst", STRING_Type, &result, NULL, REQUIRED, 0, { 0 } },
-			{ "-ref", STRING_Type, &refName, NULL, REQUIRED, 0, { 0 } },
+			{ "-src", STRING_Type, &inputPdName, nullptr, REQUIRED, 0, { 0 } },
+			{ "-dst", STRING_Type, &result, nullptr, REQUIRED, 0, { 0 } },
+			{ "-ref", STRING_Type, &refName, nullptr, REQUIRED, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
@@ -260,18 +260,18 @@ static int itkutils_PdToVolCmd( CXX_TCL_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *pd;
 	vtkPolyData *vtkpd;
-	if (inputPdName != NULL) {
+	if (inputPdName != nullptr) {
 		// Look up given image object:
 		pd = gRepository->GetObject( inputPdName );
-		if ( pd == NULL ) {
-			Tcl_AppendResult( interp, "couldn't find object ", inputPdName, (char *)NULL );
+		if ( pd == nullptr ) {
+			Tcl_AppendResult( interp, "couldn't find object ", inputPdName, (char *)nullptr );
 			return TCL_ERROR;
 		}
 		// Make sure image is of type STRUCTURED_PTS_T:
 		type = pd->GetType();
 		if ( type != POLY_DATA_T ) {
 			Tcl_AppendResult( interp, "error: object ", inputPdName,
-					"not of type PolyData", (char *)NULL );
+					"not of type PolyData", (char *)nullptr );
 			return TCL_ERROR;
 		}
 		// Retrive geometric information:
@@ -280,18 +280,18 @@ static int itkutils_PdToVolCmd( CXX_TCL_STDARGS )
 
 	cvRepositoryData *ref;
 	vtkStructuredPoints *vtkref;
-	if (refName != NULL) {
+	if (refName != nullptr) {
 		// Look up given image object:
 		ref = gRepository->GetObject( refName );
-		if ( ref == NULL ) {
-			Tcl_AppendResult( interp, "couldn't find object ", refName, (char *)NULL );
+		if ( ref == nullptr ) {
+			Tcl_AppendResult( interp, "couldn't find object ", refName, (char *)nullptr );
 			return TCL_ERROR;
 		}
 		// Make sure image is of type STRUCTURED_PTS_T:
 		type = ref->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			Tcl_AppendResult( interp, "error: object ", refName,
-					"not of type StructuredPts", (char *)NULL );
+					"not of type StructuredPts", (char *)nullptr );
 			return TCL_ERROR;
 		}
 		// Retrive geometric information:
@@ -302,7 +302,7 @@ static int itkutils_PdToVolCmd( CXX_TCL_STDARGS )
 	CVTCLRepositoryExistsMacro(result)
 
 	// Do work of command
-	cvStrPts *obj = NULL;
+	cvStrPts *obj = nullptr;
 	ImgInfo tempInfo = ImgInfo(vtkref);
 	vtkref->Delete();
 	//tempInfo.Print(std::cout);
@@ -312,7 +312,7 @@ static int itkutils_PdToVolCmd( CXX_TCL_STDARGS )
 	obj->SetName( result );
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		Tcl_AppendResult( interp, "error registering obj ", result,
-				" in repository", (char *)NULL );
+				" in repository", (char *)nullptr );
 		delete obj;
 		return TCL_ERROR;
 	}
@@ -332,8 +332,8 @@ static int itkutils_WriteImageCmd(CXX_TCL_STDARGS)
 
 	int table_size = 2;
 	ARG_Entry arg_table[] = {
-			{ "-src", STRING_Type, &inputImgName, NULL, REQUIRED, 0, { 0 } },
-			{ "-fname", STRING_Type, &fname, NULL, REQUIRED, 0, { 0 } },
+			{ "-src", STRING_Type, &inputImgName, nullptr, REQUIRED, 0, { 0 } },
+			{ "-fname", STRING_Type, &fname, nullptr, REQUIRED, 0, { 0 } },
 	};
 	usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
 
@@ -344,18 +344,18 @@ static int itkutils_WriteImageCmd(CXX_TCL_STDARGS)
 	RepositoryDataT type;
 	cvRepositoryData *img;
 	vtkStructuredPoints *vtksp;
-	if (inputImgName != NULL) {
+	if (inputImgName != nullptr) {
 		// Look up given image object:
 		img = gRepository->GetObject( inputImgName );
-		if ( img == NULL ) {
-			Tcl_AppendResult( interp, "couldn't find object ", inputImgName, (char *)NULL );
+		if ( img == nullptr ) {
+			Tcl_AppendResult( interp, "couldn't find object ", inputImgName, (char *)nullptr );
 			return TCL_ERROR;
 		}
 		// Make sure image is of type STRUCTURED_PTS_T:
 		type = img->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			Tcl_AppendResult( interp, "error: object ", inputImgName,
-					"not of type StructuredPts", (char *)NULL );
+					"not of type StructuredPts", (char *)nullptr );
 			return TCL_ERROR;
 		}
 		// Retrive geometric information:
@@ -382,9 +382,9 @@ int itkutils_GradientMagnitudeGaussianCmd( CXX_TCL_STDARGS )
 
 	int table_size = 3;
 	ARG_Entry arg_table[] = {
-			{ "-src", STRING_Type, &inputImgName, NULL, REQUIRED, 0, { 0 } },
-			{ "-dst", STRING_Type, &result, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigma", DOUBLE_Type, &sigma, NULL, REQUIRED, 0, { 0 } },
+			{ "-src", STRING_Type, &inputImgName, nullptr, REQUIRED, 0, { 0 } },
+			{ "-dst", STRING_Type, &result, nullptr, REQUIRED, 0, { 0 } },
+			{ "-sigma", DOUBLE_Type, &sigma, nullptr, REQUIRED, 0, { 0 } },
 	};
 	usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
 
@@ -396,11 +396,11 @@ int itkutils_GradientMagnitudeGaussianCmd( CXX_TCL_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *img;
 	vtkStructuredPoints *vtksp;
-	if (inputImgName != NULL) {
+	if (inputImgName != nullptr) {
 		// Look up given image object:
 		img = gRepository->GetObject( inputImgName );
-		if ( img == NULL ) {
-			Tcl_AppendResult( interp, "couldn't find object ", inputImgName, (char *)NULL );
+		if ( img == nullptr ) {
+			Tcl_AppendResult( interp, "couldn't find object ", inputImgName, (char *)nullptr );
 			return TCL_ERROR;
 		}
 
@@ -408,7 +408,7 @@ int itkutils_GradientMagnitudeGaussianCmd( CXX_TCL_STDARGS )
 		type = img->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			Tcl_AppendResult( interp, "error: object ", inputImgName,
-					"not of type StructuredPts", (char *)NULL );
+					"not of type StructuredPts", (char *)nullptr );
 			return TCL_ERROR;
 		}
 		// Retrive geometric information:
@@ -432,7 +432,7 @@ int itkutils_GradientMagnitudeGaussianCmd( CXX_TCL_STDARGS )
 	obj->SetName( result );
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		Tcl_AppendResult( interp, "error registering obj ", result,
-				" in repository", (char *)NULL );
+				" in repository", (char *)nullptr );
 		delete obj;
 		return TCL_ERROR;
 	}
@@ -453,9 +453,9 @@ int itkutils_GaussianCmd( CXX_TCL_STDARGS )
 
 	int table_size = 3;
 	ARG_Entry arg_table[] = {
-			{ "-src", STRING_Type, &inputImgName, NULL, REQUIRED, 0, { 0 } },
-			{ "-dst", STRING_Type, &result, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigma", DOUBLE_Type, &sigma, NULL, REQUIRED, 0, { 0 } },
+			{ "-src", STRING_Type, &inputImgName, nullptr, REQUIRED, 0, { 0 } },
+			{ "-dst", STRING_Type, &result, nullptr, REQUIRED, 0, { 0 } },
+			{ "-sigma", DOUBLE_Type, &sigma, nullptr, REQUIRED, 0, { 0 } },
 	};
 	usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
 
@@ -467,11 +467,11 @@ int itkutils_GaussianCmd( CXX_TCL_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *img;
 	vtkStructuredPoints *vtksp;
-	if (inputImgName != NULL) {
+	if (inputImgName != nullptr) {
 		// Look up given image object:
 		img = gRepository->GetObject( inputImgName );
-		if ( img == NULL ) {
-			Tcl_AppendResult( interp, "couldn't find object ", inputImgName, (char *)NULL );
+		if ( img == nullptr ) {
+			Tcl_AppendResult( interp, "couldn't find object ", inputImgName, (char *)nullptr );
 			return TCL_ERROR;
 		}
 
@@ -479,7 +479,7 @@ int itkutils_GaussianCmd( CXX_TCL_STDARGS )
 		type = img->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			Tcl_AppendResult( interp, "error: object ", inputImgName,
-					"not of type StructuredPts", (char *)NULL );
+					"not of type StructuredPts", (char *)nullptr );
 			return TCL_ERROR;
 		}
 		// Retrive geometric information:
@@ -503,7 +503,7 @@ int itkutils_GaussianCmd( CXX_TCL_STDARGS )
 	obj->SetName( result );
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		Tcl_AppendResult( interp, "error registering obj ", result,
-				" in repository", (char *)NULL );
+				" in repository", (char *)nullptr );
 		delete obj;
 		return TCL_ERROR;
 	}
@@ -524,9 +524,9 @@ int itkutils_DistanceImageCmd( CXX_TCL_STDARGS )
 
 	int table_size = 3;
 	ARG_Entry arg_table[] = {
-			{ "-src", STRING_Type, &inputImgName, NULL, REQUIRED, 0, { 0 } },
-			{ "-dst", STRING_Type, &result, NULL, REQUIRED, 0, { 0 } },
-			{ "-thres", DOUBLE_Type, &thres, NULL, REQUIRED, 0, { 0 } },
+			{ "-src", STRING_Type, &inputImgName, nullptr, REQUIRED, 0, { 0 } },
+			{ "-dst", STRING_Type, &result, nullptr, REQUIRED, 0, { 0 } },
+			{ "-thres", DOUBLE_Type, &thres, nullptr, REQUIRED, 0, { 0 } },
 	};
 	usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
 
@@ -538,11 +538,11 @@ int itkutils_DistanceImageCmd( CXX_TCL_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *img;
 	vtkStructuredPoints *vtksp;
-	if (inputImgName != NULL) {
+	if (inputImgName != nullptr) {
 		// Look up given image object:
 		img = gRepository->GetObject( inputImgName );
-		if ( img == NULL ) {
-			Tcl_AppendResult( interp, "couldn't find object ", inputImgName, (char *)NULL );
+		if ( img == nullptr ) {
+			Tcl_AppendResult( interp, "couldn't find object ", inputImgName, (char *)nullptr );
 			return TCL_ERROR;
 		}
 
@@ -550,7 +550,7 @@ int itkutils_DistanceImageCmd( CXX_TCL_STDARGS )
 		type = img->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			Tcl_AppendResult( interp, "error: object ", inputImgName,
-					"not of type StructuredPts", (char *)NULL );
+					"not of type StructuredPts", (char *)nullptr );
 			return TCL_ERROR;
 		}
 		// Retrive geometric information:
@@ -574,7 +574,7 @@ int itkutils_DistanceImageCmd( CXX_TCL_STDARGS )
 	obj->SetName( result );
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		Tcl_AppendResult( interp, "error registering obj ", result,
-				" in repository", (char *)NULL );
+				" in repository", (char *)nullptr );
 		delete obj;
 		return TCL_ERROR;
 	}
@@ -596,9 +596,9 @@ int itkutils_ThresholdImageCmd( CXX_TCL_STDARGS )
 
 	int table_size = 3;
 	ARG_Entry arg_table[] = {
-			{ "-src", STRING_Type, &inputImgName, NULL, REQUIRED, 0, { 0 } },
-			{ "-dst", STRING_Type, &result, NULL, REQUIRED, 0, { 0 } },
-			{ "-thres", DOUBLE_Type, &thres, NULL, REQUIRED, 0, { 0 } },
+			{ "-src", STRING_Type, &inputImgName, nullptr, REQUIRED, 0, { 0 } },
+			{ "-dst", STRING_Type, &result, nullptr, REQUIRED, 0, { 0 } },
+			{ "-thres", DOUBLE_Type, &thres, nullptr, REQUIRED, 0, { 0 } },
 	};
 	usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
 
@@ -610,11 +610,11 @@ int itkutils_ThresholdImageCmd( CXX_TCL_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *img;
 	vtkStructuredPoints *vtksp;
-	if (inputImgName != NULL) {
+	if (inputImgName != nullptr) {
 		// Look up given image object:
 		img = gRepository->GetObject( inputImgName );
-		if ( img == NULL ) {
-			Tcl_AppendResult( interp, "couldn't find object ", inputImgName, (char *)NULL );
+		if ( img == nullptr ) {
+			Tcl_AppendResult( interp, "couldn't find object ", inputImgName, (char *)nullptr );
 			return TCL_ERROR;
 		}
 
@@ -622,7 +622,7 @@ int itkutils_ThresholdImageCmd( CXX_TCL_STDARGS )
 		type = img->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			Tcl_AppendResult( interp, "error: object ", inputImgName,
-					"not of type StructuredPts", (char *)NULL );
+					"not of type StructuredPts", (char *)nullptr );
 			return TCL_ERROR;
 		}
 		// Retrive geometric information:
@@ -646,7 +646,7 @@ int itkutils_ThresholdImageCmd( CXX_TCL_STDARGS )
 	obj->SetName( result );
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		Tcl_AppendResult( interp, "error registering obj ", result,
-				" in repository", (char *)NULL );
+				" in repository", (char *)nullptr );
 		delete obj;
 		return TCL_ERROR;
 	}
@@ -668,11 +668,11 @@ int itkutils_FractEdgeProximity3DCmd( CXX_TCL_STDARGS )
 
 	int table_size = 5;
 	ARG_Entry arg_table[] = {
-			{ "-src", STRING_Type, &inputImgName, NULL, REQUIRED, 0, { 0 } },
-			{ "-dst", STRING_Type, &result, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigma", DOUBLE_Type, &sigma, NULL, REQUIRED, 0, { 0 } },
-			{ "-kappa", DOUBLE_Type, &kappa, NULL, REQUIRED, 0, { 0 } },
-			{ "-exponent", DOUBLE_Type, &exponent, NULL, REQUIRED, 0, { 0 } }
+			{ "-src", STRING_Type, &inputImgName, nullptr, REQUIRED, 0, { 0 } },
+			{ "-dst", STRING_Type, &result, nullptr, REQUIRED, 0, { 0 } },
+			{ "-sigma", DOUBLE_Type, &sigma, nullptr, REQUIRED, 0, { 0 } },
+			{ "-kappa", DOUBLE_Type, &kappa, nullptr, REQUIRED, 0, { 0 } },
+			{ "-exponent", DOUBLE_Type, &exponent, nullptr, REQUIRED, 0, { 0 } }
 	};
 	usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
 
@@ -684,11 +684,11 @@ int itkutils_FractEdgeProximity3DCmd( CXX_TCL_STDARGS )
 	RepositoryDataT type;
 	cvRepositoryData *img;
 	vtkStructuredPoints *vtksp;
-	if (inputImgName != NULL) {
+	if (inputImgName != nullptr) {
 		// Look up given image object:
 		img = gRepository->GetObject( inputImgName );
-		if ( img == NULL ) {
-			Tcl_AppendResult( interp, "couldn't find object ", inputImgName, (char *)NULL );
+		if ( img == nullptr ) {
+			Tcl_AppendResult( interp, "couldn't find object ", inputImgName, (char *)nullptr );
 			return TCL_ERROR;
 		}
 
@@ -696,7 +696,7 @@ int itkutils_FractEdgeProximity3DCmd( CXX_TCL_STDARGS )
 		type = img->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			Tcl_AppendResult( interp, "error: object ", inputImgName,
-					"not of type StructuredPts", (char *)NULL );
+					"not of type StructuredPts", (char *)nullptr );
 			return TCL_ERROR;
 		}
 		// Retrive geometric information:
@@ -723,7 +723,7 @@ int itkutils_FractEdgeProximity3DCmd( CXX_TCL_STDARGS )
 	obj->SetName( result );
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		Tcl_AppendResult( interp, "error registering obj ", result,
-				" in repository", (char *)NULL );
+				" in repository", (char *)nullptr );
 		delete obj;
 		return TCL_ERROR;
 	}

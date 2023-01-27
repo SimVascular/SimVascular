@@ -305,13 +305,13 @@ svCatchDebugger() {
 	//#ifdef BUILD_WITH_STDOUT_STDERR_REDIRECT
         simvascularstdout = freopen( filestdout, "w", stdout );
         // Note: freopen is deprecated; consider using freopen_s instead
-        if( simvascularstdout == NULL ) {
+        if( simvascularstdout == nullptr ) {
           fprintf( stdout, "error on reassigning stdout\n" );
           fflush ( stdout );
         }
         simvascularstderr = freopen( filestderr, "w", stderr );
         // Note: freopen is deprecated; consider using freopen_s instead
-        if( simvascularstderr == NULL ) {
+        if( simvascularstderr == nullptr ) {
           fprintf( stderr, "error on reassigning stderr\n" );
           fflush ( stderr );
 	}
@@ -370,7 +370,7 @@ svCatchDebugger() {
   }
 
   char *envstr=getenv("SV_BATCH_MODE");
-  if (envstr != NULL) {
+  if (envstr != nullptr) {
     fprintf(stdout,"\n  Using SimVascular in batch mode.\n");
     gSimVascularBatchMode = 1;
   }

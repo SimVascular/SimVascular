@@ -115,7 +115,7 @@ void sv4guiCloseProjectAction::Run()
             return;
 
         berry::ISelectionService* selectionService =window->GetSelectionService();
-        if(selectionService==NULL)
+        if(selectionService==nullptr)
             return;
 
         mitk::DataNodeSelection::ConstPointer nodeSelection = selectionService->GetSelection().Cast<const mitk::DataNodeSelection>();
@@ -137,7 +137,7 @@ void sv4guiCloseProjectAction::Run()
           }
 
           QString msg = "Are you sure that you want to close the project "+QString::fromStdString(selectedNode->GetName())+"?";
-          if (QMessageBox::question(NULL, "Close Project", msg,
+          if (QMessageBox::question(nullptr, "Close Project", msg,
                                     QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
           {
               mitk::StatusBar::GetInstance()->DisplayText("Not closing project.");

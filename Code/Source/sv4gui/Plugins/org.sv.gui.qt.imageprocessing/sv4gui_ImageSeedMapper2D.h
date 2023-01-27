@@ -91,7 +91,7 @@ class sv4guiImageSeedMapper2D : public mitk::VtkMapper
 
     mitk::LocalStorageHandler<LocalStorage> m_LSH;
 
-    //static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = NULL, bool overwrite = false);
+    //static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = nullptr, bool overwrite = false);
 
     double m_SeedRadius = 0.5;
 

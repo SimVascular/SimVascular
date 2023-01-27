@@ -509,7 +509,7 @@ static PyObject *
 Dmg_add_mesh(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("sOOs", PyRunTimeErr, __func__);
-  static char *keywords[] = {"name", "volume", "surface", "model", NULL};
+  static char *keywords[] = {"name", "volume", "surface", "model", nullptr};
   char* meshName;
   PyObject* volumeArg;
   PyObject* surfaceArg;
@@ -698,7 +698,7 @@ Dmg_get_mesh(PyObject* self, PyObject* args)
   auto mesh = mitkMesh->GetMesh();
   auto ugrid = mesh->GetVolumeMesh();
 
-  if (ugrid == NULL) {
+  if (ugrid == nullptr) {
       api.error("Unable to get Mesh unstructured grid for '" + std::string(meshName) + "' from the SV Data Manager.");
       return nullptr;
   }
@@ -730,7 +730,7 @@ static PyObject *
 Dmg_get_path(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  char* pathName = NULL;
+  char* pathName = nullptr;
 
   if (!PyArg_ParseTuple(args, api.format, &pathName)) {
       return api.argsError();
@@ -793,9 +793,9 @@ static PyObject *
 Dmg_add_path(PyObject* self, PyObject* args, PyObject* kwargs)
 {
     auto api = PyUtilApiFunction("sO!", PyRunTimeErr, __func__);
-    static char *keywords[] = {"name", "path", NULL};
+    static char *keywords[] = {"name", "path", nullptr};
     PyObject* pathArg;
-    char* pathName = NULL;
+    char* pathName = nullptr;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &pathName, &PyPathType, &pathArg)) {
         return api.argsError();
@@ -861,10 +861,10 @@ static PyObject *
 Dmg_add_segmentation(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("ssO!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"name", "path", "segmentations", NULL};
+  static char *keywords[] = {"name", "path", "segmentations", nullptr};
   PyObject* segList;
-  char* segName = NULL;
-  char* pathName = NULL;
+  char* segName = nullptr;
+  char* pathName = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &segName, &pathName, &PyList_Type, &segList)) {
       return api.argsError();
@@ -952,11 +952,11 @@ Dmg_add_geometry(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   using namespace SvDataManagerNodes;
   auto api = PyUtilApiFunction("sOss", PyRunTimeErr, __func__);
-  static char *keywords[] = {"name", "geometry", "plugin", "node", NULL};
-  char* geomName = NULL;
+  static char *keywords[] = {"name", "geometry", "plugin", "node", nullptr};
+  char* geomName = nullptr;
   PyObject* geomObj;
-  char* pluginName = NULL;
-  char* nodeName = NULL;
+  char* pluginName = nullptr;
+  char* nodeName = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &geomName, &geomObj, &pluginName, &nodeName)) {
       return api.argsError();
@@ -1045,8 +1045,8 @@ static PyObject *
 Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("sO", PyRunTimeErr, __func__);
-  static char *keywords[] = {"name", "model", NULL};
-  char* modelName = NULL;
+  static char *keywords[] = {"name", "model", nullptr};
+  char* modelName = nullptr;
   PyObject* modelArg;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &modelName, &modelArg)) {
@@ -1152,7 +1152,7 @@ Dmg_get_segmentations(PyObject* self, PyObject* args)
 
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  char* segName = NULL;
+  char* segName = nullptr;
 
   if (!PyArg_ParseTuple(args, api.format, &segName)) {
       return api.argsError();
@@ -1180,7 +1180,7 @@ Dmg_get_segmentations(PyObject* self, PyObject* args)
 
   // Get the contour group from the data node.
   sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*>(node->GetData());
-  if (group == NULL) {
+  if (group == nullptr) {
       api.error("Unable to get the segmentations for the node named '" + std::string(segName) + "' from the SV Data Manager.");
       return nullptr;
   }
@@ -1220,8 +1220,8 @@ static PyObject *
 Dmg_remove_data_node(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss", PyRunTimeErr, __func__);
-  char* folderName = NULL;
-  char* nodeName = NULL;
+  char* folderName = nullptr;
+  char* nodeName = nullptr;
 
   if (!PyArg_ParseTuple(args, api.format, &folderName, &nodeName)) {
       return api.argsError();
@@ -1329,7 +1329,7 @@ PyMethodDef PyDmgMethods[] =
     // [TODO:DaveP] not sure to expose this or not, a bit dangerous.
     // {"remove_data_node", Dmg_remove_data_node, METH_VARARGS, Dmg_remove_data_node_doc},
 
-    {NULL, NULL,0,NULL},
+    {nullptr, nullptr,0,nullptr},
 };
 
 //-----------------------
@@ -1371,13 +1371,13 @@ PyInit_PyDmg(void)
 {
   // Create the dmg module.
   auto module = PyModule_Create(&PyDmgModule);
-  if (module == NULL) {
+  if (module == nullptr) {
     fprintf(stdout, "Error initializing the dmg module.\n");
     return SV_PYTHON_ERROR;
   }
 
   // Add dmg.DmgError exception.
-  PyRunTimeErr = PyErr_NewException(DMG_EXCEPTION, NULL, NULL);
+  PyRunTimeErr = PyErr_NewException(DMG_EXCEPTION, nullptr, nullptr);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(module, DMG_EXCEPTION_OBJECT, PyRunTimeErr);
 
@@ -1399,7 +1399,7 @@ PyMODINIT_FUNC initpyDmg(void)
 {
   PyObject *pyDmg;
 
-  if ( gRepository == NULL ) {
+  if ( gRepository == nullptr ) {
     gRepository = new cvRepository();
     fprintf( stdout, "gRepository created from pyDmg\n" );
     return;
@@ -1407,7 +1407,7 @@ PyMODINIT_FUNC initpyDmg(void)
 
   pyDmg = Py_InitModule("pyDmg", PyDmgMethods);
 
-  PyRunTimeErr = PyErr_NewException("dmg.DmgError",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("dmg.DmgError",nullptr,nullptr);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(pyDmg,"DmgError",PyRunTimeErr);
 

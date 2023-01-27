@@ -61,7 +61,7 @@ void sv4guiProjectSaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
     catch(std::exception& e)
     {
         MITK_ERROR << "Project saving failed!";
-        QMessageBox::warning(NULL, "Error", QString("An error occurred during saving project: %1").arg(e.what()));
+        QMessageBox::warning(nullptr, "Error", QString("An error occurred during saving project: %1").arg(e.what()));
     }
 }
 

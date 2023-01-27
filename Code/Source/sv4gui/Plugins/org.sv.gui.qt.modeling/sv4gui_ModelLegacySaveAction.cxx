@@ -101,7 +101,7 @@ void sv4guiModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &sele
         if(lastFileSavePath=="")
             lastFileSavePath=QDir::homePath();
 
-        QString fileName = QFileDialog::getSaveFileName(NULL
+        QString fileName = QFileDialog::getSaveFileName(nullptr
                                                         ,tr("Export Solid Model")
                                                         ,lastFileSavePath
                                                         ,fileFilter);

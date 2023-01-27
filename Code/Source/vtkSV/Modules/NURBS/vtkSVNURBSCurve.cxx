@@ -67,16 +67,16 @@ vtkSVNURBSCurve::vtkSVNURBSCurve()
 // ----------------------
 vtkSVNURBSCurve::~vtkSVNURBSCurve()
 {
-  if (this->ControlPointGrid != NULL)
+  if (this->ControlPointGrid != nullptr)
   {
     this->ControlPointGrid->Delete();
   }
-  if (this->KnotVector != NULL)
+  if (this->KnotVector != nullptr)
   {
     this->KnotVector->Delete();
   }
 
-  if (this->CurveRepresentation != NULL)
+  if (this->CurveRepresentation != nullptr)
   {
     this->CurveRepresentation->Delete();
   }
@@ -189,8 +189,8 @@ int vtkSVNURBSCurve::IncreaseDegree(const int numberOfIncreases)
   vtkNew(vtkSVControlGrid, newControlPoints);
 
   // Increase the degree
-  vtkDoubleArray *vKnots = NULL; // just one direction for curve
-  vtkDoubleArray *newVKnots = NULL; // just one direction for curve
+  vtkDoubleArray *vKnots = nullptr; // just one direction for curve
+  vtkDoubleArray *newVKnots = nullptr; // just one direction for curve
   int q = 0; // just one direction for curve
   int dir = 0; // just one directio for curve
   if (vtkSVNURBSUtils::IncreaseDegree(this->ControlPointGrid,
@@ -273,8 +273,8 @@ int vtkSVNURBSCurve::InsertKnot(const double newKnot, const int numberOfInserts)
   vtkNew(vtkSVControlGrid, newControlPoints);
 
   // Insert the knot
-  vtkDoubleArray *vKnots = NULL; // just one direction for curve
-  vtkDoubleArray *newVKnots = NULL; // just one direction for curve
+  vtkDoubleArray *vKnots = nullptr; // just one direction for curve
+  vtkDoubleArray *newVKnots = nullptr; // just one direction for curve
   int q = 0; // just one direction for curve
   int dir = 0; // just one directio for curve
   if (vtkSVNURBSUtils::InsertKnot(this->ControlPointGrid,
@@ -308,8 +308,8 @@ int vtkSVNURBSCurve::InsertKnots(vtkDoubleArray *newKnots)
   vtkNew(vtkDoubleArray, newKnotSpan);
   vtkNew(vtkSVControlGrid, newControlPoints);
 
-  vtkDoubleArray *vKnots = NULL; // just one direction for curve
-  vtkDoubleArray *newVKnots = NULL; // just one direction for curve
+  vtkDoubleArray *vKnots = nullptr; // just one direction for curve
+  vtkDoubleArray *newVKnots = nullptr; // just one direction for curve
   int q = 0; // just one direction for curve
   int dir = 0; // just one directio for curve
   if (vtkSVNURBSUtils::KnotRefinement(this->ControlPointGrid,
@@ -377,8 +377,8 @@ int vtkSVNURBSCurve::RemoveKnotAtIndex(const int knotIndex, const int numberOfRe
   vtkNew(vtkSVControlGrid, newControlPoints);
 
   // Remove the knot
-  vtkDoubleArray *vKnots = NULL; // just one direction for curve
-  vtkDoubleArray *newVKnots = NULL; // just one direction for curve
+  vtkDoubleArray *vKnots = nullptr; // just one direction for curve
+  vtkDoubleArray *newVKnots = nullptr; // just one direction for curve
   int q = 0; // just one direction for curve
   int dir = 0; // just one directio for curve
   if (vtkSVNURBSUtils::RemoveKnot(this->ControlPointGrid,

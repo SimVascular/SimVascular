@@ -118,9 +118,9 @@ static PyObject *
 ModelingSeries_get_model(PyModelingSeries* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("|i", PyRunTimeErr, __func__);
-  static char *keywords[] = {"time", NULL};
+  static char *keywords[] = {"time", nullptr};
   int index = 0;
-  char* solidName = NULL;
+  char* solidName = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &index)) {
      return api.argsError();
@@ -183,8 +183,8 @@ static PyObject *
 ModelingSeries_write(PyModelingSeries* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", NULL};
-  char* fileNameArg = NULL;
+  static char *keywords[] = {"file_name", nullptr};
+  char* fileNameArg = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileNameArg)) {
       return api.argsError();
@@ -250,7 +250,7 @@ static PyMethodDef PyModelingSeriesMethods[] = {
 
   {"write", (PyCFunction)ModelingSeries_write, METH_VARARGS|METH_KEYWORDS, ModelingSeries_write_doc},
 
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //----------------------
@@ -262,7 +262,7 @@ static PyMethodDef PyModelingSeriesMethods[] = {
 // designated initializers.
 //
 PyTypeObject PyModelingSeriesType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   MODELING_SERIES_MODULE_CLASS,
   sizeof(PyModelingSeries)
 };
@@ -315,7 +315,7 @@ PyModelingSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   //std::cout << "[PyModelingSeriesNew] PyModelingSeriesNew " << std::endl;
   auto self = (PyModelingModel*)type->tp_alloc(type, 0);
   //auto self = (PyContour*)type->tp_alloc(type, 0);
-  if (self == NULL) {
+  if (self == nullptr) {
       std::cout << "[PyModelingSeriesNew] ERROR: Can't allocate type." << std::endl;
       return nullptr;
   }
@@ -368,7 +368,7 @@ SetModelingSeriesTypeFields(PyTypeObject& solidType)
 PyObject *
 CreatePyModelingSeries(sv4guiModel::Pointer solidGroup)
 {
-  auto modelingSeriesObj = PyObject_CallObject((PyObject*)&PyModelingSeriesType, NULL);
+  auto modelingSeriesObj = PyObject_CallObject((PyObject*)&PyModelingSeriesType, nullptr);
   auto pyModelingSeries = (PyModelingSeries*)modelingSeriesObj;
   if (solidGroup != nullptr) {
       //delete pyModelingSeries->solidGroup;

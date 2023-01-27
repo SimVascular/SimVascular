@@ -94,7 +94,7 @@ sv4guiPath* sv4guiSegmentationLegacyLoadAction::GetPath(int groupPathID, std::st
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void sv4guiSegmentationLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
@@ -129,7 +129,7 @@ void sv4guiSegmentationLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer
         if(lastFilePath=="")
             lastFilePath=QDir::homePath();
 
-        QString segDir = QFileDialog::getExistingDirectory(NULL, tr("Import Legacy Segmentations (Choose Directory)"),
+        QString segDir = QFileDialog::getExistingDirectory(nullptr, tr("Import Legacy Segmentations (Choose Directory)"),
                                                              lastFilePath);
 
         segDir=segDir.trimmed();
@@ -151,7 +151,7 @@ void sv4guiSegmentationLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer
             if(contourGroup)
             {
                 sv4guiPath* path=GetPath(contourGroup->GetPathID(), contourGroup->GetPathName(), selectedNode);
-                sv4guiPathElement* pe=NULL;
+                sv4guiPathElement* pe=nullptr;
                 if(path)
                 {
                     pe=path->GetPathElement();

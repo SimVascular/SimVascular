@@ -63,7 +63,7 @@ static char* KNOT_SPAN_TYPE_MODULE_CLASS = "geometry.LoftNurbsOptions.KnotSpanTy
 //---------------------------------
 //
 static PyTypeObject PyLoftNurbsOptions_KnotSpanType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   KNOT_SPAN_TYPE_MODULE_CLASS,
   sizeof(PyLoftNurbsOptions_KnotSpan)
 };
@@ -76,7 +76,7 @@ static PyObject *
 PyLoftNurbsOptions_KnotSpanTypeNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   auto self = (PyLoftNurbsOptions_KnotSpan*)type->tp_alloc(type, 0);
-  if (self == NULL) {
+  if (self == nullptr) {
       return nullptr;
   }
 
@@ -154,7 +154,7 @@ static char* PARAMETRIC_SPAN_TYPE_MODULE_CLASS = "geometry.LoftNurbsOptions.Para
 //---------------------------------------
 //
 static PyTypeObject PyLoftNurbsOptions_ParametricSpanType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   PARAMETRIC_SPAN_TYPE_MODULE_CLASS,
   sizeof(PyLoftNurbsOptions_ParametricSpan)
 };
@@ -167,7 +167,7 @@ static PyObject *
 PyLoftNurbsOptions_ParametricSpanTypeNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   auto self = (PyLoftNurbsOptions_ParametricSpan*)type->tp_alloc(type, 0);
-  if (self == NULL) {
+  if (self == nullptr) {
       return nullptr;
   }
 

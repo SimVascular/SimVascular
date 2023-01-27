@@ -89,30 +89,30 @@ const QString sv4guiSeg2DEdit::EXTENSION_ID = "org.sv.views.segmentation2d";
 sv4guiSeg2DEdit::sv4guiSeg2DEdit() : ui(new Ui::sv4guiSeg2DEdit)
 {
     m_ContourGroupChangeObserverTag=-1;
-    m_ContourGroup=NULL;
-    m_ContourGroupNode=NULL;
-    m_GroupFolderNode=NULL;
-    m_Path=NULL;
-    m_PathNode=NULL;
-    m_Image=NULL;
-    m_cvImage=NULL;
-    m_LoftWidget=NULL;
-    m_LSParamWidget=NULL;
+    m_ContourGroup=nullptr;
+    m_ContourGroupNode=nullptr;
+    m_GroupFolderNode=nullptr;
+    m_Path=nullptr;
+    m_PathNode=nullptr;
+    m_Image=nullptr;
+    m_cvImage=nullptr;
+    m_LoftWidget=nullptr;
+    m_LSParamWidget=nullptr;
     m_StartLoftContourGroupObserverTag=-1;
     m_StartLoftContourGroupObserverTag2=-1;
     m_StartChangingContourObserverTag=-1;
     m_EndChangingContourObserverTag=-1;
     m_SelectContourObserverTag=-1;
     m_ContourChanging=false;
-    m_DataInteractor=NULL;
+    m_DataInteractor=nullptr;
 
-    m_ManualMenu=NULL;
-    m_CopyContour=NULL;
-    m_ContourGroupCreateWidget=NULL;
+    m_ManualMenu=nullptr;
+    m_CopyContour=nullptr;
+    m_ContourGroupCreateWidget=nullptr;
 
-    m_PreviewDataNode=NULL;
-    m_PreviewContourModel=NULL;
-    m_PreviewDataNodeInteractor=NULL;
+    m_PreviewDataNode=nullptr;
+    m_PreviewContourModel=nullptr;
+    m_PreviewDataNodeInteractor=nullptr;
     m_PreviewContourModelObserverFinishTag=-1;
     m_PreviewContourModelObserverUpdateTag=-1;
 
@@ -145,7 +145,7 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
 
     m_DisplayWidget=GetActiveStdMultiWidget();
 
-    if(m_DisplayWidget==NULL)
+    if(m_DisplayWidget==nullptr)
     {
         parent->setEnabled(false);
         MITK_ERROR << "Plugin PathEdit Init Error: No QmitkStdMultiWidget!";
@@ -158,8 +158,8 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
 //    ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_LINEAR);
     ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_CUBIC);
 
-    m_CurrentParamWidget=NULL;
-    m_CurrentSegButton=NULL;
+    m_CurrentParamWidget=nullptr;
+    m_CurrentSegButton=nullptr;
 
     QVBoxLayout* vlayout = new QVBoxLayout(ui->lsParamWidgetContainer);
     vlayout->setContentsMargins(0,0,0,0);
@@ -257,7 +257,7 @@ void sv4guiSeg2DEdit::Hidden()
 
 int sv4guiSeg2DEdit::GetTimeStep()
 {
-    mitk::SliceNavigationController* timeNavigationController = NULL;
+    mitk::SliceNavigationController* timeNavigationController = nullptr;
     if(m_DisplayWidget)
     {
         timeNavigationController=m_DisplayWidget->GetTimeNavigationController();
@@ -323,13 +323,13 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 //    std::string groupPathName=m_ContourGroup->GetPathName();
     int  groupPathID=m_ContourGroup->GetPathID();
 
-//    mitk::DataNode::Pointer pathNode=NULL;
-    mitk::DataNode::Pointer imageNode=NULL;
-    m_Image=NULL;
+//    mitk::DataNode::Pointer pathNode=nullptr;
+    mitk::DataNode::Pointer imageNode=nullptr;
+    m_Image=nullptr;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_ContourGroupNode,isProjFolder,false);
 
-    m_PathNode=NULL;
+    m_PathNode=nullptr;
 
     if(rs->size()>0) {
         mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
@@ -370,24 +370,24 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     }
 
 //    if(!m_Image){
-//        QMessageBox::warning(NULL,"No image found for this project","Make sure the image is loaded!");
+//        QMessageBox::warning(nullptr,"No image found for this project","Make sure the image is loaded!");
 ////        return;
 //    }
 
     if(!m_Path){
-        QMessageBox::warning(NULL,"No path found for this contour group","Make sure the path for the contour group exits!");
+        QMessageBox::warning(nullptr,"No path found for this contour group","Make sure the path for the contour group exits!");
         return;
     }
 
     rs=GetDataStorage()->GetSources(m_ContourGroupNode);
-    m_GroupFolderNode=NULL;
+    m_GroupFolderNode=nullptr;
     if(rs->size()>0)
         m_GroupFolderNode=rs->GetElement(0);
 
     ui->labelGroupName->setText(QString::fromStdString(m_ContourGroupNode->GetName()));
 
     ui->labelPathName->setText(QString::fromStdString(m_PathNode->GetName()));
-    if(m_PathNode->IsVisible(NULL))
+    if(m_PathNode->IsVisible(nullptr))
         ui->checkBoxShowPath->setChecked(true);
     else
         ui->checkBoxShowPath->setChecked(false);
@@ -397,11 +397,11 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     if(m_Image)
         m_cvImage=sv4guiSegmentationUtils::image2cvStrPts(m_Image);
     else
-        m_cvImage=NULL;
+        m_cvImage=nullptr;
 
     int timeStep=GetTimeStep();
     sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL)
+    if(pathElement==nullptr)
         return;
 
     std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints=pathElement->GetPathPoints();
@@ -410,7 +410,7 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     for(int i=0;i<m_ContourGroup->GetSize(timeStep);i++)
     {
         sv4guiContour* contour=m_ContourGroup->GetContour(i,timeStep);
-        if(contour==NULL) continue;
+        if(contour==nullptr) continue;
 
         int insertingIndex=sv4guiMath3::GetInsertintIndexByDistance(pathPosPoints, contour->GetPathPosPoint(), false);
         if(insertingIndex!=-2)
@@ -432,7 +432,7 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     for(int i=0;i<m_ContourGroup->GetSize(timeStep);i++)
     {
         sv4guiContour* contour=m_ContourGroup->GetContour(i,timeStep);
-        if(contour==NULL) continue;
+        if(contour==nullptr) continue;
 
         for(int j=0;j<pathPoints.size();j++)
         {
@@ -446,7 +446,7 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     m_PathPoints=pathPoints;
 
     //set visible range for 3D view
-    mitk::BaseData* baseData=NULL;
+    mitk::BaseData* baseData=nullptr;
     if(imageNode.IsNotNull())
         baseData=imageNode->GetData();
     else if(m_PathNode.IsNotNull())
@@ -735,7 +735,7 @@ sv4guiContour* sv4guiSeg2DEdit::PostprocessContour(sv4guiContour* contour)
 
 void sv4guiSeg2DEdit::CreateContours(SegmentationMethod method)
 {
-    if(m_cvImage==NULL)
+    if(m_cvImage==nullptr)
         return;
 
     bool usingBatch;
@@ -748,7 +748,7 @@ void sv4guiSeg2DEdit::CreateContours(SegmentationMethod method)
         if(posList.size()>50)
         {
             QString msg = "There will be "+ QString::number(posList.size()) + " segmentations to do. Are you sure?";
-            if (QMessageBox::question(NULL, "Warning", msg,
+            if (QMessageBox::question(nullptr, "Warning", msg,
                                       QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
             {
               return;
@@ -776,7 +776,7 @@ void sv4guiSeg2DEdit::CreateContours(SegmentationMethod method)
 //            ui->resliceSlider->setSlicePos(posID);
         }
 
-        sv4guiContour* contour = NULL;
+        sv4guiContour* contour = nullptr;
 
         auto pathPoint = ui->resliceSlider->getPathPoint(posID);
         auto imageVolume = m_cvImage->GetVtkStructuredPoints(); 
@@ -817,7 +817,7 @@ void sv4guiSeg2DEdit::CreateContours(SegmentationMethod method)
                 delete contour;
 
             if(posList.size()==1) {
-                QMessageBox::warning(NULL, "2D Segmentation",
+                QMessageBox::warning(nullptr, "2D Segmentation",
                   "The image could not be segmented using the current parameter settings.\nThe image widow may also not contain enough data (pixel values) to distinguish a vessel boundary.");
             }
         }
@@ -840,7 +840,7 @@ void sv4guiSeg2DEdit::ResetGUI()
     if(m_CurrentParamWidget)
     {
         m_CurrentParamWidget->hide();
-        m_CurrentParamWidget=NULL;
+        m_CurrentParamWidget=nullptr;
     }
 
     if(m_CurrentSegButton)
@@ -859,7 +859,7 @@ void sv4guiSeg2DEdit::ResetGUI()
 
 void sv4guiSeg2DEdit::CreateLSContour()
 {
-    if(m_CurrentParamWidget==NULL||m_CurrentParamWidget!=ui->lsParamWidgetContainer)
+    if(m_CurrentParamWidget==nullptr||m_CurrentParamWidget!=ui->lsParamWidgetContainer)
     {
         ResetGUI();
 
@@ -879,10 +879,10 @@ void sv4guiSeg2DEdit::CreateLSContour()
 
 void sv4guiSeg2DEdit::CreateThresholdContour()
 {
-    if(m_cvImage==NULL)
+    if(m_cvImage==nullptr)
         return;
 
-    if(m_CurrentParamWidget==NULL||m_CurrentParamWidget!=ui->thresholdWidgetContainer)
+    if(m_CurrentParamWidget==nullptr||m_CurrentParamWidget!=ui->thresholdWidgetContainer)
     {
         ResetGUI();
 
@@ -910,7 +910,7 @@ void sv4guiSeg2DEdit::CreateThresholdContour()
 
 void sv4guiSeg2DEdit::CreateMLContour()
 {
-    if(m_cvImage==NULL)
+    if(m_cvImage==nullptr)
         return;
 
     if(m_CurrentSegButton!=ui->btnML)
@@ -947,7 +947,7 @@ void sv4guiSeg2DEdit::FinishPreview()
     int timeStep=GetTimeStep();
 
     sv4guiContour* contour=m_PreviewContourModel->GetContour(timeStep);
-    m_PreviewContourModel->SetContour(NULL);
+    m_PreviewContourModel->SetContour(nullptr);
 
     if(contour && contour->GetContourPointNumber()>2)
     {
@@ -964,7 +964,7 @@ void sv4guiSeg2DEdit::FinishPreview()
         if(contour)
             delete contour;
 
-//        QMessageBox::warning(NULL,"No Valid Contour Created","Contour not created and added since it's invalid");
+//        QMessageBox::warning(nullptr,"No Valid Contour Created","Contour not created and added since it's invalid");
     }
 }
 
@@ -981,7 +981,7 @@ void sv4guiSeg2DEdit::CreateEllipse()
 
     sv4guiContour* existingContour=m_ContourGroup->GetContour(index);
 
-    sv4guiContour* contour=NULL;
+    sv4guiContour* contour=nullptr;
     if(existingContour && existingContour->GetContourPointNumber()>2)
     {
         contour=sv4guiContourEllipse::CreateByFitting(existingContour);
@@ -1014,7 +1014,7 @@ void sv4guiSeg2DEdit::CreateCircle()
 
     sv4guiContour* existingContour=m_ContourGroup->GetContour(index);
 
-    sv4guiContour* contour=NULL;
+    sv4guiContour* contour=nullptr;
     if(existingContour && existingContour->GetContourPointNumber()>2)
     {
         contour=sv4guiContourCircle::CreateByFitting(existingContour);
@@ -1046,7 +1046,7 @@ void sv4guiSeg2DEdit::CreateSplinePoly()
 
     sv4guiContour* existingContour=m_ContourGroup->GetContour(index);
 
-    sv4guiContour* contour=NULL;
+    sv4guiContour* contour=nullptr;
     if(existingContour && existingContour->GetContourPointNumber()>2)
     {
         int splineControlNumber=ui->spinBoxControlNumber->value();
@@ -1225,13 +1225,13 @@ void sv4guiSeg2DEdit::ClearAll()
 
     if(m_ContourGroupNode.IsNotNull())
     {
-        m_ContourGroupNode->SetDataInteractor(NULL);
-        m_DataInteractor=NULL;
+        m_ContourGroupNode->SetDataInteractor(nullptr);
+        m_DataInteractor=nullptr;
     }
 
-    m_ContourGroup=NULL;
-    m_ContourGroupNode=NULL;
-    m_Path=NULL;
+    m_ContourGroup=nullptr;
+    m_ContourGroupNode=nullptr;
+    m_Path=nullptr;
 
     ui->labelGroupName->setText("");
     ui->listWidget->clear();
@@ -1243,7 +1243,7 @@ void sv4guiSeg2DEdit::ClearAll()
 
 void sv4guiSeg2DEdit::UpdateContourList()
 {
-    if(m_ContourGroup==NULL) return;
+    if(m_ContourGroup==nullptr) return;
 
     int timeStep=GetTimeStep();
 
@@ -1305,7 +1305,7 @@ void sv4guiSeg2DEdit::LoftContourGroup()
 
         m_ContourGroup->RemoveInvalidContours(timeStep);
         if(m_ContourGroup->GetSize()>1)
-            m_LoftSurface->SetVtkPolyData(sv4guiModelUtils::CreateLoftSurface(m_ContourGroup,0,0,NULL,timeStep),timeStep);
+            m_LoftSurface->SetVtkPolyData(sv4guiModelUtils::CreateLoftSurface(m_ContourGroup,0,0,nullptr,timeStep),timeStep);
 
     }
     else
@@ -1393,7 +1393,7 @@ void sv4guiSeg2DEdit::ManualContextMenuRequested()
 
 void sv4guiSeg2DEdit::ManualCircleContextMenuRequested(const QPoint &pos)
 {
-  if (m_CurrentSegButton == NULL)
+  if (m_CurrentSegButton == nullptr)
     return;
   if (m_CurrentSegButton != ui->btnCircle)
     return;
@@ -1408,7 +1408,7 @@ void sv4guiSeg2DEdit::ManualCircleContextMenuRequested(const QPoint &pos)
 
 void sv4guiSeg2DEdit::ManualEllipseContextMenuRequested(const QPoint &pos)
 {
-  if (m_CurrentSegButton == NULL)
+  if (m_CurrentSegButton == nullptr)
     return;
   if (m_CurrentSegButton != ui->btnEllipse)
     return;
@@ -1423,7 +1423,7 @@ void sv4guiSeg2DEdit::ManualEllipseContextMenuRequested(const QPoint &pos)
 
 void sv4guiSeg2DEdit::ManualSplinePolyContextMenuRequested(const QPoint &pos)
 {
-  if (m_CurrentSegButton == NULL)
+  if (m_CurrentSegButton == nullptr)
     return;
   if (m_CurrentSegButton != ui->btnSplinePoly)
     return;
@@ -1438,7 +1438,7 @@ void sv4guiSeg2DEdit::ManualSplinePolyContextMenuRequested(const QPoint &pos)
 
 void sv4guiSeg2DEdit::ManualPolygonContextMenuRequested(const QPoint &pos)
 {
-  if (m_CurrentSegButton == NULL)
+  if (m_CurrentSegButton == nullptr)
     return;
   if (m_CurrentSegButton != ui->btnPolygon)
     return;
@@ -1646,7 +1646,7 @@ void sv4guiSeg2DEdit::CreateManualPolygonType(bool spline)
         points.push_back(point);
     }
 
-    sv4guiContour* contour=NULL;
+    sv4guiContour* contour=nullptr;
     if(spline)
         contour=new sv4guiContourSplinePolygon();
     else
@@ -1708,7 +1708,7 @@ void sv4guiSeg2DEdit::CopyContour()
 
 void sv4guiSeg2DEdit::PasteContour()
 {
-    if(m_CopyContour==NULL)
+    if(m_CopyContour==nullptr)
         return;
 
     sv4guiContour* contour=m_CopyContour->Clone();
@@ -1852,13 +1852,13 @@ void sv4guiSeg2DEdit::QuitPreviewInteraction()
 
     if(m_PreviewDataNode.IsNotNull())
     {
-        m_PreviewDataNode->SetDataInteractor(NULL);
+        m_PreviewDataNode->SetDataInteractor(nullptr);
         GetDataStorage()->Remove(m_PreviewDataNode);
-        m_PreviewDataNode=NULL;
+        m_PreviewDataNode=nullptr;
     }
 
-    m_PreviewDataNodeInteractor=NULL;
-    m_PreviewContourModel=NULL;
+    m_PreviewDataNodeInteractor=nullptr;
+    m_PreviewContourModel=nullptr;
 }
 
 bool sv4guiSeg2DEdit::eventFilter(QObject *obj, QEvent *event)
@@ -1939,7 +1939,7 @@ void sv4guiSeg2DEdit::segTabSelected(){
           ui->resliceSlider->turnOnReslice(false);
           ClearAll();
           ////remove_toolbox  ui->segToolbox->setCurrentIndex(1);
-          QMessageBox::warning(NULL,"No segmentation selected","Create, or Select a segmentation before choosing single path segmentation!");
+          QMessageBox::warning(nullptr,"No segmentation selected","Create, or Select a segmentation before choosing single path segmentation!");
       }
       ////remove_toolbox     break;
       ////remove_toolbox  }
@@ -1961,7 +1961,7 @@ void sv4guiSeg2DEdit::initialize()
   GetDataStorage()->GetNamedNode("Segmentations")->GetBoolProperty("ml_init",ml_init);
 
   if(!ml_init){
-    QMessageBox::information(NULL,"Initializing machine learning", "The machine learning segmentation data will now be loaded; this may take a minute.");
+    QMessageBox::information(nullptr,"Initializing machine learning", "The machine learning segmentation data will now be loaded; this may take a minute.");
     GetDataStorage()->GetNamedNode("Segmentations")->SetBoolProperty("ml_init",true);
   }
 
@@ -2083,7 +2083,7 @@ void sv4guiSeg2DEdit::segmentPaths(){
   }
 
   if (seg_code.size() == 0) {
-    QMessageBox::warning(NULL, "Segmentation Name", "No segmentation suffix given.");
+    QMessageBox::warning(nullptr, "Segmentation Name", "No segmentation suffix given.");
     return;
   }
 
@@ -2097,7 +2097,7 @@ void sv4guiSeg2DEdit::segmentPaths(){
         auto seg_node = seg_nodes->GetElement(j);
         auto seg_name = seg_node->GetName();
         if (seg_name == new_seg_name){
-          QMessageBox::warning(NULL,("Segmentation " + seg_name +" already exists").c_str(),"Please use a different segmentation name!");
+          QMessageBox::warning(nullptr,("Segmentation " + seg_name +" already exists").c_str(),"Please use a different segmentation name!");
           m_selected_paths.clear();
           return;
         }
@@ -2211,7 +2211,7 @@ sv4guiSeg2DEdit::segmentPath(sv4guiPath* path)
       msg = QString::number(numFailures) + " segmentations out of " + QString::number(n) + " could not be computed for the image.\n\n";
     }
     msg += "The image window may not contain enough data (pixel values) to distinguish a vessel boundary.";
-    QMessageBox::warning(NULL, "2D Segmentation", msg);
+    QMessageBox::warning(nullptr, "2D Segmentation", msg);
   }
 
   return contours;
@@ -2252,7 +2252,7 @@ sv4guiContour* sv4guiSeg2DEdit::doMLContour(sv4guiPathElement::sv4guiPathPoint p
   std::vector<std::vector<double>> points = ml_utils->segmentPathPoint(path_point);
 
   if (points.size() <= 0){
-    return NULL;
+    return nullptr;
   }
 
   sv4guiContour* contour = new sv4guiContour();

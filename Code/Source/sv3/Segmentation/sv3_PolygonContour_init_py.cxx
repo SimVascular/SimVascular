@@ -71,16 +71,16 @@ PyObject* polygonContour_AvailableCmd(PyObject* self,PyObject* args);
 PyObject* polygonContour_RegistrarsListCmd(PyObject* self, PyObject* args);
 
 PyMethodDef polygonContour_methods[] = {
-  {"Available", polygonContour_AvailableCmd,METH_NOARGS,NULL},
-  {"Registrars", polygonContour_RegistrarsListCmd,METH_NOARGS,NULL},
-  {NULL, NULL}
+  {"Available", polygonContour_AvailableCmd,METH_NOARGS,nullptr},
+  {"Registrars", polygonContour_RegistrarsListCmd,METH_NOARGS,nullptr},
+  {nullptr, nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyPolygonContourModule = {
    PyModuleDef_HEAD_INIT,
    "pyPolygonContour",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    polygonContour_methods
@@ -99,7 +99,7 @@ initpyPolygonContour()
   pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
 
-  if (contourObjectRegistrar != NULL) {
+  if (contourObjectRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_POLYGON,
       (FactoryMethodPtr) &CreatePolygonContour );
@@ -112,7 +112,7 @@ initpyPolygonContour()
 
   PyObject* pythonC;
   pythonC = Py_InitModule("pyPolygonContour", polygonContour_methods);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyPolygonContour\n");
     return;
@@ -132,7 +132,7 @@ PyInit_pyPolygonContour()
   pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
 
-  if (contourObjectRegistrar != NULL) {
+  if (contourObjectRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_POLYGON,
       (FactoryMethodPtr) &CreatePolygonContour );
@@ -145,7 +145,7 @@ PyInit_pyPolygonContour()
 
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyPolygonContourModule);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyPolygonContour\n");
     Py_RETURN_NONE;

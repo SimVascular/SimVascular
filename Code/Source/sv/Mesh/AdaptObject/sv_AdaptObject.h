@@ -85,7 +85,7 @@ public:
   KernelType GetKernel() const {return adapt_kernel_;}
   //Instantiation function from SimVascular
   #ifdef SV_USE_TCL
-  static cvAdaptObject* DefaultInstantiateAdaptObject( Tcl_Interp *interp = NULL, KernelType t = KERNEL_TETGEN);
+  static cvAdaptObject* DefaultInstantiateAdaptObject( Tcl_Interp *interp = nullptr, KernelType t = KERNEL_TETGEN);
   #endif
   #ifdef SV_USE_PYTHON
   static cvAdaptObject* DefaultInstantiateAdaptObject(KernelType t = KERNEL_TETGEN);

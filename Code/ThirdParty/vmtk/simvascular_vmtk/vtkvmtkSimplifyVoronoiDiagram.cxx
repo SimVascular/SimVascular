@@ -34,8 +34,8 @@ vtkStandardNewMacro(vtkvmtkSimplifyVoronoiDiagram);
 
 vtkvmtkSimplifyVoronoiDiagram::vtkvmtkSimplifyVoronoiDiagram()
 {
-  this->UnremovablePointIds = NULL;
-  this->UnremovableCellIds = NULL;
+  this->UnremovablePointIds = nullptr;
+  this->UnremovableCellIds = nullptr;
   this->Simplification = VTK_VMTK_REMOVE_BOUNDARY_POINTS;
   this->IncludeUnremovable = 1;
   this->OnePassOnly = 0;
@@ -46,13 +46,13 @@ vtkvmtkSimplifyVoronoiDiagram::~vtkvmtkSimplifyVoronoiDiagram()
   if (this->UnremovablePointIds)
     {
     this->UnremovablePointIds->Delete();
-    this->UnremovablePointIds = NULL;
+    this->UnremovablePointIds = nullptr;
     }
 
   if (this->UnremovableCellIds)
     {
     this->UnremovableCellIds->Delete();
-    this->UnremovableCellIds = NULL;
+    this->UnremovableCellIds = nullptr;
     }
 }
 
@@ -112,7 +112,7 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   vtkIdType npts, ncells;
   const vtkIdType *pts = new vtkIdType;
   npts = 0;
-  pts = NULL;
+  pts = nullptr;
   vtkIdType edge[2];
   vtkCellArray *currentPolys;
   vtkCellLinks* currentLinks;

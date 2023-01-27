@@ -102,7 +102,7 @@ PyDoc_STRVAR(PathPlanningModule_doc,
 //
 static PyMethodDef PyPathPlanningModuleMethods[] =
 {
-    {NULL,NULL}
+    {nullptr,nullptr}
 };
 
 //-----------------------
@@ -176,14 +176,14 @@ PyMODINIT_FUNC PyInit_PyPathplanning()
 
   // Create the pathplanning module.
   auto module = PyModule_Create(&PyPathPlanningModule);
-  if (module == NULL) {
+  if (module == nullptr) {
       fprintf(stdout,"Error in initializing 'path' module \n");
       return nullptr;
   }
 
   // Add path.PathException exception.
   //
-  PyRunTimeErr = PyErr_NewException(PATHPLANNING_MODULE_EXCEPTION, NULL, NULL);
+  PyRunTimeErr = PyErr_NewException(PATHPLANNING_MODULE_EXCEPTION, nullptr, nullptr);
   PyModule_AddObject(module, PATHPLANNING_MODULE_EXCEPTION_OBJECT, PyRunTimeErr);
 
   // Add Path class.
@@ -220,7 +220,7 @@ PyMODINIT_FUNC initpyPath()
 {
   // Associate the mesh registrar with the python interpreter so it can be
   // retrieved by the DLLs.
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository = new cvRepository();
     fprintf(stdout,"New gRepository created from cv_mesh_init\n");
@@ -235,12 +235,12 @@ PyMODINIT_FUNC initpyPath()
   }
   PyObject* pythonC;
   pythonC = Py_InitModule("pyPath",pyPathModule_methods);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyPath\n");
     return;
   }
-  PyRunTimeErr = PyErr_NewException("pyPath.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyPath.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyPathType);
   PyModule_AddObject(pythonC,"pyPath",(PyObject*)&pyPathType);

@@ -39,9 +39,9 @@
 #include "vtkXMLDataSetWriter.h"
 
 cvDistanceMap::cvDistanceMap() {
-    map_ = NULL;
-    path_ = NULL;
-    mask_ = NULL;
+    map_ = nullptr;
+    path_ = nullptr;
+    mask_ = nullptr;
     useCityBlock_ = 1;
 
     // create index table for 26-connectivity neighborhood
@@ -64,10 +64,10 @@ cvDistanceMap::cvDistanceMap() {
 }
 
 cvDistanceMap::~cvDistanceMap() {
-    if (map_ != NULL) {
+    if (map_ != nullptr) {
         map_->Delete();
     }
-    if (path_ != NULL) {
+    if (path_ != nullptr) {
         path_->Delete();
     }
 }
@@ -79,9 +79,9 @@ int cvDistanceMap::createDistanceMap (vtkStructuredPoints *vtksp,
     // Code to create a PathPlan binary segmentation from a VTK
     // structured points set.
 
-    if (map_ != NULL) {
+    if (map_ != nullptr) {
         map_ -> Delete();
-        map_ = NULL;
+        map_ = nullptr;
     }
 
     start_[0] = start[0];
@@ -244,10 +244,10 @@ int cvDistanceMap::createDistanceMap (vtkStructuredPoints *vtksp,
         if (bucket[buckindex]->GetNumberOfIds() == 0) {
             //buckets[buckindex+3] = buckets[buckindex];
           bucketlookup[buckindex] = loopAllBuckets+3;
-            //buckets[buckindex] = NULL;
+            //buckets[buckindex] = nullptr;
           loopAllBuckets++;
         } else {
-            //if (buckets[loopAllBuckets] == NULL) {
+            //if (buckets[loopAllBuckets] == nullptr) {
             //  fprintf(stdout,"invalid bucket (loopAllBuckets %i)\n",loopAllBuckets);
             //  exit(-1);
             //}
@@ -285,11 +285,11 @@ vtkStructuredPoints* cvDistanceMap::getDistanceMap() {
 
 vtkPolyData* cvDistanceMap::getPathOld(int stop[3]) {
 
-    if (map_ == NULL) {
-        return NULL;
+    if (map_ == nullptr) {
+        return nullptr;
     }
 
-    path_ = NULL;
+    path_ = nullptr;
 
     stop_[0] = stop[0];
     stop_[1] = stop[1];
@@ -323,7 +323,7 @@ vtkPolyData* cvDistanceMap::getPathOld(int stop[3]) {
         mypts->Delete();
         mylines->Delete();
         mypd->Delete();
-        return NULL;
+        return nullptr;
     }
 */
 
@@ -360,7 +360,7 @@ vtkPolyData* cvDistanceMap::getPathOld(int stop[3]) {
           mylines->Delete();
           mypd->Delete();
           line->Delete();
-          return NULL;
+          return nullptr;
         }
 
         map_ -> GetPoint(p,x);
@@ -385,11 +385,11 @@ vtkPolyData* cvDistanceMap::getPath(int stop[3], int minqstop) {
 
     int i,n;
 
-    if (map_ == NULL) {
-        return NULL;
+    if (map_ == nullptr) {
+        return nullptr;
     }
 
-    path_ = NULL;
+    path_ = nullptr;
 
     stop_[0] = stop[0];
     stop_[1] = stop[1];
@@ -430,7 +430,7 @@ vtkPolyData* cvDistanceMap::getPath(int stop[3], int minqstop) {
         if (p < 0) {
           fprintf(stdout,"ERROR:  could not find less than equal path to next pt!\n");
           curpath->Delete();
-          return NULL;
+          return nullptr;
         }
 
         curpath->InsertNextId(p);
@@ -480,11 +480,11 @@ vtkPolyData* cvDistanceMap::getPathByThinning(int stop[3],  int minqstop, int ma
 
   int i,n;
 
-  if (map_ == NULL) {
-    return NULL;
+  if (map_ == nullptr) {
+    return nullptr;
   }
 
-  path_ = NULL;
+  path_ = nullptr;
 
   stop_[0] = stop[0];
   stop_[1] = stop[1];
@@ -499,7 +499,7 @@ vtkPolyData* cvDistanceMap::getPathByThinning(int stop[3],  int minqstop, int ma
   int maskval;
 
   distanceMapType minq;
-  vtkDataArray *maskScalars = NULL;
+  vtkDataArray *maskScalars = nullptr;
 
   // only create the initial mask if we are going to use thinning
   if (maxIterNum > 1) {
@@ -508,8 +508,8 @@ vtkPolyData* cvDistanceMap::getPathByThinning(int stop[3],  int minqstop, int ma
   }
 
   int curIterNum = 0;
-  vtkIdList *prevpath = NULL;
-  vtkIdList *curpath = NULL;
+  vtkIdList *prevpath = nullptr;
+  vtkIdList *curpath = nullptr;
 
   while (curIterNum < maxIterNum) {
 
@@ -549,7 +549,7 @@ vtkPolyData* cvDistanceMap::getPathByThinning(int stop[3],  int minqstop, int ma
           if (curIterNum == 0) {
             fprintf(stdout,"ERROR:  could not find less than equal path to next pt!\n");
             curpath->Delete();
-            return NULL;
+            return nullptr;
           }
           // now need to use points from previous path to
           // keep going
@@ -570,7 +570,7 @@ vtkPolyData* cvDistanceMap::getPathByThinning(int stop[3],  int minqstop, int ma
             fprintf(stdout,"ERROR:  could not find less than equal path to next pt!\n");
             curpath->Delete();
             prevpath->Delete();
-            return NULL;
+            return nullptr;
           }
         }
         fprintf(stdout,"adding (%i) \n",p);
@@ -590,7 +590,7 @@ vtkPolyData* cvDistanceMap::getPathByThinning(int stop[3],  int minqstop, int ma
 
     if (numPixelsRemoved == 0) break;
 
-    if (prevpath != NULL) prevpath->Delete();
+    if (prevpath != nullptr) prevpath->Delete();
     prevpath = curpath;
 
   }
@@ -732,9 +732,9 @@ int cvDistanceMap::get26ConnectivityNeighbors(int p) {
 int cvDistanceMap::createInitMask() {
 
 
-    if (mask_ != NULL) {
+    if (mask_ != nullptr) {
         mask_ -> Delete();
-        mask_ = NULL;
+        mask_ = nullptr;
     }
 
     int s;

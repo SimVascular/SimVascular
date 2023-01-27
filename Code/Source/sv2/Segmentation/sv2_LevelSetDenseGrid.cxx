@@ -63,7 +63,7 @@ cvLevelSetDenseGrid::cvLevelSetDenseGrid( double h[], int dims[], double o[] )
 
   numNodes_ = I_ * J_ * K_;
   grid_ = new cvLevelSetNode [numNodes_];
-  if ( grid_ == NULL ) {
+  if ( grid_ == nullptr ) {
     printf( "ERR: Couldn't allocate memory for %d cvLevelSetNode's.\n", numNodes_ );
     return;
   }
@@ -177,7 +177,7 @@ cvLevelSetDenseGrid::cvLevelSetDenseGrid( double h[], int dims[], double o[] )
     }
   }
 
-  scalars_ = NULL;
+  scalars_ = nullptr;
 
   return;
 }
@@ -206,7 +206,7 @@ cvLevelSetDenseGrid::~cvLevelSetDenseGrid()
 
 void cvLevelSetDenseGrid::DeallocateNodes()
 {
-  if ( grid_ != NULL ) {
+  if ( grid_ != nullptr ) {
     delete [] grid_;
   }
   return;
@@ -232,12 +232,12 @@ cvLevelSetNode *cvLevelSetDenseGrid::GetNext()
 {
   cvLevelSetNode *result;
 
-  if ( curr_ == NULL ) {
-    return NULL;
+  if ( curr_ == nullptr ) {
+    return nullptr;
   }
   result = curr_;
   if ( curr_->index_ == (numNodes_-1) ) {
-    curr_ = NULL;
+    curr_ = nullptr;
   } else {
     curr_++;
   }
@@ -382,12 +382,12 @@ int cvLevelSetDenseGrid::InitPhi( cvPolyData *front )
   double x, y, z;
   double d;
   double sign;
-  cvSolidModel *sm = NULL;
+  cvSolidModel *sm = nullptr;
   int c;
 
   if (!init_) {
     sm = cvSolidModel::DefaultInstantiateSolidModel();
-    if ( sm == NULL ) {
+    if ( sm == nullptr ) {
       return SV_ERROR;
     }
     if ( dim_ == 3 ) {
@@ -639,11 +639,11 @@ cvStrPts *cvLevelSetDenseGrid::GetCurvature()
 
   FindK();
   MakeScalarsVtk( GS_CURVATURE );
-  if ( scalars_ != NULL ) {
+  if ( scalars_ != nullptr ) {
     result = new cvStrPts( scalars_ );
     return result;
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -729,7 +729,7 @@ void cvLevelSetDenseGrid::MakeScalarsVtk( GridScalarT scalarType ) {
     default:
       scalars_->Delete();
       data->Delete();
-      scalars_ = NULL;
+      scalars_ = nullptr;
       return;
       break;
     }
@@ -787,7 +787,7 @@ cvLevelSetNode *cvLevelSetDenseGrid::FindNearestActiveNode( cvLevelSetNode *n )
   maxDim = svmaximum(I_, J_);
   maxDim = svmaximum(maxDim, K_);
   minDist = maxDim * minh_ * sqrt(2.0);
-  t = NULL;
+  t = nullptr;
   while ( c = GetNext() ) {
     if (c->state_ & CV_NODE_ACTIVE) {
       currDist = Distance( c->pos_[0], c->pos_[1], c->pos_[2],

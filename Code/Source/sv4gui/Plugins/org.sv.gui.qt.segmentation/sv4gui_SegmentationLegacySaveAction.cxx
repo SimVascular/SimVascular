@@ -81,7 +81,7 @@ void sv4guiSegmentationLegacySaveAction::Run(const QList<mitk::DataNode::Pointer
             lastFilePath=QDir::homePath();
 
 
-        QString segDir = QFileDialog::getExistingDirectory(NULL, tr("Export as Legacy Segmentations (Choose Directory)"),
+        QString segDir = QFileDialog::getExistingDirectory(nullptr, tr("Export as Legacy Segmentations (Choose Directory)"),
                                                              lastFilePath);
 
         segDir=segDir.trimmed();

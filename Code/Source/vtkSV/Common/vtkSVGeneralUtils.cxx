@@ -756,7 +756,7 @@ int vtkSVGeneralUtils::ClipCut(vtkPolyData *inPd, vtkImplicitFunction *cutFuncti
     triangulator->Update();
 
     // Only if pd is provided to we copy output
-    if (clippedOutPd != NULL)
+    if (clippedOutPd != nullptr)
       clippedOutPd->DeepCopy(triangulator->GetOutput());
   }
 
@@ -1455,15 +1455,15 @@ int vtkSVGeneralUtils::RunLoopFind(vtkPolyData *pd,
                                    vtkPolyData *loop,
                                    vtkIdList *boundaryIds)
 {
-  // Set check ids in case booundaryIds is not NULL
+  // Set check ids in case booundaryIds is not nullptr
   int checkIds = 0;
   int checkNum = 0;
   vtkNew(vtkIntArray, checkList);
   checkList->SetNumberOfTuples(pd->GetNumberOfPoints());
   checkList->FillComponent(0, 0);
 
-  // If boundaryIds not NULL, we check the order of points given!
-  if (boundaryIds != NULL)
+  // If boundaryIds not nullptr, we check the order of points given!
+  if (boundaryIds != nullptr)
   {
     checkIds = 1;
     for (int i=0; i<boundaryIds->GetNumberOfIds(); i++)
@@ -1592,7 +1592,7 @@ int vtkSVGeneralUtils::SeparateLoops(vtkPolyData *pd,
     //}
 
     //Run through intersection lines to get loops!
-    vtkSVGeneralUtils::RunLoopFind(pd, startPt, nextCell, newloop, NULL);
+    vtkSVGeneralUtils::RunLoopFind(pd, startPt, nextCell, newloop, nullptr);
     loops[count++] = newloop;
   }
 

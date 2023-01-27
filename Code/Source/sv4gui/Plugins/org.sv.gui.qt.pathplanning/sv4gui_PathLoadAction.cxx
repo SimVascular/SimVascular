@@ -83,7 +83,7 @@ void sv4guiPathLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNod
         if(lastFilePath=="")
             lastFilePath=QDir::homePath();
 
-        QString fileName = QFileDialog::getOpenFileName(NULL, tr("Import Paths (Choose File)"),
+        QString fileName = QFileDialog::getOpenFileName(nullptr, tr("Import Paths (Choose File)"),
                                                         lastFilePath,
                                                         tr("SimVascular Legacy Paths (*.paths);;SimVascular Paths (*.pth)"));
 
@@ -116,19 +116,19 @@ void sv4guiPathLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNod
                 if(pathdata.IsNotNull())
                 {
                     bool ok;
-                    QString text = QInputDialog::getText(NULL, tr("Path Name"),
+                    QString text = QInputDialog::getText(nullptr, tr("Path Name"),
                                                     tr("Please give a path name:"), QLineEdit::Normal,
                                                     "", &ok);
                     std::string nodeName=text.trimmed().toStdString();
                     
                     if(nodeName==""){
-                        QMessageBox::warning(NULL,"Path Empty","Please give a path name!");
+                        QMessageBox::warning(nullptr,"Path Empty","Please give a path name!");
                         return;
                     }
                 
                     mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(nodeName.c_str(),selectedNode);
                     if(exitingNode){
-                        QMessageBox::warning(NULL,"Path Already Created","Please use a different path name!");
+                        QMessageBox::warning(nullptr,"Path Already Created","Please use a different path name!");
                         return;
                     }
                     

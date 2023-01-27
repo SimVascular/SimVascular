@@ -6,9 +6,9 @@ diff -rupN original/qtbase/src/plugins/platforms/cocoa/qcocoahelpers.mm patch/qt
      OSStatus err = noErr;
 
 +#ifndef Q_OS_MACOS
-     require_action(inContext != NULL, InvalidContext, err = paramErr);
-     require_action(inBounds != NULL, InvalidBounds, err = paramErr);
-     require_action(inImage != NULL, InvalidImage, err = paramErr);
+     require_action(inContext != nullptr, InvalidContext, err = paramErr);
+     require_action(inBounds != nullptr, InvalidBounds, err = paramErr);
+     require_action(inImage != nullptr, InvalidImage, err = paramErr);
 +#endif
 
      CGContextSaveGState( inContext );

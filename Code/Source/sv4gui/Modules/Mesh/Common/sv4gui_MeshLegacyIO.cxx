@@ -155,14 +155,14 @@ bool sv4guiMeshLegacyIO::WriteFiles(mitk::DataNode::Pointer meshNode, sv4guiMode
     // Get the surface mesh from a data node or from a file.
     std::string surfaceFileName = path+"/"+meshNode->GetName()+".vtp";
     auto surfaceMesh = mesh->GetSurfaceMesh();
-    if (surfaceMesh == NULL && path != "") {
+    if (surfaceMesh == nullptr && path != "") {
         surfaceMesh = mesh->CreateSurfaceMeshFromFile(surfaceFileName);
     }
 
     // Get the volume mesh from a data node or from a file.
     std::string volumeFileName = path+"/"+meshNode->GetName()+".vtu";
     auto volumeMesh = mesh->GetVolumeMesh();
-    if (volumeMesh == NULL && path != "") {
+    if (volumeMesh == nullptr && path != "") {
         volumeMesh = mesh->CreateVolumeMeshFromFile(volumeFileName);
     }
 

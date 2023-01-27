@@ -91,22 +91,22 @@ int Tetgenadapt_Init( Tcl_Interp *interp )
   // Associate the adapt registrar with the Tcl interpreter so it can be
   // retrieved by the DLLs.
   cvFactoryRegistrar* adaptObjectRegistrar =
-    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "AdaptObjectRegistrar", NULL);
+    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "AdaptObjectRegistrar", nullptr);
 
-  if (adaptObjectRegistrar != NULL) {
+  if (adaptObjectRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           adaptObjectRegistrar->SetFactoryMethodPtr( KERNEL_TETGEN,
       (FactoryMethodPtr) &CreateTetGenAdapt );
 
     Tcl_CreateCommand( interp, "tetgenadapt_available", TetGenAdapt_AvailableCmd,
-		       (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		       (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   }
   else {
     return TCL_ERROR;
   }
 
   Tcl_CreateCommand( interp, "tetgenadapt_registrars", TetGenAdapt_RegistrarsListCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   return TCL_OK;
 
@@ -129,7 +129,7 @@ int TetGenAdapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
   cvFactoryRegistrar *adaptObjectRegistrar =
-    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "AdaptObjectRegistrar", NULL);
+    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "AdaptObjectRegistrar", nullptr);
 
   char result[255];
   sprintf( result, "Adapt object registrar ptr -> %p\n", adaptObjectRegistrar );

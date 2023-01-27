@@ -67,9 +67,9 @@ vtkSVCenterlineGraph::vtkSVCenterlineGraph()
   this->CubeSize = 0.5;
   this->Root = new vtkSVCenterlineGCell(this->NumberOfCells++, 0, RIGHT);
 
-  this->GroupIdsArrayName = NULL;
+  this->GroupIdsArrayName = nullptr;
 
-  this->Lines = NULL;
+  this->Lines = nullptr;
 }
 
 // ----------------------
@@ -77,21 +77,21 @@ vtkSVCenterlineGraph::vtkSVCenterlineGraph()
 // ----------------------
 vtkSVCenterlineGraph::~vtkSVCenterlineGraph()
 {
-  if (this->Root != NULL)
+  if (this->Root != nullptr)
   {
     this->Root->Delete();
-    this->Root = NULL;
+    this->Root = nullptr;
   }
-  if (this->Lines != NULL)
+  if (this->Lines != nullptr)
   {
     this->Lines->Delete();
-    this->Lines = NULL;
+    this->Lines = nullptr;
   }
 
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
   {
     delete [] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
   }
 
 }
@@ -117,7 +117,7 @@ int vtkSVCenterlineGraph::Recurse(vtkSVCenterlineGCell *rootGCell, int(*function
 // ----------------------
 int vtkSVCenterlineGraph::PrintGraph()
 {
-  vtkSVCenterlineGraph::Recurse(this->Root, vtkSVCenterlineGraph::PrintGCell, NULL, NULL, NULL);
+  vtkSVCenterlineGraph::Recurse(this->Root, vtkSVCenterlineGraph::PrintGCell, nullptr, nullptr, nullptr);
   return SV_OK;
 }
 
@@ -129,10 +129,10 @@ int vtkSVCenterlineGraph::PrintGCell(vtkSVCenterlineGCell *gCell, void *arg0, vo
   fprintf(stdout, "GCell ID: %d\n", gCell->Id);
   fprintf(stdout, "GCell Group ID: %d\n", gCell->GroupId);
   fprintf(stdout, "Direction: %d\n", gCell->BranchDir);
-  if(gCell->Parent != NULL)
+  if(gCell->Parent != nullptr)
     fprintf(stdout, "Parent: %d\n", gCell->Parent->Id);
   else
-    fprintf(stdout, "Parent is NULL\n");
+    fprintf(stdout, "Parent is nullptr\n");
   if(gCell->Children.size() != 0)
   {
     for (int i=0; i<gCell->Children.size(); i++)
@@ -198,7 +198,7 @@ int vtkSVCenterlineGraph::InsertGCellPoints(vtkSVCenterlineGCell *gCell, void *a
 int vtkSVCenterlineGraph::BuildGraph()
 {
   fprintf(stdout,"Building graph!!!\n");
-  if (this->Lines == NULL)
+  if (this->Lines == nullptr)
   {
     vtkErrorMacro("Need to provide the centerlines");
     return SV_ERROR;
@@ -405,7 +405,7 @@ int vtkSVCenterlineGraph::ComputeGlobalReferenceVectors(vtkSVCenterlineGCell *pa
   int numPts = thresholder->GetOutput()->GetNumberOfPoints();
 
   double endPt0[3], endPt1[3];
-  if (parent->Parent == NULL && parent->Children.size() == 0)
+  if (parent->Parent == nullptr && parent->Children.size() == 0)
   {
     thresholder->GetOutput()->GetPoint(1, endPt0);
     thresholder->GetOutput()->GetPoint(0, endPt1);
@@ -747,7 +747,7 @@ vtkSVCenterlineGCell* vtkSVCenterlineGraph::GetCell(const int findId)
   if (findId > this->NumberOfCells)
   {
     fprintf(stdout,"Id is larger than number of cells\n");
-    return NULL;
+    return nullptr;
   }
   return this->FindId(this->Root, findId);
 }
@@ -757,7 +757,7 @@ vtkSVCenterlineGCell* vtkSVCenterlineGraph::GetCell(const int findId)
 // ----------------------
 vtkSVCenterlineGCell* vtkSVCenterlineGraph::FindId(vtkSVCenterlineGCell *lookCell, const int findId)
 {
-  if (lookCell == NULL)
+  if (lookCell == nullptr)
   {
     return lookCell;
   }
@@ -772,13 +772,13 @@ vtkSVCenterlineGCell* vtkSVCenterlineGraph::FindId(vtkSVCenterlineGCell *lookCel
       for (int i=0; i<lookCell->Children.size(); i++)
       {
         vtkSVCenterlineGCell* foundCell = this->FindId(lookCell->Children[i], findId);
-        if (foundCell != NULL)
+        if (foundCell != nullptr)
           return foundCell;
       }
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // ----------------------
@@ -789,7 +789,7 @@ vtkSVCenterlineGCell* vtkSVCenterlineGraph::GetCellByGroupId(const int findId)
   //if (findId > this->NumberOfCells)
   //{
   //  fprintf(stdout,"Id is larger than number of cells\n");
-  //  return NULL;
+  //  return nullptr;
   //}
   return this->FindGroupId(this->Root, findId);
 }
@@ -800,7 +800,7 @@ vtkSVCenterlineGCell* vtkSVCenterlineGraph::GetCellByGroupId(const int findId)
 // ----------------------
 vtkSVCenterlineGCell* vtkSVCenterlineGraph::FindGroupId(vtkSVCenterlineGCell *lookCell, const int findId)
 {
-  if (lookCell == NULL)
+  if (lookCell == nullptr)
   {
     return lookCell;
   }
@@ -815,13 +815,13 @@ vtkSVCenterlineGCell* vtkSVCenterlineGraph::FindGroupId(vtkSVCenterlineGCell *lo
       for (int i=0; i<lookCell->Children.size(); i++)
       {
         vtkSVCenterlineGCell* foundCell = this->FindGroupId(lookCell->Children[i], findId);
-        if (foundCell != NULL)
+        if (foundCell != nullptr)
           return foundCell;
       }
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // ----------------------
@@ -866,7 +866,7 @@ int vtkSVCenterlineGraph::GetGraphPoints()
       length = minLength;
 
     vtkSVCenterlineGCell *parent = gCell->Parent;
-    if (parent == NULL)
+    if (parent == nullptr)
     {
       this->Lines->GetPoint(pts[0], gCell->EndPt);
       double lineDir[3];
@@ -890,7 +890,7 @@ int vtkSVCenterlineGraph::GetGraphPoints()
 
       double rotationAngle;
       vtkSVCenterlineGCell *grandParent = parent->Parent;
-      if (grandParent == NULL)
+      if (grandParent == nullptr)
       {
         fprintf(stdout,"NO GRANDPARENT\n");
         double parentVec[3];
@@ -1324,7 +1324,7 @@ int vtkSVCenterlineGraph::UpdateBranchReferenceDirections()
 
     int isTerminating = 0;
     double endVecs[3][3];
-    if (gCell->Parent == NULL)
+    if (gCell->Parent == nullptr)
     {
       // found parent, flip around
       isTerminating = 1;
@@ -1361,7 +1361,7 @@ int vtkSVCenterlineGraph::UpdateBranchReferenceDirections()
         for (int l=0; l<3; l++)
           checkRefs[k][l] = refVecs[k][l];
 
-      if (gCell->Parent == NULL)
+      if (gCell->Parent == nullptr)
         vtkMath::Subtract(pt1, pt0, refVecs[0]);
       else
         vtkMath::Subtract(pt0, pt1, refVecs[0]);
@@ -1635,7 +1635,7 @@ int vtkSVCenterlineGraph::ComputeMinimumLength(vtkSVCenterlineGCell *gCell, doub
 
   // Get all brothers
   double minTopLength = 0.0;
-  if (gCell->Parent != NULL)
+  if (gCell->Parent != nullptr)
   {
     vtkSVCenterlineGCell *parent = gCell->Parent;
 

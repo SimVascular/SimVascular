@@ -47,9 +47,9 @@
 
 sv4guiMitkSeg3DDataInteractor::sv4guiMitkSeg3DDataInteractor()
     : mitk::DataInteractor()
-    , m_MitkSeg3D(NULL)
-    , m_Param(NULL)
-    , m_Seed(NULL)
+    , m_MitkSeg3D(nullptr)
+    , m_Param(nullptr)
+    , m_Seed(nullptr)
     , m_MinRadius(0.02)
     , m_OriginalRadius(0.1)
 {
@@ -79,8 +79,8 @@ void sv4guiMitkSeg3DDataInteractor::ConnectActionsAndFunctions()
 
 void sv4guiMitkSeg3DDataInteractor::FetchDataParam()
 {
-    m_MitkSeg3D=NULL;
-    m_Param=NULL;
+    m_MitkSeg3D=nullptr;
+    m_Param=nullptr;
 
     m_MitkSeg3D=dynamic_cast<sv4guiMitkSeg3D*>( GetDataNode()->GetData() );
     if(m_MitkSeg3D)
@@ -95,17 +95,17 @@ void sv4guiMitkSeg3DDataInteractor::FetchDataParam()
 
 bool sv4guiMitkSeg3DDataInteractor::IsOverSeed( const mitk::InteractionEvent* interactionEvent )
 {
-    m_Seed=NULL;
+    m_Seed=nullptr;
 
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return false;
 
     FetchDataParam();
 
     std::map<int,svSeed>* seedMap=&(m_Param->GetSeedMap());
 
-    if(seedMap==NULL)
+    if(seedMap==nullptr)
         return false;
 
     mitk::Point3D point3d = positionEvent->GetPositionInWorld();
@@ -135,7 +135,7 @@ bool sv4guiMitkSeg3DDataInteractor::IsOverSeed( const mitk::InteractionEvent* in
 void sv4guiMitkSeg3DDataInteractor::GetPosition(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if(positionEvent == NULL)
+    if(positionEvent == nullptr)
         return;
 
     m_CurrentPickedPoint = positionEvent->GetPositionInWorld();
@@ -152,7 +152,7 @@ void sv4guiMitkSeg3DDataInteractor::AddSeed(mitk::StateMachineAction*, mitk::Int
         m_MitkSeg3D->Modified();//tell render that data changed
     }
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
 }
 
 void sv4guiMitkSeg3DDataInteractor::AddEndSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
@@ -166,14 +166,14 @@ void sv4guiMitkSeg3DDataInteractor::AddEndSeed(mitk::StateMachineAction*, mitk::
         m_MitkSeg3D->Modified();//tell render that data changed
     }
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
 }
 
 
 void sv4guiMitkSeg3DDataInteractor::MoveSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return;
 
     if(m_Seed)
@@ -187,13 +187,13 @@ void sv4guiMitkSeg3DDataInteractor::MoveSeed(mitk::StateMachineAction*, mitk::In
             m_MitkSeg3D->Modified();//tell renderer that data changed
     }
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
 }
 
 void sv4guiMitkSeg3DDataInteractor::InitChangeRadius(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if (positionEvent == NULL)
+    if (positionEvent == nullptr)
         return;
 
     m_LastPoint = positionEvent->GetPositionInWorld();
@@ -204,7 +204,7 @@ void sv4guiMitkSeg3DDataInteractor::InitChangeRadius(mitk::StateMachineAction*, 
 void sv4guiMitkSeg3DDataInteractor::ChangeRadius(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if (positionEvent == NULL)
+    if (positionEvent == nullptr)
         return;
 
     if(m_Seed)
@@ -221,7 +221,7 @@ void sv4guiMitkSeg3DDataInteractor::ChangeRadius(mitk::StateMachineAction*, mitk
         }
     }
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
 
 }
 
@@ -234,7 +234,7 @@ void sv4guiMitkSeg3DDataInteractor::DeleteSeed( mitk::StateMachineAction*, mitk:
             m_MitkSeg3D->Modified();//tell render that data changed
     }
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
 }
 
 

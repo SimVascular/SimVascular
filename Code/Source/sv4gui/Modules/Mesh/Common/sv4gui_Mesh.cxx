@@ -43,9 +43,9 @@
 sv4guiMesh::sv4guiMesh()
     : m_Type("")
 //    , m_ModelName("")
-    , m_ModelElement(NULL)
-    , m_SurfaceMesh(NULL)
-    , m_VolumeMesh(NULL)
+    , m_ModelElement(nullptr)
+    , m_SurfaceMesh(nullptr)
+    , m_VolumeMesh(nullptr)
 {
 }
 
@@ -55,14 +55,14 @@ sv4guiMesh::sv4guiMesh(const sv4guiMesh &other)
     , m_ModelElement(other.m_ModelElement)
     , m_CommandHistory(other.m_CommandHistory)
 {
-    m_SurfaceMesh=NULL;
+    m_SurfaceMesh=nullptr;
     if(other.m_SurfaceMesh)
     {
         m_SurfaceMesh=vtkSmartPointer<vtkPolyData>::New();
         m_SurfaceMesh->DeepCopy(other.m_SurfaceMesh);
     }
 
-    m_VolumeMesh=NULL;
+    m_VolumeMesh=nullptr;
     if(other.m_VolumeMesh)
     {
         m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
@@ -247,7 +247,7 @@ bool sv4guiMesh::ReadVolumeFile(std::string filePath)
 
 vtkSmartPointer<vtkPolyData> sv4guiMesh::CreateSurfaceMeshFromFile(std::string filePath)
 {
-    vtkSmartPointer<vtkPolyData> surfaceMesh=NULL;
+    vtkSmartPointer<vtkPolyData> surfaceMesh=nullptr;
     std::ifstream surfaceFile(filePath);
     if (surfaceFile) {
         vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
@@ -262,7 +262,7 @@ vtkSmartPointer<vtkPolyData> sv4guiMesh::CreateSurfaceMeshFromFile(std::string f
 
 vtkSmartPointer<vtkUnstructuredGrid> sv4guiMesh::CreateVolumeMeshFromFile(std::string filePath)
 {
-    vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=NULL;
+    vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=nullptr;
     std::ifstream volumeFile(filePath);
     if (volumeFile) {
         vtkSmartPointer<vtkXMLUnstructuredGridReader> reader = vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();

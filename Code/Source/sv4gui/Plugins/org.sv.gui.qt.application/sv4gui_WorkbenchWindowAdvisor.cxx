@@ -464,7 +464,7 @@ sv4guiWorkbenchWindowAdvisor::sv4guiWorkbenchWindowAdvisor(berry::WorkbenchAdvis
     dropTargetListener(new QmitkDefaultDropTargetListener),
     m_UndoEnabled(true),
     m_Interface(new sv4guiDataNodeOperationInterface),
-    m_CopyDataNode(NULL)
+    m_CopyDataNode(nullptr)
 {
     productName = QCoreApplication::applicationName();
     viewExcludeList.push_back("org.mitk.views.viewnavigatorview");
@@ -1090,7 +1090,7 @@ mitk::DataStorage::Pointer sv4guiWorkbenchWindowAdvisor::GetDataStorage()
     {
         QString msg = "IDataStorageService service not available. Unable to save sv projects.";
         MITK_WARN << msg.toStdString();
-        return NULL;
+        return nullptr;
     }
 
     // Get the active data storage (or the default one, if none is active)
@@ -1098,7 +1098,7 @@ mitk::DataStorage::Pointer sv4guiWorkbenchWindowAdvisor::GetDataStorage()
     context->ungetService(dsServiceRef);
 
     if(dsRef.IsNull())
-        return NULL;
+        return nullptr;
 
     return dsRef->GetDataStorage();
 }
@@ -1113,7 +1113,7 @@ std::list< mitk::DataNode::Pointer > sv4guiWorkbenchWindowAdvisor::GetSelectedDa
         return selectedList;
 
     berry::ISelectionService* selectionService =window->GetSelectionService();
-    if(selectionService==NULL)
+    if(selectionService==nullptr)
         return selectedList;
 
     mitk::DataNodeSelection::ConstPointer nodeSelection = selectionService->GetSelection().Cast<const mitk::DataNodeSelection>();
@@ -1126,7 +1126,7 @@ std::list< mitk::DataNode::Pointer > sv4guiWorkbenchWindowAdvisor::GetSelectedDa
 void sv4guiWorkbenchWindowAdvisor::SetupDataManagerDoubleClick()
 {
     berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
-    if(workbench==NULL)
+    if(workbench==nullptr)
         return;
 
 //    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow(); //not active window set yet
@@ -1565,7 +1565,7 @@ void sv4guiWorkbenchWindowAdvisor::RemoveSelectedNodes( bool )
         return;
     }
 
-    QMessageBox::StandardButton answerButton = QMessageBox::question( NULL
+    QMessageBox::StandardButton answerButton = QMessageBox::question( nullptr
                                                                       , tr("DataManager")
                                                                       , question
                                                                       , QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
@@ -1592,7 +1592,7 @@ void sv4guiWorkbenchWindowAdvisor::RemoveSelectedNodes( bool )
                     incCurrEventId=true;
                 }
 
-                mitk::DataNode::Pointer parentNode=NULL;
+                mitk::DataNode::Pointer parentNode=nullptr;
                 mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources (node);
                 if(rs.IsNotNull()&&rs->size()>0)
                     parentNode=rs->GetElement(0);
@@ -1650,18 +1650,18 @@ void sv4guiWorkbenchWindowAdvisor::RenameSelectedNode( bool )
         node->GetBoolProperty("running",running);
         if(running)
         {
-            QMessageBox::warning(NULL,"Job Running","You can't rename it since it has a job running.");
+            QMessageBox::warning(nullptr,"Job Running","You can't rename it since it has a job running.");
             return;
         }
 
         bool ok;
-        QString text = QInputDialog::getText(NULL, tr("Rename"),
+        QString text = QInputDialog::getText(nullptr, tr("Rename"),
                                              tr("New Name:"), QLineEdit::Normal,
                                              QString::fromStdString(node->GetName()), &ok);
         QString newName=text.trimmed();
         if (ok && !newName.isEmpty())
         {
-            mitk::DataNode::Pointer parentNode=NULL;
+            mitk::DataNode::Pointer parentNode=nullptr;
             mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources(node);
             if(rs.IsNotNull()&&rs->size()>0)
                 parentNode=rs->GetElement(0);
@@ -1677,13 +1677,13 @@ void sv4guiWorkbenchWindowAdvisor::RenameSelectedNode( bool )
             mitk::NodePredicateDataType::Pointer isImage = mitk::NodePredicateDataType::New("Image");
             if(parentNode.IsNotNull() && isImageFolder->CheckNode(parentNode) && isImage->CheckNode(node))
             {
-                QMessageBox::information(NULL,"Info","Image renaming inside a SV project is not allowed.");
+                QMessageBox::information(nullptr,"Info","Image renaming inside a SV project is not allowed.");
                 return;
             }
 
             if(alreadyExists)
             {
-                QMessageBox::warning(NULL,"Name Conflict","Please use a name different from other existing nodes under the parent node.");
+                QMessageBox::warning(nullptr,"Name Conflict","Please use a name different from other existing nodes under the parent node.");
                 return;
             }
 
@@ -1754,7 +1754,7 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
     mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitksvFSIJob");
     mitk::NodePredicateDataType::Pointer isROMSimJob = mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob");
 
-    mitk::DataNode::Pointer parentNode=NULL;
+    mitk::DataNode::Pointer parentNode=nullptr;
 
     if(isPath->CheckNode(m_CopyDataNode))
     {
@@ -1989,7 +1989,7 @@ void sv4guiWorkbenchWindowAdvisor::ToggleCoronalPlane(bool )
 void sv4guiWorkbenchWindowAdvisor::SetCrosshairGapZero()
 {
     berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
-    if(workbench==NULL)
+    if(workbench==nullptr)
         return;
 
 //    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow(); //not active window set yet

@@ -36,7 +36,7 @@
 
 #include "mitkAbstractFileIO.h"
 
-#include <tinyxml.h>
+#include <simvascular_tinyxml.h>
 
 class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiMitkROMSimJobIO : public mitk::AbstractFileIO
 {
@@ -46,6 +46,9 @@ public:
 
     using mitk::AbstractFileReader::Read;
     std::vector<mitk::BaseData::Pointer> Read() override;
+    std::vector<mitk::BaseData::Pointer> DoRead() override {
+        std::cout << "Should implement this?" << std::endl << std::flush;
+    }
     mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
 
     void Write() override;

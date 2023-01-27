@@ -81,7 +81,7 @@
                 PyErr_SetString(PyRunTimeErr, "Could not import cv_type");      \
             }																	\
 			cvObj = ls->Get##property (); 										\
-			if ( cvObj == NULL ) { 												\
+			if ( cvObj == nullptr ) { 												\
 				PyErr_SetString(PyRunTimeErr, "error, obj is null" ); 		    \
 			}																	\
 			CVPYTHONRepositoryRegisterMacro(objName,cvObj,PyRunTimeErr);						\

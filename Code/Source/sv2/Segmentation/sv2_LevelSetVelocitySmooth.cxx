@@ -214,7 +214,7 @@ int cvLevelSetVelocitySmooth::Evaluate( double pos[], double *f0, double *f1, do
   toDot[1] = 0.0;
   toDot[2] = 0.0;
 
-  if ( v != NULL ) {
+  if ( v != nullptr ) {
     v[0] = n[0] * (*f0);
     v[1] = n[1] * (*f0);
     v[2] = n[2] * (*f0);

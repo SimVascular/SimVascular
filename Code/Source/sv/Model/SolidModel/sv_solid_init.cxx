@@ -292,10 +292,10 @@ int Solid_Init( Tcl_Interp *interp )
 {
   // Associate the solid model registrar with the Tcl interpreter so it can be
   // retrieved by the DLLs.
-  Tcl_SetAssocData( interp, "SolidModelRegistrar", NULL, &cvSolidModel::gRegistrar );
+  Tcl_SetAssocData( interp, "SolidModelRegistrar", nullptr, &cvSolidModel::gRegistrar );
 
   Tcl_CreateCommand( interp, "solid_registrars", Solid_RegistrarsListCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   // Initialize
   cvSolidModel::gCurrentKernel = SM_KT_INVALID;
@@ -305,69 +305,69 @@ int Solid_Init( Tcl_Interp *interp )
 #endif
 
   Tcl_CreateCommand( interp, "solid_poly", Solid_PolyCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_polyPts", Solid_PolyPtsCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_circle", Solid_CircleCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_ellipse", Solid_EllipseCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_box2d", Solid_Box2dCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   Tcl_CreateCommand( interp, "solid_box3d", Solid_Box3dCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_sphere", Solid_SphereCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_ellipsoid", Solid_EllipsoidCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_cylinder", Solid_CylinderCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_truncatedCone", Solid_TruncatedConeCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_torus", Solid_TorusCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_poly3dSolid", Solid_Poly3dSolidCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_poly3dSurface", Solid_Poly3dSurfaceCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_extrudeZ", Solid_ExtrudeZCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_extrude", Solid_ExtrudeCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_makeApproxCurveLoop",
 		     Solid_MakeApproxCurveLoopCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_makeInterpCurveLoop",
 		     Solid_MakeInterpCurveLoopCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_makeLoftedSurf", Solid_MakeLoftedSurfCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_capSurfToSolid", Solid_CapSurfToSolidCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   Tcl_CreateCommand( interp, "solid_intersect", Solid_IntersectCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_union", Solid_UnionCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_subtract", Solid_SubtractCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   Tcl_CreateCommand( interp, "solid_readNative", Solid_ReadNativeCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_copy", Solid_CopyCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   Tcl_CreateCommand( interp, "solid_methods", Solid_ListMethodsCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   Tcl_CreateCommand( interp, "solid_newObject", Solid_NewObjectCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   Tcl_CreateCommand( interp, "solid_setKernel", Solid_SetKernelCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "solid_getKernel", Solid_GetKernelCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   return TCL_OK;
 }
@@ -381,7 +381,7 @@ int Solid_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
   cvFactoryRegistrar *solidModelRegistrar =
-    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
+    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", nullptr);
 
   char result[255];
   sprintf( result, "Solid model registrar ptr -> %p\n", solidModelRegistrar );
@@ -425,8 +425,8 @@ int Solid_PolyPtsCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -444,26 +444,26 @@ int Solid_PolyPtsCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Retrieve cvPolyData source:
   pd = gRepository->GetObject( srcName );
-  if ( pd == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( pd == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
   type = pd->GetType();
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, "object ", srcName, " not of type cvPolyData",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -477,7 +477,7 @@ int Solid_PolyPtsCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -507,8 +507,8 @@ int Solid_PolyCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -526,26 +526,26 @@ int Solid_PolyCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Retrieve cvPolyData source:
   pd = gRepository->GetObject( srcName );
-  if ( pd == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( pd == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
   type = pd->GetType();
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, "object ", srcName, " not of type cvPolyData",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -559,7 +559,7 @@ int Solid_PolyCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -590,10 +590,10 @@ int Solid_CircleCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-r", DOUBLE_Type, &radius, NULL, REQUIRED, 0, { 0 } },
-    { "-x", DOUBLE_Type, &(ctr[0]), NULL, REQUIRED, 0, { 0 } },
-    { "-y", DOUBLE_Type, &(ctr[1]), NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-r", DOUBLE_Type, &radius, nullptr, REQUIRED, 0, { 0 } },
+    { "-x", DOUBLE_Type, &(ctr[0]), nullptr, REQUIRED, 0, { 0 } },
+    { "-y", DOUBLE_Type, &(ctr[1]), nullptr, REQUIRED, 0, { 0 } },
   };
 
   // Generate a usage string (see comments for ARG_GenSyntaxStr for
@@ -623,13 +623,13 @@ int Solid_CircleCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -642,7 +642,7 @@ int Solid_CircleCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -671,11 +671,11 @@ int Solid_EllipseCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-xr", DOUBLE_Type, &xr, NULL, REQUIRED, 0, { 0 } },
-    { "-yr", DOUBLE_Type, &yr, NULL, REQUIRED, 0, { 0 } },
-    { "-ctrx", DOUBLE_Type, &(ctr[0]), NULL, REQUIRED, 0, { 0 } },
-    { "-ctry", DOUBLE_Type, &(ctr[1]), NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-xr", DOUBLE_Type, &xr, nullptr, REQUIRED, 0, { 0 } },
+    { "-yr", DOUBLE_Type, &yr, nullptr, REQUIRED, 0, { 0 } },
+    { "-ctrx", DOUBLE_Type, &(ctr[0]), nullptr, REQUIRED, 0, { 0 } },
+    { "-ctry", DOUBLE_Type, &(ctr[1]), nullptr, REQUIRED, 0, { 0 } },
   };
 
   // Generate a usage string (see comments for ARG_GenSyntaxStr for
@@ -705,13 +705,13 @@ int Solid_EllipseCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -724,7 +724,7 @@ int Solid_EllipseCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -756,11 +756,11 @@ int Solid_Box2dCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-h", DOUBLE_Type, &(boxDims[0]), NULL, REQUIRED, 0, { 0 } },
-    { "-w", DOUBLE_Type, &(boxDims[1]), NULL, REQUIRED, 0, { 0 } },
-    { "-xctr", DOUBLE_Type, &(ctr[0]), NULL, REQUIRED, 0, { 0 } },
-    { "-yctr", DOUBLE_Type, &(ctr[1]), NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-h", DOUBLE_Type, &(boxDims[0]), nullptr, REQUIRED, 0, { 0 } },
+    { "-w", DOUBLE_Type, &(boxDims[1]), nullptr, REQUIRED, 0, { 0 } },
+    { "-xctr", DOUBLE_Type, &(ctr[0]), nullptr, REQUIRED, 0, { 0 } },
+    { "-yctr", DOUBLE_Type, &(ctr[1]), nullptr, REQUIRED, 0, { 0 } },
   };
 
   // Generate a usage string (see comments for ARG_GenSyntaxStr for
@@ -790,13 +790,13 @@ int Solid_Box2dCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -809,7 +809,7 @@ int Solid_Box2dCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -840,9 +840,9 @@ int Solid_Box3dCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-dims", LIST_Type, &dimsList, NULL, REQUIRED, 0, { 0 } },
-    { "-ctr", LIST_Type, &ctrList, NULL, REQUIRED, 0, { 0 } }
+    { "-result", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dims", LIST_Type, &dimsList, nullptr, REQUIRED, 0, { 0 } },
+    { "-ctr", LIST_Type, &ctrList, nullptr, REQUIRED, 0, { 0 } }
   };
 
   // Generate a usage string (see comments for ARG_GenSyntaxStr for
@@ -887,13 +887,13 @@ int Solid_Box3dCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -906,7 +906,7 @@ int Solid_Box3dCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -937,9 +937,9 @@ int Solid_SphereCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-r", DOUBLE_Type, &r, NULL, REQUIRED, 0, { 0 } },
-    { "-ctr", LIST_Type, &ctrList, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-r", DOUBLE_Type, &r, nullptr, REQUIRED, 0, { 0 } },
+    { "-ctr", LIST_Type, &ctrList, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -974,13 +974,13 @@ int Solid_SphereCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -993,7 +993,7 @@ int Solid_SphereCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -1025,9 +1025,9 @@ int Solid_EllipsoidCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-r", LIST_Type, &rList, NULL, REQUIRED, 0, { 0 } },
-    { "-ctr", LIST_Type, &ctrList, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-r", LIST_Type, &rList, nullptr, REQUIRED, 0, { 0 } },
+    { "-ctr", LIST_Type, &ctrList, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1071,13 +1071,13 @@ int Solid_EllipsoidCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -1090,7 +1090,7 @@ int Solid_EllipsoidCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -1122,11 +1122,11 @@ int Solid_CylinderCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-radius", DOUBLE_Type, &r, NULL, REQUIRED, 0, { 0 } },
-    { "-length", DOUBLE_Type, &l, NULL, REQUIRED, 0, { 0 } },
-    { "-ctr", LIST_Type, &ctrList, NULL, REQUIRED, 0, { 0 } },
-    { "-axis", LIST_Type, &axisList, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-radius", DOUBLE_Type, &r, nullptr, REQUIRED, 0, { 0 } },
+    { "-length", DOUBLE_Type, &l, nullptr, REQUIRED, 0, { 0 } },
+    { "-ctr", LIST_Type, &ctrList, nullptr, REQUIRED, 0, { 0 } },
+    { "-axis", LIST_Type, &axisList, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1169,13 +1169,13 @@ int Solid_CylinderCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -1188,7 +1188,7 @@ int Solid_CylinderCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -1220,11 +1220,11 @@ int Solid_TruncatedConeCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-r1", DOUBLE_Type, &r1, NULL, REQUIRED, 0, { 0 } },
-    { "-r2", DOUBLE_Type, &r2, NULL, REQUIRED, 0, { 0 } },
-    { "-pt", LIST_Type, &ptList, NULL, REQUIRED, 0, { 0 } },
-    { "-dir", LIST_Type, &dirList, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-r1", DOUBLE_Type, &r1, nullptr, REQUIRED, 0, { 0 } },
+    { "-r2", DOUBLE_Type, &r2, nullptr, REQUIRED, 0, { 0 } },
+    { "-pt", LIST_Type, &ptList, nullptr, REQUIRED, 0, { 0 } },
+    { "-dir", LIST_Type, &dirList, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1267,13 +1267,13 @@ int Solid_TruncatedConeCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -1286,7 +1286,7 @@ int Solid_TruncatedConeCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -1318,11 +1318,11 @@ int Solid_TorusCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-rmaj", DOUBLE_Type, &rmaj, NULL, REQUIRED, 0, { 0 } },
-    { "-rmin", DOUBLE_Type, &rmin, NULL, REQUIRED, 0, { 0 } },
-    { "-ctr", LIST_Type, &ctrList, NULL, REQUIRED, 0, { 0 } },
-    { "-axis", LIST_Type, &axisList, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-rmaj", DOUBLE_Type, &rmaj, nullptr, REQUIRED, 0, { 0 } },
+    { "-rmin", DOUBLE_Type, &rmin, nullptr, REQUIRED, 0, { 0 } },
+    { "-ctr", LIST_Type, &ctrList, nullptr, REQUIRED, 0, { 0 } },
+    { "-axis", LIST_Type, &axisList, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1365,13 +1365,13 @@ int Solid_TorusCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -1384,7 +1384,7 @@ int Solid_TorusCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -1418,10 +1418,10 @@ int Solid_Poly3dSolidCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-facet", STRING_Type, &facetMethodName, NULL, REQUIRED, 0, { 0 } },
-    { "-angle", DOUBLE_Type, &angle, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-result", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-facet", STRING_Type, &facetMethodName, nullptr, REQUIRED, 0, { 0 } },
+    { "-angle", DOUBLE_Type, &angle, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1445,33 +1445,33 @@ int Solid_Poly3dSolidCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve cvPolyData source:
   pd = gRepository->GetObject( srcName );
-  if ( pd == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( pd == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
   type = pd->GetType();
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, "object ", srcName, " not of type cvPolyData",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
   if ( geom->SetPoly3dFacetMethod( facetMethod ) != SV_OK ) {
     Tcl_AppendResult( interp, "error selecting facet method ",
-		      facetMethodName, (char *) NULL );
+		      facetMethodName, (char *) nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -1484,7 +1484,7 @@ int Solid_Poly3dSolidCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -1517,9 +1517,9 @@ int Solid_Poly3dSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-facet", STRING_Type, &facetMethodName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-facet", STRING_Type, &facetMethodName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1543,33 +1543,33 @@ int Solid_Poly3dSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve cvPolyData source:
   pd = gRepository->GetObject( srcName );
-  if ( pd == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( pd == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
   type = pd->GetType();
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, "object ", srcName, " not of type cvPolyData",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
   if ( geom->SetPoly3dFacetMethod( facetMethod ) != SV_OK ) {
     Tcl_AppendResult( interp, "error selecting facet method ",
-		      facetMethodName, (char *) NULL );
+		      facetMethodName, (char *) nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -1583,7 +1583,7 @@ int Solid_Poly3dSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -1614,9 +1614,9 @@ int Solid_ExtrudeZCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-dist", DOUBLE_Type, &dist, NULL, REQUIRED, 0, { 0 } }
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dist", DOUBLE_Type, &dist, nullptr, REQUIRED, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1633,27 +1633,27 @@ int Solid_ExtrudeZCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve cvSolidModel source:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
   type = src->GetType();
   if ( type != SOLID_MODEL_T ) {
     Tcl_AppendResult( interp, "object ", srcName, " not of type cvSolidModel",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -1666,7 +1666,7 @@ int Solid_ExtrudeZCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -1699,10 +1699,10 @@ int Solid_ExtrudeCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-pt1", LIST_Type, &pt1List, NULL, REQUIRED, 0, { 0 } },
-    { "-pt2", LIST_Type, &pt2List, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-pt1", LIST_Type, &pt1List, nullptr, REQUIRED, 0, { 0 } },
+    { "-pt2", LIST_Type, &pt2List, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1719,21 +1719,21 @@ int Solid_ExtrudeCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve cvSolidModel source:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
   type = src->GetType();
   if ( type != SOLID_MODEL_T ) {
     Tcl_AppendResult( interp, "object ", srcName, " not of type cvSolidModel",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1758,7 +1758,7 @@ int Solid_ExtrudeCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     delete dist;
     return TCL_ERROR;
   }
@@ -1773,7 +1773,7 @@ int Solid_ExtrudeCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     delete dist;
     return TCL_ERROR;
@@ -1807,10 +1807,10 @@ int Solid_MakeApproxCurveLoopCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-src_pd", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-fit_tol", DOUBLE_Type, &tol, NULL, REQUIRED, 0, { 0 } },
-    { "-closed", INT_Type, &closed, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src_pd", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-fit_tol", DOUBLE_Type, &tol, nullptr, REQUIRED, 0, { 0 } },
+    { "-closed", INT_Type, &closed, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1827,27 +1827,27 @@ int Solid_MakeApproxCurveLoopCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve cvPolyData source:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, "object ", srcName, " not of type cvPolyData",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -1860,7 +1860,7 @@ int Solid_MakeApproxCurveLoopCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -1892,9 +1892,9 @@ int Solid_MakeInterpCurveLoopCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-src_pd", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-closed", INT_Type, &closed, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src_pd", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-closed", INT_Type, &closed, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1911,27 +1911,27 @@ int Solid_MakeInterpCurveLoopCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve cvPolyData source:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, "object ", srcName, " not of type cvPolyData",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -1944,7 +1944,7 @@ int Solid_MakeInterpCurveLoopCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -1981,14 +1981,14 @@ int Solid_MakeLoftedSurfCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 8;
   ARG_Entry arg_table[] = {
-    { "-srcs", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-continuity", INT_Type, &continuity, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-partype", INT_Type, &partype, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-w1", DOUBLE_Type, &w1, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-w2", DOUBLE_Type, &w2, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-w3", DOUBLE_Type, &w3, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-smooth", INT_Type, &smoothing, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-srcs", LIST_Type, &srcList, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-continuity", INT_Type, &continuity, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-partype", INT_Type, &partype, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-w1", DOUBLE_Type, &w1, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-w2", DOUBLE_Type, &w2, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-w3", DOUBLE_Type, &w3, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-smooth", INT_Type, &smoothing, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2020,9 +2020,9 @@ int Solid_MakeLoftedSurfCmd( ClientData clientData, Tcl_Interp *interp,
 
   for ( i = 0; i < numSrcs; i++ ) {
     src = gRepository->GetObject( srcList.argv[i] );
-    if ( src == NULL ) {
+    if ( src == nullptr ) {
       Tcl_AppendResult( interp, "couldn't find object ", srcList.argv[i],
-			(char *)NULL );
+			(char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] srcs;
       return TCL_ERROR;
@@ -2030,7 +2030,7 @@ int Solid_MakeLoftedSurfCmd( ClientData clientData, Tcl_Interp *interp,
     type = src->GetType();
     if ( type != SOLID_MODEL_T ) {
       Tcl_AppendResult( interp, "object ", srcList.argv[i],
-			" not of type cvSolidModel", (char *)NULL );
+			" not of type cvSolidModel", (char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] srcs;
       return TCL_ERROR;
@@ -2044,14 +2044,14 @@ int Solid_MakeLoftedSurfCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     delete [] srcs;
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     delete [] srcs;
     return TCL_ERROR;
   }
@@ -2070,7 +2070,7 @@ int Solid_MakeLoftedSurfCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -2100,8 +2100,8 @@ int Solid_CapSurfToSolidCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } }
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2117,28 +2117,28 @@ int Solid_CapSurfToSolidCmd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != SOLID_MODEL_T ) {
     Tcl_AppendResult( interp, "object ", srcName, " not of type cvSolidModel",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -2151,7 +2151,7 @@ int Solid_CapSurfToSolidCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -2177,8 +2177,8 @@ int Solid_ReadNativeCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -2196,7 +2196,7 @@ int Solid_ReadNativeCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2210,7 +2210,7 @@ int Solid_ReadNativeCmd( ClientData clientData, Tcl_Interp *interp,
 
 	  geom = cvSolidModel::DefaultInstantiateSolidModel( interp);
 
-	  if ( geom == NULL ) {
+	  if ( geom == nullptr ) {
 	    return TCL_ERROR;
 	  }
 
@@ -2223,7 +2223,7 @@ int Solid_ReadNativeCmd( ClientData clientData, Tcl_Interp *interp,
 	  // Register the new solid:
 	  if ( !( gRepository->Register( objName, geom ) ) ) {
 	    Tcl_AppendResult( interp, "error registering obj ", objName,
-			      " in repository", (char *)NULL );
+			      " in repository", (char *)nullptr );
 	    delete geom;
 	    return TCL_ERROR;
 	  }
@@ -2260,8 +2260,8 @@ int Solid_CopyCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -2278,27 +2278,27 @@ int Solid_CopyCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source:
   srcGeom = gRepository->GetObject( srcName );
-  if ( srcGeom == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( srcGeom == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
   src_t = gRepository->GetType( srcName );
   if ( src_t != SOLID_MODEL_T ) {
     Tcl_AppendResult( interp, "object ", srcName, " not of type cvSolidModel",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified destination object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   dstGeom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( dstGeom == NULL ) {
+  if ( dstGeom == nullptr ) {
     return TCL_ERROR;
   }
   if ( dstGeom->Copy( *((cvSolidModel *)srcGeom) ) != SV_OK ) {
@@ -2310,7 +2310,7 @@ int Solid_CopyCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( dstName, dstGeom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dstGeom;
     return TCL_ERROR;
   }
@@ -2345,10 +2345,10 @@ int Solid_IntersectCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-smp", STRING_Type, &smpName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-a", STRING_Type, &aName, NULL, REQUIRED, 0, { 0 } },
-    { "-b", STRING_Type, &bName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
+    { "-smp", STRING_Type, &smpName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-a", STRING_Type, &aName, nullptr, REQUIRED, 0, { 0 } },
+    { "-b", STRING_Type, &bName, nullptr, REQUIRED, 0, { 0 } },
   };
 
   // Generate a usage string (see comments for ARG_GenSyntaxStr for
@@ -2382,32 +2382,32 @@ int Solid_IntersectCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve cvSolidModel operands:
   gmA = gRepository->GetObject( aName );
-  if ( gmA == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", aName, (char *)NULL );
+  if ( gmA == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", aName, (char *)nullptr );
     return TCL_ERROR;
   }
   aType = gRepository->GetType( aName );
   if ( aType != SOLID_MODEL_T ) {
     Tcl_AppendResult( interp, "object ", aName, " not of type cvSolidModel",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   gmB = gRepository->GetObject( bName );
-  if ( gmB == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", bName, (char *)NULL );
+  if ( gmB == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", bName, (char *)nullptr );
     return TCL_ERROR;
   }
   bType = gRepository->GetType( bName );
   if ( bType != SOLID_MODEL_T ) {
     Tcl_AppendResult( interp, "object ", bName, " not of type cvSolidModel",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -2420,7 +2420,7 @@ int Solid_IntersectCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( resultName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -2455,10 +2455,10 @@ int Solid_UnionCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-smp", STRING_Type, &smpName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-a", STRING_Type, &aName, NULL, REQUIRED, 0, { 0 } },
-    { "-b", STRING_Type, &bName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
+    { "-smp", STRING_Type, &smpName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-a", STRING_Type, &aName, nullptr, REQUIRED, 0, { 0 } },
+    { "-b", STRING_Type, &bName, nullptr, REQUIRED, 0, { 0 } },
   };
 
   // Generate a usage string (see comments for ARG_GenSyntaxStr for
@@ -2492,32 +2492,32 @@ int Solid_UnionCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve cvSolidModel operands:
   gmA = gRepository->GetObject( aName );
-  if ( gmA == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", aName, (char *)NULL );
+  if ( gmA == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", aName, (char *)nullptr );
     return TCL_ERROR;
   }
   aType = gRepository->GetType( aName );
   if ( aType != SOLID_MODEL_T ) {
     Tcl_AppendResult( interp, "object ", aName, " not of type cvSolidModel",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   gmB = gRepository->GetObject( bName );
-  if ( gmB == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", bName, (char *)NULL );
+  if ( gmB == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", bName, (char *)nullptr );
     return TCL_ERROR;
   }
   bType = gRepository->GetType( bName );
   if ( bType != SOLID_MODEL_T ) {
     Tcl_AppendResult( interp, "object ", bName, " not of type cvSolidModel",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   result = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( result == NULL ) {
+  if ( result == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -2530,7 +2530,7 @@ int Solid_UnionCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( resultName, result ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete result;
     return TCL_ERROR;
   }
@@ -2565,10 +2565,10 @@ int Solid_SubtractCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-smp", STRING_Type, &smpName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-a", STRING_Type, &aName, NULL, REQUIRED, 0, { 0 } },
-    { "-b", STRING_Type, &bName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
+    { "-smp", STRING_Type, &smpName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-a", STRING_Type, &aName, nullptr, REQUIRED, 0, { 0 } },
+    { "-b", STRING_Type, &bName, nullptr, REQUIRED, 0, { 0 } },
   };
 
   // Generate a usage string (see comments for ARG_GenSyntaxStr for
@@ -2602,32 +2602,32 @@ int Solid_SubtractCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve cvSolidModel operands:
   gmA = gRepository->GetObject( aName );
-  if ( gmA == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", aName, (char *)NULL );
+  if ( gmA == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", aName, (char *)nullptr );
     return TCL_ERROR;
   }
   aType = gRepository->GetType( aName );
   if ( aType != SOLID_MODEL_T ) {
     Tcl_AppendResult( interp, "object ", aName, " not of type cvSolidModel",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   gmB = gRepository->GetObject( bName );
-  if ( gmB == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", bName, (char *)NULL );
+  if ( gmB == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", bName, (char *)nullptr );
     return TCL_ERROR;
   }
   bType = gRepository->GetType( bName );
   if ( bType != SOLID_MODEL_T ) {
     Tcl_AppendResult( interp, "object ", bName, " not of type cvSolidModel",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   result = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( result == NULL ) {
+  if ( result == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -2641,7 +2641,7 @@ int Solid_SubtractCmd( ClientData clientData, Tcl_Interp *interp,
   // Register the new solid:
   if ( !( gRepository->Register( resultName, result ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete result;
     return TCL_ERROR;
   }
@@ -2663,7 +2663,7 @@ int Solid_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
 			  int argc, CONST84 char *argv[] )
 {
   if ( argc != 1 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2853,7 +2853,7 @@ int Solid_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
     }
   } else {
     Tcl_AppendResult( interp, "\"", argv[1],
-		      "\" not a recognized cvSolidModel method", (char *)NULL );
+		      "\" not a recognized cvSolidModel method", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2885,7 +2885,7 @@ int Solid_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-name", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-name", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -2903,7 +2903,7 @@ int Solid_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2917,14 +2917,14 @@ int Solid_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
 
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
 
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
 	  // Register the new solid:
 	  if ( !( gRepository->Register( objName, geom ) ) ) {
 	    Tcl_AppendResult( interp, "error registering obj ", objName,
-			      " in repository", (char *)NULL );
+			      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -2958,7 +2958,7 @@ int Solid_SetKernelCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-name", STRING_Type, &kernelName, NULL, REQUIRED, 0, { 0 } }
+    { "-name", STRING_Type, &kernelName, nullptr, REQUIRED, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2995,7 +2995,7 @@ int Solid_GetKernelCmd( ClientData clientData, Tcl_Interp *interp,
   char *kernelName;
 
   if ( argc != 1 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3073,7 +3073,7 @@ static int Solid_FindExtentMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "FindExtent: error on object ",
-		      geom->GetName(), (char *)NULL );
+		      geom->GetName(), (char *)nullptr );
     return TCL_ERROR;
   }
 }
@@ -3094,13 +3094,13 @@ static int Solid_FindCentroidMtd( ClientData clientData, Tcl_Interp *interp,
 
   if ( geom->GetSpatialDim( &tdim ) != SV_OK ) {
     Tcl_AppendResult( interp, "couldn't get spatial dim of object ",
-		      geom->GetName(), (char *)NULL );
+		      geom->GetName(), (char *)nullptr );
     return TCL_ERROR;
   }
   if ( ( tdim != 2 ) && ( tdim != 3 ) ) {
     sprintf( tmp, "%d", tdim );
     Tcl_AppendResult( interp, "spatial dim ", tmp, " not supported",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
   status = geom->FindCentroid( centroid );
@@ -3116,7 +3116,7 @@ static int Solid_FindCentroidMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "FindCentroid: error on object ",
-		      geom->GetName(), (char *)NULL );
+		      geom->GetName(), (char *)nullptr );
     return TCL_ERROR;
   }
 }
@@ -3142,7 +3142,7 @@ static int Solid_GetTopoDimMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetTopoDim: error on object ",
-		      geom->GetName(), (char *)NULL );
+		      geom->GetName(), (char *)nullptr );
     return TCL_ERROR;
   }
 }
@@ -3168,7 +3168,7 @@ static int Solid_GetSpatialDimMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetSpatialDim: error on object ",
-		      geom->GetName(), (char *)NULL );
+		      geom->GetName(), (char *)nullptr );
     return TCL_ERROR;
   }
 }
@@ -3191,10 +3191,10 @@ static int Solid_ClassifyPtMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-x", DOUBLE_Type, &x, NULL, REQUIRED, 0, { 0 } },
-    { "-y", DOUBLE_Type, &y, NULL, REQUIRED, 0, { 0 } },
-    { "-z", DOUBLE_Type, &z, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-verbose", INT_Type, &v, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-x", DOUBLE_Type, &x, nullptr, REQUIRED, 0, { 0 } },
+    { "-y", DOUBLE_Type, &y, nullptr, REQUIRED, 0, { 0 } },
+    { "-z", DOUBLE_Type, &z, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-verbose", INT_Type, &v, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -3224,7 +3224,7 @@ static int Solid_ClassifyPtMtd( ClientData clientData, Tcl_Interp *interp,
     } else {
       Tcl_AppendResult( interp, "object ", geom->GetName(),
 			" must be of topological and spatial dimension 2",
-			(char *)NULL );
+			(char *)nullptr );
       return TCL_ERROR;
     }
   }
@@ -3237,7 +3237,7 @@ static int Solid_ClassifyPtMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "ClassifyPt: error on object ",
-		      geom->GetName(), (char *)NULL );
+		      geom->GetName(), (char *)nullptr );
     return TCL_ERROR;
   }
 }
@@ -3261,8 +3261,8 @@ static int Solid_DistanceMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-pos", LIST_Type, &posList, NULL, REQUIRED, 0, { 0 } },
-    { "-upperLimit", DOUBLE_Type, &upperLimit, NULL, REQUIRED, 0, { 0 } },
+    { "-pos", LIST_Type, &posList, nullptr, REQUIRED, 0, { 0 } },
+    { "-upperLimit", DOUBLE_Type, &upperLimit, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -3292,7 +3292,7 @@ static int Solid_DistanceMtd( ClientData clientData, Tcl_Interp *interp,
   status = geom->GetSpatialDim( &sdim );
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "error retrieving spatial dim of obj ",
-		      geom->GetName(), (char *) NULL );
+		      geom->GetName(), (char *) nullptr );
     return TCL_ERROR;
   }
   if ( ( sdim == 3 ) && ( npos != 3 ) ) {
@@ -3315,7 +3315,7 @@ static int Solid_DistanceMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "Distance: error on object ",
-		      geom->GetName(), (char *)NULL );
+		      geom->GetName(), (char *)nullptr );
     return TCL_ERROR;
   }
 }
@@ -3337,7 +3337,7 @@ static int Solid_TranslateMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-vec", LIST_Type, &vecList, NULL, REQUIRED, 0, { 0 } },
+    { "-vec", LIST_Type, &vecList, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -3367,7 +3367,7 @@ static int Solid_TranslateMtd( ClientData clientData, Tcl_Interp *interp,
 
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Translate: error on object ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3392,8 +3392,8 @@ static int Solid_RotateMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-axis", LIST_Type, &axisList, NULL, REQUIRED, 0, { 0 } },
-    { "-rad", DOUBLE_Type, &rad, NULL, REQUIRED, 0, { 0 } },
+    { "-axis", LIST_Type, &axisList, nullptr, REQUIRED, 0, { 0 } },
+    { "-rad", DOUBLE_Type, &rad, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -3423,7 +3423,7 @@ static int Solid_RotateMtd( ClientData clientData, Tcl_Interp *interp,
 
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Rotate: error on object ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3445,7 +3445,7 @@ static int Solid_ScaleMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-factor", DOUBLE_Type, &factor, NULL, REQUIRED, 0, { 0 } },
+    { "-factor", DOUBLE_Type, &factor, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -3464,7 +3464,7 @@ static int Solid_ScaleMtd( ClientData clientData, Tcl_Interp *interp,
 
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Scale: error on object ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3491,8 +3491,8 @@ static int Solid_ReflectMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-pos", LIST_Type, &posList, NULL, REQUIRED, 0, { 0 } },
-    { "-nrm", LIST_Type, &nrmList, NULL, REQUIRED, 0, { 0 } }
+    { "-pos", LIST_Type, &posList, nullptr, REQUIRED, 0, { 0 } },
+    { "-nrm", LIST_Type, &nrmList, nullptr, REQUIRED, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -3530,7 +3530,7 @@ static int Solid_ReflectMtd( ClientData clientData, Tcl_Interp *interp,
 
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Reflect: error on object ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3555,7 +3555,7 @@ static int Solid_Apply4x4Mtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-mat", LIST_Type, &matList, NULL, REQUIRED, 0, { 0 } }
+    { "-mat", LIST_Type, &matList, nullptr, REQUIRED, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -3601,7 +3601,7 @@ static int Solid_Apply4x4Mtd( ClientData clientData, Tcl_Interp *interp,
 
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Apply4x4: error on object ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3661,8 +3661,8 @@ static int Solid_WriteNativeMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fn, NULL, REQUIRED, 0, { 0 } },
-    { "-version", INT_Type, &file_version, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-file", STRING_Type, &fn, nullptr, REQUIRED, 0, { 0 } },
+    { "-version", INT_Type, &file_version, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -3680,7 +3680,7 @@ static int Solid_WriteNativeMtd( ClientData clientData, Tcl_Interp *interp,
   status = geom->WriteNative( file_version , fn );
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
-		      " to file ", fn, (char *)NULL );
+		      " to file ", fn, (char *)nullptr );
     return TCL_ERROR;
   } else {
     return TCL_OK;
@@ -3703,7 +3703,7 @@ static int Solid_WriteVtkPolyDataMtd( ClientData clientData,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fn, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fn, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -3721,7 +3721,7 @@ static int Solid_WriteVtkPolyDataMtd( ClientData clientData,
   status = geom->WriteVtkPolyData( fn );
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
-		      " to file ", fn, (char *)NULL );
+		      " to file ", fn, (char *)nullptr );
     return TCL_ERROR;
   } else {
     return TCL_OK;
@@ -3744,7 +3744,7 @@ static int Solid_WriteGeomSimMtd( ClientData clientData,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fn, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fn, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -3762,7 +3762,7 @@ static int Solid_WriteGeomSimMtd( ClientData clientData,
   status = geom->WriteGeomSim( fn );
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
-		      " to file ", fn, (char *)NULL );
+		      " to file ", fn, (char *)nullptr );
     return TCL_ERROR;
   } else {
     return TCL_OK;
@@ -3786,8 +3786,8 @@ static int Solid_GetPolyDataMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
+    { "-max_edge_size", DOUBLE_Type, &max_dist, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -3810,22 +3810,22 @@ static int Solid_GetPolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Get the cvPolyData:
   pd = geom->GetPolyData(useMaxDist, max_dist);
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     Tcl_AppendResult( interp, "error getting cvPolyData for ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, pd ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete pd;
     return TCL_ERROR;
   }
@@ -3849,7 +3849,7 @@ static int Solid_SetVtkPolyDataMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -3869,7 +3869,7 @@ static int Solid_SetVtkPolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   type = gRepository->GetType( objName );
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, "\"", objName,
-		      "\" must be of type cvPolyData", (char *)NULL );
+		      "\" must be of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3911,9 +3911,9 @@ static int Solid_GetFacePolyDataMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-face", INT_Type, &faceid, NULL, REQUIRED, 0, { 0 } },
-    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
+    { "-face", INT_Type, &faceid, nullptr, REQUIRED, 0, { 0 } },
+    { "-max_edge_size", DOUBLE_Type, &max_dist, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -3936,22 +3936,22 @@ static int Solid_GetFacePolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Get the cvPolyData:
   pd = geom->GetFacePolyData(faceid,useMaxDist,max_dist);
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     Tcl_AppendResult( interp, "error getting cvPolyData for ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, pd ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete pd;
     return TCL_ERROR;
   }
@@ -3974,9 +3974,9 @@ static int Solid_GetFaceNormalMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-face", INT_Type, &faceid, NULL, REQUIRED, 0, { 0 } },
-    { "-u", DOUBLE_Type, &u, NULL, REQUIRED, 0, { 0 } },
-    { "-v", DOUBLE_Type, &v, NULL, REQUIRED, 0, {0}},
+    { "-face", INT_Type, &faceid, nullptr, REQUIRED, 0, { 0 } },
+    { "-u", DOUBLE_Type, &u, nullptr, REQUIRED, 0, { 0 } },
+    { "-v", DOUBLE_Type, &v, nullptr, REQUIRED, 0, {0}},
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -3995,7 +3995,7 @@ static int Solid_GetFaceNormalMtd( ClientData clientData, Tcl_Interp *interp,
   double normal[3];
 
   if ( geom->GetFaceNormal(faceid,u,v,normal) == SV_ERROR ) {
-    Tcl_AppendResult( interp, "error getting Normal for face. ", (char *)NULL );
+    Tcl_AppendResult( interp, "error getting Normal for face. ", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4023,7 +4023,7 @@ static int Solid_GetDiscontinuitiesMtd( ClientData clientData,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4042,22 +4042,22 @@ static int Solid_GetDiscontinuitiesMtd( ClientData clientData,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Get the cvPolyData:
   pd = geom->GetDiscontinuities();
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     Tcl_AppendResult( interp, "error getting discontinuities for ",
-		      geom->GetName(), (char *)NULL );
+		      geom->GetName(), (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, pd ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete pd;
     return TCL_ERROR;
   }
@@ -4082,8 +4082,8 @@ static int Solid_GetAxialIsoparametricCurveMtd( ClientData clientData,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-prm", DOUBLE_Type, &prm, NULL, REQUIRED, 0, { 0 } }
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
+    { "-prm", DOUBLE_Type, &prm, nullptr, REQUIRED, 0, { 0 } }
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4102,7 +4102,7 @@ static int Solid_GetAxialIsoparametricCurveMtd( ClientData clientData,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4114,16 +4114,16 @@ static int Solid_GetAxialIsoparametricCurveMtd( ClientData clientData,
     return TCL_ERROR;
   }
   curve = geom->GetAxialIsoparametricCurve( prm );
-  if ( curve == NULL ) {
+  if ( curve == nullptr ) {
     Tcl_AppendResult( interp, "error getting isoparametric curve for ",
-		      geom->GetName(), (char *)NULL );
+		      geom->GetName(), (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, curve ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete curve;
     return TCL_ERROR;
   }
@@ -4149,7 +4149,7 @@ static int Solid_GetKernelMtd( ClientData clientData, Tcl_Interp *interp,
   SolidModel_KernelT kernelType;
   char *kernelName;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -4181,7 +4181,7 @@ static int Solid_GetLabelKeysMtd( ClientData clientData, Tcl_Interp *interp,
   int numKeys, i;
   char **keys;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -4211,7 +4211,7 @@ static int Solid_GetLabelMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-key", STRING_Type, &key, NULL, REQUIRED, 0, { 0 } },
+    { "-key", STRING_Type, &key, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4228,7 +4228,7 @@ static int Solid_GetLabelMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   if ( ! geom->GetLabel( key, &value ) ) {
-    Tcl_AppendResult( interp, "key ", key, " not found", (char *) NULL );
+    Tcl_AppendResult( interp, "key ", key, " not found", (char *) nullptr );
     return TCL_ERROR;
   }
 
@@ -4250,8 +4250,8 @@ static int Solid_SetLabelMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-key", STRING_Type, &key, NULL, REQUIRED, 0, { 0 } },
-    { "-value", STRING_Type, &value, NULL, REQUIRED, 0, { 0 } },
+    { "-key", STRING_Type, &key, nullptr, REQUIRED, 0, { 0 } },
+    { "-value", STRING_Type, &value, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4270,10 +4270,10 @@ static int Solid_SetLabelMtd( ClientData clientData, Tcl_Interp *interp,
   if ( ! geom->SetLabel( key, value ) ) {
     if ( geom->IsLabelPresent( key ) ) {
       Tcl_AppendResult( interp, "key ", key, " already in use",
-			(char *) NULL );
+			(char *) nullptr );
       return TCL_ERROR;
     } else {
-      Tcl_AppendResult( interp, "error setting label ", key, (char *) NULL );
+      Tcl_AppendResult( interp, "error setting label ", key, (char *) nullptr );
       return TCL_ERROR;
     }
   }
@@ -4295,7 +4295,7 @@ static int Solid_ClearLabelMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-key", STRING_Type, &key, NULL, REQUIRED, 0, { 0 } },
+    { "-key", STRING_Type, &key, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4312,7 +4312,7 @@ static int Solid_ClearLabelMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   if ( ! geom->IsLabelPresent( key ) ) {
-    Tcl_AppendResult( interp, "key ", key, " not found", (char *) NULL );
+    Tcl_AppendResult( interp, "key ", key, " not found", (char *) nullptr );
     return TCL_ERROR;
   }
 
@@ -4346,7 +4346,7 @@ static int Solid_GetFaceIdsMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetFaceIds: error on object ",
-		      geom->GetName(), (char *)NULL );
+		      geom->GetName(), (char *)nullptr );
     return TCL_ERROR;
   }
 }
@@ -4364,7 +4364,7 @@ int Solid_GetBoundaryFacesMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-angle", DOUBLE_Type, &angle, NULL, REQUIRED, 0, { 0 } },
+    { "-angle", DOUBLE_Type, &angle, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4384,7 +4384,7 @@ int Solid_GetBoundaryFacesMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetBoundaryFaces: error on object ",
-		      geom->GetName(), (char *)NULL );
+		      geom->GetName(), (char *)nullptr );
     return TCL_ERROR;
   }
 }
@@ -4413,7 +4413,7 @@ static int Solid_GetRegionIdsMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetRegionIds: error on object ",
-		      geom->GetName(), (char *)NULL );
+		      geom->GetName(), (char *)nullptr );
     return TCL_ERROR;
   }
 }
@@ -4433,8 +4433,8 @@ static int Solid_GetFaceAttrMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-attr", STRING_Type, &key, NULL, REQUIRED, 0, { 0 } },
-    { "-faceId", INT_Type, &faceid, NULL, REQUIRED, 0, { 0 } },
+    { "-attr", STRING_Type, &key, nullptr, REQUIRED, 0, { 0 } },
+    { "-faceId", INT_Type, &faceid, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4451,11 +4451,11 @@ static int Solid_GetFaceAttrMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   if ( ! geom->GetFaceAttribute( key, faceid, &value ) ) {
-    Tcl_AppendResult( interp, "attribute ", key, " not found", (char *) NULL );
+    Tcl_AppendResult( interp, "attribute ", key, " not found", (char *) nullptr );
     return TCL_ERROR;
   }
 
-  Tcl_AppendResult( interp, value, (char *) NULL );
+  Tcl_AppendResult( interp, value, (char *) nullptr );
 
   return TCL_OK;
 }
@@ -4475,9 +4475,9 @@ static int Solid_SetFaceAttrMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-attr", STRING_Type, &key, NULL, REQUIRED, 0, { 0 } },
-    { "-value", STRING_Type, &value, NULL, REQUIRED, 0, { 0 } },
-    { "-faceId", INT_Type, &faceid, NULL, REQUIRED, 0, { 0 } },
+    { "-attr", STRING_Type, &key, nullptr, REQUIRED, 0, { 0 } },
+    { "-value", STRING_Type, &value, nullptr, REQUIRED, 0, { 0 } },
+    { "-faceId", INT_Type, &faceid, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4494,7 +4494,7 @@ static int Solid_SetFaceAttrMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   if ( ! geom->SetFaceAttribute( key, faceid, value ) ) {
-    Tcl_AppendResult( interp, "attribute ", key, " could not be set", (char *) NULL );
+    Tcl_AppendResult( interp, "attribute ", key, " could not be set", (char *) nullptr );
     return TCL_ERROR;
   }
 
@@ -4516,8 +4516,8 @@ static int Solid_GetRegionAttrMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-attr", STRING_Type, &key, NULL, REQUIRED, 0, { 0 } },
-    { "-regionId", INT_Type, &regionid, NULL, REQUIRED, 0, { 0 } },
+    { "-attr", STRING_Type, &key, nullptr, REQUIRED, 0, { 0 } },
+    { "-regionId", INT_Type, &regionid, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4534,11 +4534,11 @@ static int Solid_GetRegionAttrMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   if ( ! geom->GetRegionAttribute( key, regionid, &value ) ) {
-    Tcl_AppendResult( interp, "attribute ", key, " not found", (char *) NULL );
+    Tcl_AppendResult( interp, "attribute ", key, " not found", (char *) nullptr );
     return TCL_ERROR;
   }
 
-  Tcl_AppendResult( interp, value, (char *) NULL );
+  Tcl_AppendResult( interp, value, (char *) nullptr );
 
   return TCL_OK;
 }
@@ -4558,9 +4558,9 @@ static int Solid_SetRegionAttrMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-attr", STRING_Type, &key, NULL, REQUIRED, 0, { 0 } },
-    { "-value", STRING_Type, &value, NULL, REQUIRED, 0, { 0 } },
-    { "-regionId", INT_Type, &regionid, NULL, REQUIRED, 0, { 0 } },
+    { "-attr", STRING_Type, &key, nullptr, REQUIRED, 0, { 0 } },
+    { "-value", STRING_Type, &value, nullptr, REQUIRED, 0, { 0 } },
+    { "-regionId", INT_Type, &regionid, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4577,7 +4577,7 @@ static int Solid_SetRegionAttrMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   if ( ! geom->SetRegionAttribute( key, regionid, value ) ) {
-    Tcl_AppendResult( interp, "attribute ", key, " could not be set", (char *) NULL );
+    Tcl_AppendResult( interp, "attribute ", key, " could not be set", (char *) nullptr );
     return TCL_ERROR;
   }
 
@@ -4599,7 +4599,7 @@ static int Solid_DeleteFacesMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-faces", LIST_Type, &faceList, NULL, REQUIRED, 0, { 0 } },
+    { "-faces", LIST_Type, &faceList, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -4637,7 +4637,7 @@ static int Solid_DeleteFacesMtd( ClientData clientData, Tcl_Interp *interp,
 
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "DeleteFaces: error on object ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4658,7 +4658,7 @@ static int Solid_DeleteRegionMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-regionid", INT_Type, &regionid, NULL, REQUIRED, 0, { 0 } },
+    { "-regionid", INT_Type, &regionid, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -4677,7 +4677,7 @@ static int Solid_DeleteRegionMtd( ClientData clientData, Tcl_Interp *interp,
 
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "DeleteRegion: error on object ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4702,10 +4702,10 @@ static int Solid_CreateEdgeBlendMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-faceA", INT_Type, &faceA, NULL, REQUIRED, 0, { 0 } },
-    { "-faceB", INT_Type, &faceB, NULL, REQUIRED, 0, { 0 } },
-    { "-radius", DOUBLE_Type, &radius, NULL, REQUIRED, 0, { 0 } },
-    { "-fillshape", INT_Type, &filletshape, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-faceA", INT_Type, &faceA, nullptr, REQUIRED, 0, { 0 } },
+    { "-faceB", INT_Type, &faceB, nullptr, REQUIRED, 0, { 0 } },
+    { "-radius", DOUBLE_Type, &radius, nullptr, REQUIRED, 0, { 0 } },
+    { "-fillshape", INT_Type, &filletshape, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -4722,7 +4722,7 @@ static int Solid_CreateEdgeBlendMtd( ClientData clientData, Tcl_Interp *interp,
 
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "CreateEdgeBlend: error on object ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4740,8 +4740,8 @@ static int Solid_CombineFacesMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-targetface", INT_Type, &faceid1, NULL, REQUIRED, 0, { 0 } },
-    { "-loseface", INT_Type, &faceid2, NULL, REQUIRED, 0, { 0 } },
+    { "-targetface", INT_Type, &faceid1, nullptr, REQUIRED, 0, { 0 } },
+    { "-loseface", INT_Type, &faceid2, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4759,7 +4759,7 @@ static int Solid_CombineFacesMtd( ClientData clientData, Tcl_Interp *interp,
 
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Combine Faces: Error", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4777,8 +4777,8 @@ static int Solid_RemeshFaceMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-excludelist", LIST_Type, &excludeList, NULL, REQUIRED, 0, { 0 } },
-    { "-size", DOUBLE_Type, &size, NULL, REQUIRED, 0, { 0 } },
+    { "-excludelist", LIST_Type, &excludeList, nullptr, REQUIRED, 0, { 0 } },
+    { "-size", DOUBLE_Type, &size, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4813,7 +4813,7 @@ static int Solid_RemeshFaceMtd( ClientData clientData, Tcl_Interp *interp,
 
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Remesh Face: Error", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 

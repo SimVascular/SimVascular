@@ -96,7 +96,7 @@ static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
       &nterms,&numInterpPoints))
     {
       PyErr_SetString(MathErr, "Could not import 1 tuple and 2 int: pointsArg, nterms, numInterpPoints");
-      return NULL;
+      return nullptr;
     }
 
   // Do work of command
@@ -105,7 +105,7 @@ static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
     
   }
   int nlistpts = PyList_Size(pointsArg);
-  if (nlistpts < 0)   return NULL;
+  if (nlistpts < 0)   return nullptr;
   int npts = 0;
 
   int i;
@@ -115,7 +115,7 @@ static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
 
   for (i = 0; i < nlistpts; i++) {
     PyObject *temp=PyList_GetItem(pointsArg,i);
-    if (temp!=NULL)
+    if (temp!=nullptr)
     {
       for (int j=0;j<2;j++)
       {
@@ -129,7 +129,7 @@ static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
   //     fprintf(stdout,"Point %i:  %lf %lf\n",i,pts[i][0],pts[i][1]);
   //}
 
-  double **terms = NULL;
+  double **terms = nullptr;
   //printf("%d,%d,%d,%d\n",nlistpts,numInterpPoints,nterms,&terms);
   if ((mathobj->FFT(pts, nlistpts, numInterpPoints, nterms, &terms)) == SV_ERROR) {
      PyErr_SetString( MathErr, "error in fft");
@@ -141,7 +141,7 @@ static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
   // create result string
   char r[2048];
   PyObject *pylist=PyList_New(nterms);
-  if(pylist!=NULL)
+  if(pylist!=nullptr)
   {
   for (i = 0; i < nterms; i++) {
       PyObject* rr = PyList_New(2);
@@ -150,7 +150,7 @@ static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
         if(!rr)
         {
         Py_DECREF(pylist);
-        return NULL;
+        return nullptr;
         }
     PyList_SET_ITEM(pylist, i, rr);
     }
@@ -182,7 +182,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
       &t0,&dt,&omega,&numPts))
     {
       PyErr_SetString(MathErr, "Could not import 1 tuple, 3 double and 1 int: termsArg, t0, dt,omega, numPts");
-      return NULL;
+      return nullptr;
     }
 
 
@@ -192,7 +192,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
     
   }
   int nlistterms = PyList_Size(termsArg);
-  if (nlistterms < 0)   return NULL;
+  if (nlistterms < 0)   return nullptr;
 
   int numTerms = 0;
 
@@ -205,7 +205,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
   for (i = 0; i < nlistterms; i++) {
 
     PyObject *temp=PyList_GetItem(termsArg,i);
-    if (temp!=NULL)
+    if (temp!=nullptr)
     {
       for (int j=0;j<2;j++)
       {
@@ -219,7 +219,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
   //     fprintf(stdout,"Term %i:  %lf %lf\n",i,terms[i][0],terms[i][1]);
   //}
 
-  double **pts = NULL;
+  double **pts = nullptr;
   if ( (mathobj->inverseFFT(terms, nlistterms, t0, dt, omega, numPts, &pts)) == SV_ERROR) {
      PyErr_SetString( MathErr, "error in inverse fft" );
      mathobj->deleteArray(terms,nlistterms,2);
@@ -230,7 +230,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
   // create result string
   char r[2048];
   PyObject *pylist=PyList_New(numPts);
-  if(pylist!=NULL)
+  if(pylist!=nullptr)
   {
   for (i = 0; i < numPts; i++) {
     r[0] = '\0';
@@ -239,7 +239,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
     if(!rr)
     {
       Py_DECREF(pylist);
-      return NULL;
+      return nullptr;
     }
     PyList_SET_ITEM(pylist, i, rr);
     }
@@ -272,7 +272,7 @@ PyObject *pyMath_computeWomersleyCmd(PyObject *self, PyObject *args)
       &time,&viscosity,&omega,&density,&radmax,&radius))
     {
       PyErr_SetString(MathErr, "Could not import 1 tuple and 6 double: termsArg,time,viscosity,omega,density,radmax,radius");
-      return NULL;
+      return nullptr;
     }
 
   // Do work of command
@@ -281,7 +281,7 @@ PyObject *pyMath_computeWomersleyCmd(PyObject *self, PyObject *args)
     
   }
   int nlistterms = PyList_Size(termsArg);
-  if (nlistterms < 0)   return NULL;
+  if (nlistterms < 0)   return nullptr;
   int numTerms = 0;
 
   int i;
@@ -291,7 +291,7 @@ PyObject *pyMath_computeWomersleyCmd(PyObject *self, PyObject *args)
 
   for (i = 0; i < nlistterms; i++) {
     PyObject *temp=PyList_GetItem(termsArg,i);
-    if (temp!=NULL)
+    if (temp!=nullptr)
     {
       for (int j=0;j<2;j++)
       {
@@ -330,7 +330,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
       &numInterpPoints))
   {
       PyErr_SetString(MathErr, "Could not import 1 tuple and 1 int: termsArg,numInterpPoints");
-      return NULL;
+      return nullptr;
   }
 
 
@@ -341,7 +341,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
     
   }
   int nlistpts = PyList_Size(pointsArg);
-  if (nlistpts < 0)   return NULL;
+  if (nlistpts < 0)   return nullptr;
   int npts = 0;
 
 
@@ -353,7 +353,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
   for (i = 0; i < nlistpts; i++) {
 
     PyObject *temp=PyList_GetItem(pointsArg,i);
-    if (temp!=NULL)
+    if (temp!=nullptr)
     {
       for (int j=0;j<2;j++)
       {
@@ -370,7 +370,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
   // 0 to T.
   double t0 = pts[0][0];
   double dt = (pts[nlistpts-1][0]-t0)/(numInterpPoints-1);
-  double **outPts = NULL;
+  double **outPts = nullptr;
 
   if ((mathobj->linearInterpolate(pts, nlistpts, t0, dt, numInterpPoints, &outPts)) == SV_ERROR) {
      PyErr_SetString( MathErr, "error in linear interpolation");
@@ -382,7 +382,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
   // create result string
   char r[2048];
   PyObject *pylist=PyList_New(numInterpPoints);
-  if(pylist!=NULL)
+  if(pylist!=nullptr)
   {
   for (i = 0; i < numInterpPoints; i++) {
     r[0] = '\0';
@@ -391,7 +391,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
     if(!rr)
     {
       Py_DECREF(pylist);
-      return NULL;
+      return nullptr;
     }
     PyList_SET_ITEM(pylist, i, rr);
     }
@@ -414,7 +414,7 @@ PyObject *pyMath_curveLengthCmd(PyObject *self, PyObject *args)
       &closed))
   {
       PyErr_SetString(MathErr, "Could not import 1 tuple and 1 int: termsArg,closed");
-      return NULL;
+      return nullptr;
   }
 
   // Do work of command
@@ -423,7 +423,7 @@ PyObject *pyMath_curveLengthCmd(PyObject *self, PyObject *args)
     
   }
   int nlistpts = PyList_Size(pointsArg);
-  if (nlistpts < 0)   return NULL;
+  if (nlistpts < 0)   return nullptr;
   int npts = 0;
 
   int i;
@@ -433,7 +433,7 @@ PyObject *pyMath_curveLengthCmd(PyObject *self, PyObject *args)
 
   for (i = 0; i < nlistpts; i++) {
     PyObject *temp=PyList_GetItem(pointsArg,i);
-    if (temp!=NULL)
+    if (temp!=nullptr)
     {
       for (int j=0;j<3;j++)
       {
@@ -471,7 +471,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
       &closed,&numInterpPoints))
   {
       PyErr_SetString(MathErr, "Could not import 1 tuple and 2 int: termsArg,closed,&numInterpPoints");
-      return NULL;
+      return nullptr;
   }
 
   // Do work of command
@@ -480,7 +480,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
     
   }
   int nlistpts = PyList_Size(pointsArg);
-  if (nlistpts < 0)   return NULL;
+  if (nlistpts < 0)   return nullptr;
   int npts = 0;
 
   int i;
@@ -490,7 +490,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
 
   for (i = 0; i < nlistpts; i++) {
     PyObject *temp=PyList_GetItem(pointsArg,i);
-    if (temp!=NULL)
+    if (temp!=nullptr)
     {
       for (int j=0;j<3;j++)
       {
@@ -503,7 +503,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
   //     fprintf(stdout,"Point %i:  %lf %lf\n",i,pts[i][0],pts[i][1]);
   //}
 
-  double **outPts = NULL;
+  double **outPts = nullptr;
   if ((mathobj->linearInterpolateCurve(pts, nlistpts, closed, numInterpPoints, &outPts)) == SV_ERROR) {
      PyErr_SetString( MathErr, "error in linear interpolation" );
      mathobj->deleteArray(pts,nlistpts,3);
@@ -514,7 +514,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
   // create result string
   char r[2048];
   PyObject *pylist=PyList_New(numInterpPoints);
-  if(pylist!=NULL)
+  if(pylist!=nullptr)
   {
   for (i = 0; i < numInterpPoints; i++) {
     r[0] = '\0';
@@ -523,7 +523,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
     if(!rr)
     {
       Py_DECREF(pylist);
-      return NULL;
+      return nullptr;
     }
     PyList_SET_ITEM(pylist, i, rr);
     }
@@ -554,7 +554,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
                         &xOrder,&yOrder))
   {
       PyErr_SetString(MathErr, "Could not import 2 tuple and 2 int:xtermsArg, termsArg,xOrder,yOrder");
-      return NULL;
+      return nullptr;
   }
 
 
@@ -565,7 +565,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
   }
   int numberOfSamples = PyList_Size(xtermsArg);
   int numberOfSamplesY = PyList_Size(ytermsArg);
-  if (numberOfSamples < 0)   return NULL;
+  if (numberOfSamples < 0)   return nullptr;
 
   if (numberOfSamples!= numberOfSamplesY) {
 
@@ -580,7 +580,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
   double **xt = mathobj->createArray(numberOfSamples,xOrder);
   for (i = 0; i < numberOfSamples; i++) {
     temp=PyList_GetItem(xtermsArg,i);
-    if (temp!=NULL)
+    if (temp!=nullptr)
     {
       for (int j=0;j<3;j++)
       {
@@ -592,7 +592,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
   double **yt = mathobj->createArray(numberOfSamples,yOrder);
   for (i = 0; i < numberOfSamples; i++) {
     temp=PyList_GetItem(ytermsArg,i);
-    if (temp!=NULL)
+    if (temp!=nullptr)
     {
       for (j=0;j<3;j++)
       {
@@ -625,7 +625,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
   // create result string
   char r[2048];
   PyObject *pylist=PyList_New(xOrder);
-  if(pylist!=NULL)
+  if(pylist!=nullptr)
   {
   for (i = 0; i < xOrder; i++) {
     r[0] = '\0';
@@ -635,7 +635,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
     if(!rr)
     {
       Py_DECREF(pylist);
-      return NULL;
+      return nullptr;
     }
     PyList_SET_ITEM(pylist, i, rr);
   }
@@ -663,7 +663,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
       &closed,&numModes,&numInterpPoints))
   {
       PyErr_SetString(MathErr, "Could not import 1 tuple and 3 int: termsArg,closed,numModes,numInterpPoints");
-      return NULL;
+      return nullptr;
   }
 
 
@@ -673,7 +673,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
     
   }
   int nlistpts = PyList_Size(pointsArg);
-  if (nlistpts < 0)   return NULL;
+  if (nlistpts < 0)   return nullptr;
   int npts = 0;
 
   int i;
@@ -682,7 +682,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
 
   for (i = 0; i < nlistpts; i++) {
     PyObject *temp=PyList_GetItem(pointsArg,i);
-    if (temp!=NULL)
+    if (temp!=nullptr)
     {
       for (int j=0;j<3;j++)
       {
@@ -691,7 +691,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
     }
   }
 
-  double **outPts = NULL;
+  double **outPts = nullptr;
   if ((mathobj->smoothCurve(pts, nlistpts, closed, numModes, numInterpPoints, &outPts)) == SV_ERROR) {
      PyErr_SetString( MathErr, "error in smoothing curve");
      mathobj->deleteArray(pts,nlistpts,3);
@@ -702,7 +702,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
   // create result string
   char r[2048];
   PyObject *pylist=PyList_New(numInterpPoints);
-  if(pylist!=NULL)
+  if(pylist!=nullptr)
   {
   for (i = 0; i < numInterpPoints; i++) {
     r[0] = '\0';
@@ -711,7 +711,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
     if(!rr)
     {
       Py_DECREF(pylist);
-      return NULL;
+      return nullptr;
     }
     PyList_SET_ITEM(pylist, i, rr);
     }
@@ -728,22 +728,22 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
 // pyImage_methods
 // --------------------
 static PyMethodDef pyMath_methods[] = {
-   {"FFT", pyMath_FFTCmd, METH_VARARGS,NULL},
-   {"InverseFFT", pyMath_inverseFFTCmd, METH_VARARGS,NULL},
-   {"ComputeWomersley", pyMath_computeWomersleyCmd, METH_VARARGS,NULL},
-   {"LinearInterp", pyMath_linearInterpCmd, METH_VARARGS,NULL},
-   {"CurveLength", pyMath_curveLengthCmd, METH_VARARGS,NULL},
-   {"LinearInterpCurve", pyMath_linearInterpolateCurveCmd, METH_VARARGS,NULL},
-   {"FitLeastSquares", pyMath_fitLeastSquaresCmd, METH_VARARGS,NULL},
-   {"SmoothCurve", pyMath_smoothCurveCmd, METH_VARARGS,NULL},
-  {NULL,       NULL},
+   {"FFT", pyMath_FFTCmd, METH_VARARGS,nullptr},
+   {"InverseFFT", pyMath_inverseFFTCmd, METH_VARARGS,nullptr},
+   {"ComputeWomersley", pyMath_computeWomersleyCmd, METH_VARARGS,nullptr},
+   {"LinearInterp", pyMath_linearInterpCmd, METH_VARARGS,nullptr},
+   {"CurveLength", pyMath_curveLengthCmd, METH_VARARGS,nullptr},
+   {"LinearInterpCurve", pyMath_linearInterpolateCurveCmd, METH_VARARGS,nullptr},
+   {"FitLeastSquares", pyMath_fitLeastSquaresCmd, METH_VARARGS,nullptr},
+   {"SmoothCurve", pyMath_smoothCurveCmd, METH_VARARGS,nullptr},
+  {nullptr,       nullptr},
   };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyMathmodule = {
    PyModuleDef_HEAD_INIT,
    "pyMath",   /* name of module */
-   "pyMath module", /* module documentation, may be NULL */
+   "pyMath module", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    pyMath_methods
@@ -760,7 +760,7 @@ PyObject *pyMth;
 pyMth = Py_InitModule("pyMath",pyMath_methods);
 
 
-MathErr = PyErr_NewException("pyMath.error",NULL,NULL);
+MathErr = PyErr_NewException("pyMath.error",nullptr,nullptr);
 Py_INCREF(MathErr);
 PyModule_AddObject(pyMth,"error",MathErr);
 
@@ -774,12 +774,12 @@ PyMODINIT_FUNC PyInit_pyMath(void)
 
   pyMth = PyModule_Create(&pyMathmodule);
   printf("PyModule_Create called\n");
-  if (pyMth==NULL) {
+  if (pyMth==nullptr) {
     printf("Error Creating Python module!\n");
-    return NULL;
+    return nullptr;
   }
 
-MathErr = PyErr_NewException("pyMath.error",NULL,NULL);
+MathErr = PyErr_NewException("pyMath.error",nullptr,nullptr);
 Py_INCREF(MathErr);
 PyModule_AddObject(pyMth,"error",MathErr);
 Py_INCREF(pyMth);

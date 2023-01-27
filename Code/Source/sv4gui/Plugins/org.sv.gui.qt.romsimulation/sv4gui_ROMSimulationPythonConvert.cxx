@@ -84,7 +84,7 @@ bool sv4guiROMSimulationPythonConvert::ConvertResults(const std::string outputDi
   if (pyModule == nullptr) {
       auto msg = "Unable to load the Python '" + QString(m_PythonModuleName.c_str()) + "' module.";
       MITK_ERROR << msg;
-      QMessageBox::warning(NULL, sv4guiROMSimulationView::MsgTitle, msg);
+      QMessageBox::warning(nullptr, sv4guiROMSimulationView::MsgTitle, msg);
       return false;
   } 
 
@@ -98,7 +98,7 @@ bool sv4guiROMSimulationPythonConvert::ConvertResults(const std::string outputDi
   if (!PyCallable_Check(pyFunc)) {
       auto msg = "Can't find the function '" + QString(pyFuncName) + "' in the '" + QString(m_PythonModuleName.c_str()) + "' module.";
       MITK_ERROR << msg;
-      QMessageBox::warning(NULL, sv4guiROMSimulationView::MsgTitle, msg);
+      QMessageBox::warning(nullptr, sv4guiROMSimulationView::MsgTitle, msg);
       return false;
   }
 
@@ -152,7 +152,7 @@ bool sv4guiROMSimulationPythonConvert::ConvertResults(const std::string outputDi
       } else {
           QString rmsg = "Reduced-order solver files have been successfully converted.\n";
           MITK_INFO << msg << rmsg;
-          QMessageBox::information(NULL, sv4guiROMSimulationView::MsgTitle, rmsg);
+          QMessageBox::information(nullptr, sv4guiROMSimulationView::MsgTitle, rmsg);
       }
   }
 

@@ -80,18 +80,18 @@ int Path_pyInit()
 }
 
 static PyMethodDef pyPath_methods[]={
-  {"NewObject", (PyCFunction)sv4Path_NewObjectCmd,METH_VARARGS,NULL},
-  {"GetObject", (PyCFunction)sv4Path_GetObjectCmd,METH_VARARGS,NULL},
-  {"AddPoint",(PyCFunction)sv4Path_AddPointCmd,METH_VARARGS,NULL},
-  {"PrintPoints",(PyCFunction)sv4Path_PrintCtrlPointCmd, METH_NOARGS,NULL},
-  {"RemovePoint",(PyCFunction)sv4Path_RemovePointCmd,METH_VARARGS,NULL},
-  {"MovePoint",(PyCFunction)sv4Path_MoveCtrlPointCmd,METH_VARARGS,NULL},
-  {"Smooth",(PyCFunction)sv4Path_SmoothPathCmd, METH_VARARGS,NULL},
-  {"CreatePath",(PyCFunction)sv4Path_CreatePathCmd, METH_NOARGS,NULL},
-  {"GetPathPtsNum",(PyCFunction)sv4Path_GetPathPtNumberCmd, METH_NOARGS, NULL},
-  {"GetPathPosPts",(PyCFunction)sv4Path_GetPathPosPts, METH_NOARGS, NULL},
-  {"GetControlPts",(PyCFunction)sv4Path_GetControlPts, METH_NOARGS, NULL},
-  {NULL,NULL}
+  {"NewObject", (PyCFunction)sv4Path_NewObjectCmd,METH_VARARGS,nullptr},
+  {"GetObject", (PyCFunction)sv4Path_GetObjectCmd,METH_VARARGS,nullptr},
+  {"AddPoint",(PyCFunction)sv4Path_AddPointCmd,METH_VARARGS,nullptr},
+  {"PrintPoints",(PyCFunction)sv4Path_PrintCtrlPointCmd, METH_NOARGS,nullptr},
+  {"RemovePoint",(PyCFunction)sv4Path_RemovePointCmd,METH_VARARGS,nullptr},
+  {"MovePoint",(PyCFunction)sv4Path_MoveCtrlPointCmd,METH_VARARGS,nullptr},
+  {"Smooth",(PyCFunction)sv4Path_SmoothPathCmd, METH_VARARGS,nullptr},
+  {"CreatePath",(PyCFunction)sv4Path_CreatePathCmd, METH_NOARGS,nullptr},
+  {"GetPathPtsNum",(PyCFunction)sv4Path_GetPathPtNumberCmd, METH_NOARGS, nullptr},
+  {"GetPathPosPts",(PyCFunction)sv4Path_GetPathPosPts, METH_NOARGS, nullptr},
+  {"GetControlPts",(PyCFunction)sv4Path_GetControlPts, METH_NOARGS, nullptr},
+  {nullptr,nullptr}
 };
 
 static int pyPath_init(pyPath* self, PyObject* args)
@@ -101,7 +101,7 @@ static int pyPath_init(pyPath* self, PyObject* args)
 }
 
 static PyTypeObject pyPathType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   "pyPath.pyPath",             /* tp_name */
   sizeof(pyPath),             /* tp_basicsize */
   0,                         /* tp_itemsize */
@@ -144,14 +144,14 @@ static PyTypeObject pyPathType = {
 
 static PyMethodDef pyPathModule_methods[] =
 {
-    {NULL,NULL}
+    {nullptr,nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyPathModule = {
    PyModuleDef_HEAD_INIT,
    "pyPath",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    pyPathModule_methods
@@ -167,7 +167,7 @@ PyMODINIT_FUNC initpyPath()
 {
   // Associate the mesh registrar with the python interpreter so it can be
   // retrieved by the DLLs.
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository = new cvRepository();
     fprintf(stdout,"New gRepository created from cv_mesh_init\n");
@@ -182,12 +182,12 @@ PyMODINIT_FUNC initpyPath()
   }
   PyObject* pythonC;
   pythonC = Py_InitModule("pyPath",pyPathModule_methods);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyPath\n");
     return;
   }
-  PyRunTimeErr = PyErr_NewException("pyPath.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyPath.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyPathType);
   PyModule_AddObject(pythonC,"pyPath",(PyObject*)&pyPathType);
@@ -204,7 +204,7 @@ PyMODINIT_FUNC PyInit_pyPath()
 
 {
 
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository = new cvRepository();
     fprintf(stdout,"New gRepository created from sv3_PathElement_init\n");
@@ -219,12 +219,12 @@ PyMODINIT_FUNC PyInit_pyPath()
   }
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyPathModule);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyPath\n");
     return SV_PYTHON_ERROR;
   }
-  PyRunTimeErr = PyErr_NewException("pyPath.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyPath.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyPathType);
   PyModule_AddObject(pythonC,"pyPath",(PyObject*)&pyPathType);
@@ -279,7 +279,7 @@ PyObject* sv4Path_NewObjectCmd( pyPath* self, PyObject* args)
 // --------------------
 PyObject* sv4Path_GetObjectCmd( pyPath* self, PyObject* args)
 {
-  char *objName=NULL;
+  char *objName=nullptr;
   RepositoryDataT type;
   cvRepositoryData *rd;
   PathElement *path;
@@ -295,7 +295,7 @@ PyObject* sv4Path_GetObjectCmd( pyPath* self, PyObject* args)
   // Retrieve source object:
   rd = gRepository->GetObject( objName );
   char r[2048];
-  if ( rd == NULL )
+  if ( rd == nullptr )
   {
     r[0] = '\0';
     sprintf(r, "couldn't find object %s", objName);
@@ -337,7 +337,7 @@ PyObject* sv4Path_AddPointCmd( pyPath* self, PyObject* args)
     }
     
     PathElement* path = self->geom;
-    if (path==NULL)
+    if (path==nullptr)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
         
@@ -389,7 +389,7 @@ PyObject* sv4Path_RemovePointCmd( pyPath* self, PyObject* args)
     
     
     PathElement* path = self->geom;
-    if (path==NULL)
+    if (path==nullptr)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
         
@@ -424,7 +424,7 @@ PyObject* sv4Path_MoveCtrlPointCmd( pyPath* self, PyObject* args)
     }
     
     PathElement* path = self->geom;
-    if (path==NULL)
+    if (path==nullptr)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
         
@@ -467,7 +467,7 @@ PyObject* sv4Path_SmoothPathCmd( pyPath* self, PyObject* args)
     }
     
     PathElement* path = self->geom;
-    if (path==NULL)
+    if (path==nullptr)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
         
@@ -507,7 +507,7 @@ PyObject* sv4Path_PrintCtrlPointCmd( pyPath* self, PyObject* args)
 PyObject* sv4Path_CreatePathCmd(pyPath* self, PyObject* args)
 {
     PathElement* path = self->geom;
-    if (path==NULL)
+    if (path==nullptr)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
         
@@ -531,7 +531,7 @@ PyObject* sv4Path_CreatePathCmd(pyPath* self, PyObject* args)
 PyObject* sv4Path_GetPathPtNumberCmd(pyPath* self, PyObject* args)
 {
     PathElement* path = self->geom;
-    if (path==NULL)
+    if (path==nullptr)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
         
@@ -548,7 +548,7 @@ PyObject* sv4Path_GetPathPtNumberCmd(pyPath* self, PyObject* args)
 PyObject* sv4Path_GetPathPosPts(pyPath* self, PyObject* args)
 {
     PathElement* path = self->geom;
-    if (path==NULL)
+    if (path==nullptr)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
         
@@ -565,7 +565,7 @@ PyObject* sv4Path_GetPathPosPts(pyPath* self, PyObject* args)
         PyList_SetItem(output,i,tmpList);
     }
     
-    if(PyErr_Occurred()!=NULL)
+    if(PyErr_Occurred()!=nullptr)
     {
         PyErr_SetString(PyRunTimeErr, "error generating pathpospt output");
         
@@ -580,7 +580,7 @@ PyObject* sv4Path_GetPathPosPts(pyPath* self, PyObject* args)
 PyObject* sv4Path_GetControlPts(pyPath* self, PyObject* args)
 {
     PathElement* path = self->geom;
-    if (path==NULL)
+    if (path==nullptr)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
     }
@@ -596,7 +596,7 @@ PyObject* sv4Path_GetControlPts(pyPath* self, PyObject* args)
         PyList_SetItem(output,i,tmpList);
     }
 
-    if(PyErr_Occurred()!=NULL)
+    if(PyErr_Occurred()!=nullptr)
     {
         PyErr_SetString(PyRunTimeErr, "error generating pathcontrolpt output");
     }

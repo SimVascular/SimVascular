@@ -42,7 +42,7 @@
 
 cvLevelSetVelocity::cvLevelSetVelocity()
 {
-  ls_ = NULL;
+  ls_ = nullptr;
   //  tol_ = CV_PHI_TOL;
   tol_ = 1e10 * FindMachineEpsilon();
 
@@ -58,7 +58,7 @@ cvLevelSetVelocity::cvLevelSetVelocity()
 
 cvLevelSetVelocity::~cvLevelSetVelocity()
 {
-  if ( ls_ != NULL ) {
+  if ( ls_ != nullptr ) {
     ls_->UnlinkVelocity();
   }
 }
@@ -72,11 +72,11 @@ int cvLevelSetVelocity::LinkLevelSet( cvLevelSet *ls )
 {
   cvLevelSetVelocity *dummy;
 
-  if ( ls == NULL ) {
+  if ( ls == nullptr ) {
     return SV_ERROR;
   }
 
-  if ( ls_ != NULL ) {
+  if ( ls_ != nullptr ) {
     UnlinkLevelSet();
   }
 
@@ -101,13 +101,13 @@ int cvLevelSetVelocity::LinkLevelSet( cvLevelSet *ls )
 
 int cvLevelSetVelocity::UnlinkLevelSet()
 {
-  if ( ls_ == NULL ) {
+  if ( ls_ == nullptr ) {
     return SV_OK;
   }
 
   //  ls_->UnlinkVelocity();
-  ls_->velocity_ = NULL;
-  ls_ = NULL;
+  ls_->velocity_ = nullptr;
+  ls_ = nullptr;
   tol_ = CV_PHI_TOL;
   return SV_OK;
 }
@@ -134,11 +134,11 @@ int cvLevelSetVelocity::UpdateTolerance()
   double minh;
   double hv[3];
 
-  if ( ls_ == NULL ) {
+  if ( ls_ == nullptr ) {
     return SV_ERROR;
   }
   grid = ls_->GetGrid();
-  if ( grid == NULL ) {
+  if ( grid == nullptr ) {
     return SV_ERROR;
   }
   grid->GetHv( &hv[0], &hv[1], &hv[2] );
@@ -156,7 +156,7 @@ int cvLevelSetVelocity::UpdateTolerance()
 
 int cvLevelSetVelocity::Valid()
 {
-  if ( ls_ == NULL ) {
+  if ( ls_ == nullptr ) {
     return SV_ERROR;
   } else {
     return SV_OK;

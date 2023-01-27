@@ -119,7 +119,7 @@ static int NewName( CONST84 char *name )
 {
 	Tcl_HashEntry *entryPtr;
 	entryPtr = Tcl_FindHashEntry( &gLsetCoreTable, name );
-	if ( entryPtr != NULL ) {
+	if ( entryPtr != nullptr ) {
 		return 0;
 	}
 	return 1;
@@ -179,7 +179,7 @@ int itkls3d_ObjectCmd( CXX_TCL_STDARGS )
 	CVTCLObjMethodInit(itkls3d,SetBinarySeedMtd,SetBinarySeed)
 
 	Tcl_AppendResult( interp, "\"", argv[1],
-			"\" not a recognized ITKLevelSet method", (char *)NULL );
+			"\" not a recognized ITKLevelSet method", (char *)nullptr );
 	return TCL_ERROR;
 }
 
@@ -205,7 +205,7 @@ static int itkls3d_NewCmd( CXX_TCL_STDARGS )
 	// Check syntax:
 	if (argc != 2) {
 		Tcl_AppendResult( interp, "usage: ", argv[0], " <objName>",
-				(char *)NULL );
+				(char *)nullptr );
 		return TCL_ERROR;
 	}
 
@@ -213,15 +213,15 @@ static int itkls3d_NewCmd( CXX_TCL_STDARGS )
 	lsName = argv[1];
 	if ( !NewName( lsName ) ) {
 		Tcl_AppendResult( interp, "ITKLevelSetCore object \"", lsName,
-				"\" already exists", (char *)NULL );
+				"\" already exists", (char *)nullptr );
 		return TCL_ERROR;
 	}
 
 	// Allocate new cvLevelSet object:
 	ls = new cvITKLevelSetBase<ImageType>;
-	if ( ls == NULL ) {
+	if ( ls == nullptr ) {
 		Tcl_AppendResult( interp, "error allocating object \"", lsName,
-				"\"", (char *)NULL );
+				"\"", (char *)nullptr );
 		return TCL_ERROR;
 	}
 
@@ -256,7 +256,7 @@ void Deleteitkls3d( ClientData clientData )
 	Tcl_HashEntry *entryPtr;
 
 	entryPtr = Tcl_FindHashEntry( &gLsetCoreTable, ls->tclName_ );
-	if ( entryPtr == NULL ) {
+	if ( entryPtr == nullptr ) {
 		printf("Error looking up LsetCore object %s for deletion.\n",
 				ls->tclName_);
 	} else {
@@ -278,8 +278,8 @@ int itkls3d_SetInputsMtd( CXX_TCL_STDARGS )
 	int table_size = 2;
 
 	ARG_Entry arg_table[] = {
-			{ "-image", STRING_Type, &inputImageName, NULL, REQUIRED, 0, { 0 } },
-			{ "-seed", STRING_Type, &seedPdName, NULL, REQUIRED, 0, { 0 } },
+			{ "-image", STRING_Type, &inputImageName, nullptr, REQUIRED, 0, { 0 } },
+			{ "-seed", STRING_Type, &seedPdName, nullptr, REQUIRED, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );
@@ -294,11 +294,11 @@ int itkls3d_SetInputsMtd( CXX_TCL_STDARGS )
 	typeImg1 = gRepository->GetType( inputImageName );
 	typeImg1Str = RepositoryDataT_EnumToStr( typeImg1 );
 	cvRepositoryData *inputImage;
-	if (inputImageName != NULL) {
+	if (inputImageName != nullptr) {
 		// Look up given image object:
 		inputImage = gRepository->GetObject( inputImageName );
-		if ( inputImage == NULL ) {
-			Tcl_AppendResult( interp, "couldn't find object ", inputImageName, (char *)NULL );
+		if ( inputImage == nullptr ) {
+			Tcl_AppendResult( interp, "couldn't find object ", inputImageName, (char *)nullptr );
 			return TCL_ERROR;
 		}
 		//printf("Found Object\n");
@@ -306,7 +306,7 @@ int itkls3d_SetInputsMtd( CXX_TCL_STDARGS )
 		typeImg1 = inputImage->GetType();
 		if ( typeImg1 != STRUCTURED_PTS_T ) {
 			Tcl_AppendResult( interp, "error: object ", inputImageName,
-					"not of type StructuredPts", (char *)NULL );
+					"not of type StructuredPts", (char *)nullptr );
 			return TCL_ERROR;
 		}
 	}
@@ -318,11 +318,11 @@ int itkls3d_SetInputsMtd( CXX_TCL_STDARGS )
 	typeImg2Str = RepositoryDataT_EnumToStr( typeImg2 );
 	cvRepositoryData *seedPolyData;
 
-	if (seedPdName != NULL) {
+	if (seedPdName != nullptr) {
 		// Look up given image object:
 		seedPolyData = gRepository->GetObject( seedPdName );
-		if ( seedPolyData == NULL ) {
-			Tcl_AppendResult( interp, "couldn't find object ", seedPdName, (char *)NULL );
+		if ( seedPolyData == nullptr ) {
+			Tcl_AppendResult( interp, "couldn't find object ", seedPdName, (char *)nullptr );
 			return TCL_ERROR;
 		}
 		printf("Found Object\n");
@@ -330,7 +330,7 @@ int itkls3d_SetInputsMtd( CXX_TCL_STDARGS )
 		typeImg2 = seedPolyData->GetType();
 		if ( typeImg2 != POLY_DATA_T) {
 			Tcl_AppendResult( interp, "error: object ", seedPdName,
-					"not of type PolyData", (char *)NULL );
+					"not of type PolyData", (char *)nullptr );
 			return TCL_ERROR;
 		}
 	}
@@ -359,11 +359,11 @@ static int itkls3d_PhaseOneLevelSetMtd( CXX_TCL_STDARGS )
 
 	int table_size = 5;
 	ARG_Entry arg_table[] = {
-			{ "-Kc", DOUBLE_Type, &kc, NULL, REQUIRED, 0, { 0 } },
-			{ "-expRising", DOUBLE_Type, &expFactorRising, NULL, REQUIRED, 0, { 0 } },
-			{ "-expFalling", DOUBLE_Type, &expFactorFalling, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigmaFeat", DOUBLE_Type, &sigmaFeat, NULL, SV_OPTIONAL, 0, { 0 } },
-			{ "-sigmaAdv", DOUBLE_Type, &sigmaAdv, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-Kc", DOUBLE_Type, &kc, nullptr, REQUIRED, 0, { 0 } },
+			{ "-expRising", DOUBLE_Type, &expFactorRising, nullptr, REQUIRED, 0, { 0 } },
+			{ "-expFalling", DOUBLE_Type, &expFactorFalling, nullptr, REQUIRED, 0, { 0 } },
+			{ "-sigmaFeat", DOUBLE_Type, &sigmaFeat, nullptr, SV_OPTIONAL, 0, { 0 } },
+			{ "-sigmaAdv", DOUBLE_Type, &sigmaAdv, nullptr, SV_OPTIONAL, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );
@@ -391,10 +391,10 @@ static int itkls3d_PhaseTwoLevelSetMtd( CXX_TCL_STDARGS )
 
 	int table_size = 4;
 	ARG_Entry arg_table[] = {
-			{ "-Klow", DOUBLE_Type, &klow, NULL, REQUIRED, 0, { 0 } },
-			{ "-Kupp", DOUBLE_Type, &kupp, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigmaFeat", DOUBLE_Type, &sigmaFeat, NULL, SV_OPTIONAL, 0, { 0 } },
-			{ "-sigmaAdv", DOUBLE_Type, &sigmaAdv, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-Klow", DOUBLE_Type, &klow, nullptr, REQUIRED, 0, { 0 } },
+			{ "-Kupp", DOUBLE_Type, &kupp, nullptr, REQUIRED, 0, { 0 } },
+			{ "-sigmaFeat", DOUBLE_Type, &sigmaFeat, nullptr, SV_OPTIONAL, 0, { 0 } },
+			{ "-sigmaAdv", DOUBLE_Type, &sigmaAdv, nullptr, SV_OPTIONAL, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );
@@ -422,10 +422,10 @@ static int itkls3d_GACLevelSetMtd( CXX_TCL_STDARGS )
 
 	int table_size = 4;
 	ARG_Entry arg_table[] = {
-			{ "-expFactor", DOUBLE_Type, &expFactor, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigmaSpeed", DOUBLE_Type, &sigma, NULL, SV_OPTIONAL, 0, { 0 } },
-			{ "-kappa", DOUBLE_Type, &kappa, NULL, SV_OPTIONAL, 0, { 0 } },
-			{ "-iso", DOUBLE_Type, &iso, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-expFactor", DOUBLE_Type, &expFactor, nullptr, REQUIRED, 0, { 0 } },
+			{ "-sigmaSpeed", DOUBLE_Type, &sigma, nullptr, SV_OPTIONAL, 0, { 0 } },
+			{ "-kappa", DOUBLE_Type, &kappa, nullptr, SV_OPTIONAL, 0, { 0 } },
+			{ "-iso", DOUBLE_Type, &iso, nullptr, SV_OPTIONAL, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );
@@ -448,10 +448,10 @@ static int itkls3d_LaplacianLevelSetMtd( CXX_TCL_STDARGS )
 	std::cout << "Laplacian" << std::endl;
 	int table_size = 4;
 	ARG_Entry arg_table[] = {
-			{ "-expFactor", DOUBLE_Type, &expFactor, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigmaSpeed", DOUBLE_Type, &sigma, NULL, SV_OPTIONAL, 0, { 0 } },
-			{ "-kappa", DOUBLE_Type, &kappa, NULL, SV_OPTIONAL, 0, { 0 } },
-			{ "-iso", DOUBLE_Type, &iso, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-expFactor", DOUBLE_Type, &expFactor, nullptr, REQUIRED, 0, { 0 } },
+			{ "-sigmaSpeed", DOUBLE_Type, &sigma, nullptr, SV_OPTIONAL, 0, { 0 } },
+			{ "-kappa", DOUBLE_Type, &kappa, nullptr, SV_OPTIONAL, 0, { 0 } },
+			{ "-iso", DOUBLE_Type, &iso, nullptr, SV_OPTIONAL, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );

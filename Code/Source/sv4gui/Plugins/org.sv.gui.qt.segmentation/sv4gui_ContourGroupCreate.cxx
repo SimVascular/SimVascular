@@ -53,8 +53,8 @@ sv4guiContourGroupCreate::sv4guiContourGroupCreate(mitk::DataStorage::Pointer da
     , m_DataStorage(dataStorage)
     , m_SelecteNode(selectedNode)
     , m_TimeStep(timeStep)
-    , m_SegFolderNode(NULL)
-    , m_PathFolderNode(NULL)
+    , m_SegFolderNode(nullptr)
+    , m_PathFolderNode(nullptr)
 {
     m_Interface=new sv4guiDataNodeOperationInterface;
 
@@ -76,8 +76,8 @@ void sv4guiContourGroupCreate::Activated()
 {
     ui->comboBox->clear();
 
-    m_PathFolderNode=NULL;
-    m_SegFolderNode=NULL;
+    m_PathFolderNode=nullptr;
+    m_SegFolderNode=nullptr;
 
     if(m_SelecteNode.IsNull())
         return;
@@ -134,14 +134,14 @@ void sv4guiContourGroupCreate::CreateGroup()
 {
     QString selectedPathName=ui->comboBox->currentText();
     if(selectedPathName=="") {
-        QMessageBox::warning(NULL,"No Path Selected","Please select a path!");
+        QMessageBox::warning(nullptr,"No Path Selected","Please select a path!");
         return;
     }
 
     mitk::DataNode::Pointer selectedPathNode=m_DataStorage->GetNamedDerivedNode(selectedPathName.toStdString().c_str(),m_PathFolderNode);
 
     if(selectedPathNode.IsNull()) {
-        QMessageBox::warning(NULL,"No Path Found!","Please select a existing path!");
+        QMessageBox::warning(nullptr,"No Path Found!","Please select a existing path!");
         return;
     }
 
@@ -153,7 +153,7 @@ void sv4guiContourGroupCreate::CreateGroup()
 
     mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(groupName.c_str(),m_SegFolderNode);
     if(exitingNode){
-        QMessageBox::warning(NULL,"Contour Group Already Created","Please use a different group name!");
+        QMessageBox::warning(nullptr,"Contour Group Already Created","Please use a different group name!");
         return;
     }
 
@@ -162,7 +162,7 @@ void sv4guiContourGroupCreate::CreateGroup()
         auto groupName = ui->lineEditGroupName->text().trimmed();
         QString msg = "The name '" + groupName + "' is not valid.\n" +
                       "Contour group names " + validName + ".\n";
-        QMessageBox::warning(NULL, "Contour group", msg);
+        QMessageBox::warning(nullptr, "Contour group", msg);
         return;
     }
 

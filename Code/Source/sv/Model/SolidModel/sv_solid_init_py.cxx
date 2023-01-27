@@ -269,151 +269,151 @@ static int pySolidModel_init(pySolidModel* self, PyObject* args)
 
 //All functions listed and initiated as pySolid_methods declared here
 static PyMemberDef pySolidModel_members[]={
-{NULL}
+{nullptr}
 };
 // --------------------
 // pySolid_methods
 // --------------------
 static PyMethodDef pySolidModel_methods[]={
-  { "GetModel", (PyCFunction)Solid_GetModelCmd, METH_VARARGS, NULL},
+  { "GetModel", (PyCFunction)Solid_GetModelCmd, METH_VARARGS, nullptr},
   { "Poly",(PyCFunction) Solid_PolyCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "PolyPts", (PyCFunction)Solid_PolyPtsCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Circle", (PyCFunction)Solid_CircleCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Ellipse", (PyCFunction)Solid_EllipseCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Box2d", (PyCFunction)Solid_Box2dCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Box3d", (PyCFunction)Solid_Box3dCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Sphere", (PyCFunction)Solid_SphereCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Ellipsoid", (PyCFunction)Solid_EllipsoidCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Cylinder", (PyCFunction)Solid_CylinderCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "TruncatedCone", (PyCFunction)Solid_TruncatedConeCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Torus", (PyCFunction)Solid_TorusCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Poly3dSolid", (PyCFunction)Solid_Poly3dSolidCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Poly3dSurface", (PyCFunction)Solid_Poly3dSurfaceCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "ExtrudeZ", (PyCFunction)Solid_ExtrudeZCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Extrude", (PyCFunction)Solid_ExtrudeCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "MakeApproxCurveLoop",
 		     (PyCFunction)Solid_MakeApproxCurveLoopCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "MakeInterpCurveLoop",
 		     (PyCFunction)Solid_MakeInterpCurveLoopCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "MakeLoftedSurf", (PyCFunction)Solid_MakeLoftedSurfCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "CapSurfToSolid", (PyCFunction)Solid_CapSurfToSolidCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Intersect", (PyCFunction)Solid_IntersectCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Union", (PyCFunction)Solid_UnionCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Subtract", (PyCFunction)Solid_SubtractCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "ReadNative", (PyCFunction)Solid_ReadNativeCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Copy", (PyCFunction)Solid_CopyCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Methods", (PyCFunction)Solid_ListMethodsCmd,
-		     METH_NOARGS,NULL},
+		     METH_NOARGS,nullptr},
   { "NewObject", (PyCFunction)Solid_NewObjectCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetClassName", (PyCFunction)Solid_GetClassNameMtd,
-		     METH_NOARGS,NULL},
+		     METH_NOARGS,nullptr},
   { "FindExtent", (PyCFunction)Solid_FindExtentMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "FindCentroid",(PyCFunction)Solid_FindCentroidMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetTopoDim",(PyCFunction)Solid_GetTopoDimMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetSpatialDim",(PyCFunction)Solid_GetSpatialDimMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "ClassifyPt",(PyCFunction)Solid_ClassifyPtMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "DeleteFaces",(PyCFunction)Solid_DeleteFacesMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "DeleteRegion",(PyCFunction)Solid_DeleteRegionMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "CreateEdgeBlend",(PyCFunction)Solid_CreateEdgeBlendMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "CombineFaces",(PyCFunction)Solid_CombineFacesMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "RemeshFace",(PyCFunction)Solid_RemeshFaceMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Distance",(PyCFunction)Solid_DistanceMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetFaceNormal",(PyCFunction)Solid_GetFaceNormalMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Translate",(PyCFunction)Solid_TranslateMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Rotate",(PyCFunction)Solid_RotateMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Scale",(PyCFunction)Solid_ScaleMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Reflect",(PyCFunction)Solid_ReflectMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Apply4x4",(PyCFunction)Solid_Apply4x4Mtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Print", (PyCFunction)Solid_PrintMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "Check", (PyCFunction)Solid_CheckMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "WriteNative",(PyCFunction)Solid_WriteNativeMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "WriteVtkPolyData",(PyCFunction)Solid_WriteVtkPolyDataMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "WriteGeomSim", (PyCFunction)Solid_WriteGeomSimMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetFacePolyData",(PyCFunction)Solid_GetFacePolyDataMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetPolyData",(PyCFunction)Solid_GetPolyDataMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "SetVtkPolyData",(PyCFunction)Solid_SetVtkPolyDataMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetDiscontinuities",(PyCFunction)Solid_GetDiscontinuitiesMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetAxialIsoparametricCurve",(PyCFunction)Solid_GetAxialIsoparametricCurveMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetKernel",(PyCFunction)Solid_GetKernelMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetLabelKeys",(PyCFunction)Solid_GetLabelKeysMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetLabel", (PyCFunction)Solid_GetLabelMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "SetLabel",(PyCFunction)Solid_SetLabelMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "ClearLabel", (PyCFunction)Solid_ClearLabelMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetFaceIds", (PyCFunction)Solid_GetFaceIdsMtd,
-		     METH_NOARGS,NULL},
+		     METH_NOARGS,nullptr},
   { "GetBoundaryFaces",(PyCFunction)Solid_GetBoundaryFacesMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetRegionIds",(PyCFunction)Solid_GetRegionIdsMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetFaceAttr",(PyCFunction)Solid_GetFaceAttrMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "SetFaceAttr",(PyCFunction)Solid_SetFaceAttrMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetRegionAttr",(PyCFunction)Solid_GetRegionAttrMtd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "SetRegionAttr", (PyCFunction)Solid_SetRegionAttrMtd,
-		     METH_VARARGS,NULL},
-  {NULL,NULL}
+		     METH_VARARGS,nullptr},
+  {nullptr,nullptr}
 };
 static PyTypeObject pySolidModelType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   "pySolid.pySolidModel",             /* tp_name */
   sizeof(pySolidModel),             /* tp_basicsize */
   0,                         /* tp_itemsize */
@@ -454,16 +454,16 @@ static PyTypeObject pySolidModelType = {
   0,                  /* tp_new */
 };
 static PyMethodDef pySolid_methods[] = {
-  {"Registrars", (PyCFunction)Solid_RegistrarsListCmd,METH_NOARGS,NULL},
+  {"Registrars", (PyCFunction)Solid_RegistrarsListCmd,METH_NOARGS,nullptr},
   { "SetKernel", (PyCFunction)Solid_SetKernelCmd,
-		     METH_VARARGS,NULL},
+		     METH_VARARGS,nullptr},
   { "GetKernel", (PyCFunction)Solid_GetKernelCmd,
-		     METH_NOARGS,NULL},
-  {NULL, NULL}
+		     METH_NOARGS,nullptr},
+  {nullptr, nullptr}
 };
 
 static PyTypeObject pycvFactoryRegistrarType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   "pySolid.pycvFactoryRegistrar",             /* tp_name */
   sizeof(pycvFactoryRegistrar),             /* tp_basicsize */
   0,                         /* tp_itemsize */
@@ -491,7 +491,7 @@ static PyTypeObject pycvFactoryRegistrarType = {
 static struct PyModuleDef pySolidmodule = {
    PyModuleDef_HEAD_INIT,
    "pySolid",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    pySolid_methods
@@ -503,7 +503,7 @@ PyMODINIT_FUNC
 initpySolid(void)
 {
     // Initialize-gRepository
-  if (gRepository ==NULL)
+  if (gRepository ==nullptr)
   {
     gRepository=new cvRepository();
     fprintf(stdout,"New gRepository created from cv_solid_init\n");
@@ -529,13 +529,13 @@ initpySolid(void)
   //Init our defined functions
   PyObject *pythonC;
   pythonC = Py_InitModule("pySolid", pySolid_methods);
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pySolid");
     return;
   }
 
-  PyRunTimeErr=PyErr_NewException("pySolid.error",NULL,NULL);
+  PyRunTimeErr=PyErr_NewException("pySolid.error",nullptr,nullptr);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
   Py_INCREF(&pySolidModelType);
   Py_INCREF(&pycvFactoryRegistrarType);
@@ -555,7 +555,7 @@ PyMODINIT_FUNC
 PyInit_pySolid(void)
 {
     // Initialize-gRepository
-  if (gRepository ==NULL)
+  if (gRepository ==nullptr)
   {
     gRepository=new cvRepository();
     fprintf(stdout,"New gRepository created from cv_solid_init\n");
@@ -581,13 +581,13 @@ PyInit_pySolid(void)
   //Init our defined functions
   PyObject *pythonC;
   pythonC = PyModule_Create(&pySolidmodule);
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pySolid");
     return SV_PYTHON_ERROR;
   }
 
-  PyRunTimeErr=PyErr_NewException("pySolid.error",NULL,NULL);
+  PyRunTimeErr=PyErr_NewException("pySolid.error",nullptr,nullptr);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
   Py_INCREF(&pySolidModelType);
   Py_INCREF(&pycvFactoryRegistrarType);
@@ -647,7 +647,7 @@ PyObject* Solid_RegistrarsListCmd(PyObject* self, PyObject* args)
 
 PyObject* Solid_GetModelCmd( pySolidModel* self, PyObject* args)
 {
-  char *objName=NULL;
+  char *objName=nullptr;
   RepositoryDataT type;
   cvRepositoryData *rd;
   cvSolidModel *geom;
@@ -663,7 +663,7 @@ PyObject* Solid_GetModelCmd( pySolidModel* self, PyObject* args)
   // Retrieve source object:
   rd = gRepository->GetObject( objName );
   char r[2048];
-  if ( rd == NULL )
+  if ( rd == nullptr )
   {
     r[0] = '\0';
     sprintf(r, "couldn't find object %s", objName);
@@ -728,7 +728,7 @@ PyObject* Solid_PolyPtsCmd( pySolidModel* self, PyObject* args)
 
   // Retrieve cvPolyData source:
   pd = gRepository->GetObject( srcName );
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
     
   }
@@ -740,8 +740,8 @@ PyObject* Solid_PolyPtsCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"geom is NULL");
+  if ( geom == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"geom is nullptr");
   }
 
   // Create the polygon solid:
@@ -793,7 +793,7 @@ PyObject* Solid_PolyCmd( pySolidModel* self, PyObject* args)
 
   // Retrieve cvPolyData source:
   pd = gRepository->GetObject( srcName );
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -805,7 +805,7 @@ PyObject* Solid_PolyCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -862,7 +862,7 @@ PyObject* Solid_CircleCmd(pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -920,7 +920,7 @@ if(!PyArg_ParseTuple(args,"sdO",&objName,&r,&ctrList))
   }
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -978,7 +978,7 @@ PyObject* Solid_EllipseCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -1037,7 +1037,7 @@ PyObject* Solid_Box2dCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -1108,7 +1108,7 @@ PyObject* Solid_Box3dCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -1176,7 +1176,7 @@ PyObject* Solid_EllipsoidCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -1247,7 +1247,7 @@ PyObject* Solid_CylinderCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -1317,7 +1317,7 @@ PyObject* Solid_TruncatedConeCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -1386,7 +1386,7 @@ PyObject* Solid_TorusCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -1444,7 +1444,7 @@ PyObject* Solid_Poly3dSolidCmd( pySolidModel* self, PyObject* args)
 
   // Retrieve cvPolyData source:
   pd = gRepository->GetObject( srcName );
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
     
   }
@@ -1462,7 +1462,7 @@ PyObject* Solid_Poly3dSolidCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -1524,7 +1524,7 @@ PyObject* Solid_Poly3dSurfaceCmd( pySolidModel* self, PyObject* args)
 
   // Retrieve cvPolyData source:
   pd = gRepository->GetObject( srcName );
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -1542,7 +1542,7 @@ PyObject* Solid_Poly3dSurfaceCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -1594,7 +1594,7 @@ PyObject* Solid_ExtrudeZCmd( pySolidModel* self, PyObject* args)
 
   // Retrieve cvSolidModel source:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -1612,7 +1612,7 @@ PyObject* Solid_ExtrudeZCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -1677,7 +1677,7 @@ PyObject* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args)
   }
   // Retrieve cvSolidModel source:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -1699,7 +1699,7 @@ PyObject* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     delete dist;
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
@@ -1752,7 +1752,7 @@ PyObject* Solid_MakeApproxCurveLoopCmd( pySolidModel* self, PyObject* args)
 
   // Retrieve cvPolyData source:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -1770,7 +1770,7 @@ PyObject* Solid_MakeApproxCurveLoopCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -1818,7 +1818,7 @@ PyObject* Solid_MakeInterpCurveLoopCmd( pySolidModel* self, PyObject* args)
 
   // Retrieve cvPolyData source:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -1836,7 +1836,7 @@ PyObject* Solid_MakeInterpCurveLoopCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -1902,7 +1902,7 @@ PyObject* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
 
   for ( i = 0; i < numSrcs; i++ ) {
     src = gRepository->GetObject( PyString_AsString(PyList_GetItem(srcList,i)) );
-    if ( src == NULL ) {
+    if ( src == nullptr ) {
       PyErr_SetString(PyRunTimeErr,"Couldn't find object ");
       delete [] srcs;
       
@@ -1927,7 +1927,7 @@ PyObject* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     delete [] srcs;
     
@@ -1979,7 +1979,7 @@ PyObject* Solid_CapSurfToSolidCmd( pySolidModel* self, PyObject* args)
   // Do work of command:
 
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -1998,7 +1998,7 @@ PyObject* Solid_CapSurfToSolidCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -2055,7 +2055,7 @@ PyObject* Solid_ReadNativeCmd( pySolidModel* self, PyObject* args)
 
 	  geom = cvSolidModel::pyDefaultInstantiateSolidModel();
 
-	  if ( geom == NULL ) {
+	  if ( geom == nullptr ) {
 	   PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
 	    
 	  }
@@ -2107,7 +2107,7 @@ PyObject* Solid_CopyCmd( pySolidModel* self, PyObject* args)
 
   // Retrieve source:
   srcGeom = gRepository->GetObject( srcName );
-  if ( srcGeom == NULL ) {
+  if ( srcGeom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -2125,7 +2125,7 @@ PyObject* Solid_CopyCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   dstGeom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( dstGeom == NULL ) {
+  if ( dstGeom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -2156,7 +2156,7 @@ PyObject* Solid_CopyCmd( pySolidModel* self, PyObject* args)
 PyObject* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
 {
   char *resultName;
-  char *smpName=NULL;
+  char *smpName=nullptr;
   char *smpStr;
   char *aName;
   char *bName;
@@ -2186,7 +2186,7 @@ PyObject* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
 
   // Retrieve cvSolidModel operands:
   gmA = gRepository->GetObject( aName );
-  if ( gmA == NULL ) {
+  if ( gmA == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -2197,7 +2197,7 @@ PyObject* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
   }
 
   gmB = gRepository->GetObject( bName );
-  if ( gmB == NULL ) {
+  if ( gmB == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -2209,7 +2209,7 @@ PyObject* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -2241,7 +2241,7 @@ PyObject* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
 PyObject* Solid_UnionCmd( pySolidModel* self, PyObject* args)
 {
   char *resultName;
-  char *smpName=NULL;
+  char *smpName=nullptr;
   char *smpStr;
   char *aName;
   char *bName;
@@ -2270,7 +2270,7 @@ PyObject* Solid_UnionCmd( pySolidModel* self, PyObject* args)
   // Do work of command:
   // Retrieve cvSolidModel operands:
   gmA = gRepository->GetObject( aName );
-  if ( gmA == NULL ) {
+  if ( gmA == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -2281,7 +2281,7 @@ PyObject* Solid_UnionCmd( pySolidModel* self, PyObject* args)
   }
 
   gmB = gRepository->GetObject( bName );
-  if ( gmB == NULL ) {
+  if ( gmB == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -2293,8 +2293,8 @@ PyObject* Solid_UnionCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   result = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( result == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"result is NULL");
+  if ( result == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"result is nullptr");
   }
   if ( result->Union( (cvSolidModel*)gmA, (cvSolidModel*)gmB, smp ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "union error" );
@@ -2323,7 +2323,7 @@ PyObject* Solid_UnionCmd( pySolidModel* self, PyObject* args)
 PyObject* Solid_SubtractCmd( pySolidModel* self, PyObject* args)
 {
   char *resultName;
-  char *smpName=NULL;
+  char *smpName=nullptr;
   char *smpStr;
   char *aName;
   char *bName;
@@ -2353,7 +2353,7 @@ PyObject* Solid_SubtractCmd( pySolidModel* self, PyObject* args)
 
   // Retrieve cvSolidModel operands:
   gmA = gRepository->GetObject( aName );
-  if ( gmA == NULL ) {
+  if ( gmA == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -2364,7 +2364,7 @@ PyObject* Solid_SubtractCmd( pySolidModel* self, PyObject* args)
   }
 
   gmB = gRepository->GetObject( bName );
-  if ( gmB == NULL ) {
+  if ( gmB == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -2376,8 +2376,8 @@ PyObject* Solid_SubtractCmd( pySolidModel* self, PyObject* args)
 
   // Instantiate the new solid:
   result = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( result == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"geom is NULL");
+  if ( result == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"geom is nullptr");
   }
 
   if ( result->Subtract( (cvSolidModel*)gmA, (cvSolidModel*)gmB, smp )
@@ -2463,7 +2463,7 @@ PyObject* Solid_NewObjectCmd(pySolidModel* self,PyObject *args )
       cvSolidModel::gCurrentKernel == SM_KT_OCCT ||
       cvSolidModel::gCurrentKernel == SM_KT_MESHSIMSOLID) {
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     
   }
@@ -3134,7 +3134,7 @@ static PyObject*  Solid_GetPolyDataMtd( pySolidModel *self ,PyObject* args  )
   }
 
   cvSolidModel *geom =(self->geom);
-  if (geom==NULL)
+  if (geom==nullptr)
   {
       PyErr_SetString(PyRunTimeErr, "Solid object it empty");
       
@@ -3142,7 +3142,7 @@ static PyObject*  Solid_GetPolyDataMtd( pySolidModel *self ,PyObject* args  )
   // Get the cvPolyData:
   pd = geom->GetPolyData(useMaxDist, max_dist);
   //Py_DECREF(geom);
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "error getting cvPolyData" );
     
   }
@@ -3237,7 +3237,7 @@ static PyObject* Solid_GetFacePolyDataMtd( pySolidModel* self, PyObject* args)
 
   // Get the cvPolyData:
   pd = geom->GetFacePolyData(faceid,useMaxDist,max_dist);
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "error getting cvPolyData for ");
     
   }
@@ -3309,7 +3309,7 @@ static PyObject* Solid_GetDiscontinuitiesMtd( pySolidModel* self,
 
   // Get the cvPolyData:
   pd = geom->GetDiscontinuities();
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "error getting discontinuities");
     
   }
@@ -3359,7 +3359,7 @@ static pySolidModel* Solid_GetAxialIsoparametricCurveMtd( pySolidModel* self,
     
   }
   curve = geom->GetAxialIsoparametricCurve( prm );
-  if ( curve == NULL ) {
+  if ( curve == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "error getting isoparametric curve for");
     
   }

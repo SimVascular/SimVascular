@@ -242,7 +242,7 @@ static int NewName( CONST84 char *name )
 {
   Tcl_HashEntry *entryPtr;
   entryPtr = Tcl_FindHashEntry( &gLsetCoreTable, name );
-  if ( entryPtr != NULL ) {
+  if ( entryPtr != nullptr ) {
     return SV_ERROR;
   }
   return SV_OK;
@@ -257,7 +257,7 @@ static int NewName( CONST84 char *name, Tcl_Interp *interp )
 {
   int code;
 
-  code = Tcl_VarEval( interp, "info commands ", name, (char *)NULL );
+  code = Tcl_VarEval( interp, "info commands ", name, (char *)nullptr );
   if ( code != TCL_OK ) {
     return SV_ERROR;
   }
@@ -284,11 +284,11 @@ int Lsetcore_Init( Tcl_Interp *interp )
 {
   Tcl_InitHashTable( &gLsetCoreTable, TCL_STRING_KEYS );
   Tcl_CreateCommand( interp, "lsetCore", LsetCore_NewCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "lsetCore_instances", LsetCore_ListInstancesCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "lsetCore_methods", LsetCore_ListMethodsCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   strcpy( projectionSetBase_, "" );
   return TCL_OK;
 }
@@ -311,7 +311,7 @@ int LsetCore_NewCmd( ClientData clientData, Tcl_Interp *interp,
   // Check syntax:
   if (argc != 2) {
     Tcl_AppendResult( interp, "usage: ", argv[0], " <objName>",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -319,15 +319,15 @@ int LsetCore_NewCmd( ClientData clientData, Tcl_Interp *interp,
   lsName = argv[1];
   if ( !NewName( lsName ) ) {
     Tcl_AppendResult( interp, "lsetCore object \"", lsName,
-		      "\" already exists", (char *)NULL );
+		      "\" already exists", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Allocate new cvLevelSet object:
   ls = new cvLevelSet;
-  if ( ls == NULL ) {
+  if ( ls == nullptr ) {
     Tcl_AppendResult( interp, "error allocating object \"", lsName,
-		      "\"", (char *)NULL );
+		      "\"", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -362,7 +362,7 @@ void DeleteLsetCore( ClientData clientData )
   Tcl_HashEntry *entryPtr;
 
   entryPtr = Tcl_FindHashEntry( &gLsetCoreTable, ls->tclName_ );
-  if ( entryPtr == NULL ) {
+  if ( entryPtr == nullptr ) {
     printf("Error looking up LsetCore object %s for deletion.\n",
 	   ls->tclName_);
   } else {
@@ -383,7 +383,7 @@ int LsetCore_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
 			   int argc, CONST84 char *argv[] )
 {
   if ( argc != 1 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -406,12 +406,12 @@ int LsetCore_ListInstancesCmd( ClientData clientData, Tcl_Interp *interp,
   Tcl_HashSearch search;
 
   if ( argc != 1 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
   for ( entryPtr = Tcl_FirstHashEntry( &gLsetCoreTable, &search );
-	entryPtr != NULL;
+	entryPtr != nullptr;
 	entryPtr = Tcl_NextHashEntry( &search ) ) {
     Tcl_AppendElement( interp, (char*)(Tcl_GetHashKey( &gLsetCoreTable, entryPtr )) );
   }
@@ -745,7 +745,7 @@ int LsetCore_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 
   } else {
     Tcl_AppendResult( interp, "\"", argv[1],
-		      "\" not a recognized LsetCore method", (char *)NULL );
+		      "\" not a recognized LsetCore method", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -766,9 +766,9 @@ static int LsetCore_SetTimeMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-simTime", DOUBLE_Type, &simTime, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-cflFactor", DOUBLE_Type, &cflFactor, NULL, SV_OPTIONAL, 0, { 0 } },
-    //    { "-dt", DOUBLE_Type, &dt, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-simTime", DOUBLE_Type, &simTime, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-cflFactor", DOUBLE_Type, &cflFactor, nullptr, SV_OPTIONAL, 0, { 0 } },
+    //    { "-dt", DOUBLE_Type, &dt, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -844,7 +844,7 @@ static int LsetCore_GetTimeMtd( ClientData clientData, Tcl_Interp *interp,
   double simTime, t, cflFactor;
   char dummyStr[CV_STRLEN];
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
 
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
@@ -898,7 +898,7 @@ static int LsetCore_GetTimeStepMtd( ClientData clientData, Tcl_Interp *interp,
   char *usage;
   int ts;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -926,7 +926,7 @@ static int LsetCore_ResetTimeStepMtd( ClientData clientData,
   cvLevelSet *ls = (cvLevelSet *)clientData;
   char *usage;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -958,12 +958,12 @@ static int LsetCore_SetGridMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 6;
   ARG_Entry arg_table[] = {
-    { "-h", LIST_Type, &hlist, NULL, REQUIRED, 0, { 0 } },
-    { "-dim", LIST_Type, &glist, NULL, REQUIRED, 0, { 0 } },
-    { "-origin", LIST_Type, &olist, NULL, REQUIRED, 0, { 0 } },
-    { "-type", STRING_Type, &gridTypeStr, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-bandExt", LIST_Type, &blist, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-mineWd", DOUBLE_Type, &mineWd, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-h", LIST_Type, &hlist, nullptr, REQUIRED, 0, { 0 } },
+    { "-dim", LIST_Type, &glist, nullptr, REQUIRED, 0, { 0 } },
+    { "-origin", LIST_Type, &olist, nullptr, REQUIRED, 0, { 0 } },
+    { "-type", STRING_Type, &gridTypeStr, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-bandExt", LIST_Type, &blist, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-mineWd", DOUBLE_Type, &mineWd, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -1058,7 +1058,7 @@ static int LsetCore_SetGridMtd( ClientData clientData, Tcl_Interp *interp,
   if ( gridType != Invalid_GridT ) {
     if ( !( ls->SetGridType( gridType ) ) ) {
       Tcl_AppendResult( interp, "error setting grid type ", gridTypeStr,
-			(char *)NULL );
+			(char *)nullptr );
       return TCL_ERROR;
     }
   } else {
@@ -1070,18 +1070,18 @@ static int LsetCore_SetGridMtd( ClientData clientData, Tcl_Interp *interp,
   if ( gridType != Sparse_GridT ) {
     if ( arg_table[4].valid ) {
       Tcl_AppendResult( interp, arg_table[4].name, " is only valid for "
-			"sparse grids", (char *)NULL );
+			"sparse grids", (char *)nullptr );
       return TCL_ERROR;
     }
     if ( arg_table[5].valid ) {
       Tcl_AppendResult( interp, arg_table[5].name, " is only valid for "
-			"sparse grids", (char *)NULL );
+			"sparse grids", (char *)nullptr );
       return TCL_ERROR;
     }
   } else {
     if ( ! arg_table[4].valid ) {
       Tcl_AppendResult( interp, arg_table[4].name, " required for "
-			"sparse grids", (char *)NULL );
+			"sparse grids", (char *)nullptr );
       return TCL_ERROR;
     }
   }
@@ -1134,7 +1134,7 @@ static int LsetCore_GetGridMtd( ClientData clientData, Tcl_Interp *interp,
   // If any add'l arg's given, return usage string:
   if ( argc != 2 ) {
     Tcl_AppendResult( interp, "usage: $LsetCoreObject ", argv[1],
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1226,10 +1226,10 @@ static int LsetCore_SetCircleSeedMtd( ClientData clientData,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-r", DOUBLE_Type, &r, NULL, REQUIRED, 0, { 0 } },
-    { "-x", DOUBLE_Type, &x, NULL, REQUIRED, 0, { 0 } },
-    { "-y", DOUBLE_Type, &y, NULL, REQUIRED, 0, { 0 } },
-    { "-z", DOUBLE_Type, &z, NULL, REQUIRED, 0, { 0 } },
+    { "-r", DOUBLE_Type, &r, nullptr, REQUIRED, 0, { 0 } },
+    { "-x", DOUBLE_Type, &x, nullptr, REQUIRED, 0, { 0 } },
+    { "-y", DOUBLE_Type, &y, nullptr, REQUIRED, 0, { 0 } },
+    { "-z", DOUBLE_Type, &z, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -1275,7 +1275,7 @@ static int LsetCore_GetCircleSeedMtd( ClientData clientData,
 
   // If any add'l arg's given, return usage string:
   if ( argc != 2 ) {
-    Tcl_AppendResult( interp, "usage: $LsetCoreObject ", argv[1], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: $LsetCoreObject ", argv[1], (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1321,7 +1321,7 @@ static int LsetCore_SetPdSeedMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-polydata", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } }
+    { "-polydata", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } }
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -1340,16 +1340,16 @@ static int LsetCore_SetPdSeedMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   pd = gRepository->GetObject( objName );
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", objName,
-                      (char *)NULL );
+                      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = pd->GetType();
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, objName, " not a poly data object",
-                      (char *)NULL );
+                      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1407,7 +1407,7 @@ static int LsetCore_SetSolidSeedMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-solid", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-solid", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -1423,16 +1423,16 @@ static int LsetCore_SetSolidSeedMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   sm = gRepository->GetObject( objName );
-  if ( sm == NULL ) {
+  if ( sm == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", objName,
-                      (char *)NULL );
+                      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = sm->GetType();
   if ( (type != SOLID_MODEL_T) ) {
     Tcl_AppendResult( interp, objName, " not a solid model object",
-                      (char *)NULL );
+                      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1489,8 +1489,8 @@ static int LsetCore_SetImageSeedMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-img", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-thr", DOUBLE_Type, &thr, NULL, REQUIRED, 0, { 0 } }
+    { "-img", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-thr", DOUBLE_Type, &thr, nullptr, REQUIRED, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -1506,16 +1506,16 @@ static int LsetCore_SetImageSeedMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   img = gRepository->GetObject( objName );
-  if ( img == NULL ) {
+  if ( img == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", objName,
-                      (char *)NULL );
+                      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = img->GetType();
   if ( (type != STRUCTURED_PTS_T) ) {
     Tcl_AppendResult( interp, objName, " not an image object",
-                      (char *)NULL );
+                      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1582,7 +1582,7 @@ static int LsetCore_SetVelocityMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-vobj", STRING_Type, &vName, NULL, REQUIRED, 0, { 0 } },
+    { "-vobj", STRING_Type, &vName, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -1600,9 +1600,9 @@ static int LsetCore_SetVelocityMtd( ClientData clientData, Tcl_Interp *interp,
 
   // Look up the named velocity object in the velocity table:
   entryPtr = Tcl_FindHashEntry( &gLsetVTable, vName );
-  if ( entryPtr == NULL ) {
+  if ( entryPtr == nullptr ) {
     Tcl_AppendResult( interp, "velocity object ", vName, " not found",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
   v = (cvLevelSetVelocity *)Tcl_GetHashValue( entryPtr );
@@ -1629,7 +1629,7 @@ static int LsetCore_GetVelocityMtd( ClientData clientData, Tcl_Interp *interp,
   cvLevelSetVelocity *v;
   char *usage;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
 
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
@@ -1641,7 +1641,7 @@ static int LsetCore_GetVelocityMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( v == NULL ) {
+  if ( v == nullptr ) {
     Tcl_SetResult( interp, "error getting velocity", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1693,7 +1693,7 @@ static int LsetCore_SetTimersMtd( ClientData clientData, Tcl_Interp *interp,
     if ( Tcl_StringMatch( argv[i], "-flag" ) ) {
       if ( Tcl_GetInt( interp, argv[i+1], &value ) != TCL_OK ) {
 	Tcl_AppendResult( interp, "invalid value for flag: ",
-			  argv[i+1], (char *)NULL );
+			  argv[i+1], (char *)nullptr );
 	return TCL_ERROR;
       }
       flagFlag = 1;
@@ -1702,11 +1702,11 @@ static int LsetCore_SetTimersMtd( ClientData clientData, Tcl_Interp *interp,
     // Syntax errors:
     else if ( argv[i][0] == '-' ) {
       Tcl_AppendResult( interp, "\"", argv[i],
-			"\" not a recognized flag", (char *)NULL );
+			"\" not a recognized flag", (char *)nullptr );
       return TCL_ERROR;
     } else {
       Tcl_AppendResult( interp, "expecting a flag, but found \"", argv[i],
-			"\" instead", (char *)NULL );
+			"\" instead", (char *)nullptr );
       return TCL_ERROR;
     }
   }
@@ -1735,7 +1735,7 @@ static int LsetCore_GetTimersMtd( ClientData clientData, Tcl_Interp *interp,
   // If any add'l arg's given, return usage string:
   if ( argc != 2 ) {
     Tcl_AppendResult( interp, "usage: $LsetCoreObject ",
-		      argv[1], (char *)NULL );
+		      argv[1], (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1762,7 +1762,7 @@ static int LsetCore_GetTimerGranularityMtd( ClientData clientData,
   double g;
   char *usage;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -1794,7 +1794,7 @@ static int LsetCore_SetVExtensionMtd( ClientData clientData,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-fn", STRING_Type, &fnName, NULL, REQUIRED, 0, { 0 } },
+    { "-fn", STRING_Type, &fnName, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -1834,7 +1834,7 @@ static int LsetCore_GetVExtensionMtd( ClientData clientData,
   ExtensionT etype;
   char *dummy;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
 
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
@@ -1895,7 +1895,7 @@ static int LsetCore_IsInitMtd( ClientData clientData, Tcl_Interp *interp,
   cvLevelSet *ls = (cvLevelSet *)clientData;
   char *usage;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -1929,7 +1929,7 @@ static int LsetCore_EvolveOneTimeStepMtd( ClientData clientData,
 {
   cvLevelSet *ls = (cvLevelSet *)clientData;
   char usage[CV_STRLEN];
-  cvPolyData **projectionSets = NULL;
+  cvPolyData **projectionSets = nullptr;
   int numSets = 0;
 
   sprintf( usage, "usage: $LsetCoreObject %s", argv[1] );
@@ -1965,7 +1965,7 @@ static int LsetCore_GridModifiedMtd( ClientData clientData, Tcl_Interp *interp,
   char *usage;
 
   if ( argc != 2 ) {
-    usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+    usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
   }
@@ -1996,8 +1996,8 @@ static int LsetCore_ExtractFrontMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-out", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-closed", INT_Type, &closed, NULL, SV_OPTIONAL, 0, { 0 } }
+    { "-out", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-closed", INT_Type, &closed, nullptr, SV_OPTIONAL, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -2013,7 +2013,7 @@ static int LsetCore_ExtractFrontMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   front = ls->ExtractFront( closed );
-  if ( front == NULL ) {
+  if ( front == nullptr ) {
     Tcl_SetResult( interp, "error on front extraction", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2072,7 +2072,7 @@ static int LsetCore_ExtractPhiMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-out", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-out", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -2087,7 +2087,7 @@ static int LsetCore_ExtractPhiMtd( ClientData clientData, Tcl_Interp *interp,
 
   // Do work of command:
   phi = ls->ExtractPhi();
-  if ( phi == NULL ) {
+  if ( phi == nullptr ) {
     Tcl_SetResult( interp, "error on phi extraction", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2120,8 +2120,8 @@ static int LsetCore_GetBoundaryDataMtd( ClientData clientData,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-field", STRING_Type, &fieldName, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-field", STRING_Type, &fieldName, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -2139,7 +2139,7 @@ static int LsetCore_GetBoundaryDataMtd( ClientData clientData,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2153,9 +2153,9 @@ static int LsetCore_GetBoundaryDataMtd( ClientData clientData,
 
   // Now, go get the data:
   dataPd = ls->GetGrid()->GetBoundaryData( fieldType );
-  if ( dataPd == NULL ) {
+  if ( dataPd == nullptr ) {
     Tcl_AppendResult( interp, "error on extraction of boundary data ",
-		      fieldName, (char *)NULL );
+		      fieldName, (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2188,7 +2188,7 @@ static int LsetCore_ExtractCurvatureMtd( ClientData clientData,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-out", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-out", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -2203,7 +2203,7 @@ static int LsetCore_ExtractCurvatureMtd( ClientData clientData,
 
   // Do work of command:
   k = ls->ExtractCurvature();
-  if ( k == NULL ) {
+  if ( k == nullptr ) {
     Tcl_SetResult( interp, "error on curvature extraction", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2233,24 +2233,24 @@ static int LsetCore_ExtractVelMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-out", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } }
+    { "-out", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } }
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
 
   if ( argc == 2 ) {
-    Tcl_AppendResult( interp, usage, (char*)NULL );
+    Tcl_AppendResult( interp, usage, (char*)nullptr );
     return TCL_OK;
   }
 
   if ( ARG_ParseTclStr( interp, argc, argv, 2,
 			table_size, arg_table ) != TCL_OK ) {
-    Tcl_AppendResult( interp, usage, (char*)NULL );
+    Tcl_AppendResult( interp, usage, (char*)nullptr );
     return TCL_ERROR;
   }
 
   vectors = ls->ExtractVectors();
-  if ( vectors == NULL ) {
+  if ( vectors == nullptr ) {
     Tcl_SetResult( interp, "error on velocity extraction", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2280,9 +2280,9 @@ static int LsetCore_FindMaxVMtd( ClientData clientData, Tcl_Interp *interp,
   char *usage;
   double maxV;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
-    Tcl_AppendResult( interp, usage, (char*)NULL );
+    Tcl_AppendResult( interp, usage, (char*)nullptr );
     return TCL_ERROR;
   }
 
@@ -2307,9 +2307,9 @@ static int LsetCore_VanishedMtd( ClientData clientData, Tcl_Interp *interp,
   cvLevelSet *ls = (cvLevelSet *)clientData;
   char *usage;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
-    Tcl_AppendResult( interp, usage, (char*)NULL );
+    Tcl_AppendResult( interp, usage, (char*)nullptr );
     return TCL_ERROR;
   }
 
@@ -2353,7 +2353,7 @@ static int LsetCore_ExtractActiveNodesMtd( ClientData clientData,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-out", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-out", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -2372,7 +2372,7 @@ static int LsetCore_ExtractActiveNodesMtd( ClientData clientData,
   // Do work of command:
   //  nodes = ls->ExtractActiveNodes();
   nodes = ls->GetGrid()->GetActiveNodes();
-  if ( nodes == NULL ) {
+  if ( nodes == nullptr ) {
     Tcl_SetResult( interp, "error on active node extraction", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2405,7 +2405,7 @@ static int LsetCore_ExtractForceMinVNodesMtd( ClientData clientData,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-out", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-out", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -2439,7 +2439,7 @@ static int LsetCore_ExtractForceMinVNodesMtd( ClientData clientData,
 
   if ( !(gRepository->Register( objName, nodeSets[0] ) ) ) {
       Tcl_AppendResult( interp, "error registering obj ", objName,
-			" in repository", (char *)NULL );
+			" in repository", (char *)nullptr );
       CleanUpNodeSets( nodeSets, numSets );
       return TCL_ERROR;
   }
@@ -2462,12 +2462,12 @@ static int LsetCore_ExtractProjectionSetsMtd( ClientData clientData,
   char *usage;
   char *baseName;
   char objName[CV_STRLEN];
-  cvPolyData **nodeSets = NULL;
+  cvPolyData **nodeSets = nullptr;
   int i, j, numSets;
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-base", STRING_Type, &baseName, NULL, REQUIRED, 0, { 0 } },
+    { "-base", STRING_Type, &baseName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -2499,7 +2499,7 @@ static int LsetCore_ExtractProjectionSetsMtd( ClientData clientData,
     sprintf(objName, "%s%d", baseName, i);
     if ( !(gRepository->Register( objName, nodeSets[i] ) ) ) {
       Tcl_AppendResult( interp, "error registering obj ", objName,
-			" in repository", (char *)NULL );
+			" in repository", (char *)nullptr );
       for ( j = i; j < numSets; j++ ) {
 	delete nodeSets[j];
       }
@@ -2511,7 +2511,7 @@ static int LsetCore_ExtractProjectionSetsMtd( ClientData clientData,
   // Delete the array of cvPolyData pointers.  (Responsibility for mem
   // mgmt of the objects themselves has now been assumed by the
   // cvRepository.)
-  if ( nodeSets != NULL ) {
+  if ( nodeSets != nullptr ) {
     delete [] nodeSets;
   }
 
@@ -2535,7 +2535,7 @@ static int LsetCore_ExtractCoveredNodesMtd( ClientData clientData,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-out", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-out", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -2565,7 +2565,7 @@ static int LsetCore_ExtractCoveredNodesMtd( ClientData clientData,
 
   if ( !(gRepository->Register( objName, nodeSets[0] ) ) ) {
       Tcl_AppendResult( interp, "error registering obj ", objName,
-			" in repository", (char *)NULL );
+			" in repository", (char *)nullptr );
       CleanUpNodeSets( nodeSets, numSets );
       return TCL_ERROR;
   }
@@ -2592,7 +2592,7 @@ static int LsetCore_ExtractUncoveredNodesMtd( ClientData clientData,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-out", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-out", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -2626,7 +2626,7 @@ static int LsetCore_ExtractUncoveredNodesMtd( ClientData clientData,
 
   if ( !(gRepository->Register( objName, nodeSets[0] ) ) ) {
       Tcl_AppendResult( interp, "error registering obj ", objName,
-			" in repository", (char *)NULL );
+			" in repository", (char *)nullptr );
       CleanUpNodeSets( nodeSets, numSets );
       return TCL_ERROR;
   }
@@ -2653,7 +2653,7 @@ static int LsetCore_ExtractMineNodesMtd( ClientData clientData,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-out", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-out", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -2687,7 +2687,7 @@ static int LsetCore_ExtractMineNodesMtd( ClientData clientData,
 
   if ( !(gRepository->Register( objName, nodeSets[0] ) ) ) {
       Tcl_AppendResult( interp, "error registering obj ", objName,
-			" in repository", (char *)NULL );
+			" in repository", (char *)nullptr );
       CleanUpNodeSets( nodeSets, numSets );
       return TCL_ERROR;
   }
@@ -2712,7 +2712,7 @@ static int LsetCore_SetSaveProjectionSetsMtd( ClientData clientData,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-flag", INT_Type, &flag, NULL, REQUIRED, 0, { 0 } },
+    { "-flag", INT_Type, &flag, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -2749,7 +2749,7 @@ static int LsetCore_GetSaveProjectionSetsMtd( ClientData clientData,
   int flag;
   char dummy[CV_STRLEN];
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -2782,7 +2782,7 @@ static int LsetCore_SaveGridMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -2800,13 +2800,13 @@ static int LsetCore_SaveGridMtd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Invoke grid cvPolyData creation:
   grid = ls->GetGrid()->CreateGridPolyData();
-  if ( grid == NULL ) {
+  if ( grid == nullptr ) {
     Tcl_SetResult( interp, "error saving grid... has the grid been "
 		   "initialized?", TCL_STATIC );
     return TCL_ERROR;
@@ -2839,7 +2839,7 @@ static int LsetCore_GetGridStatsMtd( ClientData clientData, Tcl_Interp *interp,
   cvLevelSet *ls = (cvLevelSet *)clientData;
   char *usage;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -2863,7 +2863,7 @@ static int LsetCore_GetMemoryUsageMtd( ClientData clientData,
   cvLevelSet *ls = (cvLevelSet *)clientData;
   char *usage;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;

@@ -97,9 +97,9 @@ cvITKLevelSetBase<TInputImage, TInternalPixelType>
 	m_SigmaAdvection = 0;
 
 
-	m_cvInputImage = NULL;
-	m_cvSeedImage = NULL;
-	m_cvSeed = NULL;
+	m_cvInputImage = nullptr;
+	m_cvSeedImage = nullptr;
+	m_cvSeed = nullptr;
 
 	m_Debug = false;
 
@@ -126,9 +126,9 @@ typename TInternalPixelType>
 void	cvITKLevelSetBase<TInputImage, TInternalPixelType>
 ::DeallocateFeatureObjs()
  {
-	if ( m_cvInputImage != NULL ) {
+	if ( m_cvInputImage != nullptr ) {
 		delete m_cvInputImage;
-		m_cvInputImage = NULL;
+		m_cvInputImage = nullptr;
 	}
 
  }
@@ -187,7 +187,7 @@ typename TInternalPixelType>
 int cvITKLevelSetBase<TInputImage, TInternalPixelType>
 ::GetFeatureImage( cvStrPts **s)
  {
-	if ( m_cvInputImage == NULL ) {
+	if ( m_cvInputImage == nullptr ) {
                 return SV_ERROR;
 	} else {
 		*s = m_cvInputImage;
@@ -201,7 +201,7 @@ cvStrPts* cvITKLevelSetBase<TInputImage, TInternalPixelType>
 ::GetVelocityImage()
  {
 	cvStrPts* vimg = new cvStrPts(m_vtkFeatureImage);
-	if ( vimg == NULL ) {
+	if ( vimg == nullptr ) {
 		return 0;
 	} else {
 
@@ -215,7 +215,7 @@ cvStrPts* cvITKLevelSetBase<TInputImage, TInternalPixelType>
 ::GetFrontImage()
  {
 	cvStrPts* vimg = new cvStrPts(m_vtkFrontImage);
-	if ( vimg == NULL ) {
+	if ( vimg == nullptr ) {
 		return 0;
 	} else {
 
@@ -255,7 +255,7 @@ cvPolyData* cvITKLevelSetBase<TInputImage, TInternalPixelType>
  {
 	cvPolyData *front;
 	front = new cvPolyData(m_vtkFrontPolyData);
-	if ( front == NULL ) {
+	if ( front == nullptr ) {
 		return 0;
 	} else {
 
@@ -272,9 +272,9 @@ void cvITKLevelSetBase<TInputImage, TInternalPixelType>
 ::DeallocateSeedObjs()
  {
 
-	if ( m_cvSeedImage != NULL ) {
+	if ( m_cvSeedImage != nullptr ) {
 		delete m_cvSeedImage;
-		m_cvSeedImage = NULL;
+		m_cvSeedImage = nullptr;
 	}
 
  }

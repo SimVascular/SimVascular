@@ -103,7 +103,7 @@ int Occtsolid_Init( Tcl_Interp *interp )
   Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
   //gOCCTManager = new AppStd_Application;
   OCCTManager = XCAFApp_Application::GetApplication();
-  //if ( gOCCTManager == NULL ) {
+  //if ( gOCCTManager == nullptr ) {
   //  fprintf( stderr, "error allocating gOCCTManager\n" );
   //  return TCL_ERROR;
   //}
@@ -117,24 +117,24 @@ int Occtsolid_Init( Tcl_Interp *interp )
 
   printf("  %-12s %s\n","OpenCASCADE:", OCC_VERSION_COMPLETE);
   cvFactoryRegistrar* solidModelRegistrar =
-    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
+    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", nullptr);
 
-  if (solidModelRegistrar != NULL) {
+  if (solidModelRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           solidModelRegistrar->SetFactoryMethodPtr( SM_KT_OCCT,
       (FactoryMethodPtr) &CreateOCCTSolidModel );
 
     Tcl_CreateCommand( interp, "opencascade_available", OCCTSolidModel_AvailableCmd,
-		       (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		       (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   }
   else {
     return TCL_ERROR;
   }
 
   Tcl_CreateCommand( interp, "opencascadesolidmodel_registrars", OCCTSolidModel_RegistrarsListCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "occt_loft_vtksv_nurbs", OCCTSolidModel_loftVtksvNURBSCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   return TCL_OK;
 }
@@ -155,7 +155,7 @@ int OCCTSolidModel_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
   cvFactoryRegistrar *solidModelRegistrar =
-    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
+    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", nullptr);
 
   char result[255];
   sprintf( result, "Solid model registrar ptr -> %p\n", solidModelRegistrar );
@@ -191,14 +191,14 @@ int OCCTSolidModel_loftVtksvNURBSCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 8;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-srclist", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
-    { "-uDegree", INT_Type, &uDegree, NULL, REQUIRED, 0, { 0 } },
-    { "-vDegree", INT_Type, &vDegree, NULL, REQUIRED, 0, { 0 } },
-    { "-uKnotSpanType", STRING_Type, &uKnotSpanType, NULL, REQUIRED, 0, { 0 } },
-    { "-vKnotSpanType", STRING_Type, &vKnotSpanType, NULL, REQUIRED, 0, { 0 } },
-    { "-uParametricSpanType", STRING_Type, &uParametricSpanType, NULL, REQUIRED, 0, { 0 } },
-    { "-vParametricSpanType", STRING_Type, &vParametricSpanType, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-srclist", LIST_Type, &srcList, nullptr, REQUIRED, 0, { 0 } },
+    { "-uDegree", INT_Type, &uDegree, nullptr, REQUIRED, 0, { 0 } },
+    { "-vDegree", INT_Type, &vDegree, nullptr, REQUIRED, 0, { 0 } },
+    { "-uKnotSpanType", STRING_Type, &uKnotSpanType, nullptr, REQUIRED, 0, { 0 } },
+    { "-vKnotSpanType", STRING_Type, &vKnotSpanType, nullptr, REQUIRED, 0, { 0 } },
+    { "-uParametricSpanType", STRING_Type, &uParametricSpanType, nullptr, REQUIRED, 0, { 0 } },
+    { "-vParametricSpanType", STRING_Type, &vParametricSpanType, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -221,7 +221,7 @@ int OCCTSolidModel_loftVtksvNURBSCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   geom = (cvOCCTSolidModel *)gRepository->GetObject( objName );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     fprintf(stderr,"Object is not in repository\n");
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -238,9 +238,9 @@ int OCCTSolidModel_loftVtksvNURBSCmd( ClientData clientData, Tcl_Interp *interp,
 
   for (int i = 0; i < numSrcs; i++ ) {
     src = gRepository->GetObject( srcList.argv[i] );
-    if ( src == NULL ) {
+    if ( src == nullptr ) {
       Tcl_AppendResult( interp, "couldn't find object ", srcList.argv[i],
-			(char *)NULL );
+			(char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] srcs;
       return TCL_ERROR;
@@ -248,7 +248,7 @@ int OCCTSolidModel_loftVtksvNURBSCmd( ClientData clientData, Tcl_Interp *interp,
     type = src->GetType();
     if ( type != POLY_DATA_T ) {
       Tcl_AppendResult( interp, "object ", srcList.argv[i],
-			" not of type cvPolyData", (char *)NULL );
+			" not of type cvPolyData", (char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] srcs;
       return TCL_ERROR;
@@ -347,7 +347,7 @@ int OCCTSolidModel_loftVtksvNURBSCmd( ClientData clientData, Tcl_Interp *interp,
     vKarr,vKlen,uKarr,uKlen,vMarr,vMlen,uMarr,uMlen,q,p) != SV_OK)
   {
     Tcl_AppendResult( interp, "error lofting obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete [] uKarr;
     delete [] vKarr;
     delete [] uMarr;

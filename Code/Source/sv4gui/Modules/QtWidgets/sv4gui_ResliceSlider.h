@@ -130,7 +130,7 @@ protected:
 
     double resliceSize;
 
-    QmitkStdMultiWidget* displayWidget=NULL;
+    QmitkStdMultiWidget* displayWidget=nullptr;
 
     mitk::SlicedGeometry3D::Pointer currentSlicedGeometry;
 

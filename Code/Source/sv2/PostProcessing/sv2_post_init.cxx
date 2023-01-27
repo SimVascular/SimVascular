@@ -84,21 +84,21 @@ int Post_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
 int Post_Init( Tcl_Interp *interp )
 {
   Tcl_CreateCommand( interp, "post_readVisMesh", Post_readVisMeshCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "post_readVisRes", Post_readVisResCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "post_calcWallShear", Post_calcWallShearCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "post_calcWallShearMean", Post_calcWallShearMeanCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "post_calcWallShearPulse", Post_calcWallShearPulseCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "post_calcOSI", Post_calcOSICmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "post_calcAvgPointData", Post_calcAvgPointDataCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "post_calcTKE", Post_calcTKECmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   return TCL_OK;
 }
 
@@ -116,8 +116,8 @@ int Post_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fileName, nullptr, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -135,7 +135,7 @@ int Post_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -144,21 +144,21 @@ int Post_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
   // read in the mesh file
   if (myconverter->ReadVisMesh(fileName) == SV_ERROR) {
       delete myconverter;
-      Tcl_AppendResult( interp, "error reading ", fileName, (char *)NULL);
+      Tcl_AppendResult( interp, "error reading ", fileName, (char *)nullptr);
       return TCL_ERROR;
   }
 
   dst = myconverter->GetGridObj();
   delete myconverter;
 
-  if (dst == NULL) {
-    Tcl_AppendResult( interp, "error getting obj ", objName, (char *)NULL );
+  if (dst == nullptr) {
+    Tcl_AppendResult( interp, "error getting obj ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   if ( !( gRepository->Register( objName , dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -176,28 +176,28 @@ int Post_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
-  char *fileName = NULL;
-  char *gridName = NULL;
-  char *resultName = NULL;
-  char *stressName = NULL;
-  char *transportName = NULL;
-  char *tractionName = NULL;
-  char *displacementName = NULL;
-  char *wssName = NULL;
+  char *fileName = nullptr;
+  char *gridName = nullptr;
+  char *resultName = nullptr;
+  char *stressName = nullptr;
+  char *transportName = nullptr;
+  char *tractionName = nullptr;
+  char *displacementName = nullptr;
+  char *wssName = nullptr;
   ARG_List tractionNodesList;
   tractionNodesList.argc = 0;
 
   int table_size = 8;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
-    { "-grid", STRING_Type, &gridName, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &resultName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-stress", STRING_Type, &stressName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-transport", STRING_Type, &transportName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-traction", STRING_Type, &tractionName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-displacement", STRING_Type, &displacementName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-wss", STRING_Type, &wssName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-traction_nodes", LIST_Type, &tractionNodesList, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-file", STRING_Type, &fileName, nullptr, REQUIRED, 0, { 0 } },
+    { "-grid", STRING_Type, &gridName, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-stress", STRING_Type, &stressName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-transport", STRING_Type, &transportName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-traction", STRING_Type, &tractionName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-displacement", STRING_Type, &displacementName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-wss", STRING_Type, &wssName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-traction_nodes", LIST_Type, &tractionNodesList, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -215,64 +215,64 @@ int Post_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
   // check to make sure we have a valid grid object
   if (! gRepository->Exists( gridName ) ) {
     Tcl_AppendResult( interp, "object ", gridName, " does not exist",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   cvRepositoryData *grid = gRepository->GetObject( gridName );
   RepositoryDataT type = grid->GetType();
   if ( type != UNSTRUCTURED_GRID_T ) {
-    Tcl_AppendResult( interp, gridName, " not of type UnstructuredGrid", (char *)NULL );
+    Tcl_AppendResult( interp, gridName, " not of type UnstructuredGrid", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // check to make sure the results objs don't exist
-  if (resultName != NULL) {
+  if (resultName != nullptr) {
     if ( gRepository->Exists( resultName ) ) {
       Tcl_AppendResult( interp, "object ", resultName, " exists",
-	  	      (char *)NULL );
+	  	      (char *)nullptr );
       return TCL_ERROR;
     }
   }
-  if (stressName != NULL) {
+  if (stressName != nullptr) {
     if ( gRepository->Exists( stressName ) ) {
       Tcl_AppendResult( interp, "object ", stressName, " exists",
-		      (char *)NULL );
+		      (char *)nullptr );
       return TCL_ERROR;
     }
   }
-  if (transportName != NULL) {
+  if (transportName != nullptr) {
     if ( gRepository->Exists( transportName ) ) {
       Tcl_AppendResult( interp, "object ", transportName, " exists",
-		      (char *)NULL );
+		      (char *)nullptr );
       return TCL_ERROR;
     }
   }
-  if (tractionName != NULL) {
+  if (tractionName != nullptr) {
     if ( gRepository->Exists( tractionName ) ) {
       Tcl_AppendResult( interp, "object ", tractionName, " exists",
-		      (char *)NULL );
+		      (char *)nullptr );
       return TCL_ERROR;
     }
   }
-  if (displacementName != NULL) {
+  if (displacementName != nullptr) {
     if ( gRepository->Exists( displacementName ) ) {
       Tcl_AppendResult( interp, "object ", displacementName, " exists",
-		      (char *)NULL );
+		      (char *)nullptr );
       return TCL_ERROR;
     }
   }
-  if (wssName != NULL) {
+  if (wssName != nullptr) {
     if ( gRepository->Exists( wssName ) ) {
       Tcl_AppendResult( interp, "object ", wssName, " exists",
-		      (char *)NULL );
+		      (char *)nullptr );
       return TCL_ERROR;
     }
   }
 
   // parse the traction node list if it was specified
   int numTractionNodes = 0;
-  int *tractionNodes = NULL;
+  int *tractionNodes = nullptr;
   if (tractionNodesList.argc != 0) {
 
     numTractionNodes = tractionNodesList.argc;
@@ -305,109 +305,109 @@ int Post_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
   // read in the results file
   if (myconverter->ReadVisRes(fileName) == SV_ERROR) {
       delete myconverter;
-      Tcl_AppendResult( interp, "error reading ", fileName, (char *)NULL);
+      Tcl_AppendResult( interp, "error reading ", fileName, (char *)nullptr);
       return TCL_ERROR;
   }
 
   cvPolyData *dst;
 
-  if (resultName != NULL) {
-    dst = NULL;
+  if (resultName != nullptr) {
+    dst = nullptr;
     dst = myconverter->GetResObj();
-    if (dst == NULL) {
+    if (dst == nullptr) {
       delete myconverter;
-      Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)NULL );
+      Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)nullptr );
       return TCL_ERROR;
     }
     if ( !( gRepository->Register( resultName , dst ) ) ) {
       delete myconverter;
       Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
       delete dst;
       return TCL_ERROR;
     }
   }
 
-  if (transportName != NULL) {
-    dst = NULL;
+  if (transportName != nullptr) {
+    dst = nullptr;
     dst = myconverter->GetTransportObj();
-    if (dst == NULL) {
+    if (dst == nullptr) {
       delete myconverter;
-      Tcl_AppendResult( interp, "error getting obj ", transportName, (char *)NULL );
+      Tcl_AppendResult( interp, "error getting obj ", transportName, (char *)nullptr );
       return TCL_ERROR;
     }
     if ( !( gRepository->Register( transportName , dst ) ) ) {
       delete myconverter;
       Tcl_AppendResult( interp, "error registering obj ", transportName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
       delete dst;
       return TCL_ERROR;
     }
   }
 
-  if (stressName != NULL) {
-    dst = NULL;
+  if (stressName != nullptr) {
+    dst = nullptr;
     dst = myconverter->GetStressObj();
-    if (dst == NULL) {
+    if (dst == nullptr) {
       delete myconverter;
-      Tcl_AppendResult( interp, "error getting obj ", stressName, (char *)NULL );
+      Tcl_AppendResult( interp, "error getting obj ", stressName, (char *)nullptr );
       return TCL_ERROR;
     }
     if ( !( gRepository->Register( stressName , dst ) ) ) {
       delete myconverter;
       Tcl_AppendResult( interp, "error registering obj ", stressName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
       delete dst;
       return TCL_ERROR;
     }
   }
 
-  if (tractionName != NULL) {
-    dst = NULL;
+  if (tractionName != nullptr) {
+    dst = nullptr;
     dst = myconverter->GetTractionObj();
-    if (dst == NULL) {
+    if (dst == nullptr) {
       delete myconverter;
-      Tcl_AppendResult( interp, "error getting obj ", tractionName, (char *)NULL );
+      Tcl_AppendResult( interp, "error getting obj ", tractionName, (char *)nullptr );
       return TCL_ERROR;
     }
     if ( !( gRepository->Register( tractionName , dst ) ) ) {
       delete myconverter;
       Tcl_AppendResult( interp, "error registering obj ", tractionName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
       delete dst;
       return TCL_ERROR;
     }
   }
 
-  if (displacementName != NULL) {
-    dst = NULL;
+  if (displacementName != nullptr) {
+    dst = nullptr;
     dst = myconverter->GetDisplacementObj();
-    if (dst == NULL) {
+    if (dst == nullptr) {
       delete myconverter;
-      Tcl_AppendResult( interp, "error getting obj ", displacementName, (char *)NULL );
+      Tcl_AppendResult( interp, "error getting obj ", displacementName, (char *)nullptr );
       return TCL_ERROR;
     }
     if ( !( gRepository->Register( displacementName , dst ) ) ) {
       delete myconverter;
       Tcl_AppendResult( interp, "error registering obj ", displacementName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
       delete dst;
       return TCL_ERROR;
     }
   }
 
-  if (wssName != NULL) {
-    dst = NULL;
+  if (wssName != nullptr) {
+    dst = nullptr;
     dst = myconverter->GetWSSObj();
-    if (dst == NULL) {
+    if (dst == nullptr) {
       delete myconverter;
-      Tcl_AppendResult( interp, "error getting obj ", wssName, (char *)NULL );
+      Tcl_AppendResult( interp, "error getting obj ", wssName, (char *)nullptr );
       return TCL_ERROR;
     }
     if ( !( gRepository->Register( wssName , dst ) ) ) {
       delete myconverter;
       Tcl_AppendResult( interp, "error registering obj ", wssName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
       delete dst;
       return TCL_ERROR;
     }
@@ -429,17 +429,17 @@ int Post_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
-  char *surfaceMeshName = NULL;
-  char *tensorsName = NULL;
-  char *tractionsName = NULL;
-  char *resultName = NULL;
+  char *surfaceMeshName = nullptr;
+  char *tensorsName = nullptr;
+  char *tractionsName = nullptr;
+  char *resultName = nullptr;
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, REQUIRED, 0, { 0 } },
-    { "-tensors", STRING_Type, &tensorsName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-tractions", STRING_Type, &tractionsName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-surfaceMesh", STRING_Type, &surfaceMeshName, nullptr, REQUIRED, 0, { 0 } },
+    { "-tensors", STRING_Type, &tensorsName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-tractions", STRING_Type, &tractionsName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -454,22 +454,22 @@ int Post_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Do work of command:
 
-  if (tensorsName == NULL && tractionsName == NULL) {
+  if (tensorsName == nullptr && tractionsName == nullptr) {
      Tcl_AppendResult( interp, "must specify either tensors or tractions",
-                       (char *)NULL );
+                       (char *)nullptr );
      return TCL_ERROR;
   }
 
-  if (tensorsName != NULL && tractionsName != NULL) {
+  if (tensorsName != nullptr && tractionsName != nullptr) {
      Tcl_AppendResult( interp, "cannot specify both tensors or tractions",
-                       (char *)NULL );
+                       (char *)nullptr );
      return TCL_ERROR;
   }
 
   // check to make sure we have a valid exterior surface mesh object
   if (! gRepository->Exists( surfaceMeshName ) ) {
     Tcl_AppendResult( interp, "object ", surfaceMeshName, " does not exist",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -477,17 +477,17 @@ int Post_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
   RepositoryDataT type = surfaceMesh->GetType();
 
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   cvRepositoryData *tensors;
   cvRepositoryData *tractions;
 
-  if (tensorsName != NULL) {
+  if (tensorsName != nullptr) {
     if (! gRepository->Exists( tensorsName ) ) {
       Tcl_AppendResult( interp, "object ", tensorsName, " does not exist",
-		      (char *)NULL );
+		      (char *)nullptr );
       return TCL_ERROR;
     }
 
@@ -495,16 +495,16 @@ int Post_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
     type = tensors->GetType();
 
     if ( type != POLY_DATA_T ) {
-      Tcl_AppendResult( interp, tensorsName, " not of type cvPolyData", (char *)NULL );
+      Tcl_AppendResult( interp, tensorsName, " not of type cvPolyData", (char *)nullptr );
       return TCL_ERROR;
     }
 
   }
 
-  if (tractionsName != NULL) {
+  if (tractionsName != nullptr) {
     if (! gRepository->Exists( tractionsName ) ) {
       Tcl_AppendResult( interp, "object ", tractionsName, " does not exist",
-		      (char *)NULL );
+		      (char *)nullptr );
       return TCL_ERROR;
     }
 
@@ -512,17 +512,17 @@ int Post_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
     type = tractions->GetType();
 
     if ( type != POLY_DATA_T ) {
-      Tcl_AppendResult( interp, tractionsName, " not of type cvPolyData", (char *)NULL );
+      Tcl_AppendResult( interp, tractionsName, " not of type cvPolyData", (char *)nullptr );
       return TCL_ERROR;
     }
 
   }
 
   // check to make sure the results objs don't exist
-  if (resultName != NULL) {
+  if (resultName != nullptr) {
     if ( gRepository->Exists( resultName ) ) {
       Tcl_AppendResult( interp, "object ", resultName, " exists",
-	  	      (char *)NULL );
+	  	      (char *)nullptr );
       return TCL_ERROR;
     }
   }
@@ -530,39 +530,39 @@ int Post_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
   cvCalculateWallShearStress *wallshear = new cvCalculateWallShearStress();
 
   wallshear->SetSurfaceMesh((cvPolyData*)surfaceMesh);
-  if (tensorsName != NULL) {
+  if (tensorsName != nullptr) {
     wallshear->SetTensors((cvPolyData*)tensors);
   } else {
     wallshear->SetTractions((cvPolyData*)tractions);
   }
 
   // read in the results file
-  if (tensorsName != NULL) {
+  if (tensorsName != nullptr) {
     if (wallshear->CalcWallShearFromStresses() == SV_ERROR) {
       delete wallshear;
-      Tcl_AppendResult( interp, "error calculating wall shear ", (char *)NULL);
+      Tcl_AppendResult( interp, "error calculating wall shear ", (char *)nullptr);
       return TCL_ERROR;
     }
   } else {
     if (wallshear->CalcWallShearFromTractions() == SV_ERROR) {
       delete wallshear;
-      Tcl_AppendResult( interp, "error calculating wall shear ", (char *)NULL);
+      Tcl_AppendResult( interp, "error calculating wall shear ", (char *)nullptr);
       return TCL_ERROR;
     }
   }
 
   cvPolyData *dst;
-  dst = NULL;
+  dst = nullptr;
   dst = wallshear->GetWallShear();
-  if (dst == NULL) {
+  if (dst == nullptr) {
     delete wallshear;
-    Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)NULL );
+    Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)nullptr );
     return TCL_ERROR;
   }
   if ( !( gRepository->Register( resultName , dst ) ) ) {
     delete wallshear;
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -586,18 +586,18 @@ int Post_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_List shearPdList;
   cvRepositoryData *src;
   RepositoryDataT type;
-  char *resultName = NULL;
-  char *surfaceMeshName = NULL;
+  char *resultName = nullptr;
+  char *surfaceMeshName = nullptr;
   double period = 0.0;
   int numPds = 0;
   int i;
-  cvRepositoryData *surfaceMesh = NULL;
+  cvRepositoryData *surfaceMesh = nullptr;
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-shearPdList", LIST_Type, &shearPdList, NULL, REQUIRED, 0, { 0 } },
-    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-shearPdList", LIST_Type, &shearPdList, nullptr, REQUIRED, 0, { 0 } },
+    { "-surfaceMesh", STRING_Type, &surfaceMeshName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -622,9 +622,9 @@ int Post_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
 
   for ( i = 0; i < numPds; i++ ) {
     src = gRepository->GetObject( shearPdList.argv[i] );
-    if ( src == NULL ) {
+    if ( src == nullptr ) {
       Tcl_AppendResult( interp, "couldn't find object ", shearPdList.argv[i],
-			(char *)NULL );
+			(char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] shearPds;
       return TCL_ERROR;
@@ -632,7 +632,7 @@ int Post_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
     type = src->GetType();
     if ( type != POLY_DATA_T ) {
       Tcl_AppendResult( interp, "object ", shearPdList.argv[i],
-			" not of type cvPolyData", (char *)NULL );
+			" not of type cvPolyData", (char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] shearPds;
       return TCL_ERROR;
@@ -644,10 +644,10 @@ int Post_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   // check to make sure we have a valid exterior surface mesh object
-  if (surfaceMeshName != NULL) {
+  if (surfaceMeshName != nullptr) {
     if (! gRepository->Exists( surfaceMeshName ) ) {
        Tcl_AppendResult( interp, "object ", surfaceMeshName, " does not exist",
-		      (char *)NULL );
+		      (char *)nullptr );
        return TCL_ERROR;
      }
 
@@ -655,7 +655,7 @@ int Post_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
      type = surfaceMesh->GetType();
 
      if ( type != POLY_DATA_T ) {
-       Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)NULL );
+       Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)nullptr );
        return TCL_ERROR;
      }
   }
@@ -663,7 +663,7 @@ int Post_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     delete [] shearPds;
     return TCL_ERROR;
   }
@@ -671,24 +671,24 @@ int Post_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
   cvCalculateWallShearStress *wallshear = new cvCalculateWallShearStress();
 
   // optionally copy the structure from the surface mesh
-  if (surfaceMesh != NULL) {
+  if (surfaceMesh != nullptr) {
       wallshear->SetSurfaceMesh((cvPolyData*)surfaceMesh);
   }
 
-  cvPolyData *dst = NULL;
+  cvPolyData *dst = nullptr;
   dst = wallshear->CalcWallShearMean(numPds, shearPds);
 
-  if (dst == NULL) {
+  if (dst == nullptr) {
     delete wallshear;
     delete [] shearPds;
-    Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)NULL );
+    Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)nullptr );
     return TCL_ERROR;
   }
   if ( !( gRepository->Register( resultName , dst ) ) ) {
     delete wallshear;
     delete [] shearPds;
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -715,18 +715,18 @@ int Post_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_List shearPdList;
   cvRepositoryData *src;
   RepositoryDataT type;
-  char *resultName = NULL;
-  char *surfaceMeshName = NULL;
+  char *resultName = nullptr;
+  char *surfaceMeshName = nullptr;
   double period = 0.0;
   int numPds = 0;
   int i;
-  cvRepositoryData *surfaceMesh = NULL;
+  cvRepositoryData *surfaceMesh = nullptr;
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-shearPdList", LIST_Type, &shearPdList, NULL, REQUIRED, 0, { 0 } },
-    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-shearPdList", LIST_Type, &shearPdList, nullptr, REQUIRED, 0, { 0 } },
+    { "-surfaceMesh", STRING_Type, &surfaceMeshName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -751,9 +751,9 @@ int Post_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
 
   for ( i = 0; i < numPds; i++ ) {
     src = gRepository->GetObject( shearPdList.argv[i] );
-    if ( src == NULL ) {
+    if ( src == nullptr ) {
       Tcl_AppendResult( interp, "couldn't find object ", shearPdList.argv[i],
-			(char *)NULL );
+			(char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] shearPds;
       return TCL_ERROR;
@@ -761,7 +761,7 @@ int Post_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
     type = src->GetType();
     if ( type != POLY_DATA_T ) {
       Tcl_AppendResult( interp, "object ", shearPdList.argv[i],
-			" not of type cvPolyData", (char *)NULL );
+			" not of type cvPolyData", (char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] shearPds;
       return TCL_ERROR;
@@ -773,10 +773,10 @@ int Post_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   // check to make sure we have a valid exterior surface mesh object
-  if (surfaceMeshName != NULL) {
+  if (surfaceMeshName != nullptr) {
     if (! gRepository->Exists( surfaceMeshName ) ) {
        Tcl_AppendResult( interp, "object ", surfaceMeshName, " does not exist",
-		      (char *)NULL );
+		      (char *)nullptr );
        return TCL_ERROR;
      }
 
@@ -784,7 +784,7 @@ int Post_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
      type = surfaceMesh->GetType();
 
      if ( type != POLY_DATA_T ) {
-       Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)NULL );
+       Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)nullptr );
        return TCL_ERROR;
      }
   }
@@ -792,7 +792,7 @@ int Post_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     delete [] shearPds;
     return TCL_ERROR;
   }
@@ -800,24 +800,24 @@ int Post_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
   cvCalculateWallShearStress *wallshear = new cvCalculateWallShearStress();
 
   // optionally copy the structure from the surface mesh
-  if (surfaceMesh != NULL) {
+  if (surfaceMesh != nullptr) {
       wallshear->SetSurfaceMesh((cvPolyData*)surfaceMesh);
   }
 
-  cvPolyData *dst = NULL;
+  cvPolyData *dst = nullptr;
   dst = wallshear->CalcWallShearPulse(numPds, shearPds);
 
-  if (dst == NULL) {
+  if (dst == nullptr) {
     delete wallshear;
     delete [] shearPds;
-    Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)NULL );
+    Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)nullptr );
     return TCL_ERROR;
   }
   if ( !( gRepository->Register( resultName , dst ) ) ) {
     delete wallshear;
     delete [] shearPds;
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -840,21 +840,21 @@ int Post_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
-  char *meanPdName = NULL;
-  char *pulsePdName = NULL;
-  char *surfaceMeshName = NULL;
-  char *resultName = NULL;
+  char *meanPdName = nullptr;
+  char *pulsePdName = nullptr;
+  char *surfaceMeshName = nullptr;
+  char *resultName = nullptr;
   cvRepositoryData *src1;
   cvRepositoryData *src2;
   RepositoryDataT type;
-  cvRepositoryData *surfaceMesh = NULL;
+  cvRepositoryData *surfaceMesh = nullptr;
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-meanPd", STRING_Type, &meanPdName, NULL, REQUIRED, 0, { 0 } },
-    { "-pulsePd", STRING_Type, &pulsePdName, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-meanPd", STRING_Type, &meanPdName, nullptr, REQUIRED, 0, { 0 } },
+    { "-pulsePd", STRING_Type, &pulsePdName, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
+    { "-surfaceMesh", STRING_Type, &surfaceMeshName, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -873,36 +873,36 @@ int Post_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
   // correct type (i.e. cvPolyData).
 
   src1 = gRepository->GetObject( meanPdName );
-  if ( src1 == NULL ) {
+  if ( src1 == nullptr ) {
       Tcl_AppendResult( interp, "couldn't find object ", meanPdName,
-			(char *)NULL );
+			(char *)nullptr );
       return TCL_ERROR;
   }
   type = src1->GetType();
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, "object ", meanPdName,
-			" not of type cvPolyData", (char *)NULL );
+			" not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   src2 = gRepository->GetObject( pulsePdName );
-  if ( src2 == NULL ) {
+  if ( src2 == nullptr ) {
       Tcl_AppendResult( interp, "couldn't find object ", pulsePdName,
-			(char *)NULL );
+			(char *)nullptr );
       return TCL_ERROR;
   }
   type = src2->GetType();
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, "object ", pulsePdName,
-			" not of type cvPolyData", (char *)NULL );
+			" not of type cvPolyData", (char *)nullptr );
       return TCL_ERROR;
   }
 
   // check to make sure we have a valid exterior surface mesh object
-  if (surfaceMeshName != NULL) {
+  if (surfaceMeshName != nullptr) {
     if (! gRepository->Exists( surfaceMeshName ) ) {
        Tcl_AppendResult( interp, "object ", surfaceMeshName, " does not exist",
-		      (char *)NULL );
+		      (char *)nullptr );
        return TCL_ERROR;
      }
 
@@ -910,7 +910,7 @@ int Post_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
      type = surfaceMesh->GetType();
 
      if ( type != POLY_DATA_T ) {
-       Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)NULL );
+       Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)nullptr );
        return TCL_ERROR;
      }
   }
@@ -918,29 +918,29 @@ int Post_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   cvCalculateWallShearStress *wallshear = new cvCalculateWallShearStress();
 
   // optionally copy the structure from the surface mesh
-  if (surfaceMesh != NULL) {
+  if (surfaceMesh != nullptr) {
       wallshear->SetSurfaceMesh((cvPolyData*)surfaceMesh);
   }
 
-  cvPolyData *dst = NULL;
+  cvPolyData *dst = nullptr;
   dst = wallshear->CalcOSI((cvPolyData*)src1,(cvPolyData*)src2);
 
-  if (dst == NULL) {
+  if (dst == nullptr) {
     delete wallshear;
-    Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)NULL );
+    Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)nullptr );
     return TCL_ERROR;
   }
   if ( !( gRepository->Register( resultName , dst ) ) ) {
     delete wallshear;
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -965,18 +965,18 @@ int Post_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_List inputPdList;
   cvRepositoryData *src;
   RepositoryDataT type;
-  char *resultName = NULL;
-  char *surfaceMeshName = NULL;
+  char *resultName = nullptr;
+  char *surfaceMeshName = nullptr;
   double period = 0.0;
   int numPds = 0;
   int i;
-  cvRepositoryData *surfaceMesh = NULL;
+  cvRepositoryData *surfaceMesh = nullptr;
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-inputPdList", LIST_Type, &inputPdList, NULL, REQUIRED, 0, { 0 } },
-    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-inputPdList", LIST_Type, &inputPdList, nullptr, REQUIRED, 0, { 0 } },
+    { "-surfaceMesh", STRING_Type, &surfaceMeshName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1001,9 +1001,9 @@ int Post_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
   for ( i = 0; i < numPds; i++ ) {
     src = gRepository->GetObject( inputPdList.argv[i] );
-    if ( src == NULL ) {
+    if ( src == nullptr ) {
       Tcl_AppendResult( interp, "couldn't find object ", inputPdList.argv[i],
-			(char *)NULL );
+			(char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] inputPds;
       return TCL_ERROR;
@@ -1011,7 +1011,7 @@ int Post_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
     type = src->GetType();
     if ( type != POLY_DATA_T ) {
       Tcl_AppendResult( interp, "object ", inputPdList.argv[i],
-			" not of type cvPolyData", (char *)NULL );
+			" not of type cvPolyData", (char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] inputPds;
       return TCL_ERROR;
@@ -1023,10 +1023,10 @@ int Post_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   // check to make sure we have a valid exterior surface mesh object
-  if (surfaceMeshName != NULL) {
+  if (surfaceMeshName != nullptr) {
     if (! gRepository->Exists( surfaceMeshName ) ) {
        Tcl_AppendResult( interp, "object ", surfaceMeshName, " does not exist",
-		      (char *)NULL );
+		      (char *)nullptr );
        delete [] inputPds;
        return TCL_ERROR;
      }
@@ -1035,7 +1035,7 @@ int Post_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
      type = surfaceMesh->GetType();
 
      if ( type != POLY_DATA_T ) {
-       Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)NULL );
+       Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)nullptr );
        delete [] inputPds;
        return TCL_ERROR;
      }
@@ -1044,7 +1044,7 @@ int Post_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     delete [] inputPds;
     return TCL_ERROR;
   }
@@ -1052,24 +1052,24 @@ int Post_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   cvCalculateWallShearStress *wallshear = new cvCalculateWallShearStress();
 
   // optionally copy the structure from the surface mesh
-  if (surfaceMesh != NULL) {
+  if (surfaceMesh != nullptr) {
       wallshear->SetSurfaceMesh((cvPolyData*)surfaceMesh);
   }
 
-  cvPolyData *dst = NULL;
+  cvPolyData *dst = nullptr;
   dst = wallshear->CalcAvgPointData(numPds, inputPds);
 
-  if (dst == NULL) {
+  if (dst == nullptr) {
     delete wallshear;
     delete [] inputPds;
-    Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)NULL );
+    Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)nullptr );
     return TCL_ERROR;
   }
   if ( !( gRepository->Register( resultName , dst ) ) ) {
     delete wallshear;
     delete [] inputPds;
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -1095,15 +1095,15 @@ int Post_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
   ARG_List inputPdList;
   cvRepositoryData *src;
   RepositoryDataT type;
-  char *resultName = NULL;
+  char *resultName = nullptr;
   double period = 0.0;
   int numPds = 0;
   int i;
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-inputPdList", LIST_Type, &inputPdList, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-inputPdList", LIST_Type, &inputPdList, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1128,9 +1128,9 @@ int Post_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
 
   for ( i = 0; i < numPds; i++ ) {
     src = gRepository->GetObject( inputPdList.argv[i] );
-    if ( src == NULL ) {
+    if ( src == nullptr ) {
       Tcl_AppendResult( interp, "couldn't find object ", inputPdList.argv[i],
-			(char *)NULL );
+			(char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] inputPds;
       return TCL_ERROR;
@@ -1138,7 +1138,7 @@ int Post_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
     type = src->GetType();
     if ( type != POLY_DATA_T ) {
       Tcl_AppendResult( interp, "object ", inputPdList.argv[i],
-			" not of type cvPolyData", (char *)NULL );
+			" not of type cvPolyData", (char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] inputPds;
       return TCL_ERROR;
@@ -1152,27 +1152,27 @@ int Post_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     delete [] inputPds;
     return TCL_ERROR;
   }
 
   cvCalculateTKE *tke = new cvCalculateTKE();
 
-  cvPolyData *dst = NULL;
+  cvPolyData *dst = nullptr;
   tke->SetInputData(numPds, inputPds);
   dst = tke->GetTKEPolyData();
 
   delete [] inputPds;
   delete tke;
 
-  if (dst == NULL) {
-    Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)NULL );
+  if (dst == nullptr) {
+    Tcl_AppendResult( interp, "error getting obj ", resultName, (char *)nullptr );
     return TCL_ERROR;
   }
   if ( !( gRepository->Register( resultName , dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }

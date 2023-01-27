@@ -81,5 +81,5 @@ void VtkParametricSpline::EvaluateByLengthFactor(double t, double Pt[3])
     double U[3]={0};
     U[0]=t;
 
-    vtkParametricSpline::Evaluate(U, Pt, NULL);
+    vtkParametricSpline::Evaluate(U, Pt, nullptr);
 }

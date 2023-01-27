@@ -81,9 +81,9 @@ cvITKLevelSet::cvITKLevelSet(){
 	m_SigmaAdvection = 0;
 
 
-	m_cvInputImage = NULL;
-	m_cvSeedImage = NULL;
-	m_cvSeed = NULL;
+	m_cvInputImage = nullptr;
+	m_cvSeedImage = nullptr;
+	m_cvSeed = nullptr;
 
 	m_Debug = false;
 	m_UseInputImageAsFeature = false;
@@ -104,9 +104,9 @@ cvITKLevelSet::cvITKLevelSet(){
 // ---
 void	cvITKLevelSet::DeallocateFeatureObjs()
 {
-	if ( m_cvInputImage != NULL ) {
+	if ( m_cvInputImage != nullptr ) {
 		delete m_cvInputImage;
-		m_cvInputImage = NULL;
+		m_cvInputImage = nullptr;
 	}
 
 }
@@ -139,7 +139,7 @@ int cvITKLevelSet::SetFeatureImage(cvStrPts *s)
 }
 int cvITKLevelSet::GetFeatureImage( cvStrPts **s)
 {
-	if ( m_cvInputImage == NULL ) {
+	if ( m_cvInputImage == nullptr ) {
         return SV_ERROR;
 	} else {
 		*s = m_cvInputImage;
@@ -150,7 +150,7 @@ int cvITKLevelSet::GetFeatureImage( cvStrPts **s)
 cvStrPts* cvITKLevelSet::GetVelocityImage()
 {
 	cvStrPts* vimg = new cvStrPts(m_vtkFeatureImage);
-	if ( vimg == NULL ) {
+	if ( vimg == nullptr ) {
 		return 0;
 	} else {
 
@@ -161,7 +161,7 @@ cvStrPts* cvITKLevelSet::GetVelocityImage()
 cvStrPts* cvITKLevelSet::GetFrontImage()
 {
 	cvStrPts* vimg = new cvStrPts(m_vtkFrontImage);
-	if ( vimg == NULL ) {
+	if ( vimg == nullptr ) {
 		return 0;
 	} else {
 
@@ -192,7 +192,7 @@ cvPolyData* cvITKLevelSet::GetFront()
 {
 	cvPolyData *front;
 	front = new cvPolyData(m_vtkFrontPolyData);
-	if ( front == NULL ) {
+	if ( front == nullptr ) {
 		return 0;
 	} else {
 
@@ -206,9 +206,9 @@ cvPolyData* cvITKLevelSet::GetFront()
 void cvITKLevelSet::DeallocateSeedObjs()
 {
 
-	if ( m_cvSeedImage != NULL ) {
+	if ( m_cvSeedImage != nullptr ) {
 		delete m_cvSeedImage;
-		m_cvSeedImage = NULL;
+		m_cvSeedImage = nullptr;
 	}
 
 }

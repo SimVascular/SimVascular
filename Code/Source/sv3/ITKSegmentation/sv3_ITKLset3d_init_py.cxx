@@ -132,23 +132,23 @@ static int pyLevelSet3d_init(pyLevelSet3d* self, PyObject* args)
 }
 
 PyMethodDef pyLevelSet3d_methods[] = {
-	{"NewLevelSetObject", (PyCFunction)itkls3d_NewCmd, METH_VARARGS,NULL},
-	{"DeleteLevelSetObject",(PyCFunction)Deleteitkls3d, METH_NOARGS,NULL },
-    {"SetInputs", (PyCFunction)itkls3d_SetInputsMtd, METH_VARARGS,NULL},
-    {"PhaseOneLevelSet", (PyCFunction)itkls3d_PhaseOneLevelSetMtd, METH_VARARGS,NULL},
-    {"PhaseTwoLevelSet", (PyCFunction)itkls3d_PhaseTwoLevelSetMtd, METH_VARARGS,NULL},
-    {"GACLevelSet", (PyCFunction)itkls3d_GACLevelSetMtd, METH_VARARGS,NULL},
-    {"LaplacianLevelSet",(PyCFunction)itkls3d_LaplacianLevelSetMtd,METH_VARARGS,NULL},
-    //{"WriteFront", (PyCFunction)itkls3d_WriteFrontMtd, METH_VARARGS,NULL},
-    {"CopyFrontToSeed",(PyCFunction)itkls3d_CopyFrontToSeedMtd,METH_VARARGS,NULL},
-    {NULL, NULL,0,NULL},
+	{"NewLevelSetObject", (PyCFunction)itkls3d_NewCmd, METH_VARARGS,nullptr},
+	{"DeleteLevelSetObject",(PyCFunction)Deleteitkls3d, METH_NOARGS,nullptr },
+    {"SetInputs", (PyCFunction)itkls3d_SetInputsMtd, METH_VARARGS,nullptr},
+    {"PhaseOneLevelSet", (PyCFunction)itkls3d_PhaseOneLevelSetMtd, METH_VARARGS,nullptr},
+    {"PhaseTwoLevelSet", (PyCFunction)itkls3d_PhaseTwoLevelSetMtd, METH_VARARGS,nullptr},
+    {"GACLevelSet", (PyCFunction)itkls3d_GACLevelSetMtd, METH_VARARGS,nullptr},
+    {"LaplacianLevelSet",(PyCFunction)itkls3d_LaplacianLevelSetMtd,METH_VARARGS,nullptr},
+    //{"WriteFront", (PyCFunction)itkls3d_WriteFrontMtd, METH_VARARGS,nullptr},
+    {"CopyFrontToSeed",(PyCFunction)itkls3d_CopyFrontToSeedMtd,METH_VARARGS,nullptr},
+    {nullptr, nullptr,0,nullptr},
 };
 PyMethodDef Itkls3d_methods[] = {
-    {NULL, NULL,0,NULL},
+    {nullptr, nullptr,0,nullptr},
 };
 
 static PyTypeObject pyLevelSet3dType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   "pyLevelSet3d.pyLevelSet3d",             /* tp_name */
   sizeof(pyLevelSet3d),             /* tp_basicsize */
   0,                         /* tp_itemsize */
@@ -193,7 +193,7 @@ static PyTypeObject pyLevelSet3dType = {
 static struct PyModuleDef Itkls3dmodule = {
    PyModuleDef_HEAD_INIT,
    "Itkls3d",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    Itkls3d_methods
@@ -217,7 +217,7 @@ PyObject* Itkls3d_pyInit(){
 #elif PYTHON_MAJOR_VERSION == 3
     pyItkls3D = PyModule_Create(&Itkls3dmodule);
 #endif
-    PyRunTimeErr3d = PyErr_NewException("Itkls3d.error",NULL,NULL);
+    PyRunTimeErr3d = PyErr_NewException("Itkls3d.error",nullptr,nullptr);
     PyModule_AddObject(pyItkls3D,"error",PyRunTimeErr3d);
     Py_INCREF(&pyLevelSet3dType);
     PyModule_AddObject(pyItkls3D,"pyLevelSet3d",(PyObject*)&pyLevelSet3dType);
@@ -266,7 +266,7 @@ int itkls3d_ObjectCmd( CXX_PYTHON_STDARGS )
 	CVPYTHONObjMethodInit(itkls3d,SetBinarySeedMtd,SetBinarySeed)
 
 	Tcl_AppendResult( interp, "\"", argv[1],
-			"\" not a recognized ITKLevelSet method", (char *)NULL );
+			"\" not a recognized ITKLevelSet method", (char *)nullptr );
 	return TCL_ERROR;
 }*/
 
@@ -277,7 +277,7 @@ static int NewName( CONST84 char *name )
 {
 	Tcl_HashEntry *entryPtr;
 	entryPtr = Tcl_FindHashEntry( &gLsetCoreTable, name );
-	if ( entryPtr != NULL ) {
+	if ( entryPtr != nullptr ) {
 		return 0;
 	}
 	return 1;
@@ -317,7 +317,7 @@ static pyLevelSet3d* itkls3d_NewCmd(  pyLevelSet3d* self, PyObject* args )
 
 	// Allocate new cvLevelSet object:
 	ls = new cvITKLevelSetBase<ImageType>;
-	if ( ls == NULL ) {
+	if ( ls == nullptr ) {
 		PyErr_SetString(PyRunTimeErr3d,"error allocating object");
 		
 	}
@@ -349,7 +349,7 @@ PyObject* Deleteitkls3d( pyLevelSet3d* self, PyObject* args )
 	Tcl_HashEntry *entryPtr;
 
 	entryPtr = Tcl_FindHashEntry( &gLsetCoreTable, ls->tclName_ );
-	if ( entryPtr == NULL ) {
+	if ( entryPtr == nullptr ) {
 		printf("Error looking up LsetCore object %s for deletion.\n",
 				ls->tclName_);
 	} else {
@@ -377,12 +377,12 @@ PyObject* itkls3d_SetInputsMtd( pyLevelSet3d* self, PyObject* args )
 	typeImg1 = gRepository->GetType( inputImageName );
 	typeImg1Str = RepositoryDataT_EnumToStr( typeImg1 );
 	cvRepositoryData *inputImage;
-	if (inputImageName != NULL) {
+	if (inputImageName != nullptr) {
 		// Look up given image object:
 		inputImage = gRepository->GetObject( inputImageName );
-		if ( inputImage == NULL ) {
+		if ( inputImage == nullptr ) {
 			char temp[2048];
-			sprintf(temp,"couldn't find object ", inputImageName, (char *)NULL );
+			sprintf(temp,"couldn't find object ", inputImageName, (char *)nullptr );
 			PyErr_SetString(PyRunTimeErr3d, temp );
 			
 		}
@@ -391,7 +391,7 @@ PyObject* itkls3d_SetInputsMtd( pyLevelSet3d* self, PyObject* args )
 		typeImg1 = inputImage->GetType();
 		if ( typeImg1 != STRUCTURED_PTS_T ) {
 			char temp[2048];
-			sprintf(temp,"error: object ", inputImageName, "not of type StructuredPts", (char *)NULL);
+			sprintf(temp,"error: object ", inputImageName, "not of type StructuredPts", (char *)nullptr);
 			PyErr_SetString(PyRunTimeErr3d, temp );
 			
 		}
@@ -403,12 +403,12 @@ PyObject* itkls3d_SetInputsMtd( pyLevelSet3d* self, PyObject* args )
 	typeImg2Str = RepositoryDataT_EnumToStr( typeImg2 );
 	cvRepositoryData *seedPolyData;
 
-	if (seedPdName != NULL) {
+	if (seedPdName != nullptr) {
 		// Look up given image object:
 		seedPolyData = gRepository->GetObject( seedPdName );
-		if ( seedPolyData == NULL ) {
+		if ( seedPolyData == nullptr ) {
 			char temp[2048];
-			sprintf(temp,"couldn't find object ", seedPdName, (char *)NULL );
+			sprintf(temp,"couldn't find object ", seedPdName, (char *)nullptr );
 			PyErr_SetString(PyRunTimeErr3d, temp );
 			
 		}
@@ -417,7 +417,7 @@ PyObject* itkls3d_SetInputsMtd( pyLevelSet3d* self, PyObject* args )
 		typeImg2 = seedPolyData->GetType();
 		if ( typeImg2 != POLY_DATA_T) {
 			char temp[2048];
-			sprintf(temp,"error: object ", seedPdName, "not of type PolyData", (char *)NULL);
+			sprintf(temp,"error: object ", seedPdName, "not of type PolyData", (char *)nullptr);
 			PyErr_SetString(PyRunTimeErr3d, temp );
 			
 		}

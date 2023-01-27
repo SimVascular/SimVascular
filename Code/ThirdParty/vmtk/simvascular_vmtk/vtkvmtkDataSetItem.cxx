@@ -27,7 +27,7 @@
 vtkvmtkDataSetItem::vtkvmtkDataSetItem()
   {
   this->DataSetPointId = -1;
-  this->DataSet = NULL;
+  this->DataSet = nullptr;
   this->ReallocateOnBuild = 0;
   }
 
@@ -37,7 +37,7 @@ void vtkvmtkDataSetItem::DeepCopy(vtkvmtkItem* src)
 
   vtkvmtkDataSetItem* dataSetItemSrc = vtkvmtkDataSetItem::SafeDownCast(src);
 
-  if (dataSetItemSrc==NULL)
+  if (dataSetItemSrc==nullptr)
     {
     vtkErrorMacro(<<"Trying to deep copy a non-stencil item");
     }

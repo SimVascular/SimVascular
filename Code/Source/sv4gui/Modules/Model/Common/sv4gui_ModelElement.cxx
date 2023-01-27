@@ -34,9 +34,9 @@
 
 sv4guiModelElement::sv4guiModelElement()
     : m_Type("")
-    , m_WholeVtkPolyData(NULL)
+    , m_WholeVtkPolyData(nullptr)
     , m_NumSampling(0)
-    , m_InnerSolid(NULL)
+    , m_InnerSolid(nullptr)
     , m_UseUniform(0)
 {
     m_BlendParam=new svBlendParam();
@@ -48,7 +48,7 @@ sv4guiModelElement::sv4guiModelElement(const sv4guiModelElement &other)
     , m_SegNames(other.m_SegNames)
     , m_NumSampling(other.m_NumSampling)
     , m_FileExtensions(other.m_FileExtensions)
-    , m_InnerSolid(NULL)
+    , m_InnerSolid(nullptr)
 {
     int faceNum=other.m_Faces.size();
     m_Faces.resize(faceNum);
@@ -58,7 +58,7 @@ sv4guiModelElement::sv4guiModelElement(const sv4guiModelElement &other)
         m_Faces[i]=new svFace(*(other.m_Faces[i]),true);
     }
 
-    m_WholeVtkPolyData=NULL;
+    m_WholeVtkPolyData=nullptr;
     if(other.m_WholeVtkPolyData)
     {
         m_WholeVtkPolyData=vtkSmartPointer<vtkPolyData>::New();
@@ -156,7 +156,7 @@ sv4guiModelElement::svFace* sv4guiModelElement::GetFace(int id) const
 {
     int idx=GetFaceIndex(id);
     if(idx<0)
-        return NULL;
+        return nullptr;
     else
         return m_Faces[idx];
 }
@@ -378,7 +378,7 @@ std::vector<int> sv4guiModelElement::GetOutletFaceIDs()
 double sv4guiModelElement::GetFaceArea(int id)
 {
     svFace* face=GetFace(id);
-    if(face==NULL)
+    if(face==nullptr)
         return 0;
 
     return sv4guiModelUtils::CalculateVpdArea(face->vpd);
@@ -458,7 +458,7 @@ sv4guiModelElement::svBlendParamRadius* sv4guiModelElement::GetBlendParamRadius(
             return m_BlendRadii[i];
     }
 
-    return NULL;
+    return nullptr;
 }
 
 sv4guiModelElement::svBlendParamRadius* sv4guiModelElement::GetBlendParamRadius(std::string faceName1, std::string faceName2)
@@ -469,7 +469,7 @@ sv4guiModelElement::svBlendParamRadius* sv4guiModelElement::GetBlendParamRadius(
             return m_BlendRadii[i];
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void sv4guiModelElement::RemoveFace(int faceID)
@@ -570,7 +570,7 @@ int sv4guiModelElement::GetFaceIDFromInnerSolid(std::string faceName)
 {
     int id=-1;
 
-    if(m_InnerSolid==NULL)
+    if(m_InnerSolid==nullptr)
         return id;
 
     int numFaces;

@@ -56,7 +56,7 @@ sv4guiContourGroupDataInteractor::sv4guiContourGroupDataInteractor()
     , m_IsHovering( false )
     , m_LastPointWasValid( false )
     , m_ContourIndex(sv4guiContour::INVALID_INDEX)
-    , m_Contour(NULL)
+    , m_Contour(nullptr)
     , m_TimeStep(0)
     , m_Interaction3D(false)
     , m_Method("")
@@ -103,12 +103,12 @@ void sv4guiContourGroupDataInteractor::ConnectActionsAndFunctions()
 bool sv4guiContourGroupDataInteractor::ContourExistsOnCurrentSlice( const mitk::InteractionEvent* interactionEvent )
 {
     m_ContourIndex=-2;
-    m_Contour=NULL;
+    m_Contour=nullptr;
 
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
     m_TimeStep = renderer->GetTimeStep();
     sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*>( GetDataNode()->GetData() );
-    if(group==NULL)
+    if(group==nullptr)
         return false;
 
     if(IsOn2DView(interactionEvent))
@@ -123,7 +123,7 @@ bool sv4guiContourGroupDataInteractor::ContourExistsOnCurrentSlice( const mitk::
         m_Contour=group->GetContour(m_ContourIndex,m_TimeStep);
     }
 
-    return m_Contour!=NULL;
+    return m_Contour!=nullptr;
 }
 
 bool sv4guiContourGroupDataInteractor::CurrentContourHasControlPoints( const mitk::InteractionEvent* interactionEvent )
@@ -146,7 +146,7 @@ bool sv4guiContourGroupDataInteractor::GroupHasUnplacedContour( const mitk::Inte
 bool sv4guiContourGroupDataInteractor::OnCurrentContourPlane( const mitk::InteractionEvent* interactionEvent )
 {
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
         return false;
 
     if(IsOn2DView(interactionEvent))
@@ -157,7 +157,7 @@ bool sv4guiContourGroupDataInteractor::OnCurrentContourPlane( const mitk::Intera
     {
         if(m_Interaction3D){
             sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*>( GetDataNode()->GetData() );
-            if(group==NULL)
+            if(group==nullptr)
                 return false;
 
             return group->GetCurrentIndexOn2DView()!=-2;
@@ -170,10 +170,10 @@ bool sv4guiContourGroupDataInteractor::OnCurrentContourPlane( const mitk::Intera
 bool sv4guiContourGroupDataInteractor::PointIsValid( const mitk::InteractionEvent* interactionEvent )
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return false;
 
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
          return false;
 
     bool tooClose=false;
@@ -237,7 +237,7 @@ bool sv4guiContourGroupDataInteractor::PointIsValid( const mitk::InteractionEven
 
 bool sv4guiContourGroupDataInteractor::ContourIsFinished( const mitk::InteractionEvent* /*interactionEvent*/ )
 {
-   if(m_Contour==NULL)
+   if(m_Contour==nullptr)
         return false;
     else
         return ( m_Contour->GetControlPointNumber() >= m_Contour->GetMaxControlPointNumber() );
@@ -245,7 +245,7 @@ bool sv4guiContourGroupDataInteractor::ContourIsFinished( const mitk::Interactio
 
 bool sv4guiContourGroupDataInteractor::MinimalContourIsFinished( const mitk::InteractionEvent* /*interactionEvent*/ )
 {
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
     {
         return false;
     }
@@ -258,12 +258,12 @@ bool sv4guiContourGroupDataInteractor::MinimalContourIsFinished( const mitk::Int
 bool sv4guiContourGroupDataInteractor::IsOverContour( const mitk::InteractionEvent* interactionEvent )
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return false;
 
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
 
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
         return false;
 
     int nextContourPointIndex = SearchCoutourPoint(positionEvent
@@ -283,7 +283,7 @@ bool sv4guiContourGroupDataInteractor::IsOverContour2( const mitk::InteractionEv
     m_SelectedContourIndex=-2;
 
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return false;
 
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
@@ -293,7 +293,7 @@ bool sv4guiContourGroupDataInteractor::IsOverContour2( const mitk::InteractionEv
 
     int timeStep = renderer->GetTimeStep();
     sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*>( GetDataNode()->GetData() );
-    if(group==NULL)
+    if(group==nullptr)
         return false;
 
     for(int i=0;i<group->GetSize(timeStep);++i)
@@ -465,12 +465,12 @@ int sv4guiContourGroupDataInteractor::SearchCoutourPoint(
 bool sv4guiContourGroupDataInteractor::IsOverPoint( const mitk::InteractionEvent* interactionEvent )
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return false;
 
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
 
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
         return false;
 
     int pointIndex = -2;
@@ -590,13 +590,13 @@ bool sv4guiContourGroupDataInteractor::IsMethodSpecified( const mitk::Interactio
 void sv4guiContourGroupDataInteractor::AddInitialPoint(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return;
 
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
 
     sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup *>( GetDataNode()->GetData() );
-    if(group==NULL)
+    if(group==nullptr)
         return;
 
     if(m_Method=="Circle")
@@ -644,23 +644,23 @@ void sv4guiContourGroupDataInteractor::AddInitialPoint(mitk::StateMachineAction*
 
     m_Contour->PlaceContour(point);
 
-    renderer->GetRenderingManager()->RequestUpdateAll();
+    renderer->RequestUpdate();
 }
 
 void sv4guiContourGroupDataInteractor::MoveCurrentPoint(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return;
 
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
         return;
 
     mitk::Point3D point = positionEvent->GetPositionInWorld();
     int selectedIndex=m_Contour->GetControlPointSelectedIndex();
     sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup *>( GetDataNode()->GetData() );
 
-    if(group==NULL)
+    if(group==nullptr)
         return;
 //    group->InvokeEvent( StartInteractionContoureEvent() );
 
@@ -675,7 +675,7 @@ void sv4guiContourGroupDataInteractor::MoveCurrentPoint(mitk::StateMachineAction
 
     m_LastPoint = point;
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
 }
 
 void sv4guiContourGroupDataInteractor::FinalizeContour( mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
@@ -694,48 +694,48 @@ void sv4guiContourGroupDataInteractor::FinalizeContour( mitk::StateMachineAction
     GetDataNode()->Modified();
 
     sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup *>( GetDataNode()->GetData() );
-    if(group==NULL)
+    if(group==nullptr)
         return;
 
     group->InvokeEvent( EndChangingContourEvent() );
 //    group->InvokeEvent( StartLoftContourGroupEvent() );
     group->InvokeEvent( sv4guiContourChangeEvent() );
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
 }
 
 void sv4guiContourGroupDataInteractor::AppendPoint( mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return;
 
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
         return;
 
     mitk::Point3D point = positionEvent->GetPositionInWorld();
 
     sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup *>( GetDataNode()->GetData() );
 
-    if(group==NULL)
+    if(group==nullptr)
         return;
 //    group->InvokeEvent( StartInteractionContoureEvent() );
 
     group->InsertControlPoint(m_ContourIndex, -1, point, m_TimeStep);
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
 
 }
 
 void sv4guiContourGroupDataInteractor::SelectPoint( mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return;
 
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
 
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
         return;
 
     int pointIndex = -2;
@@ -747,7 +747,7 @@ void sv4guiContourGroupDataInteractor::SelectPoint( mitk::StateMachineAction*, m
     if ( pointIndex !=-2 )
     {
         m_Contour->SetControlPointSelectedIndex(pointIndex);
-        renderer->GetRenderingManager()->RequestUpdateAll();
+        renderer->RequestUpdate();
         return;
     }
 
@@ -756,15 +756,15 @@ void sv4guiContourGroupDataInteractor::SelectPoint( mitk::StateMachineAction*, m
 void sv4guiContourGroupDataInteractor::DeselectPoint( mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return;
 
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
         return;
 
     m_Contour->DeselectControlPoint();
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
 
 }
 
@@ -787,7 +787,7 @@ void sv4guiContourGroupDataInteractor::DeleteContour( mitk::StateMachineAction*,
         if ( !m_UndoEnabled )
             delete doOp;
 
-        interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+        interactionEvent->GetSender()->RequestUpdate();
 
     }
 
@@ -796,10 +796,10 @@ void sv4guiContourGroupDataInteractor::DeleteContour( mitk::StateMachineAction*,
 void sv4guiContourGroupDataInteractor::RemoveSelectedPoint( mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
     sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup *>( GetDataNode()->GetData() );
-    if(group==NULL)
+    if(group==nullptr)
         return;
 
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
         return;
 
     int selectedIndex=m_Contour->GetControlPointSelectedIndex();
@@ -826,7 +826,7 @@ void sv4guiContourGroupDataInteractor::RemoveSelectedPoint( mitk::StateMachineAc
         if ( !m_UndoEnabled )
             delete doOp;
 
-        interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+        interactionEvent->GetSender()->RequestUpdate();
 
     }
 
@@ -835,10 +835,10 @@ void sv4guiContourGroupDataInteractor::RemoveSelectedPoint( mitk::StateMachineAc
 void sv4guiContourGroupDataInteractor::InitMove(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if (positionEvent == NULL)
+    if (positionEvent == nullptr)
         return;
 
-    if (m_Contour==NULL)
+    if (m_Contour==nullptr)
         return;
 
     mitk::OperationEvent::IncCurrObjectEventId();
@@ -849,7 +849,7 @@ void sv4guiContourGroupDataInteractor::InitMove(mitk::StateMachineAction*, mitk:
     m_PreviousLocation=m_Contour->GetControlPoint(selectedIndex);
 
     sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup *>( GetDataNode()->GetData() );
-    if(group!=NULL)
+    if(group!=nullptr)
       group->InvokeEvent( StartChangingContourEvent() );
 
 }
@@ -858,10 +858,10 @@ void sv4guiContourGroupDataInteractor::FinishMove(mitk::StateMachineAction*, mit
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
 
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return;
 
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
         return;
 
     int selectedIndex=m_Contour->GetControlPointSelectedIndex();
@@ -869,7 +869,7 @@ void sv4guiContourGroupDataInteractor::FinishMove(mitk::StateMachineAction*, mit
 
     sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup *>( GetDataNode()->GetData() );
 
-    if(group==NULL)
+    if(group==nullptr)
         return;
 
     group->InvokeEvent(EndChangingContourEvent());
@@ -888,7 +888,7 @@ void sv4guiContourGroupDataInteractor::FinishMove(mitk::StateMachineAction*, mit
     if ( !m_UndoEnabled )
         delete doOp;
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
     mitk::OperationEvent::IncCurrGroupEventId();
 
     this->NotifyResultReady();
@@ -897,22 +897,22 @@ void sv4guiContourGroupDataInteractor::FinishMove(mitk::StateMachineAction*, mit
 
 void sv4guiContourGroupDataInteractor::HidePreviewPoint( mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
         return;
 
     if(m_Contour->IsExtendable()){
         m_Contour->HidePreviewControlPoint();
-        interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+        interactionEvent->GetSender()->RequestUpdate();
     }
 }
 
 void sv4guiContourGroupDataInteractor::SetPreviewPoint( mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return;
 
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
         return;
 
     mitk::Point3D point=positionEvent->GetPositionInWorld();
@@ -920,7 +920,7 @@ void sv4guiContourGroupDataInteractor::SetPreviewPoint( mitk::StateMachineAction
     if(m_Contour->IsExtendable())
     {
         m_Contour->SetPreviewControlPoint(point);
-        interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+        interactionEvent->GetSender()->RequestUpdate();
     }
 
 }
@@ -928,15 +928,15 @@ void sv4guiContourGroupDataInteractor::SetPreviewPoint( mitk::StateMachineAction
 void sv4guiContourGroupDataInteractor::InsertPoint(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return;
 
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
         return;
 
     sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup *>( GetDataNode()->GetData() );
 
-    if(group==NULL)
+    if(group==nullptr)
         return;
 
     if(m_Contour->IsExtendable()&&m_Contour->IsPreviewControlPointVisible())
@@ -969,7 +969,7 @@ void sv4guiContourGroupDataInteractor::InsertPoint(mitk::StateMachineAction*, mi
         if ( !m_UndoEnabled )
             delete doOp;
 
-        renderer->GetRenderingManager()->RequestUpdateAll();
+        renderer->RequestUpdate();
 
         m_LastPoint = positionEvent->GetPositionInWorld();
 
@@ -988,7 +988,7 @@ void sv4guiContourGroupDataInteractor::SetSelectionAccuracy( mitk::ScalarType ac
 mitk::ScalarType sv4guiContourGroupDataInteractor::GetSelectionAccuracy() const
 {
     float pointsize=(float)(2*m_SelectionAccuracy);
-    if (GetDataNode()!=NULL)
+    if (GetDataNode()!=nullptr)
     {
         GetDataNode()->GetFloatProperty("point.3dsize", pointsize);
     }

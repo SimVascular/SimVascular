@@ -61,28 +61,28 @@ cvFactoryRegistrar cvSolidModel::gRegistrar;
 // about kernel types can be returned if necessary.
 
 // PLEASE note that checking the return value of this function is
-// CRITICAL for things to work right.  If we return NULL here, we
+// CRITICAL for things to work right.  If we return nullptr here, we
 // absolutely need to trap that in the callers (i.e. cvSolidModel
-// instantiation functions) to make sure those NULL ptr's don't get
+// instantiation functions) to make sure those nullptr ptr's don't get
 // registered in the repository.  Subsequent cvSolidModel lookup's
-// currently DO NOT check for NULL values.  The idea is that objects
+// currently DO NOT check for nullptr values.  The idea is that objects
 // are checked for validity *before* they get registered.
 #ifdef SV_USE_TCL
 cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
 {
   // Get the solid model factory registrar associated with this Tcl interpreter.
   cvFactoryRegistrar* solidModelRegistrar;
-  if (interp == NULL) {
+  if (interp == nullptr) {
     fprintf(stdout,"WARNING:  Null interpreter passed to SolidModel.  Overriding with default.\n");
     fflush(stdout);
   }
-  Tcl_Interp* myinterp = NULL;
+  Tcl_Interp* myinterp = nullptr;
   myinterp = gVtkTclInterp;
   assert(myinterp);
 
-  solidModelRegistrar = (cvFactoryRegistrar *) Tcl_GetAssocData( myinterp, "SolidModelRegistrar", NULL);
+  solidModelRegistrar = (cvFactoryRegistrar *) Tcl_GetAssocData( myinterp, "SolidModelRegistrar", nullptr);
 
-  cvSolidModel* solid = NULL;
+  cvSolidModel* solid = nullptr;
   if (cvSolidModel::gCurrentKernel == SM_KT_PARASOLID ||
       cvSolidModel::gCurrentKernel == SM_KT_DISCRETE ||
       cvSolidModel::gCurrentKernel == SM_KT_POLYDATA ||
@@ -90,7 +90,7 @@ cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
       cvSolidModel::gCurrentKernel == SM_KT_MESHSIMSOLID) {
 
     solid = (cvSolidModel *) (solidModelRegistrar->UseFactoryMethod( cvSolidModel::gCurrentKernel ));
-    if (solid == NULL) {
+    if (solid == nullptr) {
 		  fprintf( stdout, "Unable to create solid model kernel (%i)\n",cvSolidModel::gCurrentKernel);
 		  //Tcl_SetResult( interp, "Unable to create solid model", TCL_STATIC );
     }
@@ -110,11 +110,11 @@ cvSolidModel* cvSolidModel::pyDefaultInstantiateSolidModel()
   PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
   pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
-  if (pySolidModelRegistrar==NULL)
+  if (pySolidModelRegistrar==nullptr)
   {
     fprintf(stdout,"Cannot get solidModelRegistrar from pySys");
   }
-  cvSolidModel* solid = NULL;
+  cvSolidModel* solid = nullptr;
   if (cvSolidModel::gCurrentKernel == SM_KT_PARASOLID ||
       cvSolidModel::gCurrentKernel == SM_KT_DISCRETE ||
       cvSolidModel::gCurrentKernel == SM_KT_POLYDATA ||
@@ -122,7 +122,7 @@ cvSolidModel* cvSolidModel::pyDefaultInstantiateSolidModel()
       cvSolidModel::gCurrentKernel == SM_KT_MESHSIMSOLID)
       {
         solid = (cvSolidModel *) (pySolidModelRegistrar->UseFactoryMethod( cvSolidModel::gCurrentKernel ));
-        if (solid == NULL) {
+        if (solid == nullptr) {
 		  fprintf( stdout, "Unable to create solid model kernel (%i)\n",cvSolidModel::gCurrentKernel);
 		  //Tcl_SetResult( interp, "Unable to create solid model", TCL_STATIC );
     }

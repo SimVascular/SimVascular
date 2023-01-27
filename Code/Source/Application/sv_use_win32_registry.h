@@ -81,13 +81,13 @@ errno_t cv_getenv_s(
    const char *varname
 ) {
   *pReturnValue = 0;
-  char *rtnstr = NULL;
+  char *rtnstr = nullptr;
   rtnstr = getenv(varname);
-  if (rtnstr == NULL) {
+  if (rtnstr == nullptr) {
     return 0;
   }
   *pReturnValue = strlen(rtnstr);
-  if (buffer != NULL) {
+  if (buffer != nullptr) {
     buffer[0]='\0';
     sprintf(buffer,rtnstr);
   }

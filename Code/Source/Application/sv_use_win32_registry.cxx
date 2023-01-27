@@ -54,7 +54,7 @@ int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_I
     exit(-1);
   }
 
-  returnStatus = RegQueryValueEx(hKey, regVarName, NULL, &dwType,(LPBYTE)&lszValue, &dwSize);
+  returnStatus = RegQueryValueEx(hKey, regVarName, nullptr, &dwType,(LPBYTE)&lszValue, &dwSize);
   RegCloseKey(hKey);
 
   if (returnStatus != ERROR_SUCCESS) {
@@ -101,7 +101,7 @@ void QueryKey(HKEY hKey)
         hKey,                    // key handle 
         achClass,                // buffer for class name 
         &cchClassName,           // size of class string 
-        NULL,                    // reserved 
+        nullptr,                    // reserved 
         &cSubKeys,               // number of subkeys 
         &cbMaxSubKey,            // longest subkey size 
         &cchMaxClass,            // longest class string 
@@ -123,9 +123,9 @@ void QueryKey(HKEY hKey)
             retCode = RegEnumKeyEx(hKey, i,
                      achKey, 
                      &cbName, 
-                     NULL, 
-                     NULL, 
-                     NULL, 
+                     nullptr, 
+                     nullptr, 
+                     nullptr, 
                      &ftLastWriteTime); 
             if (retCode == ERROR_SUCCESS) 
             {
@@ -147,10 +147,10 @@ void QueryKey(HKEY hKey)
             retCode = RegEnumValue(hKey, i, 
                 achValue, 
                 &cchValue, 
-                NULL, 
-                NULL,
-                NULL,
-                NULL);
+                nullptr, 
+                nullptr,
+                nullptr,
+                nullptr);
  
             if (retCode == ERROR_SUCCESS ) 
             { 
@@ -248,7 +248,7 @@ int sv_parse_registry_for_plugins() {
         hKey[0],                    // key handle 
         achClass0,                // buffer for class name 
         &cchClassName[0],           // size of class string 
-        NULL,                    // reserved 
+        nullptr,                    // reserved 
         &cSubKeys[0],               // number of subkeys 
         &cbMaxSubKey[0],            // longest subkey size 
         &cchMaxClass[0],            // longest class string 
@@ -269,9 +269,9 @@ int sv_parse_registry_for_plugins() {
       retCode = RegEnumKeyEx(hKey[0], i,
                      achKey[0], 
                      &cbName[0], 
-                     NULL, 
-                     NULL, 
-                     NULL, 
+                     nullptr, 
+                     nullptr, 
+                     nullptr, 
                      &ftLastWriteTime[0]);
       
        if (retCode == ERROR_SUCCESS) {
@@ -293,7 +293,7 @@ int sv_parse_registry_for_plugins() {
                      hKey[1],                    // key handle 
                      achClass1,                // buffer for class name 
                      &cchClassName[1],           // size of class string 
-                     NULL,                    // reserved 
+                     nullptr,                    // reserved 
                      &cSubKeys[1],               // number of subkeys 
                      &cbMaxSubKey[1],            // longest subkey size 
                      &cchMaxClass[1],            // longest class string 
@@ -311,9 +311,9 @@ int sv_parse_registry_for_plugins() {
                       retCode = RegEnumKeyEx(hKey[1], j,
                          achKey[1], 
                          &cbName[1], 
-                         NULL, 
-                         NULL, 
-                         NULL, 
+                         nullptr, 
+                         nullptr, 
+                         nullptr, 
                          &ftLastWriteTime[1]);
      
                       if (retCode == ERROR_SUCCESS) {
@@ -383,7 +383,7 @@ int sv_parse_registry_for_environment_variables(char* toplevel_key) {
         hKey,                    // key handle 
         achClass,                // buffer for class name 
         &cchClassName,           // size of class string 
-        NULL,                    // reserved 
+        nullptr,                    // reserved 
         &cSubKeys,               // number of subkeys 
         &cbMaxSubKey,            // longest subkey size 
         &cchMaxClass,            // longest class string 
@@ -412,7 +412,7 @@ int sv_parse_registry_for_environment_variables(char* toplevel_key) {
       retCode = RegEnumValue(hKey, i, 
                 achValue, 
                 &cchValue, 
-                NULL,
+                nullptr,
 		&dwType,
 		(LPBYTE)&lszValue,
 		&dwSize);
@@ -445,8 +445,8 @@ int sv_main_append_to_envvar(char* envvar_to_update, char* appendme) {
   // default to empty string if it doesn't
   
   char* envstr=getenv(envvar_to_update);
-  if (envstr != NULL) {
-    getenv_s( &requiredSize, NULL, 0, envvar_to_update);
+  if (envstr != nullptr) {
+    getenv_s( &requiredSize, nullptr, 0, envvar_to_update);
     if (requiredSize >= _MAX_ENV) {
       fprintf(stderr,"FATAL ERROR:  var (%s) to long!\n",envvar_to_update);
       exit(-1);

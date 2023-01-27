@@ -72,7 +72,7 @@ sv4guiSolverProcessHandler::sv4guiSolverProcessHandler(QProcess* process, mitk::
     , m_TotalSteps(totalSteps)
     , m_RunDir(runDir)
     , m_Parent(parent)
-    , m_Timer(NULL)
+    , m_Timer(nullptr)
 {
 }
 
@@ -92,7 +92,7 @@ void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
   QString text = "";
   QString status = "Simulation failed";
   QMessageBox::Icon icon = QMessageBox::Warning;
-  QMessageBox messageBox(NULL); 
+  QMessageBox messageBox(nullptr); 
 
   if (error == QProcess::FailedToStart) {
     title = "Simulation cannot be started";
@@ -131,7 +131,7 @@ void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
 
 void sv4guiSolverProcessHandler::Start()
 {
-    if(m_Process==NULL)
+    if(m_Process==nullptr)
         return;
 
     if(m_JobNode.IsNull())
@@ -175,7 +175,7 @@ void sv4guiSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::Ex
 
     QString title = "SimVascular SV Simulation";
     QMessageBox::Icon icon=QMessageBox::NoIcon;
-    QMessageBox mb(NULL); //svSimualtionView maybe doesn't exist.
+    QMessageBox mb(nullptr); //svSimualtionView maybe doesn't exist.
     QString status="";
 
     auto jobName = QString::fromStdString(m_JobNode->GetName()); 

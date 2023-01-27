@@ -210,7 +210,7 @@ class sv4guisvFSISolverProcessHandler : public QObject
     Q_OBJECT
 
 public:
-    sv4guisvFSISolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent=NULL);
+    sv4guisvFSISolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent=nullptr);
     virtual ~sv4guisvFSISolverProcessHandler();
 
     void Start();

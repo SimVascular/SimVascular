@@ -69,7 +69,7 @@ sv4guiProcessHandler::sv4guiProcessHandler(QProcess* process, mitk::DataNode::Po
     : m_Process(process)
     , m_JobNode(jobNode)
     , m_Parent(parent)
-    , m_MessageBox(NULL)
+    , m_MessageBox(nullptr)
     , m_Stoppable(stoppable)
     , m_MultiThreading(multithreading)
 {
@@ -86,7 +86,7 @@ sv4guiProcessHandler::~sv4guiProcessHandler()
 
 void sv4guiProcessHandler::Start()
 {
-    if(m_Process==NULL)
+    if(m_Process==nullptr)
         return;
 
     if(m_MultiThreading)
@@ -120,7 +120,7 @@ void sv4guiProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStat
     if(m_MessageBox)
     {
         delete m_MessageBox;
-        m_MessageBox=NULL;
+        m_MessageBox=nullptr;
     }
 
     QString title="";

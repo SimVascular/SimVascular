@@ -139,7 +139,7 @@ int cvLevelSetVelocityConstant::Evaluate( double pos[], double *f0, double *f1, 
   *f1 = 0.0;
   *forceFlag = 0;
 
-  if ( v != NULL ) {
+  if ( v != nullptr ) {
     v[0] = n[0] * v_;
     v[1] = n[1] * v_;
     v[2] = n[2] * v_;

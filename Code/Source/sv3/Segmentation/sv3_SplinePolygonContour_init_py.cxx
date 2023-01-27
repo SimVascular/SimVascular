@@ -71,16 +71,16 @@ PyObject* splinePolygonContour_AvailableCmd(PyObject* self,PyObject* args);
 PyObject* splinePolygonContour_RegistrarsListCmd(PyObject* self, PyObject* args);
 
 PyMethodDef splinePolygonContour_methods[] = {
-  {"Available", splinePolygonContour_AvailableCmd,METH_NOARGS,NULL},
-  {"Registrars", splinePolygonContour_RegistrarsListCmd,METH_NOARGS,NULL},
-  {NULL, NULL}
+  {"Available", splinePolygonContour_AvailableCmd,METH_NOARGS,nullptr},
+  {"Registrars", splinePolygonContour_RegistrarsListCmd,METH_NOARGS,nullptr},
+  {nullptr, nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pySplinePolygonContourModule = {
    PyModuleDef_HEAD_INIT,
    "pySplinePolygonContour",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    splinePolygonContour_methods
@@ -99,7 +99,7 @@ initpySplinePolygonContour()
   pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
 
-  if (contourObjectRegistrar != NULL) {
+  if (contourObjectRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_SPLINEPOLYGON,
       (FactoryMethodPtr) &CreateSplinePolygonContour );
@@ -112,7 +112,7 @@ initpySplinePolygonContour()
 
   PyObject* pythonC;
   pythonC = Py_InitModule("pySplinePolygonContour", splinePolygonContour_methods);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pySplinePolygonContour");
     return;
@@ -132,7 +132,7 @@ PyInit_pySplinePolygonContour()
   pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
 
-  if (contourObjectRegistrar != NULL) {
+  if (contourObjectRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_SPLINEPOLYGON,
       (FactoryMethodPtr) &CreateSplinePolygonContour );
@@ -145,7 +145,7 @@ PyInit_pySplinePolygonContour()
 
   PyObject* pythonC;
   pythonC = PyModule_Create(&pySplinePolygonContourModule);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pySplinePolygonContour");
     Py_RETURN_NONE;

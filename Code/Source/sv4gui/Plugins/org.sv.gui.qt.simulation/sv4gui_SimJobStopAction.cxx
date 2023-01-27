@@ -36,7 +36,7 @@
 #include "sv4gui_SimulationView.h"
 
 sv4guiSimJobStopAction::sv4guiSimJobStopAction()
-    : m_Functionality(NULL)
+    : m_Functionality(nullptr)
 {
 }
 
@@ -77,7 +77,7 @@ void sv4guiSimJobStopAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
 //            timeStep=timeNavigationController->GetTime()->GetPos();
 //        }
 
-        if (QMessageBox::question(NULL, "Stop Simulation", "Are you sure to stop simulatin for this job?",
+        if (QMessageBox::question(nullptr, "Stop Simulation", "Are you sure to stop simulatin for this job?",
                                   QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
         {
           return;
@@ -88,7 +88,7 @@ void sv4guiSimJobStopAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
 
           if(running)
           {
-              sv4guiSolverProcessHandler* handler=NULL;
+              sv4guiSolverProcessHandler* handler=nullptr;
               bool ok=selectedNode->GetPropertyValue<sv4guiSolverProcessHandler*>("process handler",handler);
 
               if(ok && handler)
@@ -99,7 +99,7 @@ void sv4guiSimJobStopAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
           }
           else
           {
-              QMessageBox::information(NULL,"Info","The selected job is not running.");
+              QMessageBox::information(nullptr,"Info","The selected job is not running.");
               return;
           }
 

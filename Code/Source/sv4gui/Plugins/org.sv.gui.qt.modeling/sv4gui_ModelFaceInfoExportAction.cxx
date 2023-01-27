@@ -85,7 +85,7 @@ void sv4guiModelFaceInfoExportAction::Run(const QList<mitk::DataNode::Pointer> &
         if(lastFileSavePath=="")
             lastFileSavePath=QDir::homePath();
 
-        QString fileName = QFileDialog::getSaveFileName(NULL
+        QString fileName = QFileDialog::getSaveFileName(nullptr
                                                         ,tr("Export Cap Info")
                                                         ,lastFileSavePath
                                                         ,tr("All Files (*)"));

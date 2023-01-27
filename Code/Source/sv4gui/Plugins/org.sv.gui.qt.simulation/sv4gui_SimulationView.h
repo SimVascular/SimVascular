@@ -180,7 +180,7 @@ public:
 
     bool IsDouble(std::string value);
 
-    bool AreDouble(std::string values, int* count = NULL);
+    bool AreDouble(std::string values, int* count = nullptr);
 
     bool IsInt(std::string value);
 

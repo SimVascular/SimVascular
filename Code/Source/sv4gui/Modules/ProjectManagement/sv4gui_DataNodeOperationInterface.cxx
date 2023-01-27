@@ -83,7 +83,7 @@ void sv4guiDataNodeOperationInterface::ExecuteOperation(mitk::Operation* op)
 {
     sv4guiDataNodeOperation* operation = dynamic_cast<sv4guiDataNodeOperation*>(op);
 
-    if ( operation==NULL )
+    if ( operation==nullptr )
     {
         MITK_ERROR << "No valid sv4guiDataNodeOperation" << std::endl;
         return;

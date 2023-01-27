@@ -152,21 +152,21 @@ int Mesh_Init( Tcl_Interp *interp )
 {
   // Associate the mesh registrar with the Tcl interpreter so it can be
   // retrieved by the DLLs.
-  Tcl_SetAssocData( interp, "MeshSystemRegistrar", NULL, ((ClientData*)&cvMeshSystem::RegisterKernel ));
+  Tcl_SetAssocData( interp, "MeshSystemRegistrar", nullptr, ((ClientData*)&cvMeshSystem::RegisterKernel ));
 
   // Initialize
   cvMeshSystem::SetCurrentKernel( cvMeshObject::KERNEL_INVALID );
 
   Tcl_CreateCommand( interp, "mesh_newObject", cvMesh_NewObjectCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "mesh_listMethods", cvMesh_ListMethodsCmd,
-  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "mesh_setKernel", cvMesh_SetMeshKernelCmd,
-  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "mesh_logon", cvMesh_LogonCmd,
-  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "mesh_logoff", cvMesh_LogoffCmd,
-  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   return TCL_OK;
 }
@@ -180,16 +180,16 @@ int cvMesh_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
 {
   char *resultName;
-  char *meshFileName = NULL;
-  char *solidFileName = NULL;
+  char *meshFileName = nullptr;
+  char *solidFileName = nullptr;
 
   char *usage;
 
   int table_sz = 3;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-meshfile", STRING_Type, &meshFileName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-solidfile", STRING_Type, &solidFileName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
+    { "-meshfile", STRING_Type, &meshFileName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-solidfile", STRING_Type, &solidFileName, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -207,21 +207,21 @@ int cvMesh_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Instantiate the new mesh:
   cvMeshObject *geom;
   geom = cvMeshSystem::DefaultInstantiateMeshObject( interp, meshFileName, solidFileName );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     return TCL_ERROR;
   }
 
   // Register the solid:
   if ( !( gRepository->Register( resultName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     return TCL_ERROR;
   }
@@ -243,7 +243,7 @@ int cvMesh_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
 			  int argc, CONST84 char *argv[] )
 {
   if ( argc != 1 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -259,7 +259,7 @@ int cvMesh_SetMeshKernelCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-name", STRING_Type, &kernelName, NULL, REQUIRED, 0, { 0 } }
+    { "-name", STRING_Type, &kernelName, nullptr, REQUIRED, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -424,7 +424,7 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
     }
   } else {
     Tcl_AppendResult( interp, "\"", argv[1],
-		      "\" not a recognized cvMeshObject method", (char *)NULL );
+		      "\" not a recognized cvMeshObject method", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -513,7 +513,7 @@ static int cvMesh_GetKernelMtd( ClientData clientData, Tcl_Interp *interp,
   cvMeshObject::KernelType kernelType;
   char *kernelName;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;
@@ -580,7 +580,7 @@ int cvMesh_SetSolidKernelMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-name", STRING_Type, &kernelName, NULL, REQUIRED, 0, { 0 } }
+    { "-name", STRING_Type, &kernelName, nullptr, REQUIRED, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -619,7 +619,7 @@ static int cvMesh_WriteMetisAdjacencyMtd( ClientData clientData, Tcl_Interp *int
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fn, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fn, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -638,7 +638,7 @@ static int cvMesh_WriteMetisAdjacencyMtd( ClientData clientData, Tcl_Interp *int
 
   if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
-		      " to file ", fn, (char *)NULL );
+		      " to file ", fn, (char *)nullptr );
     return TCL_ERROR;
   } else {
     return TCL_OK;
@@ -659,7 +659,7 @@ static int cvMesh_GetPolyDataMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -678,22 +678,22 @@ static int cvMesh_GetPolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Get the cvPolyData:
   pd = geom->GetPolyData();
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     Tcl_AppendResult( interp, "error getting cvPolyData for ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, pd ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete pd;
     return TCL_ERROR;
   }
@@ -715,7 +715,7 @@ static int cvMesh_GetSolidMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -734,22 +734,22 @@ static int cvMesh_GetSolidMtd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Get the cvPolyData:
   pd = geom->GetSolid();
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     Tcl_AppendResult( interp, "error getting cvPolyData for ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, pd ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete pd;
     return TCL_ERROR;
   }
@@ -773,7 +773,7 @@ static int cvMesh_SetVtkPolyDataMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -793,7 +793,7 @@ static int cvMesh_SetVtkPolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   type = gRepository->GetType( objName );
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, "\"", objName,
-		      "\" must be of type cvPolyData", (char *)NULL );
+		      "\" must be of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -831,7 +831,7 @@ static int cvMesh_GetUnstructuredGridMtd( ClientData clientData, Tcl_Interp *int
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -850,22 +850,22 @@ static int cvMesh_GetUnstructuredGridMtd( ClientData clientData, Tcl_Interp *int
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Get the cvUnstructuredGrid:
   ug = geom->GetUnstructuredGrid();
-  if ( ug == NULL ) {
+  if ( ug == nullptr ) {
     Tcl_AppendResult( interp, "error getting cvPolyData for ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, ug ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete ug;
     return TCL_ERROR;
   }
@@ -889,8 +889,8 @@ static int cvMesh_GetFacePolyDataMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-face", INT_Type   , &face, NULL, REQUIRED, 0 , { 0 }},
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
+    { "-face", INT_Type   , &face, nullptr, REQUIRED, 0 , { 0 }},
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -909,22 +909,22 @@ static int cvMesh_GetFacePolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Get the cvPolyData:
   pd = geom->GetFacePolyData(face);
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     Tcl_AppendResult( interp, "error getting cvPolyData for ", geom->GetName(),
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, pd ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete pd;
     return TCL_ERROR;
   }
@@ -946,7 +946,7 @@ int cvMesh_LogonCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &logFileName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &logFileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -964,8 +964,8 @@ int cvMesh_LogonCmd( ClientData clientData, Tcl_Interp *interp,
   cvMeshSystem* meshKernel = cvMeshSystem::GetCurrentKernel();
 
   // read in the results file
-  if (meshKernel == NULL || meshKernel->LogOn(logFileName) == SV_ERROR) {
-      Tcl_AppendResult( interp, "error opening logfile ", (char *)NULL);
+  if (meshKernel == nullptr || meshKernel->LogOn(logFileName) == SV_ERROR) {
+      Tcl_AppendResult( interp, "error opening logfile ", (char *)nullptr);
       return TCL_ERROR;
   }
 
@@ -981,14 +981,14 @@ int cvMesh_LogoffCmd( ClientData clientData, Tcl_Interp *interp,
 			  int argc, CONST84 char *argv[] )
 {
   if ( argc != 1 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
   cvMeshSystem* meshKernel = cvMeshSystem::GetCurrentKernel();
 
-  if (meshKernel == NULL || meshKernel->LogOff() == SV_ERROR) {
-      Tcl_AppendResult( interp, "error turning off logfile ", (char *)NULL);
+  if (meshKernel == nullptr || meshKernel->LogOff() == SV_ERROR) {
+      Tcl_AppendResult( interp, "error turning off logfile ", (char *)nullptr);
       return TCL_ERROR;
   }
 
@@ -1009,8 +1009,8 @@ static int cvMesh_SetMeshOptionsMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-options", STRING_Type   , &flags, NULL, REQUIRED, 0 , { 0 }},
-    { "-values", LIST_Type   , &valueList, NULL, REQUIRED, 0 , { 0 }},
+    { "-options", STRING_Type   , &flags, nullptr, REQUIRED, 0 , { 0 }},
+    { "-values", LIST_Type   , &valueList, nullptr, REQUIRED, 0 , { 0 }},
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -1035,7 +1035,7 @@ static int cvMesh_SetMeshOptionsMtd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if (numValues != valueList.argc) {
-     Tcl_AppendResult( interp, "error in values list", (char *)NULL );
+     Tcl_AppendResult( interp, "error in values list", (char *)nullptr );
      delete [] values;
      return TCL_ERROR;
   }
@@ -1045,7 +1045,7 @@ static int cvMesh_SetMeshOptionsMtd( ClientData clientData, Tcl_Interp *interp,
   // Get the cvPolyData:
   if ( geom->SetMeshOptions(flags,numValues,values) == SV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
-		      (char *)NULL );
+		      (char *)nullptr );
     delete [] values;
     return TCL_ERROR;
   }
@@ -1068,7 +1068,7 @@ int cvMesh_LoadModelMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &FileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -1086,7 +1086,7 @@ int cvMesh_LoadModelMtd( ClientData clientData, Tcl_Interp *interp,
   // read in the results file
   fprintf(stderr,"Filename: %s\n",FileName);
   if (geom->LoadModel(FileName) == SV_ERROR) {
-      Tcl_AppendResult( interp, "error loading solid model", (char *)NULL);
+      Tcl_AppendResult( interp, "error loading solid model", (char *)nullptr);
       return TCL_ERROR;
   }
 
@@ -1106,7 +1106,7 @@ int cvMesh_GetBoundaryFacesMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-angle", DOUBLE_Type, &angle, NULL, REQUIRED, 0, { 0 } },
+    { "-angle", DOUBLE_Type, &angle, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -1126,7 +1126,7 @@ int cvMesh_GetBoundaryFacesMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetBoundaryFaces: error on object ",
-		      geom->GetName(), (char *)NULL );
+		      geom->GetName(), (char *)nullptr );
     return TCL_ERROR;
   }
 }
@@ -1147,7 +1147,7 @@ int cvMesh_LoadDiscreteModelMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &FileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -1164,7 +1164,7 @@ int cvMesh_LoadDiscreteModelMtd( ClientData clientData, Tcl_Interp *interp,
 
   // read in the results file
   if (geom->LoadDiscreteModel(FileName) == SV_ERROR) {
-      Tcl_AppendResult( interp, "error loading solid model", (char *)NULL);
+      Tcl_AppendResult( interp, "error loading solid model", (char *)nullptr);
       return TCL_ERROR;
   }
 
@@ -1185,8 +1185,8 @@ int cvMesh_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
-    { "-surfile", STRING_Type, &SurfFileName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-file", STRING_Type, &FileName, nullptr, REQUIRED, 0, { 0 } },
+    { "-surfile", STRING_Type, &SurfFileName, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -1203,7 +1203,7 @@ int cvMesh_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
 
   // read in the results file
   if (geom->LoadMesh(FileName,SurfFileName) == SV_ERROR) {
-      Tcl_AppendResult( interp, "error loading mesh ", (char *)NULL);
+      Tcl_AppendResult( interp, "error loading mesh ", (char *)nullptr);
       return TCL_ERROR;
   }
 
@@ -1219,7 +1219,7 @@ int cvMesh_WriteStatsMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &FileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -1236,7 +1236,7 @@ int cvMesh_WriteStatsMtd( ClientData clientData, Tcl_Interp *interp,
 
   // read in the results file
   if (geom->WriteStats(FileName) == SV_ERROR) {
-      Tcl_AppendResult( interp, "error writing stats file ", (char *)NULL);
+      Tcl_AppendResult( interp, "error writing stats file ", (char *)nullptr);
       return TCL_ERROR;
   }
 
@@ -1266,8 +1266,8 @@ int cvMesh_WriteMeshMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
-    { "-version", INT_Type, &smsver, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-file", STRING_Type, &FileName, nullptr, REQUIRED, 0, { 0 } },
+    { "-version", INT_Type, &smsver, nullptr, SV_OPTIONAL, 0, { 0 } },
 
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
@@ -1285,7 +1285,7 @@ int cvMesh_WriteMeshMtd( ClientData clientData, Tcl_Interp *interp,
 
   // read in the results file
   if (geom->WriteMesh(FileName,smsver) == SV_ERROR) {
-      Tcl_AppendResult( interp, "error writing mesh ", (char *)NULL);
+      Tcl_AppendResult( interp, "error writing mesh ", (char *)nullptr);
       return TCL_ERROR;
   }
 
@@ -1302,12 +1302,12 @@ int cvMesh_NewMeshMtd( ClientData clientData, Tcl_Interp *interp,
 {
   cvMeshObject *geom = (cvMeshObject *)clientData;
   if ( argc != 2 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
   if (geom->NewMesh() == SV_ERROR) {
-      Tcl_AppendResult( interp, "error creating new mesh ", (char *)NULL);
+      Tcl_AppendResult( interp, "error creating new mesh ", (char *)nullptr);
       return TCL_ERROR;
   }
 
@@ -1324,12 +1324,12 @@ int cvMesh_GenerateMeshMtd( ClientData clientData, Tcl_Interp *interp,
 {
   cvMeshObject *geom = (cvMeshObject *)clientData;
   if ( argc != 2 ) {
-    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)NULL );
+    Tcl_AppendResult( interp, "usage: ", argv[0], (char *)nullptr );
     return TCL_ERROR;
   }
 
   if (geom->GenerateMesh() == SV_ERROR) {
-      Tcl_AppendResult( interp, "Error generating mesh ", (char *)NULL);
+      Tcl_AppendResult( interp, "Error generating mesh ", (char *)nullptr);
       return TCL_ERROR;
   }
 
@@ -1354,9 +1354,9 @@ static int cvMesh_SetSphereRefinementMtd( ClientData clientData, Tcl_Interp *int
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-size", DOUBLE_Type, &size, NULL, REQUIRED, 0, { 0 } },
-    { "-r", DOUBLE_Type, &r, NULL, REQUIRED, 0, { 0 } },
-    { "-ctr", LIST_Type, &ctrList, NULL, REQUIRED, 0, { 0 } },
+    { "-size", DOUBLE_Type, &size, nullptr, REQUIRED, 0, { 0 } },
+    { "-r", DOUBLE_Type, &r, nullptr, REQUIRED, 0, { 0 } },
+    { "-ctr", LIST_Type, &ctrList, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -1392,7 +1392,7 @@ static int cvMesh_SetSphereRefinementMtd( ClientData clientData, Tcl_Interp *int
 
   if ( geom->SetSphereRefinement(size,r,ctr) == SV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1413,8 +1413,8 @@ static int cvMesh_SetSizeFunctionBasedMeshMtd( ClientData clientData, Tcl_Interp
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-size", DOUBLE_Type, &size, NULL, REQUIRED, 0, { 0 } },
-    { "-functionname", STRING_Type, &functionName, NULL, REQUIRED, 0, { 0 } },
+    { "-size", DOUBLE_Type, &size, nullptr, REQUIRED, 0, { 0 } },
+    { "-functionname", STRING_Type, &functionName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -1431,7 +1431,7 @@ static int cvMesh_SetSizeFunctionBasedMeshMtd( ClientData clientData, Tcl_Interp
 
   if ( geom->SetSizeFunctionBasedMesh(size,functionName) == SV_ERROR ) {
     Tcl_AppendResult( interp, "error in setting size function ",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1460,11 +1460,11 @@ static int cvMesh_SetCylinderRefinementMtd( ClientData clientData, Tcl_Interp *i
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-size", DOUBLE_Type, &size, NULL, REQUIRED, 0, { 0 } },
-    { "-r", DOUBLE_Type, &r, NULL, REQUIRED, 0, { 0 } },
-    { "-length", DOUBLE_Type, &length, NULL, REQUIRED, 0, { 0 } },
-    { "-ctr", LIST_Type, &ctrList, NULL, REQUIRED, 0, { 0 } },
-    { "-nrm", LIST_Type, &nrmList, NULL, REQUIRED, 0, { 0 } },
+    { "-size", DOUBLE_Type, &size, nullptr, REQUIRED, 0, { 0 } },
+    { "-r", DOUBLE_Type, &r, nullptr, REQUIRED, 0, { 0 } },
+    { "-length", DOUBLE_Type, &length, nullptr, REQUIRED, 0, { 0 } },
+    { "-ctr", LIST_Type, &ctrList, nullptr, REQUIRED, 0, { 0 } },
+    { "-nrm", LIST_Type, &nrmList, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -1516,7 +1516,7 @@ static int cvMesh_SetCylinderRefinementMtd( ClientData clientData, Tcl_Interp *i
 
   if ( geom->SetCylinderRefinement(size,r,length,ctr,nrm) == SV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1537,16 +1537,16 @@ static int cvMesh_SetBoundaryLayerMtd( ClientData clientData, Tcl_Interp *interp
   int id = 0;
   int side = 0;
   int nL = 0;
-  double *H = NULL;
+  double *H = nullptr;
   ARG_List Hlist;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-type", INT_Type   , &type, NULL, REQUIRED, 0 , { 0 }},
-    { "-id", INT_Type, &id, NULL, REQUIRED, 0 , { 0 }},
-    { "-side", INT_Type   , &side, NULL, REQUIRED, 0 , { 0 }},
-    { "-nL", INT_Type   , &nL, NULL, REQUIRED, 0 , { 0 }},
-    { "-H", LIST_Type   , &Hlist, NULL, REQUIRED, 0 , { 0 }},
+    { "-type", INT_Type   , &type, nullptr, REQUIRED, 0 , { 0 }},
+    { "-id", INT_Type, &id, nullptr, REQUIRED, 0 , { 0 }},
+    { "-side", INT_Type   , &side, nullptr, REQUIRED, 0 , { 0 }},
+    { "-nL", INT_Type   , &nL, nullptr, REQUIRED, 0 , { 0 }},
+    { "-H", LIST_Type   , &Hlist, nullptr, REQUIRED, 0 , { 0 }},
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -1573,7 +1573,7 @@ static int cvMesh_SetBoundaryLayerMtd( ClientData clientData, Tcl_Interp *interp
   }
 
   if (numH != Hlist.argc) {
-     Tcl_AppendResult( interp, "error in H list", (char *)NULL );
+     Tcl_AppendResult( interp, "error in H list", (char *)nullptr );
      delete [] H;
      return TCL_ERROR;
   }
@@ -1582,7 +1582,7 @@ static int cvMesh_SetBoundaryLayerMtd( ClientData clientData, Tcl_Interp *interp
 
   if ( geom->SetBoundaryLayer(type,id,side,nL,H) == SV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
-		      (char *)NULL );
+		      (char *)nullptr );
     delete [] H;
     return TCL_ERROR;
   }
@@ -1603,7 +1603,7 @@ static int cvMesh_SetWallsMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-walls", LIST_Type   , &wallsList, NULL, REQUIRED, 0 , { 0 }},
+    { "-walls", LIST_Type   , &wallsList, nullptr, REQUIRED, 0 , { 0 }},
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -1634,7 +1634,7 @@ static int cvMesh_SetWallsMtd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if (numWalls != wallsList.argc) {
-     Tcl_AppendResult( interp, "error in H list", (char *)NULL );
+     Tcl_AppendResult( interp, "error in H list", (char *)nullptr );
      delete [] walls;
      return TCL_ERROR;
   }
@@ -1643,7 +1643,7 @@ static int cvMesh_SetWallsMtd( ClientData clientData, Tcl_Interp *interp,
 
   if ( geom->SetWalls(numWalls,walls) == SV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
-		      (char *)NULL );
+		      (char *)nullptr );
     delete [] walls;
     return TCL_ERROR;
   }
@@ -1663,7 +1663,7 @@ static int cvMesh_GetModelFaceInfoMtd( ClientData clientData, Tcl_Interp *interp
   cvMeshObject *geom = (cvMeshObject *)clientData;
   char *usage;
 
-  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  usage = ARG_GenSyntaxStr( 2, argv, 0, nullptr );
   if ( argc != 2 ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     return TCL_ERROR;

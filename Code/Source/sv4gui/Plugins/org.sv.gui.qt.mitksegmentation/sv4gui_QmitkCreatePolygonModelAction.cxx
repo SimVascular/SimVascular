@@ -239,7 +239,7 @@ void QmitkCreatePolygonModelAction::Run(const QList<DataNode::Pointer> &selected
         m_DataStorage->GetNamedNode(new_polydata_name.toStdString());
     
     if (newPdNode){
-        QMessageBox::warning(NULL,"Segmentation Already exists","Please use a different segmentation name!");
+        QMessageBox::warning(nullptr,"Segmentation Already exists","Please use a different segmentation name!");
         return;
     }
     if(!ok){

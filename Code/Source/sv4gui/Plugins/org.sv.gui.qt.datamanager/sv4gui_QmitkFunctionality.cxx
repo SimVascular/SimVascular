@@ -37,8 +37,8 @@
 #include <berryIWorkbenchWindow.h>
 #include <berryISelectionService.h>
 
-#include <internal/QmitkFunctionalityUtil.h>
-#include <internal/QmitkCommonLegacyActivator.h>
+// #include <internal/QmitkFunctionalityUtil.h>
+// #include <internal/QmitkCommonLegacyActivator.h>
 #include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
@@ -191,7 +191,7 @@ void sv4guiQmitkFunctionality::ClosePartProxy()
   }
 
   // REMOVE SELECTION PROVIDER
-  this->GetSite()->SetSelectionProvider(berry::ISelectionProvider::Pointer(NULL));
+  this->GetSite()->SetSelectionProvider(berry::ISelectionProvider::Pointer(nullptr));
 
   berry::ISelectionService* s = GetSite()->GetWorkbenchWindow()->GetSelectionService();
   if(s)

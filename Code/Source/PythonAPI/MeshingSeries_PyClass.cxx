@@ -218,7 +218,7 @@ MeshingSeries_get_mesh(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
   //std::cout << "========== MeshingSeries_get_mesh ==========" << std::endl;
 
   auto api = PyUtilApiFunction("|i", PyRunTimeErr, __func__);
-  static char *keywords[] = {"time", NULL};
+  static char *keywords[] = {"time", nullptr};
   int time = 0;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &time)) {
@@ -316,8 +316,8 @@ static PyObject *
 MeshingSeries_write(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", NULL};
-  char* fileNameArg = NULL;
+  static char *keywords[] = {"file_name", nullptr};
+  char* fileNameArg = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileNameArg)) {
       return api.argsError();
@@ -383,7 +383,7 @@ static PyMethodDef PyMeshingSeriesMethods[] = {
 
   {"write", (PyCFunction)MeshingSeries_write, METH_VARARGS|METH_KEYWORDS, MeshingSeries_write_doc},
 
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //---------------------
@@ -395,7 +395,7 @@ static PyMethodDef PyMeshingSeriesMethods[] = {
 // designated initializers.
 //
 PyTypeObject PyMeshingSeriesType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   MESHING_SERIES_MODULE_CLASS,
   sizeof(PyMeshingSeries)
 };
@@ -450,7 +450,7 @@ PyMeshingSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyMeshingSeriesNew] PyMeshingSeriesNew " << std::endl;
   auto self = (PyMeshingSeries*)type->tp_alloc(type, 0);
-  if (self == NULL) {
+  if (self == nullptr) {
       std::cout << "[PyMeshingSeriesNew] ERROR: Can't allocate type." << std::endl;
       return nullptr;
   }
@@ -506,7 +506,7 @@ CreatePyMeshingSeries(sv4guiMitkMesh::Pointer meshingGroup)
   //std::cout << std::endl;
   //std::cout << "========== CreatePyMeshingSeries ==========" << std::endl;
   //std::cout << "[CreatePyMeshingSeries] Create MeshingSeries object ... " << std::endl;
-  auto meshingSeriesObj = PyObject_CallObject((PyObject*)&PyMeshingSeriesType, NULL);
+  auto meshingSeriesObj = PyObject_CallObject((PyObject*)&PyMeshingSeriesType, nullptr);
   auto pyMeshingSeries = (PyMeshingSeries*)meshingSeriesObj;
 
   if (meshingGroup != nullptr) {

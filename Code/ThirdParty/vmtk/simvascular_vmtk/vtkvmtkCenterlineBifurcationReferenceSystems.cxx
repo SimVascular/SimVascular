@@ -43,12 +43,12 @@ vtkStandardNewMacro(vtkvmtkCenterlineBifurcationReferenceSystems);
 
 vtkvmtkCenterlineBifurcationReferenceSystems::vtkvmtkCenterlineBifurcationReferenceSystems()
 {
-  this->RadiusArrayName = NULL;
-  this->GroupIdsArrayName = NULL;
-  this->BlankingArrayName = NULL;
+  this->RadiusArrayName = nullptr;
+  this->GroupIdsArrayName = nullptr;
+  this->BlankingArrayName = nullptr;
 
-  this->NormalArrayName = NULL;
-  this->UpNormalArrayName = NULL;
+  this->NormalArrayName = nullptr;
+  this->UpNormalArrayName = nullptr;
 }
 
 vtkvmtkCenterlineBifurcationReferenceSystems::~vtkvmtkCenterlineBifurcationReferenceSystems()
@@ -56,31 +56,31 @@ vtkvmtkCenterlineBifurcationReferenceSystems::~vtkvmtkCenterlineBifurcationRefer
   if (this->RadiusArrayName)
     {
     delete[] this->RadiusArrayName;
-    this->RadiusArrayName = NULL;
+    this->RadiusArrayName = nullptr;
     }
 
   if (this->GroupIdsArrayName)
     {
     delete[] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
     }
 
   if (this->BlankingArrayName)
     {
     delete[] this->BlankingArrayName;
-    this->BlankingArrayName = NULL;
+    this->BlankingArrayName = nullptr;
     }
 
   if (this->NormalArrayName)
     {
     delete[] this->NormalArrayName;
-    this->NormalArrayName = NULL;
+    this->NormalArrayName = nullptr;
     }
 
   if (this->UpNormalArrayName)
     {
     delete[] this->UpNormalArrayName;
-    this->UpNormalArrayName = NULL;
+    this->UpNormalArrayName = nullptr;
     }
 }
 

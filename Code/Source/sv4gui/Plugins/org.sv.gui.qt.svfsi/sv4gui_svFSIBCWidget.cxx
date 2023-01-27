@@ -95,7 +95,7 @@ void sv4guisvFSIBCWidget::Setup(sv4guiMitksvFSIJob* mitkJob, int eqIndx, bool ad
 
     m_Job=mitkJob->GetSimJob();
 
-    if(m_Job==NULL || m_EqIndx<0)
+    if(m_Job==nullptr || m_EqIndx<0)
         return;
 
     sv4guisvFSIeqClass& eq=m_Job->m_Eqs[m_EqIndx];
@@ -153,7 +153,7 @@ void sv4guisvFSIBCWidget::Setup(sv4guiMitksvFSIJob* mitkJob, int eqIndx, bool ad
 
 void sv4guisvFSIBCWidget::LoadBC()
 {
-    if(m_Job==NULL || m_EqIndx<0)
+    if(m_Job==nullptr || m_EqIndx<0)
         return;
 
     sv4guisvFSIeqClass& eq=m_Job->m_Eqs[m_EqIndx];
@@ -399,7 +399,7 @@ void sv4guisvFSIBCWidget::SaveBC() {
     if ( ui->faceList->selectedItems().isEmpty() )
         return;
 
-    if(m_Job==NULL || m_EqIndx<0)
+    if(m_Job==nullptr || m_EqIndx<0)
         return;
 
     sv4guisvFSIbcClass newBC;

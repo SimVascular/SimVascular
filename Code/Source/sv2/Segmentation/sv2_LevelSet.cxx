@@ -70,14 +70,14 @@ cvLevelSet::cvLevelSet()
   bandExt_[0] = 1.0;
   bandExt_[1] = -1.0;
   mineWd_ = -1.0;
-  grid_ = NULL;
+  grid_ = nullptr;
   gridType_ = Dense_GridT;
-  velocity_ = NULL;
+  velocity_ = nullptr;
 
-  seed_ = NULL;
-  pdSeed_ = NULL;
-  smSeed_ = NULL;
-  imgSeed_ = NULL;
+  seed_ = nullptr;
+  pdSeed_ = nullptr;
+  smSeed_ = nullptr;
+  imgSeed_ = nullptr;
 
   status_ = 0;
   timers_ = 0;
@@ -323,21 +323,21 @@ int cvLevelSet::GetCurrTime( double *currTime )
 
 void cvLevelSet::DeallocateSeedObjs()
 {
-  if ( seed_ != NULL ) {
+  if ( seed_ != nullptr ) {
     delete seed_;
-    seed_ = NULL;
+    seed_ = nullptr;
   }
-  if ( pdSeed_ != NULL ) {
+  if ( pdSeed_ != nullptr ) {
     delete pdSeed_;
-    pdSeed_ = NULL;
+    pdSeed_ = nullptr;
   }
-  if ( smSeed_ != NULL ) {
+  if ( smSeed_ != nullptr ) {
     delete smSeed_;
-    smSeed_ = NULL;
+    smSeed_ = nullptr;
   }
-  if ( imgSeed_ != NULL ) {
+  if ( imgSeed_ != nullptr ) {
     delete imgSeed_;
-    imgSeed_ = NULL;
+    imgSeed_ = nullptr;
   }
 }
 
@@ -366,7 +366,7 @@ int cvLevelSet::SetSeed( Seed_T *s )
   DeallocateSeedObjs();
 
   // Now save the given circular seed:
-  if ( seed_ == NULL ) {
+  if ( seed_ == nullptr ) {
     seed_ = new Seed_T;
   }
   *seed_ = *s;
@@ -381,7 +381,7 @@ int cvLevelSet::SetSeed( Seed_T *s )
 
 int cvLevelSet::GetSeed( Seed_T *s )
 {
-  if ( seed_ == NULL ) {
+  if ( seed_ == nullptr ) {
     return SV_ERROR;
   } else {
     *s = *seed_;
@@ -411,7 +411,7 @@ int cvLevelSet::SetSeed( cvPolyData *s )
 
 int cvLevelSet::GetSeed( cvPolyData **s )
 {
-  if ( pdSeed_ == NULL ) {
+  if ( pdSeed_ == nullptr ) {
     return SV_ERROR;
   } else {
     *s = pdSeed_;
@@ -441,7 +441,7 @@ int cvLevelSet::SetSeed( cvSolidModel *s )
 
 int cvLevelSet::GetSeed( cvSolidModel **s )
 {
-  if ( smSeed_ == NULL ) {
+  if ( smSeed_ == nullptr ) {
     return SV_ERROR;
   } else {
     *s = smSeed_;
@@ -471,7 +471,7 @@ int cvLevelSet::SetSeed( cvStrPts *s, double thr )
 
 int cvLevelSet::GetSeed( cvStrPts **s, double *thr )
 {
-  if ( imgSeed_ == NULL ) {
+  if ( imgSeed_ == nullptr ) {
     return SV_ERROR;
   } else {
     *s = imgSeed_;
@@ -494,11 +494,11 @@ int cvLevelSet::LinkVelocity( cvLevelSetVelocity *v )
 {
   cvLevelSet *dummy;
 
-  if ( v == NULL ) {
+  if ( v == nullptr ) {
     return SV_ERROR;
   }
 
-  if ( velocity_ != NULL ) {
+  if ( velocity_ != nullptr ) {
     UnlinkVelocity();
   }
 
@@ -521,13 +521,13 @@ int cvLevelSet::LinkVelocity( cvLevelSetVelocity *v )
 
 int cvLevelSet::UnlinkVelocity()
 {
-  if ( velocity_ == NULL ) {
+  if ( velocity_ == nullptr ) {
     return SV_OK;
   }
 
   //  velocity_->UnlinkLevelSet();
-  velocity_->ls_ = NULL;
-  velocity_ = NULL;
+  velocity_->ls_ = nullptr;
+  velocity_ = nullptr;
   return SV_OK;
 }
 
@@ -585,7 +585,7 @@ int cvLevelSet::Init()
     switch (gridType_) {
     case Dense_GridT:
       grid_ = new cvLevelSetDenseGrid( h, dims, origin_ );
-      if ( grid_ == NULL ) {
+      if ( grid_ == nullptr ) {
 	printf( "ERR: Couldn't allocate cvLevelSetDenseGrid.\n" );
     return SV_ERROR;
       }
@@ -595,7 +595,7 @@ int cvLevelSet::Init()
     return SV_ERROR;
       }
       grid_ = new cvLevelSetSparseGrid( h, dims, origin_ );
-      if ( grid_ == NULL ) {
+      if ( grid_ == nullptr ) {
 	printf( "ERR: Couldn't allocate cvLevelSetSparseGrid.\n" );
     return SV_ERROR;
       }
@@ -606,7 +606,7 @@ int cvLevelSet::Init()
       }
       break;
     default:
-      grid_ = NULL;
+      grid_ = nullptr;
       return SV_ERROR;
     }
 
@@ -627,7 +627,7 @@ int cvLevelSet::Init()
 
     if ( initStatus != SV_OK ) {
       delete grid_;
-      grid_ = NULL;
+      grid_ = nullptr;
       return SV_ERROR;
     }
     if (timers_) {
@@ -638,7 +638,7 @@ int cvLevelSet::Init()
     currTime_ = 0.0;
     tn_ = 0;
 
-    if ( velocity_ != NULL ) {
+    if ( velocity_ != nullptr ) {
       velocity_->UpdateTolerance();
     }
   }
@@ -677,7 +677,7 @@ int cvLevelSet::EvolveOneTimeStep()
     printf("ERR: Zero level set has no geometry.\n");
     return SV_ERROR;
 
-  } else if ( velocity_ == NULL ) {
+  } else if ( velocity_ == nullptr ) {
     printf("ERR: no velocity currently associated with %s\n", tclName_);
     return SV_ERROR;
 
@@ -974,7 +974,7 @@ char *cvLevelSet::GetGridStatString()
 
   result = new char [CV_STRLEN];
 
-  if ( grid_ == NULL ) {
+  if ( grid_ == nullptr ) {
     sprintf( result, "No currently valid grid." );
     return result;
   }

@@ -87,19 +87,19 @@ vtkSVNURBSVolume::vtkSVNURBSVolume()
 // ----------------------
 vtkSVNURBSVolume::~vtkSVNURBSVolume()
 {
-  if (this->ControlPointGrid != NULL)
+  if (this->ControlPointGrid != nullptr)
   {
     this->ControlPointGrid->Delete();
   }
   for (int i=0; i<3; i++)
   {
-    if (this->UVWKnotVectors[i] != NULL)
+    if (this->UVWKnotVectors[i] != nullptr)
     {
       this->UVWKnotVectors[i]->Delete();
     }
   }
 
-  if (this->VolumeRepresentation != NULL)
+  if (this->VolumeRepresentation != nullptr)
   {
     this->VolumeRepresentation->Delete();
   }

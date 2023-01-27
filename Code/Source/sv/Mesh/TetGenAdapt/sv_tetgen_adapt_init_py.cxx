@@ -79,16 +79,16 @@ PyObject* TetGenAdapt_AvailableCmd(PyObject* self,PyObject* args);
 PyObject* TetGenAdapt_RegistrarsListCmd(PyObject* self, PyObject* args);
 
 PyMethodDef TetGenAdapt_methods[] = {
-  {"Available", TetGenAdapt_AvailableCmd,METH_NOARGS,NULL},
-  {"Registrars", TetGenAdapt_RegistrarsListCmd,METH_NOARGS,NULL},
-  {NULL, NULL}
+  {"Available", TetGenAdapt_AvailableCmd,METH_NOARGS,nullptr},
+  {"Registrars", TetGenAdapt_RegistrarsListCmd,METH_NOARGS,nullptr},
+  {nullptr, nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyTetGenAdaptmodule = {
    PyModuleDef_HEAD_INIT,
    "pyTetGenAdapt",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    TetGenAdapt_methods
@@ -108,7 +108,7 @@ PyObject* Tetgenadapt_pyInit()
   pyAdaptObjectRegistrar* tmp = (pyAdaptObjectRegistrar *) pyGlobal;
   cvFactoryRegistrar* adaptObjectRegistrar =tmp->registrar;
   
-  if (adaptObjectRegistrar != NULL) {
+  if (adaptObjectRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           adaptObjectRegistrar->SetFactoryMethodPtr( KERNEL_TETGEN,
       (FactoryMethodPtr) &pyCreateTetGenAdapt );
@@ -126,7 +126,7 @@ PyObject* Tetgenadapt_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
   pythonC = PyModule_Create(&pyTetGenAdaptmodule);
 #endif
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyTetGenAdapt\n");
     return SV_PYTHON_ERROR;
@@ -148,7 +148,7 @@ initpyTetGenAdapt()
   pyAdaptObjectRegistrar* tmp = (pyAdaptObjectRegistrar *) pyGlobal;
   cvFactoryRegistrar* adaptObjectRegistrar =tmp->registrar;
 
-  if (adaptObjectRegistrar != NULL) {
+  if (adaptObjectRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           adaptObjectRegistrar->SetFactoryMethodPtr( KERNEL_TETGEN,
       (FactoryMethodPtr) &pyCreateTetGenAdapt );
@@ -164,7 +164,7 @@ initpyTetGenAdapt()
   PyObject* pythonC;
   pythonC = Py_InitModule("pyTetGenAdapt", TetGenAdapt_methods);
 
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyTetGenAdapt\n");
     return;
@@ -187,7 +187,7 @@ PyInit_pyTetGenAdapt()
   pyAdaptObjectRegistrar* tmp = (pyAdaptObjectRegistrar *) pyGlobal;
   cvFactoryRegistrar* adaptObjectRegistrar =tmp->registrar;
 
-  if (adaptObjectRegistrar != NULL) {
+  if (adaptObjectRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           adaptObjectRegistrar->SetFactoryMethodPtr( KERNEL_TETGEN,
       (FactoryMethodPtr) &pyCreateTetGenAdapt );
@@ -200,7 +200,7 @@ PyInit_pyTetGenAdapt()
 
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyTetGenAdaptmodule);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyTetGenAdapt\n");
     return SV_PYTHON_ERROR;

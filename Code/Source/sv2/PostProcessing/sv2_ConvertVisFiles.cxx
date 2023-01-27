@@ -47,24 +47,24 @@
 // -------------------
 
 cvConvertVisFiles::cvConvertVisFiles() {
-    meshfp_= NULL;
-    resfp_ = NULL;
+    meshfp_= nullptr;
+    resfp_ = nullptr;
     meshfilename_[0] = '\0';
     resfilename_[0] = '\0';
 
     numTractionNodes_ = 0;
-    tractionNodes_ = NULL;
+    tractionNodes_ = nullptr;
 
     meshLoaded_ = 0;
     resLoaded_ = 0;
     meshExported_ = 0;
-    pressure_ = NULL;
-    transport_ = NULL;
-    stress_ = NULL;
-    velocity_ = NULL;
-    traction_ = NULL;
-    displacement_ = NULL;
-    wss_ = NULL;
+    pressure_ = nullptr;
+    transport_ = nullptr;
+    stress_ = nullptr;
+    velocity_ = nullptr;
+    traction_ = nullptr;
+    displacement_ = nullptr;
+    wss_ = nullptr;
     haveVelocityResults_ = 0;
     havePressureResults_ = 0;
     haveTransportResults_ = 0;
@@ -73,8 +73,8 @@ cvConvertVisFiles::cvConvertVisFiles() {
     haveDisplacementResults_ = 0;
     haveWSSResults_ = 0;
     currentLine_[0]  = '\0';
-    meshpts_ = NULL;
-    grid_ = NULL;
+    meshpts_ = nullptr;
+    grid_ = nullptr;
 }
 
 
@@ -92,35 +92,35 @@ cvConvertVisFiles::~cvConvertVisFiles() {
     // delete the mesh if the user didn't ask for it
     if ((meshExported_ == 0) && (meshLoaded_ == 1)) {
         //fprintf(stdout,"debug: deleting mesh\n");
-      if (meshpts_ != NULL) {
+      if (meshpts_ != nullptr) {
          meshpts_->Delete();
       }
-      if (grid_ != NULL) {
+      if (grid_ != nullptr) {
          grid_->Delete();
       }
     }
     // delete the results objs
     if (resLoaded_ == 1) {
         //fprintf(stdout,"debug: deleting results\n");
-      if ((havePressureResults_ == 1) && (pressure_ != NULL)) {
+      if ((havePressureResults_ == 1) && (pressure_ != nullptr)) {
             pressure_->Delete();
       }
-      if ((haveVelocityResults_ == 1) && (velocity_ != NULL)) {
+      if ((haveVelocityResults_ == 1) && (velocity_ != nullptr)) {
             velocity_->Delete();
       }
-      if ((haveTransportResults_ == 1) && (transport_ != NULL)) {
+      if ((haveTransportResults_ == 1) && (transport_ != nullptr)) {
             transport_->Delete();
       }
-      if ((haveStressResults_ == 1) && (stress_ != NULL)) {
+      if ((haveStressResults_ == 1) && (stress_ != nullptr)) {
             stress_->Delete();
       }
-      if ((haveTractionResults_ == 1) && (traction_ != NULL)) {
+      if ((haveTractionResults_ == 1) && (traction_ != nullptr)) {
             traction_->Delete();
       }
-      if ((haveDisplacementResults_ == 1) && (displacement_ != NULL)) {
+      if ((haveDisplacementResults_ == 1) && (displacement_ != nullptr)) {
             displacement_->Delete();
       }
-      if ((haveWSSResults_ == 1) && (wss_ != NULL)) {
+      if ((haveWSSResults_ == 1) && (wss_ != nullptr)) {
             wss_->Delete();
       }
     }
@@ -133,9 +133,9 @@ cvConvertVisFiles::~cvConvertVisFiles() {
 
 int cvConvertVisFiles::openInputFile(char* filename, gzFile* fp) {
     // open the output file
-    *fp = NULL;
+    *fp = nullptr;
     *fp = gzopen (filename, "rb");
-    if (*fp == Z_NULL) {
+    if (*fp == Z_nullptr) {
       fprintf(stderr,"Error: Could not open input file %s.\n",filename);
       return SV_ERROR;
     }
@@ -155,7 +155,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
         return SV_ERROR;
     }
 
-    if (meshfp_ == NULL) {
+    if (meshfp_ == nullptr) {
         return SV_ERROR;
     }
     //
@@ -203,10 +203,10 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
           meshpts_->Delete();
           return SV_ERROR;
       }
-      if (strstr(currentLine_,"end node coordinates") != NULL) {
+      if (strstr(currentLine_,"end node coordinates") != nullptr) {
           break;
       }
-      if (strstr(currentLine_,"end nodal coordinates") != NULL) {
+      if (strstr(currentLine_,"end nodal coordinates") != nullptr) {
           break;
       }
       if (sscanf(currentLine_,"%i %lf %lf %lf",&nodeid,&dpt[0],&dpt[1],&dpt[2]) != 4) {
@@ -310,7 +310,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
           grid_->Delete();
           return SV_ERROR;
       }
-      if (strstr(currentLine_,"end connectivity") != NULL) {
+      if (strstr(currentLine_,"end connectivity") != nullptr) {
           break;
       }
 
@@ -402,9 +402,9 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
 int cvConvertVisFiles::readNextLineFromFile(gzFile fp) {
 
 #ifdef SV_USE_ZLIB
-    if (gzgets(fp,currentLine_,MAXVISLINELENGTH) ==Z_NULL) {
+    if (gzgets(fp,currentLine_,MAXVISLINELENGTH) ==Z_nullptr) {
 #else
-    if (fgets(currentLine_,MAXVISLINELENGTH,fp) == NULL) {
+    if (fgets(currentLine_,MAXVISLINELENGTH,fp) == nullptr) {
 #endif
         //fprintf(stderr,"ERROR:  readNextLine failed.\n");
         return SV_ERROR;
@@ -417,7 +417,7 @@ int cvConvertVisFiles::readNextLineFromFile(gzFile fp) {
 int cvConvertVisFiles::findStringInFile(char *findme, gzFile fp) {
 
     while (readNextLineFromFile(fp) == SV_OK) {
-      if (strstr(currentLine_,findme) != NULL) {
+      if (strstr(currentLine_,findme) != nullptr) {
           return SV_OK;
       }
     }
@@ -437,7 +437,7 @@ int cvConvertVisFiles::ReadVisRes(char *infilename) {
     haveDisplacementResults_ = 0;
 
     // check and make sure the mesh has been loaded
-    if (grid_ == NULL) {
+    if (grid_ == nullptr) {
         fprintf(stderr,"ERROR: no mesh loaded!\n");
         return SV_ERROR;
     }
@@ -447,7 +447,7 @@ int cvConvertVisFiles::ReadVisRes(char *infilename) {
         return SV_ERROR;
     }
 
-    if (resfp_ == NULL) {
+    if (resfp_ == nullptr) {
         return SV_ERROR;
     }
 
@@ -472,27 +472,27 @@ int cvConvertVisFiles::ReadVisRes(char *infilename) {
         return SV_ERROR;
       }
 
-      if (strstr(currentLine_,"end analysis results") != NULL) {
+      if (strstr(currentLine_,"end analysis results") != nullptr) {
         continue;
       }
 
-      if (strstr(currentLine_,"pressure") != NULL) {
+      if (strstr(currentLine_,"pressure") != nullptr) {
         readPressureFromFile();
-      } else if (strstr(currentLine_,"velocity") != NULL) {
+      } else if (strstr(currentLine_,"velocity") != nullptr) {
         readVelocityFromFile();
-      } else if (strstr(currentLine_,"transport") != NULL) {
+      } else if (strstr(currentLine_,"transport") != nullptr) {
         readTransportFromFile();
-      } else if (strstr(currentLine_,"species_") != NULL) {
+      } else if (strstr(currentLine_,"species_") != nullptr) {
         fprintf(stderr,"WARNING: ignoring results (%s).\n",currentLine_);
-      } else if (strstr(currentLine_,"species") != NULL) {
+      } else if (strstr(currentLine_,"species") != nullptr) {
         readTransportFromFile();
-      } else if (strstr(currentLine_,"wall") != NULL) {
+      } else if (strstr(currentLine_,"wall") != nullptr) {
         readWSSFromFile();
-      } else if (strstr(currentLine_,"stress") != NULL) {
+      } else if (strstr(currentLine_,"stress") != nullptr) {
         readStressFromFile();
-      } else if (strstr(currentLine_,"traction") != NULL) {
+      } else if (strstr(currentLine_,"traction") != nullptr) {
         readTractionFromFile();
-      } else if (strstr(currentLine_,"displacement") != NULL) {
+      } else if (strstr(currentLine_,"displacement") != nullptr) {
         readDisplacementFromFile();
       } else {
         fprintf(stderr,"WARNING: ignoring results (%s).\n",currentLine_);
@@ -538,7 +538,7 @@ int cvConvertVisFiles::readPressureFromFile() {
           scalars->Delete();
           return SV_ERROR;
       }
-      if (strstr(currentLine_,"end data") != NULL) {
+      if (strstr(currentLine_,"end data") != nullptr) {
           break;
       }
       if (sscanf(currentLine_,"%lf",&d) != 1) {
@@ -613,7 +613,7 @@ int cvConvertVisFiles::readVelocityFromFile() {
           vectors->Delete();
           return SV_ERROR;
       }
-      if (strstr(currentLine_,"end data") != NULL) {
+      if (strstr(currentLine_,"end data") != nullptr) {
           break;
       }
       if (sscanf(currentLine_,"%lf %lf %lf",&d[0],&d[1],&d[2]) != 3) {
@@ -655,7 +655,7 @@ int cvConvertVisFiles::readVelocityFromFile() {
 
 int cvConvertVisFiles::readTractionFromFile() {
 
-    gzFile nodesFile = NULL;
+    gzFile nodesFile = nullptr;
     int realnodeid = 0;
 
     int numNodes = grid_->GetNumberOfPoints();
@@ -702,7 +702,7 @@ int cvConvertVisFiles::readTractionFromFile() {
           traction->Delete();
           return SV_ERROR;
       }
-      if (strstr(currentLine_,"end data") != NULL) {
+      if (strstr(currentLine_,"end data") != nullptr) {
           break;
       }
       if (sscanf(currentLine_,"%lf %lf %lf",&d[0],&d[1],&d[2]) != 3) {
@@ -763,7 +763,7 @@ int cvConvertVisFiles::readTractionFromFile() {
 
 int cvConvertVisFiles::readDisplacementFromFile() {
 
-    gzFile nodesFile = NULL;
+    gzFile nodesFile = nullptr;
     int realnodeid = 0;
 
     int i;
@@ -799,7 +799,7 @@ int cvConvertVisFiles::readDisplacementFromFile() {
     f[0] = 0; f[1] = 0; f[2] = 0;
     int nodeid = 1;
 
-    int* keepme = NULL;
+    int* keepme = nullptr;
     if (numTractionNodes_ > 0) {
       displacement->FillComponent(0,0.0);
       displacement->FillComponent(1,0.0);
@@ -819,17 +819,17 @@ int cvConvertVisFiles::readDisplacementFromFile() {
       if (flag == NEXTLINE_EOF) {
           closeInputFile(resfp_);
           displacement->Delete();
-          if (keepme != NULL) delete [] keepme;
+          if (keepme != nullptr) delete [] keepme;
           return SV_ERROR;
       }
-      if (strstr(currentLine_,"end data") != NULL) {
+      if (strstr(currentLine_,"end data") != nullptr) {
           break;
       }
       if (sscanf(currentLine_,"%lf %lf %lf",&d[0],&d[1],&d[2]) != 3) {
           fprintf(stderr,"ERROR: invalid line (%s).\n",currentLine_);
           closeInputFile(resfp_);
           displacement->Delete();
-          if (keepme != NULL) delete [] keepme;
+          if (keepme != nullptr) delete [] keepme;
           return SV_ERROR;
       }
 
@@ -842,13 +842,13 @@ int cvConvertVisFiles::readDisplacementFromFile() {
           fprintf(stderr,"ERROR:  node id (%i) out of allowable range [1,%i].",realnodeid,numNodes);
           closeInputFile(resfp_);
           displacement->Delete();
-          if (keepme != NULL) delete [] keepme;
+          if (keepme != nullptr) delete [] keepme;
           return SV_ERROR;
       }
 
       //fprintf(stdout,"set node %i\n",realnodeid);
       // remember that in vtk data structures node 1 is actually in slot 0
-      if (keepme == NULL) {
+      if (keepme == nullptr) {
         displacement->SetTuple3((vtkIdType)(realnodeid-1),f[0],f[1],f[2]);
       } else {
           if (keepme[realnodeid-1] == 0) {
@@ -864,13 +864,13 @@ int cvConvertVisFiles::readDisplacementFromFile() {
     if (nodeid != (numNodes+1)) {
         fprintf(stderr,"ERROR:  not enough displacement data (%i != %i)\n",nodeid,numNodes);
         displacement->Delete();
-        if (keepme != NULL) delete [] keepme;
+        if (keepme != nullptr) delete [] keepme;
         return SV_ERROR;
     }
 
     fprintf(stdout,"Done reading %i nodal displacement vectors.\n",(nodeid-1));
 
-    if (keepme != NULL) delete [] keepme;
+    if (keepme != nullptr) delete [] keepme;
 
     haveDisplacementResults_=1;
     displacement_ = displacement;
@@ -881,7 +881,7 @@ int cvConvertVisFiles::readDisplacementFromFile() {
 
 int cvConvertVisFiles::readWSSFromFile() {
 
-    gzFile nodesFile = NULL;
+    gzFile nodesFile = nullptr;
     int realnodeid = 0;
 
     int i;
@@ -917,7 +917,7 @@ int cvConvertVisFiles::readWSSFromFile() {
     f[0] = 0; f[1] = 0; f[2] = 0;
     int nodeid = 1;
 
-    int* keepme = NULL;
+    int* keepme = nullptr;
     if (numTractionNodes_ > 0) {
       wss->FillComponent(0,0.0);
       wss->FillComponent(1,0.0);
@@ -937,17 +937,17 @@ int cvConvertVisFiles::readWSSFromFile() {
       if (flag == NEXTLINE_EOF) {
           closeInputFile(resfp_);
           wss->Delete();
-          if (keepme != NULL) delete [] keepme;
+          if (keepme != nullptr) delete [] keepme;
           return SV_ERROR;
       }
-      if (strstr(currentLine_,"end data") != NULL) {
+      if (strstr(currentLine_,"end data") != nullptr) {
           break;
       }
       if (sscanf(currentLine_,"%lf %lf %lf",&d[0],&d[1],&d[2]) != 3) {
           fprintf(stderr,"ERROR: invalid line (%s).\n",currentLine_);
           closeInputFile(resfp_);
           wss->Delete();
-          if (keepme != NULL) delete [] keepme;
+          if (keepme != nullptr) delete [] keepme;
           return SV_ERROR;
       }
 
@@ -960,13 +960,13 @@ int cvConvertVisFiles::readWSSFromFile() {
           fprintf(stderr,"ERROR:  node id (%i) out of allowable range [1,%i].",realnodeid,numNodes);
           closeInputFile(resfp_);
           wss->Delete();
-          if (keepme != NULL) delete [] keepme;
+          if (keepme != nullptr) delete [] keepme;
           return SV_ERROR;
       }
 
       //fprintf(stdout,"set node %i\n",realnodeid);
       // remember that in vtk data structures node 1 is actually in slot 0
-      if (keepme == NULL) {
+      if (keepme == nullptr) {
         wss->SetTuple3((vtkIdType)(realnodeid-1),f[0],f[1],f[2]);
       } else {
           if (keepme[realnodeid-1] == 0) {
@@ -982,13 +982,13 @@ int cvConvertVisFiles::readWSSFromFile() {
     if (nodeid != (numNodes+1)) {
         fprintf(stderr,"ERROR:  not enough wss data (%i != %i)\n",nodeid,numNodes);
         wss->Delete();
-        if (keepme != NULL) delete [] keepme;
+        if (keepme != nullptr) delete [] keepme;
         return SV_ERROR;
     }
 
     fprintf(stdout,"Done reading %i nodal wss vectors.\n",(nodeid-1));
 
-    if (keepme != NULL) delete [] keepme;
+    if (keepme != nullptr) delete [] keepme;
 
     haveWSSResults_=1;
     wss_ = wss;
@@ -1031,7 +1031,7 @@ int cvConvertVisFiles::readTransportFromFile() {
           scalars->Delete();
           return SV_ERROR;
       }
-      if (strstr(currentLine_,"end data") != NULL) {
+      if (strstr(currentLine_,"end data") != nullptr) {
           break;
       }
       if (sscanf(currentLine_,"%lf",&d) != 1) {
@@ -1110,7 +1110,7 @@ int cvConvertVisFiles::readStressFromFile() {
           tensors->Delete();
           return SV_ERROR;
       }
-      if (strstr(currentLine_,"end data") != NULL) {
+      if (strstr(currentLine_,"end data") != nullptr) {
           break;
       }
       if (sscanf(currentLine_,"%lf %lf %lf %lf %lf %lf",

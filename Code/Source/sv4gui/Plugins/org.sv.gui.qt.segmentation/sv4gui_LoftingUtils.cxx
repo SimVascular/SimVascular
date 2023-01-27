@@ -43,7 +43,7 @@ void sv4guiLoftingUtils::SetPreferencedValues(svLoftingParam* param)
     if(preferences.IsNull())
         return;
 
-    if(param==NULL)
+    if(param==nullptr)
         return;
 
      param->method= preferences->Get("Lofting Method", QString::fromStdString(param->method)).toStdString();

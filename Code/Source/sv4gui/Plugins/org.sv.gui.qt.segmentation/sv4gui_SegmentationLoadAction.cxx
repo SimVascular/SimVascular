@@ -88,7 +88,7 @@ void sv4guiSegmentationLoadAction::Run(const QList<mitk::DataNode::Pointer> &sel
         if(lastFilePath=="")
             lastFilePath=QDir::homePath();
 
-        QString filePath = QFileDialog::getOpenFileName(NULL, "Import Segmentation (Choose File)", lastFilePath, tr("SimVascular Segmentations (*.ctgr *.s3d);;VTP Files (*.vtp)"));
+        QString filePath = QFileDialog::getOpenFileName(nullptr, "Import Segmentation (Choose File)", lastFilePath, tr("SimVascular Segmentations (*.ctgr *.s3d);;VTP Files (*.vtp)"));
 
         filePath=filePath.trimmed();
         if(filePath.isEmpty())
@@ -98,19 +98,19 @@ void sv4guiSegmentationLoadAction::Run(const QList<mitk::DataNode::Pointer> &sel
         // std::string baseName=fi.baseName().toStdString();
         
         bool ok;
-        QString text = QInputDialog::getText(NULL, tr("Segmentation Name"),
+        QString text = QInputDialog::getText(nullptr, tr("Segmentation Name"),
                                         tr("Please give a segmentation name:"), QLineEdit::Normal,
                                         "", &ok);
         std::string baseName=text.trimmed().toStdString();
         
         if(baseName==""){
-            QMessageBox::warning(NULL,"Segmentation Empty","Please give a segmentation name!");
+            QMessageBox::warning(nullptr,"Segmentation Empty","Please give a segmentation name!");
             return;
         }
     
         mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(baseName.c_str(),selectedNode);
         if(exitingNode){
-            QMessageBox::warning(NULL,"Segmentation Already Created","Please use a different name!");
+            QMessageBox::warning(nullptr,"Segmentation Already Created","Please use a different name!");
             return;
         }
 

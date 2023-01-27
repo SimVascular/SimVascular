@@ -291,12 +291,12 @@ const std::vector<QString> sv4guiROMSimulationView::DataExportName::names =
 //
 sv4guiROMSimulationView::sv4guiROMSimulationView() : ui(new Ui::sv4guiROMSimulationView)
 {
-    m_Parent = NULL;
-    m_MitkJob = NULL;
+    m_Parent = nullptr;
+    m_MitkJob = nullptr;
 
-    m_Model = NULL;
+    m_Model = nullptr;
     m_ModelFolderNode = nullptr;
-    m_ModelNode = NULL;
+    m_ModelNode = nullptr;
     m_ModelInletFaceSelected = false;
 
     m_Mesh = nullptr;
@@ -312,21 +312,21 @@ sv4guiROMSimulationView::sv4guiROMSimulationView() : ui(new Ui::sv4guiROMSimulat
     m_CenterlinesMapper = nullptr;
     m_CenterlinesNode = nullptr;
 
-    m_JobNode = NULL;
+    m_JobNode = nullptr;
     m_DataStorage = nullptr;
-    m_DataInteractor=NULL;
+    m_DataInteractor=nullptr;
 
     m_ModelSelectFaceObserverTag = -1;
-    m_TableModelBasic = NULL;
-    m_TableModelCap = NULL;
-    m_TableMenuCap = NULL;
+    m_TableModelBasic = nullptr;
+    m_TableModelCap = nullptr;
+    m_TableMenuCap = nullptr;
 
-    m_TableModelVar = NULL;
-    m_TableMenuVar = NULL;
+    m_TableModelVar = nullptr;
+    m_TableMenuVar = nullptr;
 
-    m_CapBCWidget = NULL;
+    m_CapBCWidget = nullptr;
 
-    m_TableModelSolver=NULL;
+    m_TableModelSolver=nullptr;
 
     m_SolverExecutable = "";
 
@@ -902,7 +902,7 @@ void sv4guiROMSimulationView::SelectModelFile()
             lastFilePath=QDir::homePath();
         }
   
-        m_ModelFileName = QFileDialog::getOpenFileName(NULL, tr("Import Surface Model (Choose File)"), lastFilePath,
+        m_ModelFileName = QFileDialog::getOpenFileName(nullptr, tr("Import Surface Model (Choose File)"), lastFilePath,
           tr("Surface model file (*.vtp)"));
   
         m_ModelFileName = m_ModelFileName.trimmed();
@@ -1071,7 +1071,7 @@ void sv4guiROMSimulationView::SetModelInletFaces()
     if ( m_ModelInletFaceNames.size() > 1) {
         auto msg = "Only one inlet face may be selected.\n";
         MITK_WARN << msg; 
-        QMessageBox::warning(NULL, MsgTitle, msg);
+        QMessageBox::warning(nullptr, MsgTitle, msg);
         m_ModelInletFaceNames.clear();
         m_ModelInletFaceIds.clear();
         return;
@@ -1176,7 +1176,7 @@ void sv4guiROMSimulationView::ResetModel()
     m_CenterlinesCalculated = false;
     m_SimulationFilesCreated = false;
 
-    QMessageBox::warning(NULL, MsgTitle, "The model has changed. Centerlines and simulation files need to be regenerated.");
+    QMessageBox::warning(nullptr, MsgTitle, "The model has changed. Centerlines and simulation files need to be regenerated.");
 }
 
 //-------------------------
@@ -1261,7 +1261,7 @@ void sv4guiROMSimulationView::CalculateCenterlines()
 
     if (!m_ModelInletFaceSelected) {
         MITK_WARN << "No inlet faces selected.";
-        QMessageBox::warning(NULL, MsgTitle, "No inlet faces selected.");
+        QMessageBox::warning(nullptr, MsgTitle, "No inlet faces selected.");
         return;
     }
 
@@ -1393,7 +1393,7 @@ void sv4guiROMSimulationView::SelectCenterlinesFile()
             lastFilePath=QDir::homePath();
         }
   
-        m_CenterlinesFileName = QFileDialog::getOpenFileName(NULL, tr("Import Centerlines (Choose File)"), lastFilePath,
+        m_CenterlinesFileName = QFileDialog::getOpenFileName(nullptr, tr("Import Centerlines (Choose File)"), lastFilePath,
           tr("Centerlines file (*.vtp)"));
   
         m_CenterlinesFileName = m_CenterlinesFileName.trimmed();
@@ -1573,7 +1573,7 @@ void sv4guiROMSimulationView::Generate1DMesh()
     //MITK_INFO << msg << "Model file: " << modelFileName;
 
     if (!m_CenterlinesCalculated) {
-        QMessageBox::warning(NULL, MsgTitle, "No centerlines have been calculated or centerlines source file set.");
+        QMessageBox::warning(nullptr, MsgTitle, "No centerlines have been calculated or centerlines source file set.");
         MITK_ERROR << "No centerlines file is defined.";
         return;
     }
@@ -1684,11 +1684,11 @@ void sv4guiROMSimulationView::OnPreferencesChanged(const berry::IBerryPreference
 {
     using namespace sv4guiROMSimulationPreferenceDBKey;
 
-    if (prefs == NULL) {
+    if (prefs == nullptr) {
         return;
     }
 
-    if (m_Parent == NULL) { 
+    if (m_Parent == nullptr) { 
         return;
     }
 
@@ -1817,7 +1817,7 @@ void sv4guiROMSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> no
 
     // Enable the toolbox pages ('1D Mesh', 'Basic Parameters', etc.) to allow input.
     //
-    if (m_Model == NULL) {
+    if (m_Model == nullptr) {
         EnableTool(false);
     } else {
         EnableTool(true);
@@ -1834,7 +1834,7 @@ void sv4guiROMSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> no
     if(m_ModelNode.IsNotNull()) {
         m_ModelNode->SetProperty("material.representation", mitk::VtkRepresentationProperty::New(VTK_WIREFRAME));
         ui->ModelNameLabel->setText(QString::fromStdString(m_ModelNode->GetName()));
-        if (m_ModelNode->IsVisible(NULL)) {
+        if (m_ModelNode->IsVisible(nullptr)) {
             //ui->showModelCheckBox->setChecked(true);
         }
     } else {
@@ -1978,17 +1978,17 @@ void sv4guiROMSimulationView::RemoveObservers()
         std::string user="";
         m_ModelNode->GetStringProperty("interactor user", user);
         if(user=="romsimulation")
-            m_ModelNode->SetDataInteractor(NULL);
+            m_ModelNode->SetDataInteractor(nullptr);
     }
-    m_DataInteractor=NULL;
+    m_DataInteractor=nullptr;
 }
 
 void sv4guiROMSimulationView::ClearAll()
 {
-    m_Model=NULL;
-    m_JobNode=NULL;
-    m_MitkJob=NULL;
-    m_ModelNode=NULL;
+    m_Model=nullptr;
+    m_JobNode=nullptr;
+    m_MitkJob=nullptr;
+    m_ModelNode=nullptr;
 
     ui->labelJobName->setText("");
     ui->JobStatusValueLabel->setText("");
@@ -2016,7 +2016,7 @@ void sv4guiROMSimulationView::UpdateModelGUI()
 
     /* [DaveP] This does not work well.
     sv4guiROMSimJob* job = m_MitkJob->GetSimJob();
-    if (job == NULL) {
+    if (job == nullptr) {
         job = new sv4guiROMSimJob();
     }
     auto inletFaceName = job->GetModelProp("Inlet Face Name");
@@ -2058,7 +2058,7 @@ void sv4guiROMSimulationView::UpdateGUIBasic()
 
     sv4guiROMSimJob* job = m_MitkJob->GetSimJob();
 
-    if (job == NULL) {
+    if (job == nullptr) {
         job = new sv4guiROMSimJob();
     }
 
@@ -2188,7 +2188,7 @@ void sv4guiROMSimulationView::UpdateFaceListSelection()
 
     sv4guiModelElement* modelElement = m_Model->GetModelElement();
 
-    if (modelElement == NULL) {
+    if (modelElement == nullptr) {
         return;
     }
 
@@ -2263,7 +2263,7 @@ void sv4guiROMSimulationView::TableCapSelectionChanged( const QItemSelection & /
     }
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewCap->selectionModel()->selectedRows();
 
@@ -2514,7 +2514,7 @@ void  sv4guiROMSimulationView::SplitCapBC()
     }
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL) {
+    if(modelElement==nullptr) {
         return;
     }
 
@@ -2631,12 +2631,12 @@ void sv4guiROMSimulationView::UpdateGUICap()
     }
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL) {
+    if(modelElement==nullptr) {
         return;
     }
 
     sv4guiROMSimJob* job=m_MitkJob->GetSimJob();
-    if(job==NULL) {
+    if(job==nullptr) {
         job=new sv4guiROMSimJob();
     }
 
@@ -2655,7 +2655,7 @@ void sv4guiROMSimulationView::UpdateGUICap()
 
     for (auto const& id : ids) {
         sv4guiModelElement::svFace* face=modelElement->GetFace(id);
-        if(face==NULL ) {
+        if(face==nullptr ) {
             continue;
         }
 
@@ -2775,7 +2775,7 @@ void sv4guiROMSimulationView::TableVarSelectionChanged( const QItemSelection & /
     }
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewVar->selectionModel()->selectedRows();
 
@@ -2946,7 +2946,7 @@ void sv4guiROMSimulationView::UpdateGUIWall()
 
     sv4guiROMSimJob* job = m_MitkJob->GetSimJob();
 
-    if (job == NULL) {
+    if (job == nullptr) {
         job = new sv4guiROMSimJob();
         MITK_INFO << msg << " job is null, create new one."; 
     } else {
@@ -3000,7 +3000,7 @@ void sv4guiROMSimulationView::UpdateGUISolver()
     }
 
     sv4guiROMSimJob* job = m_MitkJob->GetSimJob();
-    if (job == NULL) {
+    if (job == nullptr) {
         job = new sv4guiROMSimJob();
         MITK_INFO << msg << " job is null, create new one."; 
     } else {
@@ -3149,7 +3149,7 @@ void sv4guiROMSimulationView::UpdateGUIJob()
 
     sv4guiROMSimJob* job = m_MitkJob->GetSimJob();
 
-    if (job == NULL) {
+    if (job == nullptr) {
         return;
     }
 
@@ -3231,7 +3231,7 @@ void sv4guiROMSimulationView::UpdateGUIRunDir()
     }
 
     sv4guiROMSimJob* job=m_MitkJob->GetSimJob();
-    if(job==NULL)
+    if(job==nullptr)
         return;
 
     std::string pNum=job->GetRunProp("Number of Processes");
@@ -3410,7 +3410,7 @@ void sv4guiROMSimulationView::RunOneDSimulationJob(const QString& jobPath)
 //
 QString sv4guiROMSimulationView::GetSolverExecutable()
 {
-    if (m_Parent == NULL) { 
+    if (m_Parent == nullptr) { 
         return nullptr;
     }
 
@@ -3496,14 +3496,14 @@ bool sv4guiROMSimulationView::CreateDataFiles(QString outputDir, bool outputAllF
 
     // Check that centerlines have been generated.
     if (!m_CenterlinesCalculated) {
-        QMessageBox::warning(NULL, MsgTitle, "No centerlines have been calculated or centerlines source file set.");
+        QMessageBox::warning(nullptr, MsgTitle, "No centerlines have been calculated or centerlines source file set.");
         MITK_ERROR << "No centerlines file is defined.";
         return false;
     }
 
     // Check that inlet and outlet faces have been identified.
     if (!m_ModelInletFaceSelected || (m_ModelOutletFaceNames.size() == 0)) {
-        QMessageBox::warning(NULL, MsgTitle, "No inlet face has been selected.");
+        QMessageBox::warning(nullptr, MsgTitle, "No inlet face has been selected.");
         MITK_ERROR << "No inlet face has been defined.";
         return false;
     }
@@ -3513,7 +3513,7 @@ bool sv4guiROMSimulationView::CreateDataFiles(QString outputDir, bool outputAllF
     if (job->GetCapProp(inletFaceName, "Original File") == "") {
         auto msg = "A flow rate file for the inlet face '" + inletFaceName + "' has not been defined.";
         MITK_WARN << msg; 
-        QMessageBox::warning(NULL, MsgTitle, QString(msg.c_str())); 
+        QMessageBox::warning(nullptr, MsgTitle, QString(msg.c_str())); 
         return false;
     }
 
@@ -3584,7 +3584,7 @@ bool sv4guiROMSimulationView::CreateDataFiles(QString outputDir, bool outputAllF
     auto status = pythonInterface.GenerateSolverInput(outDir, job);
 
     if (!status) {
-        QMessageBox::warning(NULL, MsgTitle, "Creating the 1D solver input file has failed.");
+        QMessageBox::warning(nullptr, MsgTitle, "Creating the 1D solver input file has failed.");
         return false;
     }
 
@@ -3753,7 +3753,7 @@ void sv4guiROMSimulationView::WriteFlowFile(const QString outputDir, sv4guiROMSi
     } else {
         auto msg = "Unable to write flow rate file '" + flowFile + "'";
         MITK_ERROR << msg; 
-        QMessageBox::critical(NULL, MsgTitle, msg);
+        QMessageBox::critical(nullptr, MsgTitle, msg);
     }
 
     // Add script parameter.
@@ -3919,9 +3919,9 @@ sv4guiMesh* sv4guiROMSimulationView::GetSurfaceMesh(const std::string meshName)
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs = GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
 
-    sv4guiMesh* mesh = NULL;
-    mitk::DataNode::Pointer projFolderNode = NULL;
-    mitk::DataNode::Pointer meshNode = NULL;
+    sv4guiMesh* mesh = nullptr;
+    mitk::DataNode::Pointer projFolderNode = nullptr;
+    mitk::DataNode::Pointer meshNode = nullptr;
 
     if (rs->size()>0) {
         projFolderNode = rs->GetElement(0);
@@ -4508,7 +4508,7 @@ bool sv4guiROMSimulationView::CheckSolverInputState(bool validate)
         QStandardItem* valueItem = m_TableModelSolver->item(i,1);
         //MITK_INFO << msg << "parName: : " << parName << "  value: " << valueItem;
         // Check for section header (e.g. "Time Step Parameters").
-        if (valueItem == NULL) {
+        if (valueItem == nullptr) {
             continue;
         }
         std::string type = m_TableModelSolver->item(i,2)->text().trimmed().toStdString();
@@ -4552,7 +4552,7 @@ bool sv4guiROMSimulationView::SetSolverParameters(sv4guiROMSimJob* job, std::str
     for (int i = 0; i < m_TableModelSolver->rowCount();i++) {
         std::string parName = m_TableModelSolver->item(i,0)->text().trimmed().toStdString();
         QStandardItem* valueItem = m_TableModelSolver->item(i,1);
-        if (valueItem == NULL) {
+        if (valueItem == nullptr) {
             continue;
         }
 
@@ -4593,7 +4593,7 @@ void sv4guiROMSimulationView::SaveToManager()
 
     sv4guiROMSimJob* job = CreateJob(msg);
 
-    if (job == NULL) {
+    if (job == nullptr) {
         QMessageBox::warning(m_Parent, MsgTitle, "Parameter Values Error.\n"+QString::fromStdString(msg));
         return;
     }
@@ -4825,7 +4825,7 @@ void sv4guiROMSimulationView::ExportResults()
 
        } else {
            auto modelName = QString(m_MitkJob->GetModelName().c_str());
-           QMessageBox::warning(NULL, "", "No simulation job was found for the model '" + modelName + 
+           QMessageBox::warning(nullptr, "", "No simulation job was found for the model '" + modelName + 
                "' used by the 1D simulation.");
            return;
        }
@@ -4964,7 +4964,7 @@ bool sv4guiROMSimulationView::AreDouble(std::string values, int* count)
         if(!ok) return false;
     }
 
-    if(count!=NULL)
+    if(count!=nullptr)
         (*count)=list.size();
 
     return true;
@@ -5009,7 +5009,7 @@ void sv4guiROMSimulationView::UpdateSimJob()
     auto validate = false;
     sv4guiROMSimJob* newJob = CreateJob(emsg, validate);
 
-    if (newJob == NULL) {
+    if (newJob == nullptr) {
         //QMessageBox::warning(m_Parent, MsgTitle, "Parameter Values Error.\n"+QString::fromStdString(emsg));
         return;
     }
@@ -5020,7 +5020,7 @@ void sv4guiROMSimulationView::UpdateSimJob()
        auto simName = ui->SimName_ComboBox->currentText().toStdString();
        if (simName == "") { 
            auto modelName = QString(m_MitkJob->GetModelName().c_str());
-           QMessageBox::warning(NULL, "", "No simulation job was found for the model '" + modelName + 
+           QMessageBox::warning(nullptr, "", "No simulation job was found for the model '" + modelName + 
                "' used by the 1D simulation.");
            ui->ProjectTo3DMesh_CheckBox->setChecked(0);
        }

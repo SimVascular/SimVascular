@@ -35,8 +35,8 @@ vtkStandardNewMacro(vtkvmtkNonManifoldSteepestDescent);
 
 vtkvmtkNonManifoldSteepestDescent::vtkvmtkNonManifoldSteepestDescent()
 {
-  this->DescentArrayName = NULL;
-  this->DescentArray = NULL;
+  this->DescentArrayName = nullptr;
+  this->DescentArray = nullptr;
   this->NumberOfEdgeSubdivisions = 250;
   this->Direction = VTK_VMTK_DOWNWARD;
 }

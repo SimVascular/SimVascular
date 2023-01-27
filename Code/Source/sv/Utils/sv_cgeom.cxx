@@ -125,7 +125,7 @@ cgeom_VertsCompact (int num_verts, vtkFloatingPointType *verts, int num_polys, v
   */
 
   for (i = 0; i <= size; i++) {
-    hash_table[i] = NULL;
+    hash_table[i] = nullptr;
     }
 
   dx = maxx - minx;
@@ -525,7 +525,7 @@ cgeom_PolysSmooth (int num_verts, vtkFloatingPointType *verts, int num_polys, vt
   edge_table = (EdgeVertexList**)malloc(sizeof(EdgeVertexList*) * num_verts);
 
   for (i = 0; i < num_verts; i++) {
-    edge_table[i] = NULL;
+    edge_table[i] = nullptr;
     }
 
 
@@ -1084,7 +1084,7 @@ cgeom_PolysEdgeTab (int num_verts, vtkFloatingPointType *verts, int num_polys, v
   edge_table = (EdgeList**)malloc(sizeof(EdgeList*) * num_verts);
 
   for (i = 0; i < num_verts; i++) {
-    edge_table[i] = NULL;
+    edge_table[i] = nullptr;
     }
 
 

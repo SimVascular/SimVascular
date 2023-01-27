@@ -279,148 +279,148 @@ int Geom_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
 int Geom_Init( Tcl_Interp *interp )
 {
   Tcl_CreateCommand( interp, "geom_reduce", Geom_ReduceCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_makePolysConsistent",
 		     Geom_MakePolysConsistentCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_reverseAllCells",
 		     Geom_ReverseAllCellsCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_numClosedLineRegions",
 		     Geom_NumClosedLineRegionsCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_getClosedLineRegion",
 		     Geom_GetClosedLineRegionCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_pick", Geom_PickCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_orientProfile", Geom_OrientProfileCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_disorientProfile", Geom_DisorientProfileCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_alignProfile", Geom_AlignProfileCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_translate", Geom_TranslateCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_scaleAvg", Geom_ScaleAvgCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_getOrderedPts", Geom_GetOrderedPtsCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_writeOrderedPts",
 		     Geom_WriteOrderedPtsCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_writeLines", Geom_WriteLinesCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_polysClosed", Geom_PolysClosedCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_surfArea", Geom_SurfAreaCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_getPolyCentroid", Geom_GetPolyCentroidCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_printTriStats", Geom_PrintTriStatsCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_printSmallPolys", Geom_PrintSmallPolysCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_rmSmallPolys", Geom_RmSmallPolysCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_bbox", Geom_BBoxCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_classify", Geom_ClassifyCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_ptInPoly", Geom_PtInPolyCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_mergePts", Geom_MergePtsCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_warp3dPts", Geom_Warp3dPtsCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_numPts", Geom_NumPtsCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_sampleLoop", Geom_sampleLoopCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_loftSolid", Geom_loftSolidCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_loftSolidWithNURBS", Geom_loftSolidWithNURBSCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_2dWindingNum", Geom_2dWindingNumCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_polygonNorm", Geom_PolygonNormCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_avgPt", Geom_AvgPtCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_copy", Geom_CopyCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_project", Geom_ProjectCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_reorderPgn", Geom_ReorderPgnCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_splinePtsToPathPlan", Geom_SplinePtsToPathPlanCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_integrateSurfaceFlux", Geom_IntegrateSurfaceCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_integrateSurface2", Geom_IntegrateSurface2Cmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_integrateEnergy", Geom_IntegrateEnergyCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_findDistance", Geom_FindDistanceCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_interpolateScalar", Geom_InterpolateScalarCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_interpolateVector", Geom_InterpolateVectorCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_intersectWithLine", Geom_IntersectWithLineCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_addPointData", Geom_AddPointDataCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_subtractPointData", Geom_SubtractPointDataCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_multiplyPointData", Geom_MultiplyPointDataCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_dividePointData", Geom_DividePointDataCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_integrateScalarSurf", Geom_IntegrateScalarSurfCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_integrateScalarThresh", Geom_IntegrateScalarThreshCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_replacePointData", Geom_ReplacePointDataCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_union", Geom_UnionCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_intersect", Geom_IntersectCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_subtract", Geom_SubtractCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_checksurface", Geom_CheckSurfaceCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_clean", Geom_CleanCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_set_ids_for_caps", Geom_CapIdSetCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_local_decimation", Geom_LocalDecimationCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_local_laplacian_smooth", Geom_LocalLaplacianSmoothCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_local_constrain_smooth", Geom_LocalConstrainSmoothCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_local_linear_subdivision", Geom_LocalLinearSubdivisionCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_local_butterfly_subdivision", Geom_LocalButterflySubdivisionCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_local_loop_subdivision", Geom_LocalLoopSubdivisionCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_local_blend", Geom_LocalBlendCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_set_array_for_local_op_sphere", Geom_SetArrayForLocalOp_SphereCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_set_array_for_local_op_face", Geom_SetArrayForLocalOp_FaceCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_set_array_for_local_op_cells", Geom_SetArrayForLocalOp_CellsCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
  Tcl_CreateCommand( interp, "geom_set_array_for_local_op_face_blend", Geom_SetArrayForLocalOp_BlendCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "geom_all_union", Geom_All_UnionCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "model_name_model_from_polydata_names", Geom_Convert_NURBS_To_PolyCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   return TCL_OK;
 }
 
@@ -437,14 +437,14 @@ int Geom_ReduceCmd( ClientData clientData, Tcl_Interp *interp,
   char *dstName;
   double tol;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-tol", DOUBLE_Type, &tol, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-tol", DOUBLE_Type, &tol, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -461,22 +461,22 @@ int Geom_ReduceCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -487,7 +487,7 @@ int Geom_ReduceCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -510,16 +510,16 @@ int Geom_UnionCmd( ClientData clientData, Tcl_Interp *interp,
   char *dstName;
   cvRepositoryData *srcA;
   cvRepositoryData *srcB;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
   double tolerance = 1e-6;
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-a", STRING_Type, &aName, NULL, REQUIRED, 0, { 0 } },
-    { "-b", STRING_Type, &bName, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-tolerance", DOUBLE_Type, &tolerance, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-a", STRING_Type, &aName, nullptr, REQUIRED, 0, { 0 } },
+    { "-b", STRING_Type, &bName, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-tolerance", DOUBLE_Type, &tolerance, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -536,35 +536,35 @@ int Geom_UnionCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   srcA = gRepository->GetObject( aName );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", aName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   srcB = gRepository->GetObject( bName );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", bName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, aName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, aName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, bName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, bName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -576,7 +576,7 @@ int Geom_UnionCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -600,16 +600,16 @@ int Geom_IntersectCmd( ClientData clientData, Tcl_Interp *interp,
   char *dstName;
   cvRepositoryData *srcA;
   cvRepositoryData *srcB;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
   double tolerance = 1e-6;
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-a", STRING_Type, &aName, NULL, REQUIRED, 0, { 0 } },
-    { "-b", STRING_Type, &bName, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-tolerance", DOUBLE_Type, &tolerance, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-a", STRING_Type, &aName, nullptr, REQUIRED, 0, { 0 } },
+    { "-b", STRING_Type, &bName, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-tolerance", DOUBLE_Type, &tolerance, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -626,35 +626,35 @@ int Geom_IntersectCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   srcA = gRepository->GetObject( aName );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", aName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   srcB = gRepository->GetObject( bName );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", bName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, aName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, aName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, bName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, bName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -666,7 +666,7 @@ int Geom_IntersectCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -690,16 +690,16 @@ int Geom_SubtractCmd( ClientData clientData, Tcl_Interp *interp,
   char *dstName;
   cvRepositoryData *srcA;
   cvRepositoryData *srcB;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
   double tolerance = 1e-6;
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-a", STRING_Type, &aName, NULL, REQUIRED, 0, { 0 } },
-    { "-b", STRING_Type, &bName, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-tolerance", DOUBLE_Type, &tolerance, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-a", STRING_Type, &aName, nullptr, REQUIRED, 0, { 0 } },
+    { "-b", STRING_Type, &bName, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-tolerance", DOUBLE_Type, &tolerance, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -716,35 +716,35 @@ int Geom_SubtractCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   srcA = gRepository->GetObject( aName );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", aName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   srcB = gRepository->GetObject( bName );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", bName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, aName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, aName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, bName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, bName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -756,7 +756,7 @@ int Geom_SubtractCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -781,8 +781,8 @@ int Geom_CheckSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-tolerance", DOUBLE_Type, &tol, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &Name, nullptr, REQUIRED, 0, { 0 } },
+    { "-tolerance", DOUBLE_Type, &tol, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -799,9 +799,9 @@ int Geom_CheckSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", Name,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -836,8 +836,8 @@ int Geom_CleanCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -854,33 +854,33 @@ int Geom_CleanCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   dst = sys_geom_Clean( (cvPolyData*)src );
-  if ( dst == NULL ) {
-    Tcl_AppendResult( interp, "error cleaning ", srcName, (char *)NULL );
+  if ( dst == nullptr ) {
+    Tcl_AppendResult( interp, "error cleaning ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -900,13 +900,13 @@ int Geom_CapIdSetCmd( ClientData clientData, Tcl_Interp *interp,
   char *Name;
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &Name, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -923,16 +923,16 @@ int Geom_CapIdSetCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", Name,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
   int *doublecaps;
@@ -947,7 +947,7 @@ int Geom_CapIdSetCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete [] doublecaps;
     delete dst;
     return TCL_ERROR;
@@ -979,17 +979,17 @@ int Geom_SetArrayForLocalOp_FaceCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_List values;
 
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 6;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-array", STRING_Type, &arrayName, NULL, REQUIRED, 0, { 0 } },
-    { "-values", LIST_Type, &values, NULL, REQUIRED, 0, { 0 } },
-    { "-outarray", STRING_Type, &outArray, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-datatype", INT_Type, &dataType, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &Name, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-array", STRING_Type, &arrayName, nullptr, REQUIRED, 0, { 0 } },
+    { "-values", LIST_Type, &values, nullptr, REQUIRED, 0, { 0 } },
+    { "-outarray", STRING_Type, &outArray, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-datatype", INT_Type, &dataType, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1004,16 +1004,16 @@ int Geom_SetArrayForLocalOp_FaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", Name,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1045,7 +1045,7 @@ int Geom_SetArrayForLocalOp_FaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -1071,17 +1071,17 @@ int Geom_SetArrayForLocalOp_SphereCmd( ClientData clientData, Tcl_Interp *interp
   ARG_List ctrList;
 
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 6;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-radius", DOUBLE_Type, &radius, NULL, REQUIRED, 0, { 0 } },
-    { "-center", LIST_Type, &ctrList, NULL, REQUIRED, 0, { 0 } },
-    { "-outarray", STRING_Type, &outArray, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-datatype", INT_Type, &dataType, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &Name, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-radius", DOUBLE_Type, &radius, nullptr, REQUIRED, 0, { 0 } },
+    { "-center", LIST_Type, &ctrList, nullptr, REQUIRED, 0, { 0 } },
+    { "-outarray", STRING_Type, &outArray, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-datatype", INT_Type, &dataType, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1096,16 +1096,16 @@ int Geom_SetArrayForLocalOp_SphereCmd( ClientData clientData, Tcl_Interp *interp
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", Name,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1134,7 +1134,7 @@ int Geom_SetArrayForLocalOp_SphereCmd( ClientData clientData, Tcl_Interp *interp
   vtkPolyData *geom = ((cvPolyData*)(dst))->GetVtkPolyData();
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -1157,16 +1157,16 @@ int Geom_SetArrayForLocalOp_CellsCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_List values;
 
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-values", LIST_Type, &values, NULL, REQUIRED, 0, { 0 } },
-    { "-outarray", STRING_Type, &outArray, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-datatype", INT_Type, &dataType, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &Name, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-values", LIST_Type, &values, nullptr, REQUIRED, 0, { 0 } },
+    { "-outarray", STRING_Type, &outArray, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-datatype", INT_Type, &dataType, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1181,16 +1181,16 @@ int Geom_SetArrayForLocalOp_CellsCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", Name,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1222,7 +1222,7 @@ int Geom_SetArrayForLocalOp_CellsCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -1247,18 +1247,18 @@ int Geom_SetArrayForLocalOp_BlendCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_List values;
 
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 7;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-array", STRING_Type, &arrayName, NULL, REQUIRED, 0, { 0 } },
-    { "-values", LIST_Type, &values, NULL, REQUIRED, 0, { 0 } },
-    { "-radius", DOUBLE_Type, &radius, NULL, REQUIRED, 0, { 0 } },
-    { "-outarray", STRING_Type, &outArray, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-datatype", INT_Type, &dataType, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &Name, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-array", STRING_Type, &arrayName, nullptr, REQUIRED, 0, { 0 } },
+    { "-values", LIST_Type, &values, nullptr, REQUIRED, 0, { 0 } },
+    { "-radius", DOUBLE_Type, &radius, nullptr, REQUIRED, 0, { 0 } },
+    { "-outarray", STRING_Type, &outArray, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-datatype", INT_Type, &dataType, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1273,16 +1273,16 @@ int Geom_SetArrayForLocalOp_BlendCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", Name,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1314,7 +1314,7 @@ int Geom_SetArrayForLocalOp_BlendCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -1336,16 +1336,16 @@ int Geom_LocalDecimationCmd( ClientData clientData, Tcl_Interp *interp,
   char *cellArrayName = 0;
   double target = 0.25;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-target", DOUBLE_Type, &target, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &Name, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-target", DOUBLE_Type, &target, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1362,16 +1362,16 @@ int Geom_LocalDecimationCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", Name,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
   if ( sys_geom_local_quadric_decimation( (cvPolyData*)src, (cvPolyData**)(&dst),target,
@@ -1383,7 +1383,7 @@ int Geom_LocalDecimationCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -1406,17 +1406,17 @@ int Geom_LocalLaplacianSmoothCmd( ClientData clientData, Tcl_Interp *interp,
   int numiters = 100;
   double relax = 0.01;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 6;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-numiters", INT_Type, &numiters, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-relax", DOUBLE_Type, &relax, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &Name, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-numiters", INT_Type, &numiters, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-relax", DOUBLE_Type, &relax, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1433,16 +1433,16 @@ int Geom_LocalLaplacianSmoothCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", Name,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
   if ( sys_geom_local_laplacian_smooth( (cvPolyData*)src, (cvPolyData**)(&dst),
@@ -1455,7 +1455,7 @@ int Geom_LocalLaplacianSmoothCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -1479,18 +1479,18 @@ int Geom_LocalConstrainSmoothCmd( ClientData clientData, Tcl_Interp *interp,
   double constrainfactor = 0.7;
   int numcgsolves = 30;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 7;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-numiters", INT_Type, &numiters, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-constrainfactor", DOUBLE_Type, &constrainfactor, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-numcgsolves", INT_Type, &numcgsolves, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &Name, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-numiters", INT_Type, &numiters, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-constrainfactor", DOUBLE_Type, &constrainfactor, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-numcgsolves", INT_Type, &numcgsolves, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1507,16 +1507,16 @@ int Geom_LocalConstrainSmoothCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", Name,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
   if ( sys_geom_local_constrain_smooth( (cvPolyData*)src, (cvPolyData**)(&dst),
@@ -1529,7 +1529,7 @@ int Geom_LocalConstrainSmoothCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -1551,16 +1551,16 @@ int Geom_LocalLinearSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
   char *cellArrayName = 0;
   int numiters = 100;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-numiters", INT_Type, &numiters, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &Name, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-numiters", INT_Type, &numiters, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1577,16 +1577,16 @@ int Geom_LocalLinearSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", Name,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
   if ( sys_geom_local_linear_subdivision( (cvPolyData*)src, (cvPolyData**)(&dst),
@@ -1598,7 +1598,7 @@ int Geom_LocalLinearSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -1620,16 +1620,16 @@ int Geom_LocalButterflySubdivisionCmd( ClientData clientData, Tcl_Interp *interp
   char *cellArrayName = 0;
   int numiters = 100;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-numiters", INT_Type, &numiters, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &Name, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-numiters", INT_Type, &numiters, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1646,16 +1646,16 @@ int Geom_LocalButterflySubdivisionCmd( ClientData clientData, Tcl_Interp *interp
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", Name,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
   if ( sys_geom_local_butterfly_subdivision( (cvPolyData*)src, (cvPolyData**)(&dst),
@@ -1667,7 +1667,7 @@ int Geom_LocalButterflySubdivisionCmd( ClientData clientData, Tcl_Interp *interp
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -1689,16 +1689,16 @@ int Geom_LocalLoopSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
   char *cellArrayName = 0;
   int numiters = 100;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-numiters", INT_Type, &numiters, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &Name, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-numiters", INT_Type, &numiters, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1715,16 +1715,16 @@ int Geom_LocalLoopSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", Name,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
   if ( sys_geom_local_loop_subdivision( (cvPolyData*)src, (cvPolyData**)(&dst),
@@ -1736,7 +1736,7 @@ int Geom_LocalLoopSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -1763,21 +1763,21 @@ int Geom_LocalBlendCmd( ClientData clientData, Tcl_Interp *interp,
   int numlapsmoothiters = 50;
   double targetdecimation = 0.01;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 10;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-numblenditers", INT_Type, &numblenditers, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-numsubblenditers", INT_Type, &numsubblenditers, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-numsubdivisioniters", INT_Type, &numsubdivisioniters, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-numcgsmoothiters", INT_Type, &numcgsmoothiters, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-numlapsmoothiters", INT_Type, &numlapsmoothiters, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-targetdecimation", DOUBLE_Type, &targetdecimation, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &Name, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-numblenditers", INT_Type, &numblenditers, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-numsubblenditers", INT_Type, &numsubblenditers, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-numsubdivisioniters", INT_Type, &numsubdivisioniters, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-numcgsmoothiters", INT_Type, &numcgsmoothiters, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-numlapsmoothiters", INT_Type, &numlapsmoothiters, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-targetdecimation", DOUBLE_Type, &targetdecimation, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1794,16 +1794,16 @@ int Geom_LocalBlendCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", Name,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
   if ( sys_geom_local_blend( (cvPolyData*)src, (cvPolyData**)(&dst),
@@ -1818,7 +1818,7 @@ int Geom_LocalBlendCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -1847,10 +1847,10 @@ int Geom_All_UnionCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-srclist", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
-    { "-intertype", INT_Type, &interT, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-tolerance", DOUBLE_Type, &tolerance, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-srclist", LIST_Type, &srcList, nullptr, REQUIRED, 0, { 0 } },
+    { "-intertype", INT_Type, &interT, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-tolerance", DOUBLE_Type, &tolerance, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1874,9 +1874,9 @@ int Geom_All_UnionCmd( ClientData clientData, Tcl_Interp *interp,
 
   for (int i = 0; i < numSrcs; i++ ) {
     src = gRepository->GetObject( srcList.argv[i] );
-    if ( src == NULL ) {
+    if ( src == nullptr ) {
       Tcl_AppendResult( interp, "couldn't find object ", srcList.argv[i],
-			(char *)NULL );
+			(char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] srcs;
       return TCL_ERROR;
@@ -1884,7 +1884,7 @@ int Geom_All_UnionCmd( ClientData clientData, Tcl_Interp *interp,
     type = src->GetType();
     if ( type != POLY_DATA_T ) {
       Tcl_AppendResult( interp, "object ", srcList.argv[i],
-			" not of type cvPolyData", (char *)NULL );
+			" not of type cvPolyData", (char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] srcs;
       return TCL_ERROR;
@@ -1898,14 +1898,14 @@ int Geom_All_UnionCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     delete [] srcs;
     return TCL_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     delete [] srcs;
     return TCL_ERROR;
   }
@@ -1924,7 +1924,7 @@ int Geom_All_UnionCmd( ClientData clientData, Tcl_Interp *interp,
   geom->SetVtkPolyDataObject(dstPd);
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete geom;
     delete [] srcs;
     delete dst;
@@ -1964,10 +1964,10 @@ int Geom_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-model", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-facelist", LIST_Type, &faceList, NULL, REQUIRED, 0, { 0 } },
-    { "-ids", LIST_Type, &idList, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-model", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-facelist", LIST_Type, &faceList, nullptr, REQUIRED, 0, { 0 } },
+    { "-ids", LIST_Type, &idList, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1999,9 +1999,9 @@ int Geom_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
 
   for (int i = 0; i < numFaces; i++ ) {
     face = gRepository->GetObject( faceList.argv[i] );
-    if ( face == NULL ) {
+    if ( face == nullptr ) {
       Tcl_AppendResult( interp, "couldn't find object ", faceList.argv[i],
-			(char *)NULL );
+			(char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] faces;
       return TCL_ERROR;
@@ -2009,7 +2009,7 @@ int Geom_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
     type = face->GetType();
     if ( type != POLY_DATA_T ) {
       Tcl_AppendResult( interp, "object ", faceList.argv[i],
-			" not of type cvPolyData", (char *)NULL );
+			" not of type cvPolyData", (char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] faces;
       return TCL_ERROR;
@@ -2029,7 +2029,7 @@ int Geom_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     delete [] faces;
     delete [] allids;
     return TCL_ERROR;
@@ -2037,8 +2037,8 @@ int Geom_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve cvPolyData source:
   model = gRepository->GetObject( srcName );
-  if ( model == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( model == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     delete [] faces;
     delete [] allids;
     return TCL_ERROR;
@@ -2046,7 +2046,7 @@ int Geom_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
   type = model->GetType();
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, "object ", srcName, " not of type cvPolyData",
-		      (char *)NULL );
+		      (char *)nullptr );
     delete [] faces;
     delete [] allids;
     return TCL_ERROR;
@@ -2057,7 +2057,7 @@ int Geom_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     delete [] faces;
     delete [] allids;
     return TCL_ERROR;
@@ -2080,7 +2080,7 @@ int Geom_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
   geom->SetVtkPolyDataObject(dstPd);
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -2104,13 +2104,13 @@ int Geom_MakePolysConsistentCmd( ClientData clientData, Tcl_Interp *interp,
   char *srcName;
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2127,22 +2127,22 @@ int Geom_MakePolysConsistentCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2154,7 +2154,7 @@ int Geom_MakePolysConsistentCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -2176,13 +2176,13 @@ int Geom_ReverseAllCellsCmd( ClientData clientData, Tcl_Interp *interp,
   char *srcName;
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2199,22 +2199,22 @@ int Geom_ReverseAllCellsCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2226,7 +2226,7 @@ int Geom_ReverseAllCellsCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -2252,7 +2252,7 @@ int Geom_NumClosedLineRegionsCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } }
+    { "-obj", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2269,14 +2269,14 @@ int Geom_NumClosedLineRegionsCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2305,15 +2305,15 @@ int Geom_GetClosedLineRegionCmd( ClientData clientData, Tcl_Interp *interp,
   char *srcName;
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   int id;
   RepositoryDataT type;
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-id", INT_Type, &id, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } }
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-id", INT_Type, &id, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2330,20 +2330,20 @@ int Geom_GetClosedLineRegionCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified destination does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2355,7 +2355,7 @@ int Geom_GetClosedLineRegionCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -2377,15 +2377,15 @@ int Geom_PickCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_List posList;
   char *resultName;
   cvRepositoryData *obj;
-  cvRepositoryData *result = NULL;
+  cvRepositoryData *result = nullptr;
   RepositoryDataT type;
   double pos[3];
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-pos", LIST_Type, &posList, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-pos", LIST_Type, &posList, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2401,7 +2401,7 @@ int Geom_PickCmd( ClientData clientData, Tcl_Interp *interp,
   // Convert given coordinate to double's:
   if ( posList.argc != 3 ) {
     Tcl_AppendResult( interp, "crd arg's must be Tcl lists with three ",
-		      "elements each", (char*)NULL );
+		      "elements each", (char*)nullptr );
     ARG_FreeListArgvs( table_size, arg_table );
     return TCL_ERROR;
   }
@@ -2420,21 +2420,21 @@ int Geom_PickCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified result does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2447,7 +2447,7 @@ int Geom_PickCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( resultName, result ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete result;
     return TCL_ERROR;
   }
@@ -2477,16 +2477,16 @@ int Geom_OrientProfileCmd( ClientData clientData, Tcl_Interp *interp,
 
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-path_pos", LIST_Type, &pathPosList, NULL, REQUIRED, 0, { 0 } },
-    { "-path_tan", LIST_Type, &pathTanList, NULL, REQUIRED, 0, { 0 } },
-    { "-path_xhat", LIST_Type, &pathXhatList, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-path_pos", LIST_Type, &pathPosList, nullptr, REQUIRED, 0, { 0 } },
+    { "-path_tan", LIST_Type, &pathTanList, nullptr, REQUIRED, 0, { 0 } },
+    { "-path_xhat", LIST_Type, &pathXhatList, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2528,22 +2528,22 @@ int Geom_OrientProfileCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve src object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Check src type:
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2555,7 +2555,7 @@ int Geom_OrientProfileCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -2585,16 +2585,16 @@ int Geom_DisorientProfileCmd( ClientData clientData, Tcl_Interp *interp,
 
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-path_pos", LIST_Type, &pathPosList, NULL, REQUIRED, 0, { 0 } },
-    { "-path_tan", LIST_Type, &pathTanList, NULL, REQUIRED, 0, { 0 } },
-    { "-path_xhat", LIST_Type, &pathXhatList, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-path_pos", LIST_Type, &pathPosList, nullptr, REQUIRED, 0, { 0 } },
+    { "-path_tan", LIST_Type, &pathTanList, nullptr, REQUIRED, 0, { 0 } },
+    { "-path_xhat", LIST_Type, &pathXhatList, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2636,22 +2636,22 @@ int Geom_DisorientProfileCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve src object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Check src type:
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2663,7 +2663,7 @@ int Geom_DisorientProfileCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -2687,15 +2687,15 @@ int Geom_AlignProfileCmd( ClientData clientData, Tcl_Interp *interp,
   int vecMtd = 1;
   cvRepositoryData *ref;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-ref", STRING_Type, &refName, NULL, REQUIRED, 0, { 0 } },
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-vecMtd", BOOL_Type, &vecMtd, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-ref", STRING_Type, &refName, nullptr, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-vecMtd", BOOL_Type, &vecMtd, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2714,32 +2714,32 @@ int Geom_AlignProfileCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve ref object and check type:
   ref = gRepository->GetObject( refName );
-  if ( ref == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", refName, (char *)NULL );
+  if ( ref == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", refName, (char *)nullptr );
     return TCL_ERROR;
   }
   type = ref->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, refName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, refName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Retrieve src object and check type:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2748,14 +2748,14 @@ int Geom_AlignProfileCmd( ClientData clientData, Tcl_Interp *interp,
   } else {
     dst = sys_geom_AlignByDist( (cvPolyData*)ref, (cvPolyData*)src );
   }
-  if ( dst == NULL ) {
+  if ( dst == nullptr ) {
     Tcl_SetResult( interp, "alignment error", TCL_STATIC );
     return TCL_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -2781,14 +2781,14 @@ int Geom_TranslateCmd( ClientData clientData, Tcl_Interp *interp,
 
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-vec", LIST_Type, &vecList, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-vec", LIST_Type, &vecList, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2818,22 +2818,22 @@ int Geom_TranslateCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve src object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Check src type:
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2845,7 +2845,7 @@ int Geom_TranslateCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -2867,14 +2867,14 @@ int Geom_ScaleAvgCmd( ClientData clientData, Tcl_Interp *interp,
   char *dstName;
   double factor;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-factor", DOUBLE_Type, &factor, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-factor", DOUBLE_Type, &factor, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2894,22 +2894,22 @@ int Geom_ScaleAvgCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve src object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Check src type:
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -2921,7 +2921,7 @@ int Geom_ScaleAvgCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -2948,7 +2948,7 @@ int Geom_GetOrderedPtsCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } }
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -2965,15 +2965,15 @@ int Geom_GetOrderedPtsCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Check type:
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3007,8 +3007,8 @@ int Geom_WriteOrderedPtsCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -3025,15 +3025,15 @@ int Geom_WriteOrderedPtsCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Check type:
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3061,8 +3061,8 @@ int Geom_WriteLinesCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -3079,15 +3079,15 @@ int Geom_WriteLinesCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Check type:
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3115,7 +3115,7 @@ int Geom_PolysClosedCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3132,15 +3132,15 @@ int Geom_PolysClosedCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3174,7 +3174,7 @@ int Geom_SurfAreaCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3191,15 +3191,15 @@ int Geom_SurfAreaCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3232,7 +3232,7 @@ int Geom_GetPolyCentroidCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3249,15 +3249,15 @@ int Geom_GetPolyCentroidCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3289,7 +3289,7 @@ int Geom_PrintTriStatsCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-surf", STRING_Type, &surfName, NULL, REQUIRED, 0, { 0 } },
+    { "-surf", STRING_Type, &surfName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3306,16 +3306,16 @@ int Geom_PrintTriStatsCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   surf = gRepository->GetObject( surfName );
-  if ( surf == NULL ) {
+  if ( surf == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", surfName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = surf->GetType();
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, surfName, " not of type cvPolyData",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3343,8 +3343,8 @@ int Geom_PrintSmallPolysCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-sideTol", DOUBLE_Type, &sideTol, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-sideTol", DOUBLE_Type, &sideTol, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3361,15 +3361,15 @@ int Geom_PrintSmallPolysCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3394,14 +3394,14 @@ int Geom_RmSmallPolysCmd( ClientData clientData, Tcl_Interp *interp,
   char *dstName;
   double sideTol;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-sideTol", DOUBLE_Type, &sideTol, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-sideTol", DOUBLE_Type, &sideTol, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3418,22 +3418,22 @@ int Geom_RmSmallPolysCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3445,7 +3445,7 @@ int Geom_RmSmallPolysCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -3473,7 +3473,7 @@ int Geom_BBoxCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3490,14 +3490,14 @@ int Geom_BBoxCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3533,8 +3533,8 @@ int Geom_ClassifyCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-pt", LIST_Type, &ptList, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-pt", LIST_Type, &ptList, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3565,14 +3565,14 @@ int Geom_ClassifyCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3609,9 +3609,9 @@ int Geom_PtInPolyCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-pgn", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-pt", LIST_Type, &ptList, NULL, REQUIRED, 0, { 0 } },
-    { "-usePrevPoly", INT_Type, &usePrevPoly, NULL, REQUIRED, 0, { 0 } },
+    { "-pgn", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-pt", LIST_Type, &ptList, nullptr, REQUIRED, 0, { 0 } },
+    { "-usePrevPoly", INT_Type, &usePrevPoly, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3641,14 +3641,14 @@ int Geom_PtInPolyCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3683,9 +3683,9 @@ int Geom_MergePtsCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-tol", DOUBLE_Type, &tol, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-tol", DOUBLE_Type, &tol, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3702,21 +3702,21 @@ int Geom_MergePtsCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3724,7 +3724,7 @@ int Geom_MergePtsCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -3752,9 +3752,9 @@ int Geom_Warp3dPtsCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-scale", DOUBLE_Type, &scale, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-scale", DOUBLE_Type, &scale, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3771,21 +3771,21 @@ int Geom_Warp3dPtsCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3793,7 +3793,7 @@ int Geom_Warp3dPtsCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -3819,7 +3819,7 @@ int Geom_NumPtsCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3836,14 +3836,14 @@ int Geom_NumPtsCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -3875,9 +3875,9 @@ int Geom_sampleLoopCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-num", INT_Type, &targetNumPts, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-num", INT_Type, &targetNumPts, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3894,34 +3894,34 @@ int Geom_sampleLoopCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   dst = sys_geom_sampleLoop( (cvPolyData*)src, targetNumPts );
 
-  if ( dst == NULL ) {
+  if ( dst == nullptr ) {
     Tcl_SetResult( interp, "subsample loop error", TCL_STATIC );
     return TCL_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -3959,18 +3959,18 @@ int Geom_loftSolidCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 12;
   ARG_Entry arg_table[] = {
-    { "-srclist", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-numOutInSegs", INT_Type, &numOutPtsInSegs, NULL, REQUIRED, 0, { 0 } },
-    { "-numOutAlongLength", INT_Type, &numOutPtsAlongLength, NULL, REQUIRED, 0, { 0 } },
-    { "-numLinearPtsAlongLength", INT_Type, &numLinearPtsAlongLength, NULL, REQUIRED, 0, { 0 } },
-    { "-numModes", INT_Type, &numModes, NULL, REQUIRED, 0, { 0 } },
-    { "-useFFT", INT_Type, &useFFT, NULL, REQUIRED, 0, { 0 } },
-    { "-useLinearSampleAlongLength", INT_Type, &useLinearSampleAlongLength, NULL, REQUIRED, 0, { 0 } },
-    { "-splineType", INT_Type, &splineType, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-bias", DOUBLE_Type, &bias, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-tension", DOUBLE_Type, &tension, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-continuity", DOUBLE_Type, &continuity, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-srclist", LIST_Type, &srcList, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-numOutInSegs", INT_Type, &numOutPtsInSegs, nullptr, REQUIRED, 0, { 0 } },
+    { "-numOutAlongLength", INT_Type, &numOutPtsAlongLength, nullptr, REQUIRED, 0, { 0 } },
+    { "-numLinearPtsAlongLength", INT_Type, &numLinearPtsAlongLength, nullptr, REQUIRED, 0, { 0 } },
+    { "-numModes", INT_Type, &numModes, nullptr, REQUIRED, 0, { 0 } },
+    { "-useFFT", INT_Type, &useFFT, nullptr, REQUIRED, 0, { 0 } },
+    { "-useLinearSampleAlongLength", INT_Type, &useLinearSampleAlongLength, nullptr, REQUIRED, 0, { 0 } },
+    { "-splineType", INT_Type, &splineType, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-bias", DOUBLE_Type, &bias, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-tension", DOUBLE_Type, &tension, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-continuity", DOUBLE_Type, &continuity, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3994,9 +3994,9 @@ int Geom_loftSolidCmd( ClientData clientData, Tcl_Interp *interp,
 
   for (int i = 0; i < numSrcs; i++ ) {
     src = gRepository->GetObject( srcList.argv[i] );
-    if ( src == NULL ) {
+    if ( src == nullptr ) {
       Tcl_AppendResult( interp, "couldn't find object ", srcList.argv[i],
-			(char *)NULL );
+			(char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] srcs;
       return TCL_ERROR;
@@ -4004,7 +4004,7 @@ int Geom_loftSolidCmd( ClientData clientData, Tcl_Interp *interp,
     type = src->GetType();
     if ( type != POLY_DATA_T ) {
       Tcl_AppendResult( interp, "object ", srcList.argv[i],
-			" not of type cvPolyData", (char *)NULL );
+			" not of type cvPolyData", (char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] srcs;
       return TCL_ERROR;
@@ -4018,7 +4018,7 @@ int Geom_loftSolidCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     delete [] srcs;
     return TCL_ERROR;
   }
@@ -4036,7 +4036,7 @@ int Geom_loftSolidCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -4071,16 +4071,16 @@ int Geom_loftSolidWithNURBSCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 10;
   ARG_Entry arg_table[] = {
-    { "-srclist", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-uDegree", INT_Type, &uDegree, NULL, REQUIRED, 0, { 0 } },
-    { "-vDegree", INT_Type, &vDegree, NULL, REQUIRED, 0, { 0 } },
-    { "-uSpacing", DOUBLE_Type, &uSpacing, NULL, REQUIRED, 0, { 0 } },
-    { "-vSpacing", DOUBLE_Type, &vSpacing, NULL, REQUIRED, 0, { 0 } },
-    { "-uKnotSpanType", STRING_Type, &uKnotSpanType, NULL, REQUIRED, 0, { 0 } },
-    { "-vKnotSpanType", STRING_Type, &vKnotSpanType, NULL, REQUIRED, 0, { 0 } },
-    { "-uParametricSpanType", STRING_Type, &uParametricSpanType, NULL, REQUIRED, 0, { 0 } },
-    { "-vParametricSpanType", STRING_Type, &vParametricSpanType, NULL, REQUIRED, 0, { 0 } },
+    { "-srclist", LIST_Type, &srcList, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-uDegree", INT_Type, &uDegree, nullptr, REQUIRED, 0, { 0 } },
+    { "-vDegree", INT_Type, &vDegree, nullptr, REQUIRED, 0, { 0 } },
+    { "-uSpacing", DOUBLE_Type, &uSpacing, nullptr, REQUIRED, 0, { 0 } },
+    { "-vSpacing", DOUBLE_Type, &vSpacing, nullptr, REQUIRED, 0, { 0 } },
+    { "-uKnotSpanType", STRING_Type, &uKnotSpanType, nullptr, REQUIRED, 0, { 0 } },
+    { "-vKnotSpanType", STRING_Type, &vKnotSpanType, nullptr, REQUIRED, 0, { 0 } },
+    { "-uParametricSpanType", STRING_Type, &uParametricSpanType, nullptr, REQUIRED, 0, { 0 } },
+    { "-vParametricSpanType", STRING_Type, &vParametricSpanType, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4104,9 +4104,9 @@ int Geom_loftSolidWithNURBSCmd( ClientData clientData, Tcl_Interp *interp,
 
   for (int i = 0; i < numSrcs; i++ ) {
     src = gRepository->GetObject( srcList.argv[i] );
-    if ( src == NULL ) {
+    if ( src == nullptr ) {
       Tcl_AppendResult( interp, "couldn't find object ", srcList.argv[i],
-			(char *)NULL );
+			(char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] srcs;
       return TCL_ERROR;
@@ -4114,7 +4114,7 @@ int Geom_loftSolidWithNURBSCmd( ClientData clientData, Tcl_Interp *interp,
     type = src->GetType();
     if ( type != POLY_DATA_T ) {
       Tcl_AppendResult( interp, "object ", srcList.argv[i],
-			" not of type cvPolyData", (char *)NULL );
+			" not of type cvPolyData", (char *)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       delete [] srcs;
       return TCL_ERROR;
@@ -4128,7 +4128,7 @@ int Geom_loftSolidWithNURBSCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     delete [] srcs;
     return TCL_ERROR;
   }
@@ -4148,7 +4148,7 @@ int Geom_loftSolidWithNURBSCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -4173,7 +4173,7 @@ int Geom_2dWindingNumCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4190,14 +4190,14 @@ int Geom_2dWindingNumCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4227,7 +4227,7 @@ int Geom_PolygonNormCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4244,20 +4244,20 @@ int Geom_PolygonNormCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   if ( sys_geom_PolygonNormal( (cvPolyData*)obj, n ) != SV_OK ) {
     Tcl_AppendResult( interp, "error computing normal for ",
-		      objName, (char *)NULL );
+		      objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4285,7 +4285,7 @@ int Geom_AvgPtCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4302,20 +4302,20 @@ int Geom_AvgPtCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   if ( sys_geom_AvgPt( (cvPolyData*)obj, pt ) != SV_OK ) {
     Tcl_AppendResult( interp, "error averaging points of ",
-		      objName, (char *)NULL );
+		      objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4344,8 +4344,8 @@ int Geom_CopyCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4362,33 +4362,33 @@ int Geom_CopyCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   dst = sys_geom_DeepCopy( (cvPolyData*)src );
-  if ( dst == NULL ) {
-    Tcl_AppendResult( interp, "error copying ", srcName, (char *)NULL );
+  if ( dst == nullptr ) {
+    Tcl_AppendResult( interp, "error copying ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -4414,9 +4414,9 @@ int Geom_ReorderPgnCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-start", INT_Type, &start, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-start", INT_Type, &start, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4433,32 +4433,32 @@ int Geom_ReorderPgnCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   dst = sys_geom_ReorderPolygon( (cvPolyData*)src, start );
-  if ( dst == NULL ) {
-    Tcl_AppendResult( interp, "error reordering ", srcName, (char *)NULL );
+  if ( dst == nullptr ) {
+    Tcl_AppendResult( interp, "error reordering ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -4478,7 +4478,7 @@ int Geom_SplinePtsToPathPlanCmd( ClientData clientData, Tcl_Interp *interp,
   char *usage;
   char *srcName;
   int numOutputPts;
-  char *filename = NULL;
+  char *filename = nullptr;
   int flag;
   cvRepositoryData *src;
   RepositoryDataT type;
@@ -4486,10 +4486,10 @@ int Geom_SplinePtsToPathPlanCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 4;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-file", STRING_Type, &filename, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-numOutputPts", INT_Type, &numOutputPts, NULL, REQUIRED, 0, { 0 } },
-    { "-flag", INT_Type, &flag, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &filename, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-numOutputPts", INT_Type, &numOutputPts, nullptr, REQUIRED, 0, { 0 } },
+    { "-flag", INT_Type, &flag, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4506,14 +4506,14 @@ int Geom_SplinePtsToPathPlanCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( src == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4521,12 +4521,12 @@ int Geom_SplinePtsToPathPlanCmd( ClientData clientData, Tcl_Interp *interp,
   // a tcl string containing the path.  If a filename is specified, return string
   // will be left blank.
   int result;
-  if (filename == NULL) {
+  if (filename == nullptr) {
     result = sys_geom_splinePtsToPathPlan( ((cvPolyData*)src)->GetVtkPolyData(),numOutputPts,
                                   filename, flag, interp);
   } else {
     result = sys_geom_splinePtsToPathPlan( ((cvPolyData*)src)->GetVtkPolyData(),numOutputPts,
-                                  filename, flag, NULL);
+                                  filename, flag, nullptr);
   }
 
   if (result == SV_OK) {
@@ -4555,9 +4555,9 @@ int Geom_IntegrateSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-nrm", LIST_Type, &nrmList, NULL, REQUIRED, 0, { 0 } },
-    { "-tensorType", INT_Type, &tensorType, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-nrm", LIST_Type, &nrmList, nullptr, REQUIRED, 0, { 0 } },
+    { "-tensorType", INT_Type, &tensorType, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4575,7 +4575,7 @@ int Geom_IntegrateSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
     // Convert given coordinate to double's:
     if ( nrmList.argc != 3 ) {
       Tcl_AppendResult( interp, "crd arg's must be Tcl lists with three ",
-		      "elements each", (char*)NULL );
+		      "elements each", (char*)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       return TCL_ERROR;
     }
@@ -4594,14 +4594,14 @@ int Geom_IntegrateSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4636,8 +4636,8 @@ int Geom_IntegrateSurface2Cmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-tensorType", INT_Type, &tensorType, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-tensorType", INT_Type, &tensorType, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4658,14 +4658,14 @@ int Geom_IntegrateSurface2Cmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4702,9 +4702,9 @@ int Geom_IntegrateEnergyCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-nrm", LIST_Type, &nrmList, NULL, REQUIRED, 0, { 0 } },
-    { "-rho", DOUBLE_Type, &rho, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-nrm", LIST_Type, &nrmList, nullptr, REQUIRED, 0, { 0 } },
+    { "-rho", DOUBLE_Type, &rho, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4722,7 +4722,7 @@ int Geom_IntegrateEnergyCmd( ClientData clientData, Tcl_Interp *interp,
     // Convert given coordinate to double's:
     if ( nrmList.argc != 3 ) {
       Tcl_AppendResult( interp, "crd arg's must be Tcl lists with three ",
-		      "elements each", (char*)NULL );
+		      "elements each", (char*)nullptr );
       ARG_FreeListArgvs( table_size, arg_table );
       return TCL_ERROR;
     }
@@ -4741,14 +4741,14 @@ int Geom_IntegrateEnergyCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4785,8 +4785,8 @@ int Geom_FindDistanceCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-pt", LIST_Type, &ptList, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-pt", LIST_Type, &ptList, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4817,14 +4817,14 @@ int Geom_FindDistanceCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4856,8 +4856,8 @@ int Geom_InterpolateScalarCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-pt", LIST_Type, &ptList, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-pt", LIST_Type, &ptList, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4890,14 +4890,14 @@ int Geom_InterpolateScalarCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -4933,8 +4933,8 @@ int Geom_InterpolateVectorCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-pt", LIST_Type, &ptList, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-pt", LIST_Type, &ptList, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4967,14 +4967,14 @@ int Geom_InterpolateVectorCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5014,9 +5014,9 @@ int Geom_IntersectWithLineCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 3;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-pt0", LIST_Type, &p0List, NULL, REQUIRED, 0, { 0 } },
-    { "-pt1", LIST_Type, &p1List, NULL, REQUIRED, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-pt0", LIST_Type, &p0List, nullptr, REQUIRED, 0, { 0 } },
+    { "-pt1", LIST_Type, &p1List, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -5055,14 +5055,14 @@ int Geom_IntersectWithLineCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( obj == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5095,18 +5095,18 @@ int Geom_AddPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   int vflag = FALSE;
   char *dstName;
 
-  cvRepositoryData *srcA = NULL;
-  cvRepositoryData *srcB = NULL;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *srcA = nullptr;
+  cvRepositoryData *srcB = nullptr;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-srcA", STRING_Type, &srcNameA, NULL, REQUIRED, 0, { 0 } },
-    { "-srcB", STRING_Type, &srcNameB, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-scalars", BOOL_Type, &scflag, NULL, REQUIRED, 0, { 0 } },
-    { "-vectors", BOOL_Type, &vflag, NULL, REQUIRED, 0, { 0 } },
+    { "-srcA", STRING_Type, &srcNameA, nullptr, REQUIRED, 0, { 0 } },
+    { "-srcB", STRING_Type, &srcNameB, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-scalars", BOOL_Type, &scflag, nullptr, REQUIRED, 0, { 0 } },
+    { "-vectors", BOOL_Type, &vflag, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -5123,17 +5123,17 @@ int Geom_AddPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   srcA = gRepository->GetObject( srcNameA );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcNameA,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcNameB,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5141,19 +5141,19 @@ int Geom_AddPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcNameA, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcNameA, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcNameB, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcNameB, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5173,7 +5173,7 @@ int Geom_AddPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -5198,18 +5198,18 @@ int Geom_SubtractPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   int vflag = FALSE;
   char *dstName;
 
-  cvRepositoryData *srcA = NULL;
-  cvRepositoryData *srcB = NULL;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *srcA = nullptr;
+  cvRepositoryData *srcB = nullptr;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-srcA", STRING_Type, &srcNameA, NULL, REQUIRED, 0, { 0 } },
-    { "-srcB", STRING_Type, &srcNameB, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-scalars", BOOL_Type, &scflag, NULL, REQUIRED, 0, { 0 } },
-    { "-vectors", BOOL_Type, &vflag, NULL, REQUIRED, 0, { 0 } },
+    { "-srcA", STRING_Type, &srcNameA, nullptr, REQUIRED, 0, { 0 } },
+    { "-srcB", STRING_Type, &srcNameB, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-scalars", BOOL_Type, &scflag, nullptr, REQUIRED, 0, { 0 } },
+    { "-vectors", BOOL_Type, &vflag, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -5226,17 +5226,17 @@ int Geom_SubtractPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   srcA = gRepository->GetObject( srcNameA );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcNameA,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcNameB,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5244,19 +5244,19 @@ int Geom_SubtractPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcNameA, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcNameA, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcNameB, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcNameB, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5276,7 +5276,7 @@ int Geom_SubtractPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -5301,18 +5301,18 @@ int Geom_MultiplyPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   int vflag = FALSE;
   char *dstName;
 
-  cvRepositoryData *srcA = NULL;
-  cvRepositoryData *srcB = NULL;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *srcA = nullptr;
+  cvRepositoryData *srcB = nullptr;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-srcA", STRING_Type, &srcNameA, NULL, REQUIRED, 0, { 0 } },
-    { "-srcB", STRING_Type, &srcNameB, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-scalars", BOOL_Type, &scflag, NULL, REQUIRED, 0, { 0 } },
-    { "-vectors", BOOL_Type, &vflag, NULL, REQUIRED, 0, { 0 } },
+    { "-srcA", STRING_Type, &srcNameA, nullptr, REQUIRED, 0, { 0 } },
+    { "-srcB", STRING_Type, &srcNameB, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-scalars", BOOL_Type, &scflag, nullptr, REQUIRED, 0, { 0 } },
+    { "-vectors", BOOL_Type, &vflag, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -5329,17 +5329,17 @@ int Geom_MultiplyPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   srcA = gRepository->GetObject( srcNameA );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcNameA,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcNameB,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5347,19 +5347,19 @@ int Geom_MultiplyPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcNameA, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcNameA, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcNameB, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcNameB, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5379,7 +5379,7 @@ int Geom_MultiplyPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -5404,18 +5404,18 @@ int Geom_DividePointDataCmd( ClientData clientData, Tcl_Interp *interp,
   int vflag = FALSE;
   char *dstName;
 
-  cvRepositoryData *srcA = NULL;
-  cvRepositoryData *srcB = NULL;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *srcA = nullptr;
+  cvRepositoryData *srcB = nullptr;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-srcA", STRING_Type, &srcNameA, NULL, REQUIRED, 0, { 0 } },
-    { "-srcB", STRING_Type, &srcNameB, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-scalars", BOOL_Type, &scflag, NULL, REQUIRED, 0, { 0 } },
-    { "-vectors", BOOL_Type, &vflag, NULL, REQUIRED, 0, { 0 } },
+    { "-srcA", STRING_Type, &srcNameA, nullptr, REQUIRED, 0, { 0 } },
+    { "-srcB", STRING_Type, &srcNameB, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-scalars", BOOL_Type, &scflag, nullptr, REQUIRED, 0, { 0 } },
+    { "-vectors", BOOL_Type, &vflag, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -5432,17 +5432,17 @@ int Geom_DividePointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   srcA = gRepository->GetObject( srcNameA );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcNameA,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcNameB,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5450,19 +5450,19 @@ int Geom_DividePointDataCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcNameA, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcNameA, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcNameB, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcNameB, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5482,7 +5482,7 @@ int Geom_DividePointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -5507,18 +5507,18 @@ int Geom_ProjectCmd( ClientData clientData, Tcl_Interp *interp,
   int vflag = FALSE;
   char *dstName;
 
-  cvRepositoryData *srcA = NULL;
-  cvRepositoryData *srcB = NULL;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *srcA = nullptr;
+  cvRepositoryData *srcB = nullptr;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-srcA", STRING_Type, &srcNameA, NULL, REQUIRED, 0, { 0 } },
-    { "-srcB", STRING_Type, &srcNameB, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-scalars", BOOL_Type, &scflag, NULL, REQUIRED, 0, { 0 } },
-    { "-vectors", BOOL_Type, &vflag, NULL, REQUIRED, 0, { 0 } },
+    { "-srcA", STRING_Type, &srcNameA, nullptr, REQUIRED, 0, { 0 } },
+    { "-srcB", STRING_Type, &srcNameB, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-scalars", BOOL_Type, &scflag, nullptr, REQUIRED, 0, { 0 } },
+    { "-vectors", BOOL_Type, &vflag, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -5535,17 +5535,17 @@ int Geom_ProjectCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   srcA = gRepository->GetObject( srcNameA );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcNameA,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcNameB,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5553,19 +5553,19 @@ int Geom_ProjectCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcNameA, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcNameA, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcNameB, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcNameB, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5585,7 +5585,7 @@ int Geom_ProjectCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -5611,7 +5611,7 @@ int Geom_IntegrateScalarSurfCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 1;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -5628,15 +5628,15 @@ int Geom_IntegrateScalarSurfCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5672,8 +5672,8 @@ int Geom_IntegrateScalarThreshCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-thr", DOUBLE_Type, &wssthresh, NULL, REQUIRED, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-thr", DOUBLE_Type, &wssthresh, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -5690,15 +5690,15 @@ int Geom_IntegrateScalarThreshCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcName,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5731,18 +5731,18 @@ int Geom_ReplacePointDataCmd( ClientData clientData, Tcl_Interp *interp,
   int vflag = FALSE;
   char *dstName;
 
-  cvRepositoryData *srcA = NULL;
-  cvRepositoryData *srcB = NULL;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *srcA = nullptr;
+  cvRepositoryData *srcB = nullptr;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   int table_size = 5;
   ARG_Entry arg_table[] = {
-    { "-srcA", STRING_Type, &srcNameA, NULL, REQUIRED, 0, { 0 } },
-    { "-srcB", STRING_Type, &srcNameB, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-scalars", BOOL_Type, &scflag, NULL, REQUIRED, 0, { 0 } },
-    { "-vectors", BOOL_Type, &vflag, NULL, REQUIRED, 0, { 0 } },
+    { "-srcA", STRING_Type, &srcNameA, nullptr, REQUIRED, 0, { 0 } },
+    { "-srcB", STRING_Type, &srcNameB, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-scalars", BOOL_Type, &scflag, nullptr, REQUIRED, 0, { 0 } },
+    { "-vectors", BOOL_Type, &vflag, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -5759,17 +5759,17 @@ int Geom_ReplacePointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Retrieve source object:
   srcA = gRepository->GetObject( srcNameA );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcNameA,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcNameB,
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5777,19 +5777,19 @@ int Geom_ReplacePointDataCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcNameA, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcNameA, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, srcNameB, " not of type cvPolyData", (char *)NULL );
+    Tcl_AppendResult( interp, srcNameB, " not of type cvPolyData", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -5809,7 +5809,7 @@ int Geom_ReplacePointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }

@@ -78,15 +78,15 @@ vtkSVIdListSeedSelector::vtkSVIdListSeedSelector()
 // ----------------------
 vtkSVIdListSeedSelector::~vtkSVIdListSeedSelector()
 {
-  if (this->SourceIds != NULL)
+  if (this->SourceIds != nullptr)
   {
     this->SourceIds->Delete();
-    this->SourceIds = NULL;
+    this->SourceIds = nullptr;
   }
-  if (this->TargetIds != NULL)
+  if (this->TargetIds != nullptr)
   {
     this->TargetIds->Delete();
-    this->TargetIds = NULL;
+    this->TargetIds = nullptr;
   }
 }
 

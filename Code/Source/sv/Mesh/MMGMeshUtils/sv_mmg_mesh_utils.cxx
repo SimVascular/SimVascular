@@ -65,7 +65,7 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
   boundaryScalars->GetRange(minmax, 0);
   int range = minmax[1] - minmax[0];
 
-  if (useSizingFunction && meshSizingFunction == NULL)
+  if (useSizingFunction && meshSizingFunction == nullptr)
   {
     fprintf(stderr,"Cannot use sizing function without a function!");
     return SV_ERROR;
@@ -324,8 +324,8 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
   }
   MMG5_pMesh mesh;
   MMG5_pSol  sol;
-  mesh = NULL;
-  sol = NULL;
+  mesh = nullptr;
+  sol = nullptr;
 
   MMGS_Init_mesh(MMG5_ARG_start,
         	 MMG5_ARG_ppMesh,&mesh,MMG5_ARG_ppMet,&sol,
@@ -333,7 +333,7 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
   mesh->ver = 2;
   mesh->dim = 3;
 
-  vtkDoubleArray *dummyArray = NULL;
+  vtkDoubleArray *dummyArray = nullptr;
   surface->BuildCells();
   surface->BuildLinks();
   if (MMGUtils_ConvertToMMG(mesh, sol, surface, hmin, hmax,
@@ -456,7 +456,7 @@ int MMGUtils_PassCellArray(vtkPolyData *newgeom,
   int i,j,k;
   int subId;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts = new vtkIdType;
   double distance;
   double closestPt[3];
   double minmax[2];

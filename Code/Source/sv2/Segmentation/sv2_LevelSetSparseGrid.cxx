@@ -60,7 +60,7 @@ cvLevelSetSparseGrid::cvLevelSetSparseGrid( double h[], int dims[], double o[] )
 
   numBuckets_ = sqrt( 1.0 * numDenseNodes_ );
   nodeTable_ = new cvSortedList<TableStruct*> * [numBuckets_];
-  if ( nodeTable_ == NULL ) {
+  if ( nodeTable_ == nullptr ) {
     printf("ERR: Couldn't allocate cvLevelSetSparseGrid::nodeTable_.\n");
     return;
   }
@@ -70,16 +70,16 @@ cvLevelSetSparseGrid::cvLevelSetSparseGrid( double h[], int dims[], double o[] )
 
   numSparseNodes_ = 0;
   numSparseEdges_ = 0;
-  htIter_ = NULL;
+  htIter_ = nullptr;
 
-  adjIa_ = NULL;
-  adjJa_ = NULL;
+  adjIa_ = nullptr;
+  adjJa_ = nullptr;
   iaSz_ = 0;
   jaSz_ = 0;
 
-  color_ = NULL;
-  L1map_ = NULL;
-  L2map_ = NULL;
+  color_ = nullptr;
+  L1map_ = nullptr;
+  L2map_ = nullptr;
 
   gridState_ = SGST_Start;
 
@@ -88,7 +88,7 @@ cvLevelSetSparseGrid::cvLevelSetSparseGrid( double h[], int dims[], double o[] )
   // stays true up until the next time step is invoked.
   mineHit_ = 0;
 
-  seedInterface_ = NULL;
+  seedInterface_ = nullptr;
   bandMethod_ = BAND_SWEEP;
   closedPhiVtkValid_ = 0;
 
@@ -168,18 +168,18 @@ void cvLevelSetSparseGrid::ClearHT()
 
 void cvLevelSetSparseGrid::DeallocateCSR()
 {
-  if ( grid_ != NULL ) {
+  if ( grid_ != nullptr ) {
     delete [] grid_;
-    grid_ = NULL;
+    grid_ = nullptr;
   }
-  if ( adjIa_ != NULL ) {
+  if ( adjIa_ != nullptr ) {
     delete [] adjIa_;
-    adjIa_ = NULL;
+    adjIa_ = nullptr;
     iaSz_ = 0;
   }
-  if ( adjJa_ != NULL ) {
+  if ( adjJa_ != nullptr ) {
     delete [] adjJa_;
-    adjJa_ = NULL;
+    adjJa_ = nullptr;
     jaSz_ = 0;
   }
   return;
@@ -192,9 +192,9 @@ void cvLevelSetSparseGrid::DeallocateCSR()
 
 void cvLevelSetSparseGrid::ClearPartitioning()
 {
-  if ( color_ != NULL ) {
+  if ( color_ != nullptr ) {
     delete [] color_;
-    color_ = NULL;
+    color_ = nullptr;
   }
   return;
 }
@@ -401,7 +401,7 @@ int cvLevelSetSparseGrid::InitSign_Internal( cvPolyData *front )
   /*
   cvSolidModel *sm;
   sm = cvSolidModel::DefaultInstantiateSolidModel();
-  if ( sm == NULL ) {
+  if ( sm == nullptr ) {
     return SV_ERROR;
   }
   if ( dim_ == 3 ) {
@@ -522,7 +522,7 @@ int cvLevelSetSparseGrid::InitPhi( cvStrPts *img, double thr )
 
   vtksp = (vtkStructuredPoints*)(img->GetVtkPtr());
   vtkdata = vtksp->GetPointData()->GetScalars();
-  if ( vtkdata == NULL ) {
+  if ( vtkdata == nullptr ) {
     printf( "ERR: cvStrPts used for lset init needs to have scalar data\n" );
     return SV_ERROR;
   }
@@ -552,7 +552,7 @@ int cvLevelSetSparseGrid::InitPhi( cvStrPts *img, double thr )
   // anymore once this call returns:
   local_img = CreateImage( (void*)fdata, numdata, "-float", imgDims, pixDims );
   delete [] fdata;
-  if ( local_img == NULL ) {
+  if ( local_img == nullptr ) {
     printf( "ERR: couldn't create scalar map from given cvStrPts\n" );
     return SV_ERROR;
   }
@@ -611,9 +611,9 @@ int cvLevelSetSparseGrid::InitPhi( cvStrPts *img, double thr )
 
 void cvLevelSetSparseGrid::ClearSeedInterface()
 {
-  if ( seedInterface_ != NULL ) {
+  if ( seedInterface_ != nullptr ) {
     delete seedInterface_;
-    seedInterface_ = NULL;
+    seedInterface_ = nullptr;
   }
   return;
 }
@@ -677,8 +677,8 @@ int cvLevelSetSparseGrid::BuildSeedInterface( cvSolidModel *seed )
   seedBound = cvSolidModel::DefaultInstantiateSolidModel();
   seedIntfSolid = cvSolidModel::DefaultInstantiateSolidModel();
 
-  if ( ( logicalSolid == NULL ) || ( seedBound == NULL ) ||
-       ( seedIntfSolid == NULL ) ) {
+  if ( ( logicalSolid == nullptr ) || ( seedBound == nullptr ) ||
+       ( seedIntfSolid == nullptr ) ) {
     return SV_ERROR;
   }
 
@@ -712,7 +712,7 @@ int cvLevelSetSparseGrid::BuildSeedInterface( cvSolidModel *seed )
 
   delete seedIntfSolid;
 
-  if ( seedInterface_ == NULL ) {
+  if ( seedInterface_ == nullptr ) {
     return SV_ERROR;
   }
 
@@ -781,7 +781,7 @@ void cvLevelSetSparseGrid::InitHTIterator()
     return;
   }
   htCurrBucketId_ = 0;
-  if ( htIter_ != NULL ) {
+  if ( htIter_ != nullptr ) {
     delete htIter_;
   }
   htIter_ = new cvLispListIterator<TableStruct*>(nodeTable_[htCurrBucketId_]);
@@ -798,21 +798,21 @@ TableStruct *cvLevelSetSparseGrid::GetNextHTItem()
   TableStruct *item;
 
   if ( gridState_ < SGST_HashTable ) {
-    return NULL;
+    return nullptr;
   }
-  if ( htIter_ == NULL ) {
-    return NULL;
+  if ( htIter_ == nullptr ) {
+    return nullptr;
   }
   if ( htCurrBucketId_ >= numBuckets_ ) {
-    return NULL;
+    return nullptr;
   }
 
   while ( htIter_->IsDone() ) {
     delete htIter_;
-    htIter_ = NULL;
+    htIter_ = nullptr;
     htCurrBucketId_++;
     if ( htCurrBucketId_ >= numBuckets_ ) {
-      return NULL;
+      return nullptr;
     }
     htIter_ = new cvLispListIterator<TableStruct*>(nodeTable_[htCurrBucketId_]);
   }
@@ -1148,7 +1148,7 @@ int cvLevelSetSparseGrid::ConstructHT( cvPolyData *front )
 
   if ( ! init_ ) {
     sm = cvSolidModel::DefaultInstantiateSolidModel();
-    if ( sm == NULL ) {
+    if ( sm == nullptr ) {
       return SV_ERROR;
     }
     if ( dim_ == 3 ) {
@@ -1691,7 +1691,7 @@ int cvLevelSetSparseGrid::ConstructCSR()
   DeallocateCSR();
   grid_ = new cvLevelSetNode [numSparseNodes_];
   //  color_ = new int [numSparseNodes_];
-  if ( grid_ == NULL ) {
+  if ( grid_ == nullptr ) {
     DeallocateCSR();
     return SV_ERROR;
   }
@@ -1769,7 +1769,7 @@ int cvLevelSetSparseGrid::ConstructCSR()
   iaSz_ = numSparseNodes_ + 1;
   jaSz_ = edgeCnt;
 
-  if ( (adjIa_ == NULL) || (adjJa_ == NULL) ) {
+  if ( (adjIa_ == nullptr) || (adjJa_ == nullptr) ) {
     DeallocateCSR();
     return SV_ERROR;
   }
@@ -1840,13 +1840,13 @@ int cvLevelSetSparseGrid::GetNeighborSparseIxs( cvLevelSetNode *node, int ixs[] 
   k = node->k_;
 
   // Neighbors in x direction:
-  if ( ( neighbor = IJKPresentInCSR( i-1, j, k ) ) != NULL ) {
+  if ( ( neighbor = IJKPresentInCSR( i-1, j, k ) ) != nullptr ) {
     ixs[0] = neighbor->index_;
     num++;
   } else {
     ixs[0] = -1;
   }
-  if ( ( neighbor = IJKPresentInCSR( i+1, j, k ) ) != NULL ) {
+  if ( ( neighbor = IJKPresentInCSR( i+1, j, k ) ) != nullptr ) {
     ixs[1] = neighbor->index_;
     num++;
   } else {
@@ -1854,13 +1854,13 @@ int cvLevelSetSparseGrid::GetNeighborSparseIxs( cvLevelSetNode *node, int ixs[] 
   }
 
   // Neighbors in y direction:
-  if ( ( neighbor = IJKPresentInCSR( i, j-1, k ) ) != NULL ) {
+  if ( ( neighbor = IJKPresentInCSR( i, j-1, k ) ) != nullptr ) {
     ixs[2] = neighbor->index_;
     num++;
   } else {
     ixs[2] = -1;
   }
-  if ( ( neighbor = IJKPresentInCSR( i, j+1, k ) ) != NULL ) {
+  if ( ( neighbor = IJKPresentInCSR( i, j+1, k ) ) != nullptr ) {
     ixs[3] = neighbor->index_;
     num++;
   } else {
@@ -1868,13 +1868,13 @@ int cvLevelSetSparseGrid::GetNeighborSparseIxs( cvLevelSetNode *node, int ixs[] 
   }
 
   // Neighbors in z direction:
-  if ( ( neighbor = IJKPresentInCSR( i, j, k-1 ) ) != NULL ) {
+  if ( ( neighbor = IJKPresentInCSR( i, j, k-1 ) ) != nullptr ) {
     ixs[4] = neighbor->index_;
     num++;
   } else {
     ixs[4] = -1;
   }
-  if ( ( neighbor = IJKPresentInCSR( i, j, k+1 ) ) != NULL ) {
+  if ( ( neighbor = IJKPresentInCSR( i, j, k+1 ) ) != nullptr ) {
     ixs[5] = neighbor->index_;
     num++;
   } else {
@@ -1902,7 +1902,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
   int cnt;
   int status;
 
-  if ( grid_ == NULL ) {
+  if ( grid_ == nullptr ) {
     return SV_ERROR;
   }
 
@@ -1926,7 +1926,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
       delete [] edgeArr;
       return SV_ERROR;
     }
-    if ( IJKPresentInCSR( i, j, k ) == NULL ) {
+    if ( IJKPresentInCSR( i, j, k ) == nullptr ) {
       printf("ERR: self-lookup in CSR failed\n");
       delete [] edgeArr;
       return SV_ERROR;
@@ -1975,7 +1975,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
     }
 
     // Neighbors in x direction:
-    if ( ( neighbor = IJKPresentInCSR( i-1, j, k ) ) != NULL ) {
+    if ( ( neighbor = IJKPresentInCSR( i-1, j, k ) ) != nullptr ) {
       if ( ( neighbor->i_ != (i-1) ) ||
 	   ( neighbor->j_ != j ) ||
 	   ( neighbor->k_ != k ) ) {
@@ -1986,7 +1986,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
       edgeCnt++;
     }
 
-    if ( ( neighbor = IJKPresentInCSR( i+1, j, k ) ) != NULL ) {
+    if ( ( neighbor = IJKPresentInCSR( i+1, j, k ) ) != nullptr ) {
       if ( ( neighbor->i_ != (i+1) ) ||
 	   ( neighbor->j_ != j ) ||
 	   ( neighbor->k_ != k ) ) {
@@ -1998,7 +1998,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
     }
 
     // Neighbors in y direction:
-    if ( ( neighbor = IJKPresentInCSR( i, j-1, k ) ) != NULL ) {
+    if ( ( neighbor = IJKPresentInCSR( i, j-1, k ) ) != nullptr ) {
       if ( ( neighbor->i_ != i ) ||
 	   ( neighbor->j_ != (j-1) ) ||
 	   ( neighbor->k_ != k ) ) {
@@ -2008,7 +2008,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
       }
       edgeCnt++;
     }
-    if ( ( neighbor = IJKPresentInCSR( i, j+1, k ) ) != NULL ) {
+    if ( ( neighbor = IJKPresentInCSR( i, j+1, k ) ) != nullptr ) {
       if ( ( neighbor->i_ != i ) ||
 	   ( neighbor->j_ != (j+1) ) ||
 	   ( neighbor->k_ != k ) ) {
@@ -2020,7 +2020,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
     }
 
     // Neighbors in z direction:
-    if ( ( neighbor = IJKPresentInCSR( i, j, k-1 ) ) != NULL ) {
+    if ( ( neighbor = IJKPresentInCSR( i, j, k-1 ) ) != nullptr ) {
       if ( ( neighbor->i_ != i ) ||
 	   ( neighbor->j_ != j ) ||
 	   ( neighbor->k_ != (k-1) ) ) {
@@ -2030,7 +2030,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
       }
       edgeCnt++;
     }
-    if ( ( neighbor = IJKPresentInCSR( i, j, k+1 ) ) != NULL ) {
+    if ( ( neighbor = IJKPresentInCSR( i, j, k+1 ) ) != nullptr ) {
       if ( ( neighbor->i_ != i ) ||
 	   ( neighbor->j_ != j ) ||
 	   ( neighbor->k_ != (k+1) ) ) {
@@ -2128,8 +2128,8 @@ int cvLevelSetSparseGrid::IJKPresentInHT( int i, int j, int k,
   int tag;
   cvLispListIterator<TableStruct*> *iter;
 
-  (*bucket) = NULL;
-  (*entry) = NULL;
+  (*bucket) = nullptr;
+  (*entry) = nullptr;
 
   if ( (i < 0) || (i >= I_) ||
        (j < 0) || (j >= J_) ||
@@ -2204,13 +2204,13 @@ int cvLevelSetSparseGrid::SetNeighborInfo( cvLevelSetNode *node )
   k = node->k_;
 
   // Neighbors in x direction:
-  if ( ( neighbor = IJKPresentInCSR( i-1, j, k ) ) != NULL ) {
+  if ( ( neighbor = IJKPresentInCSR( i-1, j, k ) ) != nullptr ) {
     node->xPrevIndex_ = neighbor->index_;
     cnt++;
   } else {
     node->xPrevIndex_ = node->index_;
   }
-  if ( ( neighbor = IJKPresentInCSR( i+1, j, k ) ) != NULL ) {
+  if ( ( neighbor = IJKPresentInCSR( i+1, j, k ) ) != nullptr ) {
     node->xNextIndex_ = neighbor->index_;
     cnt++;
   } else {
@@ -2218,13 +2218,13 @@ int cvLevelSetSparseGrid::SetNeighborInfo( cvLevelSetNode *node )
   }
 
   // Neighbors in y direction:
-  if ( ( neighbor = IJKPresentInCSR( i, j-1, k ) ) != NULL ) {
+  if ( ( neighbor = IJKPresentInCSR( i, j-1, k ) ) != nullptr ) {
     node->yPrevIndex_ = neighbor->index_;
     cnt++;
   } else {
     node->yPrevIndex_ = node->index_;
   }
-  if ( ( neighbor = IJKPresentInCSR( i, j+1, k ) ) != NULL ) {
+  if ( ( neighbor = IJKPresentInCSR( i, j+1, k ) ) != nullptr ) {
     node->yNextIndex_ = neighbor->index_;
     cnt++;
   } else {
@@ -2232,13 +2232,13 @@ int cvLevelSetSparseGrid::SetNeighborInfo( cvLevelSetNode *node )
   }
 
   // Neighbors in z direction:
-  if ( ( neighbor = IJKPresentInCSR( i, j, k-1 ) ) != NULL ) {
+  if ( ( neighbor = IJKPresentInCSR( i, j, k-1 ) ) != nullptr ) {
     node->zPrevIndex_ = neighbor->index_;
     cnt++;
   } else {
     node->zPrevIndex_ = node->index_;
   }
-  if ( ( neighbor = IJKPresentInCSR( i, j, k+1 ) ) != NULL ) {
+  if ( ( neighbor = IJKPresentInCSR( i, j, k+1 ) ) != nullptr ) {
     node->zNextIndex_ = neighbor->index_;
     cnt++;
   } else {
@@ -2322,12 +2322,12 @@ cvLevelSetNode *cvLevelSetSparseGrid::IJKPresentInCSR( int i, int j, int k )
   if ( (i < 0) || (i >= I_) ||
        (j < 0) || (j >= J_) ||
        (k < 0) || (k >= K_) ) {
-    return NULL;
+    return nullptr;
   }
 
   ix = IJKToSparseIx( i, j, k );
   if ( ix < 0 ) {
-    return NULL;
+    return nullptr;
   }
   return &(grid_[ix]);
 }
@@ -2410,7 +2410,7 @@ int cvLevelSetSparseGrid::InitIxBuffer()
   if ( gridState_ < SGST_CSR ) {
     return SV_ERROR;
   }
-  if ( ixBuffer_ != NULL ) {
+  if ( ixBuffer_ != nullptr ) {
     delete [] ixBuffer_;
   }
   ixBuffer_ = new int [numSparseNodes_];
@@ -2428,7 +2428,7 @@ int cvLevelSetSparseGrid::InitNodeSets()
   if ( gridState_ < SGST_CSR ) {
     return SV_ERROR;
   }
-  if ( nodeSets_ != NULL ) {
+  if ( nodeSets_ != nullptr ) {
     delete [] nodeSets_;
   }
   nodeSetsSize_ = 2 * numSparseNodes_;
@@ -2743,7 +2743,7 @@ void cvLevelSetSparseGrid::MakePhiVtk( int closed )
   while ( currNode = GetNext() ) {
     xyDiagNode = IJKPresentInCSR( currNode->i_+1, currNode->j_+1,
 				  currNode->k_ );
-    if ( xyDiagNode == NULL ) {
+    if ( xyDiagNode == nullptr ) {
       continue;
     }
     if ( dim_ == 3 ) {
@@ -2753,8 +2753,8 @@ void cvLevelSetSparseGrid::MakePhiVtk( int closed )
 				    currNode->k_+1 );
       xyzDiagNode = IJKPresentInCSR( currNode->i_+1, currNode->j_+1,
 				     currNode->k_+1 );
-      if ( ( yzDiagNode == NULL ) || ( xzDiagNode == NULL ) ||
-	   ( xyzDiagNode == NULL ) ) {
+      if ( ( yzDiagNode == nullptr ) || ( xzDiagNode == nullptr ) ||
+	   ( xyzDiagNode == nullptr ) ) {
 	continue;
       }
     }
@@ -2869,7 +2869,7 @@ void cvLevelSetSparseGrid::MakeClosedPhiVtk()
 	}
 
 	// If (i,j,k) is in the current sparse grid:
-	if ( currNode != NULL ) {
+	if ( currNode != nullptr ) {
 	  datum = currNode->GetDoubleDatum( GS_PHI, tol_ );
 	  if ( IntSign( datum, tol_ ) == -1 ) {
 	    if (bound) {
@@ -2899,7 +2899,7 @@ void cvLevelSetSparseGrid::MakeClosedPhiVtk()
 	    printf("ERR: Unexpected grid mismatch.\n");
 	    phiVtkValid_ = 0;
 	    phiVtk_->Delete();
-	    phiVtk_ = NULL;
+	    phiVtk_ = nullptr;
 	    return;
 	    */
 
@@ -2988,7 +2988,7 @@ int cvLevelSetSparseGrid::GetPartSize( int partNum )
   int i;
   int partSz = 0;
 
-  if ( ( color_ == NULL ) || ( partNum >= numParts_ ) ) {
+  if ( ( color_ == nullptr ) || ( partNum >= numParts_ ) ) {
     return -1;
   }
 
@@ -3026,7 +3026,7 @@ int cvLevelSetSparseGrid::BuildL1Map()
   if ( gridState_ < SGST_CSR ) {
     return SV_ERROR;
   }
-  if ( L1map_ != NULL ) {
+  if ( L1map_ != nullptr ) {
     return SV_OK;
   }
 
@@ -3080,12 +3080,12 @@ int cvLevelSetSparseGrid::BuildGlobalToLocalMap( int partNum, int **map )
   int i;
   int localIx = 0;
 
-  if ( ( color_ == NULL ) || ( partNum >= numParts_ ) ) {
+  if ( ( color_ == nullptr ) || ( partNum >= numParts_ ) ) {
     return SV_ERROR;
   }
 
   *map = new int [numSparseNodes_];
-  if ( *map == NULL ) {
+  if ( *map == nullptr ) {
     printf( "ERR: Memory allocation failure [cvLevelSetSparseGrid::"
 	    "BuildGlobalToLocalMap].\n" );
     return SV_ERROR;
@@ -3121,7 +3121,7 @@ int cvLevelSetSparseGrid::BuildLocalToGlobalMap( int g2lMap[], int **l2gMap, int
   int partSz = 0;
   int partPos = 0;
 
-  if ( color_ == NULL ) {
+  if ( color_ == nullptr ) {
     return SV_ERROR;
   }
 
@@ -3132,7 +3132,7 @@ int cvLevelSetSparseGrid::BuildLocalToGlobalMap( int g2lMap[], int **l2gMap, int
   }
 
   *l2gMap = new int [partSz];
-  if ( *l2gMap == NULL ) {
+  if ( *l2gMap == nullptr ) {
     printf( "ERR: Memory allocation failure [cvLevelSetSparseGrid::"
 	    "BuildLocalToGlobalMap].\n" );
     return SV_ERROR;
@@ -3265,7 +3265,7 @@ cvDataObject *cvLevelSetSparseGrid::GetCSRStructure()
   vtkFloatingPointType crd[3];
 
   if ( gridState_ < SGST_CSR ) {
-    return NULL;
+    return nullptr;
   }
 
   ug = vtkUnstructuredGrid::New();
@@ -3299,10 +3299,10 @@ cvDataObject *cvLevelSetSparseGrid::GetCSRStructure()
     if ( ( currNode->xNextIndex_ != currNode->index_ ) &&
 	 ( currNode->yNextIndex_ != currNode->index_ ) &&
 	 ( (dim_==2) || ( currNode->zNextIndex_ != currNode->index_ ) ) &&
-	 ( xyDiagNode != NULL ) &&
-	 ( (dim_==2) || ( yzDiagNode != NULL ) ) &&
-	 ( (dim_==2) || ( xzDiagNode != NULL ) ) &&
-	 ( (dim_==2) || ( xyzDiagNode != NULL ) ) ) {
+	 ( xyDiagNode != nullptr ) &&
+	 ( (dim_==2) || ( yzDiagNode != nullptr ) ) &&
+	 ( (dim_==2) || ( xzDiagNode != nullptr ) ) &&
+	 ( (dim_==2) || ( xyzDiagNode != nullptr ) ) ) {
 
       // Insert point id's as per the definition given on p.119 (vtk book):
       if ( dim_ == 3 ) {
@@ -3340,7 +3340,7 @@ cvDataObject *cvLevelSetSparseGrid::GetCSRStructure()
 
   ug->Delete();
 
-  return NULL;
+  return nullptr;
 }
 
 

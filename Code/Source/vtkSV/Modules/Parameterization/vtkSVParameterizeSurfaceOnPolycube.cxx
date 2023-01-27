@@ -88,12 +88,12 @@ vtkSVParameterizeSurfaceOnPolycube::vtkSVParameterizeSurfaceOnPolycube()
   this->SurfaceOnPolycubePd = vtkPolyData::New();
   this->PolycubeOnSurfacePd = vtkPolyData::New();
   this->NURBSSurfaceRepresentationPd = vtkPolyData::New();
-  this->PolycubePd = NULL;
-  this->PolycubeUg = NULL;
+  this->PolycubePd = nullptr;
+  this->PolycubeUg = nullptr;
 
-  this->GroupIdsArrayName  = NULL;
-  this->PatchIdsArrayName  = NULL;
-  this->GridIdsArrayName   = NULL;
+  this->GroupIdsArrayName  = nullptr;
+  this->PatchIdsArrayName  = nullptr;
+  this->GridIdsArrayName   = nullptr;
 
   this->EnforcePolycubeConnectivity = 0;
 }
@@ -103,53 +103,53 @@ vtkSVParameterizeSurfaceOnPolycube::vtkSVParameterizeSurfaceOnPolycube()
 // ----------------------
 vtkSVParameterizeSurfaceOnPolycube::~vtkSVParameterizeSurfaceOnPolycube()
 {
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
-  if (this->SurfaceOnPolycubePd != NULL)
+  if (this->SurfaceOnPolycubePd != nullptr)
   {
     this->SurfaceOnPolycubePd->Delete();
-    this->SurfaceOnPolycubePd = NULL;
+    this->SurfaceOnPolycubePd = nullptr;
   }
-  if (this->PolycubeOnSurfacePd != NULL)
+  if (this->PolycubeOnSurfacePd != nullptr)
   {
     this->PolycubeOnSurfacePd->Delete();
-    this->PolycubeOnSurfacePd = NULL;
+    this->PolycubeOnSurfacePd = nullptr;
   }
-  if (this->NURBSSurfaceRepresentationPd != NULL)
+  if (this->NURBSSurfaceRepresentationPd != nullptr)
   {
     this->NURBSSurfaceRepresentationPd->Delete();
-    this->NURBSSurfaceRepresentationPd = NULL;
+    this->NURBSSurfaceRepresentationPd = nullptr;
   }
-  if (this->PolycubePd != NULL)
+  if (this->PolycubePd != nullptr)
   {
     this->PolycubePd->Delete();
-    this->PolycubePd = NULL;
+    this->PolycubePd = nullptr;
   }
-  if (this->PolycubeUg != NULL)
+  if (this->PolycubeUg != nullptr)
   {
     this->PolycubeUg->Delete();
-    this->PolycubeUg = NULL;
+    this->PolycubeUg = nullptr;
   }
 
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
   {
     delete [] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
   }
 
-  if (this->PatchIdsArrayName != NULL)
+  if (this->PatchIdsArrayName != nullptr)
   {
     delete [] this->PatchIdsArrayName;
-    this->PatchIdsArrayName = NULL;
+    this->PatchIdsArrayName = nullptr;
   }
 
-  if (this->GridIdsArrayName != NULL)
+  if (this->GridIdsArrayName != nullptr)
   {
     delete [] this->GridIdsArrayName;
-    this->GridIdsArrayName = NULL;
+    this->GridIdsArrayName = nullptr;
   }
 }
 
@@ -208,7 +208,7 @@ int vtkSVParameterizeSurfaceOnPolycube::PrepFilter()
     strcpy(this->PatchIdsArrayName, "PatchIds");
   }
 
-  if (this->PolycubePd == NULL)
+  if (this->PolycubePd == nullptr)
   {
     vtkErrorMacro("Surface polycube not provided");
     return SV_ERROR;
@@ -245,7 +245,7 @@ int vtkSVParameterizeSurfaceOnPolycube::PrepFilter()
     return SV_OK;
   }
 
-  if (this->PolycubeUg == NULL)
+  if (this->PolycubeUg == nullptr)
   {
     vtkErrorMacro("Volume polycube not provided");
     return SV_ERROR;
@@ -604,7 +604,7 @@ int vtkSVParameterizeSurfaceOnPolycube::RunFilter()
 void vtkSVParameterizeSurfaceOnPolycube::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
     os << indent << "Group ids array name: " << this->GroupIdsArrayName << "\n";
 }
 
@@ -681,7 +681,7 @@ int vtkSVParameterizeSurfaceOnPolycube::InterpolateMapOntoTarget(vtkPolyData *so
   interpolator->SetInputData(1, targetPd);
   interpolator->SetInputData(2, targetBasePd);
   interpolator->SetNumSourceSubdivisions(0);
-  if (dataMatchingArrayName.c_str() != NULL)
+  if (dataMatchingArrayName.c_str() != nullptr)
   {
     interpolator->SetEnableDataMatching(1);
     interpolator->SetDataMatchingArrayName(dataMatchingArrayName.c_str());
@@ -825,7 +825,7 @@ int vtkSVParameterizeSurfaceOnPolycube::FormNURBSSurface()
 
   // Get the divisions on the polycube
   vtkDataArray *polycubeDivisions = this->PolycubeUg->GetFieldData()->GetArray("PolycubeDivisions");
-  if (polycubeDivisions == NULL)
+  if (polycubeDivisions == nullptr)
   {
     std::cerr<< "Array with name PolycubeDivivisions needs to be present on volume polycube" << endl;
     return SV_ERROR;

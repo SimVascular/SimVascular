@@ -331,11 +331,11 @@ cvLevelSetNode *cvLevelSetSparseGrid::GetNext()
 {
   cvLevelSetNode *result;
 
-  if ( grid_ == NULL ) {
-    return NULL;
+  if ( grid_ == nullptr ) {
+    return nullptr;
   }
   if ( currIx_ >= numSparseNodes_ ) {
-    return NULL;
+    return nullptr;
   }
   result = &(grid_[currIx_]);
   currIx_++;

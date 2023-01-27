@@ -62,7 +62,7 @@ void sv4guiQueryKey(HKEY hKey)
         hKey,                    // key handle 
         achClass,                // buffer for class name 
         &cchClassName,           // size of class string 
-        NULL,                    // reserved 
+        nullptr,                    // reserved 
         &cSubKeys,               // number of subkeys 
         &cbMaxSubKey,            // longest subkey size 
         &cchMaxClass,            // longest class string 
@@ -84,9 +84,9 @@ void sv4guiQueryKey(HKEY hKey)
             retCode = RegEnumKeyEx(hKey, i,
                      achKey, 
                      &cbName, 
-                     NULL, 
-                     NULL, 
-                     NULL, 
+                     nullptr, 
+                     nullptr, 
+                     nullptr, 
                      &ftLastWriteTime); 
             if (retCode == ERROR_SUCCESS) 
             {
@@ -108,10 +108,10 @@ void sv4guiQueryKey(HKEY hKey)
             retCode = RegEnumValue(hKey, i, 
                 achValue, 
                 &cchValue, 
-                NULL, 
-                NULL,
-                NULL,
-                NULL);
+                nullptr, 
+                nullptr,
+                nullptr,
+                nullptr);
  
             if (retCode == ERROR_SUCCESS ) 
             { 
@@ -184,7 +184,7 @@ int sv4gui_parse_registry_for_svsolver(char* keytofind, char* rtnval)
         hKey[0],                    // key handle 
         achClass0,                // buffer for class name 
         &cchClassName[0],           // size of class string 
-        NULL,                    // reserved 
+        nullptr,                    // reserved 
         &cSubKeys[0],               // number of subkeys 
         &cbMaxSubKey[0],            // longest subkey size 
         &cchMaxClass[0],            // longest class string 
@@ -205,9 +205,9 @@ int sv4gui_parse_registry_for_svsolver(char* keytofind, char* rtnval)
       retCode = RegEnumKeyEx(hKey[0], i,
                      achKey[0], 
                      &cbName[0], 
-                     NULL, 
-                     NULL, 
-                     NULL, 
+                     nullptr, 
+                     nullptr, 
+                     nullptr, 
                      &ftLastWriteTime[0]);
       
        if (retCode == ERROR_SUCCESS) {
@@ -285,7 +285,7 @@ int sv4gui_parse_registry_for_svsolver_internal(char* toplevel_key, char* keytof
         hKey,                    // key handle 
         achClass,                // buffer for class name 
         &cchClassName,           // size of class string 
-        NULL,                    // reserved 
+        nullptr,                    // reserved 
         &cSubKeys,               // number of subkeys 
         &cbMaxSubKey,            // longest subkey size 
         &cchMaxClass,            // longest class string 
@@ -317,7 +317,7 @@ int sv4gui_parse_registry_for_svsolver_internal(char* toplevel_key, char* keytof
       retCode = RegEnumValue(hKey, i, 
                 achValue, 
                 &cchValue, 
-                NULL,
+                nullptr,
 		&dwType,
 		(LPBYTE)&lszValue,
 		&dwSize);

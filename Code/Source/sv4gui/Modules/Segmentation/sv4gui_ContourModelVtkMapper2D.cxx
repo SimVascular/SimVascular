@@ -153,13 +153,13 @@ void sv4guiContourModelVtkMapper2D::FindContourOnCurrentSlice(mitk::BaseRenderer
 
     sv4guiContour* contour=input->GetContour(t);
     const mitk::PlaneGeometry *rendererPlaneGeometry = renderer->GetCurrentWorldPlaneGeometry();
-    if(contour!=NULL && rendererPlaneGeometry!=NULL && contour->IsOnPlane(rendererPlaneGeometry,1.0))
+    if(contour!=nullptr && rendererPlaneGeometry!=nullptr && contour->IsOnPlane(rendererPlaneGeometry,1.0))
     {
         m_Contour=contour;
     }
     else
     {
-        m_Contour=NULL;
+        m_Contour=nullptr;
     }
 }
 
@@ -184,7 +184,7 @@ void sv4guiContourModelVtkMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* r
 
     //Search one available contour for this renderer plane
     const mitk::PlaneGeometry *rendererPlaneGeometry = renderer->GetCurrentWorldPlaneGeometry();
-    if(rendererPlaneGeometry==NULL)
+    if(rendererPlaneGeometry==nullptr)
         return;
 
     float point_size = m_Point2DSize*renderer->GetScaleFactorMMPerDisplayUnit();
@@ -192,7 +192,7 @@ void sv4guiContourModelVtkMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* r
 //    m_Contour=input->GetContourOnPlane(rendererPlaneGeometry,1.0,t);
     FindContourOnCurrentSlice(renderer,t);
 
-    if(m_Contour==NULL){
+    if(m_Contour==nullptr){
         ls->m_PropAssembly->VisibilityOff();
         return;
     }
@@ -362,7 +362,7 @@ void sv4guiContourModelVtkMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* r
     }
 
     ls->m_ContourActor->VisibilityOn();
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
     {
 //        ls->m_ContourActor->GetProperty()->SetColor(color[0],color[1],color[2]);
     }
@@ -386,7 +386,7 @@ void sv4guiContourModelVtkMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* r
 void sv4guiContourModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 {
     mitk::DataNode* node = GetDataNode();
-    if( node == NULL )
+    if( node == nullptr )
         return;
 
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
@@ -481,7 +481,7 @@ void sv4guiContourModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer 
     }
 
     ls->m_ContourActor->VisibilityOn();
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
     {
 //        ls->m_ContourActor->GetProperty()->SetColor(color[0],color[1],color[2]);
     }

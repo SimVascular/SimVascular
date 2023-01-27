@@ -55,7 +55,7 @@ void sv4guiProjectCloseAction::Run(const QList<mitk::DataNode::Pointer> &selecte
     }
 
     QString msg = "Are you sure that you want to close the project "+QString::fromStdString(selectedNode->GetName())+"?";
-    if (QMessageBox::question(NULL, "Close Project", msg,
+    if (QMessageBox::question(nullptr, "Close Project", msg,
                               QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
     {
         return;
@@ -76,7 +76,7 @@ void sv4guiProjectCloseAction::Run(const QList<mitk::DataNode::Pointer> &selecte
     catch(std::exception& e)
     {
         MITK_ERROR << "Project closing failed!";
-        QMessageBox::warning(NULL, "Error", QString("An error occurred during closing project: %1").arg(e.what()));
+        QMessageBox::warning(nullptr, "Error", QString("An error occurred during closing project: %1").arg(e.what()));
     }
 
 }

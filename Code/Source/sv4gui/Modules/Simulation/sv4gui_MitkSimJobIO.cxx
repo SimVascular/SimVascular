@@ -36,7 +36,7 @@
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
 
-#include <tinyxml.h>
+#include <simvascular_tinyxml.h>
 
 #include <fstream>
 

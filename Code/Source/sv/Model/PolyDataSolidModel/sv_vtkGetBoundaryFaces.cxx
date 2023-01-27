@@ -103,9 +103,9 @@ vtkGetBoundaryFaces::vtkGetBoundaryFaces()
     this->BoundaryPointArray = vtkIntArray::New();
     this->BoundaryCellArray = vtkIntArray::New();
 
-    this->checked = NULL;
-    this->checkedcarefully = NULL;
-    this->pointMapper = NULL;
+    this->checked = nullptr;
+    this->checkedcarefully = nullptr;
+    this->pointMapper = nullptr;
 
     this->NumberOfRegions = 0;
 }
@@ -142,11 +142,11 @@ vtkGetBoundaryFaces::~vtkGetBoundaryFaces()
     if (this->CheckCellsCareful2)
 	this->CheckCellsCareful2->Delete();
 
-    if (this->checked != NULL)
+    if (this->checked != nullptr)
       delete [] this->checked;
-    if (this->checkedcarefully != NULL)
+    if (this->checkedcarefully != nullptr)
       delete [] this->checkedcarefully;
-    if (this->pointMapper != NULL)
+    if (this->pointMapper != nullptr)
       delete [] this->pointMapper;
 }
 
@@ -276,7 +276,7 @@ void vtkGetBoundaryFaces::FindBoundaryRegion(int reg,int start)
     //Variables used in function
     int i;
     vtkIdType j,k,l,cellId;
-    vtkIdType *pts = 0;
+    const vtkIdType *pts = new vtkIdType;
     vtkIdType npts = 0;
     vtkIdType numNei, nei, p1, p2, nIds, neis;
 
@@ -368,7 +368,7 @@ void vtkGetBoundaryFaces::FindBoundaryRegionTipToe(int reg)
     //Variables used in function
     int i;
     vtkIdType j,k,l;
-    vtkIdType *pts = 0;
+    const vtkIdType *pts = new vtkIdType;
     vtkIdType npts = 0;
     vtkIdType cellId;
     vtkIdType numNei, nei, p1, p2, nIds, neiId;

@@ -56,7 +56,7 @@ vtkStandardNewMacro(vtkSVCleanUnstructuredGrid);
 // ----------------------
 vtkSVCleanUnstructuredGrid::vtkSVCleanUnstructuredGrid()
 {
-  this->Locator = NULL;
+  this->Locator = nullptr;
   this->ToleranceIsAbsolute  = 0;
   this->Tolerance            = 0.0;
   this->AbsoluteTolerance    = 1.0;
@@ -67,7 +67,7 @@ vtkSVCleanUnstructuredGrid::vtkSVCleanUnstructuredGrid()
 // ----------------------
 vtkSVCleanUnstructuredGrid::~vtkSVCleanUnstructuredGrid()
 {
-  this->SetLocator(NULL);
+  this->SetLocator(nullptr);
 }
 
 // ----------------------
@@ -222,7 +222,7 @@ void vtkSVCleanUnstructuredGrid::CreateDefaultLocator(vtkDataSet *input)
     }
   }
 
-  if ( this->Locator == NULL)
+  if ( this->Locator == nullptr)
   {
     if (tol==0.0)
     {
@@ -242,7 +242,7 @@ void vtkSVCleanUnstructuredGrid::CreateDefaultLocator(vtkDataSet *input)
     // check that the tolerance wasn't changed from zero to non-zero
     if ((tol>0.0) && (this->GetLocator()->GetTolerance()==0.0))
     {
-      this->SetLocator(NULL);
+      this->SetLocator(nullptr);
       this->Locator = vtkPointLocator::New();
       this->Locator->Register(this);
       this->Locator->Delete();

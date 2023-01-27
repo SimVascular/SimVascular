@@ -73,11 +73,11 @@
 cvTetGenAdapt::cvTetGenAdapt()
   : cvAdaptObject(KERNEL_TETGEN)
 {
-  meshobject_ = NULL;
-  inmesh_  = NULL;
-  insurface_mesh_ = NULL;
-  outmesh_ = NULL;
-  outsurface_mesh_ = NULL;
+  meshobject_ = nullptr;
+  inmesh_  = nullptr;
+  insurface_mesh_ = nullptr;
+  outmesh_ = nullptr;
+  outsurface_mesh_ = nullptr;
 
   options.poly_ = 1;
   options.metric_option_ = 1;
@@ -94,11 +94,11 @@ cvTetGenAdapt::cvTetGenAdapt()
   options.sphere_[3] = 0;
   options.sphere_[4] = 1;
 
-  sol_ = NULL;
-  ybar_ = NULL;
-  hessians_ = NULL;
-  avgspeed_ = NULL;
-  errormetric_ = NULL;
+  sol_ = nullptr;
+  ybar_ = nullptr;
+  hessians_ = nullptr;
+  avgspeed_ = nullptr;
+  errormetric_ = nullptr;
 }
 
 cvTetGenAdapt::cvTetGenAdapt( const cvTetGenAdapt& Adapt)
@@ -110,26 +110,26 @@ cvTetGenAdapt::cvTetGenAdapt( const cvTetGenAdapt& Adapt)
 
 cvTetGenAdapt::~cvTetGenAdapt()
 {
-  if (meshobject_ != NULL)
+  if (meshobject_ != nullptr)
     gRepository->UnRegister(meshobject_->GetName());
 
-  if (inmesh_ != NULL)
+  if (inmesh_ != nullptr)
     inmesh_->Delete();
-  if (insurface_mesh_ != NULL)
+  if (insurface_mesh_ != nullptr)
     insurface_mesh_->Delete();
 
-  if (outmesh_ != NULL)
+  if (outmesh_ != nullptr)
     outmesh_->Delete();
-  if (outsurface_mesh_ != NULL)
+  if (outsurface_mesh_ != nullptr)
     outsurface_mesh_->Delete();
 
-  if (sol_ != NULL)
+  if (sol_ != nullptr)
     delete [] sol_;
-  if (avgspeed_ != NULL)
+  if (avgspeed_ != nullptr)
     delete [] avgspeed_;
-  if (hessians_ != NULL)
+  if (hessians_ != nullptr)
     delete [] hessians_;
-  if (errormetric_ != NULL)
+  if (errormetric_ != nullptr)
     delete [] errormetric_;
 }
 
@@ -160,7 +160,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 		char *meshFileName,
 		char *solidFileName)
 {
-  if (meshobject_ != NULL)
+  if (meshobject_ != nullptr)
   {
     fprintf(stderr,"Cannot create a mesh object, one already exists\n");
     return SV_ERROR;
@@ -206,7 +206,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
     return SV_ERROR;
   }
 
-  if (solidFileName != NULL)
+  if (solidFileName != nullptr)
   {
     evalmestr[0]='\0';
     sprintf(evalmestr,"%s %s %s",mesh_name," LoadModel -file ",solidFileName);
@@ -218,7 +218,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
     }
   }
 
-  if (meshFileName != NULL)
+  if (meshFileName != nullptr)
   {
     evalmestr[0]='\0';
     sprintf(evalmestr,"%s %s %s",mesh_name," LoadMesh -file ",meshFileName);
@@ -245,7 +245,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 		char *meshFileName,
 		char *solidFileName)
 {
-  if (meshobject_ != NULL)
+  if (meshobject_ != nullptr)
   {
     fprintf(stderr,"Cannot create a mesh object, one already exists\n");
     return SV_ERROR;
@@ -258,7 +258,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   }
   cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("TetGen");
   meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,meshFileName,solidFileName);
-  if ( meshobject_ == NULL ) {
+  if ( meshobject_ == nullptr ) {
     fprintf(stderr,"Mesh Object is null after instantiation!\n");
     return SV_ERROR;
   }
@@ -267,7 +267,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   // Register the mesh:
   if ( reg_status == 0 ) {
     Tcl_AppendResult( interp, "error registering obj ", mesh_name,
-        	      " in repository", (char *)NULL );
+        	      " in repository", (char *)nullptr );
     fprintf(stderr,"Error when registering\n");
     delete meshobject_;
     return SV_ERROR;
@@ -277,7 +277,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvMesh_ObjectCmd,
         	     (ClientData)meshobject_, fakeDeleteMesh );
 
-  if (solidFileName != NULL)
+  if (solidFileName != nullptr)
   {
     if (this->LoadModel(solidFileName) != SV_OK)
     {
@@ -285,7 +285,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
       return SV_ERROR;
     }
   }
-  if (meshFileName != NULL)
+  if (meshFileName != nullptr)
   {
     if (this->LoadMesh(meshFileName) != SV_OK)
     {
@@ -307,7 +307,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(
 		char *meshFileName,
 		char *solidFileName)
 {
-  if (meshobject_ != NULL)
+  if (meshobject_ != nullptr)
   {
     fprintf(stderr,"Cannot create a mesh object, one already exists\n");
     return SV_ERROR;
@@ -320,7 +320,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(
   }
   cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("TetGen");
   meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject(meshFileName,solidFileName);
-  if ( meshobject_ == NULL ) {
+  if ( meshobject_ == nullptr ) {
     fprintf(stderr,"Mesh Object is null after instantiation!\n");
     return SV_ERROR;
   }
@@ -353,7 +353,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(
     fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
     return SV_ERROR;
   }
-  if (solidFileName != NULL)
+  if (solidFileName != nullptr)
   {
     evalmestr[0]='\0';
     sprintf(evalmestr,"%s.LoadModel('%s')",mesh_name,solidFileName);
@@ -365,7 +365,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(
       return SV_ERROR;
     }
   }
-  if (meshFileName != NULL)
+  if (meshFileName != nullptr)
   {
     evalmestr[0]='\0';
     sprintf(evalmestr,"%s.LoadMesh('%s')",mesh_name,meshFileName);
@@ -391,7 +391,7 @@ int cvTetGenAdapt::LoadModel(char *fileName)
     return SV_ERROR;
   }
 
-  if (insurface_mesh_ != NULL)
+  if (insurface_mesh_ != nullptr)
     insurface_mesh_->Delete();
 
   vtkSmartPointer<vtkXMLPolyDataReader> pdreader =
@@ -406,7 +406,7 @@ int cvTetGenAdapt::LoadModel(char *fileName)
   printf(" Total # of vertices: %d\n", insurface_mesh_->GetNumberOfPoints());
   insurface_mesh_->BuildLinks();
 
-  if (meshobject_ == NULL)
+  if (meshobject_ == nullptr)
   {
     fprintf(stderr,"Mesh object must first be created with CreateInternalMeshObject before loading\n");
     return SV_ERROR;
@@ -419,10 +419,10 @@ int cvTetGenAdapt::LoadModel(char *fileName)
 
 int cvTetGenAdapt::LoadModel(vtkPolyData *pd)
 {
-  if (pd==NULL)
+  if (pd==nullptr)
     return SV_ERROR;
 
-  if (insurface_mesh_ != NULL)
+  if (insurface_mesh_ != nullptr)
     insurface_mesh_->Delete();
 
   insurface_mesh_ = vtkPolyData::New();
@@ -433,7 +433,7 @@ int cvTetGenAdapt::LoadModel(vtkPolyData *pd)
   printf(" Total # of vertices: %d\n", insurface_mesh_->GetNumberOfPoints());
   insurface_mesh_->BuildLinks();
 
-  if (meshobject_ == NULL)
+  if (meshobject_ == nullptr)
   {
     fprintf(stderr,"Mesh object must first be created before loading\n");
     return SV_ERROR;
@@ -456,7 +456,7 @@ int cvTetGenAdapt::LoadMesh(char *fileName)
     return SV_ERROR;
   }
 
-  if (inmesh_ != NULL)
+  if (inmesh_ != nullptr)
     inmesh_->Delete();
   vtkSmartPointer<vtkXMLUnstructuredGridReader> ugreader =
     vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
@@ -475,10 +475,10 @@ int cvTetGenAdapt::LoadMesh(char *fileName)
 
 int cvTetGenAdapt::LoadMesh(vtkUnstructuredGrid* ug)
 {
-  if (ug==NULL)
+  if (ug==nullptr)
     return SV_ERROR;
 
-  if (inmesh_ != NULL)
+  if (inmesh_ != nullptr)
     inmesh_->Delete();
 
   inmesh_ = vtkUnstructuredGrid::New();
@@ -502,14 +502,14 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
     return SV_ERROR;
   }
 
-  if (sol_ != NULL)
+  if (sol_ != nullptr)
     delete [] sol_;
   if (AdaptUtils_readArrayFromFile(fileName,"solution",sol_) != SV_OK)
   {
     fprintf(stderr,"Error: Couldn't read solution from file\n");
     return SV_ERROR;
   }
-  if (inmesh_ != NULL)
+  if (inmesh_ != nullptr)
   {
     int nVar = 5;//Number of variables in solution
     if (AdaptUtils_attachArray(sol_,inmesh_,"solution",nVar,options.poly_) != SV_OK)
@@ -538,7 +538,7 @@ int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
     return SV_ERROR;
   }
 
-  if (ybar_ != NULL)
+  if (ybar_ != nullptr)
     delete [] ybar_;
 
   if (AdaptUtils_readArrayFromFile(fileName,"ybar",ybar_) != SV_OK)
@@ -547,7 +547,7 @@ int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
     return SV_ERROR;
   }
 
-  if (inmesh_ != NULL)
+  if (inmesh_ != nullptr)
   {
     int nVar=5; //Number of variables in average speed
     if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != SV_OK)
@@ -580,7 +580,7 @@ int cvTetGenAdapt::LoadAvgSpeedFromFile(char *fileName)
     return SV_ERROR;
   }
 
-  if (avgspeed_ != NULL)
+  if (avgspeed_ != nullptr)
     delete [] avgspeed_;
   if (AdaptUtils_readArrayFromFile(fileName,"average speed",avgspeed_) != SV_OK)
   {
@@ -597,7 +597,7 @@ int cvTetGenAdapt::LoadAvgSpeedFromFile(char *fileName)
     }
   }
 
-  if (inmesh_ != NULL)
+  if (inmesh_ != nullptr)
   {
     int nVar=1; //Number of variables in average speed
     if (AdaptUtils_attachArray(avgspeed_,inmesh_,"average_speed",nVar,options.poly_) != SV_OK)
@@ -625,7 +625,7 @@ int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
     return SV_ERROR;
   }
 
-  if (hessians_ != NULL)
+  if (hessians_ != nullptr)
     delete [] hessians_;
 
   if (AdaptUtils_readArrayFromFile(fileName,"hessians",hessians_) != SV_OK)
@@ -634,7 +634,7 @@ int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
     return SV_ERROR;
   }
 
-  if (inmesh_ != NULL)
+  if (inmesh_ != nullptr)
   {
     int nVar=9;
     if (AdaptUtils_attachArray(hessians_,inmesh_,"hessians",nVar,options.poly_) != SV_OK)
@@ -656,13 +656,13 @@ int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
 // ---------------
 int cvTetGenAdapt::ReadSolutionFromMesh()
 {
-  if (inmesh_ == NULL)
+  if (inmesh_ == nullptr)
   {
     fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
     return SV_ERROR;
   }
 
-  if (sol_ != NULL)
+  if (sol_ != nullptr)
     delete [] sol_;
 
   fprintf(stdout,"Getting solution from step %d to step %d in increments of %d\n",
@@ -686,13 +686,13 @@ int cvTetGenAdapt::ReadSolutionFromMesh()
 // ---------------
 int cvTetGenAdapt::ReadYbarFromMesh()
 {
-  if (inmesh_ == NULL)
+  if (inmesh_ == nullptr)
   {
     fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
     return SV_ERROR;
   }
 
-  if (ybar_ != NULL)
+  if (ybar_ != nullptr)
     delete [] ybar_;
   char ybar_step[80];
   sprintf(ybar_step,"%s_%05i","ybar",options.outstep_);
@@ -711,7 +711,7 @@ int cvTetGenAdapt::ReadYbarFromMesh()
     return SV_ERROR;
   }
 
-  if (inmesh_ != NULL)
+  if (inmesh_ != nullptr)
   {
     int nVar = 5; //Number of variables in average speed
     if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != SV_OK)
@@ -734,12 +734,12 @@ int cvTetGenAdapt::ReadYbarFromMesh()
 // ---------------
 int cvTetGenAdapt::ReadAvgSpeedFromMesh()
 {
-  if (inmesh_ == NULL)
+  if (inmesh_ == nullptr)
   {
     fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
     return SV_ERROR;
   }
-  if (avgspeed_ != NULL)
+  if (avgspeed_ != nullptr)
     delete [] avgspeed_;
   char avgspeed_step[80];
   sprintf(avgspeed_step,"%s_%05i","average_speed",options.outstep_);
@@ -766,7 +766,7 @@ int cvTetGenAdapt::ReadAvgSpeedFromMesh()
     return SV_ERROR;
   }
 
-  if (inmesh_ != NULL)
+  if (inmesh_ != nullptr)
   {
     int nVar = 1; //Number of variables in average speed
     if (AdaptUtils_attachArray(avgspeed_,inmesh_,"average_speed",nVar,options.poly_) != SV_OK)
@@ -852,7 +852,7 @@ int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
   if (strategy != -1)
     options.strategy_ = strategy;
 
-  if (inmesh_ == NULL)
+  if (inmesh_ == nullptr)
   {
     fprintf(stderr,"Error: Mesh must be loaded to set hessians\n");
     return SV_ERROR;
@@ -867,9 +867,9 @@ int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
   case 3 : {  //Read solution from mesh and calculate average solution. Then calculate hessian
       if (options.metric_option_ == 1)
       {
-	if (avgspeed_ == NULL)
+	if (avgspeed_ == nullptr)
 	{
-	  if (input == NULL)
+	  if (input == nullptr)
 	    return SV_ERROR;
 	  if (this->LoadAvgSpeedFromFile(input) != SV_OK)
 	  {
@@ -905,7 +905,7 @@ int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
   }
   break;
   case 4: { //Read some other array from the mesh to set on mesh
-      if (input != NULL)
+      if (input != nullptr)
       {
 	if (AdaptUtils_checkArrayExists(inmesh_,0,input) != SV_OK)
 	{
@@ -960,12 +960,12 @@ int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
 // -----------------------
 int cvTetGenAdapt::SetupMesh()
 {
-  if (inmesh_ == NULL || insurface_mesh_ == NULL)
+  if (inmesh_ == nullptr || insurface_mesh_ == nullptr)
   {
     fprintf(stderr,"ERROR: Mesh and model must be loaded prior to running the adaptor\n");
     return SV_ERROR;
   }
-  if (meshobject_ == NULL)
+  if (meshobject_ == nullptr)
   {
     fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
     return SV_ERROR;
@@ -1001,12 +1001,12 @@ int cvTetGenAdapt::SetupMesh()
 // -----------------------
 int cvTetGenAdapt::RunAdaptor()
 {
-  if (meshobject_ == NULL)
+  if (meshobject_ == nullptr)
   {
     fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
     return SV_ERROR;
   }
-  if (inmesh_ == NULL || insurface_mesh_ == NULL)
+  if (inmesh_ == nullptr || insurface_mesh_ == nullptr)
   {
     fprintf(stderr,"ERROR: Mesh and model must be loaded prior to running the adaptor\n");
     return SV_ERROR;
@@ -1031,13 +1031,13 @@ int cvTetGenAdapt::PrintStats()
 // -----------------------
 int cvTetGenAdapt::GetAdaptedMesh()
 {
-  if (outmesh_ != NULL)
+  if (outmesh_ != nullptr)
     outmesh_->Delete();
 
-  if (outsurface_mesh_ != NULL)
+  if (outsurface_mesh_ != nullptr)
     outsurface_mesh_->Delete();
 
-  if (meshobject_ == NULL)
+  if (meshobject_ == nullptr)
   {
     fprintf(stderr,"Mesh Object is null!\n");
     return SV_ERROR;
@@ -1053,14 +1053,14 @@ int cvTetGenAdapt::GetAdaptedMesh()
 // -----------------------
 int cvTetGenAdapt::TransferSolution()
 {
-  if (inmesh_ == NULL)
+  if (inmesh_ == nullptr)
   {
-    fprintf(stderr,"Inmesh is NULL!\n");
+    fprintf(stderr,"Inmesh is nullptr!\n");
     return SV_ERROR;
   }
-  if (outmesh_ == NULL)
+  if (outmesh_ == nullptr)
   {
-    fprintf(stderr,"Outmesh is NULL!\n");
+    fprintf(stderr,"Outmesh is nullptr!\n");
     return SV_ERROR;
   }
   int nVar = 5;// Number of variables in sol
@@ -1077,14 +1077,14 @@ int cvTetGenAdapt::TransferSolution()
 // -----------------------
 int cvTetGenAdapt::TransferRegions()
 {
-  if (insurface_mesh_ == NULL)
+  if (insurface_mesh_ == nullptr)
   {
-    fprintf(stderr,"In surfacemesh is NULL!\n");
+    fprintf(stderr,"In surfacemesh is nullptr!\n");
     return SV_ERROR;
   }
-  if (outsurface_mesh_ == NULL)
+  if (outsurface_mesh_ == nullptr)
   {
-    fprintf(stderr,"Out surfacemesh is NULL!\n");
+    fprintf(stderr,"Out surfacemesh is nullptr!\n");
     return SV_ERROR;
   }
 
@@ -1102,9 +1102,9 @@ int cvTetGenAdapt::TransferRegions()
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
 {
-  if (outsurface_mesh_ == NULL)
+  if (outsurface_mesh_ == nullptr)
   {
-    if (meshobject_ == NULL)
+    if (meshobject_ == nullptr)
     {
       fprintf(stderr,"Mesh Object is null!\n");
       return SV_ERROR;
@@ -1126,9 +1126,9 @@ int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedModelFace(int faceid, char *fileName)
 {
-  if (outsurface_mesh_ == NULL)
+  if (outsurface_mesh_ == nullptr)
   {
-    if (meshobject_ == NULL)
+    if (meshobject_ == nullptr)
     {
       fprintf(stderr,"Mesh Object is null!\n");
       return SV_ERROR;
@@ -1156,9 +1156,9 @@ int cvTetGenAdapt::WriteAdaptedModelFace(int faceid, char *fileName)
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
 {
-  if (outmesh_ == NULL)
+  if (outmesh_ == nullptr)
   {
-    if (meshobject_ == NULL)
+    if (meshobject_ == nullptr)
     {
       fprintf(stderr,"Mesh Object is null!\n");
       return SV_ERROR;
@@ -1186,7 +1186,7 @@ int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
   }
   else
   {
-    if (sol_ != NULL)
+    if (sol_ != nullptr)
       delete [] sol_;
 
     int nVar = 5; //Number of variables in solution

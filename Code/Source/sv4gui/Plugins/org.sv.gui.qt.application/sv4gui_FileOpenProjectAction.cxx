@@ -131,7 +131,7 @@ void sv4guiFileOpenProjectAction::Run()
        if(lastSVProjPath=="")
            lastSVProjPath=QDir::homePath();
 
-       QString projPath = QFileDialog::getExistingDirectory(NULL, tr("Choose Project"),
+       QString projPath = QFileDialog::getExistingDirectory(nullptr, tr("Choose Project"),
                                                         lastSVProjPath);
 
         if(projPath.trimmed().isEmpty()) return;
@@ -163,7 +163,7 @@ void sv4guiFileOpenProjectAction::Run()
                 prefs->Flush();
             }
         }else{
-            QMessageBox::warning(NULL,"Invalid Project","No project image location file found.");
+            QMessageBox::warning(nullptr,"Invalid Project","No project image location file found.");
         }
     }
     catch (std::exception& e)

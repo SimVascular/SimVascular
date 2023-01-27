@@ -52,12 +52,12 @@ public:
   // Mesh object factory method that delegates creation of meshes to the
   //  concrete implementations.
   #ifdef SV_USE_TCL
-  static cvMeshObject* DefaultInstantiateMeshObject( Tcl_Interp *interp = NULL,
-    char *const meshFileName = NULL, char *const solidFileName = NULL );
+  static cvMeshObject* DefaultInstantiateMeshObject( Tcl_Interp *interp = nullptr,
+    char *const meshFileName = nullptr, char *const solidFileName = nullptr );
   #endif
   #ifdef SV_USE_PYTHON
   static cvMeshObject* DefaultInstantiateMeshObject(
-    char *const meshFileName = NULL, char *const solidFileName = NULL );
+    char *const meshFileName = nullptr, char *const solidFileName = nullptr );
   #endif
   // Methods that concrete implementations must provide for meshing system abstraction.
 

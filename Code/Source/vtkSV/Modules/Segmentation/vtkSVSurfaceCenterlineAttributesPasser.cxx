@@ -78,20 +78,20 @@ vtkStandardNewMacro(vtkSVSurfaceCenterlineAttributesPasser);
 vtkSVSurfaceCenterlineAttributesPasser::vtkSVSurfaceCenterlineAttributesPasser()
 {
   this->WorkPd = vtkPolyData::New();
-  this->MergedCenterlines = NULL;
-  this->PolycubePd = NULL;
+  this->MergedCenterlines = nullptr;
+  this->PolycubePd = nullptr;
 
-  this->CenterlineGroupIdsArrayName = NULL;
-  this->CenterlineRadiusArrayName = NULL;
-  this->CenterlineIdsArrayName = NULL;
-  this->GroupIdsArrayName = NULL;
-  this->BlankingArrayName = NULL;
-  this->TractIdsArrayName = NULL;
-  this->ParallelTransportVectorArrayName = NULL;
+  this->CenterlineGroupIdsArrayName = nullptr;
+  this->CenterlineRadiusArrayName = nullptr;
+  this->CenterlineIdsArrayName = nullptr;
+  this->GroupIdsArrayName = nullptr;
+  this->BlankingArrayName = nullptr;
+  this->TractIdsArrayName = nullptr;
+  this->ParallelTransportVectorArrayName = nullptr;
 
-  this->PatchIdsArrayName = NULL;
-  this->SlicePointsArrayName = NULL;
-  this->TransformedNormalsArrayName = NULL;
+  this->PatchIdsArrayName = nullptr;
+  this->SlicePointsArrayName = nullptr;
+  this->TransformedNormalsArrayName = nullptr;
 
   this->EnforceBoundaryDirections = 0;
   this->UseRadiusInformation = 1;
@@ -106,79 +106,79 @@ vtkSVSurfaceCenterlineAttributesPasser::vtkSVSurfaceCenterlineAttributesPasser()
 // ----------------------
 vtkSVSurfaceCenterlineAttributesPasser::~vtkSVSurfaceCenterlineAttributesPasser()
 {
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
-  if (this->MergedCenterlines != NULL)
+  if (this->MergedCenterlines != nullptr)
   {
     this->MergedCenterlines->Delete();
-    this->MergedCenterlines = NULL;
+    this->MergedCenterlines = nullptr;
   }
-  if (this->PolycubePd != NULL)
+  if (this->PolycubePd != nullptr)
   {
     this->PolycubePd->Delete();
-    this->PolycubePd = NULL;
+    this->PolycubePd = nullptr;
   }
-  if (this->CenterlineGroupIdsArrayName != NULL)
+  if (this->CenterlineGroupIdsArrayName != nullptr)
   {
     delete [] this->CenterlineGroupIdsArrayName;
-    this->CenterlineGroupIdsArrayName = NULL;
+    this->CenterlineGroupIdsArrayName = nullptr;
   }
 
-  if (this->CenterlineRadiusArrayName != NULL)
+  if (this->CenterlineRadiusArrayName != nullptr)
   {
     delete [] this->CenterlineRadiusArrayName;
-    this->CenterlineRadiusArrayName = NULL;
+    this->CenterlineRadiusArrayName = nullptr;
   }
 
-  if (this->CenterlineIdsArrayName != NULL)
+  if (this->CenterlineIdsArrayName != nullptr)
   {
     delete [] this->CenterlineIdsArrayName;
-    this->CenterlineIdsArrayName = NULL;
+    this->CenterlineIdsArrayName = nullptr;
   }
 
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
   {
     delete [] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
   }
 
-  if (this->BlankingArrayName != NULL)
+  if (this->BlankingArrayName != nullptr)
   {
     delete [] this->BlankingArrayName;
-    this->BlankingArrayName = NULL;
+    this->BlankingArrayName = nullptr;
   }
 
-  if (this->TractIdsArrayName != NULL)
+  if (this->TractIdsArrayName != nullptr)
   {
     delete [] this->TractIdsArrayName;
-    this->TractIdsArrayName = NULL;
+    this->TractIdsArrayName = nullptr;
   }
 
-  if (this->PatchIdsArrayName != NULL)
+  if (this->PatchIdsArrayName != nullptr)
   {
     delete [] this->PatchIdsArrayName;
-    this->PatchIdsArrayName = NULL;
+    this->PatchIdsArrayName = nullptr;
   }
 
-  if (this->SlicePointsArrayName != NULL)
+  if (this->SlicePointsArrayName != nullptr)
   {
     delete [] this->SlicePointsArrayName;
-    this->SlicePointsArrayName = NULL;
+    this->SlicePointsArrayName = nullptr;
   }
 
-  if (this->TransformedNormalsArrayName != NULL)
+  if (this->TransformedNormalsArrayName != nullptr)
   {
     delete [] this->TransformedNormalsArrayName;
-    this->TransformedNormalsArrayName = NULL;
+    this->TransformedNormalsArrayName = nullptr;
   }
 
-  if (this->ParallelTransportVectorArrayName != NULL)
+  if (this->ParallelTransportVectorArrayName != nullptr)
   {
     delete [] this->ParallelTransportVectorArrayName;
-    this->ParallelTransportVectorArrayName = NULL;
+    this->ParallelTransportVectorArrayName = nullptr;
   }
 }
 
@@ -328,7 +328,7 @@ int vtkSVSurfaceCenterlineAttributesPasser::PrepFilter()
     strcpy(this->TransformedNormalsArrayName, "NormalsTransformedToCenterlines");
   }
 
-  if (this->PolycubePd == NULL)
+  if (this->PolycubePd == nullptr)
   {
     vtkDebugMacro("Polycube not provided, generating from centerlines");
 
@@ -1289,17 +1289,17 @@ void vtkSVSurfaceCenterlineAttributesPasser::PrintSelf(ostream& os, vtkIndent in
 {
   this->Superclass::PrintSelf(os,indent);
   os << indent << "Use radius information: " << this->UseRadiusInformation << "\n";
-  if (this->CenterlineGroupIdsArrayName != NULL)
+  if (this->CenterlineGroupIdsArrayName != nullptr)
     os << indent << "Centerline group ids name: " << this->CenterlineGroupIdsArrayName << "\n";
-  if (this->CenterlineRadiusArrayName != NULL)
+  if (this->CenterlineRadiusArrayName != nullptr)
     os << indent << "Centerline radius array name: " << this->CenterlineRadiusArrayName << "\n";
-  if (this->CenterlineIdsArrayName != NULL)
+  if (this->CenterlineIdsArrayName != nullptr)
     os << indent << "Centerline ids array name: " << this->CenterlineIdsArrayName << "\n";
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
     os << indent << "Group ids array name: " << this->GroupIdsArrayName << "\n";
-  if (this->BlankingArrayName != NULL)
+  if (this->BlankingArrayName != nullptr)
     os << indent << "Blanking array name: " << this->BlankingArrayName << "\n";
-  if (this->TractIdsArrayName != NULL)
+  if (this->TractIdsArrayName != nullptr)
     os << indent << "Tract ids array name: " << this->TractIdsArrayName << "\n";
 }
 

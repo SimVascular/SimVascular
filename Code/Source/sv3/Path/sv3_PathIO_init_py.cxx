@@ -74,11 +74,11 @@ int PathIO_pyInit()
 }
 
 static PyMethodDef pyPathIO_methods[]={
-  {"NewObject", (PyCFunction)sv4PathIO_NewObjectCmd,METH_VARARGS,NULL},
-  {"ReadPathGroup",(PyCFunction)sv4PathIO_ReadPathGroupCmd,METH_VARARGS,NULL},
-  {"WritePathGroup",(PyCFunction)sv4PathIO_WritePathGroupCmd, METH_VARARGS,NULL},
-  {"WritePath",(PyCFunction)sv4PathIO_WrtiePathCmd,METH_VARARGS,NULL},
-  {NULL,NULL}
+  {"NewObject", (PyCFunction)sv4PathIO_NewObjectCmd,METH_VARARGS,nullptr},
+  {"ReadPathGroup",(PyCFunction)sv4PathIO_ReadPathGroupCmd,METH_VARARGS,nullptr},
+  {"WritePathGroup",(PyCFunction)sv4PathIO_WritePathGroupCmd, METH_VARARGS,nullptr},
+  {"WritePath",(PyCFunction)sv4PathIO_WrtiePathCmd,METH_VARARGS,nullptr},
+  {nullptr,nullptr}
 };
 
 static int pyPathIO_init(pyPathIO* self, PyObject* args)
@@ -88,7 +88,7 @@ static int pyPathIO_init(pyPathIO* self, PyObject* args)
 }
 
 static PyTypeObject pyPathIOType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   "pyPathIO.pyPathIO",             /* tp_name */
   sizeof(pyPathIO),             /* tp_basicsize */
   0,                         /* tp_itemsize */
@@ -131,14 +131,14 @@ static PyTypeObject pyPathIOType = {
 
 static PyMethodDef pyPathIOModule_methods[] =
 {
-    {NULL,NULL}
+    {nullptr,nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyPathIOModule = {
    PyModuleDef_HEAD_INIT,
    "pyPathIO",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    pyPathIOModule_methods
@@ -154,7 +154,7 @@ PyMODINIT_FUNC initpyPathIO()
 {
   // Associate the mesh registrar with the python interpreter so it can be
   // retrieved by the DLLs.
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository = new cvRepository();
     fprintf(stdout,"New gRepository created from cv_mesh_init\n");
@@ -169,12 +169,12 @@ PyMODINIT_FUNC initpyPathIO()
   }
   PyObject* pythonC;
   pythonC = Py_InitModule("pyPathIO",pyPathIOModule_methods);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyPathIO\n");
     return;
   }
-  PyRunTimeErrIO = PyErr_NewException("pyPathIO.error",NULL,NULL);
+  PyRunTimeErrIO = PyErr_NewException("pyPathIO.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErrIO);
   Py_INCREF(&pyPathIOType);
   PyModule_AddObject(pythonC,"pyPathIO",(PyObject*)&pyPathIOType);
@@ -191,7 +191,7 @@ PyMODINIT_FUNC PyInit_pyPathIO()
 
 {
 
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository = new cvRepository();
     fprintf(stdout,"New gRepository created from sv3_PathIO_init\n");
@@ -206,12 +206,12 @@ PyMODINIT_FUNC PyInit_pyPathIO()
   }
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyPathIOModule);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyPathIO\n");
     return SV_PYTHON_ERROR;
   }
-  PyRunTimeErrIO = PyErr_NewException("pyPathIO.error",NULL,NULL);
+  PyRunTimeErrIO = PyErr_NewException("pyPathIO.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErrIO);
   Py_INCREF(&pyPathIOType);
   PyModule_AddObject(pythonC,"pyPathIO",(PyObject*)&pyPathIOType);
@@ -242,8 +242,8 @@ PyObject* sv4PathIO_NewObjectCmd( pyPathIO* self, PyObject* args)
 PyObject* sv4PathIO_ReadPathGroupCmd( pyPathIO* self, PyObject* args)
 {
 
-    char* objName =NULL;
-    char* fn=NULL;
+    char* objName =nullptr;
+    char* fn=nullptr;
     if(!PyArg_ParseTuple(args,"ss",&objName,&fn))
     {
         PyErr_SetString(PyRunTimeErrIO,"Could not import two chars, objName, fn");
@@ -257,7 +257,7 @@ PyObject* sv4PathIO_ReadPathGroupCmd( pyPathIO* self, PyObject* args)
     }
 
     PathIO* pathIO = self->geom;
-    if (pathIO==NULL)
+    if (pathIO==nullptr)
     {
         PyErr_SetString(PyRunTimeErrIO,"PathIO does not exist.");
         
@@ -265,7 +265,7 @@ PyObject* sv4PathIO_ReadPathGroupCmd( pyPathIO* self, PyObject* args)
     
     std::string str(fn);
     PathGroup* pthGrp = pathIO->ReadFile(str);
-    if(pthGrp==NULL)
+    if(pthGrp==nullptr)
     {
         PyErr_SetString(PyRunTimeErrIO,"Error reading file");
         
@@ -291,8 +291,8 @@ PyObject* sv4PathIO_ReadPathGroupCmd( pyPathIO* self, PyObject* args)
 
 PyObject* sv4PathIO_WritePathGroupCmd( pyPathIO* self, PyObject* args)
 {
-    char* fn=NULL;
-    char* objName=NULL;
+    char* fn=nullptr;
+    char* objName=nullptr;
     RepositoryDataT type;
     cvRepositoryData *rd;
     PathGroup *pathGrp;
@@ -308,7 +308,7 @@ PyObject* sv4PathIO_WritePathGroupCmd( pyPathIO* self, PyObject* args)
     // Retrieve source object:
     rd = gRepository->GetObject( objName );
     char r[2048];
-    if ( rd == NULL )
+    if ( rd == nullptr )
     {
         r[0] = '\0';
         sprintf(r, "couldn't find object %s", objName);
@@ -328,7 +328,7 @@ PyObject* sv4PathIO_WritePathGroupCmd( pyPathIO* self, PyObject* args)
     
     pathGrp = dynamic_cast<PathGroup*> (rd);
     
-    if (self->geom==NULL)
+    if (self->geom==nullptr)
     {
         PyErr_SetString(PyRunTimeErrIO,"PathIO does not exist.");
         
@@ -350,8 +350,8 @@ PyObject* sv4PathIO_WritePathGroupCmd( pyPathIO* self, PyObject* args)
 //----------------------------
 PyObject* sv4PathIO_WrtiePathCmd(pyPathIO* self, PyObject* args)
 {
-    char* fn=NULL;
-    char* objName=NULL;
+    char* fn=nullptr;
+    char* objName=nullptr;
     RepositoryDataT type;
     cvRepositoryData *rd;
     PathElement *path;
@@ -367,7 +367,7 @@ PyObject* sv4PathIO_WrtiePathCmd(pyPathIO* self, PyObject* args)
     // Retrieve source object:
     rd = gRepository->GetObject( objName );
     char r[2048];
-    if ( rd == NULL )
+    if ( rd == nullptr )
     {
         r[0] = '\0';
         sprintf(r, "couldn't find object %s", objName);
@@ -387,7 +387,7 @@ PyObject* sv4PathIO_WrtiePathCmd(pyPathIO* self, PyObject* args)
     
     path = dynamic_cast<PathElement*> (rd);
     
-    if (self->geom==NULL)
+    if (self->geom==nullptr)
     {
         PyErr_SetString(PyRunTimeErrIO,"PathIO does not exist.");
         

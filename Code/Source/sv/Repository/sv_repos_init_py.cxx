@@ -123,40 +123,40 @@ PyMethodDef pyRepository_methods[] =
 
 {
 
-    {"List", Repos_ListCmd, METH_NOARGS,NULL},
-    {"Exists", Repos_ExistsCmd, METH_VARARGS,NULL},
-    {"Delete", Repos_DeleteCmd, METH_VARARGS,NULL},
-    {"Type", Repos_TypeCmd, METH_VARARGS,NULL},
-    {"ImportVtkPd", Repos_ImportVtkPdCmd, METH_VARARGS,NULL},
-    {"ExportToVtk", Repos_ExportToVtkCmd, METH_VARARGS,NULL},
-    {"ImportVtkSp", Repos_ImportVtkSpCmd, METH_VARARGS,NULL},
-    {"ImportVtkImg", Repos_ImportVtkImgCmd, METH_VARARGS,NULL},
+    {"List", Repos_ListCmd, METH_NOARGS,nullptr},
+    {"Exists", Repos_ExistsCmd, METH_VARARGS,nullptr},
+    {"Delete", Repos_DeleteCmd, METH_VARARGS,nullptr},
+    {"Type", Repos_TypeCmd, METH_VARARGS,nullptr},
+    {"ImportVtkPd", Repos_ImportVtkPdCmd, METH_VARARGS,nullptr},
+    {"ExportToVtk", Repos_ExportToVtkCmd, METH_VARARGS,nullptr},
+    {"ImportVtkSp", Repos_ImportVtkSpCmd, METH_VARARGS,nullptr},
+    {"ImportVtkImg", Repos_ImportVtkImgCmd, METH_VARARGS,nullptr},
     {"ImportVtkUnstructuredGrid", Repos_ImportVtkUnstructuredGridCmd,
-      METH_VARARGS,NULL},
-    {"Save", Repos_SaveCmd, METH_VARARGS,NULL},
-    {"Load", Repos_LoadCmd, METH_VARARGS,NULL},
-    {"WriteVtkPolyData", Repos_WriteVtkPolyDataCmd, METH_VARARGS,NULL},
-    {"ReadVtkPolyData", Repos_ReadVtkPolyDataCmd, METH_VARARGS,NULL},
-    {"ReadXMLPolyData",Repos_ReadVtkXMLPolyDataCmd,METH_VARARGS,NULL},
-    {"WriteXMLPolyData",Repos_WriteVtkXMLPolyDataCmd,METH_VARARGS,NULL},
+      METH_VARARGS,nullptr},
+    {"Save", Repos_SaveCmd, METH_VARARGS,nullptr},
+    {"Load", Repos_LoadCmd, METH_VARARGS,nullptr},
+    {"WriteVtkPolyData", Repos_WriteVtkPolyDataCmd, METH_VARARGS,nullptr},
+    {"ReadVtkPolyData", Repos_ReadVtkPolyDataCmd, METH_VARARGS,nullptr},
+    {"ReadXMLPolyData",Repos_ReadVtkXMLPolyDataCmd,METH_VARARGS,nullptr},
+    {"WriteXMLPolyData",Repos_WriteVtkXMLPolyDataCmd,METH_VARARGS,nullptr},
     {"WriteVtkStructuredPoints", Repos_WriteVtkStructuredPointsCmd,
-     METH_VARARGS,NULL},
+     METH_VARARGS,nullptr},
     {"WriteVtkUnstructuredGrid", Repos_WriteVtkUnstructuredGridCmd,
-     METH_VARARGS,NULL},
-    {"GetLabelKeys", Repos_GetLabelKeysCmd, METH_VARARGS,NULL},
-    {"GetLabel", Repos_GetLabelCmd, METH_VARARGS,NULL},
-    {"SetLabel", Repos_SetLabelCmd, METH_VARARGS,NULL},
-    {"ClearLabel", Repos_ClearLabelCmd, METH_VARARGS,NULL},
-    {"Setstring", Repos_SetStringCmd, METH_VARARGS,NULL},
-    {"Getstring", Repos_GetStringCmd, METH_VARARGS,NULL},
-    {NULL, NULL,0,NULL},
+     METH_VARARGS,nullptr},
+    {"GetLabelKeys", Repos_GetLabelKeysCmd, METH_VARARGS,nullptr},
+    {"GetLabel", Repos_GetLabelCmd, METH_VARARGS,nullptr},
+    {"SetLabel", Repos_SetLabelCmd, METH_VARARGS,nullptr},
+    {"ClearLabel", Repos_ClearLabelCmd, METH_VARARGS,nullptr},
+    {"Setstring", Repos_SetStringCmd, METH_VARARGS,nullptr},
+    {"Getstring", Repos_GetStringCmd, METH_VARARGS,nullptr},
+    {nullptr, nullptr,0,nullptr},
 
 };
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyRepositorymodule = {
    PyModuleDef_HEAD_INIT,
    "pyRepository",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    pyRepository_methods
@@ -170,13 +170,13 @@ PyMODINIT_FUNC initpyRepository(void)
 
   PyObject *pyRepo;
   gRepository = new cvRepository();
-  if ( gRepository == NULL ) {
+  if ( gRepository == nullptr ) {
     fprintf( stderr, "error allocating gRepository\n" );
     return;
   }
   pyRepo = Py_InitModule("pyRepository",pyRepository_methods);
 
-  PyRunTimeErr = PyErr_NewException("pyRepository.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyRepository.error",nullptr,nullptr);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(pyRepo,"error",PyRunTimeErr);
 
@@ -188,14 +188,14 @@ PyMODINIT_FUNC PyInit_pyRepository(void)
 {
       PyObject *pyRepo;
   gRepository = new cvRepository();
-  if ( gRepository == NULL ) {
+  if ( gRepository == nullptr ) {
     fprintf( stderr, "error allocating gRepository\n" );
 
     return SV_PYTHON_ERROR;
   }
 
   pyRepo = PyModule_Create(& pyRepositorymodule);
-  PyRunTimeErr = PyErr_NewException("pyRepository.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyRepository.error",nullptr,nullptr);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(pyRepo,"error",PyRunTimeErr);
   return pyRepo;
@@ -234,7 +234,7 @@ PyObject* Repos_SetStringCmd( PyObject* self, PyObject* args)
 
   // Retrieve source object:
   pd = gRepository->GetObject( stringPd );
-  if ( pd == NULL )
+  if ( pd == nullptr )
   {
     PyErr_SetString(PyRunTimeErr, "couldn't find object stringPd");
     
@@ -264,7 +264,7 @@ PyObject* Repos_GetStringCmd( PyObject* self, PyObject* args)
 
   // Retrieve source object:
   pd = gRepository->GetObject( stringPd );
-  if ( pd == NULL )
+  if ( pd == nullptr )
   {
     PyErr_SetString(PyRunTimeErr, "couldn't find object stringPd");
     
@@ -349,7 +349,7 @@ PyObject*  Repos_DeleteCmd( PyObject* self, PyObject* args)
 
   obj_t = gRepository->GetType( objName );
   //if ( obj_t == SOLID_MODEL_T || obj_t == MESH_T || obj_t == ADAPTOR_T) {
-  //  return Tcl_VarEval( interp, "rename ", objName, " {}", (char *)NULL );
+  //  return Tcl_VarEval( interp, "rename ", objName, " {}", (char *)nullptr );
   //} else {
     unreg_status = gRepository->UnRegister( objName );
   //}
@@ -429,7 +429,7 @@ PyObject* Repos_ImportVtkPdCmd( PyObject* self, PyObject* args)
   vtkObj = (vtkPolyData *)vtkPythonUtil::GetPointerFromObject( vtkName,
     "vtkPolyData");
   char r[2048];
-  if ( vtkObj == NULL )
+  if ( vtkObj == nullptr )
   {
     r[0] = '\0';
     sprintf(r, "error retrieving vtk object %s", objName);
@@ -486,7 +486,7 @@ PyObject* Repos_ExportToVtkCmd( PyObject* self, PyObject* args)
   // Retrieve source object:
   pd = gRepository->GetObject( objName );
   char r[2048];
-  if ( pd == NULL )
+  if ( pd == nullptr )
   {
     r[0] = '\0';
     sprintf(r, "couldn't find object %s", objName);
@@ -524,7 +524,7 @@ PyObject* Repos_ExportToVtkCmd( PyObject* self, PyObject* args)
   //
   // Note that the third arg is a Tcl command function ptr.  It should
   // be something like a vtkPolyDataCommand fn ptr, I think.  It
-  // should be OK to pass in NULL, though, because
+  // should be OK to pass in nullptr, though, because
   // vtkTclGetObjectFromPointer will be able to find the instantiation
   // command based on class name.  That instantiation command
   // (e.g. "vtkPolyData") has a pointer to the object command
@@ -566,7 +566,7 @@ PyObject* Repos_ImportVtkSpCmd( PyObject* self, PyObject* args)
   // Look up the named vtk object:
   vtkObj = (vtkStructuredPoints *)vtkPythonUtil::GetPointerFromObject( vtkName,
     "vtkStructuredPoints");
-  if ( vtkObj == NULL )
+  if ( vtkObj == nullptr )
   {
     PyErr_SetString(PyRunTimeErr, "error retrieving vtk object ");
     
@@ -615,7 +615,7 @@ PyObject* Repos_ImportVtkUnstructuredGridCmd( PyObject* self, PyObject* args)
   // Look up the named vtk object:
   vtkObj = (vtkUnstructuredGrid *)vtkPythonUtil::GetPointerFromObject( vtkName,
     "vtkUnstructuredGrid");
-  if ( vtkObj == NULL )
+  if ( vtkObj == nullptr )
   {
     PyErr_SetString(PyRunTimeErr, "error retrieving vtk object ");
     
@@ -649,9 +649,9 @@ PyObject* Repos_ImportVtkImgCmd( PyObject* self, PyObject* args )
 
 {
 
-  PyObject *vtkName=NULL;
-  char *objName=NULL;
-  vtkImageData *vtkObj=NULL;
+  PyObject *vtkName=nullptr;
+  char *objName=nullptr;
+  vtkImageData *vtkObj=nullptr;
   int status;
   cvStrPts *sp;
   if (!PyArg_ParseTuple(args,"Os", &vtkName,&objName))
@@ -663,7 +663,7 @@ PyObject* Repos_ImportVtkImgCmd( PyObject* self, PyObject* args )
   // Look up the named vtk object:
   vtkObj = (vtkImageData *)vtkPythonUtil::GetPointerFromObject( vtkName,
     "vtkImageData");
-  if ( vtkObj == NULL )
+  if ( vtkObj == nullptr )
   {
     PyErr_SetString(PyRunTimeErr, "error retrieving vtk object ");
     
@@ -880,7 +880,7 @@ PyObject* Repos_ReadVtkPolyDataCmd( PyObject* self, PyObject* args )
   pdReader->Update();
 
   vtkPd = pdReader->GetOutput();
-  if ( vtkPd == NULL ||vtkPd->GetNumberOfPolys()==0 )
+  if ( vtkPd == nullptr ||vtkPd->GetNumberOfPolys()==0 )
   {
     PyErr_SetString(PyRunTimeErr, "error reading file ");
     pdReader->Delete();
@@ -936,7 +936,7 @@ PyObject* Repos_ReadVtkXMLPolyDataCmd( PyObject* self, PyObject* args )
   pdReader->Update();
 
   vtkPd = pdReader->GetOutput();
-  if ( vtkPd == NULL )
+  if ( vtkPd == nullptr )
   {
     PyErr_SetString(PyRunTimeErr, "error reading file ");
     pdReader->Delete();
@@ -982,7 +982,7 @@ PyObject* Repos_WriteVtkXMLPolyDataCmd( PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr,
       "Could not import 2 chars: objName, and filename");
-    return NULL;
+    return nullptr;
   }
 
   // Do work of command:
@@ -992,7 +992,7 @@ PyObject* Repos_WriteVtkXMLPolyDataCmd( PyObject* self, PyObject* args)
   {
     sprintf(r,"\"%s\" must be of a PolyData type",objName);
     PyErr_SetString(PyRunTimeErr, r);
-    return NULL;
+    return nullptr;
   }
 
   obj = gRepository->GetObject( objName );
@@ -1150,7 +1150,7 @@ PyObject* Repos_GetLabelKeysCmd( PyObject* self, PyObject* args)
   // Do work of command:
 
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL )
+  if ( obj == nullptr )
   {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
     
@@ -1191,7 +1191,7 @@ PyObject* Repos_GetLabelCmd( PyObject* self, PyObject* args)
   // Do work of command:
 
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL )
+  if ( obj == nullptr )
   {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
@@ -1228,7 +1228,7 @@ PyObject* Repos_SetLabelCmd( PyObject* self, PyObject* args)
   // Do work of command:
 
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL )
+  if ( obj == nullptr )
   {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
     
@@ -1274,7 +1274,7 @@ PyObject* Repos_ClearLabelCmd( PyObject* self, PyObject* args)
   // Do work of command:
 
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL )
+  if ( obj == nullptr )
   {
     PyErr_SetString(PyRunTimeErr, "couldn't find object" );
     

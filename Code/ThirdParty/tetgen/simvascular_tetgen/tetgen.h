@@ -101,9 +101,9 @@
 // allocate enough memory for them. On deletion of this object, the memory   //
 // occupied by these arrays needs to be freed.  The routine deinitialize()   //
 // will be automatically called.  It frees the memory for an array if it is  //
-// not a NULL. Note that it assumes that the memory is allocated by the C++  //
+// not a nullptr. Note that it assumes that the memory is allocated by the C++  //
 // "new" operator.  Otherwise, the user is responsible to free them and all  //
-// pointers must be NULL before the call of the destructor.                  //
+// pointers must be nullptr before the call of the destructor.                  //
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -354,14 +354,14 @@ public:
   char *findnextnumber(char* string);
 
   static void init(polygon* p) {
-    p->vertexlist = (int *) NULL;
+    p->vertexlist = (int *) nullptr;
     p->numberofvertices = 0;
   }
 
   static void init(facet* f) {
-    f->polygonlist = (polygon *) NULL;
+    f->polygonlist = (polygon *) nullptr;
     f->numberofpolygons = 0;
-    f->holelist = (REAL *) NULL;
+    f->holelist = (REAL *) nullptr;
     f->numberofholes = 0;
   }
 
@@ -372,68 +372,68 @@ public:
     mesh_dim = 3;
     useindex = 1;
 
-    pointlist = (REAL *) NULL;
-    pointattributelist = (REAL *) NULL;
-    pointmtrlist = (REAL *) NULL;
-    pointmarkerlist = (int *) NULL;
-    pointparamlist = (pointparam *) NULL;
+    pointlist = (REAL *) nullptr;
+    pointattributelist = (REAL *) nullptr;
+    pointmtrlist = (REAL *) nullptr;
+    pointmarkerlist = (int *) nullptr;
+    pointparamlist = (pointparam *) nullptr;
     numberofpoints = 0;
     numberofpointattributes = 0;
     numberofpointmtrs = 0;
 
-    tetrahedronlist = (int *) NULL;
-    tetrahedronattributelist = (REAL *) NULL;
-    tetrahedronvolumelist = (REAL *) NULL;
-    neighborlist = (int *) NULL;
+    tetrahedronlist = (int *) nullptr;
+    tetrahedronattributelist = (REAL *) nullptr;
+    tetrahedronvolumelist = (REAL *) nullptr;
+    neighborlist = (int *) nullptr;
     numberoftetrahedra = 0;
     numberofcorners = 4;
     numberoftetrahedronattributes = 0;
 
-    trifacelist = (int *) NULL;
-    trifacemarkerlist = (int *) NULL;
-    o2facelist = (int *) NULL;
-    adjtetlist = (int *) NULL;
+    trifacelist = (int *) nullptr;
+    trifacemarkerlist = (int *) nullptr;
+    o2facelist = (int *) nullptr;
+    adjtetlist = (int *) nullptr;
     numberoftrifaces = 0;
 
-    edgelist = (int *) NULL;
-    edgemarkerlist = (int *) NULL;
-    o2edgelist = (int *) NULL;
-    edgeadjtetlist = (int *) NULL;
+    edgelist = (int *) nullptr;
+    edgemarkerlist = (int *) nullptr;
+    o2edgelist = (int *) nullptr;
+    edgeadjtetlist = (int *) nullptr;
     numberofedges = 0;
 
-    facetlist = (facet *) NULL;
-    facetmarkerlist = (int *) NULL;
+    facetlist = (facet *) nullptr;
+    facetmarkerlist = (int *) nullptr;
     numberoffacets = 0;
 
-    holelist = (REAL *) NULL;
+    holelist = (REAL *) nullptr;
     numberofholes = 0;
 
-    regionlist = (REAL *) NULL;
+    regionlist = (REAL *) nullptr;
     numberofregions = 0;
 
-    facetconstraintlist = (REAL *) NULL;
+    facetconstraintlist = (REAL *) nullptr;
     numberoffacetconstraints = 0;
-    segmentconstraintlist = (REAL *) NULL;
+    segmentconstraintlist = (REAL *) nullptr;
     numberofsegmentconstraints = 0;
 
 
-    vpointlist = (REAL *) NULL;
-    vedgelist = (voroedge *) NULL;
-    vfacetlist = (vorofacet *) NULL;
-    vcelllist = (int **) NULL;
+    vpointlist = (REAL *) nullptr;
+    vedgelist = (voroedge *) nullptr;
+    vfacetlist = (vorofacet *) nullptr;
+    vcelllist = (int **) nullptr;
     numberofvpoints = 0;
     numberofvedges = 0;
     numberofvfacets = 0;
     numberofvcells = 0;
 
-    tetunsuitable = NULL;
+    tetunsuitable = nullptr;
 
-    geomhandle = NULL;
-    getvertexparamonedge = NULL;
-    getsteineronedge = NULL;
-    getvertexparamonface = NULL;
-    getedgesteinerparamonface = NULL;
-    getsteineronface = NULL;
+    geomhandle = nullptr;
+    getvertexparamonedge = nullptr;
+    getsteineronedge = nullptr;
+    getvertexparamonface = nullptr;
+    getedgesteinerparamonface = nullptr;
+    getsteineronface = nullptr;
   }
 
   // Free the memory allocated in 'tetgenio'.  Note that it assumes that the
@@ -442,62 +442,62 @@ public:
   {
     int i, j;
 
-    if (pointlist != (REAL *) NULL) {
+    if (pointlist != (REAL *) nullptr) {
       delete [] pointlist;
     }
-    if (pointattributelist != (REAL *) NULL) {
+    if (pointattributelist != (REAL *) nullptr) {
       delete [] pointattributelist;
     }
-    if (pointmtrlist != (REAL *) NULL) {
+    if (pointmtrlist != (REAL *) nullptr) {
       delete [] pointmtrlist;
     }
-    if (pointmarkerlist != (int *) NULL) {
+    if (pointmarkerlist != (int *) nullptr) {
       delete [] pointmarkerlist;
     }
-    if (pointparamlist != (pointparam *) NULL) {
+    if (pointparamlist != (pointparam *) nullptr) {
       delete [] pointparamlist;
     }
 
-    if (tetrahedronlist != (int *) NULL) {
+    if (tetrahedronlist != (int *) nullptr) {
       delete [] tetrahedronlist;
     }
-    if (tetrahedronattributelist != (REAL *) NULL) {
+    if (tetrahedronattributelist != (REAL *) nullptr) {
       delete [] tetrahedronattributelist;
     }
-    if (tetrahedronvolumelist != (REAL *) NULL) {
+    if (tetrahedronvolumelist != (REAL *) nullptr) {
       delete [] tetrahedronvolumelist;
     }
-    if (neighborlist != (int *) NULL) {
+    if (neighborlist != (int *) nullptr) {
       delete [] neighborlist;
     }
 
-    if (trifacelist != (int *) NULL) {
+    if (trifacelist != (int *) nullptr) {
       delete [] trifacelist;
     }
-    if (trifacemarkerlist != (int *) NULL) {
+    if (trifacemarkerlist != (int *) nullptr) {
       delete [] trifacemarkerlist;
     }
-    if (o2facelist != (int *) NULL) {
+    if (o2facelist != (int *) nullptr) {
       delete [] o2facelist;
     }
-    if (adjtetlist != (int *) NULL) {
+    if (adjtetlist != (int *) nullptr) {
       delete [] adjtetlist;
     }
 
-    if (edgelist != (int *) NULL) {
+    if (edgelist != (int *) nullptr) {
       delete [] edgelist;
     }
-    if (edgemarkerlist != (int *) NULL) {
+    if (edgemarkerlist != (int *) nullptr) {
       delete [] edgemarkerlist;
     }
-    if (o2edgelist != (int *) NULL) {
+    if (o2edgelist != (int *) nullptr) {
       delete [] o2edgelist;
     }
-    if (edgeadjtetlist != (int *) NULL) {
+    if (edgeadjtetlist != (int *) nullptr) {
       delete [] edgeadjtetlist;
     }
 
-    if (facetlist != (facet *) NULL) {
+    if (facetlist != (facet *) nullptr) {
       facet *f;
       polygon *p;
       for (i = 0; i < numberoffacets; i++) {
@@ -507,41 +507,41 @@ public:
           delete [] p->vertexlist;
         }
         delete [] f->polygonlist;
-        if (f->holelist != (REAL *) NULL) {
+        if (f->holelist != (REAL *) nullptr) {
           delete [] f->holelist;
         }
       }
       delete [] facetlist;
     }
-    if (facetmarkerlist != (int *) NULL) {
+    if (facetmarkerlist != (int *) nullptr) {
       delete [] facetmarkerlist;
     }
 
-    if (holelist != (REAL *) NULL) {
+    if (holelist != (REAL *) nullptr) {
       delete [] holelist;
     }
-    if (regionlist != (REAL *) NULL) {
+    if (regionlist != (REAL *) nullptr) {
       delete [] regionlist;
     }
-    if (facetconstraintlist != (REAL *) NULL) {
+    if (facetconstraintlist != (REAL *) nullptr) {
       delete [] facetconstraintlist;
     }
-    if (segmentconstraintlist != (REAL *) NULL) {
+    if (segmentconstraintlist != (REAL *) nullptr) {
       delete [] segmentconstraintlist;
     }
-    if (vpointlist != (REAL *) NULL) {
+    if (vpointlist != (REAL *) nullptr) {
       delete [] vpointlist;
     }
-    if (vedgelist != (voroedge *) NULL) {
+    if (vedgelist != (voroedge *) nullptr) {
       delete [] vedgelist;
     }
-    if (vfacetlist != (vorofacet *) NULL) {
+    if (vfacetlist != (vorofacet *) nullptr) {
       for (i = 0; i < numberofvfacets; i++) {
         delete [] vfacetlist[i].elist;
       }
       delete [] vfacetlist;
     }
-    if (vcelllist != (int **) NULL) {
+    if (vcelllist != (int **) nullptr) {
       for (i = 0; i < numberofvcells; i++) {
         delete [] vcelllist[i];
       }
@@ -1113,8 +1113,8 @@ public:
       sloc = sbowywat = 0;
 
       refineflag = 0;
-      refinetet.tet = NULL;
-      refinesh.sh = NULL;
+      refinetet.tet = nullptr;
+      refinesh.sh = nullptr;
       smlenflag = 0;
       smlen = 0.0;
     }
@@ -1173,9 +1173,9 @@ public:
       cosdihed_out = 0.0;
 
       checkflipeligibility = 0;
-      seg[0] = NULL;
-      fac[0] = NULL;
-      remvert = NULL;
+      seg[0] = nullptr;
+      fac[0] = nullptr;
+      remvert = nullptr;
     }
   };
 
@@ -2082,31 +2082,31 @@ public:
 
   void initializetetgenmesh()
   {
-    in  = addin = NULL;
-    b   = NULL;
-    bgm = NULL;
+    in  = addin = nullptr;
+    b   = nullptr;
+    bgm = nullptr;
 
-    tetrahedrons = subfaces = subsegs = points = NULL;
-    badtetrahedrons = badsubfacs = badsubsegs = NULL;
-    tet2segpool = tet2subpool = NULL;
-    flippool = NULL;
+    tetrahedrons = subfaces = subsegs = points = nullptr;
+    badtetrahedrons = badsubfacs = badsubsegs = nullptr;
+    tet2segpool = tet2subpool = nullptr;
+    flippool = nullptr;
 
-    dummypoint = NULL;
-    flipstack = NULL;
-    unflipqueue = NULL;
+    dummypoint = nullptr;
+    flipstack = nullptr;
+    unflipqueue = nullptr;
 
-    cavetetlist = cavebdrylist = caveoldtetlist = NULL;
-    cavetetshlist = cavetetseglist = cavetetvertlist = NULL;
-    caveencshlist = caveencseglist = NULL;
-    caveshlist = caveshbdlist = cavesegshlist = NULL;
+    cavetetlist = cavebdrylist = caveoldtetlist = nullptr;
+    cavetetshlist = cavetetseglist = cavetetvertlist = nullptr;
+    caveencshlist = caveencseglist = nullptr;
+    caveshlist = caveshbdlist = cavesegshlist = nullptr;
 
-    subsegstack = subfacstack = subvertstack = NULL;
-    encseglist = encshlist = NULL;
-    idx2facetlist = NULL;
-    facetverticeslist = NULL;
-    segmentendpointslist = NULL;
+    subsegstack = subfacstack = subvertstack = nullptr;
+    encseglist = encshlist = nullptr;
+    idx2facetlist = nullptr;
+    facetverticeslist = nullptr;
+    segmentendpointslist = nullptr;
 
-    highordertable = NULL;
+    highordertable = nullptr;
 
     numpointattrib = numelemattrib = 0;
     sizeoftensor = 0;
@@ -2151,22 +2151,22 @@ public:
 
   void freememory()
   {
-    if (bgm != NULL) {
+    if (bgm != nullptr) {
       delete bgm;
     }
 
-    if (points != (memorypool *) NULL) {
+    if (points != (memorypool *) nullptr) {
       delete points;
       delete [] dummypoint;
     }
-    if (tetrahedrons != (memorypool *) NULL) {
+    if (tetrahedrons != (memorypool *) nullptr) {
       delete tetrahedrons;
     }
-    if (subfaces != (memorypool *) NULL) {
+    if (subfaces != (memorypool *) nullptr) {
       delete subfaces;
       delete subsegs;
     }
-    if (tet2segpool != NULL) {
+    if (tet2segpool != nullptr) {
       delete tet2segpool;
       delete tet2subpool;
     }
@@ -2187,19 +2187,19 @@ public:
       delete encshlist;
     }
 
-    if (flippool != NULL) {
+    if (flippool != nullptr) {
       delete flippool;
       delete unflipqueue;
     }
 
-    if (cavetetlist != NULL) {
+    if (cavetetlist != nullptr) {
       delete cavetetlist;
       delete cavebdrylist;
       delete caveoldtetlist;
       delete cavetetvertlist;
     }
 
-    if (caveshlist != NULL) {
+    if (caveshlist != nullptr) {
       delete caveshlist;
       delete caveshbdlist;
       delete cavesegshlist;
@@ -2209,22 +2209,22 @@ public:
       delete caveencseglist;
     }
 
-    if (subsegstack != NULL) {
+    if (subsegstack != nullptr) {
       delete subsegstack;
       delete subfacstack;
       delete subvertstack;
     }
 
-    if (idx2facetlist != NULL) {
+    if (idx2facetlist != nullptr) {
       delete [] idx2facetlist;
       delete [] facetverticeslist;
     }
 
-    if (segmentendpointslist != NULL) {
+    if (segmentendpointslist != nullptr) {
       delete [] segmentendpointslist;
     }
 
-    if (highordertable != NULL) {
+    if (highordertable != nullptr) {
       delete [] highordertable;
     }
 
@@ -2251,19 +2251,19 @@ public:
 //                                                                           //
 // 'in' is an object of 'tetgenio' which contains a PLC you want to tetrahed-//
 // ralize or a previously generated tetrahedral mesh you want to refine.  It //
-// must not be a NULL. 'out' is another object of 'tetgenio' for storing the //
-// generated tetrahedral mesh. It can be a NULL. If so, the output will be   //
-// saved to file(s). If 'bgmin' != NULL, it contains a background mesh which //
+// must not be a nullptr. 'out' is another object of 'tetgenio' for storing the //
+// generated tetrahedral mesh. It can be a nullptr. If so, the output will be   //
+// saved to file(s). If 'bgmin' != nullptr, it contains a background mesh which //
 // defines a mesh size function.                                             //
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 void tetrahedralize(tetgenbehavior *b, tetgenio *in, tetgenio *out,
-                    tetgenio *addin = NULL, tetgenio *bgmin = NULL);
+                    tetgenio *addin = nullptr, tetgenio *bgmin = nullptr);
 
 #ifdef TETLIBRARY
 void tetrahedralize(char *switches, tetgenio *in, tetgenio *out,
-                    tetgenio *addin = NULL, tetgenio *bgmin = NULL);
+                    tetgenio *addin = nullptr, tetgenio *bgmin = nullptr);
 #endif // #ifdef TETLIBRARY
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2347,7 +2347,7 @@ inline void tetgenmesh::bond(triface& t1, triface& t2) {
 // dissolve()  a bond (from one side).
 
 inline void tetgenmesh::dissolve(triface& t) {
-  t.tet[t.ver & 3] = NULL;
+  t.tet[t.ver & 3] = nullptr;
 }
 
 // enext()  finds the next edge (counterclockwise) in the same face.
@@ -2661,7 +2661,7 @@ inline bool tetgenmesh::ishulltet(triface& t) {
 // isdeadtet()  tests if t is a tetrahedron is dead.
 
 inline bool tetgenmesh::isdeadtet(triface& t) {
-  return ((t.tet == NULL) || (t.tet[4] == NULL));
+  return ((t.tet == nullptr) || (t.tet[4] == nullptr));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2714,7 +2714,7 @@ inline void tetgenmesh::sbond1(face& s1, face& s2)
 
 inline void tetgenmesh::sdissolve(face& s)
 {
-  s.sh[s.shver >> 1] = NULL;
+  s.sh[s.shver >> 1] = nullptr;
 }
 
 // spivot() finds the adjacent subface (s2) for a given subface (s1).
@@ -2945,12 +2945,12 @@ inline int tetgenmesh::getfacetindex(face& s)
 
 inline void tetgenmesh::tsbond(triface& t, face& s)
 {
-  if ((t).tet[9] == NULL) {
+  if ((t).tet[9] == nullptr) {
     // Allocate space for this tet.
     (t).tet[9] = (tetrahedron) tet2subpool->alloc();
     // Initialize.
     for (int i = 0; i < 4; i++) {
-      ((shellface *) (t).tet[9])[i] = NULL;
+      ((shellface *) (t).tet[9])[i] = nullptr;
     }
   }
   // Bond t <== s.
@@ -2962,14 +2962,14 @@ inline void tetgenmesh::tsbond(triface& t, face& s)
 }
 
 // tspivot() finds a subface (s) abutting on the given tetrahdera (t).
-//   Return s.sh = NULL if there is no subface at t. Otherwise, return
+//   Return s.sh = nullptr if there is no subface at t. Otherwise, return
 //   the subface s, and s and t must be at the same edge wth the same
 //   orientation.
 
 inline void tetgenmesh::tspivot(triface& t, face& s)
 {
-  if ((t).tet[9] == NULL) {
-    (s).sh = NULL;
+  if ((t).tet[9] == nullptr) {
+    (s).sh = nullptr;
     return;
   }
   // Get the attached subface s.
@@ -2988,7 +2988,7 @@ inline void tetgenmesh::tspivot(triface& t, face& s)
 inline void tetgenmesh::stpivot(face& s, triface& t)
 {
   decode((tetrahedron) s.sh[9 + (s.shver & 1)], t);
-  if ((t).tet == NULL) {
+  if ((t).tet == nullptr) {
     return;
   }
   (t).ver = stpivottbl[t.ver][s.shver];
@@ -3003,8 +3003,8 @@ inline void tetgenmesh::stpivot(face& s, triface& t)
 
 inline void tetgenmesh::tsdissolve(triface& t)
 {
-  if ((t).tet[9] != NULL) {
-    ((shellface *) (t).tet[9])[(t).ver & 3] = NULL;
+  if ((t).tet[9] != nullptr) {
+    ((shellface *) (t).tet[9])[(t).ver & 3] = nullptr;
   }
 }
 
@@ -3012,8 +3012,8 @@ inline void tetgenmesh::tsdissolve(triface& t)
 
 inline void tetgenmesh::stdissolve(face& s)
 {
-  (s).sh[9] = NULL;
-  (s).sh[10] = NULL;
+  (s).sh[9] = nullptr;
+  (s).sh[10] = nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -3040,7 +3040,7 @@ inline void tetgenmesh::ssbond1(face& s, face& edge)
 
 inline void tetgenmesh::ssdissolve(face& s)
 {
-  s.sh[6 + (s.shver >> 1)] = NULL;
+  s.sh[6 + (s.shver >> 1)] = nullptr;
 }
 
 // sspivot() finds a subsegment abutting a subface.
@@ -3063,12 +3063,12 @@ inline void tetgenmesh::sspivot(face& s, face& edge)
 
 inline void tetgenmesh::tssbond1(triface& t, face& s)
 {
-  if ((t).tet[8] == NULL) {
+  if ((t).tet[8] == nullptr) {
     // Allocate space for this tet.
     (t).tet[8] = (tetrahedron) tet2segpool->alloc();
     // Initialization.
     for (int i = 0; i < 6; i++) {
-      ((shellface *) (t).tet[8])[i] = NULL;
+      ((shellface *) (t).tet[8])[i] = nullptr;
     }
   }
   ((shellface *) (t).tet[8])[ver2edge[(t).ver]] = sencode((s));
@@ -3081,22 +3081,22 @@ inline void tetgenmesh::sstbond1(face& s, triface& t)
 
 inline void tetgenmesh::tssdissolve1(triface& t)
 {
-  if ((t).tet[8] != NULL) {
-    ((shellface *) (t).tet[8])[ver2edge[(t).ver]] = NULL;
+  if ((t).tet[8] != nullptr) {
+    ((shellface *) (t).tet[8])[ver2edge[(t).ver]] = nullptr;
   }
 }
 
 inline void tetgenmesh::sstdissolve1(face& s)
 {
-  ((tetrahedron *) (s).sh)[9] = NULL;
+  ((tetrahedron *) (s).sh)[9] = nullptr;
 }
 
 inline void tetgenmesh::tsspivot1(triface& t, face& s)
 {
-  if ((t).tet[8] != NULL) {
+  if ((t).tet[8] != nullptr) {
     sdecode(((shellface *) (t).tet[8])[ver2edge[(t).ver]], s);
   } else {
-    (s).sh = NULL;
+    (s).sh = nullptr;
   }
 }
 
@@ -3287,7 +3287,7 @@ inline void tetgenmesh::point2shorg(point pa, face& searchsh)
   if ((point) searchsh.sh[3] == pa) {
     searchsh.shver = 0;
   } else if ((point) searchsh.sh[4] == pa) {
-    searchsh.shver = (searchsh.sh[5] != NULL ? 2 : 1);
+    searchsh.shver = (searchsh.sh[5] != nullptr ? 2 : 1);
   } else {
     searchsh.shver = 4;
   }
@@ -3304,7 +3304,7 @@ inline tetgenmesh::point tetgenmesh::farsorg(face& s)
   while (1) {
     senext2(travesh, neighsh);
     spivotself(neighsh);
-    if (neighsh.sh == NULL) break;
+    if (neighsh.sh == nullptr) break;
     if (sorg(neighsh) != sorg(travesh)) sesymself(neighsh);
     senext2(neighsh, travesh);
   }
@@ -3319,7 +3319,7 @@ inline tetgenmesh::point tetgenmesh::farsdest(face& s)
   while (1) {
     senext(travesh, neighsh);
     spivotself(neighsh);
-    if (neighsh.sh == NULL) break;
+    if (neighsh.sh == nullptr) break;
     if (sdest(neighsh) != sdest(travesh)) sesymself(neighsh);
     senext(neighsh, travesh);
   }

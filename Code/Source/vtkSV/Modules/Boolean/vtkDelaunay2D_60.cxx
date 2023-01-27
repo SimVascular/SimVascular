@@ -71,7 +71,7 @@ vtkDelaunay2D_60::vtkDelaunay2D_60()
   this->Tolerance = 0.00001;
   this->BoundingTriangulation = 0;
   this->Offset = 1.0;
-  this->Transform = NULL;
+  this->Transform = nullptr;
   this->ProjectionPlaneMode = VTK_DELAUNAY_XY_PLANE;
 
   // optional 2nd input
@@ -104,7 +104,7 @@ vtkPolyData *vtkDelaunay2D_60::GetSource()
 {
   if (this->GetNumberOfInputConnections(1) < 1)
     {
-    return NULL;
+    return nullptr;
     }
   return vtkPolyData::SafeDownCast(
     this->GetExecutive()->GetInputData(1, 0));
@@ -337,7 +337,7 @@ int vtkDelaunay2D_60::RequestData(
   vtkIdType p3 = 0;
   vtkPoints *inPoints;
   vtkPoints *points;
-  vtkPoints *tPoints = NULL;
+  vtkPoints *tPoints = nullptr;
   vtkCellArray *triangles;
   int ncells;
   vtkIdType nodes[4][3];
@@ -350,7 +350,7 @@ int vtkDelaunay2D_60::RequestData(
   vtkIdType tri1, tri2;
   double center[3], radius, tol, x[3];
   double n1[3], n2[3];
-  int *triUse = NULL;
+  int *triUse = nullptr;
   double *bounds;
 
   vtkDebugMacro(<<"Generating 2D Delaunay triangulation");
@@ -367,7 +367,7 @@ int vtkDelaunay2D_60::RequestData(
 
   // Initialize; check input
   //
-  if ( (inPoints=input->GetPoints()) == NULL )
+  if ( (inPoints=input->GetPoints()) == nullptr )
     {
     vtkDebugMacro("Cannot triangulate; no input points");
     return 1;
@@ -431,7 +431,7 @@ int vtkDelaunay2D_60::RequestData(
     {
     points->DeepCopy(tPoints);
     tPoints->Delete();
-    tPoints = NULL;
+    tPoints = nullptr;
     }
 
   bounds = points->GetBounds();
@@ -761,7 +761,7 @@ int vtkDelaunay2D_60::RequestData(
   // - the bounding triangulation must be deleted
   //   (BoundingTriangulation == OFF)
   // - alpha spheres are not used (Alpha == 0.0)
-  // - the triangulation is not constrained (source == NULL)
+  // - the triangulation is not constrained (source == nullptr)
 
   if ( !this->BoundingTriangulation && this->Alpha == 0.0 && !source )
     {
@@ -981,7 +981,7 @@ int vtkDelaunay2D_60::RequestData(
     if (this->Transform)
       {
       this->Transform->UnRegister(this);
-      this->Transform = NULL;
+      this->Transform = nullptr;
       }
     }
 

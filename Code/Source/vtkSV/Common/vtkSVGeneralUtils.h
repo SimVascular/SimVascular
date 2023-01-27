@@ -392,7 +392,7 @@ public:
    *  \param startPt The id of the point to start at.
    *  \param nextCell The id of the next cell to go to.
    *  \param loop Empty polydata to hold ordered points.
-   *  \param boundaryIds If not NULL, this should contain a list of some of
+   *  \param boundaryIds If not nullptr, this should contain a list of some of
    *  the points on the boundary. The algorithm will check and see if they
    *  come in the correct order, and if they don't, it will return SV_ERROR.
    *  \return SV_OK. If boundaryIds provided, SV_OK if boundaryIds are in correct order. */

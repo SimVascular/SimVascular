@@ -80,9 +80,9 @@ vtkSVGetBoundaryFaces::vtkSVGetBoundaryFaces()
 
     this->RegionAreas = vtkDoubleArray::New();
 
-    this->checked = NULL;
-    this->checkedcarefully = NULL;
-    this->pointMapper = NULL;
+    this->checked = nullptr;
+    this->checkedcarefully = nullptr;
+    this->pointMapper = nullptr;
 
     this->NumberOfRegions = 0;
 
@@ -91,7 +91,7 @@ vtkSVGetBoundaryFaces::vtkSVGetBoundaryFaces()
     this->NonManifoldEdges = 0;
     this->FeatureEdges     = 1;
 
-    this->RegionIdsArrayName = NULL;
+    this->RegionIdsArrayName = nullptr;
 
     this->ExtractLargestRegion = 0;
 }
@@ -104,65 +104,65 @@ vtkSVGetBoundaryFaces::~vtkSVGetBoundaryFaces()
     if (this->NewScalars)
     {
       this->NewScalars->Delete();
-      this->NewScalars = NULL;
+      this->NewScalars = nullptr;
     }
     if (this->WorkPd)
     {
       this->WorkPd->Delete();
-      this->WorkPd = NULL;
+      this->WorkPd = nullptr;
     }
     if (this->BoundaryLines)
     {
       this->BoundaryLines->Delete();
-      this->BoundaryLines = NULL;
+      this->BoundaryLines = nullptr;
     }
     if (this->BoundaryPointArray)
     {
       this->BoundaryPointArray->Delete();
-      this->BoundaryPointArray = NULL;
+      this->BoundaryPointArray = nullptr;
     }
     if (this->BoundaryCellArray)
     {
       this->BoundaryCellArray->Delete();
-      this->BoundaryCellArray = NULL;
+      this->BoundaryCellArray = nullptr;
     }
     if (this->RegionAreas)
     {
       this->RegionAreas->Delete();
-      this->RegionAreas = NULL;
+      this->RegionAreas = nullptr;
     }
     if (this->CheckCells)
     {
       this->CheckCells->Delete();
-      this->CheckCells = NULL;
+      this->CheckCells = nullptr;
     }
     if (this->CheckCells2)
     {
       this->CheckCells2->Delete();
-      this->CheckCells2 = NULL;
+      this->CheckCells2 = nullptr;
     }
     if (this->CheckCellsCareful)
     {
       this->CheckCellsCareful->Delete();
-      this->CheckCellsCareful = NULL;
+      this->CheckCellsCareful = nullptr;
     }
     if (this->CheckCellsCareful2)
     {
       this->CheckCellsCareful2->Delete();
-      this->CheckCellsCareful2 = NULL;
+      this->CheckCellsCareful2 = nullptr;
     }
 
-    if (this->checked != NULL)
+    if (this->checked != nullptr)
       delete [] this->checked;
-    if (this->checkedcarefully != NULL)
+    if (this->checkedcarefully != nullptr)
       delete [] this->checkedcarefully;
-    if (this->pointMapper != NULL)
+    if (this->pointMapper != nullptr)
       delete [] this->pointMapper;
 
-    if (this->RegionIdsArrayName != NULL)
+    if (this->RegionIdsArrayName != nullptr)
     {
       delete [] this->RegionIdsArrayName;
-      this->RegionIdsArrayName = NULL;
+      this->RegionIdsArrayName = nullptr;
     }
 }
 

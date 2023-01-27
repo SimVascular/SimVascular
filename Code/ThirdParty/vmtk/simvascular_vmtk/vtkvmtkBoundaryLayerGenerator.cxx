@@ -41,11 +41,11 @@ vtkStandardNewMacro(vtkvmtkBoundaryLayerGenerator);
 
 vtkvmtkBoundaryLayerGenerator::vtkvmtkBoundaryLayerGenerator()
 {
-  this->WarpVectorsArrayName = NULL;
-  this->LayerThicknessArrayName = NULL;
+  this->WarpVectorsArrayName = nullptr;
+  this->LayerThicknessArrayName = nullptr;
 
-  this->WarpVectorsArray = NULL;
-  this->LayerThicknessArray = NULL;
+  this->WarpVectorsArray = nullptr;
+  this->LayerThicknessArray = nullptr;
 
   this->UseWarpVectorMagnitudeAsThickness = 0;
   this->ConstantThickness = 0;
@@ -63,14 +63,14 @@ vtkvmtkBoundaryLayerGenerator::vtkvmtkBoundaryLayerGenerator()
   this->IncludeSidewallCells = 0;
   this->NegateWarpVectors = 0;
 
-  this->CellEntityIdsArrayName = NULL;
-  this->SurfaceCellIdsArrayName = NULL;
+  this->CellEntityIdsArrayName = nullptr;
+  this->SurfaceCellIdsArrayName = nullptr;
   this->InnerSurfaceCellEntityId = 0;
   this->OuterSurfaceCellEntityId = 0;
   this->SidewallCellEntityId = 0;
   this->VolumeCellEntityId = 0;
 
-  this->InnerSurface = NULL;
+  this->InnerSurface = nullptr;
 }
 
 vtkvmtkBoundaryLayerGenerator::~vtkvmtkBoundaryLayerGenerator()
@@ -78,30 +78,30 @@ vtkvmtkBoundaryLayerGenerator::~vtkvmtkBoundaryLayerGenerator()
   if (this->WarpVectorsArrayName)
     {
     delete[] this->WarpVectorsArrayName;
-    this->WarpVectorsArrayName = NULL;
+    this->WarpVectorsArrayName = nullptr;
     }
 
   if (this->LayerThicknessArrayName)
     {
     delete[] this->LayerThicknessArrayName;
-    this->LayerThicknessArrayName = NULL;
+    this->LayerThicknessArrayName = nullptr;
     }
 
   if (this->InnerSurface)
     {
     this->InnerSurface->Delete();
-    this->InnerSurface = NULL;
+    this->InnerSurface = nullptr;
     }
 
   if (this->CellEntityIdsArrayName)
     {
     delete[] this->CellEntityIdsArrayName;
-    this->CellEntityIdsArrayName = NULL;
+    this->CellEntityIdsArrayName = nullptr;
     }
   if (this->SurfaceCellIdsArrayName)
     {
     delete[] this->SurfaceCellIdsArrayName;
-    this->SurfaceCellIdsArrayName = NULL;
+    this->SurfaceCellIdsArrayName = nullptr;
     }
 }
 
@@ -155,9 +155,9 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
     this->LayerThicknessArray = input->GetPointData()->GetArray(this->LayerThicknessArrayName);
     }
 
-  vtkDataArray *surfaceCellIdsArray = NULL;
-  vtkIntArray *outputSurfaceCellIdsArray = NULL;
-  if (this->SurfaceCellIdsArrayName != NULL)
+  vtkDataArray *surfaceCellIdsArray = nullptr;
+  vtkIntArray *outputSurfaceCellIdsArray = nullptr;
+  if (this->SurfaceCellIdsArrayName != nullptr)
   {
     if (!input->GetCellData()->GetArray(this->SurfaceCellIdsArrayName))
     {
@@ -509,7 +509,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
   delete[] boundaryLayerCellTypesInt;
 
   output->GetCellData()->AddArray(cellEntityIdsArray);
-  if (outputSurfaceCellIdsArray != NULL)
+  if (outputSurfaceCellIdsArray != nullptr)
   {
     output->GetCellData()->AddArray(outputSurfaceCellIdsArray);
     outputSurfaceCellIdsArray->Delete();
@@ -518,7 +518,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
   if (this->InnerSurface)
     {
     this->InnerSurface->Delete();
-    this->InnerSurface = NULL;
+    this->InnerSurface = nullptr;
     }
 
   this->InnerSurface = vtkUnstructuredGrid::New();

@@ -65,7 +65,7 @@ static vtkSmartPointer<vtkPolyData> DeepCopy(vtkPolyData* other)
 
 static void Update(vtkPolyData* /*polyData*/)
 {
-//  if (polyData != NULL)
+//  if (polyData != nullptr)
 //    polyData->Update(); //VTK6_TODO vtk pipeline
 }
 
@@ -230,7 +230,7 @@ void mitk::sv4guiSurface::CalculateBoundingBox()
     BaseGeometry::Pointer geometry = timeGeometry->GetGeometryForTimeStep(i);
 
     if (geometry.IsNull())
-      mitkThrow() << "Time-sliced geometry is invalid (equals NULL).";
+      mitkThrow() << "Time-sliced geometry is invalid (equals nullptr).";
 
     geometry->SetFloatBounds(bounds);
   }
@@ -281,7 +281,7 @@ void mitk::sv4guiSurface::SetRequestedRegion(const itk::DataObject* data )
 void mitk::sv4guiSurface::SetRequestedRegion(mitk::sv4guiSurface::RegionType* region)
 {
   if (region == nullptr)
-    mitkThrow() << "Requested region is invalid (equals NULL)";
+    mitkThrow() << "Requested region is invalid (equals nullptr)";
 
   m_RequestedRegion = *region;
 }
@@ -408,7 +408,7 @@ bool mitk::Equal( vtkPolyData* leftHandSide, vtkPolyData* rightHandSide, mitk::S
 {
   if(( leftHandSide == nullptr ) || ( rightHandSide == nullptr ))
   {
-    MITK_ERROR << "mitk::Equal( vtkPolyData* leftHandSide, vtkPolyData* rightHandSide, mitk::ScalarType eps, bool verbose ) does not work for NULL pointer input.";
+    MITK_ERROR << "mitk::Equal( vtkPolyData* leftHandSide, vtkPolyData* rightHandSide, mitk::ScalarType eps, bool verbose ) does not work for nullptr pointer input.";
     return false;
   }
   return Equal( *leftHandSide, *rightHandSide, eps, verbose);
@@ -509,7 +509,7 @@ bool mitk::Equal( mitk::sv4guiSurface* leftHandSide, mitk::sv4guiSurface* rightH
 {
   if(( leftHandSide == nullptr ) || ( rightHandSide == nullptr ))
   {
-    MITK_ERROR << "mitk::Equal( mitk::sv4guiSurface* leftHandSide, mitk::sv4guiSurface* rightHandSide, mitk::ScalarType eps, bool verbose ) does not work with NULL pointer input.";
+    MITK_ERROR << "mitk::Equal( mitk::sv4guiSurface* leftHandSide, mitk::sv4guiSurface* rightHandSide, mitk::ScalarType eps, bool verbose ) does not work with nullptr pointer input.";
     return false;
   }
   return Equal( *leftHandSide, *rightHandSide, eps, verbose);

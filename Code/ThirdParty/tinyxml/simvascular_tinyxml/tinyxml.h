@@ -290,7 +290,7 @@ public:
 		TIXML_ERROR_PARSING_COMMENT,
 		TIXML_ERROR_PARSING_DECLARATION,
 		TIXML_ERROR_DOCUMENT_EMPTY,
-		TIXML_ERROR_EMBEDDED_NULL,
+		TIXML_ERROR_EMBEDDED_nullptr,
 		TIXML_ERROR_PARSING_CDATA,
 		TIXML_ERROR_DOCUMENT_TOP_ONLY,
 
@@ -594,7 +594,7 @@ public:
 	#endif
 
 	/** Add a new node related to this. Adds a child past the LastChild.
-		Returns a pointer to the new object or NULL if an error occured.
+		Returns a pointer to the new object or nullptr if an error occured.
 	*/
 	TiXmlNode* InsertEndChild( const TiXmlNode& addThis );
 
@@ -611,17 +611,17 @@ public:
 	TiXmlNode* LinkEndChild( TiXmlNode* addThis );
 
 	/** Add a new node related to this. Adds a child before the specified child.
-		Returns a pointer to the new object or NULL if an error occured.
+		Returns a pointer to the new object or nullptr if an error occured.
 	*/
 	TiXmlNode* InsertBeforeChild( TiXmlNode* beforeThis, const TiXmlNode& addThis );
 
 	/** Add a new node related to this. Adds a child after the specified child.
-		Returns a pointer to the new object or NULL if an error occured.
+		Returns a pointer to the new object or nullptr if an error occured.
 	*/
 	TiXmlNode* InsertAfterChild(  TiXmlNode* afterThis, const TiXmlNode& addThis );
 
 	/** Replace a child of this node.
-		Returns a pointer to the new object or NULL if an error occured.
+		Returns a pointer to the new object or nullptr if an error occured.
 	*/
 	TiXmlNode* ReplaceChild( TiXmlNode* replaceThis, const TiXmlNode& withThis );
 

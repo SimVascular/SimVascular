@@ -86,14 +86,14 @@ int Tetgenmesh_Init( Tcl_Interp *interp )
   // retrieved by the DLLs.
 
 	MeshKernelRegistryMethodPtr pMeshKernelRegistryMethod =
-    (MeshKernelRegistryMethodPtr) Tcl_GetAssocData( interp, "MeshSystemRegistrar", NULL);
+    (MeshKernelRegistryMethodPtr) Tcl_GetAssocData( interp, "MeshSystemRegistrar", nullptr);
 
-  if (pMeshKernelRegistryMethod != NULL) {
+  if (pMeshKernelRegistryMethod != nullptr) {
     cvMeshSystem* tetGenSystem = new cvTetGenMeshSystem();
     if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) == SV_OK)) {
       //printf("  TetGen module registered\n");
       Tcl_CreateCommand( interp, "tetgen_mesh_available", TetGenMesh_AvailableCmd,
-		         (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		         (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
     }
   }
   else {

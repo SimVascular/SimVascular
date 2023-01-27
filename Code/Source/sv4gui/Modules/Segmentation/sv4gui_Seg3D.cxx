@@ -32,15 +32,15 @@
 #include "sv4gui_Seg3D.h"
 
 sv4guiSeg3D::sv4guiSeg3D()
-    : m_Vpd(NULL)
+    : m_Vpd(nullptr)
 {
 }
 
 sv4guiSeg3D::sv4guiSeg3D(const sv4guiSeg3D &other, bool copyVpd)
     : m_Param(other.m_Param)
-    , m_Vpd(NULL)
+    , m_Vpd(nullptr)
 {
-    if(copyVpd && other.m_Vpd!=NULL)
+    if(copyVpd && other.m_Vpd!=nullptr)
     {
         m_Vpd=vtkSmartPointer<vtkPolyData>::New();
         m_Vpd->DeepCopy(other.m_Vpd);

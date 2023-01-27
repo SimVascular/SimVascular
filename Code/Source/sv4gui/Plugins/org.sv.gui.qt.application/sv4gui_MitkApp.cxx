@@ -104,7 +104,7 @@ void sv4guiMitkApp::initializeLibraryPaths() {
   size_t requiredSize;
   plugin_env[0]='\0';
   requiredSize = 0;
-  getenv_s( &requiredSize, NULL, 0, "SV_PLUGIN_PATH");
+  getenv_s( &requiredSize, nullptr, 0, "SV_PLUGIN_PATH");
 
   if (requiredSize == 0) {
     std::cerr << "Warning:  SV_PLUGIN_PATH doesn't exist!\n" << std::endl << std::flush;
@@ -117,33 +117,33 @@ void sv4guiMitkApp::initializeLibraryPaths() {
     char seps[] = ";";
     char *token;
     token = strtok( plugin_env, seps );
-    while( token != NULL ) {
+    while( token != nullptr ) {
       // While there are tokens in "string"
       //printf( " %s\n", token );
       QString pluginPath = token;
       ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
       std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
       // Get next token
-      token = strtok( NULL, seps );
+      token = strtok( nullptr, seps );
     }
   }
 #else
   char *plugin_env = getenv("SV_PLUGIN_PATH");
-  if (plugin_env == NULL) {
+  if (plugin_env == nullptr) {
     std::cerr << "Warning:  SV_PLUGIN_PATH doesn't exist!\n" << std::endl << std::flush;
   } else {
     found_sv_plugin_path = true;
     char seps[] = ":";
     char *token;
     token = strtok( plugin_env, seps );
-    while( token != NULL ) {
+    while( token != nullptr ) {
       // While there are tokens in "string"
       //printf( " %s\n", token );
       QString pluginPath = token;
       ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
       std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
       // Get next token
-      token = strtok( NULL, seps );
+      token = strtok( nullptr, seps );
     }
   }
 #endif

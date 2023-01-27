@@ -66,10 +66,10 @@ vtkSVPassDataArray::vtkSVPassDataArray()
   this->SourcePd = vtkPolyData::New();
   this->TargetPd = vtkPolyData::New();
 
-  this->PassArrayName = NULL;
+  this->PassArrayName = nullptr;
 
-  this->PassDataArray = NULL;
-  this->NewDataArray  = NULL;
+  this->PassDataArray = nullptr;
+  this->NewDataArray  = nullptr;
 
   this->PassDataIsCellData = 0;
   this->PassDataToCellData = 0;
@@ -85,23 +85,23 @@ vtkSVPassDataArray::~vtkSVPassDataArray()
   if (this->SourcePd)
   {
     this->SourcePd->Delete();
-    this->SourcePd = NULL;
+    this->SourcePd = nullptr;
   }
   if (this->TargetPd)
   {
     this->TargetPd->Delete();
-    this->TargetPd = NULL;
+    this->TargetPd = nullptr;
   }
   if (this->NewDataArray)
   {
     this->NewDataArray->Delete();
-    this->NewDataArray = NULL;
+    this->NewDataArray = nullptr;
   }
 
-  if (this->PassArrayName != NULL)
+  if (this->PassArrayName != nullptr)
   {
     delete [] this->PassArrayName;
-    this->PassArrayName = NULL;
+    this->PassArrayName = nullptr;
   }
 }
 
@@ -115,7 +115,7 @@ void vtkSVPassDataArray::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Pass data is cell data: " << this->PassDataIsCellData << "\n";
   os << indent << "Pass data to cell data: " << this->PassDataToCellData << "\n";
   os << indent << "Use cell centroid: " << this->UseCellCentroid << "\n";
-  if (this->PassArrayName != NULL)
+  if (this->PassArrayName != nullptr)
     os << indent << "Pass array name: " << this->PassArrayName << "\n";
 }
 

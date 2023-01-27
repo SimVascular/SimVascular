@@ -50,11 +50,11 @@ vtkCxxSetObjectMacro(vtkvmtkPolyDataCenterlines,CapCenterIds,vtkIdList);
 
 vtkvmtkPolyDataCenterlines::vtkvmtkPolyDataCenterlines()
 {
-  this->SourceSeedIds = NULL;
-  this->TargetSeedIds = NULL;
-  this->CapCenterIds = NULL;
+  this->SourceSeedIds = nullptr;
+  this->TargetSeedIds = nullptr;
+  this->CapCenterIds = nullptr;
 
-  this->RadiusArrayName = NULL;
+  this->RadiusArrayName = nullptr;
   this->CostFunction = new char[16];
   strcpy(this->CostFunction,"1/R");
 
@@ -79,7 +79,7 @@ vtkvmtkPolyDataCenterlines::vtkvmtkPolyDataCenterlines()
 
   this->GenerateDelaunayTessellation = 1;
 
-  this->DelaunayTessellation = NULL;
+  this->DelaunayTessellation = nullptr;
   this->DelaunayTolerance = 1E-3;
 
   this->VoronoiDiagram = vtkPolyData::New();
@@ -91,68 +91,68 @@ vtkvmtkPolyDataCenterlines::~vtkvmtkPolyDataCenterlines()
   if (this->SourceSeedIds)
     {
     this->SourceSeedIds->Delete();
-    this->SourceSeedIds = NULL;
+    this->SourceSeedIds = nullptr;
     }
 
   if (this->TargetSeedIds)
     {
     this->TargetSeedIds->Delete();
-    this->TargetSeedIds = NULL;
+    this->TargetSeedIds = nullptr;
     }
 
   if (this->CapCenterIds)
     {
     this->CapCenterIds->Delete();
-    this->CapCenterIds = NULL;
+    this->CapCenterIds = nullptr;
     }
 
   if (this->CostFunction)
     {
     delete[] this->CostFunction;
-    this->CostFunction = NULL;
+    this->CostFunction = nullptr;
     }
 
   if (this->CostFunctionArrayName)
     {
     delete[] this->CostFunctionArrayName;
-    this->CostFunctionArrayName = NULL;
+    this->CostFunctionArrayName = nullptr;
     }
 
   if (this->EikonalSolutionArrayName)
     {
     delete[] this->EikonalSolutionArrayName;
-    this->EikonalSolutionArrayName = NULL;
+    this->EikonalSolutionArrayName = nullptr;
     }
 
   if (this->EdgeArrayName)
     {
     delete[] this->EdgeArrayName;
-    this->EdgeArrayName = NULL;
+    this->EdgeArrayName = nullptr;
     }
 
   if (this->EdgePCoordArrayName)
     {
     delete[] this->EdgePCoordArrayName;
-    this->EdgePCoordArrayName = NULL;
+    this->EdgePCoordArrayName = nullptr;
     }
 
   if (this->RadiusArrayName)
     {
     delete[] this->RadiusArrayName;
-    this->RadiusArrayName = NULL;
+    this->RadiusArrayName = nullptr;
     }
 
   if (this->DelaunayTessellation)
     {
     this->DelaunayTessellation->Delete();
-    this->DelaunayTessellation = NULL;
+    this->DelaunayTessellation = nullptr;
     }
 
   this->VoronoiDiagram->Delete();
-  this->VoronoiDiagram = NULL;
+  this->VoronoiDiagram = nullptr;
 
   this->PoleIds->Delete();
-  this->PoleIds = NULL;
+  this->PoleIds = nullptr;
 }
 
 int vtkvmtkPolyDataCenterlines::RequestData(

@@ -79,7 +79,7 @@ QString sv4guiAboutDialog::GetAboutText() const
 
 QString sv4guiAboutDialog::GetCaptionText() const
 {
-    return NULL;
+    return nullptr;
 //  return m_GUI.m_CaptionLabel->text();
 }
 

@@ -160,8 +160,8 @@ diff -aur --new-file -x .git mitk-2016.03/CMakeExternals/DCMTK-3.6.1-linux.patch
 ++set(DCMTK_BUILD_DATE "\"2012-11-02\"")
 ++#ADD_DEFINITIONS("-DDCMTK_BUILD_DATE=\\\"2012-11-02\\\"")
 +
-+ # make OFString(NULL) safe by default
-+ ADD_DEFINITIONS("-DUSE_NULL_SAFE_OFSTRING")
++ # make OFString(nullptr) safe by default
++ ADD_DEFINITIONS("-DUSE_nullptr_SAFE_OFSTRING")
 +@@ -330,3 +331,4 @@
 +     ENDIF(HAVE_LIBRT)
 +   ENDIF(HAVE_PTHREAD_H)
@@ -571,7 +571,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/CppMicroServices/core/src/util
 +
      #define US_THREADS_MUTEX(x)           HANDLE (x);
      #define US_THREADS_MUTEX_INIT(x)
-     #define US_THREADS_MUTEX_CTOR(x)      : x(::CreateMutex(NULL, FALSE, NULL))
+     #define US_THREADS_MUTEX_CTOR(x)      : x(::CreateMutex(nullptr, FALSE, nullptr))
 diff -aur --new-file -x .git mitk-2016.03/Modules/IOExt/CMakeLists.txt mitk-2016.03-sv_modified/Modules/IOExt/CMakeLists.txt
 --- mitk-2016.03/Modules/IOExt/CMakeLists.txt	2016-08-15 16:50:20.000000000 -0700
 +++ mitk-2016.03-sv_modified/Modules/IOExt/CMakeLists.txt	2018-01-23 11:18:03.426997900 -0800

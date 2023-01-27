@@ -1531,7 +1531,7 @@ int vtkSVNURBSUtils::DecreaseDegree(vtkSVControlGrid *controlPoints,
 
     // Set up new uKnots
     newUKnots->SetNumberOfTuples(nukhat+1);
-    if (newVKnots != NULL && vKnots != NULL)
+    if (newVKnots != nullptr && vKnots != nullptr)
       newVKnots->DeepCopy(vKnots);
 
     // New control points, updated each time for new bezier curve
@@ -1840,7 +1840,7 @@ int vtkSVNURBSUtils::DecreaseDegree(vtkSVControlGrid *controlPoints,
 
     // Set up new uKnots
     newUKnots->SetNumberOfTuples(nvkhat+1);
-    if (newVKnots != NULL && vKnots != NULL)
+    if (newVKnots != nullptr && vKnots != nullptr)
       newVKnots->DeepCopy(vKnots);
 
     // New control points, updated each time for new bezier curve
@@ -2852,7 +2852,7 @@ int vtkSVNURBSUtils::InsertKnot(vtkSVControlGrid *controlPoints,
       newUKnots->SetTuple1(i+r, uKnots->GetTuple1(i));
 
     // Copy the v knot vector to output
-    if (newVKnots != NULL && vKnots != NULL)
+    if (newVKnots != nullptr && vKnots != nullptr)
       newVKnots->DeepCopy(vKnots);
 
     // Set up alpha array
@@ -2958,7 +2958,7 @@ int vtkSVNURBSUtils::InsertKnot(vtkSVControlGrid *controlPoints,
       newVKnots->SetTuple1(i+r, vKnots->GetTuple1(i));
 
     // Copy the u knot vector to output
-    if (newUKnots != NULL && uKnots != NULL)
+    if (newUKnots != nullptr && uKnots != nullptr)
       newUKnots->DeepCopy(uKnots);
 
     // Set up alpha array
@@ -3113,7 +3113,7 @@ int vtkSVNURBSUtils::KnotRefinement(vtkSVControlGrid *controlPoints,
       newUKnots->SetTuple1(i+r+1, uKnots->GetTuple1(i));
 
     // Copy v knot span to new v knots span
-    if(newVKnots != NULL && vKnots != NULL)
+    if(newVKnots != nullptr && vKnots != nullptr)
       newVKnots->DeepCopy(vKnots);
 
     // Set iter vars
@@ -3217,7 +3217,7 @@ int vtkSVNURBSUtils::KnotRefinement(vtkSVControlGrid *controlPoints,
       newVKnots->SetTuple1(i+r+1, vKnots->GetTuple1(i));
 
     // Copy u knot span to new u knots span
-    if (newUKnots != NULL && uKnots != NULL)
+    if (newUKnots != nullptr && uKnots != nullptr)
       newUKnots->DeepCopy(uKnots);
 
     // Set iter vars
@@ -3653,7 +3653,7 @@ int vtkSVNURBSUtils::IncreaseDegree(vtkSVControlGrid *controlPoints,
 
     // Set up new knots, just bezier knot span
     newUKnots->SetNumberOfTuples(nukhat+1);
-    if (newVKnots != NULL && vKnots != NULL)
+    if (newVKnots != nullptr && vKnots != nullptr)
       newVKnots->DeepCopy(vKnots);
 
     // New control points, updated each time for new bezier curve
@@ -3981,7 +3981,7 @@ int vtkSVNURBSUtils::IncreaseDegree(vtkSVControlGrid *controlPoints,
 
     // Set up new knots, just bezier knot span
     newVKnots->SetNumberOfTuples(nvkhat+1);
-    if (newUKnots != NULL && uKnots != NULL)
+    if (newUKnots != nullptr && uKnots != nullptr)
       newUKnots->DeepCopy(uKnots);
 
     // New control points, updated each time for new bezier curve
@@ -4350,7 +4350,7 @@ int vtkSVNURBSUtils::RemoveKnot(vtkSVControlGrid *controlPoints,
     // The new knots and old knots
     vtkNew(vtkDoubleArray, tmpKnots);
     tmpKnots->DeepCopy(uKnots);
-    if (newVKnots != NULL && vKnots != NULL)
+    if (newVKnots != nullptr && vKnots != nullptr)
       newVKnots->DeepCopy(vKnots);
 
     // Compute a tolerance for points
@@ -4568,7 +4568,7 @@ int vtkSVNURBSUtils::RemoveKnot(vtkSVControlGrid *controlPoints,
     // The new knots and old knots
     vtkNew(vtkDoubleArray, tmpKnots);
     tmpKnots->DeepCopy(vKnots);
-    if (newUKnots != NULL && uKnots != NULL)
+    if (newUKnots != nullptr && uKnots != nullptr)
       newUKnots->DeepCopy(uKnots);
 
     // Compute a tolerance for points
@@ -6005,7 +6005,7 @@ int vtkSVNURBSUtils::ControlGridToTypedArraySPECIAL(vtkSVControlGrid *grid, vtkT
 
   //Get weights
   vtkDataArray *weights = grid->GetPointData()->GetArray("Weights");
-  if (weights == NULL)
+  if (weights == nullptr)
   {
     fprintf(stderr,"No weights on control point grid\n");
     return SV_ERROR;
@@ -6051,7 +6051,7 @@ int vtkSVNURBSUtils::ControlGridToTypedArraySPECIAL(vtkSVControlGrid *grid,  con
   grid->GetDimensions(dim);
   //Get weights
   vtkDataArray *weights = grid->GetPointData()->GetArray("Weights");
-  if (weights == NULL)
+  if (weights == nullptr)
   {
     fprintf(stderr,"No weights on control point grid\n");
     return SV_ERROR;

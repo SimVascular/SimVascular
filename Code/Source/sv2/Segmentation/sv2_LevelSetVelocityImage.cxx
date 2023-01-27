@@ -41,7 +41,7 @@
 
 cvLevelSetVelocityImage::cvLevelSetVelocityImage()
 {
-  image_ = NULL;
+  image_ = nullptr;
 }
 
 
@@ -61,9 +61,9 @@ cvLevelSetVelocityImage::~cvLevelSetVelocityImage()
 
 int cvLevelSetVelocityImage::SetImage( Image_T *i, int closed )
 {
-  if ( image_ != NULL ) {
+  if ( image_ != nullptr ) {
     return SV_ERROR;
-  } else if ( i == NULL ) {
+  } else if ( i == nullptr ) {
     return SV_ERROR;
   } else {
     image_ = i;
@@ -82,10 +82,10 @@ int cvLevelSetVelocityImage::SetImage( Image_T *i, int closed )
 int cvLevelSetVelocityImage::SetImage( char *filebase, int fileNumRange[], int imgDims[],
 		      double pixDims[], int closed )
 {
-  Image_T *tmp = NULL;
+  Image_T *tmp = nullptr;
 
   tmp = ReadImage( filebase, fileNumRange, "-short", imgDims, pixDims );
-  if ( tmp == NULL ) {
+  if ( tmp == nullptr ) {
     return SV_ERROR;
   }
   if ( image_ ) {
@@ -110,10 +110,10 @@ int cvLevelSetVelocityImage::SetImage( char *filebase, int fileNumRange[], int i
 int cvLevelSetVelocityImage::SetImage( short *imgData, int numData, int imgDims[],
 		      double pixDims[], double origin[], int closed )
 {
-  Image_T *tmp = NULL;
+  Image_T *tmp = nullptr;
 
   tmp = CreateImage( imgData, numData, "-short", imgDims, pixDims );
-  if ( tmp == NULL ) {
+  if ( tmp == nullptr ) {
     return SV_ERROR;
   }
   SetLowerLeft( tmp, origin );
@@ -135,10 +135,10 @@ int cvLevelSetVelocityImage::SetImage( short *imgData, int numData, int imgDims[
 int cvLevelSetVelocityImage::SetImage( double *imgData, int numData, int imgDims[],
 		      double pixDims[], double origin[], int closed )
 {
-  Image_T *tmp = NULL;
+  Image_T *tmp = nullptr;
 
   tmp = CreateImage( imgData, numData, "-double", imgDims, pixDims );
-  if ( tmp == NULL ) {
+  if ( tmp == nullptr ) {
     return SV_ERROR;
   }
   SetLowerLeft( tmp, origin );
@@ -160,10 +160,10 @@ int cvLevelSetVelocityImage::SetImage( double *imgData, int numData, int imgDims
 int cvLevelSetVelocityImage::SetImage( float *imgData, int numData, int imgDims[],
 		      double pixDims[], double origin[], int closed )
 {
-  Image_T *tmp = NULL;
+  Image_T *tmp = nullptr;
 
   tmp = CreateImage( (void*)imgData, numData, "-float", imgDims, pixDims );
-  if ( tmp == NULL ) {
+  if ( tmp == nullptr ) {
     return SV_ERROR;
   }
   SetLowerLeft( tmp, origin );
@@ -184,7 +184,7 @@ int cvLevelSetVelocityImage::SetImage( float *imgData, int numData, int imgDims[
 
 int cvLevelSetVelocityImage::GetImage( Image_T **i )
 {
-  if ( image_ == NULL ) {
+  if ( image_ == nullptr ) {
     return SV_ERROR;
   } else {
     *i = image_;
@@ -199,7 +199,7 @@ int cvLevelSetVelocityImage::GetImage( Image_T **i )
 
 int cvLevelSetVelocityImage::GetMagGradRange( double rng[] )
 {
-  if ( image_ == NULL ) {
+  if ( image_ == nullptr ) {
     return SV_ERROR;
   } else {
     Img_GetMagGradRange( image_, rng );
@@ -214,7 +214,7 @@ int cvLevelSetVelocityImage::GetMagGradRange( double rng[] )
 
 int cvLevelSetVelocityImage::GetXYMagGradRange( double rng[] )
 {
-  if ( image_ == NULL ) {
+  if ( image_ == nullptr ) {
     return SV_ERROR;
   } else {
     Img_GetXYMagGradRange( image_, rng );
@@ -229,7 +229,7 @@ int cvLevelSetVelocityImage::GetXYMagGradRange( double rng[] )
 
 int cvLevelSetVelocityImage::GetZMagGradRange( double rng[] )
 {
-  if ( image_ == NULL ) {
+  if ( image_ == nullptr ) {
     return SV_ERROR;
   } else {
     Img_GetZMagGradRange( image_, rng );
@@ -244,7 +244,7 @@ int cvLevelSetVelocityImage::GetZMagGradRange( double rng[] )
 
 int cvLevelSetVelocityImage::GetIntensityRange( double rng[] )
 {
-  if ( image_ == NULL ) {
+  if ( image_ == nullptr ) {
     return SV_ERROR;
   } else {
     Img_GetIntensityRange( image_, rng );
@@ -259,9 +259,9 @@ int cvLevelSetVelocityImage::GetIntensityRange( double rng[] )
 
 int cvLevelSetVelocityImage::ClearImage()
 {
-  if ( image_ != NULL ) {
+  if ( image_ != nullptr ) {
     Image_Delete( image_ );
   }
-  image_ = NULL;
+  image_ = nullptr;
   return SV_OK;
 }

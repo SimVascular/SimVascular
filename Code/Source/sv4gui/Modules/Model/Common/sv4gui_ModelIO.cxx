@@ -37,7 +37,7 @@
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
 
-#include <tinyxml.h>
+#include <simvascular_tinyxml.h>
 
 #include <vtkCleanPolyData.h>
 #include <vtkXMLPolyDataReader.h>
@@ -127,7 +127,7 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
             }
 
             sv4guiModelElement* me=sv4guiModelElementFactory::CreateModelElement(type);
-            if(me==NULL)
+            if(me==nullptr)
             {
                 mitkThrow() << "No model constructor available for model type: "<< type;
 //                return result;
@@ -219,7 +219,7 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
                     faceElement->QueryFloatAttribute("color2", &color2);
                     faceElement->QueryFloatAttribute("color3", &color3);
 
-                    vtkSmartPointer<vtkPolyData> facepd=NULL;
+                    vtkSmartPointer<vtkPolyData> facepd=nullptr;
                     //face id not exists in parasolid, so skip this and set later.
                     if(type!="Parasolid")
                         facepd=me->CreateFaceVtkPolyData(id);

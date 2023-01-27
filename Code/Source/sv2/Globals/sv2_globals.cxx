@@ -37,15 +37,15 @@
 #include "sv_arg.h"
 #include "sv_misc_utils.h"
 
-SV_DLL_EXPORT cvRepository *gRepository = NULL;
+SV_DLL_EXPORT cvRepository *gRepository = nullptr;
 SV_DLL_EXPORT Tcl_HashTable gLsetVTable;
 SV_DLL_EXPORT Tcl_HashTable gLsetCoreTable;
 SV_DLL_EXPORT char projectionSetBase_[CV_STRLEN];
 // global variable to figure out if we are running in batch mode
 SV_DLL_EXPORT int gSimVascularBatchMode = 0;
 SV_DLL_EXPORT int gSimVascularUseWin32Registry = 0;
-SV_DLL_EXPORT Tcl_Interp *gVtkTclInterp = NULL;
-SV_DLL_EXPORT void *gOCCTManager = NULL;
+SV_DLL_EXPORT Tcl_Interp *gVtkTclInterp = nullptr;
+SV_DLL_EXPORT void *gOCCTManager = nullptr;
 
 SV_DLL_EXPORT Tcl_Interp* getTclInterp() {return gVtkTclInterp;};
 

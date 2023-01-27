@@ -34,7 +34,7 @@ vtkStandardNewMacro(vtkvmtkPolyDataSizingFunction);
 
 vtkvmtkPolyDataSizingFunction::vtkvmtkPolyDataSizingFunction()
 {
-  this->SizingFunctionArrayName = NULL;
+  this->SizingFunctionArrayName = nullptr;
   this->ScaleFactor = 1.0;
 }
 
@@ -43,7 +43,7 @@ vtkvmtkPolyDataSizingFunction::~vtkvmtkPolyDataSizingFunction()
   if (this->SizingFunctionArrayName)
     {
     delete[] this->SizingFunctionArrayName;
-    this->SizingFunctionArrayName = NULL;
+    this->SizingFunctionArrayName = nullptr;
     }
 }
 

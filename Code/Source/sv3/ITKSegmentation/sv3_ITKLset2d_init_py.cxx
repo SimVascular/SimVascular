@@ -129,22 +129,22 @@ static int pyLevelSet_init(pyLevelSet* self, PyObject* args)
 }
 
 PyMethodDef pyLevelSet_methods[] = {
-	{"NewLevelSetObject", (PyCFunction)itkls2d_NewCmd, METH_VARARGS,NULL},
-	{"DeleteLevelSetObject",(PyCFunction)Deleteitkls2d, METH_NOARGS,NULL },
-    {"SetInputs", (PyCFunction)itkls2d_SetInputsMtd, METH_VARARGS,NULL},
-    {"PhaseOneLevelSet", (PyCFunction)itkls2d_PhaseOneLevelSetMtd, METH_VARARGS,NULL},
-    {"PhaseTwoLevelSet", (PyCFunction)itkls2d_PhaseTwoLevelSetMtd, METH_VARARGS,NULL},
-//	{"WriteFront", (PyCFunction)itkls2d_WriteFrontMtd, METH_NOARGS,NULL},
-    {"GACLevelSet", (PyCFunction)itkls2d_GACLevelSetMtd, METH_VARARGS,NULL},
-    {NULL, NULL,0,NULL},
+	{"NewLevelSetObject", (PyCFunction)itkls2d_NewCmd, METH_VARARGS,nullptr},
+	{"DeleteLevelSetObject",(PyCFunction)Deleteitkls2d, METH_NOARGS,nullptr },
+    {"SetInputs", (PyCFunction)itkls2d_SetInputsMtd, METH_VARARGS,nullptr},
+    {"PhaseOneLevelSet", (PyCFunction)itkls2d_PhaseOneLevelSetMtd, METH_VARARGS,nullptr},
+    {"PhaseTwoLevelSet", (PyCFunction)itkls2d_PhaseTwoLevelSetMtd, METH_VARARGS,nullptr},
+//	{"WriteFront", (PyCFunction)itkls2d_WriteFrontMtd, METH_NOARGS,nullptr},
+    {"GACLevelSet", (PyCFunction)itkls2d_GACLevelSetMtd, METH_VARARGS,nullptr},
+    {nullptr, nullptr,0,nullptr},
 };
 
 PyMethodDef Itkls2d_methods[] = {
-    {NULL, NULL,0,NULL},
+    {nullptr, nullptr,0,nullptr},
 };
 
 static PyTypeObject pyLevelSetType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   "pyLevelSet.pyLevelSet",             /* tp_name */
   sizeof(pyLevelSet),             /* tp_basicsize */
   0,                         /* tp_itemsize */
@@ -189,7 +189,7 @@ static PyTypeObject pyLevelSetType = {
 static struct PyModuleDef Itkls2dmodule = {
    PyModuleDef_HEAD_INIT,
    "Itkls2d",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    Itkls2d_methods
@@ -213,7 +213,7 @@ PyObject* Itkls2d_pyInit(){
 #elif PYTHON_MAJOR_VERSION == 3
     pyItkls2D = PyModule_Create(&Itkls2dmodule);
 #endif
-    PyRunTimeErr2d = PyErr_NewException("Itkls2d.error",NULL,NULL);
+    PyRunTimeErr2d = PyErr_NewException("Itkls2d.error",nullptr,nullptr);
     PyModule_AddObject(pyItkls2D,"error",PyRunTimeErr2d);
     Py_INCREF(&pyLevelSetType);
     PyModule_AddObject(pyItkls2D,"pyLevelSet",(PyObject*)&pyLevelSetType);
@@ -231,7 +231,7 @@ static int NewName( CONST84 char *name )
 {
 	Tcl_HashEntry *entryPtr;
 	entryPtr = Tcl_FindHashEntry( &gLsetCoreTable, name );
-	if ( entryPtr != NULL ) {
+	if ( entryPtr != nullptr ) {
 		return 0;
 	}
 	return 1;
@@ -267,7 +267,7 @@ static pyLevelSet* itkls2d_NewCmd( pyLevelSet* self, PyObject* args )
 
 	// Allocate new cvLevelSet object:
 	ls = new cvITKLevelSet;
-	if ( ls == NULL ) {
+	if ( ls == nullptr ) {
 		PyErr_SetString(PyRunTimeErr2d,"error allocating object");
 		
 	}
@@ -300,7 +300,7 @@ PyObject* Deleteitkls2d(pyLevelSet* self, PyObject* args )
 	Tcl_HashEntry *entryPtr;
 
 	entryPtr = Tcl_FindHashEntry( &gLsetCoreTable, ls->tclName_ );
-	if ( entryPtr == NULL ) {
+	if ( entryPtr == nullptr ) {
 		printf("Error looking up LsetCore object %s for deletion.\n",
 				ls->tclName_);
 	} else {
@@ -329,12 +329,12 @@ PyObject* itkls2d_SetInputsMtd( pyLevelSet* self, PyObject* args  )
 	typeImg1 = gRepository->GetType( inputImageName );
 	typeImg1Str = RepositoryDataT_EnumToStr( typeImg1 );
 	cvRepositoryData *inputImage;
-	if (inputImageName != NULL) {
+	if (inputImageName != nullptr) {
 		// Look up given image object:
 		inputImage = gRepository->GetObject( inputImageName );
-		if ( inputImage == NULL ) {
+		if ( inputImage == nullptr ) {
 			char temp[2048];
-			sprintf(temp,"couldn't find object ", inputImageName, (char *)NULL );
+			sprintf(temp,"couldn't find object ", inputImageName, (char *)nullptr );
 			PyErr_SetString(PyRunTimeErr2d, temp );
 			
 		}
@@ -343,7 +343,7 @@ PyObject* itkls2d_SetInputsMtd( pyLevelSet* self, PyObject* args  )
 		typeImg1 = inputImage->GetType();
 		if ( typeImg1 != STRUCTURED_PTS_T ) {
 			char temp[2048];
-			sprintf(temp,"error: object ", inputImageName, "not of type StructuredPts", (char *)NULL);
+			sprintf(temp,"error: object ", inputImageName, "not of type StructuredPts", (char *)nullptr);
 			PyErr_SetString(PyRunTimeErr2d, temp );
 			
 		}
@@ -356,12 +356,12 @@ PyObject* itkls2d_SetInputsMtd( pyLevelSet* self, PyObject* args  )
 	typeImg2Str = RepositoryDataT_EnumToStr( typeImg2 );
 	cvRepositoryData *seedPolyData;
 
-	if (seedPdName != NULL) {
+	if (seedPdName != nullptr) {
 		// Look up given image object:
 		seedPolyData = gRepository->GetObject( seedPdName );
-		if ( seedPolyData == NULL ) {
+		if ( seedPolyData == nullptr ) {
 			char temp[2048];
-			sprintf(temp,"couldn't find object ", seedPdName, (char *)NULL );
+			sprintf(temp,"couldn't find object ", seedPdName, (char *)nullptr );
 			PyErr_SetString(PyRunTimeErr2d, temp );
 			
 		}
@@ -370,7 +370,7 @@ PyObject* itkls2d_SetInputsMtd( pyLevelSet* self, PyObject* args  )
 		typeImg2 = seedPolyData->GetType();
 		if ( typeImg2 != POLY_DATA_T) {
 			char temp[2048];
-			sprintf(temp,"error: object ", seedPdName, "not of type PolyData", (char *)NULL);
+			sprintf(temp,"error: object ", seedPdName, "not of type PolyData", (char *)nullptr);
 			PyErr_SetString(PyRunTimeErr2d, temp );
 			
 		}

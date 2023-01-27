@@ -66,7 +66,7 @@
    #define gzwrite(p1,p2,p3) fwrite((p2),(p3),1,(p1))
    #define gzseek fseek
    #define gzgets(p1,p2,p3) fgets((p2),(p3),(p1))
-   #define Z_NULL NULL
+   #define Z_nullptr nullptr
 #endif
 
 #ifdef SV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE

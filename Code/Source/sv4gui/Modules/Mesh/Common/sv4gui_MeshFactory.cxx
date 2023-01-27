@@ -53,7 +53,7 @@ void sv4guiMeshFactory::RegisterAdaptorFunction(std::string type, AdaptorCreatio
 
 sv4guiMesh* sv4guiMeshFactory::CreateMesh(std::string type)
 {
-    sv4guiMesh* mesh=NULL;
+    sv4guiMesh* mesh=nullptr;
 
     auto search=m_FunctionMap.find(type);
     if(search!=m_FunctionMap.end())
@@ -64,7 +64,7 @@ sv4guiMesh* sv4guiMeshFactory::CreateMesh(std::string type)
 
 sv4guiMeshAdaptor* sv4guiMeshFactory::CreateAdaptor(std::string type)
 {
-    sv4guiMeshAdaptor* adaptor=NULL;
+    sv4guiMeshAdaptor* adaptor=nullptr;
 
     auto search=m_AdaptorFunctionMap.find(type);
     if(search!=m_AdaptorFunctionMap.end())

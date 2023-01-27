@@ -77,21 +77,21 @@ int Math_smoothCurveCmd( ClientData clientData, Tcl_Interp *interp,
 int Math_Init( Tcl_Interp *interp )
 {
   Tcl_CreateCommand( interp, "math_FFT", Math_FFTCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "math_inverseFFT", Math_inverseFFTCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "math_computeWomersley", Math_computeWomersleyCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "math_linearInterp", Math_linearInterpCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "math_curveLength", Math_curveLengthCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "math_linearInterpCurve", Math_linearInterpolateCurveCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "math_fitLeastSquares", Math_fitLeastSquaresCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "math_smoothCurve", Math_smoothCurveCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   return TCL_OK;
 }
@@ -112,9 +112,9 @@ int Math_FFTCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 3;
   ARG_Entry arg_table[] = {
-    { "-pts", LIST_Type, &pointsArg, NULL, REQUIRED, 0, { 0 } },
-    { "-nterms", INT_Type, &nterms, NULL, REQUIRED, 0, { 0 } },
-    { "-numInterpPts", INT_Type, &numInterpPoints, NULL, REQUIRED, 0, { 0 } },
+    { "-pts", LIST_Type, &pointsArg, nullptr, REQUIRED, 0, { 0 } },
+    { "-nterms", INT_Type, &nterms, nullptr, REQUIRED, 0, { 0 } },
+    { "-numInterpPts", INT_Type, &numInterpPoints, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -176,7 +176,7 @@ int Math_FFTCmd( ClientData clientData, Tcl_Interp *interp,
   //     fprintf(stdout,"Point %i:  %lf %lf\n",i,pts[i][0],pts[i][1]);
   //}
 
-  double **terms = NULL;
+  double **terms = nullptr;
   if ((mathobj->FFT(pts, nlistpts, numInterpPoints, nterms, &terms)) == SV_ERROR) {
      Tcl_SetResult( interp, "error in fft", TCL_VOLATILE );
      ARG_FreeListArgvs( table_sz, arg_table );
@@ -221,11 +221,11 @@ int Math_inverseFFTCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 5;
   ARG_Entry arg_table[] = {
-    { "-terms", LIST_Type, &termsArg, NULL, REQUIRED, 0, { 0 } },
-    { "-t0", DOUBLE_Type, &t0, NULL, REQUIRED, 0, { 0 } },
-    { "-dt", DOUBLE_Type, &dt, NULL, REQUIRED, 0, { 0 } },
-    { "-omega", DOUBLE_Type, &omega, NULL, REQUIRED, 0, { 0 } },
-    { "-numPts", INT_Type, &numPts, NULL, REQUIRED, 0, { 0 } },
+    { "-terms", LIST_Type, &termsArg, nullptr, REQUIRED, 0, { 0 } },
+    { "-t0", DOUBLE_Type, &t0, nullptr, REQUIRED, 0, { 0 } },
+    { "-dt", DOUBLE_Type, &dt, nullptr, REQUIRED, 0, { 0 } },
+    { "-omega", DOUBLE_Type, &omega, nullptr, REQUIRED, 0, { 0 } },
+    { "-numPts", INT_Type, &numPts, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -288,7 +288,7 @@ int Math_inverseFFTCmd( ClientData clientData, Tcl_Interp *interp,
   //     fprintf(stdout,"Term %i:  %lf %lf\n",i,terms[i][0],terms[i][1]);
   //}
 
-  double **pts = NULL;
+  double **pts = nullptr;
   if ( (mathobj->inverseFFT(terms, nlistterms, t0, dt, omega, numPts, &pts)) == SV_ERROR) {
      Tcl_SetResult( interp, "error in inverse fft", TCL_VOLATILE );
      ARG_FreeListArgvs( table_sz, arg_table );
@@ -335,13 +335,13 @@ int Math_computeWomersleyCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 7;
   ARG_Entry arg_table[] = {
-    { "-terms", LIST_Type, &termsArg, NULL, REQUIRED, 0, { 0 } },
-    { "-time", DOUBLE_Type, &time, NULL, REQUIRED, 0, { 0 } },
-    { "-viscosity", DOUBLE_Type, &viscosity, NULL, REQUIRED, 0, { 0 } },
-    { "-omega", DOUBLE_Type, &omega, NULL, REQUIRED, 0, { 0 } },
-    { "-density", DOUBLE_Type, &density, NULL, REQUIRED, 0, { 0 } },
-    { "-radmax", DOUBLE_Type, &radmax, NULL, REQUIRED, 0, { 0 } },
-    { "-radius", DOUBLE_Type, &radius, NULL, REQUIRED, 0, { 0 } },
+    { "-terms", LIST_Type, &termsArg, nullptr, REQUIRED, 0, { 0 } },
+    { "-time", DOUBLE_Type, &time, nullptr, REQUIRED, 0, { 0 } },
+    { "-viscosity", DOUBLE_Type, &viscosity, nullptr, REQUIRED, 0, { 0 } },
+    { "-omega", DOUBLE_Type, &omega, nullptr, REQUIRED, 0, { 0 } },
+    { "-density", DOUBLE_Type, &density, nullptr, REQUIRED, 0, { 0 } },
+    { "-radmax", DOUBLE_Type, &radmax, nullptr, REQUIRED, 0, { 0 } },
+    { "-radius", DOUBLE_Type, &radius, nullptr, REQUIRED, 0, { 0 } },
   };
 
 
@@ -441,8 +441,8 @@ int Math_linearInterpCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-pts", LIST_Type, &pointsArg, NULL, REQUIRED, 0, { 0 } },
-    { "-numInterpPts", INT_Type, &numInterpPoints, NULL, REQUIRED, 0, { 0 } },
+    { "-pts", LIST_Type, &pointsArg, nullptr, REQUIRED, 0, { 0 } },
+    { "-numInterpPts", INT_Type, &numInterpPoints, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -508,7 +508,7 @@ int Math_linearInterpCmd( ClientData clientData, Tcl_Interp *interp,
   // 0 to T.
   double t0 = pts[0][0];
   double dt = (pts[nlistpts-1][0]-t0)/(numInterpPoints-1);
-  double **outPts = NULL;
+  double **outPts = nullptr;
 
   if ((mathobj->linearInterpolate(pts, nlistpts, t0, dt, numInterpPoints, &outPts)) == SV_ERROR) {
      Tcl_SetResult( interp, "error in linear interpolation", TCL_VOLATILE );
@@ -547,8 +547,8 @@ int Math_curveLengthCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-pts", LIST_Type, &pointsArg, NULL, REQUIRED, 0, { 0 } },
-    { "-closed", INT_Type, &closed, NULL, REQUIRED, 0, { 0 } },
+    { "-pts", LIST_Type, &pointsArg, nullptr, REQUIRED, 0, { 0 } },
+    { "-closed", INT_Type, &closed, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -647,9 +647,9 @@ int Math_linearInterpolateCurveCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 3;
   ARG_Entry arg_table[] = {
-    { "-pts", LIST_Type, &pointsArg, NULL, REQUIRED, 0, { 0 } },
-    { "-closed", INT_Type, &closed, NULL, REQUIRED, 0, { 0 } },
-    { "-numInterpPts", INT_Type, &numInterpPoints, NULL, REQUIRED, 0, { 0 } },
+    { "-pts", LIST_Type, &pointsArg, nullptr, REQUIRED, 0, { 0 } },
+    { "-closed", INT_Type, &closed, nullptr, REQUIRED, 0, { 0 } },
+    { "-numInterpPts", INT_Type, &numInterpPoints, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -712,7 +712,7 @@ int Math_linearInterpolateCurveCmd( ClientData clientData, Tcl_Interp *interp,
   //     fprintf(stdout,"Point %i:  %lf %lf\n",i,pts[i][0],pts[i][1]);
   //}
 
-  double **outPts = NULL;
+  double **outPts = nullptr;
   if ((mathobj->linearInterpolateCurve(pts, nlistpts, closed, numInterpPoints, &outPts)) == SV_ERROR) {
      Tcl_SetResult( interp, "error in linear interpolation", TCL_VOLATILE );
      ARG_FreeListArgvs( table_sz, arg_table );
@@ -755,10 +755,10 @@ int Math_fitLeastSquaresCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 4;
   ARG_Entry arg_table[] = {
-    { "-X", LIST_Type, &xtermsArg, NULL, REQUIRED, 0, { 0 } },
-    { "-Y", LIST_Type, &ytermsArg, NULL, REQUIRED, 0, { 0 } },
-    { "-xOrder", INT_Type, &xOrder, NULL, REQUIRED, 0, { 0 } },
-    { "-yOrder", INT_Type, &yOrder, NULL, REQUIRED, 0, { 0 } },
+    { "-X", LIST_Type, &xtermsArg, nullptr, REQUIRED, 0, { 0 } },
+    { "-Y", LIST_Type, &ytermsArg, nullptr, REQUIRED, 0, { 0 } },
+    { "-xOrder", INT_Type, &xOrder, nullptr, REQUIRED, 0, { 0 } },
+    { "-yOrder", INT_Type, &yOrder, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -908,10 +908,10 @@ int Math_smoothCurveCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 4;
   ARG_Entry arg_table[] = {
-    { "-pts", LIST_Type, &pointsArg, NULL, REQUIRED, 0, { 0 } },
-    { "-closed", INT_Type, &closed, NULL, REQUIRED, 0, { 0 } },
-    { "-numModes", INT_Type, &numModes, NULL, REQUIRED, 0, { 0 } },
-    { "-numInterpPts", INT_Type, &numInterpPoints, NULL, REQUIRED, 0, { 0 } },
+    { "-pts", LIST_Type, &pointsArg, nullptr, REQUIRED, 0, { 0 } },
+    { "-closed", INT_Type, &closed, nullptr, REQUIRED, 0, { 0 } },
+    { "-numModes", INT_Type, &numModes, nullptr, REQUIRED, 0, { 0 } },
+    { "-numInterpPts", INT_Type, &numInterpPoints, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -974,7 +974,7 @@ int Math_smoothCurveCmd( ClientData clientData, Tcl_Interp *interp,
   //     fprintf(stdout,"Point %i:  %lf %lf\n",i,pts[i][0],pts[i][1]);
   //}
 
-  double **outPts = NULL;
+  double **outPts = nullptr;
   if ((mathobj->smoothCurve(pts, nlistpts, closed, numModes, numInterpPoints, &outPts)) == SV_ERROR) {
      Tcl_SetResult( interp, "error in smoothing curve", TCL_VOLATILE );
      ARG_FreeListArgvs( table_sz, arg_table );

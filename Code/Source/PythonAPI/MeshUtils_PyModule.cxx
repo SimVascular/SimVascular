@@ -120,7 +120,7 @@ static PyObject *
 MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O|ddddds", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", "hmin", "hmax", "angle", "hgrad", "hausd", "log_file", NULL};
+  static char *keywords[] = {"surface", "hmin", "hmax", "angle", "hgrad", "hausd", "log_file", nullptr};
   PyObject* surfaceArg;
   double hmin = 0.1;
   double hmax = 0.1;
@@ -161,7 +161,7 @@ MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
   //
   int useSizingFunction = 0;
   int numAddedRefines = 0;
-  vtkDoubleArray *meshSizingFunction = NULL;
+  vtkDoubleArray *meshSizingFunction = nullptr;
 
   if (MMGUtils_SurfaceRemeshing(surfPolydata, hmin, hmax, hausd, angle, hgrad, useSizingFunction, meshSizingFunction,
           numAddedRefines) != SV_OK) {
@@ -170,7 +170,7 @@ MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
   }
 
   auto result = new cvPolyData(surfPolydata);
-  if (result == NULL) {
+  if (result == nullptr) {
       api.error("Error creating polydata from the remeshed object.");
       return nullptr;
   }
@@ -210,7 +210,7 @@ static PyObject *
 MeshUtils_remesh_faces(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("OO!d", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", "face_ids", "edge_size", NULL};
+  static char *keywords[] = {"surface", "face_ids", "edge_size", nullptr};
   PyObject* surfaceArg;
   PyObject* faceIDsArg;
   double edgeSize = 0.0;
@@ -276,13 +276,13 @@ MeshUtils_remesh_faces(PyObject* self, PyObject* args, PyObject* kwargs)
   int useSizeFunction = 0;
 
   if (VMTKUtils_SurfaceRemeshing(surfPolydata, edgeSize, meshCaps, preserveEdges, triangleSplitFactor, collapseAngleThreshold,
-          excludeFaceIDs,  markerListName, useSizeFunction, NULL) != SV_OK) {
+          excludeFaceIDs,  markerListName, useSizeFunction, nullptr) != SV_OK) {
       api.error("Remeshing failed.");
       return nullptr;
   }
 
   auto result = new cvPolyData(surfPolydata);
-  if (result == NULL) {
+  if (result == nullptr) {
       api.error("Error creating polydata from the remeshed object.");
       return nullptr;
   }
@@ -308,7 +308,7 @@ PyMethodDef PyMeshUtilsMethods[] =
 {
   {"remesh", (PyCFunction)MeshUtils_remesh, METH_VARARGS|METH_KEYWORDS, MeshUtils_remesh_doc},
   {"remesh_faces", (PyCFunction)MeshUtils_remesh_faces, METH_VARARGS|METH_KEYWORDS, MeshUtils_remesh_faces_doc},
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 //-----------------------
@@ -353,13 +353,13 @@ PyInit_PyMeshUtils()
 
   auto module = PyModule_Create(&PyMeshUtilsModule);
 
-  if (module == NULL) {
+  if (module == nullptr) {
     fprintf(stdout,"Error in initializing pyMeshUtil");
      return SV_PYTHON_ERROR;
   }
 
   // Add MeshUtils exception.
-  PyRunTimeErr=PyErr_NewException(MESH_UTILS_EXCEPTION, NULL, NULL);
+  PyRunTimeErr=PyErr_NewException(MESH_UTILS_EXCEPTION, nullptr, nullptr);
   PyModule_AddObject(module, MESH_UTILS_EXCEPTION_OBJECT, PyRunTimeErr);
 
   return module;
@@ -378,13 +378,13 @@ PyMODINIT_FUNC initpyMeshUtil()
   PyObject *pythonC;
   pythonC = Py_InitModule("pyMeshUtil", Mmgmesh_methods);
 
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyMeshUtil");
     return;
 
   }
-  PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",NULL,NULL);
+  PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",nullptr,nullptr);
   return;
 
 }
@@ -394,12 +394,12 @@ PyObject* Mmgmesh_pyInit()
   PyObject *pythonC;
   pythonC = Py_InitModule("pyMeshUtil", Mmgmesh_methods);
 
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyMeshUtil");
     return SV_PYTHON_ERROR;
   }
-  PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",NULL,NULL);
+  PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",nullptr,nullptr);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
   return pythonC;
 }

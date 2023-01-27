@@ -72,7 +72,7 @@ static PyObject *
 ParasolidSolid_write(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("s|i", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", "version", NULL};
+  static char *keywords[] = {"file_name", "version", nullptr};
   char* fileName;
   int fileVersion = 0;
 
@@ -113,8 +113,8 @@ PyDoc_STRVAR(PyParasolidSolidClass_doc,
 //-------------------------
 //
 PyMethodDef PyParasolidSolidMethods[] = {
-  {"write", (PyCFunction)ParasolidSolid_write, METH_VARARGS|METH_KEYWORDS, NULL},
-  {NULL, NULL}
+  {"write", (PyCFunction)ParasolidSolid_write, METH_VARARGS|METH_KEYWORDS, nullptr},
+  {nullptr, nullptr}
 };
 
 //----------------------
@@ -148,7 +148,7 @@ PyParasolidSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyParasolidSolidNew] PyParasolidSolidNew " << std::endl;
   auto self = (PyParasolidSolid*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->super.id = 2;
   }
   return (PyObject *) self;
@@ -175,7 +175,7 @@ PyParasolidSolidDealloc(PyParasolidSolid* self)
 // designated initializers.
 //
 PyTypeObject PyParasolidSolidType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   MODELING_PARAMODELING_MODULE_CLASS,

@@ -7180,7 +7180,7 @@ proc post_cutAndClipResults [list meshobj res_objs \
   #@a meshobj: mesh as a vtkUnstructuredGrid.
   #@a res_objs: tcl list of the form ((timestep vector_results scalar_results) (...) ...).
   #@a res_objs: the results should be vtkFloatArrays.  Either of the results type (vector
-  #@a res_objs: or scalar) can be set to NULL strings if desired.
+  #@a res_objs: or scalar) can be set to nullptr strings if desired.
   #@a pcmri_file: location to slice model (only reads header info)
   #@a path_id: pathid of the path (vessel) you want to intersect
   #@a sphere_center: you can explicitly specify the center of the
@@ -7188,8 +7188,8 @@ proc post_cutAndClipResults [list meshobj res_objs \
   #@a sphere_center: path_id and pcmri_file are ignored. It also requires
   #@a sphere_center: you specify the cut plane normal (the origin is assumed
   #@a sphere_center: to be at sphere_center).
-  #@a cut_plane_nrm: normal of the implicit cutting plane.  Can be NULL.
-  #@a cut_plane_org: origin of the implicit cutting plane.  Can be NULL.
+  #@a cut_plane_nrm: normal of the implicit cutting plane.  Can be nullptr.
+  #@a cut_plane_org: origin of the implicit cutting plane.  Can be nullptr.
   #@a sphere_radius: radius of sphere centered at intersection
   #@a sphere_radius: of path and pcmri plane used to prevent extraneous
   #@a sphere_radius: vessels being include in volumetric flow calcs.
@@ -7413,7 +7413,7 @@ proc post_cutAndClipResults [list meshobj res_objs \
     puts "auto sphere radius: $sphere_radius"
   }
   if {$sphere_radius == ""} {
-    return -code error "ERROR:  sphere_radius still a NULL string!"
+    return -code error "ERROR:  sphere_radius still a nullptr string!"
   }
 
   # create implicit sphere

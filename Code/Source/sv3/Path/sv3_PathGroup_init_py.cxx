@@ -85,20 +85,20 @@ int PathGroup_pyInit()
 }
 
 static PyMethodDef pyPathGroup_methods[]={
-  {"NewObject", (PyCFunction)sv4PathGroup_NewObjectCmd,METH_VARARGS,NULL},
-  {"GetObject", (PyCFunction)sv4PathGroup_GetObjectCmd,METH_VARARGS,NULL},
-  {"SetPath",(PyCFunction)sv4PathGroup_SetPathCmd,METH_VARARGS,NULL},
-  {"GetTimeSize",(PyCFunction)sv4PathGroup_GetTimeSizeCmd, METH_NOARGS,NULL},
-  {"GetPath",(PyCFunction)sv4PathGroup_GetPathCmd,METH_VARARGS,NULL},
-  {"GetPathGroupID",(PyCFunction)sv4PathGroup_GetPathGroupIDCmd,METH_VARARGS,NULL},
-  {"SetPathGroupID",(PyCFunction)sv4PathGroup_SetPathGroupIDCmd, METH_VARARGS,NULL},
-  {"SetSpacing",(PyCFunction)sv4PathGroup_SetSpacingCmd, METH_NOARGS,NULL},
-  {"GetSpacing",(PyCFunction)sv4PathGroup_GetSpacingCmd, METH_NOARGS, NULL},
-  {"SetCalculationNumber",(PyCFunction)sv4PathGroup_SetCalculationNumber, METH_NOARGS, NULL},
-  {"GetCalculationNumber",(PyCFunction)sv4PathGroup_GetCalculationNumber, METH_NOARGS, NULL},
-  {"SetMethod",(PyCFunction)sv4PathGroup_SetMethod, METH_NOARGS, NULL},
-  {"GetMethod",(PyCFunction)sv4PathGroup_GetMethod, METH_NOARGS, NULL},
-  {NULL,NULL}
+  {"NewObject", (PyCFunction)sv4PathGroup_NewObjectCmd,METH_VARARGS,nullptr},
+  {"GetObject", (PyCFunction)sv4PathGroup_GetObjectCmd,METH_VARARGS,nullptr},
+  {"SetPath",(PyCFunction)sv4PathGroup_SetPathCmd,METH_VARARGS,nullptr},
+  {"GetTimeSize",(PyCFunction)sv4PathGroup_GetTimeSizeCmd, METH_NOARGS,nullptr},
+  {"GetPath",(PyCFunction)sv4PathGroup_GetPathCmd,METH_VARARGS,nullptr},
+  {"GetPathGroupID",(PyCFunction)sv4PathGroup_GetPathGroupIDCmd,METH_VARARGS,nullptr},
+  {"SetPathGroupID",(PyCFunction)sv4PathGroup_SetPathGroupIDCmd, METH_VARARGS,nullptr},
+  {"SetSpacing",(PyCFunction)sv4PathGroup_SetSpacingCmd, METH_NOARGS,nullptr},
+  {"GetSpacing",(PyCFunction)sv4PathGroup_GetSpacingCmd, METH_NOARGS, nullptr},
+  {"SetCalculationNumber",(PyCFunction)sv4PathGroup_SetCalculationNumber, METH_NOARGS, nullptr},
+  {"GetCalculationNumber",(PyCFunction)sv4PathGroup_GetCalculationNumber, METH_NOARGS, nullptr},
+  {"SetMethod",(PyCFunction)sv4PathGroup_SetMethod, METH_NOARGS, nullptr},
+  {"GetMethod",(PyCFunction)sv4PathGroup_GetMethod, METH_NOARGS, nullptr},
+  {nullptr,nullptr}
 };
 
 static int pyPathGroup_init(pyPathGroup* self, PyObject* args)
@@ -108,7 +108,7 @@ static int pyPathGroup_init(pyPathGroup* self, PyObject* args)
 }
 
 static PyTypeObject pyPathGroupType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   "pyPathGroup.pyPathGroup",             /* tp_name */
   sizeof(pyPathGroup),             /* tp_basicsize */
   0,                         /* tp_itemsize */
@@ -151,14 +151,14 @@ static PyTypeObject pyPathGroupType = {
 
 static PyMethodDef pyPathGroupModule_methods[] =
 {
-    {NULL,NULL}
+    {nullptr,nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyPathGroupModule = {
    PyModuleDef_HEAD_INIT,
    "pyPathGroup",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    pyPathGroupModule_methods
@@ -174,7 +174,7 @@ PyMODINIT_FUNC initpyPathGroup()
 {
   // Associate the mesh registrar with the python interpreter so it can be
   // retrieved by the DLLs.
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository = new cvRepository();
     fprintf(stdout,"New gRepository created from cv_mesh_init\n");
@@ -189,12 +189,12 @@ PyMODINIT_FUNC initpyPathGroup()
   }
   PyObject* pythonC;
   pythonC = Py_InitModule("pyPathGroup",pyPathGroupModule_methods);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyPathGroup\n");
     return;
   }
-  PyRunTimeErrPg = PyErr_NewException("pyPathGroup.error",NULL,NULL);
+  PyRunTimeErrPg = PyErr_NewException("pyPathGroup.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErrPg);
   Py_INCREF(&pyPathGroupType);
   PyModule_AddObject(pythonC,"pyPathGroup",(PyObject*)&pyPathGroupType);
@@ -211,7 +211,7 @@ PyMODINIT_FUNC PyInit_pyPathGroup()
 
 {
 
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository = new cvRepository();
     fprintf(stdout,"New gRepository created from sv3_PathGroup_init\n");
@@ -226,12 +226,12 @@ PyMODINIT_FUNC PyInit_pyPathGroup()
   }
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyPathGroupModule);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyPathGroup\n");
     return SV_PYTHON_ERROR;
   }
-  PyRunTimeErrPg = PyErr_NewException("pyPathGroup.error",NULL,NULL);
+  PyRunTimeErrPg = PyErr_NewException("pyPathGroup.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErrPg);
   Py_INCREF(&pyPathGroupType);
   PyModule_AddObject(pythonC,"pyPathGroup",(PyObject*)&pyPathGroupType);
@@ -284,7 +284,7 @@ PyObject* sv4PathGroup_NewObjectCmd( pyPathGroup* self, PyObject* args)
 // --------------------
 PyObject* sv4PathGroup_GetObjectCmd( pyPathGroup* self, PyObject* args)
 {
-  char *objName=NULL;
+  char *objName=nullptr;
   RepositoryDataT type;
   cvRepositoryData *rd;
   PathGroup *path;
@@ -300,7 +300,7 @@ PyObject* sv4PathGroup_GetObjectCmd( pyPathGroup* self, PyObject* args)
   // Retrieve source object:
   rd = gRepository->GetObject( objName );
   char r[2048];
-  if ( rd == NULL )
+  if ( rd == nullptr )
   {
     r[0] = '\0';
     sprintf(r, "couldn't find object %s", objName);
@@ -346,7 +346,7 @@ PyObject* sv4PathGroup_SetPathCmd( pyPathGroup* self, PyObject* args)
         // Retrieve source object:
     rd = gRepository->GetObject( objName );
     char r[2048];
-    if ( rd == NULL )
+    if ( rd == nullptr )
     {
         r[0] = '\0';
         sprintf(r, "couldn't find object %s", objName);
@@ -365,7 +365,7 @@ PyObject* sv4PathGroup_SetPathCmd( pyPathGroup* self, PyObject* args)
     }
     
     PathElement* path = static_cast<PathElement*> (rd);
-    if (path==NULL)
+    if (path==nullptr)
     {
         PyErr_SetString(PyRunTimeErrPg,"Path does not exist.");
         
@@ -405,7 +405,7 @@ PyObject* sv4PathGroup_GetPathCmd( pyPathGroup* self, PyObject* args)
 {
 
     int index;
-    char* pathName=NULL;
+    char* pathName=nullptr;
     if(!PyArg_ParseTuple(args,"si",&pathName, &index))
     {
         PyErr_SetString(PyRunTimeErrPg,"Could not import char pathName, int index");
@@ -413,7 +413,7 @@ PyObject* sv4PathGroup_GetPathCmd( pyPathGroup* self, PyObject* args)
     }
         
     PathGroup* pathGrp = self->geom;
-    if (pathGrp==NULL)
+    if (pathGrp==nullptr)
     {
         PyErr_SetString(PyRunTimeErrPg,"Path does not exist.");
         

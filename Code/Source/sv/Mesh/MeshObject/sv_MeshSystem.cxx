@@ -36,7 +36,7 @@
 #include <string.h>
 
 cvMeshObject::KernelType cvMeshSystem::gCurrentKernel = cvMeshObject::KERNEL_INVALID;
-cvMeshSystem* cvMeshSystem::gMeshSystems[] = { NULL };
+cvMeshSystem* cvMeshSystem::gMeshSystems[] = { nullptr };
 
 cvMeshSystem::cvMeshSystem()
 {
@@ -50,7 +50,7 @@ cvMeshSystem* cvMeshSystem::GetCurrentKernel()
 {
   if (gCurrentKernel != cvMeshObject::KERNEL_MESHSIM && gCurrentKernel != cvMeshObject::KERNEL_TETGEN)
   {
-    return NULL;
+    return nullptr;
   }
 
   return gMeshSystems[gCurrentKernel];
@@ -106,29 +106,29 @@ int cvMeshSystem::RegisterKernel( cvMeshObject::KernelType kernel_type, cvMeshSy
 // about kernel types can be returned if necessary.
 
 // PLEASE note that checking the return value of this function is
-// CRITICAL for things to work right.  If we return NULL here, we
+// CRITICAL for things to work right.  If we return nullptr here, we
 // absolutely need to trap that in the callers (i.e. cvMeshSystem
-// instantiation functions) to make sure those NULL ptr's don't get
+// instantiation functions) to make sure those nullptr ptr's don't get
 // registered in the repository.  Subsequent cvMeshSystem lookup's
-// currently DO NOT check for NULL values.  The idea is that objects
+// currently DO NOT check for nullptr values.  The idea is that objects
 // are checked for validity *before* they get registered.
 #ifdef SV_USE_TCL
 cvMeshObject* cvMeshSystem::DefaultInstantiateMeshObject( Tcl_Interp *interp,
                                                           char *const meshFileName,
                                                           char *const solidFileName )
 {
-  cvMeshSystem* meshSystem = NULL;
-  cvMeshObject* meshObject = NULL;
+  cvMeshSystem* meshSystem = nullptr;
+  cvMeshObject* meshObject = nullptr;
   if (gCurrentKernel == cvMeshObject::KERNEL_MESHSIM || gCurrentKernel == cvMeshObject::KERNEL_TETGEN) {
-    if (gMeshSystems[gCurrentKernel] == NULL) {
+    if (gMeshSystems[gCurrentKernel] == nullptr) {
       Tcl_SetResult( interp, "current kernel is not available", TCL_STATIC );
-      return NULL;
+      return nullptr;
     }
     meshSystem = gMeshSystems[gCurrentKernel];
 
     meshObject = (cvMeshObject *) (meshSystem->CreateMeshObject(interp));
-    if (meshObject == NULL) {
-      if (interp != NULL)
+    if (meshObject == nullptr) {
+      if (interp != nullptr)
 		    Tcl_SetResult( interp, "Unable to create mesh object", TCL_STATIC );
     }
     else {
@@ -137,7 +137,7 @@ cvMeshObject* cvMeshSystem::DefaultInstantiateMeshObject( Tcl_Interp *interp,
     }
   }
   else {
-	  if (interp != NULL) {
+	  if (interp != nullptr) {
 		  Tcl_SetResult( interp, "current kernel is not valid", TCL_STATIC );
 	  }
   }
@@ -153,19 +153,19 @@ cvMeshObject* cvMeshSystem::DefaultInstantiateMeshObject(
   char *const meshFileName,
   char *const solidFileName )
 {
-cvMeshSystem* meshSystem = NULL;
-cvMeshObject* meshObject = NULL;
+cvMeshSystem* meshSystem = nullptr;
+cvMeshObject* meshObject = nullptr;
 if (gCurrentKernel == cvMeshObject::KERNEL_MESHSIM || gCurrentKernel == cvMeshObject::KERNEL_TETGEN)
 {
-  if (gMeshSystems[gCurrentKernel] == NULL)
+  if (gMeshSystems[gCurrentKernel] == nullptr)
   {
     fprintf( stdout, "current kernel is not available");
-    return NULL;
+    return nullptr;
   }
   meshSystem = gMeshSystems[gCurrentKernel];
 
   meshObject = (cvMeshObject *) (meshSystem->CreateMeshObject());
-  if (meshObject == NULL)
+  if (meshObject == nullptr)
   {
     fprintf( stdout, "Unable to create mesh object");
   }

@@ -56,7 +56,7 @@ sv4guiMitksvFSIJob::sv4guiMitksvFSIJob(const sv4guiMitksvFSIJob &other)
         if(other.m_JobSet[t])
             m_JobSet[t]=other.m_JobSet[t]->Clone();
 //        else
-//            m_JobSet.push_back(NULL);
+//            m_JobSet.push_back(nullptr);
     }
 }
 
@@ -169,7 +169,7 @@ sv4guisvFSIJob* sv4guiMitksvFSIJob::GetSimJob(unsigned int t) const
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }
 

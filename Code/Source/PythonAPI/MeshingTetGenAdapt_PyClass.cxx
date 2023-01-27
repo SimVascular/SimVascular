@@ -172,10 +172,10 @@ TetGenAdapt_generate_mesh(PyTetGenAdapt* self, PyObject* args, PyObject* kwargs)
 {
   //std::cout << "[TetGenAdapt_generate_mesh] ========== TetGenAdapt_generate_mesh ==========" << std::endl;
   auto api = PyUtilApiFunction("ssO!|s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"results_file", "model_file", "options", "log_file", NULL};
-  char *resultsFileName = NULL;
-  char *modelFileName = NULL;
-  char *logFileName = NULL;
+  static char *keywords[] = {"results_file", "model_file", "options", "log_file", nullptr};
+  char *resultsFileName = nullptr;
+  char *modelFileName = nullptr;
+  char *logFileName = nullptr;
   PyObject* options;
 
   if (!(PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &resultsFileName, &modelFileName, &PyTetGenAdaptOptType, &options,
@@ -191,7 +191,7 @@ TetGenAdapt_generate_mesh(PyTetGenAdapt* self, PyObject* args, PyObject* kwargs)
   // [TODO:DaveP] Need to put this in a class so stdout can be reset when
   // it goes out of scope.
   //
-  if (logFileName == NULL) {
+  if (logFileName == nullptr) {
       logFileName = "/dev/null";
   }
   int stdout_dupe = dup(fileno(stdout));
@@ -378,7 +378,7 @@ PyMethodDef PyTetGenAdaptMethods[] = {
 
   {"set_options", (PyCFunction)TetGenAdapt_set_options, METH_VARARGS, TetGenAdapt_set_options_doc},
 
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //-------------------
@@ -399,7 +399,7 @@ PyTetGenAdaptInit(PyTetGenAdapt* self, PyObject* args, PyObject *kwds)
   self->super.adaptive_mesher = new cvTetGenAdapt();
   // Create a cvTetGenMeshObject object that is used to perform
   // the actual adaptive mesh generation.
-  self->mesher = new cvTetGenMeshObject(NULL);
+  self->mesher = new cvTetGenMeshObject(nullptr);
   self->meshGenerated = false;
   numObjs += 1;
   return 0;
@@ -414,7 +414,7 @@ PyTetGenAdaptNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyTetGenAdaptNew] PyTetGenAdaptNew " << std::endl;
   auto self = (PyMeshingAdaptive*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->super.id = 2;
   }
   return (PyObject*)self;
@@ -441,7 +441,7 @@ PyTetGenAdaptDealloc(PyTetGenAdapt* self)
 // designated initializers.
 //
 PyTypeObject PyTetGenAdaptType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   MESHING_TETGEN_ADAPTIVE_MODULE_CLASS,

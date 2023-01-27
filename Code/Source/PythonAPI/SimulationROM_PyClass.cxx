@@ -568,7 +568,7 @@ static PyObject *
 ROMSim_write_input_file(PySimulationROM* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O!OOOOOOs", PyRunTimeErr, __func__);
-  static char *keywords[] = {"model_order", "model", "mesh", "fluid", "material", "boundary_conditions", "solution", "directory", NULL};
+  static char *keywords[] = {"model_order", "model", "mesh", "fluid", "material", "boundary_conditions", "solution", "directory", nullptr};
   PyObject* modelOrderArg = 0;
   PyObject* modelParamsArg = nullptr;
   PyObject* meshParamsArg = nullptr;
@@ -656,12 +656,12 @@ static PyMethodDef PyROMSimMethods[] = {
 
   {"write_input_file", (PyCFunction)ROMSim_write_input_file, METH_VARARGS|METH_KEYWORDS, ROMSim_write_input_file_doc},
 
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 static PyMemberDef PyROMSimMembers[] = {
-    {"parameters", T_OBJECT_EX, offsetof(PySimulationROM, parameters), 0, NULL},
-    {NULL}
+    {"parameters", T_OBJECT_EX, offsetof(PySimulationROM, parameters), 0, nullptr},
+    {nullptr}
 };
 
 //----------------
@@ -673,7 +673,7 @@ static PyMemberDef PyROMSimMembers[] = {
 // designated initializers. 
 //
 PyTypeObject PySimulationROMType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and 
   // the name of the type within the module.
   SIMULATION_ROM_MODULE_CLASS, 
@@ -701,7 +701,7 @@ PyROMSimInit(PySimulationROM* self, PyObject* args, PyObject *kwds)
       initParams = false;
   }
 
-  self->parameters = PyObject_CallObject((PyObject*)&PySimulationROMParametersType, NULL);
+  self->parameters = PyObject_CallObject((PyObject*)&PySimulationROMParametersType, nullptr);
 
   return 0;
 }
@@ -716,7 +716,7 @@ static PyObject *
 PyROMSimNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   auto self = (PySimulationROM*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
   }
 
   return (PyObject *) self;

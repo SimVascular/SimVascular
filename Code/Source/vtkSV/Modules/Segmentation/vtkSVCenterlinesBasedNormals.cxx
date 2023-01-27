@@ -65,16 +65,16 @@ const double vtkSVCenterlinesBasedNormals::GlobalCoords[3][3] =
 vtkSVCenterlinesBasedNormals::vtkSVCenterlinesBasedNormals()
 {
   this->WorkPd =        vtkPolyData::New();
-  this->CenterlinesPd = NULL;
+  this->CenterlinesPd = nullptr;
 
-  this->CellArrayName =        NULL;
-  this->NewCellArrayName =     NULL;
-  this->PointArrayName =       NULL;
-  this->GroupIdsArrayName =    NULL;
-  this->InternalIdsArrayName = NULL;
+  this->CellArrayName =        nullptr;
+  this->NewCellArrayName =     nullptr;
+  this->PointArrayName =       nullptr;
+  this->GroupIdsArrayName =    nullptr;
+  this->InternalIdsArrayName = nullptr;
 
-  this->CellArray = NULL;
-  this->PointArray = NULL;
+  this->CellArray = nullptr;
+  this->PointArray = nullptr;
   this->NewCellArray = vtkDoubleArray::New();
 
   this->UsePointArray =      0;
@@ -86,42 +86,42 @@ vtkSVCenterlinesBasedNormals::vtkSVCenterlinesBasedNormals()
 // ----------------------
 vtkSVCenterlinesBasedNormals::~vtkSVCenterlinesBasedNormals()
 {
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
 
-  if (this->NewCellArray != NULL)
+  if (this->NewCellArray != nullptr)
   {
     this->NewCellArray->Delete();
-    this->NewCellArray = NULL;
+    this->NewCellArray = nullptr;
   }
 
-  if (this->CellArrayName != NULL)
+  if (this->CellArrayName != nullptr)
   {
     delete [] this->CellArrayName;
-    this->CellArrayName = NULL;
+    this->CellArrayName = nullptr;
   }
-  if (this->NewCellArrayName != NULL)
+  if (this->NewCellArrayName != nullptr)
   {
     delete [] this->NewCellArrayName;
-    this->NewCellArrayName = NULL;
+    this->NewCellArrayName = nullptr;
   }
-  if (this->PointArrayName != NULL)
+  if (this->PointArrayName != nullptr)
   {
     delete [] this->PointArrayName;
-    this->PointArrayName = NULL;
+    this->PointArrayName = nullptr;
   }
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
   {
     delete [] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
   }
-  if (this->InternalIdsArrayName != NULL)
+  if (this->InternalIdsArrayName != nullptr)
   {
     delete [] this->InternalIdsArrayName;
-    this->InternalIdsArrayName = NULL;
+    this->InternalIdsArrayName = nullptr;
   }
 }
 
@@ -132,15 +132,15 @@ void vtkSVCenterlinesBasedNormals::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
-  if (this->CellArrayName != NULL)
+  if (this->CellArrayName != nullptr)
     os << indent << "Cell data array name: " << this->CellArrayName << "\n";
-  if (this->NewCellArrayName != NULL)
+  if (this->NewCellArrayName != nullptr)
     os << indent << "Cell data array name: " << this->NewCellArrayName << "\n";
-  if (this->PointArrayName != NULL)
+  if (this->PointArrayName != nullptr)
     os << indent << "Point data array name: " << this->PointArrayName << "\n";
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
     os << indent << "Point data array name: " << this->GroupIdsArrayName << "\n";
-  if (this->InternalIdsArrayName != NULL)
+  if (this->InternalIdsArrayName != nullptr)
     os << indent << "Point data array name: " << this->InternalIdsArrayName << "\n";
 
   os << indent << "Use cell array: " << this->UseCellArray << "\n";
@@ -184,7 +184,7 @@ int vtkSVCenterlinesBasedNormals::RequestData(vtkInformation *vtkNotUsed(request
 // ----------------------
 int vtkSVCenterlinesBasedNormals::PrepFilter()
 {
-  if (this->CenterlinesPd == NULL)
+  if (this->CenterlinesPd == nullptr)
   {
     vtkErrorMacro("Centerlines must be provided");
     return SV_ERROR;
@@ -195,13 +195,13 @@ int vtkSVCenterlinesBasedNormals::PrepFilter()
     return SV_ERROR;
   }
 
-  if (this->GroupIdsArrayName == NULL)
+  if (this->GroupIdsArrayName == nullptr)
   {
     vtkErrorMacro("GroupIds array name must be given");
     return SV_ERROR;
   }
 
-  if (this->InternalIdsArrayName == NULL)
+  if (this->InternalIdsArrayName == nullptr)
   {
     vtkDebugMacro("Internal ids array name not given, setting to TmpInternalIds");
     this->InternalIdsArrayName = new char[strlen("TmpInternalIds") + 1];
@@ -210,7 +210,7 @@ int vtkSVCenterlinesBasedNormals::PrepFilter()
 
   if (this->UseCellArray)
   {
-    if (this->CellArrayName == NULL)
+    if (this->CellArrayName == nullptr)
     {
       vtkDebugMacro("Cell Array Name not given, setting to CellNormals");
       this->CellArrayName = new char[strlen("CellNormals") + 1];
@@ -225,7 +225,7 @@ int vtkSVCenterlinesBasedNormals::PrepFilter()
 
     this->CellArray = vtkDoubleArray::SafeDownCast(this->WorkPd->GetCellData()->GetArray(this->CellArrayName));
 
-    if (this->NewCellArrayName == NULL)
+    if (this->NewCellArrayName == nullptr)
     {
       vtkDebugMacro("New Cell Array Name not given, setting to CenterlinesCellNormals");
       this->NewCellArrayName = new char[strlen("CenterlinesCellNormals") + 1];
@@ -238,7 +238,7 @@ int vtkSVCenterlinesBasedNormals::PrepFilter()
   }
   else if (this->UsePointArray)
   {
-    if (this->PointArrayName == NULL)
+    if (this->PointArrayName == nullptr)
     {
       vtkDebugMacro("Point Array Name not given, setting to PointNormals");
       this->PointArrayName = new char[strlen("PointNormals") + 1];

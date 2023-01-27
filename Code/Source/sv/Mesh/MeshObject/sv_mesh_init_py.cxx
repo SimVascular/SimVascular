@@ -141,46 +141,46 @@ static int pyMeshObject_init(pyMeshObject* self, PyObject* args)
 }
 
 //static PyMemberDef pyMeshObject_members[]={
-//{NULL}
+//{nullptr}
 //};
 static PyMethodDef pyMeshObject_methods[]={
-  {"NewObject", (PyCFunction)cvMesh_NewObjectCmd,METH_VARARGS,NULL},
-  {"GetMesh", (PyCFunction)cvMesh_GetObjectCmd, METH_VARARGS, NULL},
-  { "LoadModel", (PyCFunction)cvMesh_LoadModelMtd,METH_VARARGS,NULL},
-  { "GetBoundaryFaces",(PyCFunction)cvMesh_GetBoundaryFacesMtd,METH_VARARGS,NULL},
-  { "LoadMesh", (PyCFunction)cvMesh_LoadMeshMtd,METH_VARARGS,NULL},
-  { "NewMesh", (PyCFunction)cvMesh_NewMeshMtd,METH_VARARGS,NULL},
-  { "SetMeshOptions", (PyCFunction)cvMesh_SetMeshOptionsMtd,METH_VARARGS,NULL},
-  { "SetCylinderRefinement", (PyCFunction)cvMesh_SetCylinderRefinementMtd,METH_VARARGS,NULL},
-  { "SetSphereRefinement",(PyCFunction)cvMesh_SetSphereRefinementMtd,METH_VARARGS,NULL},
-  { "SetSizeFunctionBasedMesh", (PyCFunction)cvMesh_SetSizeFunctionBasedMeshMtd,METH_VARARGS,NULL},
-  { "GenerateMesh", (PyCFunction)cvMesh_GenerateMeshMtd,METH_VARARGS,NULL},
-  { "SetBoundaryLayer", (PyCFunction)cvMesh_SetBoundaryLayerMtd,METH_VARARGS,NULL},
-  { "SetWalls", (PyCFunction)cvMesh_SetWallsMtd,METH_VARARGS,NULL},
-  { "SetSolidKernel", (PyCFunction)cvMesh_SetSolidKernelMtd,METH_VARARGS,NULL},
-  { "GetModelFaceInfo",(PyCFunction)cvMesh_GetModelFaceInfoMtd,METH_VARARGS,NULL},
+  {"NewObject", (PyCFunction)cvMesh_NewObjectCmd,METH_VARARGS,nullptr},
+  {"GetMesh", (PyCFunction)cvMesh_GetObjectCmd, METH_VARARGS, nullptr},
+  { "LoadModel", (PyCFunction)cvMesh_LoadModelMtd,METH_VARARGS,nullptr},
+  { "GetBoundaryFaces",(PyCFunction)cvMesh_GetBoundaryFacesMtd,METH_VARARGS,nullptr},
+  { "LoadMesh", (PyCFunction)cvMesh_LoadMeshMtd,METH_VARARGS,nullptr},
+  { "NewMesh", (PyCFunction)cvMesh_NewMeshMtd,METH_VARARGS,nullptr},
+  { "SetMeshOptions", (PyCFunction)cvMesh_SetMeshOptionsMtd,METH_VARARGS,nullptr},
+  { "SetCylinderRefinement", (PyCFunction)cvMesh_SetCylinderRefinementMtd,METH_VARARGS,nullptr},
+  { "SetSphereRefinement",(PyCFunction)cvMesh_SetSphereRefinementMtd,METH_VARARGS,nullptr},
+  { "SetSizeFunctionBasedMesh", (PyCFunction)cvMesh_SetSizeFunctionBasedMeshMtd,METH_VARARGS,nullptr},
+  { "GenerateMesh", (PyCFunction)cvMesh_GenerateMeshMtd,METH_VARARGS,nullptr},
+  { "SetBoundaryLayer", (PyCFunction)cvMesh_SetBoundaryLayerMtd,METH_VARARGS,nullptr},
+  { "SetWalls", (PyCFunction)cvMesh_SetWallsMtd,METH_VARARGS,nullptr},
+  { "SetSolidKernel", (PyCFunction)cvMesh_SetSolidKernelMtd,METH_VARARGS,nullptr},
+  { "GetModelFaceInfo",(PyCFunction)cvMesh_GetModelFaceInfoMtd,METH_VARARGS,nullptr},
   // The method "Update" must be called before any of the other
   // methods since it loads the mesh.  To avoid confusion, we
   // call this method directly prior to any other.
  // { "Update" ) ) {
     // ignore this call now, it is done implicitly (see above)
-    //if ( (PyCFunction)cvMesh_UpdateMtd,METH_VARARGS,NULL},
-  { "Print",(PyCFunction)cvMesh_PrintMtd,METH_VARARGS,NULL},
-  { "GetKernel", (PyCFunction)cvMesh_GetKernelMtd,METH_VARARGS,NULL},
-  { "WriteMetisAdjacency", (PyCFunction)cvMesh_WriteMetisAdjacencyMtd,METH_VARARGS,NULL},
-  { "GetPolyData", (PyCFunction)cvMesh_GetPolyDataMtd,METH_VARARGS,NULL},
-  { "GetSolid", (PyCFunction)cvMesh_GetSolidMtd,METH_VARARGS,NULL},
-  { "SetVtkPolyData",(PyCFunction)cvMesh_SetVtkPolyDataMtd,METH_VARARGS,NULL},
-  { "GetUnstructuredGrid", (PyCFunction)cvMesh_GetUnstructuredGridMtd,METH_VARARGS,NULL},
-  { "GetFacePolyData", (PyCFunction)cvMesh_GetFacePolyDataMtd,METH_VARARGS,NULL},
-  { "WriteMesh", (PyCFunction)cvMesh_WriteMeshMtd,METH_VARARGS,NULL},
-  { "WriteStats",(PyCFunction)cvMesh_WriteStatsMtd,METH_VARARGS,NULL},
-  { "Adapt",  (PyCFunction)cvMesh_AdaptMtd,METH_VARARGS,NULL},
-  {NULL,NULL}
+    //if ( (PyCFunction)cvMesh_UpdateMtd,METH_VARARGS,nullptr},
+  { "Print",(PyCFunction)cvMesh_PrintMtd,METH_VARARGS,nullptr},
+  { "GetKernel", (PyCFunction)cvMesh_GetKernelMtd,METH_VARARGS,nullptr},
+  { "WriteMetisAdjacency", (PyCFunction)cvMesh_WriteMetisAdjacencyMtd,METH_VARARGS,nullptr},
+  { "GetPolyData", (PyCFunction)cvMesh_GetPolyDataMtd,METH_VARARGS,nullptr},
+  { "GetSolid", (PyCFunction)cvMesh_GetSolidMtd,METH_VARARGS,nullptr},
+  { "SetVtkPolyData",(PyCFunction)cvMesh_SetVtkPolyDataMtd,METH_VARARGS,nullptr},
+  { "GetUnstructuredGrid", (PyCFunction)cvMesh_GetUnstructuredGridMtd,METH_VARARGS,nullptr},
+  { "GetFacePolyData", (PyCFunction)cvMesh_GetFacePolyDataMtd,METH_VARARGS,nullptr},
+  { "WriteMesh", (PyCFunction)cvMesh_WriteMeshMtd,METH_VARARGS,nullptr},
+  { "WriteStats",(PyCFunction)cvMesh_WriteStatsMtd,METH_VARARGS,nullptr},
+  { "Adapt",  (PyCFunction)cvMesh_AdaptMtd,METH_VARARGS,nullptr},
+  {nullptr,nullptr}
 };
 
 static PyTypeObject pyMeshObjectType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   "pyMeshObject.pyMeshObject",             /* tp_name */
   sizeof(pyMeshObject),             /* tp_basicsize */
   0,                         /* tp_itemsize */
@@ -222,19 +222,19 @@ static PyTypeObject pyMeshObjectType = {
 };
 static PyMethodDef pyMeshObjectModule_methods[] =
 {
-  //{"mesh_newObject", (PyCFunction)cvMesh_NewObjectCmd,METH_VARARGS,NULL},
-  {"ListMethods",(PyCFunction)cvMesh_ListMethodsCmd,METH_NOARGS,NULL},
-  {"SetKernel", (PyCFunction)cvMesh_SetMeshKernelCmd,METH_VARARGS,NULL},
-  {"Logon", (PyCFunction)cvMesh_LogonCmd,METH_VARARGS,NULL},
-  {"Logoff", (PyCFunction)cvMesh_LogoffCmd,METH_NOARGS,NULL},
-  {NULL, NULL}
+  //{"mesh_newObject", (PyCFunction)cvMesh_NewObjectCmd,METH_VARARGS,nullptr},
+  {"ListMethods",(PyCFunction)cvMesh_ListMethodsCmd,METH_NOARGS,nullptr},
+  {"SetKernel", (PyCFunction)cvMesh_SetMeshKernelCmd,METH_VARARGS,nullptr},
+  {"Logon", (PyCFunction)cvMesh_LogonCmd,METH_VARARGS,nullptr},
+  {"Logoff", (PyCFunction)cvMesh_LogoffCmd,METH_NOARGS,nullptr},
+  {nullptr, nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyMeshObjectmodule = {
    PyModuleDef_HEAD_INIT,
    "pyMeshObject",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    pyMeshObjectModule_methods
@@ -249,7 +249,7 @@ PyMODINIT_FUNC initpyMeshObject()
 {
   // Associate the mesh registrar with the python interpreter so it can be
   // retrieved by the DLLs.
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository = new cvRepository();
     fprintf(stdout,"New gRepository created from cv_mesh_init\n");
@@ -280,13 +280,13 @@ PyMODINIT_FUNC initpyMeshObject()
   PyObject* pythonC;
   pythonC = Py_InitModule("pyMeshObject",pyMeshObjectModule_methods);
 
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyMeshObject\n");
     return;
 
   }
-  PyRunTimeErr = PyErr_NewException("pyMeshObject.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyMeshObject.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyMeshObjectType);
   PyModule_AddObject(pythonC,"pyMeshObject",(PyObject*)&pyMeshObjectType);
@@ -301,7 +301,7 @@ PyMODINIT_FUNC PyInit_pyMeshObject()
 {
   // Associate the mesh registrar with the python interpreter so it can be
   // retrieved by the DLLs.
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository = new cvRepository();
     fprintf(stdout,"New gRepository created from cv_mesh_init\n");
@@ -331,12 +331,12 @@ PyMODINIT_FUNC PyInit_pyMeshObject()
   PyObject* pythonC;
 
   pythonC = PyModule_Create(&pyMeshObjectmodule);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyMeshObject\n");
     return SV_PYTHON_ERROR;
   }
-  PyRunTimeErr = PyErr_NewException("pyMeshObject.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyMeshObject.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyMeshObjectType);
   PyModule_AddObject(pythonC,"pyMeshObject",(PyObject*)&pyMeshObjectType);
@@ -352,8 +352,8 @@ PyMODINIT_FUNC PyInit_pyMeshObject()
 PyObject* cvMesh_NewObjectCmd(pyMeshObject* self, PyObject* args)
 {
   char *resultName;
-  char *meshFileName = NULL;
-  char *solidFileName = NULL;
+  char *meshFileName = nullptr;
+  char *solidFileName = nullptr;
 
   if(!PyArg_ParseTuple(args,"s|ss",&resultName,&meshFileName,&solidFileName))
   {
@@ -372,8 +372,8 @@ PyObject* cvMesh_NewObjectCmd(pyMeshObject* self, PyObject* args)
   // Instantiate the new mesh:
   cvMeshObject *geom;
   geom = cvMeshSystem::DefaultInstantiateMeshObject(meshFileName, solidFileName );
-  if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr, "geom is NULL."); 
+  if ( geom == nullptr ) {
+    PyErr_SetString(PyRunTimeErr, "geom is nullptr."); 
   }
 
   // Register the solid:
@@ -394,7 +394,7 @@ PyObject* cvMesh_NewObjectCmd(pyMeshObject* self, PyObject* args)
 // ----------------------
 PyObject* cvMesh_GetObjectCmd( pyMeshObject* self, PyObject* args)
 {
-  char *objName=NULL;
+  char *objName=nullptr;
   RepositoryDataT type;
   cvRepositoryData *rd;
   cvMeshObject *geom;
@@ -410,7 +410,7 @@ PyObject* cvMesh_GetObjectCmd( pyMeshObject* self, PyObject* args)
   // Retrieve source object:
   rd = gRepository->GetObject( objName );
   char r[2048];
-  if ( rd == NULL )
+  if ( rd == nullptr )
   {
     r[0] = '\0';
     sprintf(r, "couldn't find object %s", objName);
@@ -696,7 +696,7 @@ static PyObject* cvMesh_GetPolyDataMtd( pyMeshObject* self, PyObject* args)
 
   // Get the cvPolyData:
   pd = geom->GetPolyData();
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "error getting cvPolyData" );
   }
 
@@ -742,7 +742,7 @@ static PyObject* cvMesh_GetSolidMtd( pyMeshObject* self, PyObject* args)
 
   // Get the cvPolyData:
   pd = geom->GetSolid();
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "error getting cvPolyData");
   }
 
@@ -839,7 +839,7 @@ static PyObject* cvMesh_GetUnstructuredGridMtd( pyMeshObject* self, PyObject* ar
 
   // Get the cvUnstructuredGrid:
   ug = geom->GetUnstructuredGrid();
-  if ( ug == NULL ) {
+  if ( ug == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "error getting cvPolyData" );
     
   }
@@ -887,7 +887,7 @@ static PyObject* cvMesh_GetFacePolyDataMtd( pyMeshObject* self, PyObject* args)
 
   // Get the cvPolyData:
   pd = geom->GetFacePolyData(face);
-  if ( pd == NULL ) {
+  if ( pd == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "error getting cvPolyData ");
     
   }
@@ -921,7 +921,7 @@ PyObject* cvMesh_LogonCmd(PyObject* self, PyObject* args)
   cvMeshSystem* meshKernel = cvMeshSystem::GetCurrentKernel();
 
   // read in the results file
-  if (meshKernel == NULL || meshKernel->LogOn(logFileName) == SV_ERROR) {
+  if (meshKernel == nullptr || meshKernel->LogOn(logFileName) == SV_ERROR) {
       PyErr_SetString(PyRunTimeErr, "error opening logfile");
       
   }
@@ -938,7 +938,7 @@ PyObject* cvMesh_LogoffCmd( PyObject* self, PyObject* args)
 {
   cvMeshSystem* meshKernel = cvMeshSystem::GetCurrentKernel();
 
-  if (meshKernel == NULL || meshKernel->LogOff() == SV_ERROR) {
+  if (meshKernel == nullptr || meshKernel->LogOff() == SV_ERROR) {
       PyErr_SetString(PyRunTimeErr, "error turning off logfile ");
       
   }
@@ -985,7 +985,7 @@ static PyObject* cvMesh_SetMeshOptionsMtd( pyMeshObject* self, PyObject* args)
 PyObject* cvMesh_LoadModelMtd( pyMeshObject* self, PyObject* args)
 {
   cvMeshObject *geom = self->geom;
-  if (geom==NULL)
+  if (geom==nullptr)
   {
       PyErr_SetString(PyRunTimeErr,"Mesh object not registered in repository");
       
@@ -1296,7 +1296,7 @@ static PyObject* cvMesh_SetBoundaryLayerMtd( pyMeshObject* self, PyObject* args)
   int id = 0;
   int side = 0;
   int nL = 0;
-  double *H = NULL;
+  double *H = nullptr;
   PyObject* Hlist;
 
   if(!PyArg_ParseTuple(args,"iiiiO",&type,&id,&side,&nL,&Hlist))

@@ -143,12 +143,12 @@ sv4guiContour* sv4guiContourGroup::GetContour(int contourIndex, unsigned int t) 
         {
             return m_ContourSets[t][contourIndex];
         }else{
-            return NULL;
+            return nullptr;
         }
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -270,7 +270,7 @@ void sv4guiContourGroup::RemoveInvalidContours(unsigned int t)
         for(int i=m_ContourSets[t].size()-1;i>-1;i--)
         {
             sv4guiContour* contour=m_ContourSets[t][i];
-            if(contour==NULL || contour->GetContourPointNumber()<3)
+            if(contour==nullptr || contour->GetContourPointNumber()<3)
                 RemoveContour(i,t);
         }
     }
@@ -355,7 +355,7 @@ sv4guiContour* sv4guiContourGroup::GetUnplacedContour(unsigned int t)
 
 int sv4guiContourGroup::SearchContourByPlane(const mitk::PlaneGeometry *planeGeometry, double precisionFactor, unsigned int t)
 {
-    if(planeGeometry!=NULL)
+    if(planeGeometry!=nullptr)
     {
         mitk::Point3D center=planeGeometry->GetCenter();
         mitk::Vector3D spacing=planeGeometry->GetSpacing();
@@ -364,7 +364,7 @@ int sv4guiContourGroup::SearchContourByPlane(const mitk::PlaneGeometry *planeGeo
         for(int i=0;i<GetSize(t);i++){
 
             sv4guiContour* contour=GetContour(i,t);
-            if(contour==NULL) continue;
+            if(contour==nullptr) continue;
 
             if(contour->IsOnPlane(planeGeometry,precisionFactor)){
                 double dist=center.EuclideanDistanceTo(contour->GetPathPosPoint());

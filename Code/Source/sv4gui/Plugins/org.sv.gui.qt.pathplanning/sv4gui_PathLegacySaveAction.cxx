@@ -80,7 +80,7 @@ void sv4guiPathLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selec
         if(lastFilePath=="")
             lastFilePath=QDir::homePath();
 
-        QString fileName = QFileDialog::getSaveFileName(NULL
+        QString fileName = QFileDialog::getSaveFileName(nullptr
                                                         ,tr("Export as Legacy Paths")
                                                         ,lastFilePath
                                                         ,tr("SimVascular Legacy Paths (*.paths)"));

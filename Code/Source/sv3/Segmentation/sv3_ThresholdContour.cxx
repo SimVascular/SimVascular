@@ -96,7 +96,7 @@ void thresholdContour::CreateContourPoints()
     if(m_ContourPoints.size()>0)
         m_ContourPoints.clear();
     
-    if(m_VtkImageSlice==NULL)
+    if(m_VtkImageSlice==nullptr)
     {
         printf("Image slice is empty.\n");
         return;

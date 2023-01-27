@@ -81,7 +81,7 @@ PyDoc_STRVAR(SimulationModule_doc,
 //
 static PyMethodDef PySimulationModuleMethods[] =
 {
-    {NULL,NULL}
+    {nullptr,nullptr}
 };
 
 //-----------------------
@@ -139,14 +139,14 @@ PyMODINIT_FUNC PyInit_PySimulation()
 
   // Create the simulation module.
   auto module = PyModule_Create(&PySimulationModule);
-  if (module == NULL) {
+  if (module == nullptr) {
       fprintf(stdout,"Error in initializing 'simulation' module \n");
       return nullptr;
   }
 
   // Add exception.
   //
-  PyRunTimeErr = PyErr_NewException(SIMULATION_MODULE_EXCEPTION, NULL, NULL);
+  PyRunTimeErr = PyErr_NewException(SIMULATION_MODULE_EXCEPTION, nullptr, nullptr);
   PyModule_AddObject(module, SIMULATION_MODULE_EXCEPTION_OBJECT, PyRunTimeErr);
 
   // Add Fluid class.

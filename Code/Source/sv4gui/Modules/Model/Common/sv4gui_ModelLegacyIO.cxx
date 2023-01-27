@@ -55,7 +55,7 @@
 //
 mitk::DataNode::Pointer sv4guiModelLegacyIO::ReadFile(QString filePath, QString preferredType)
 {
-    mitk::DataNode::Pointer modelNode=NULL;
+    mitk::DataNode::Pointer modelNode=nullptr;
 
     QFileInfo fileInfo(filePath);
     QString baseName = fileInfo.baseName();
@@ -114,7 +114,7 @@ mitk::DataNode::Pointer sv4guiModelLegacyIO::ReadFile(QString filePath, QString 
         modelType=preferredType.toStdString();
 
     sv4guiModelElement* me=sv4guiModelElementFactory::CreateModelElement(modelType);
-    if(me==NULL) {
+    if(me==nullptr) {
         QMessageBox::warning(nullptr, "SV Modeling", "Solid model '" + suffix + "' files are not supported.");
         return modelNode;
     }

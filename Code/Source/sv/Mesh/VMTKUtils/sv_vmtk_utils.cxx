@@ -114,10 +114,10 @@ int sys_geom_centerlines( cvPolyData *polydata,int *sources,int nsources,
 		cvPolyData **lines, cvPolyData **voronoi)
 {
   vtkPolyData *geom = polydata->GetVtkPolyData();
-  cvPolyData *result1 = NULL;
-  cvPolyData *result2 = NULL;
-  *lines = NULL;
-  *voronoi = NULL;
+  cvPolyData *result1 = nullptr;
+  cvPolyData *result2 = nullptr;
+  *lines = nullptr;
+  *voronoi = nullptr;
 
 //  vtkSmartPointer<vtkvmtkPolyDataCenterlines> centerLiner =
 //    vtkSmartPointer<vtkvmtkPolyDataCenterlines>::New();
@@ -191,8 +191,8 @@ int sys_geom_mergecenterlines( cvPolyData *lines, int mergeblanked,
 		cvPolyData **merged)
 {
   vtkPolyData *geom = lines->GetVtkPolyData();
-  cvPolyData *result1 = NULL;
-  *merged = NULL;
+  cvPolyData *result1 = nullptr;
+  *merged = nullptr;
 
   vtkNew(vtkvmtkMergeCenterlines, merger);
   try {
@@ -242,8 +242,8 @@ int sys_geom_separatecenterlines( cvPolyData *lines,
 		cvPolyData **separate)
 {
   vtkPolyData *geom = lines->GetVtkPolyData();
-  cvPolyData *result1 = NULL;
-  *separate = NULL;
+  cvPolyData *result1 = nullptr;
+  *separate = nullptr;
 
   vtkNew(vtkvmtkCenterlineBranchExtractor,brancher);
   try {
@@ -290,11 +290,11 @@ int sys_geom_centerlinesections(cvPolyData *lines_in, cvPolyData *surface_in, cv
 {
   vtkPolyData *cent = lines_in->GetVtkPolyData();
   vtkPolyData *surf = surface_in->GetVtkPolyData();
-  cvPolyData *result1 = NULL;
-  cvPolyData *result2 = NULL;
-  cvPolyData *result3 = NULL;
-  *lines_out = NULL;
-  *sections = NULL;
+  cvPolyData *result1 = nullptr;
+  cvPolyData *result2 = nullptr;
+  cvPolyData *result3 = nullptr;
+  *lines_out = nullptr;
+  *sections = nullptr;
 
   vtkNew(vtkvmtkPolyDataCenterlineSections, cross_sections);
   try {
@@ -362,8 +362,8 @@ int sys_geom_grouppolydata( cvPolyData *polydata,cvPolyData *lines,
 {
   vtkPolyData *geom = polydata->GetVtkPolyData();
   vtkPolyData *centerlines = lines->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *grouped = NULL;
+  cvPolyData *result = nullptr;
+  *grouped = nullptr;
 
   vtkNew(vtkvmtkPolyDataCenterlineGroupsClipper,grouper);
   try {
@@ -412,8 +412,8 @@ int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,
 {
   vtkPolyData *geom = polydata->GetVtkPolyData();
   vtkPolyData *centerlines = lines->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *distance = NULL;
+  cvPolyData *result = nullptr;
+  *distance = nullptr;
 
   vtkNew(vtkvmtkPolyDataDistanceToCenterlines,distancer);
   try {
@@ -465,8 +465,8 @@ int sys_geom_cap_for_centerlines(cvPolyData* polydata, cvPolyData** cappedpolyda
       int **centerids, int type)
 {
   auto geom = polydata->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *cappedpolydata = NULL;
+  cvPolyData *result = nullptr;
+  *cappedpolydata = nullptr;
   auto capCenterIds = vtkSmartPointer<vtkIdList>::New();
   auto triangulate = vtkSmartPointer<vtkTriangleFilter>::New();
 
@@ -629,8 +629,8 @@ int sys_geom_cap_with_ids( cvPolyData *polydata,cvPolyData **cappedpolydata,
 {
 
   vtkPolyData *geom = polydata->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *cappedpolydata = NULL;
+  cvPolyData *result = nullptr;
+  *cappedpolydata = nullptr;
 
   try {
 
@@ -715,14 +715,14 @@ int sys_geom_mapandcorrectids( cvPolyData *originalpd, cvPolyData *newpd, cvPoly
 {
   vtkPolyData *originalgeom = originalpd->GetVtkPolyData();
   vtkPolyData *newgeom = newpd->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *polydata = NULL;
+  cvPolyData *result = nullptr;
+  *polydata = nullptr;
 
   int i,j,k;
   int subId;
   int count;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts = new vtkIdType;
   double distance;
   double closestPt[3];
   double minmax[2];
@@ -1269,7 +1269,7 @@ int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen, vtkUnstructuredGri
 
   // Get model regions on tetgen mesh
   auto meshFromTetGenRegionIds = meshFromTetGen->GetCellData()->GetArray("ModelRegionID");
-  if (meshFromTetGenRegionIds == NULL) {
+  if (meshFromTetGenRegionIds == nullptr) {
     fprintf(stderr,"No model region id on tetgen mesh\n");
     return SV_ERROR;
   }
@@ -1800,7 +1800,7 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newGeom, vtkPolyData *originalGe
   for (int cellId = 0; cellId < newGeom->GetNumberOfCells(); cellId++) {
       // Calculate cell center.
       vtkIdType npts;
-      vtkIdType *pts;
+      const vtkIdType *pts = new vtkIdType;
       double center[3];
       newGeom->GetCellPoints(cellId, npts, pts);
       auto polyPts = vtkSmartPointer<vtkPoints>::New();
@@ -1843,7 +1843,7 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom, vtkPolyData *originalge
   int count;
   int bigcount;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts = new vtkIdType;
   double distance;
   double closestPt[3];
   double tolerance = 1.0;
@@ -1858,8 +1858,8 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom, vtkPolyData *originalge
   auto genericCell = vtkSmartPointer<vtkGenericCell>::New();
   auto originalCopy = vtkSmartPointer<vtkPolyData>::New();
 
-  if (excludeList == NULL) {
-    fprintf(stderr,"Cannot give NULL excludeList. Use other reset function without exclude list\n");
+  if (excludeList == nullptr) {
+    fprintf(stderr,"Cannot give nullptr excludeList. Use other reset function without exclude list\n");
     return SV_ERROR;
   }
 
@@ -1940,7 +1940,7 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   int count;
   int bigcount;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts =  new vtkIdType;
   double distance;
   double closestPt[3];
   double tolerance = 1.0;
@@ -1957,9 +1957,9 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   vtkSmartPointer<vtkPolyData> originalCopy =
     vtkSmartPointer<vtkPolyData>::New();
 
-  if (onlyList == NULL)
+  if (onlyList == nullptr)
   {
-    fprintf(stderr,"Cannot give NULL onlyList. Use other reset function without only list\n");
+    fprintf(stderr,"Cannot give nullptr onlyList. Use other reset function without only list\n");
     return SV_ERROR;
   }
 

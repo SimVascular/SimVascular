@@ -128,14 +128,14 @@ int Adapt_Init( Tcl_Interp *interp )
 {
   // Associate the adapt object registrar with the Tcl interpreter so it can be
   // retrieved by the DLLs.
-  Tcl_SetAssocData( interp, "AdaptObjectRegistrar", NULL, &cvAdaptObject::gRegistrar );
+  Tcl_SetAssocData( interp, "AdaptObjectRegistrar", nullptr, &cvAdaptObject::gRegistrar );
 
   Tcl_CreateCommand( interp, "adapt_registrars", Adapt_RegistrarsListCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   //Not object tcl functions
   Tcl_CreateCommand( interp, "adapt_newObject", cvAdapt_NewObjectCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   // Initialize
   cvAdaptObject::gCurrentKernel = KERNEL_INVALID;
@@ -156,7 +156,7 @@ int Adapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
   cvFactoryRegistrar *adaptObjectRegistrar =
-    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "AdaptObjectRegistrar", NULL);
+    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "AdaptObjectRegistrar", nullptr);
 
   char result[255];
   sprintf( result, "Adapt object registrar ptr -> %p\n", adaptObjectRegistrar );
@@ -179,14 +179,14 @@ int Adapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
 {
-  char *resultName = NULL;
+  char *resultName = nullptr;
 
   char *usage;
   char *kernelName;
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -204,14 +204,14 @@ int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     Tcl_AppendResult( interp, "object ", resultName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
   KernelType meshType = KERNEL_INVALID;
   kernelName = cvMeshSystem::GetCurrentKernelName();
   // Instantiate the new mesh:
-  cvAdaptObject *adaptor = NULL;
+  cvAdaptObject *adaptor = nullptr;
   if (!strcmp(kernelName,"TetGen")) {
     meshType = KERNEL_TETGEN;
     cvAdaptObject::gCurrentKernel = KERNEL_TETGEN;
@@ -224,14 +224,14 @@ int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   Tcl_SetResult( interp, kernelName, TCL_VOLATILE );
   adaptor = cvAdaptObject::DefaultInstantiateAdaptObject( interp, meshType);
 
-  if ( adaptor == NULL ) {
+  if ( adaptor == nullptr ) {
     return TCL_ERROR;
   }
 
   // Register the solid:
   if ( !( gRepository->Register( resultName, adaptor ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", resultName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete adaptor;
     return TCL_ERROR;
   }
@@ -345,7 +345,7 @@ int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
     }
   } else {
     Tcl_AppendResult( interp, "\"", argv[1],
-		      "\" not a recognized cvAdaptObject method", (char *)NULL );
+		      "\" not a recognized cvAdaptObject method", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -401,15 +401,15 @@ static void AdaptPrintMethods( Tcl_Interp *interp )
 static int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
 {
-  char *meshFileName = NULL;
-  char *solidFileName = NULL;
+  char *meshFileName = nullptr;
+  char *solidFileName = nullptr;
 
   char *usage;
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-meshfile", STRING_Type, &meshFileName, NULL, REQUIRED, 0, { 0 } },
-    { "-solidfile", STRING_Type, &solidFileName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-meshfile", STRING_Type, &meshFileName, nullptr, REQUIRED, 0, { 0 } },
+    { "-solidfile", STRING_Type, &solidFileName, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if (argc != 2)
@@ -424,8 +424,8 @@ static int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Inter
   // Do work of command:
 
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
-  if ( geom == NULL ) {
-    fprintf(stderr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    fprintf(stderr,"Adapt object should already be created! It is nullptr\n");
     return TCL_ERROR;
   }
   if (geom->CreateInternalMeshObject(interp,meshFileName,solidFileName) != SV_OK)
@@ -443,13 +443,13 @@ static int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Inter
 static int cvAdapt_LoadModelMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
-  char *solidFileName = NULL;
+  char *solidFileName = nullptr;
 
   char *usage;
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &solidFileName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &solidFileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -465,8 +465,8 @@ static int cvAdapt_LoadModelMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
-  if ( geom == NULL ) {
-    fprintf(stderr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    fprintf(stderr,"Adapt object should already be created! It is nullptr\n");
     return TCL_ERROR;
   }
   if (geom->LoadModel(solidFileName) != SV_OK)
@@ -484,13 +484,13 @@ static int cvAdapt_LoadModelMtd( ClientData clientData, Tcl_Interp *interp,
 static int cvAdapt_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
-  char *meshFileName = NULL;
+  char *meshFileName = nullptr;
 
   char *usage;
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &meshFileName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &meshFileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -506,8 +506,8 @@ static int cvAdapt_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
-  if ( geom == NULL ) {
-    fprintf(stderr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    fprintf(stderr,"Adapt object should already be created! It is nullptr\n");
     return TCL_ERROR;
   }
   if (geom->LoadMesh(meshFileName) != SV_OK)
@@ -525,13 +525,13 @@ static int cvAdapt_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
 static int cvAdapt_LoadSolutionFromFileMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   char *usage;
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -547,8 +547,8 @@ static int cvAdapt_LoadSolutionFromFileMtd( ClientData clientData, Tcl_Interp *i
   // Do work of command:
 
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
-  if ( geom == NULL ) {
-    fprintf(stderr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    fprintf(stderr,"Adapt object should already be created! It is nullptr\n");
     return TCL_ERROR;
   }
   if (geom->LoadSolutionFromFile(fileName) != SV_OK)
@@ -566,13 +566,13 @@ static int cvAdapt_LoadSolutionFromFileMtd( ClientData clientData, Tcl_Interp *i
 static int cvAdapt_LoadYbarFromFileMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   char *usage;
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -588,8 +588,8 @@ static int cvAdapt_LoadYbarFromFileMtd( ClientData clientData, Tcl_Interp *inter
   // Do work of command:
 
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
-  if ( geom == NULL ) {
-    fprintf(stderr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    fprintf(stderr,"Adapt object should already be created! It is nullptr\n");
     return TCL_ERROR;
   }
   if (geom->LoadYbarFromFile(fileName) != SV_OK)
@@ -607,13 +607,13 @@ static int cvAdapt_LoadYbarFromFileMtd( ClientData clientData, Tcl_Interp *inter
 static int cvAdapt_LoadAvgSpeedFromFileMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   char *usage;
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -629,8 +629,8 @@ static int cvAdapt_LoadAvgSpeedFromFileMtd( ClientData clientData, Tcl_Interp *i
   // Do work of command:
 
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
-  if ( geom == NULL ) {
-    fprintf(stderr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    fprintf(stderr,"Adapt object should already be created! It is nullptr\n");
     return TCL_ERROR;
   }
   if (geom->LoadAvgSpeedFromFile(fileName) != SV_OK)
@@ -648,13 +648,13 @@ static int cvAdapt_LoadAvgSpeedFromFileMtd( ClientData clientData, Tcl_Interp *i
 static int cvAdapt_LoadHessianFromFileMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   char *usage;
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -670,8 +670,8 @@ static int cvAdapt_LoadHessianFromFileMtd( ClientData clientData, Tcl_Interp *in
   // Do work of command:
 
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
-  if ( geom == NULL ) {
-    fprintf(stderr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    fprintf(stderr,"Adapt object should already be created! It is nullptr\n");
     return TCL_ERROR;
   }
   if (geom->LoadHessianFromFile(fileName) != SV_OK)
@@ -738,14 +738,14 @@ static int cvAdapt_SetAdaptOptionsMtd( ClientData clientData, Tcl_Interp *interp
 		   int argc, CONST84 char *argv[] )
 {
   double value=0;
-  char *flag = NULL;
+  char *flag = nullptr;
 
   char *usage;
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-flag", STRING_Type, &flag, NULL, REQUIRED, 0, { 0 } },
-    { "-value", DOUBLE_Type, &value, NULL, REQUIRED, 0, { 0 } },
+    { "-flag", STRING_Type, &flag, nullptr, REQUIRED, 0, { 0 } },
+    { "-value", DOUBLE_Type, &value, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -761,8 +761,8 @@ static int cvAdapt_SetAdaptOptionsMtd( ClientData clientData, Tcl_Interp *interp
   // Do work of command:
 
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
-  if ( geom == NULL ) {
-    fprintf(stderr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    fprintf(stderr,"Adapt object should already be created! It is nullptr\n");
     return TCL_ERROR;
   }
   if (geom->SetAdaptOptions(flag,value) != SV_OK)
@@ -798,7 +798,7 @@ static int cvAdapt_CheckOptionsMtd( ClientData clientData, Tcl_Interp *interp,
 static int cvAdapt_SetMetricMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
   int option = -1;
   int strategy = -1;
 
@@ -806,9 +806,9 @@ static int cvAdapt_SetMetricMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 3;
   ARG_Entry arg_table[] = {
-    { "-input", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
-    { "-option", INT_Type, &option, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-strategy", INT_Type, &strategy, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-input", STRING_Type, &fileName, nullptr, REQUIRED, 0, { 0 } },
+    { "-option", INT_Type, &option, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-strategy", INT_Type, &strategy, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if (argc != 2)
@@ -930,13 +930,13 @@ int cvAdapt_TransferRegionsMtd( ClientData clientData, Tcl_Interp *interp,
 static int cvAdapt_WriteAdaptedModelMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   char *usage;
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -952,8 +952,8 @@ static int cvAdapt_WriteAdaptedModelMtd( ClientData clientData, Tcl_Interp *inte
   // Do work of command:
 
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
-  if ( geom == NULL ) {
-    fprintf(stderr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    fprintf(stderr,"Adapt object should already be created! It is nullptr\n");
     return TCL_ERROR;
   }
   if (geom->WriteAdaptedModel(fileName) != SV_OK)
@@ -971,13 +971,13 @@ static int cvAdapt_WriteAdaptedModelMtd( ClientData clientData, Tcl_Interp *inte
 static int cvAdapt_WriteAdaptedMeshMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   char *usage;
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -993,8 +993,8 @@ static int cvAdapt_WriteAdaptedMeshMtd( ClientData clientData, Tcl_Interp *inter
   // Do work of command:
 
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
-  if ( geom == NULL ) {
-    fprintf(stderr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    fprintf(stderr,"Adapt object should already be created! It is nullptr\n");
     return TCL_ERROR;
   }
   if (geom->WriteAdaptedMesh(fileName) != SV_OK)
@@ -1012,13 +1012,13 @@ static int cvAdapt_WriteAdaptedMeshMtd( ClientData clientData, Tcl_Interp *inter
 static int cvAdapt_WriteAdaptedSolutionMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   char *usage;
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
+    { "-file", STRING_Type, &fileName, nullptr, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -1034,8 +1034,8 @@ static int cvAdapt_WriteAdaptedSolutionMtd( ClientData clientData, Tcl_Interp *i
   // Do work of command:
 
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
-  if ( geom == NULL ) {
-    fprintf(stderr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    fprintf(stderr,"Adapt object should already be created! It is nullptr\n");
     return TCL_ERROR;
   }
   if (geom->WriteAdaptedSolution(fileName) != SV_OK)

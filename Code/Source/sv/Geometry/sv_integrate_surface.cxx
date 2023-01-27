@@ -241,8 +241,8 @@ int sys_geom_IntegrateSurface( cvPolyData *src, int tensorType, double *nrm, dou
 
   int i,j;
   vtkPolyData *pd;
-  vtkDataArray *scalars = NULL;
-  vtkDataArray *vectors = NULL;
+  vtkDataArray *scalars = nullptr;
+  vtkDataArray *vectors = nullptr;
   int numPts, numPolys;
   vtkFloatingPointType *pts;
   vtkIdType *polys;
@@ -259,13 +259,13 @@ int sys_geom_IntegrateSurface( cvPolyData *src, int tensorType, double *nrm, dou
   }
   if (tensorType == 0) {
     scalars = pd->GetPointData()->GetScalars();
-    if (scalars == NULL) {
+    if (scalars == nullptr) {
         fprintf(stderr,"ERROR: No scalars!\n");
         return SV_ERROR;
     }
   } else {
     vectors = pd->GetPointData()->GetVectors();
-    if (vectors == NULL) {
+    if (vectors == nullptr) {
         fprintf(stderr,"ERROR: No vectors!\n");
         return SV_ERROR;
     }
@@ -344,8 +344,8 @@ int sys_geom_IntegrateSurface2( vtkPolyData *pd, int tensorType, double *q, doub
 
   int i,j;
 //  vtkPolyData *pd;
-  vtkDataArray *scalars = NULL;
-  vtkDataArray *vectors = NULL;
+  vtkDataArray *scalars = nullptr;
+  vtkDataArray *vectors = nullptr;
   int numPts, numPolys;
   vtkFloatingPointType *pts;
   vtkIdType *polys;
@@ -363,13 +363,13 @@ int sys_geom_IntegrateSurface2( vtkPolyData *pd, int tensorType, double *q, doub
   }
   if (tensorType == 0) {
     scalars = pd->GetPointData()->GetScalars();
-    if (scalars == NULL) {
+    if (scalars == nullptr) {
         fprintf(stderr,"ERROR: No scalars!\n");
         return SV_ERROR;
     }
   } else {
     vectors = pd->GetPointData()->GetVectors();
-    if (vectors == NULL) {
+    if (vectors == nullptr) {
         fprintf(stderr,"ERROR: No vectors!\n");
         return SV_ERROR;
     }
@@ -426,7 +426,7 @@ int sys_geom_IntegrateScalarSurf( cvPolyData *src, double *q )
 
   int i,j;
   vtkPolyData *pd;
-  vtkDataArray *scalars = NULL;
+  vtkDataArray *scalars = nullptr;
   vtkIdType celltype = 0;
   const vtkIdType *ids = new vtkIdType;
   int numPolys;
@@ -454,14 +454,14 @@ int sys_geom_IntegrateScalarSurf( cvPolyData *src, double *q )
 
   pd = src->GetVtkPolyData();
 
-  if (pd == NULL) {
+  if (pd == nullptr) {
     fprintf(stderr,"ERROR: No polydata!\n");
     return SV_ERROR;
   }
 
   scalars = pd->GetPointData()->GetScalars();
 
-  if (scalars == NULL) {
+  if (scalars == nullptr) {
     fprintf(stderr,"ERROR: No scalars!\n");
     return SV_ERROR;
   }
@@ -561,7 +561,7 @@ int sys_geom_IntegrateScalarThresh( cvPolyData *src, double wssthresh, double *q
 
   int i,j;
   vtkPolyData *pd;
-  vtkDataArray *scalars = NULL;
+  vtkDataArray *scalars = nullptr;
   vtkIdType celltype = 0;
   const vtkIdType *ids = new vtkIdType;
   int numPolys;
@@ -591,14 +591,14 @@ int sys_geom_IntegrateScalarThresh( cvPolyData *src, double wssthresh, double *q
 
   pd = src->GetVtkPolyData();
 
-  if (pd == NULL) {
+  if (pd == nullptr) {
     fprintf(stderr,"ERROR: No polydata!\n");
     return SV_ERROR;
   }
 
   scalars = pd->GetPointData()->GetScalars();
 
-  if (scalars == NULL) {
+  if (scalars == nullptr) {
     fprintf(stderr,"ERROR: No scalars!\n");
     return SV_ERROR;
   }
@@ -696,8 +696,8 @@ int sys_geom_IntegrateEnergy ( cvPolyData *src, double rho, double *nrm, double 
 
   int i,j;
   vtkPolyData *pd;
-  vtkDataArray *scalars = NULL;
-  vtkDataArray *vectors = NULL;
+  vtkDataArray *scalars = nullptr;
+  vtkDataArray *vectors = nullptr;
   int numPts, numPolys;
   vtkFloatingPointType *pts;
   vtkIdType *polys;
@@ -709,12 +709,12 @@ int sys_geom_IntegrateEnergy ( cvPolyData *src, double rho, double *nrm, double 
   pd = src->GetVtkPolyData();
 
   scalars = pd->GetPointData()->GetScalars();
-  if (scalars == NULL) {
+  if (scalars == nullptr) {
         fprintf(stderr,"ERROR: No scalars!\n");
         return SV_ERROR;
   }
   vectors = pd->GetPointData()->GetVectors();
-  if (vectors == NULL) {
+  if (vectors == nullptr) {
         fprintf(stderr,"ERROR: No vectors!\n");
         return SV_ERROR;
   }

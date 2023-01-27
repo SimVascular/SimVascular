@@ -37,7 +37,7 @@
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
 
-#include <tinyxml.h>
+#include <simvascular_tinyxml.h>
 
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
@@ -71,7 +71,7 @@ sv4guiMitkMeshIO::sv4guiMitkMeshIO()
 //    m_ReadMeshData=read;
 //}
 
-//sv4guiMitkMeshIO* sv4guiMitkMeshIO::m_Singleton = NULL;
+//sv4guiMitkMeshIO* sv4guiMitkMeshIO::m_Singleton = nullptr;
 
 //sv4guiMitkMeshIO* sv4guiMitkMeshIO::GetSingleton()
 //{
@@ -200,7 +200,7 @@ sv4guiMitkMesh::Pointer sv4guiMitkMeshIO::ReadFromFile(std::string fileName, boo
     {
 //        mitkThrow() << "Could not open/read/parse " << fileName;
         MITK_ERROR << "Could not open/read/parse " << fileName;
-        return NULL;
+        return nullptr;
     }
 
     //    TiXmlElement* version = document.FirstChildElement("format");
@@ -210,7 +210,7 @@ sv4guiMitkMesh::Pointer sv4guiMitkMeshIO::ReadFromFile(std::string fileName, boo
     if(!mmElement){
         MITK_ERROR << "No Mesh data in "<< fileName;
 //        mitkThrow() << "No Mesh data in "<< fileName;
-        return NULL;
+        return nullptr;
     }
 
     sv4guiMitkMesh::Pointer mitkMesh = sv4guiMitkMesh::New();
@@ -241,11 +241,11 @@ sv4guiMitkMesh::Pointer sv4guiMitkMeshIO::ReadFromFile(std::string fileName, boo
             meshElement->QueryStringAttribute("type", &type);
 
             sv4guiMesh* mesh=sv4guiMeshFactory::CreateMesh(type);
-            if(mesh==NULL)
+            if(mesh==nullptr)
             {
                 MITK_ERROR << "No mesh constructor for "<< type;
         //        mitkThrow() << "No mesh constructor for "<< type;
-                return NULL;
+                return nullptr;
             }
 
             TiXmlElement* chElement = meshElement->FirstChildElement("command_history");

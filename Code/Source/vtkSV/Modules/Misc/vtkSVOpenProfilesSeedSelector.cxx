@@ -80,15 +80,15 @@ vtkSVOpenProfilesSeedSelector::vtkSVOpenProfilesSeedSelector()
 // ----------------------
 vtkSVOpenProfilesSeedSelector::~vtkSVOpenProfilesSeedSelector()
 {
-  if (this->SeedIds != NULL)
+  if (this->SeedIds != nullptr)
   {
     this->SeedIds->Delete();
-    this->SeedIds = NULL;
+    this->SeedIds = nullptr;
   }
-  if (this->SVRenderer != NULL)
+  if (this->SVRenderer != nullptr)
   {
     this->SVRenderer->Delete();
-    this->SVRenderer = NULL;
+    this->SVRenderer = nullptr;
   }
 }
 
@@ -146,7 +146,7 @@ int vtkSVOpenProfilesSeedSelector::RequestData(
   this->SVRenderer->Render();
 
   this->SVRenderer->SetTextInputQuery("Please input list of inlet profile ids: \n");
-  this->SVRenderer->SetCurrentTextInput(NULL);
+  this->SVRenderer->SetCurrentTextInput(nullptr);
   this->SVRenderer->UpdateTextInput();
   this->SVRenderer->EnterTextInputMode();
 
@@ -178,7 +178,7 @@ int vtkSVOpenProfilesSeedSelector::RequestData(
   // Process info
 
   this->SVRenderer->SetTextInputQuery("Please input list of outlet profile ids (leave empty for all available profiles): ");
-  this->SVRenderer->SetCurrentTextInput(NULL);
+  this->SVRenderer->SetCurrentTextInput(nullptr);
   this->SVRenderer->UpdateTextInput();
   this->SVRenderer->EnterTextInputMode();
 

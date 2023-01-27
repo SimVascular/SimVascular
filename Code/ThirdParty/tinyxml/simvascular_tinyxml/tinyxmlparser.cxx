@@ -661,7 +661,7 @@ void TiXmlDocument::StreamIn( std::istream * in, TIXML_STRING * tag )
 			int c = in->get();
 			if ( c <= 0 )
 			{
-				SetError( TIXML_ERROR_EMBEDDED_NULL, 0, 0, TIXML_ENCODING_UNKNOWN );
+				SetError( TIXML_ERROR_EMBEDDED_nullptr, 0, 0, TIXML_ENCODING_UNKNOWN );
 				break;
 			}
 			(*tag) += (char) c;
@@ -911,7 +911,7 @@ void TiXmlElement::StreamIn (std::istream * in, TIXML_STRING * tag)
 		{
 			TiXmlDocument* document = GetDocument();
 			if ( document )
-				document->SetError( TIXML_ERROR_EMBEDDED_NULL, 0, 0, TIXML_ENCODING_UNKNOWN );
+				document->SetError( TIXML_ERROR_EMBEDDED_nullptr, 0, 0, TIXML_ENCODING_UNKNOWN );
 			return;
 		}
 		(*tag) += (char) c ;
@@ -973,7 +973,7 @@ void TiXmlElement::StreamIn (std::istream * in, TIXML_STRING * tag)
 				{
 					TiXmlDocument* document = GetDocument();
 					if ( document )
-						document->SetError( TIXML_ERROR_EMBEDDED_NULL, 0, 0, TIXML_ENCODING_UNKNOWN );
+						document->SetError( TIXML_ERROR_EMBEDDED_nullptr, 0, 0, TIXML_ENCODING_UNKNOWN );
 					return;
 				}
 				
@@ -1013,7 +1013,7 @@ void TiXmlElement::StreamIn (std::istream * in, TIXML_STRING * tag)
 				{
 					TiXmlDocument* document = GetDocument();
 					if ( document )
-						document->SetError( TIXML_ERROR_EMBEDDED_NULL, 0, 0, TIXML_ENCODING_UNKNOWN );
+						document->SetError( TIXML_ERROR_EMBEDDED_nullptr, 0, 0, TIXML_ENCODING_UNKNOWN );
 					return;
 				}
 				assert( c == '>' );
@@ -1257,7 +1257,7 @@ void TiXmlUnknown::StreamIn( std::istream * in, TIXML_STRING * tag )
 		{
 			TiXmlDocument* document = GetDocument();
 			if ( document )
-				document->SetError( TIXML_ERROR_EMBEDDED_NULL, 0, 0, TIXML_ENCODING_UNKNOWN );
+				document->SetError( TIXML_ERROR_EMBEDDED_nullptr, 0, 0, TIXML_ENCODING_UNKNOWN );
 			return;
 		}
 		(*tag) += (char) c;
@@ -1316,7 +1316,7 @@ void TiXmlComment::StreamIn( std::istream * in, TIXML_STRING * tag )
 		{
 			TiXmlDocument* document = GetDocument();
 			if ( document )
-				document->SetError( TIXML_ERROR_EMBEDDED_NULL, 0, 0, TIXML_ENCODING_UNKNOWN );
+				document->SetError( TIXML_ERROR_EMBEDDED_nullptr, 0, 0, TIXML_ENCODING_UNKNOWN );
 			return;
 		}
 
@@ -1476,7 +1476,7 @@ void TiXmlText::StreamIn( std::istream * in, TIXML_STRING * tag )
 		{
 			TiXmlDocument* document = GetDocument();
 			if ( document )
-				document->SetError( TIXML_ERROR_EMBEDDED_NULL, 0, 0, TIXML_ENCODING_UNKNOWN );
+				document->SetError( TIXML_ERROR_EMBEDDED_nullptr, 0, 0, TIXML_ENCODING_UNKNOWN );
 			return;
 		}
 
@@ -1555,7 +1555,7 @@ void TiXmlDeclaration::StreamIn( std::istream * in, TIXML_STRING * tag )
 		{
 			TiXmlDocument* document = GetDocument();
 			if ( document )
-				document->SetError( TIXML_ERROR_EMBEDDED_NULL, 0, 0, TIXML_ENCODING_UNKNOWN );
+				document->SetError( TIXML_ERROR_EMBEDDED_nullptr, 0, 0, TIXML_ENCODING_UNKNOWN );
 			return;
 		}
 		(*tag) += (char) c;

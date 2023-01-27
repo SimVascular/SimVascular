@@ -352,8 +352,8 @@ void vtkSVIntegrateAttributes::ExecuteBlock(
     cellPoints->Delete();
     }
 
-  this->PointFieldList = NULL;
-  this->CellFieldList = NULL;
+  this->PointFieldList = nullptr;
+  this->CellFieldList = nullptr;
   this->FieldListIndex = 0;
 }
 

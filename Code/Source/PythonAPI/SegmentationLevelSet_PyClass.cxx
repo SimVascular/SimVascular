@@ -98,7 +98,7 @@ PyDoc_STRVAR(PyLevelSetSegmentationClass_doc, "level set segmentation functions"
 //-------------------------------
 //
 PyMethodDef PyLevelSetSegmentationMethods[] = {
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //----------------------------
@@ -128,7 +128,7 @@ PyLevelSetSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyLevelSetSegmentationNew] PyLevelSetSegmentationNew " << std::endl;
   auto self = (PyLevelSetSegmentation*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->super.id = 2;
   }
   return (PyObject *) self;
@@ -155,7 +155,7 @@ PyLevelSetSegmentationDealloc(PyLevelSetSegmentation* self)
 // designated initializers.
 //
 static PyTypeObject PyLevelSetSegmentationType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   SEGMENTATION_LEVELSET_MODULE_CLASS,
   sizeof(PyLevelSetSegmentation)
 };

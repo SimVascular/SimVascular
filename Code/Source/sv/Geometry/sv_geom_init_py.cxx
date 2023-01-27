@@ -216,88 +216,88 @@ PyMODINIT_FUNC PyInit_pyGeom(void);
 // ----------
 PyMethodDef pyGeom_methods[] =
 {
-  {"Reduce", Geom_ReduceCmd, METH_VARARGS, NULL},
+  {"Reduce", Geom_ReduceCmd, METH_VARARGS, nullptr},
   {"MakePolysConsistent",
-		     Geom_MakePolysConsistentCmd, METH_VARARGS, NULL},
+		     Geom_MakePolysConsistentCmd, METH_VARARGS, nullptr},
   {"ReverseAllCells",
-		     Geom_ReverseAllCellsCmd, METH_VARARGS, NULL},
+		     Geom_ReverseAllCellsCmd, METH_VARARGS, nullptr},
   {"NumClosedLineRegions",
-		     Geom_NumClosedLineRegionsCmd, METH_VARARGS, NULL},
+		     Geom_NumClosedLineRegionsCmd, METH_VARARGS, nullptr},
   {"GetClosedLineRegion",
-		     Geom_GetClosedLineRegionCmd, METH_VARARGS, NULL},
-  {"Pick", Geom_PickCmd, METH_VARARGS, NULL},
-  {"OrientProfile", Geom_OrientProfileCmd, METH_VARARGS, NULL},
-  {"DisorientProfile", Geom_DisorientProfileCmd, METH_VARARGS, NULL},
-  {"AlignProfile", Geom_AlignProfileCmd, METH_VARARGS, NULL},
-  {"Translate", Geom_TranslateCmd, METH_VARARGS, NULL},
-  {"ScaleAvg", Geom_ScaleAvgCmd, METH_VARARGS, NULL},
-  {"GetOrderedPts", Geom_GetOrderedPtsCmd, METH_VARARGS, NULL},
+		     Geom_GetClosedLineRegionCmd, METH_VARARGS, nullptr},
+  {"Pick", Geom_PickCmd, METH_VARARGS, nullptr},
+  {"OrientProfile", Geom_OrientProfileCmd, METH_VARARGS, nullptr},
+  {"DisorientProfile", Geom_DisorientProfileCmd, METH_VARARGS, nullptr},
+  {"AlignProfile", Geom_AlignProfileCmd, METH_VARARGS, nullptr},
+  {"Translate", Geom_TranslateCmd, METH_VARARGS, nullptr},
+  {"ScaleAvg", Geom_ScaleAvgCmd, METH_VARARGS, nullptr},
+  {"GetOrderedPts", Geom_GetOrderedPtsCmd, METH_VARARGS, nullptr},
   {"WriteOrderedPts",
-		     Geom_WriteOrderedPtsCmd, METH_VARARGS, NULL},
-  {"WriteLines", Geom_WriteLinesCmd, METH_VARARGS, NULL},
-  {"PolysClosed", Geom_PolysClosedCmd, METH_VARARGS, NULL},
-  {"SurfArea", Geom_SurfAreaCmd, METH_VARARGS, NULL},
-  {"GetPolyCentroid", Geom_GetPolyCentroidCmd, METH_VARARGS, NULL},
-  {"PrintTriStats", Geom_PrintTriStatsCmd, METH_VARARGS, NULL},
-  {"PrintSmallPolys", Geom_PrintSmallPolysCmd, METH_VARARGS, NULL},
-  {"RmSmallPolys", Geom_RmSmallPolysCmd, METH_VARARGS, NULL},
-  {"Bbox", Geom_BBoxCmd, METH_VARARGS, NULL},
-  {"Classify", Geom_ClassifyCmd, METH_VARARGS, NULL},
-  {"PtInPoly", Geom_PtInPolyCmd, METH_VARARGS, NULL},
-  {"MergePts", Geom_MergePtsCmd, METH_VARARGS, NULL},
-  {"Warp3dPts", Geom_Warp3dPtsCmd, METH_VARARGS, NULL},
-  {"NumPts", Geom_NumPtsCmd, METH_VARARGS, NULL},
-  {"SampleLoop", Geom_sampleLoopCmd, METH_VARARGS, NULL},
-  {"LoftSolid", Geom_loftSolidCmd, METH_VARARGS, NULL},
-  {"LoftSolidWithNURBS", Geom_loftSolidWithNURBSCmd, METH_VARARGS, NULL},
-  {"2dWindingNum", Geom_2dWindingNumCmd, METH_VARARGS, NULL},
-  {"PolygonNorm", Geom_PolygonNormCmd, METH_VARARGS, NULL},
-  {"AvgPt", Geom_AvgPtCmd, METH_VARARGS, NULL},
-  {"Copy", Geom_CopyCmd, METH_VARARGS, NULL},
-  {"Project", Geom_ProjectCmd, METH_VARARGS, NULL},
-  {"ReorderPgn", Geom_ReorderPgnCmd, METH_VARARGS, NULL},
-  {"SplinePtsToPathPlan", Geom_SplinePtsToPathPlanCmd, METH_VARARGS, NULL},
-  {"IntegrateSurfaceFlux", Geom_IntegrateSurfaceCmd, METH_VARARGS, NULL},
-  {"IntegrateSurface2", Geom_IntegrateSurface2Cmd, METH_VARARGS, NULL},
-  {"IntegrateEnergy", Geom_IntegrateEnergyCmd, METH_VARARGS, NULL},
-  {"FindDistance", Geom_FindDistanceCmd, METH_VARARGS, NULL},
-  {"InterpolateScalar", Geom_InterpolateScalarCmd, METH_VARARGS, NULL},
-  {"InterpolateVector", Geom_InterpolateVectorCmd, METH_VARARGS, NULL},
-  {"IntersectWithLine", Geom_IntersectWithLineCmd, METH_VARARGS, NULL},
-  {"AddPointData", Geom_AddPointDataCmd, METH_VARARGS, NULL},
-  {"SubtractPointData", Geom_SubtractPointDataCmd, METH_VARARGS, NULL},
-  {"MultiplyPointData", Geom_MultiplyPointDataCmd, METH_VARARGS, NULL},
-  {"DividePointData", Geom_DividePointDataCmd, METH_VARARGS, NULL},
-  {"IntegrateScalarSurf", Geom_IntegrateScalarSurfCmd, METH_VARARGS, NULL},
-  {"IntegrateScalarThresh", Geom_IntegrateScalarThreshCmd, METH_VARARGS, NULL},
-  {"ReplacePointData", Geom_ReplacePointDataCmd, METH_VARARGS, NULL},
- {"Union", Geom_UnionCmd, METH_VARARGS, NULL},
- {"Intersect", Geom_IntersectCmd, METH_VARARGS, NULL},
- {"Subtract", Geom_SubtractCmd, METH_VARARGS, NULL},
- {"Checksurface", Geom_CheckSurfaceCmd, METH_VARARGS, NULL},
- {"Clean", Geom_CleanCmd, METH_VARARGS, NULL},
- {"Set_ids_for_caps", Geom_CapIdSetCmd, METH_VARARGS, NULL},
- {"Local_decimation", Geom_LocalDecimationCmd, METH_VARARGS, NULL},
- {"Local_laplacian_smooth", Geom_LocalLaplacianSmoothCmd, METH_VARARGS, NULL},
- {"Local_constrain_smooth", Geom_LocalConstrainSmoothCmd, METH_VARARGS, NULL},
- {"Local_linear_subdivision", Geom_LocalLinearSubdivisionCmd, METH_VARARGS, NULL},
- {"Local_butterfly_subdivision", Geom_LocalButterflySubdivisionCmd, METH_VARARGS, NULL},
- {"Local_loop_subdivision", Geom_LocalLoopSubdivisionCmd, METH_VARARGS, NULL},
- {"Local_blend", Geom_LocalBlendCmd, METH_VARARGS, NULL},
- {"Set_array_for_local_op_sphere", Geom_SetArrayForLocalOp_SphereCmd, METH_VARARGS, NULL},
- {"Set_array_for_local_op_face", Geom_SetArrayForLocalOp_FaceCmd, METH_VARARGS, NULL},
- {"Set_array_for_local_op_cells", Geom_SetArrayForLocalOp_CellsCmd, METH_VARARGS, NULL},
- {"Set_array_for_local_op_face_blend", Geom_SetArrayForLocalOp_BlendCmd, METH_VARARGS, NULL},
-  {"All_union", Geom_All_UnionCmd, METH_VARARGS, NULL},
-  {"model_name_model_from_polydata_names", Geom_Convert_NURBS_To_PolyCmd, METH_VARARGS, NULL},
-  {NULL,NULL}
+		     Geom_WriteOrderedPtsCmd, METH_VARARGS, nullptr},
+  {"WriteLines", Geom_WriteLinesCmd, METH_VARARGS, nullptr},
+  {"PolysClosed", Geom_PolysClosedCmd, METH_VARARGS, nullptr},
+  {"SurfArea", Geom_SurfAreaCmd, METH_VARARGS, nullptr},
+  {"GetPolyCentroid", Geom_GetPolyCentroidCmd, METH_VARARGS, nullptr},
+  {"PrintTriStats", Geom_PrintTriStatsCmd, METH_VARARGS, nullptr},
+  {"PrintSmallPolys", Geom_PrintSmallPolysCmd, METH_VARARGS, nullptr},
+  {"RmSmallPolys", Geom_RmSmallPolysCmd, METH_VARARGS, nullptr},
+  {"Bbox", Geom_BBoxCmd, METH_VARARGS, nullptr},
+  {"Classify", Geom_ClassifyCmd, METH_VARARGS, nullptr},
+  {"PtInPoly", Geom_PtInPolyCmd, METH_VARARGS, nullptr},
+  {"MergePts", Geom_MergePtsCmd, METH_VARARGS, nullptr},
+  {"Warp3dPts", Geom_Warp3dPtsCmd, METH_VARARGS, nullptr},
+  {"NumPts", Geom_NumPtsCmd, METH_VARARGS, nullptr},
+  {"SampleLoop", Geom_sampleLoopCmd, METH_VARARGS, nullptr},
+  {"LoftSolid", Geom_loftSolidCmd, METH_VARARGS, nullptr},
+  {"LoftSolidWithNURBS", Geom_loftSolidWithNURBSCmd, METH_VARARGS, nullptr},
+  {"2dWindingNum", Geom_2dWindingNumCmd, METH_VARARGS, nullptr},
+  {"PolygonNorm", Geom_PolygonNormCmd, METH_VARARGS, nullptr},
+  {"AvgPt", Geom_AvgPtCmd, METH_VARARGS, nullptr},
+  {"Copy", Geom_CopyCmd, METH_VARARGS, nullptr},
+  {"Project", Geom_ProjectCmd, METH_VARARGS, nullptr},
+  {"ReorderPgn", Geom_ReorderPgnCmd, METH_VARARGS, nullptr},
+  {"SplinePtsToPathPlan", Geom_SplinePtsToPathPlanCmd, METH_VARARGS, nullptr},
+  {"IntegrateSurfaceFlux", Geom_IntegrateSurfaceCmd, METH_VARARGS, nullptr},
+  {"IntegrateSurface2", Geom_IntegrateSurface2Cmd, METH_VARARGS, nullptr},
+  {"IntegrateEnergy", Geom_IntegrateEnergyCmd, METH_VARARGS, nullptr},
+  {"FindDistance", Geom_FindDistanceCmd, METH_VARARGS, nullptr},
+  {"InterpolateScalar", Geom_InterpolateScalarCmd, METH_VARARGS, nullptr},
+  {"InterpolateVector", Geom_InterpolateVectorCmd, METH_VARARGS, nullptr},
+  {"IntersectWithLine", Geom_IntersectWithLineCmd, METH_VARARGS, nullptr},
+  {"AddPointData", Geom_AddPointDataCmd, METH_VARARGS, nullptr},
+  {"SubtractPointData", Geom_SubtractPointDataCmd, METH_VARARGS, nullptr},
+  {"MultiplyPointData", Geom_MultiplyPointDataCmd, METH_VARARGS, nullptr},
+  {"DividePointData", Geom_DividePointDataCmd, METH_VARARGS, nullptr},
+  {"IntegrateScalarSurf", Geom_IntegrateScalarSurfCmd, METH_VARARGS, nullptr},
+  {"IntegrateScalarThresh", Geom_IntegrateScalarThreshCmd, METH_VARARGS, nullptr},
+  {"ReplacePointData", Geom_ReplacePointDataCmd, METH_VARARGS, nullptr},
+ {"Union", Geom_UnionCmd, METH_VARARGS, nullptr},
+ {"Intersect", Geom_IntersectCmd, METH_VARARGS, nullptr},
+ {"Subtract", Geom_SubtractCmd, METH_VARARGS, nullptr},
+ {"Checksurface", Geom_CheckSurfaceCmd, METH_VARARGS, nullptr},
+ {"Clean", Geom_CleanCmd, METH_VARARGS, nullptr},
+ {"Set_ids_for_caps", Geom_CapIdSetCmd, METH_VARARGS, nullptr},
+ {"Local_decimation", Geom_LocalDecimationCmd, METH_VARARGS, nullptr},
+ {"Local_laplacian_smooth", Geom_LocalLaplacianSmoothCmd, METH_VARARGS, nullptr},
+ {"Local_constrain_smooth", Geom_LocalConstrainSmoothCmd, METH_VARARGS, nullptr},
+ {"Local_linear_subdivision", Geom_LocalLinearSubdivisionCmd, METH_VARARGS, nullptr},
+ {"Local_butterfly_subdivision", Geom_LocalButterflySubdivisionCmd, METH_VARARGS, nullptr},
+ {"Local_loop_subdivision", Geom_LocalLoopSubdivisionCmd, METH_VARARGS, nullptr},
+ {"Local_blend", Geom_LocalBlendCmd, METH_VARARGS, nullptr},
+ {"Set_array_for_local_op_sphere", Geom_SetArrayForLocalOp_SphereCmd, METH_VARARGS, nullptr},
+ {"Set_array_for_local_op_face", Geom_SetArrayForLocalOp_FaceCmd, METH_VARARGS, nullptr},
+ {"Set_array_for_local_op_cells", Geom_SetArrayForLocalOp_CellsCmd, METH_VARARGS, nullptr},
+ {"Set_array_for_local_op_face_blend", Geom_SetArrayForLocalOp_BlendCmd, METH_VARARGS, nullptr},
+  {"All_union", Geom_All_UnionCmd, METH_VARARGS, nullptr},
+  {"model_name_model_from_polydata_names", Geom_Convert_NURBS_To_PolyCmd, METH_VARARGS, nullptr},
+  {nullptr,nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyGeomModule= {
    PyModuleDef_HEAD_INIT,
    "pyGeom",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    pyGeom_methods
@@ -313,13 +313,13 @@ PyMODINIT_FUNC initpyGeom(void)
 {
 
   PyObject *pyC;
-  if ( gRepository == NULL ) {
+  if ( gRepository == nullptr ) {
     gRepository = new cvRepository();
     fprintf( stdout, "gRepository created from sv_geom_init\n" );
   }
   pyC = Py_InitModule("pyGeom",pyGeom_methods);
 
-  PyRunTimeErr = PyErr_NewException("pyGeom.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyGeom.error",nullptr,nullptr);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(pyC,"error",PyRunTimeErr);
 
@@ -330,13 +330,13 @@ PyMODINIT_FUNC initpyGeom(void)
 PyMODINIT_FUNC PyInit_pyGeom(void)
 {
   PyObject *pyC;
-  if ( gRepository == NULL ) {
+  if ( gRepository == nullptr ) {
     gRepository = new cvRepository();
     fprintf( stdout, "gRepository created from sv_geom_init\n" );
   }
   pyC = PyModule_Create(& pyGeomModule);
 
-  PyRunTimeErr = PyErr_NewException("pyGeom.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyGeom.error",nullptr,nullptr);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(pyC,"error",PyRunTimeErr);
 
@@ -367,7 +367,7 @@ PyObject* Geom_ReduceCmd(PyObject* self, PyObject* args)
   char *dstName;
   double tol;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
   
   if (!PyArg_ParseTuple(args,"ssd", &srcName, &dstName,&tol))
@@ -381,7 +381,7 @@ srcName, dstName and one double, tol");
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
     
   }
@@ -423,7 +423,7 @@ PyObject* Geom_UnionCmd(PyObject* self, PyObject* args)
   char *dstName;
   cvRepositoryData *srcA;
   cvRepositoryData *srcB;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
   double tolerance = 1e-6;
   
@@ -438,13 +438,13 @@ aName, bName, dstName and one optional double, tol");
 
   // Retrieve source object:
   srcA = gRepository->GetObject( aName );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
     
   }
 
   srcB = gRepository->GetObject( bName );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
     
   }
@@ -495,7 +495,7 @@ PyObject* Geom_IntersectCmd(PyObject* self, PyObject* args)
   char *dstName;
   cvRepositoryData *srcA;
   cvRepositoryData *srcB;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
   double tolerance = 1e-6;
 
@@ -511,13 +511,13 @@ aName, bName, dstName and one optional double, tol");
 
   // Retrieve source object:
   srcA = gRepository->GetObject( aName );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
 
   srcB = gRepository->GetObject( bName );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -567,7 +567,7 @@ PyObject* Geom_SubtractCmd(PyObject* self, PyObject* args)
   char *dstName;
   cvRepositoryData *srcA;
   cvRepositoryData *srcB;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
   double tolerance = 1e-6;
 
@@ -583,13 +583,13 @@ aName, bName, dstName and one optional double, tol");
 
   // Retrieve source object:
   srcA = gRepository->GetObject( aName );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
 
   srcB = gRepository->GetObject( bName );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -650,7 +650,7 @@ PyObject* Geom_CheckSurfaceCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
     
   }
@@ -694,7 +694,7 @@ PyObject* Geom_CleanCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -712,7 +712,7 @@ PyObject* Geom_CleanCmd(PyObject* self, PyObject* args)
   }
 
   dst = sys_geom_Clean( (cvPolyData*)src );
-  if ( dst == NULL ) {
+  if ( dst == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "error cleaning object" );
     
   }
@@ -735,7 +735,7 @@ PyObject* Geom_CapIdSetCmd(PyObject* self, PyObject* args)
   char *Name;
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
   if (!PyArg_ParseTuple(args,"ss", &Name,&dstName))
   {
@@ -747,7 +747,7 @@ PyObject* Geom_CapIdSetCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
     
   }
@@ -796,7 +796,7 @@ PyObject* Geom_SetArrayForLocalOp_FaceCmd(PyObject* self, PyObject* args){
   PyObject* values;
 
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sssO|si", &Name,&dstName,&arrayName,&values,&outArray,&dataType))
@@ -810,7 +810,7 @@ one optional char, outArray and one int dataType");
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
     
   }
@@ -830,7 +830,7 @@ one optional char, outArray and one int dataType");
   for (int i =0; i<nvals;i++)
     vals[i] = PyLong_AsLong(PyList_GetItem(values,i));
   
-  if(PyErr_Occurred()!=NULL)
+  if(PyErr_Occurred()!=nullptr)
   {
     PyErr_SetString(PyRunTimeErr,"error parsing list");
     
@@ -871,7 +871,7 @@ PyObject* Geom_SetArrayForLocalOp_SphereCmd(PyObject* self, PyObject* args)
   PyObject* ctrList;
 
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
   if (!PyArg_ParseTuple(args,"ssdO|si", &Name,&dstName,&radius,&ctrList,&outArray,&dataType))
   {
@@ -883,7 +883,7 @@ one optional char, outArray and one int dataType");
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
     
   }
@@ -902,7 +902,7 @@ one optional char, outArray and one int dataType");
   for(int i=0;i<3;i++)
     ctr[i] = PyFloat_AsDouble(PyList_GetItem(ctrList,i));
 
-  if(PyErr_Occurred()!=NULL)
+  if(PyErr_Occurred()!=nullptr)
   {
     PyErr_SetString(PyRunTimeErr,"List elements must be doubles");
     
@@ -938,7 +938,7 @@ PyObject* Geom_SetArrayForLocalOp_CellsCmd(PyObject* self, PyObject* args)
   PyObject* values;
 
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ssO|si", &Name,&dstName,&values,&outArray,&dataType))
@@ -952,7 +952,7 @@ one optional char, outArray and one int dataType");
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
     
   }
@@ -973,7 +973,7 @@ one optional char, outArray and one int dataType");
   for (int i =0; i<nvals;i++)
     vals[i] = PyLong_AsLong(PyList_GetItem(values,i));
   
-  if(PyErr_Occurred()!=NULL)
+  if(PyErr_Occurred()!=nullptr)
   {
     PyErr_SetString(PyRunTimeErr,"error parsing list");
     
@@ -1013,7 +1013,7 @@ PyObject* Geom_SetArrayForLocalOp_BlendCmd(PyObject* self, PyObject* args)
   PyObject* values;
 
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
    
   if (!PyArg_ParseTuple(args,"sssOd|si", &Name,&dstName,&arrayName,&values,&radius,&outArray,&dataType))
@@ -1027,7 +1027,7 @@ one optional char, outArray and one int dataType");
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
     
   }
@@ -1048,7 +1048,7 @@ one optional char, outArray and one int dataType");
   for (int i =0; i<nvals;i++)
     vals[i] = PyLong_AsLong(PyList_GetItem(values,i));
   
-  if(PyErr_Occurred()!=NULL)
+  if(PyErr_Occurred()!=nullptr)
   {
     PyErr_SetString(PyRunTimeErr,"error parsing list");
     
@@ -1085,7 +1085,7 @@ PyObject* Geom_LocalDecimationCmd(PyObject* self, PyObject* args)
   char *cellArrayName = 0;
   double target = 0.25;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ss|dss", &Name,&dstName,&target,&pointArrayName,&cellArrayName))
@@ -1101,7 +1101,7 @@ two optional chars, pointArrayName, cellArrayName");
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
     
   }
@@ -1140,7 +1140,7 @@ PyObject* Geom_LocalLaplacianSmoothCmd(PyObject* self, PyObject* args)
   int numiters = 100;
   double relax = 0.01;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ss|idss", &Name,&dstName,&numiters,&relax,&pointArrayName,&cellArrayName))
@@ -1156,7 +1156,7 @@ two optional chars, pointArrayName, cellArrayName");
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
     
   }
@@ -1197,7 +1197,7 @@ PyObject* Geom_LocalConstrainSmoothCmd(PyObject* self, PyObject* args)
   double constrainfactor = 0.7;
   int numcgsolves = 30;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ss|idiss", &Name,&dstName,&numiters,&constrainfactor, &numcgsolves,&pointArrayName,&cellArrayName))
@@ -1215,7 +1215,7 @@ two optional chars, pointArrayName, cellArrayName");
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
     
   }
@@ -1254,7 +1254,7 @@ PyObject* Geom_LocalLinearSubdivisionCmd(PyObject* self, PyObject* args)
   char *cellArrayName = 0;
   int numiters = 100;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ss|iss", &Name,&dstName,&numiters,&pointArrayName,&cellArrayName))
@@ -1270,7 +1270,7 @@ two optional chars, pointArrayName, cellArrayName");
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
     
   }
@@ -1308,7 +1308,7 @@ PyObject* Geom_LocalButterflySubdivisionCmd(PyObject* self, PyObject* args)
   char *cellArrayName = 0;
   int numiters = 100;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ss|iss", &Name,&dstName,&numiters,&pointArrayName,&cellArrayName))
@@ -1324,7 +1324,7 @@ two optional chars, pointArrayName, cellArrayName");
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
     
   }
@@ -1362,7 +1362,7 @@ PyObject* Geom_LocalLoopSubdivisionCmd(PyObject* self, PyObject* args)
   char *cellArrayName = 0;
   int numiters = 100;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ss|iss", &Name,&dstName,&numiters,&pointArrayName,&cellArrayName))
@@ -1378,7 +1378,7 @@ two optional chars, pointArrayName, cellArrayName");
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
     
   }
@@ -1421,7 +1421,7 @@ PyObject* Geom_LocalBlendCmd(PyObject* self, PyObject* args)
   int numlapsmoothiters = 50;
   double targetdecimation = 0.01;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ss|iiiiidss", &Name,&dstName,&numblenditers,
@@ -1440,7 +1440,7 @@ two optional chars, pointArrayName, cellArrayName");
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
     
   }
@@ -1512,7 +1512,7 @@ PyObject* Geom_All_UnionCmd(PyObject* self, PyObject* args)
     str = PyBytes_AsString(PyUnicode_AsUTF8String(PyList_GetItem(srcList,i)));
 #endif
     src = gRepository->GetObject(str);
-    if ( src == NULL ) {
+    if ( src == nullptr ) {
       PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
       delete [] srcs;
       
@@ -1537,7 +1537,7 @@ PyObject* Geom_All_UnionCmd(PyObject* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     delete [] srcs;
     
   }
@@ -1619,7 +1619,7 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
     str = PyBytes_AsString(PyUnicode_AsUTF8String(PyList_GetItem(faceList,i)));
 #endif
     face=gRepository->GetObject(str);
-    if ( face == NULL ) {
+    if ( face == nullptr ) {
       PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
       delete [] faces;
       
@@ -1638,7 +1638,7 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
   for (int i=0; i<numIds;i++)
     allids[i]=PyLong_AsLong(PyList_GetItem(idList,i));
 
-  if(PyErr_Occurred()!=NULL)
+  if(PyErr_Occurred()!=nullptr)
   {
     PyErr_SetString(PyRunTimeErr, "Error parsing list objects");
     
@@ -1653,7 +1653,7 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
 
   // Retrieve cvPolyData source:
   model = gRepository->GetObject( srcName );
-  if ( model == NULL ) {
+  if ( model == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     delete [] faces;
     delete [] allids;
@@ -1671,7 +1671,7 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel( );
-  if ( geom == NULL ) {
+  if ( geom == nullptr ) {
     delete [] faces;
     delete [] allids;
     
@@ -1711,7 +1711,7 @@ PyObject* Geom_MakePolysConsistentCmd(PyObject* self, PyObject* args)
   char *srcName;
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ss", &srcName,&dstName))
@@ -1725,7 +1725,7 @@ PyObject* Geom_MakePolysConsistentCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -1768,7 +1768,7 @@ PyObject* Geom_ReverseAllCellsCmd(PyObject* self, PyObject* args)
   char *srcName;
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ss", &srcName,&dstName))
@@ -1782,7 +1782,7 @@ PyObject* Geom_ReverseAllCellsCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -1837,7 +1837,7 @@ PyObject* Geom_NumClosedLineRegionsCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -1867,7 +1867,7 @@ PyObject* Geom_GetClosedLineRegionCmd(PyObject* self, PyObject* args)
   char *srcName;
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   int id;
   RepositoryDataT type;
 
@@ -1882,7 +1882,7 @@ PyObject* Geom_GetClosedLineRegionCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -1924,7 +1924,7 @@ PyObject* Geom_PickCmd(PyObject* self, PyObject* args)
   PyObject* posList;
   char *resultName;
   cvRepositoryData *obj;
-  cvRepositoryData *result = NULL;
+  cvRepositoryData *result = nullptr;
   RepositoryDataT type;
   double pos[3];
 
@@ -1943,7 +1943,7 @@ PyObject* Geom_PickCmd(PyObject* self, PyObject* args)
   for (int i=0;i<3;i++)
     pos[i] = PyFloat_AsDouble(PyList_GetItem(posList,i));
 
-  if(PyErr_Occurred()!=NULL)
+  if(PyErr_Occurred()!=nullptr)
   {
     PyErr_SetString(PyRunTimeErr,"list elements must be doubles");
     
@@ -1953,7 +1953,7 @@ PyObject* Geom_PickCmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -2004,7 +2004,7 @@ PyObject* Geom_OrientProfileCmd(PyObject* self, PyObject* args)
 
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sOOOs", &srcName,&pathPosList,&pathTanList,&pathXhatList,&dstName))
@@ -2042,7 +2042,7 @@ PyObject* Geom_OrientProfileCmd(PyObject* self, PyObject* args)
     ptan[i]=PyFloat_AsDouble(PyList_GetItem(pathTanList,i));
     xhat[i] =PyFloat_AsDouble(PyList_GetItem(pathXhatList,i));
   }
-  if(PyErr_Occurred()!=NULL)
+  if(PyErr_Occurred()!=nullptr)
   {
     PyErr_SetString(PyRunTimeErr,"List elements must be doubles");
     
@@ -2054,7 +2054,7 @@ PyObject* Geom_OrientProfileCmd(PyObject* self, PyObject* args)
 
   // Retrieve src object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -2106,7 +2106,7 @@ PyObject* Geom_DisorientProfileCmd(PyObject* self, PyObject* args)
 
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sOOOs", &srcName,&pathPosList,&pathTanList,&pathXhatList,&dstName))
@@ -2143,7 +2143,7 @@ PyObject* Geom_DisorientProfileCmd(PyObject* self, PyObject* args)
     ptan[i]=PyFloat_AsDouble(PyList_GetItem(pathTanList,i));
     xhat[i] =PyFloat_AsDouble(PyList_GetItem(pathXhatList,i));
   }
-  if(PyErr_Occurred()!=NULL)
+  if(PyErr_Occurred()!=nullptr)
   {
     PyErr_SetString(PyRunTimeErr,"List elements must be doubles");
     
@@ -2153,7 +2153,7 @@ PyObject* Geom_DisorientProfileCmd(PyObject* self, PyObject* args)
 
   // Retrieve src object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -2199,7 +2199,7 @@ PyObject* Geom_AlignProfileCmd(PyObject* self, PyObject* args)
   int vecMtd = 1;
   cvRepositoryData *ref;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sssi", &refName,&srcName,&dstName,&vecMtd))
@@ -2215,7 +2215,7 @@ PyObject* Geom_AlignProfileCmd(PyObject* self, PyObject* args)
 
   // Retrieve ref object and check type:
   ref = gRepository->GetObject( refName );
-  if ( ref == NULL ) {
+  if ( ref == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
     
   }
@@ -2227,7 +2227,7 @@ PyObject* Geom_AlignProfileCmd(PyObject* self, PyObject* args)
 
   // Retrieve src object and check type:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -2248,7 +2248,7 @@ PyObject* Geom_AlignProfileCmd(PyObject* self, PyObject* args)
   } else {
     dst = sys_geom_AlignByDist( (cvPolyData*)ref, (cvPolyData*)src );
   }
-  if ( dst == NULL ) {
+  if ( dst == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "alignment error" );
     
   }
@@ -2277,7 +2277,7 @@ PyObject* Geom_TranslateCmd(PyObject* self, PyObject* args)
 
   char *dstName;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sOs", &srcName,&vecList,&dstName))
@@ -2299,7 +2299,7 @@ srcName,vecList,dstName");
   for(int i=0;i<3;i++)
     vec[i] = PyFloat_AsDouble(PyList_GetItem(vecList,i));
 
-  if(PyErr_Occurred()!=NULL)
+  if(PyErr_Occurred()!=nullptr)
   {
     PyErr_SetString(PyRunTimeErr,"List elements must be doubles");
     
@@ -2310,7 +2310,7 @@ srcName,vecList,dstName");
 
   // Retrieve src object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -2354,7 +2354,7 @@ PyObject* Geom_ScaleAvgCmd(PyObject* self, PyObject* args)
   char *dstName;
   double factor;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sds", &srcName,&factor,&dstName))
@@ -2371,7 +2371,7 @@ srcName,factor,dstName");
 
   // Retrieve src object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -2429,7 +2429,7 @@ PyObject* Geom_GetOrderedPtsCmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -2483,7 +2483,7 @@ PyObject* Geom_WriteOrderedPtsCmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -2526,7 +2526,7 @@ PyObject* Geom_WriteLinesCmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -2569,7 +2569,7 @@ PyObject* Geom_PolysClosedCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -2613,7 +2613,7 @@ PyObject* Geom_SurfAreaCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -2656,7 +2656,7 @@ PyObject* Geom_GetPolyCentroidCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -2697,7 +2697,7 @@ PyObject* Geom_PrintTriStatsCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   surf = gRepository->GetObject( surfName );
-  if ( surf == NULL ) {
+  if ( surf == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
     
   }
@@ -2739,7 +2739,7 @@ PyObject* Geom_PrintSmallPolysCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -2769,7 +2769,7 @@ PyObject* Geom_RmSmallPolysCmd(PyObject* self, PyObject* args)
   char *dstName;
   double sideTol;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"ssd", &srcName,&dstName,&sideTol))
@@ -2783,7 +2783,7 @@ PyObject* Geom_RmSmallPolysCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -2840,7 +2840,7 @@ PyObject* Geom_BBoxCmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -2897,7 +2897,7 @@ PyObject* Geom_ClassifyCmd(PyObject* self, PyObject* args)
   for (int i=0; i<3;i++)
     pt[i] = PyFloat_AsDouble(PyList_GetItem(ptList,i));
 
-  if(PyErr_Occurred()!=NULL){
+  if(PyErr_Occurred()!=nullptr){
     PyErr_SetString(PyRunTimeErr,"list elements must be doubles");
     
   }
@@ -2905,7 +2905,7 @@ PyObject* Geom_ClassifyCmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -2957,7 +2957,7 @@ PyObject* Geom_PtInPolyCmd(PyObject* self, PyObject* args)
   for (int i=0; i<2; i++)
     pt[i] = PyFloat_AsDouble(PyList_GetItem(ptList,i));
   //The tcl script parsed a 3d pt while requesting a 2d pt
-  if(PyErr_Occurred()!=NULL){
+  if(PyErr_Occurred()!=nullptr){
     PyErr_SetString(PyRunTimeErr,"List elements must be doubles");
     
   }
@@ -2965,7 +2965,7 @@ PyObject* Geom_PtInPolyCmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3009,7 +3009,7 @@ PyObject* Geom_MergePtsCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3062,7 +3062,7 @@ PyObject* Geom_Warp3dPtsCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3113,7 +3113,7 @@ PyObject* Geom_NumPtsCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3155,7 +3155,7 @@ PyObject* Geom_sampleLoopCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3174,7 +3174,7 @@ PyObject* Geom_sampleLoopCmd(PyObject* self, PyObject* args)
 
   dst = sys_geom_sampleLoop( (cvPolyData*)src, targetNumPts );
 
-  if ( dst == NULL ) {
+  if ( dst == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "subsample loop error" );
     
   }
@@ -3239,7 +3239,7 @@ numModes,useFFT, useLinearSampleAlongLength, splineType, bias,tension, continuit
     str = PyBytes_AsString(PyUnicode_AsUTF8String(PyList_GetItem(srcList,i)));
 #endif
     src = gRepository->GetObject(str);
-    if ( src == NULL ) {
+    if ( src == nullptr ) {
       PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
       delete [] srcs;
       
@@ -3331,7 +3331,7 @@ uParametricSpanType,vParametricSpanType");
     str = PyBytes_AsString(PyUnicode_AsUTF8String(PyList_GetItem(srcList,i)));
 #endif
     src = gRepository->GetObject(str);
-    if ( src == NULL ) {
+    if ( src == nullptr ) {
       PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
       delete [] srcs;
       
@@ -3399,7 +3399,7 @@ PyObject* Geom_2dWindingNumCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3439,7 +3439,7 @@ PyObject* Geom_PolygonNormCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3481,7 +3481,7 @@ PyObject* Geom_AvgPtCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3524,7 +3524,7 @@ PyObject* Geom_CopyCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3542,7 +3542,7 @@ PyObject* Geom_CopyCmd(PyObject* self, PyObject* args)
   }
 
   dst = sys_geom_DeepCopy( (cvPolyData*)src );
-  if ( dst == NULL ) {
+  if ( dst == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "error copying object" );
     
   }
@@ -3580,7 +3580,7 @@ PyObject* Geom_ReorderPgnCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3597,7 +3597,7 @@ PyObject* Geom_ReorderPgnCmd(PyObject* self, PyObject* args)
   }
 
   dst = sys_geom_ReorderPolygon( (cvPolyData*)src, start );
-  if ( dst == NULL ) {
+  if ( dst == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "error reordering object");
     
   }
@@ -3620,7 +3620,7 @@ PyObject* Geom_SplinePtsToPathPlanCmd(PyObject* self, PyObject* args)
 {
   char *srcName;
   int numOutputPts;
-  char *filename = NULL;
+  char *filename = nullptr;
   int flag;
   cvRepositoryData *src;
   RepositoryDataT type;
@@ -3636,7 +3636,7 @@ PyObject* Geom_SplinePtsToPathPlanCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3652,16 +3652,16 @@ PyObject* Geom_SplinePtsToPathPlanCmd(PyObject* self, PyObject* args)
   // will be left blank.
   int result;
   char *output;
-  if (filename == NULL) {
+  if (filename == nullptr) {
     result = pysys_geom_splinePtsToPathPlan( ((cvPolyData*)src)->GetVtkPolyData(),numOutputPts,
                                   filename, flag, &output);
   } else {
     result = pysys_geom_splinePtsToPathPlan( ((cvPolyData*)src)->GetVtkPolyData(),numOutputPts,
-                                  filename, flag, NULL);
+                                  filename, flag, nullptr);
   }
 
   if (result == SV_OK) {
-    if (filename !=NULL)
+    if (filename !=nullptr)
     	return SV_PYTHON_OK;
     else
 	return Py_BuildValue("s",output);
@@ -3701,7 +3701,7 @@ PyObject* Geom_IntegrateSurfaceCmd(PyObject* self, PyObject* args)
       
     for (int i=0; i<3;i++)
 	nrm[i] = PyFloat_AsDouble(PyList_GetItem(nrmList,i));
-    if(PyErr_Occurred()!=NULL)
+    if(PyErr_Occurred()!=nullptr)
     {
       PyErr_SetString(PyRunTimeErr, "list elements must all be double's");
       
@@ -3712,7 +3712,7 @@ PyObject* Geom_IntegrateSurfaceCmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3756,7 +3756,7 @@ PyObject* Geom_IntegrateSurface2Cmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3809,7 +3809,7 @@ PyObject* Geom_IntegrateEnergyCmd(PyObject* self, PyObject* args)
     {
       nrm[i] = PyFloat_AsDouble(PyList_GetItem(nrmList,i));
     }
-    if (PyErr_Occurred()!=NULL)
+    if (PyErr_Occurred()!=nullptr)
     {      
       PyErr_SetString(PyRunTimeErr, "list elements must all be double's");
       
@@ -3820,7 +3820,7 @@ PyObject* Geom_IntegrateEnergyCmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3874,7 +3874,7 @@ PyObject* Geom_FindDistanceCmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3926,7 +3926,7 @@ PyObject* Geom_InterpolateScalarCmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -3982,7 +3982,7 @@ PyObject* Geom_InterpolateVectorCmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -4048,7 +4048,7 @@ PyObject* Geom_IntersectWithLineCmd(PyObject* self, PyObject* args)
 
   // Retrieve object:
   obj = gRepository->GetObject( objName );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     
   }
@@ -4081,9 +4081,9 @@ PyObject* Geom_AddPointDataCmd(PyObject* self, PyObject* args)
   int vflag = FALSE;
   char *dstName;
 
-  cvRepositoryData *srcA = NULL;
-  cvRepositoryData *srcB = NULL;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *srcA = nullptr;
+  cvRepositoryData *srcB = nullptr;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sssii", &srcNameA,&srcNameB,&dstName,&scflag,&vflag))
@@ -4098,14 +4098,14 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 
   // Retrieve source object:
   srcA = gRepository->GetObject( srcNameA );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -4165,9 +4165,9 @@ PyObject* Geom_SubtractPointDataCmd(PyObject* self, PyObject* args)
   int vflag = FALSE;
   char *dstName;
 
-  cvRepositoryData *srcA = NULL;
-  cvRepositoryData *srcB = NULL;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *srcA = nullptr;
+  cvRepositoryData *srcB = nullptr;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sssii", &srcNameA,&srcNameB,&dstName,&scflag,&vflag))
@@ -4182,14 +4182,14 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 
   // Retrieve source object:
   srcA = gRepository->GetObject( srcNameA );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -4249,9 +4249,9 @@ PyObject* Geom_MultiplyPointDataCmd(PyObject* self, PyObject* args)
   int vflag = FALSE;
   char *dstName;
 
-  cvRepositoryData *srcA = NULL;
-  cvRepositoryData *srcB = NULL;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *srcA = nullptr;
+  cvRepositoryData *srcB = nullptr;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sssii", &srcNameA,&srcNameB,&dstName,&scflag,&vflag))
@@ -4266,14 +4266,14 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 
   // Retrieve source object:
   srcA = gRepository->GetObject( srcNameA );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -4334,9 +4334,9 @@ PyObject* Geom_DividePointDataCmd(PyObject* self, PyObject* args)
   int vflag = FALSE;
   char *dstName;
 
-  cvRepositoryData *srcA = NULL;
-  cvRepositoryData *srcB = NULL;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *srcA = nullptr;
+  cvRepositoryData *srcB = nullptr;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sssii", &srcNameA,&srcNameB,&dstName,&scflag,&vflag))
@@ -4351,14 +4351,14 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 
   // Retrieve source object:
   srcA = gRepository->GetObject( srcNameA );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -4418,9 +4418,9 @@ PyObject* Geom_ProjectCmd(PyObject* self, PyObject* args)
   int vflag = FALSE;
   char *dstName;
 
-  cvRepositoryData *srcA = NULL;
-  cvRepositoryData *srcB = NULL;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *srcA = nullptr;
+  cvRepositoryData *srcB = nullptr;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sssii", &srcNameA,&srcNameB,&dstName,&scflag,&vflag))
@@ -4435,14 +4435,14 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 
   // Retrieve source object:
   srcA = gRepository->GetObject( srcNameA );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -4511,7 +4511,7 @@ PyObject* Geom_IntegrateScalarSurfCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -4556,7 +4556,7 @@ PyObject* Geom_IntegrateScalarThreshCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
@@ -4588,9 +4588,9 @@ PyObject* Geom_ReplacePointDataCmd(PyObject* self, PyObject* args)
   int vflag = FALSE;
   char *dstName;
 
-  cvRepositoryData *srcA = NULL;
-  cvRepositoryData *srcB = NULL;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *srcA = nullptr;
+  cvRepositoryData *srcB = nullptr;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sssii", &srcNameA,&srcNameB,&dstName,&scflag,&vflag))
@@ -4605,14 +4605,14 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 
   // Retrieve source object:
   srcA = gRepository->GetObject( srcNameA );
-  if ( srcA == NULL ) {
+  if ( srcA == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
-  if ( srcB == NULL ) {
+  if ( srcB == nullptr ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
     
   }

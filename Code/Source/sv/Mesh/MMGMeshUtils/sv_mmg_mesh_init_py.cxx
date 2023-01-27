@@ -71,15 +71,15 @@ PyObject* MMG_RemeshCmd( PyObject* self, PyObject* args);
 
 PyMethodDef Mmgmesh_methods[]=
 {
-  {"Remesh", MMG_RemeshCmd,METH_VARARGS,NULL},
-  {NULL,NULL}
+  {"Remesh", MMG_RemeshCmd,METH_VARARGS,nullptr},
+  {nullptr,nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyMeshUtilmodule = {
    PyModuleDef_HEAD_INIT,
    "pyMeshUtil",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    Mmgmesh_methods
@@ -97,12 +97,12 @@ PyObject* Mmgmesh_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
   pythonC = PyModule_Create(&pyMeshUtilmodule);
 #endif
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyMeshUtil");
     return SV_PYTHON_ERROR;
   }
-  PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",NULL,NULL);
+  PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",nullptr,nullptr);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
   return pythonC;
 }
@@ -113,13 +113,13 @@ PyMODINIT_FUNC initpyMeshUtil()
   PyObject *pythonC;
   pythonC = Py_InitModule("pyMeshUtil", Mmgmesh_methods);
 
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyMeshUtil");
     return;
 
   }
-  PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",NULL,NULL);
+  PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",nullptr,nullptr);
   return;
 
 }
@@ -130,12 +130,12 @@ PyMODINIT_FUNC PyInit_pyMeshUtil()
 {
   PyObject *pythonC;
   pythonC = PyModule_Create(&pyMeshUtilmodule);
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyMeshUtil");
      return SV_PYTHON_ERROR;
   }
-  PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",NULL,NULL);
+  PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",nullptr,nullptr);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
 
   return pythonC;
@@ -156,7 +156,7 @@ PyObject* MMG_RemeshCmd(PyObject* self, PyObject* args)
   double hgrad = 1.1;
   double hausd = 0.01;
   cvRepositoryData *src;
-  cvRepositoryData *dst = NULL;
+  cvRepositoryData *dst = nullptr;
   RepositoryDataT type;
 
   if(!PyArg_ParseTuple(args,"ss|ddddd",
@@ -170,7 +170,7 @@ PyObject* MMG_RemeshCmd(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   src = gRepository->GetObject( srcName );
-  if ( src == NULL ) {
+  if ( src == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     
   }
@@ -192,7 +192,7 @@ PyObject* MMG_RemeshCmd(PyObject* self, PyObject* args)
   surfacepd->BuildLinks();
   int useSizingFunction = 0;
   int numAddedRefines = 0;
-  vtkDoubleArray *meshSizingFunction = NULL;
+  vtkDoubleArray *meshSizingFunction = nullptr;
   if ( MMGUtils_SurfaceRemeshing( surfacepd, hmin, hmax, hausd, angle, hgrad,
 	useSizingFunction, meshSizingFunction, numAddedRefines) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "remeshing error");
@@ -200,7 +200,7 @@ PyObject* MMG_RemeshCmd(PyObject* self, PyObject* args)
   }
 
   dst = new cvPolyData(surfacepd);
-  if ( dst == NULL ) {
+  if ( dst == nullptr ) {
     PyErr_SetString(PyRunTimeErr, "error remeshing obj in repository");
     
   }

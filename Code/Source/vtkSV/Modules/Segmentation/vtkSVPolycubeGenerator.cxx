@@ -59,9 +59,9 @@ vtkStandardNewMacro(vtkSVPolycubeGenerator);
 // ----------------------
 vtkSVPolycubeGenerator::vtkSVPolycubeGenerator()
 {
-  this->CenterlineGroupIdsArrayName = NULL;
-  this->CenterlineRadiusArrayName   = NULL;
-  this->GridIdsArrayName      = NULL;
+  this->CenterlineGroupIdsArrayName = nullptr;
+  this->CenterlineRadiusArrayName   = nullptr;
+  this->GridIdsArrayName      = nullptr;
   this->CenterlineGraph             = vtkSVCenterlineGraph::New();
 
   this->WorkPd     = vtkPolyData::New();
@@ -78,40 +78,40 @@ vtkSVPolycubeGenerator::vtkSVPolycubeGenerator()
 // ----------------------
 vtkSVPolycubeGenerator::~vtkSVPolycubeGenerator()
 {
-  if (this->CenterlineGroupIdsArrayName != NULL)
+  if (this->CenterlineGroupIdsArrayName != nullptr)
   {
     delete [] this->CenterlineGroupIdsArrayName;
-    this->CenterlineGroupIdsArrayName = NULL;
+    this->CenterlineGroupIdsArrayName = nullptr;
   }
 
-  if (this->CenterlineRadiusArrayName != NULL)
+  if (this->CenterlineRadiusArrayName != nullptr)
   {
     delete [] this->CenterlineRadiusArrayName;
-    this->CenterlineRadiusArrayName = NULL;
+    this->CenterlineRadiusArrayName = nullptr;
   }
 
-  if (this->GridIdsArrayName != NULL)
+  if (this->GridIdsArrayName != nullptr)
   {
     delete [] this->GridIdsArrayName;
-    this->GridIdsArrayName = NULL;
+    this->GridIdsArrayName = nullptr;
   }
 
-  if (this->CenterlineGraph != NULL)
+  if (this->CenterlineGraph != nullptr)
   {
     this->CenterlineGraph->Delete();
-    this->CenterlineGraph = NULL;
+    this->CenterlineGraph = nullptr;
   }
 
-  if (this->SurfacePolycubePd != NULL)
+  if (this->SurfacePolycubePd != nullptr)
   {
     this->SurfacePolycubePd->Delete();
-    this->SurfacePolycubePd = NULL;
+    this->SurfacePolycubePd = nullptr;
   }
 
-  if (this->VolumePolycubeUg != NULL)
+  if (this->VolumePolycubeUg != nullptr)
   {
     this->VolumePolycubeUg->Delete();
-    this->VolumePolycubeUg = NULL;
+    this->VolumePolycubeUg = nullptr;
   }
 }
 
@@ -461,7 +461,7 @@ int vtkSVPolycubeGenerator::GetCubePoints(vtkSVCenterlineGCell *gCell,
   parent = gCell->Parent;
 
   int myLoc;
-  if (parent != NULL)
+  if (parent != nullptr)
   {
     if (parent->Children[0]->Id == gCell->Id)
       brother = parent->Children[1];

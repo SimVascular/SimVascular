@@ -129,7 +129,7 @@ int cvRepository::UnRegister( char *name )
   cvRepositoryData *obj;
 
   entryPtr = Tcl_FindHashEntry( &table_, name );
-  if ( entryPtr == NULL ) {
+  if ( entryPtr == nullptr ) {
     return SV_ERROR;
   } else {
     obj = (cvRepositoryData *) Tcl_GetHashValue( entryPtr );
@@ -153,7 +153,7 @@ int cvRepository::Exists( char *name )
   Tcl_HashEntry *entryPtr;
 
   entryPtr = Tcl_FindHashEntry( &table_, name );
-  if ( entryPtr == NULL ) {
+  if ( entryPtr == nullptr ) {
     return SV_ERROR;
   } else {
     return SV_OK;
@@ -170,7 +170,7 @@ RepositoryDataT cvRepository::GetType( CONST84 char *name )
   cvRepositoryData *obj;
 
   obj = this->GetObject( name );
-  if ( obj == NULL ) {
+  if ( obj == nullptr ) {
     return OBJ_NOT_FOUND_T;
   } else {
     return obj->GetType();
@@ -188,8 +188,8 @@ cvRepositoryData *cvRepository::GetObject( CONST84 char *name )
   cvRepositoryData *obj;
 
   entryPtr = Tcl_FindHashEntry( &table_, name );
-  if ( entryPtr == NULL ) {
-    return NULL;
+  if ( entryPtr == nullptr ) {
+    return nullptr;
   } else {
     obj = (cvRepositoryData *) Tcl_GetHashValue( entryPtr );
     return obj;
@@ -273,8 +273,8 @@ char *cvRepository::GetNextName()
 {
   char *key;
 
-  if ( currEntryPtr_ == NULL ) {
-    return NULL;
+  if ( currEntryPtr_ == nullptr ) {
+    return nullptr;
   } else {
     key = (char*)(Tcl_GetHashKey( &table_, currEntryPtr_ ));
     currEntryPtr_ = Tcl_NextHashEntry( &search_ );

@@ -75,8 +75,8 @@ vtkSVCenterlineParallelTransportVectors::vtkSVCenterlineParallelTransportVectors
 
   this->CenterlineGraph = vtkSVCenterlineGraph::New();
 
-  this->ParallelTransportVectorArrayName = NULL;
-  this->GroupIdsArrayName = NULL;
+  this->ParallelTransportVectorArrayName = nullptr;
+  this->GroupIdsArrayName = nullptr;
 }
 
 // ----------------------
@@ -84,27 +84,27 @@ vtkSVCenterlineParallelTransportVectors::vtkSVCenterlineParallelTransportVectors
 // ----------------------
 vtkSVCenterlineParallelTransportVectors::~vtkSVCenterlineParallelTransportVectors()
 {
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
-  if (this->CenterlineGraph != NULL)
+  if (this->CenterlineGraph != nullptr)
   {
     this->CenterlineGraph->Delete();
-    this->CenterlineGraph = NULL;
+    this->CenterlineGraph = nullptr;
   }
 
-  if (this->ParallelTransportVectorArrayName != NULL)
+  if (this->ParallelTransportVectorArrayName != nullptr)
   {
     delete [] this->ParallelTransportVectorArrayName;
-    this->ParallelTransportVectorArrayName = NULL;
+    this->ParallelTransportVectorArrayName = nullptr;
   }
 
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
   {
     delete [] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
   }
 }
 
@@ -238,7 +238,7 @@ int vtkSVCenterlineParallelTransportVectors::RunFilter()
 
     int isTerminating = 0;
     double endVecs[3][3];
-    if (gCell->Parent == NULL)
+    if (gCell->Parent == nullptr)
     {
       // found parent, flip around
       isTerminating = 1;
@@ -265,7 +265,7 @@ int vtkSVCenterlineParallelTransportVectors::RunFilter()
     double tmpX[3];
     double pt0[3], pt1[3];
 
-    if (gCell->Parent == NULL)
+    if (gCell->Parent == nullptr)
     {
       localArrayX->SetTuple(pts[0], refVecs[1]);
       localArrayY->SetTuple(pts[0], refVecs[2]);
@@ -282,7 +282,7 @@ int vtkSVCenterlineParallelTransportVectors::RunFilter()
         for (int l=0; l<3; l++)
           checkRefs[k][l] = refVecs[k][l];
 
-      if (gCell->Parent == NULL)
+      if (gCell->Parent == nullptr)
         vtkMath::Subtract(pt1, pt0, refVecs[0]);
       else
         vtkMath::Subtract(pt0, pt1, refVecs[0]);
@@ -451,8 +451,8 @@ int vtkSVCenterlineParallelTransportVectors::RunFilter()
 // ----------------------
 void vtkSVCenterlineParallelTransportVectors::PrintSelf(ostream& os, vtkIndent indent)
 {
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
     os << indent << "Group ids array name: " << this->GroupIdsArrayName << "\n";
-  if (this->ParallelTransportVectorArrayName != NULL)
+  if (this->ParallelTransportVectorArrayName != nullptr)
     os << indent << "Parallel transport vectors array name: " << this->ParallelTransportVectorArrayName << "\n";
 }

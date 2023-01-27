@@ -103,7 +103,7 @@ bool sv4guiROMSimulationPython::GenerateMesh(const std::string& outputDir, const
   pModule = PyImport_Import(pName);
   Py_DECREF(pName);
 
-  if (pModule != NULL) {
+  if (pModule != nullptr) {
       MITK_INFO << msg << "Module is not null";
   }
   return SV_OK;
@@ -153,7 +153,7 @@ bool sv4guiROMSimulationPython::GenerateSolverInput(const std::string outputDire
   if (pyModule == nullptr) {
       auto msg = "Unable to load the Python '" + QString(m_PythonROMSimulationModuleName.c_str()) + "' module.";
       MITK_ERROR << msg;
-      QMessageBox::warning(NULL, sv4guiROMSimulationView::MsgTitle, msg);
+      QMessageBox::warning(nullptr, sv4guiROMSimulationView::MsgTitle, msg);
       return false;
   } 
 
@@ -167,7 +167,7 @@ bool sv4guiROMSimulationPython::GenerateSolverInput(const std::string outputDire
   if (!PyCallable_Check(pyFunc)) {
       auto msg = "Can't find the function '" + QString(pyFuncName) + "' in the '" + QString(m_PythonROMSimulationModuleName.c_str()) + "' module.";
       MITK_ERROR << msg;
-      QMessageBox::warning(NULL, sv4guiROMSimulationView::MsgTitle, msg);
+      QMessageBox::warning(nullptr, sv4guiROMSimulationView::MsgTitle, msg);
       return false;
   }
 
@@ -252,7 +252,7 @@ bool sv4guiROMSimulationPython::GenerateSolverInput(const std::string outputDire
               rmsg += "Number of nodes: " + QString::number(num_nodes) + "\n"; 
               rmsg += "Number of elements: " + QString::number(num_elems) + "\n"; 
               MITK_INFO << msg << rmsg; 
-              QMessageBox::information(NULL, sv4guiROMSimulationView::MsgTitle, rmsg);
+              QMessageBox::information(nullptr, sv4guiROMSimulationView::MsgTitle, rmsg);
           }
       }
   }
@@ -306,7 +306,7 @@ bool sv4guiROMSimulationPython::ExecuteZeroDSimulation(const std::string outputD
   if (pyModule == nullptr) {
       auto msg = "Unable to load the Python '" + QString(moduleName.c_str()) + "' module.";
       MITK_ERROR << msg;
-      QMessageBox::warning(NULL, sv4guiROMSimulationView::MsgTitle, msg);
+      QMessageBox::warning(nullptr, sv4guiROMSimulationView::MsgTitle, msg);
       return false;
   }
 
@@ -320,7 +320,7 @@ bool sv4guiROMSimulationPython::ExecuteZeroDSimulation(const std::string outputD
   if (!PyCallable_Check(pyFunc)) {
       auto msg = "Can't find the function '" + QString(pyFuncName) + "' in the '" + QString(moduleName.c_str()) + "' module.";
       MITK_ERROR << msg;
-      QMessageBox::warning(NULL, sv4guiROMSimulationView::MsgTitle, msg);
+      QMessageBox::warning(nullptr, sv4guiROMSimulationView::MsgTitle, msg);
       return false;
   }
 
@@ -364,7 +364,7 @@ bool sv4guiROMSimulationPython::ExecuteZeroDSimulation(const std::string outputD
           mb.setDefaultButton(QMessageBox::Ok);
           mb.exec();
       } else {
-          QMessageBox::information(NULL, sv4guiROMSimulationView::MsgTitle, "The 0D solver has completed.");
+          QMessageBox::information(nullptr, sv4guiROMSimulationView::MsgTitle, "The 0D solver has completed.");
       }
   }
 

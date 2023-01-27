@@ -173,7 +173,7 @@ Geom_align_profile(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   //std::cout << "========== Geom_align_profile ==========" << std::endl;
   auto api = PyUtilApiFunction("OO|O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"reference", "align", "use_distance", NULL};
+  static char *keywords[] = {"reference", "align", "use_distance", nullptr};
   PyObject* refObj;
   PyObject* alignObj;
   PyObject* distArg;
@@ -278,7 +278,7 @@ Geom_point_inside(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   //std::cout << "========== Geom_point_inside ==========" << std::endl;
   auto api = PyUtilApiFunction("OO!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"polydata", "point", NULL};
+  static char *keywords[] = {"polydata", "point", nullptr};
   PyObject* pdObj;
   PyObject* pointArg;
 
@@ -333,7 +333,7 @@ static PyObject *
 Geom_interpolate_closed_curve(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("Oi", PyRunTimeErr, __func__);
-  static char *keywords[] = {"polydata", "number_of_points", NULL};
+  static char *keywords[] = {"polydata", "number_of_points", nullptr};
   PyObject* pdObj;
   int numSamples;
 
@@ -355,7 +355,7 @@ Geom_interpolate_closed_curve(PyObject* self, PyObject* args, PyObject* kwargs)
   cvPolyData cvPolydata(polydata);
   auto result = sys_geom_sampleLoop(&cvPolydata, numSamples);
 
-  if (result == NULL) {
+  if (result == nullptr) {
       api.error("Error performing the sample loop operation.");
       return nullptr;
   }
@@ -384,7 +384,7 @@ Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
   std::cout << "========== Geom_local_blend ==========" << std::endl;
   #endif
   auto api = PyUtilApiFunction("OO!O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", "faces", "options", NULL};
+  static char *keywords[] = {"surface", "faces", "options", nullptr};
   PyObject* surfaceArg;
   PyObject* facesArg;
   PyObject* blendOptsArg;
@@ -529,7 +529,7 @@ Geom_loft(PyObject* self, PyObject* args, PyObject* kwargs)
   #endif
 
   auto api = PyUtilApiFunction("O!O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"polydata_list", "loft_options", NULL};
+  static char *keywords[] = {"polydata_list", "loft_options", nullptr};
   PyObject* objListArg;
   PyObject* loftOptsArg;
 
@@ -642,7 +642,7 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
   std::cout << "========== Geom_loft_nurbs ==========" << std::endl;
   #endif
   auto api = PyUtilApiFunction("O!O!|i", PyRunTimeErr, __func__);
-  static char *keywords[] = {"polydata_list", "loft_options", "num_sections", NULL};
+  static char *keywords[] = {"polydata_list", "loft_options", "num_sections", nullptr};
   PyObject* objListArg;
   PyObject* loftOptsArg;
   int num_sections = 12;
@@ -774,7 +774,7 @@ static PyObject *
 Geom_local_sphere_smooth(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("OdO!O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", "radius", "center", "smoothing_parameters", NULL};
+  static char *keywords[] = {"surface", "radius", "center", "smoothing_parameters", nullptr};
   PyObject* surfaceArg;
   double radius = 0.0;
   PyObject* centerArg;
@@ -969,7 +969,7 @@ Geom_reduce(PyObject* self, PyObject* args)
 
   // Retrieve source object.
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -1176,7 +1176,7 @@ Geom_check_surface(PyObject* self, PyObject* args)
 
   // Retrieve source object.
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -1215,7 +1215,7 @@ Geom_clean(PyObject* self, PyObject* args)
 
   // Retrieve source object.
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -1224,7 +1224,7 @@ Geom_clean(PyObject* self, PyObject* args)
   }
 
   auto dst = sys_geom_Clean(src);
-  if (dst == NULL) {
+  if (dst == nullptr) {
     api.error("Error cleaning geometry '" + std::string(srcName) + ".");
     return nullptr;
   }
@@ -1262,7 +1262,7 @@ Geom_set_ids_for_caps(PyObject* self, PyObject* args)
 
   // Retrieve source object.
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -1322,7 +1322,7 @@ Geom_set_array_for_local_op_face(PyObject* self, PyObject* args)
 
   // Retrieve source object.
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -1340,7 +1340,7 @@ Geom_set_array_for_local_op_face(PyObject* self, PyObject* args)
     vals.push_back(PyLong_AsLong(PyList_GetItem(values,i)));
   }
 
-  if (PyErr_Occurred() != NULL) {
+  if (PyErr_Occurred() != nullptr) {
       api.error("Error parsing values list argument.");
       return nullptr;
   }
@@ -1388,7 +1388,7 @@ Geom_set_array_for_local_op_cells(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -1406,7 +1406,7 @@ Geom_set_array_for_local_op_cells(PyObject* self, PyObject* args)
     vals.push_back(PyLong_AsLong(PyList_GetItem(values,i)));
   }
 
-  if (PyErr_Occurred() != NULL) {
+  if (PyErr_Occurred() != nullptr) {
       api.error("Error parsing values list argument.");
       return nullptr;
   }
@@ -1458,7 +1458,7 @@ Geom_set_array_for_local_op_blend(PyObject* self, PyObject* args)
 
   // Retrieve source object:
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -1479,7 +1479,7 @@ Geom_set_array_for_local_op_blend(PyObject* self, PyObject* args)
     vals.push_back(PyLong_AsLong(PyList_GetItem(values,i)));
   }
 
-  if (PyErr_Occurred() != NULL) {
+  if (PyErr_Occurred() != nullptr) {
       api.error("Error parsing values list argument.");
       return nullptr;
   }
@@ -1525,7 +1525,7 @@ Geom_local_decimation(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -1575,7 +1575,7 @@ Geom_local_laplacian_smooth(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -1626,7 +1626,7 @@ Geom_local_constrain_smooth(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -1675,7 +1675,7 @@ Geom_local_linear_subdivision(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -1724,7 +1724,7 @@ Geom_local_butterfly_subdivision(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -1773,7 +1773,7 @@ Geom_local_loop_subdivision(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -1841,7 +1841,7 @@ Geom_all_union(PyObject* self, PyObject* args)
 
   // Create new solid:
   auto geom = cvSolidModel::pyDefaultInstantiateSolidModel();
-  if (geom == NULL) {
+  if (geom == nullptr) {
       api.error("Error creating solid model.");
       return nullptr;
   }
@@ -1886,7 +1886,7 @@ Geom_convert_nurbs_to_poly(PyObject* self, PyObject* args)
   }
 
   auto model = GetRepositoryGeometry(api, srcName);
-  if (model == NULL) {
+  if (model == nullptr) {
       return nullptr;
   }
 
@@ -1918,7 +1918,7 @@ Geom_convert_nurbs_to_poly(PyObject* self, PyObject* args)
       allids.push_back(PyLong_AsLong(PyList_GetItem(idList,i)));
   }
 
-  if (PyErr_Occurred() != NULL) {
+  if (PyErr_Occurred() != nullptr) {
       api.error("Error parsing values ID list argument.");
       return nullptr;
   }
@@ -1929,7 +1929,7 @@ Geom_convert_nurbs_to_poly(PyObject* self, PyObject* args)
 
   // Instantiate the new solid:
   auto geom = cvSolidModel::pyDefaultInstantiateSolidModel( );
-  if (geom == NULL ) {
+  if (geom == nullptr ) {
       api.error("Error creating solid model.");
       return nullptr;
   }
@@ -1976,7 +1976,7 @@ Geom_make_polys_consistent(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2022,7 +2022,7 @@ Geom_reverse_all_cells(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2067,7 +2067,7 @@ Geom_num_closed_line_regions(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2106,7 +2106,7 @@ Geom_get_closed_line_region(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2153,7 +2153,7 @@ Geom_pick(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -2213,7 +2213,7 @@ Geom_orient_profile(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2285,7 +2285,7 @@ Geom_disorient_profile(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2356,7 +2356,7 @@ Geom_translate(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2412,7 +2412,7 @@ Geom_scale_avg(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2457,7 +2457,7 @@ Geom_get_ordered_points(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2513,7 +2513,7 @@ Geom_write_ordered_points(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -2550,7 +2550,7 @@ Geom_write_lines(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -2586,7 +2586,7 @@ Geom_polys_closed(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2623,7 +2623,7 @@ Geom_surface_area(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2660,7 +2660,7 @@ Geom_get_poly_centroid(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2697,7 +2697,7 @@ Geom_print_tri_stats(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2734,7 +2734,7 @@ Geom_print_small_polys(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2772,7 +2772,7 @@ Geom_remove_small_polys(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2817,7 +2817,7 @@ Geom_bbox(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -2862,7 +2862,7 @@ Geom_point_in_poly(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -2908,7 +2908,7 @@ Geom_merge_points(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -2956,7 +2956,7 @@ Geom_warp_3d_points(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -3001,7 +3001,7 @@ Geom_num_points(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -3037,7 +3037,7 @@ Geom_winding_number(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -3070,7 +3070,7 @@ Geom_polygon_normal(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -3110,7 +3110,7 @@ Geom_copy(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -3119,7 +3119,7 @@ Geom_copy(PyObject* self, PyObject* args)
   }
 
   auto dst = sys_geom_DeepCopy(src);
-  if (dst == NULL) {
+  if (dst == nullptr) {
       api.error("Error copying the geometry '" + std::string(srcName) + ".");
       return nullptr;
   }
@@ -3157,7 +3157,7 @@ Geom_reorder_polygon(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -3166,7 +3166,7 @@ Geom_reorder_polygon(PyObject* self, PyObject* args)
   }
 
   auto dst = sys_geom_ReorderPolygon( (cvPolyData*)src, start );
-  if (dst == NULL) {
+  if (dst == nullptr) {
       api.error("Error repordering a polygon for the geometry '" + std::string(srcName) + ".");
       return nullptr;
   }
@@ -3198,23 +3198,23 @@ Geom_spline_points_to_path_plan(PyObject* self, PyObject* args)
   char *srcName;
   int numOutputPts;
   int flag;
-  char *filename = NULL;
+  char *filename = nullptr;
 
   if (!PyArg_ParseTuple(args, api.format, &srcName, &numOutputPts, &flag, &filename)) {
       return api.argsError();
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
   int result;
   char *output;
-  if (filename == NULL) {
+  if (filename == nullptr) {
     result = pysys_geom_splinePtsToPathPlan(src->GetVtkPolyData(),numOutputPts, filename, flag, &output);
   } else {
-    result = pysys_geom_splinePtsToPathPlan(src->GetVtkPolyData(),numOutputPts, filename, flag, NULL);
+    result = pysys_geom_splinePtsToPathPlan(src->GetVtkPolyData(),numOutputPts, filename, flag, nullptr);
   }
 
   if (result != SV_OK) {
@@ -3222,7 +3222,7 @@ Geom_spline_points_to_path_plan(PyObject* self, PyObject* args)
       return nullptr;
   }
 
-  if (filename == NULL) {
+  if (filename == nullptr) {
       return Py_BuildValue("s",output);
   } else {
       return SV_PYTHON_OK;
@@ -3262,7 +3262,7 @@ Geom_integrate_surface(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -3300,7 +3300,7 @@ Geom_integrate_surface2(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -3347,7 +3347,7 @@ Geom_integrate_energy(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -3385,7 +3385,7 @@ Geom_find_distance(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -3426,7 +3426,7 @@ Geom_interpolate_scalar(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -3471,7 +3471,7 @@ Geom_interpolate_vector(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -3521,7 +3521,7 @@ Geom_intersect_with_line(PyObject* self, PyObject* args)
   }
 
   auto obj = GetRepositoryGeometry(api, objName);
-  if (obj == NULL) {
+  if (obj == nullptr) {
       return nullptr;
   }
 
@@ -3575,12 +3575,12 @@ Geom_add_point_data(PyObject* self, PyObject* args)
   }
 
   auto srcA = GetRepositoryGeometry(api, srcNameA);
-  if (srcA == NULL) {
+  if (srcA == nullptr) {
       return nullptr;
   }
 
   auto srcB = GetRepositoryGeometry(api, srcNameB);
-  if (srcB == NULL) {
+  if (srcB == nullptr) {
       return nullptr;
   }
 
@@ -3640,12 +3640,12 @@ Geom_subtract_point_data(PyObject* self, PyObject* args)
   }
 
   auto srcA = GetRepositoryGeometry(api, srcNameA);
-  if (srcA == NULL) {
+  if (srcA == nullptr) {
       return nullptr;
   }
 
   auto srcB = GetRepositoryGeometry(api, srcNameB);
-  if (srcB == NULL) {
+  if (srcB == nullptr) {
       return nullptr;
   }
 
@@ -3704,12 +3704,12 @@ Geom_multiply_point_data(PyObject* self, PyObject* args)
   }
 
   auto srcA = GetRepositoryGeometry(api, srcNameA);
-  if (srcA == NULL) {
+  if (srcA == nullptr) {
       return nullptr;
   }
 
   auto srcB = GetRepositoryGeometry(api, srcNameB);
-  if (srcB == NULL) {
+  if (srcB == nullptr) {
       return nullptr;
   }
 
@@ -3768,12 +3768,12 @@ Geom_divide_point_data(PyObject* self, PyObject* args)
   }
 
   auto srcA = GetRepositoryGeometry(api, srcNameA);
-  if (srcA == NULL) {
+  if (srcA == nullptr) {
       return nullptr;
   }
 
   auto srcB = GetRepositoryGeometry(api, srcNameB);
-  if (srcB == NULL) {
+  if (srcB == nullptr) {
       return nullptr;
   }
 
@@ -3834,12 +3834,12 @@ Geom_project(PyObject* self, PyObject* args)
   }
 
   auto srcA = GetRepositoryGeometry(api, srcNameA);
-  if (srcA == NULL) {
+  if (srcA == nullptr) {
       return nullptr;
   }
 
   auto srcB = GetRepositoryGeometry(api, srcNameB);
-  if (srcB == NULL) {
+  if (srcB == nullptr) {
       return nullptr;
   }
 
@@ -3895,7 +3895,7 @@ Geom_integrate_scalar_surface(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -3938,7 +3938,7 @@ Geom_integrate_scalar_threshold(PyObject* self, PyObject* args)
   }
 
   auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  if (src == nullptr) {
       return nullptr;
   }
 
@@ -3980,12 +3980,12 @@ Geom_replace_point_data(PyObject* self, PyObject* args)
   }
 
   auto srcA = GetRepositoryGeometry(api, srcNameA);
-  if (srcA == NULL) {
+  if (srcA == nullptr) {
       return nullptr;
   }
 
   auto srcB = GetRepositoryGeometry(api, srcNameB);
-  if (srcB == NULL) {
+  if (srcB == nullptr) {
       return nullptr;
   }
 
@@ -4207,7 +4207,7 @@ PyMethodDef PyGeomMethods[] =
 
 #endif // #ifdef python_geom_module_use_old_methods
 
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 
@@ -4275,7 +4275,7 @@ PyInit_PyGeometry(void)
   // Create the geometry module.
   auto module = PyModule_Create(&PyGeomModule);
 
-  PyRunTimeErr = PyErr_NewException(GEOMETRY_EXCEPTION, NULL, NULL);
+  PyRunTimeErr = PyErr_NewException(GEOMETRY_EXCEPTION, nullptr, nullptr);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(module, GEOMETRY_EXCEPTION_OBJECT, PyRunTimeErr);
 
@@ -4312,13 +4312,13 @@ PyInit_PyGeometry(void)
 PyMODINIT_FUNC initpyGeom(void)
 {
   PyObject *pyC;
-  if ( gRepository == NULL ) {
+  if ( gRepository == nullptr ) {
     gRepository = new cvRepository();
     fprintf( stdout, "gRepository created from sv_geom_init\n" );
   }
   pyC = Py_InitModule("pyGeom",pyGeom_methods);
 
-  PyRunTimeErr = PyErr_NewException("pyGeom.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyGeom.error",nullptr,nullptr);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(pyC,"error",PyRunTimeErr);
 

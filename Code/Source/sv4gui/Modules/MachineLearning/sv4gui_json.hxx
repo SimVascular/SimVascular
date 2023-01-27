@@ -19050,7 +19050,7 @@ class basic_json
     zero-terminated c-strings.
 
     @throw out_of_range.407  if `j.is_number_unsigned() && j.get<std::uint64_t>() > 9223372036854775807`
-    @throw out_of_range.409  if a key in `j` contains a NULL (U+0000)
+    @throw out_of_range.409  if a key in `j` contains a nullptr (U+0000)
     @throw type_error.317    if `!j.is_object()`
 
     @pre The input `j` is required to be an object: `j.is_object() == true`.

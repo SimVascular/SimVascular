@@ -36,8 +36,8 @@
 //#include <QmitkDataManagerView.h>
 
 sv4guiMeshCreateAction::sv4guiMeshCreateAction()
-    : m_MeshCreateWidget(NULL)
-    , m_Functionality(NULL)
+    : m_MeshCreateWidget(nullptr)
+    , m_Functionality(nullptr)
 {
 }
 

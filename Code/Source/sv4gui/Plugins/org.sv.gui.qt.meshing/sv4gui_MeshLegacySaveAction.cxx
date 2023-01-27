@@ -61,7 +61,7 @@ void sv4guiMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selec
 
     std::string modelName=mitkMesh->GetModelName();
 
-    mitk::DataNode::Pointer modelNode=NULL;
+    mitk::DataNode::Pointer modelNode=nullptr;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=m_DataStorage->GetSources (meshNode,isProjFolder,false);
 
@@ -77,7 +77,7 @@ void sv4guiMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selec
         }
     }
 
-    sv4guiModel* model=NULL;
+    sv4guiModel* model=nullptr;
     if(modelNode.IsNotNull())
     {
         model=dynamic_cast<sv4guiModel*>(modelNode->GetData());
@@ -107,7 +107,7 @@ void sv4guiMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selec
         if(lastFileSavePath=="")
             lastFileSavePath=QDir::homePath();
 
-        QString dir = QFileDialog::getExistingDirectory(NULL
+        QString dir = QFileDialog::getExistingDirectory(nullptr
                                                         , tr("Export as Legacy Mesh (Choose Directory)")
                                                         , lastFileSavePath);
 
@@ -118,7 +118,7 @@ void sv4guiMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selec
 
         if(!sv4guiMeshLegacyIO::WriteFiles(meshNode,model->GetModelElement(), outputDir))
         {
-            QMessageBox::warning(NULL,"Mesh info missing","Please make sure the mesh exists and is valid.");
+            QMessageBox::warning(nullptr,"Mesh info missing","Please make sure the mesh exists and is valid.");
             return;
         }
 

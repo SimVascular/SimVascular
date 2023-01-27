@@ -43,16 +43,16 @@ Version:   $Revision: 1.11 $
 
 vtkvmtkCenterlineSplittingAndGroupingFilter::vtkvmtkCenterlineSplittingAndGroupingFilter()
 {
-  this->RadiusArrayName = NULL;
-  this->GroupIdsArrayName = NULL;
-  this->CenterlineIdsArrayName = NULL;
-  this->BlankingArrayName = NULL;
-  this->TractIdsArrayName = NULL;
+  this->RadiusArrayName = nullptr;
+  this->GroupIdsArrayName = nullptr;
+  this->CenterlineIdsArrayName = nullptr;
+  this->BlankingArrayName = nullptr;
+  this->TractIdsArrayName = nullptr;
 
   this->NumberOfSplittingPoints = 0;
-  this->SubIds = NULL;
-  this->PCoords = NULL;
-  this->TractBlanking = NULL;
+  this->SubIds = nullptr;
+  this->PCoords = nullptr;
+  this->TractBlanking = nullptr;
 
   this->GroupingMode = POINTINTUBE;
 }
@@ -62,49 +62,49 @@ vtkvmtkCenterlineSplittingAndGroupingFilter::~vtkvmtkCenterlineSplittingAndGroup
   if (this->RadiusArrayName)
     {
     delete[] this->RadiusArrayName;
-    this->RadiusArrayName = NULL;
+    this->RadiusArrayName = nullptr;
     }
 
   if (this->GroupIdsArrayName)
     {
     delete[] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
     }
 
   if (this->CenterlineIdsArrayName)
     {
     delete[] this->CenterlineIdsArrayName;
-    this->CenterlineIdsArrayName = NULL;
+    this->CenterlineIdsArrayName = nullptr;
     }
 
   if (this->BlankingArrayName)
     {
     delete[] this->BlankingArrayName;
-    this->BlankingArrayName = NULL;
+    this->BlankingArrayName = nullptr;
     }
 
   if (this->TractIdsArrayName)
     {
     delete[] this->TractIdsArrayName;
-    this->TractIdsArrayName = NULL;
+    this->TractIdsArrayName = nullptr;
     }
 
   if (this->SubIds)
     {
     delete[] this->SubIds;
-    this->SubIds = NULL;
+    this->SubIds = nullptr;
     }
 
   if (this->PCoords)
     {
     delete[] this->PCoords;
-    this->PCoords = NULL;
+    this->PCoords = nullptr;
     }
 
   if (this->TractBlanking)
     {
     delete[] this->TractBlanking;
-    this->TractBlanking = NULL;
+    this->TractBlanking = nullptr;
     }
 }
 

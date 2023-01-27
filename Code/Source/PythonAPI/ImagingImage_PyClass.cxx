@@ -399,7 +399,7 @@ static PathElement*
 GetPathElement(PyUtilApiFunction& api, PyPath* self)
 {
   auto path = self->path;
-  if (path == NULL) {
+  if (path == nullptr) {
       api.error("The path element data has not be created.");
       return nullptr;
   }
@@ -721,8 +721,8 @@ static PyObject *
 Image_read(PyImage* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("s|O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", "scale_factor", NULL};
-  char* fileName = NULL;
+  static char *keywords[] = {"file_name", "scale_factor", nullptr};
+  char* fileName = nullptr;
   PyObject* scaleObj = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName, &PyFloat_Type, &scaleObj)) {
@@ -768,8 +768,8 @@ static PyObject *
 Image_read_transformation(PyImage* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", NULL};
-  char* fileName = NULL;
+  static char *keywords[] = {"file_name", nullptr};
+  char* fileName = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
     return api.argsError();
@@ -810,7 +810,7 @@ static PyObject *
 Image_scale(PyImage* self, PyObject* args, PyObject* kwargs)
 { 
   auto api = PyUtilApiFunction("d", PyRunTimeErr, __func__);
-  static char *keywords[] = {"scale_factor", NULL};
+  static char *keywords[] = {"scale_factor", nullptr};
   double scale;
   
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &scale)) {
@@ -845,7 +845,7 @@ static PyObject *
 Image_set_origin(PyImage* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"origin", NULL};
+  static char *keywords[] = {"origin", nullptr};
   PyObject* originArg = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &originArg)) {
@@ -879,7 +879,7 @@ static PyObject *
 Image_set_spacing(PyImage* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"spacing", NULL};
+  static char *keywords[] = {"spacing", nullptr};
   PyObject* spacingArg = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &spacingArg)) {
@@ -924,7 +924,7 @@ static PyObject *
 Image_transform(PyImage* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
-  static char *keywords[] = {"matrix", NULL};
+  static char *keywords[] = {"matrix", nullptr};
   PyObject* matrixArg;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &matrixArg)) {
@@ -972,8 +972,8 @@ static PyObject *
 Image_write(PyImage* self, PyObject* args, PyObject* kwargs)
 { 
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", NULL};
-  char* fileName = NULL;
+  static char *keywords[] = {"file_name", nullptr};
+  char* fileName = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
     return api.argsError();
@@ -1021,8 +1021,8 @@ static PyObject *
 Image_write_transformation(PyImage* self, PyObject* args, PyObject* kwargs)
 { 
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", NULL};
-  char* fileName = NULL;
+  static char *keywords[] = {"file_name", nullptr};
+  char* fileName = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
     return api.argsError();
@@ -1092,7 +1092,7 @@ static PyMethodDef PyImageMethods[] = {
   {"write", (PyCFunction)Image_write, METH_VARARGS|METH_KEYWORDS, Image_write_doc},
   {"write_transformation", (PyCFunction)Image_write_transformation, METH_VARARGS|METH_KEYWORDS, Image_write_transformation_doc},
 
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 //-------------
@@ -1104,7 +1104,7 @@ static PyMethodDef PyImageMethods[] = {
 // designated initializers.
 //
 PyTypeObject PyImageType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   IMAGING_MODULE_CLASS,
@@ -1138,7 +1138,7 @@ PyImageInit(PyImage* self, PyObject* args, PyObject *kwds)
 static PyObject *
 PyImageNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 {
-  static char *keywords[] = {"file_name", "scale_factor", NULL};
+  static char *keywords[] = {"file_name", "scale_factor", nullptr};
   auto api = PyUtilApiFunction("|sO!", PyRunTimeErr, "imaging.Image");
   char* fileNameArg = nullptr; 
   PyObject* scaleObj = nullptr;
@@ -1149,7 +1149,7 @@ PyImageNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 
   std::cout << "[PyImageNew] PyImageNew " << std::endl;
   auto self = (PyImage*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       self->id = 1;
   }
 
@@ -1222,7 +1222,7 @@ CreatePyImage()
 //CreatePyImage(PathElement* path)
 {
   //std::cout << "[CreatePyImage] Create Path object ... " << std::endl;
-  auto imageObj = PyObject_CallObject((PyObject*)&PyImageType, NULL);
+  auto imageObj = PyObject_CallObject((PyObject*)&PyImageType, nullptr);
   auto pyImage = (PyImage*)imageObj;
 
   /*

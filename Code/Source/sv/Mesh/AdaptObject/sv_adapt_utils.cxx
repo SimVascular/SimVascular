@@ -107,7 +107,7 @@ int AdaptUtils_SmoothHessians(vtkUnstructuredGrid *mesh)
   double nodalHessian[6];
   vtkIdType checkPt;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts = new vtkIdType;
   vtkIdType p1,p2;
   vtkIdType pointId,cellId;
   vtkIdType surfacePt,volumePt;
@@ -360,9 +360,9 @@ int AdaptUtils_attachArray( double *valueArray,
 		  std::string dataName,
 		  int nVar,
 		  int poly ) {
-  if (valueArray == NULL)
+  if (valueArray == nullptr)
   {
-    fprintf(stderr,"Array to attach is NULL\n");
+    fprintf(stderr,"Array to attach is nullptr\n");
     return SV_ERROR;
   }
   int nem = (poly > 1) ? (poly - 1) : 0;
@@ -561,7 +561,7 @@ int AdaptUtils_modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
   int count;
   int bigcount;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts = new vtkIdType;
   double distance;
   double mappingPt[3];
   double closestPt[3];
@@ -1118,7 +1118,7 @@ double AdaptUtils_maxLocalError(vtkUnstructuredGrid *mesh,vtkIdType vertex, doub
   double maxLocE=0;
   vtkIdType cellId,pointId;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts = new vtkIdType;
   vtkSmartPointer<vtkIdList> attachedCells =
     vtkSmartPointer<vtkIdList>::New();
   vtkSmartPointer<vtkIdList> firstPointList =

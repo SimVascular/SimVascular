@@ -82,23 +82,23 @@ int Image_MaskInPlaceCmd( ClientData clientData, Tcl_Interp *interp,
 int Image_Init( Tcl_Interp *interp )
 {
   Tcl_CreateCommand( interp, "img_readHeader_5X", Image_ReadHeaderCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "img_decode", Image_DecodeCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "img_calcCorrectionEqn", Image_CalcCorrectionEqnCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "img_calcCorrectionEqnAuto", Image_CalcCorrectionEqnAutoCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "img_threshold", Image_ThresholdCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "img_computeStructuredCoord", Image_ComputeStructuredCoordCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "img_createDistanceMap", Image_CreateDistanceMapCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "img_findPath", Image_FindPathCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   Tcl_CreateCommand( interp, "img_mask", Image_MaskInPlaceCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   return TCL_OK;
 }
 
@@ -117,8 +117,8 @@ int Image_ReadHeaderCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &filename, NULL, REQUIRED, 0, { 0 } },
-    { "-protected", INT_Type, &readProtected, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-file", STRING_Type, &filename, nullptr, REQUIRED, 0, { 0 } },
+    { "-protected", INT_Type, &readProtected, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -175,7 +175,7 @@ int Image_ReadHeaderCmd( ClientData clientData, Tcl_Interp *interp,
                               &acquisitionTime,&heart_rate,&im_no,&im_seno);
 
   if ( status == SV_ERROR ) {
-    Tcl_AppendResult( interp, "Problem reading header for ", filename, (char *)NULL );
+    Tcl_AppendResult( interp, "Problem reading header for ", filename, (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -285,7 +285,7 @@ int Image_DecodeCmd( ClientData clientData, Tcl_Interp *interp,
   char *usage;
 
   char *magname;
-  magname = NULL;
+  magname = nullptr;
   char *phasename;
   char *result;
   double venc,vencscale;
@@ -293,11 +293,11 @@ int Image_DecodeCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 5;
   ARG_Entry arg_table[] = {
-    { "-magImage", STRING_Type, &magname, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-phaseImage", STRING_Type, &phasename, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &result, NULL, REQUIRED, 0, { 0 } },
-    { "-venc", DOUBLE_Type, &venc, NULL, REQUIRED, 0, { 0 } },
-    { "-vencscale", DOUBLE_Type, &vencscale, NULL, REQUIRED, 0, { 0 } },
+    { "-magImage", STRING_Type, &magname, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-phaseImage", STRING_Type, &phasename, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &result, nullptr, REQUIRED, 0, { 0 } },
+    { "-venc", DOUBLE_Type, &venc, nullptr, REQUIRED, 0, { 0 } },
+    { "-vencscale", DOUBLE_Type, &vencscale, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -319,12 +319,12 @@ int Image_DecodeCmd( ClientData clientData, Tcl_Interp *interp,
   cvRepositoryData *img;
   vtkStructuredPoints *vtkspMag, *vtkspPhase;
 
-  if (magname != NULL) {
+  if (magname != nullptr) {
     mag_weight_flag = 1;
     // Look up given image object:
     img = gRepository->GetObject( magname );
-    if ( img == NULL ) {
-      Tcl_AppendResult( interp, "couldn't find object ", magname, (char *)NULL );
+    if ( img == nullptr ) {
+      Tcl_AppendResult( interp, "couldn't find object ", magname, (char *)nullptr );
       return TCL_ERROR;
     }
 
@@ -332,7 +332,7 @@ int Image_DecodeCmd( ClientData clientData, Tcl_Interp *interp,
     type = img->GetType();
     if ( type != STRUCTURED_PTS_T ) {
       Tcl_AppendResult( interp, "error: object ", magname,
-	  	      "not of type StructuredPts", (char *)NULL );
+	  	      "not of type StructuredPts", (char *)nullptr );
       return TCL_ERROR;
     }
     // Retrive geometric information:
@@ -341,8 +341,8 @@ int Image_DecodeCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Look up given image object:
   img = gRepository->GetObject( phasename );
-  if ( img == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", phasename, (char *)NULL );
+  if ( img == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", phasename, (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -350,7 +350,7 @@ int Image_DecodeCmd( ClientData clientData, Tcl_Interp *interp,
   type = img->GetType();
   if ( type != STRUCTURED_PTS_T ) {
     Tcl_AppendResult( interp, "error: object ", phasename,
-		      "not of type StructuredPts", (char *)NULL );
+		      "not of type StructuredPts", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -360,7 +360,7 @@ int Image_DecodeCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( result ) ) {
     Tcl_AppendResult( interp, "object ", result, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -373,7 +373,7 @@ int Image_DecodeCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( status == SV_ERROR ) {
-    Tcl_AppendResult( interp, "Problem decoding ", magname, " and ",phasename,(char *)NULL );
+    Tcl_AppendResult( interp, "Problem decoding ", magname, " and ",phasename,(char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -381,7 +381,7 @@ int Image_DecodeCmd( ClientData clientData, Tcl_Interp *interp,
   sp->SetName( result );
   if ( !( gRepository->Register( sp->GetName(), sp ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", result,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete sp;
     return TCL_ERROR;
   }
@@ -408,9 +408,9 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 3;
   ARG_Entry arg_table[] = {
-    { "-regions", LIST_Type, &regionsArg, NULL, REQUIRED, 0, { 0 } },
-    { "-images", LIST_Type, &imagesArg, NULL, REQUIRED, 0, { 0 } },
-    { "-order", INT_Type, &order, NULL, REQUIRED, 0, { 0 } },
+    { "-regions", LIST_Type, &regionsArg, nullptr, REQUIRED, 0, { 0 } },
+    { "-images", LIST_Type, &imagesArg, nullptr, REQUIRED, 0, { 0 } },
+    { "-order", INT_Type, &order, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -430,7 +430,7 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
 
   // check for valid order
   if (order < 0 || order > 3) {
-        Tcl_AppendResult( interp, "order must be 0,1, or 2", (char *)NULL );
+        Tcl_AppendResult( interp, "order must be 0,1, or 2", (char *)nullptr );
         ARG_FreeListArgvs( table_sz, arg_table );
         return TCL_ERROR;
   }
@@ -439,13 +439,13 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
   int numImages = imagesArg.argc;
 
   if (numRegions == 0) {
-       Tcl_AppendResult( interp, "empty list of regions", (char *)NULL );
+       Tcl_AppendResult( interp, "empty list of regions", (char *)nullptr );
         ARG_FreeListArgvs( table_sz, arg_table );
         return TCL_ERROR;
   }
 
   if (numImages == 0) {
-       Tcl_AppendResult( interp, "empty list of images", (char *)NULL );
+       Tcl_AppendResult( interp, "empty list of images", (char *)nullptr );
         ARG_FreeListArgvs( table_sz, arg_table );
         return TCL_ERROR;
   }
@@ -457,10 +457,10 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
   vtkStructuredPoints **listImg = new vtkStructuredPoints* [numImages];
 
   for (i = 0; i < numRegions; i++) {
-    if (regionsArg.argv[i] != NULL) {
+    if (regionsArg.argv[i] != nullptr) {
       pd = gRepository->GetObject( regionsArg.argv[i] );
-      if ( pd == NULL ) {
-        Tcl_AppendResult( interp, "couldn't find object ", regionsArg.argv[i], (char *)NULL );
+      if ( pd == nullptr ) {
+        Tcl_AppendResult( interp, "couldn't find object ", regionsArg.argv[i], (char *)nullptr );
         delete [] listPd;
         delete [] listImg;
         ARG_FreeListArgvs( table_sz, arg_table );
@@ -471,7 +471,7 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
       type = pd->GetType();
       if ( type != POLY_DATA_T ) {
         Tcl_AppendResult( interp, "error: object ", regionsArg.argv[i],
-	  	      "not of type cvPolyData", (char *)NULL );
+	  	      "not of type cvPolyData", (char *)nullptr );
         delete [] listPd;
         delete [] listImg;
         ARG_FreeListArgvs( table_sz, arg_table );
@@ -479,7 +479,7 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
       }
       listPd[i] = ((cvPolyData*)pd)->GetVtkPolyData();
     } else {
-      Tcl_AppendResult( interp, "NULL region pointer encountered ", (char *)NULL );
+      Tcl_AppendResult( interp, "nullptr region pointer encountered ", (char *)nullptr );
       delete [] listPd;
       delete [] listImg;
       ARG_FreeListArgvs( table_sz, arg_table );
@@ -489,10 +489,10 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
 
   // find the corresponding repository objects to each name
   for (i = 0; i < numImages; i++) {
-    if (imagesArg.argv[i] != NULL) {
+    if (imagesArg.argv[i] != nullptr) {
       img = gRepository->GetObject( imagesArg.argv[i] );
-      if ( img == NULL ) {
-        Tcl_AppendResult( interp, "couldn't find object ", imagesArg.argv[i], (char *)NULL );
+      if ( img == nullptr ) {
+        Tcl_AppendResult( interp, "couldn't find object ", imagesArg.argv[i], (char *)nullptr );
         delete [] listPd;
         delete [] listImg;
         ARG_FreeListArgvs ( table_sz, arg_table );
@@ -503,7 +503,7 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
       type = img->GetType();
       if ( type != STRUCTURED_PTS_T ) {
         Tcl_AppendResult( interp, "error: object ", imagesArg.argv[i],
-	  	      "not of type StructuredPts", (char *)NULL );
+	  	      "not of type StructuredPts", (char *)nullptr );
         delete [] listPd;
         delete [] listImg;
         ARG_FreeListArgvs ( table_sz, arg_table );
@@ -512,7 +512,7 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
       listImg[i] = ((cvStrPts*)img)->GetVtkStructuredPoints();
 
     } else {
-      Tcl_AppendResult( interp, "NULL image pointer encountered ", (char *)NULL );
+      Tcl_AppendResult( interp, "nullptr image pointer encountered ", (char *)nullptr );
       delete [] listPd;
       delete [] listImg;
       ARG_FreeListArgvs ( table_sz, arg_table );
@@ -538,7 +538,7 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_sz, arg_table );
 
   if ( status == SV_ERROR ) {
-    Tcl_AppendResult( interp, "error finding correction equation ", (char *)NULL );
+    Tcl_AppendResult( interp, "error finding correction equation ", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -559,7 +559,7 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
   fprintf(stdout,r);
   fprintf(stdout,"\n");
 
-  Tcl_AppendResult( interp, r, (char *)NULL );
+  Tcl_AppendResult( interp, r, (char *)nullptr );
   return TCL_OK;
 
 }
@@ -583,11 +583,11 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 5;
   ARG_Entry arg_table[] = {
-    { "-regions", LIST_Type, &regionsArg, NULL, REQUIRED, 0, { 0 } },
-    { "-images", LIST_Type, &imagesArg, NULL, REQUIRED, 0, { 0 } },
-    { "-order", INT_Type, &order, NULL, REQUIRED, 0, { 0 } },
-    { "-factor", DOUBLE_Type, &factor, NULL, REQUIRED, 0, { 0 } },
-    { "-mask", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-regions", LIST_Type, &regionsArg, nullptr, REQUIRED, 0, { 0 } },
+    { "-images", LIST_Type, &imagesArg, nullptr, REQUIRED, 0, { 0 } },
+    { "-order", INT_Type, &order, nullptr, REQUIRED, 0, { 0 } },
+    { "-factor", DOUBLE_Type, &factor, nullptr, REQUIRED, 0, { 0 } },
+    { "-mask", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -607,14 +607,14 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
 
   // check for valid order
   if (order < 0 || order > 3) {
-        Tcl_AppendResult( interp, "order must be 0,1, or 2", (char *)NULL );
+        Tcl_AppendResult( interp, "order must be 0,1, or 2", (char *)nullptr );
         ARG_FreeListArgvs( table_sz, arg_table );
         return TCL_ERROR;
   }
 
   int numImages = imagesArg.argc;
   if (numImages == 0) {
-       Tcl_AppendResult( interp, "empty list of images", (char *)NULL );
+       Tcl_AppendResult( interp, "empty list of images", (char *)nullptr );
         ARG_FreeListArgvs( table_sz, arg_table );
         return TCL_ERROR;
   }
@@ -625,7 +625,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
   fflush(stdout);
 
   //  if (numRegions == 0) {
-  //       Tcl_AppendResult( interp, "empty list of regions", (char *)NULL );
+  //       Tcl_AppendResult( interp, "empty list of regions", (char *)nullptr );
   //        ARG_FreeListArgvs( table_sz, arg_table );
   //        return TCL_ERROR;
   //  }
@@ -633,7 +633,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     Tcl_AppendResult( interp, "object ", objName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     ARG_FreeListArgvs ( table_sz, arg_table );
     return TCL_ERROR;
   }
@@ -646,10 +646,10 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
 
   // find the corresponding repository objects to each name
   for (i = 0; i < numImages; i++) {
-    if (imagesArg.argv[i] != NULL) {
+    if (imagesArg.argv[i] != nullptr) {
       img = gRepository->GetObject( imagesArg.argv[i] );
-      if ( img == NULL ) {
-        Tcl_AppendResult( interp, "couldn't find object ", imagesArg.argv[i], (char *)NULL );
+      if ( img == nullptr ) {
+        Tcl_AppendResult( interp, "couldn't find object ", imagesArg.argv[i], (char *)nullptr );
         delete [] listImg;
         ARG_FreeListArgvs ( table_sz, arg_table );
         return TCL_ERROR;
@@ -659,7 +659,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
       type = img->GetType();
       if ( type != STRUCTURED_PTS_T ) {
         Tcl_AppendResult( interp, "error: object ", imagesArg.argv[i],
-	  	      "not of type StructuredPts", (char *)NULL );
+	  	      "not of type StructuredPts", (char *)nullptr );
         delete [] listImg;
         ARG_FreeListArgvs ( table_sz, arg_table );
         return TCL_ERROR;
@@ -667,21 +667,21 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
       listImg[i] = ((cvStrPts*)img)->GetVtkStructuredPoints();
 
     } else {
-      Tcl_AppendResult( interp, "NULL image pointer encountered ", (char *)NULL );
+      Tcl_AppendResult( interp, "nullptr image pointer encountered ", (char *)nullptr );
       delete [] listImg;
       ARG_FreeListArgvs ( table_sz, arg_table );
       return TCL_ERROR;
     }
   }
 
-  vtkPolyData **listPd = NULL;
+  vtkPolyData **listPd = nullptr;
   if (numRegions > 0) {
   listPd = new vtkPolyData* [numRegions];
   for (i = 0; i < numRegions; i++) {
-    if (regionsArg.argv[i] != NULL) {
+    if (regionsArg.argv[i] != nullptr) {
       pd = gRepository->GetObject( regionsArg.argv[i] );
-      if ( pd == NULL ) {
-        Tcl_AppendResult( interp, "couldn't find object ", regionsArg.argv[i], (char *)NULL );
+      if ( pd == nullptr ) {
+        Tcl_AppendResult( interp, "couldn't find object ", regionsArg.argv[i], (char *)nullptr );
         delete [] listPd;
         delete [] listImg;
         ARG_FreeListArgvs( table_sz, arg_table );
@@ -692,7 +692,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
       type = pd->GetType();
       if ( type != POLY_DATA_T ) {
         Tcl_AppendResult( interp, "error: object ", regionsArg.argv[i],
-	  	      "not of type cvPolyData", (char *)NULL );
+	  	      "not of type cvPolyData", (char *)nullptr );
         delete [] listPd;
         delete [] listImg;
         ARG_FreeListArgvs( table_sz, arg_table );
@@ -700,7 +700,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
       }
       listPd[i] = ((cvPolyData*)pd)->GetVtkPolyData();
     } else {
-      Tcl_AppendResult( interp, "NULL region pointer encountered ", (char *)NULL );
+      Tcl_AppendResult( interp, "nullptr region pointer encountered ", (char *)nullptr );
       delete [] listPd;
       delete [] listImg;
       ARG_FreeListArgvs( table_sz, arg_table );
@@ -719,7 +719,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
 
   // classify points and calculate correction equation
   double results[6];
-  vtkStructuredPoints* maskImg = NULL;
+  vtkStructuredPoints* maskImg = nullptr;
   int status = img_calcCorrectionEqnAuto(numRegions,listPd,numImages,listImg,order,factor,results,&maskImg);
 
   // clean up
@@ -728,7 +728,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_sz, arg_table );
 
   if ( status == SV_ERROR ) {
-    Tcl_AppendResult( interp, "error finding correction equation ", (char *)NULL );
+    Tcl_AppendResult( interp, "error finding correction equation ", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -749,14 +749,14 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
   fprintf(stdout,r);
   fprintf(stdout,"\n");
 
-  Tcl_AppendResult( interp, r, (char *)NULL );
+  Tcl_AppendResult( interp, r, (char *)nullptr );
 
   cvStrPts *sp = new cvStrPts(maskImg);
 
   // Register the image
   if ( !( gRepository->Register( objName, sp ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", objName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete sp;
     return TCL_ERROR;
   }
@@ -776,20 +776,20 @@ int Image_ThresholdCmd( ClientData clientData, Tcl_Interp *interp,
   char *usage;
 
   char *imagename;
-  imagename = NULL;
+  imagename = nullptr;
   char *result;
-  result = NULL;
+  result = nullptr;
 
   double thrMin,thrMax;
   int max_num_pts;
 
   int table_sz = 5;
   ARG_Entry arg_table[] = {
-    { "-image", STRING_Type, &imagename, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &result, NULL, REQUIRED, 0, { 0 } },
-    { "-min_value", DOUBLE_Type, &thrMin, NULL, REQUIRED, 0, { 0 } },
-    { "-max_value", DOUBLE_Type, &thrMax, NULL, REQUIRED, 0, { 0 } },
-    { "-max_num_pts", INT_Type, &max_num_pts, NULL, REQUIRED, 0, { 0 } },
+    { "-image", STRING_Type, &imagename, nullptr, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &result, nullptr, REQUIRED, 0, { 0 } },
+    { "-min_value", DOUBLE_Type, &thrMin, nullptr, REQUIRED, 0, { 0 } },
+    { "-max_value", DOUBLE_Type, &thrMax, nullptr, REQUIRED, 0, { 0 } },
+    { "-max_num_pts", INT_Type, &max_num_pts, nullptr, REQUIRED, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -811,11 +811,11 @@ int Image_ThresholdCmd( ClientData clientData, Tcl_Interp *interp,
   cvRepositoryData *img;
   vtkStructuredPoints *vtksp;
 
-  if (imagename != NULL) {
+  if (imagename != nullptr) {
     // Look up given image object:
     img = gRepository->GetObject( imagename );
-    if ( img == NULL ) {
-      Tcl_AppendResult( interp, "couldn't find object ", imagename, (char *)NULL );
+    if ( img == nullptr ) {
+      Tcl_AppendResult( interp, "couldn't find object ", imagename, (char *)nullptr );
       return TCL_ERROR;
     }
 
@@ -823,7 +823,7 @@ int Image_ThresholdCmd( ClientData clientData, Tcl_Interp *interp,
     type = img->GetType();
     if ( type != STRUCTURED_PTS_T ) {
       Tcl_AppendResult( interp, "error: object ", imagename,
-	  	      "not of type StructuredPts", (char *)NULL );
+	  	      "not of type StructuredPts", (char *)nullptr );
       return TCL_ERROR;
     }
     // Retrive geometric information:
@@ -833,22 +833,22 @@ int Image_ThresholdCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( result ) ) {
     Tcl_AppendResult( interp, "object ", result, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
-  cvPolyData *obj = NULL;
+  cvPolyData *obj = nullptr;
   int status = img_threshold(vtksp, thrMin, thrMax, max_num_pts, &obj);
 
-  if ( status == SV_ERROR || obj == NULL) {
-    Tcl_AppendResult( interp, "Problem thresholding ", imagename,(char *)NULL );
+  if ( status == SV_ERROR || obj == nullptr) {
+    Tcl_AppendResult( interp, "Problem thresholding ", imagename,(char *)nullptr );
     return TCL_ERROR;
   }
 
   obj->SetName( result );
   if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", result,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete obj;
     return TCL_ERROR;
   }
@@ -871,12 +871,12 @@ int Image_ComputeStructuredCoordCmd( ClientData clientData, Tcl_Interp *interp,
   char *imagename;
   ARG_List ptList;
 
-  imagename = NULL;
+  imagename = nullptr;
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-image", STRING_Type, &imagename, NULL, REQUIRED, 0, { 0 } },
-    { "-pt", LIST_Type, &ptList, NULL, REQUIRED, 0, { 0 } }
+    { "-image", STRING_Type, &imagename, nullptr, REQUIRED, 0, { 0 } },
+    { "-pt", LIST_Type, &ptList, nullptr, REQUIRED, 0, { 0 } }
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -908,11 +908,11 @@ int Image_ComputeStructuredCoordCmd( ClientData clientData, Tcl_Interp *interp,
   cvRepositoryData *img;
   vtkStructuredPoints *vtksp;
 
-  if (imagename != NULL) {
+  if (imagename != nullptr) {
     // Look up given image object:
     img = gRepository->GetObject( imagename );
-    if ( img == NULL ) {
-      Tcl_AppendResult( interp, "couldn't find object ", imagename, (char *)NULL );
+    if ( img == nullptr ) {
+      Tcl_AppendResult( interp, "couldn't find object ", imagename, (char *)nullptr );
       return TCL_ERROR;
     }
 
@@ -920,7 +920,7 @@ int Image_ComputeStructuredCoordCmd( ClientData clientData, Tcl_Interp *interp,
     type = img->GetType();
     if ( type != STRUCTURED_PTS_T ) {
       Tcl_AppendResult( interp, "error: object ", imagename,
-	  	      "not of type StructuredPts", (char *)NULL );
+	  	      "not of type StructuredPts", (char *)nullptr );
       return TCL_ERROR;
     }
     // Retrive geometric information:
@@ -981,11 +981,11 @@ int Image_CreateDistanceMapCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 5;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-start", LIST_Type, &startList, NULL, REQUIRED, 0, { 0 } },
-    { "-thr", DOUBLE_Type, &thr, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-city_block", BOOL_Type, &useCityBlock, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-start", LIST_Type, &startList, nullptr, REQUIRED, 0, { 0 } },
+    { "-thr", DOUBLE_Type, &thr, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-city_block", BOOL_Type, &useCityBlock, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -1009,8 +1009,8 @@ int Image_CreateDistanceMapCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Look up given image object:
   img = gRepository->GetObject( srcName );
-  if ( img == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( img == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1018,7 +1018,7 @@ int Image_CreateDistanceMapCmd( ClientData clientData, Tcl_Interp *interp,
   type = img->GetType();
   if ( type != STRUCTURED_PTS_T ) {
     Tcl_AppendResult( interp, "error: object ", srcName,
-		      "not of type StructuredPts", (char *)NULL );
+		      "not of type StructuredPts", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1041,11 +1041,11 @@ int Image_CreateDistanceMapCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
-  vtkStructuredPoints *mapsp = NULL;
+  vtkStructuredPoints *mapsp = nullptr;
   vtkFloatingPointType thrval = thr;
 
   cvDistanceMap* distmap = new cvDistanceMap();
@@ -1055,7 +1055,7 @@ int Image_CreateDistanceMapCmd( ClientData clientData, Tcl_Interp *interp,
   int status = distmap->createDistanceMap(sp,thrval,start);
 
   if ( status == SV_ERROR ) {
-    Tcl_AppendResult( interp, "Problem creating distance map for ", srcName,(char *)NULL );
+    Tcl_AppendResult( interp, "Problem creating distance map for ", srcName,(char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1065,7 +1065,7 @@ int Image_CreateDistanceMapCmd( ClientData clientData, Tcl_Interp *interp,
   repossp->SetName( dstName );
   if ( !( gRepository->Register( repossp->GetName(), repossp ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete repossp;
     return TCL_ERROR;
   }
@@ -1095,12 +1095,12 @@ int Image_FindPathCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 6;
   ARG_Entry arg_table[] = {
-    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-stop", LIST_Type, &stopList, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-city_block", BOOL_Type, &useCityBlock, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-thin_passes", INT_Type, &maxIter, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-min_dist", INT_Type, &minqstop, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-src", STRING_Type, &srcName, nullptr, REQUIRED, 0, { 0 } },
+    { "-stop", LIST_Type, &stopList, nullptr, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, nullptr, REQUIRED, 0, { 0 } },
+    { "-city_block", BOOL_Type, &useCityBlock, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-thin_passes", INT_Type, &maxIter, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-min_dist", INT_Type, &minqstop, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -1124,8 +1124,8 @@ int Image_FindPathCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Look up given image object:
   img = gRepository->GetObject( srcName );
-  if ( img == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+  if ( img == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1133,7 +1133,7 @@ int Image_FindPathCmd( ClientData clientData, Tcl_Interp *interp,
   type = img->GetType();
   if ( type != STRUCTURED_PTS_T ) {
     Tcl_AppendResult( interp, "error: object ", srcName,
-		      "not of type StructuredPts", (char *)NULL );
+		      "not of type StructuredPts", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1156,11 +1156,11 @@ int Image_FindPathCmd( ClientData clientData, Tcl_Interp *interp,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
+		      (char *)nullptr );
     return TCL_ERROR;
   }
 
-  vtkStructuredPoints *mapsp = NULL;
+  vtkStructuredPoints *mapsp = nullptr;
 
   cvDistanceMap* distmap = new cvDistanceMap();
   distmap->setDistanceMap(sp);
@@ -1174,8 +1174,8 @@ int Image_FindPathCmd( ClientData clientData, Tcl_Interp *interp,
     pd = distmap->getPathByThinning(stop,minqstop,maxIter);
   }
 
-  if ( pd == NULL ) {
-    Tcl_AppendResult( interp, "Problem finding path for ", srcName,(char *)NULL );
+  if ( pd == nullptr ) {
+    Tcl_AppendResult( interp, "Problem finding path for ", srcName,(char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1184,7 +1184,7 @@ int Image_FindPathCmd( ClientData clientData, Tcl_Interp *interp,
   dst->SetName( dstName );
   if ( !( gRepository->Register( dst->GetName(), dst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
+		      " in repository", (char *)nullptr );
     delete dst;
     return TCL_ERROR;
   }
@@ -1212,10 +1212,10 @@ int Image_MaskInPlaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 4;
   ARG_Entry arg_table[] = {
-    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-mask", STRING_Type, &maskName, NULL, REQUIRED, 0, { 0 } },
-    { "-value", DOUBLE_Type, &replaceVal, NULL, SV_OPTIONAL, 0, { 0 } },
-    { "-not", BOOL_Type, &notval, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-obj", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } },
+    { "-mask", STRING_Type, &maskName, nullptr, REQUIRED, 0, { 0 } },
+    { "-value", DOUBLE_Type, &replaceVal, nullptr, SV_OPTIONAL, 0, { 0 } },
+    { "-not", BOOL_Type, &notval, nullptr, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -1239,8 +1239,8 @@ int Image_MaskInPlaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   // Look up given image object:
   img = gRepository->GetObject( objName );
-  if ( img == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)NULL );
+  if ( img == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", objName, (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1248,15 +1248,15 @@ int Image_MaskInPlaceCmd( ClientData clientData, Tcl_Interp *interp,
   type = img->GetType();
   if ( type != STRUCTURED_PTS_T ) {
     Tcl_AppendResult( interp, "error: object ", objName,
-		      "not of type StructuredPts", (char *)NULL );
+		      "not of type StructuredPts", (char *)nullptr );
     return TCL_ERROR;
   }
 
 
   // Look up given mask object:
   mask = gRepository->GetObject( maskName );
-  if ( mask == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", maskName, (char *)NULL );
+  if ( mask == nullptr ) {
+    Tcl_AppendResult( interp, "couldn't find object ", maskName, (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1264,7 +1264,7 @@ int Image_MaskInPlaceCmd( ClientData clientData, Tcl_Interp *interp,
   type = mask->GetType();
   if ( type != STRUCTURED_PTS_T ) {
     Tcl_AppendResult( interp, "error: object ", maskName,
-		      "not of type StructuredPts", (char *)NULL );
+		      "not of type StructuredPts", (char *)nullptr );
     return TCL_ERROR;
   }
 
@@ -1276,7 +1276,7 @@ int Image_MaskInPlaceCmd( ClientData clientData, Tcl_Interp *interp,
   int status = MaskImageInPlace(imgsp,masksp,replaceVal,notval);
 
   if ( status == SV_ERROR ) {
-    Tcl_AppendResult( interp, "Problem masking in place for ", objName,(char *)NULL );
+    Tcl_AppendResult( interp, "Problem masking in place for ", objName,(char *)nullptr );
     return TCL_ERROR;
   }
 

@@ -60,13 +60,13 @@ mitk::Mapper::Pointer sv4guiMitksvFSIObjectFactory::CreateMapper(mitk::DataNode*
 
   if ( id == mitk::BaseRenderer::Standard2D )
   {
-    if( dynamic_cast<sv4guiMitksvFSIJob*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiMitksvFSIJob*>(node->GetData())!=nullptr )
     {
     }
   }
   else if ( id == mitk::BaseRenderer::Standard3D )
   {
-    if( dynamic_cast<sv4guiMitksvFSIJob*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiMitksvFSIJob*>(node->GetData())!=nullptr )
     {
     }
   }
@@ -76,13 +76,13 @@ mitk::Mapper::Pointer sv4guiMitksvFSIObjectFactory::CreateMapper(mitk::DataNode*
 void sv4guiMitksvFSIObjectFactory::SetDefaultProperties(mitk::DataNode* node)
 {
 
-  if(node==NULL)
+  if(node==nullptr)
     return;
 
-  if(node->GetData() ==NULL)
+  if(node->GetData() ==nullptr)
     return;
 
-  if( dynamic_cast<sv4guiMitksvFSIJob*>(node->GetData())!=NULL )
+  if( dynamic_cast<sv4guiMitksvFSIJob*>(node->GetData())!=nullptr )
   {
   }
 }

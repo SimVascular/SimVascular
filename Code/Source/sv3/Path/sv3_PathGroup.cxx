@@ -127,7 +127,7 @@ PathElement* PathGroup::GetPathElement(unsigned int t ) const
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }
 

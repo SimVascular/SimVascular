@@ -39,10 +39,10 @@ vtkStandardNewMacro(vtkvmtkBoundaryReferenceSystems);
 
 vtkvmtkBoundaryReferenceSystems::vtkvmtkBoundaryReferenceSystems()
 {
-  this->BoundaryRadiusArrayName = NULL;
-  this->BoundaryNormalsArrayName = NULL;
-  this->Point1ArrayName = NULL;
-  this->Point2ArrayName = NULL;
+  this->BoundaryRadiusArrayName = nullptr;
+  this->BoundaryNormalsArrayName = nullptr;
+  this->Point1ArrayName = nullptr;
+  this->Point2ArrayName = nullptr;
 }
 
 vtkvmtkBoundaryReferenceSystems::~vtkvmtkBoundaryReferenceSystems()
@@ -50,25 +50,25 @@ vtkvmtkBoundaryReferenceSystems::~vtkvmtkBoundaryReferenceSystems()
   if (this->BoundaryRadiusArrayName)
     {
     delete[] this->BoundaryRadiusArrayName;
-    this->BoundaryRadiusArrayName = NULL;
+    this->BoundaryRadiusArrayName = nullptr;
     }
 
   if (this->BoundaryNormalsArrayName)
     {
     delete[] this->BoundaryNormalsArrayName;
-    this->BoundaryNormalsArrayName = NULL;
+    this->BoundaryNormalsArrayName = nullptr;
     }
 
   if (this->Point1ArrayName)
     {
     delete[] this->Point1ArrayName;
-    this->Point1ArrayName = NULL;
+    this->Point1ArrayName = nullptr;
     }
 
   if (this->Point2ArrayName)
     {
     delete[] this->Point2ArrayName;
-    this->Point2ArrayName = NULL;
+    this->Point2ArrayName = nullptr;
     }
 }
 

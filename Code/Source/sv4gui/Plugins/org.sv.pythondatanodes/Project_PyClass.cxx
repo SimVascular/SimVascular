@@ -84,7 +84,7 @@ static PyMethodDef PyProjectClassMethods[] = {
 
   {"open", (PyCFunction)sv4Project_open, METH_VARARGS, sv4Project_open_doc },
 
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 //--------------------
@@ -96,7 +96,7 @@ static PyMethodDef PyProjectClassMethods[] = {
 // designated initializers.
 //
 PyTypeObject PyProjectClassType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   PROJECT_MODULE_CLASS,
@@ -134,7 +134,7 @@ PyProjectNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   std::cout << "[PyProjectNew] PyProjectNew " << std::endl;
   auto self = (PyProject*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       self->id = 1;
   }
 
@@ -186,7 +186,7 @@ CreatePyProject()
 {
 /*
   std::cout << "[CreatePyProject] Create Project object ... " << std::endl;
-  auto projectObj = PyObject_CallObject((PyObject*)&PyProjectType, NULL);
+  auto projectObj = PyObject_CallObject((PyObject*)&PyProjectType, nullptr);
   auto pyProject = (PyProject*)projectObj;
 
   if (project != nullptr) {

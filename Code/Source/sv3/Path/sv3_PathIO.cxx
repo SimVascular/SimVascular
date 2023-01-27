@@ -46,13 +46,13 @@ PathGroup* PathIO::ReadFile(std::string fileName)
     if (!document.LoadFile(fileName))
     {
         std::cout<<"Could not open/read/parse " << fileName<<std::endl;
-        return NULL;
+        return nullptr;
     }
     TiXmlElement* path = document.FirstChildElement("path");
 
     if(!path){
         std::cout<< "No path data in "<< fileName <<std::endl;
-        return NULL;
+        return nullptr;
     }
     
     PathGroup* pathGrp = new PathGroup();
@@ -88,7 +88,7 @@ PathGroup* PathIO::ReadFile(std::string fileName)
 
         PathElement* pe = new PathElement();
         if(ReadPath(pe, peElement)==SV_ERROR)
-            return NULL;
+            return nullptr;
         
         pathGrp->SetPathElement(pe,timestep);
 

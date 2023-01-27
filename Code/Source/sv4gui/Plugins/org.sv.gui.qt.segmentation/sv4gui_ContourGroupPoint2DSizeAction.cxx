@@ -38,7 +38,7 @@
 #include <QInputDialog>
 
 sv4guiContourGroupPoint2DSizeAction::sv4guiContourGroupPoint2DSizeAction()
-    : m_Functionality(NULL)
+    : m_Functionality(nullptr)
 {
 }
 
@@ -57,12 +57,12 @@ void sv4guiContourGroupPoint2DSizeAction::Run(const QList<mitk::DataNode::Pointe
         selectedNode->GetFloatProperty ("point.displaysize", initialValue);
 
     bool ok;
-    float size=QInputDialog::getDouble(NULL, "Point 2D Display Size", "Size:", initialValue, 0.1, 100.0, 1, &ok);
+    float size=QInputDialog::getDouble(nullptr, "Point 2D Display Size", "Size:", initialValue, 0.1, 100.0, 1, &ok);
 
     if(!ok)
         return;
 
-    mitk::DataNode::Pointer segFolderNode=NULL;
+    mitk::DataNode::Pointer segFolderNode=nullptr;
     if(selectedNode.IsNotNull())
     {
         mitk::DataStorage::SetOfObjects::ConstPointer rs = m_DataStorage->GetSources(selectedNode);

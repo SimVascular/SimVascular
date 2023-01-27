@@ -101,7 +101,7 @@ vtkProp* sv4guiMitkMeshMapper2D::GetVtkProp(mitk::BaseRenderer * renderer)
 void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 {
     mitk::DataNode* node = GetDataNode();
-    if(node==NULL)
+    if(node==nullptr)
         return;
 
     LocalStorage* localStorage = m_LSH.GetLocalStorage(renderer);
@@ -114,7 +114,7 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
     }
 
     sv4guiMitkMesh* mitkMesh  = static_cast<sv4guiMitkMesh *>( node->GetData() );
-    if(mitkMesh==NULL)
+    if(mitkMesh==nullptr)
     {
         localStorage->m_PropAssembly->VisibilityOff();
         return;
@@ -123,21 +123,21 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
     int timestep=this->GetTimestep();
 
     sv4guiMesh* mesh=mitkMesh->GetMesh(timestep);
-    if(mesh==NULL)
+    if(mesh==nullptr)
     {
         localStorage->m_PropAssembly->VisibilityOff();
         return;
     }
 
     vtkSmartPointer<vtkPolyData> surfaceMesh=mesh->GetSurfaceMesh();
-    if ((surfaceMesh == NULL) || (surfaceMesh->GetNumberOfPoints() < 1))
+    if ((surfaceMesh == nullptr) || (surfaceMesh->GetNumberOfPoints() < 1))
     {
         localStorage->m_PropAssembly->VisibilityOff();
         return;
     }
 
     const mitk::PlaneGeometry* planeGeometry = renderer->GetCurrentWorldPlaneGeometry();
-    if( ( planeGeometry == NULL ) || ( !planeGeometry->IsValid() ) || ( !planeGeometry->HasReferenceGeometry() ))
+    if( ( planeGeometry == nullptr ) || ( !planeGeometry->IsValid() ) || ( !planeGeometry->HasReferenceGeometry() ))
     {
         localStorage->m_PropAssembly->VisibilityOff();
         return;
@@ -282,7 +282,7 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
 
         Superclass::ApplyColorAndOpacityProperties( renderer, meshActor ) ;
         this->ApplyShaderProperties(renderer);
-        sv4guiMitkMeshMapper3D::ApplyAllProperties(node, renderer, meshMapper, meshActor, NULL, false);
+        sv4guiMitkMeshMapper3D::ApplyAllProperties(node, renderer, meshMapper, meshActor, nullptr, false);
         if(showEdges)
         {
             meshActor->GetProperty()->SetEdgeColor(edgeColor[0], edgeColor[1], edgeColor[2]);
@@ -301,7 +301,7 @@ void sv4guiMitkMeshMapper2D::ApplyMapperProperties(vtkSmartPointer<vtkPolyDataMa
 {
     const mitk::DataNode * node = GetDataNode();
 
-    if(node == NULL)
+    if(node == nullptr)
     {
         return;
     }

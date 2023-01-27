@@ -103,7 +103,7 @@ PyDoc_STRVAR(PyThresholdSegmentationClass_doc, "circle Segmentation functions");
 //--------------------------------
 //
 PyMethodDef PyThresholdSegmentationMethods[] = {
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 
@@ -134,7 +134,7 @@ PyThresholdSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyThresholdSegmentationNew] PyThresholdSegmentationNew " << std::endl;
   auto self = (PyThresholdSegmentation*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->super.id = 2;
   }
   return (PyObject *) self;
@@ -161,7 +161,7 @@ PyThresholdSegmentationDealloc(PyThresholdSegmentation* self)
 // designated initializers.
 //
 static PyTypeObject PyThresholdSegmentationType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   SEGMENTATION_THRESHOLD_MODULE_CLASS,

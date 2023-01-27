@@ -38,7 +38,7 @@ vtkvmtkVoronoiDiagram3D::vtkvmtkVoronoiDiagram3D()
 {
   this->BuildLines = 0;
   this->PoleIds = vtkIdList::New();
-  this->RadiusArrayName = NULL;
+  this->RadiusArrayName = nullptr;
 }
 
 vtkvmtkVoronoiDiagram3D::~vtkvmtkVoronoiDiagram3D()
@@ -48,7 +48,7 @@ vtkvmtkVoronoiDiagram3D::~vtkvmtkVoronoiDiagram3D()
   if (this->RadiusArrayName)
     {
     delete[] this->RadiusArrayName;
-    this->RadiusArrayName = NULL;
+    this->RadiusArrayName = nullptr;
     }
 }
 
@@ -111,7 +111,7 @@ void vtkvmtkVoronoiDiagram3D::BuildVoronoiPolys(vtkUnstructuredGrid* input, vtkC
   bool boundaryTetra;
   vtkIdType npts;
   const vtkIdType *pts = new vtkIdType;
-  pts = NULL;
+  pts = nullptr;
   vtkIdType neighborTetraId;
   vtkIdType i, k, h;
   vtkCellArray* edgeArray;

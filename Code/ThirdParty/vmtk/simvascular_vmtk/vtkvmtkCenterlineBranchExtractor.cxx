@@ -49,19 +49,19 @@ void vtkvmtkCenterlineBranchExtractor::ComputeCenterlineSplitting(vtkPolyData* i
   if (this->SubIds)
     {
     delete[] this->SubIds;
-    this->SubIds = NULL;
+    this->SubIds = nullptr;
     }
 
   if (this->PCoords)
     {
     delete[] this->PCoords;
-    this->PCoords = NULL;
+    this->PCoords = nullptr;
     }
 
   if (this->TractBlanking)
     {
     delete[] this->TractBlanking;
-    this->TractBlanking = NULL;
+    this->TractBlanking = nullptr;
     }
 
   if (!this->RadiusArrayName)

@@ -61,7 +61,7 @@ static char header[]="Visualization Toolkit generated SLA File                  
 // ----------------------
 vtkSVRawWriter::vtkSVRawWriter()
 {
-  this->FileName = NULL;
+  this->FileName = nullptr;
 }
 
 // ----------------------
@@ -89,14 +89,14 @@ void vtkSVRawWriter::WriteData()
   }
 
   pts = input->GetPoints();
-  if (pts == NULL || cells == NULL)
+  if (pts == nullptr || cells == nullptr)
   {
     vtkErrorMacro(<<"No data to write!");
     this->SetErrorCode(vtkErrorCode::UnknownError);
     return;
   }
 
-  if (this->FileName == NULL)
+  if (this->FileName == nullptr)
   {
     vtkErrorMacro(<< "Please specify FileName to write");
     this->SetErrorCode(vtkErrorCode::NoFileNameError);
@@ -124,7 +124,7 @@ void vtkSVRawWriter::WriteRawFile(
   vtkIdType npts = 0;
   const vtkIdType* indx = new vtkIdType;
 
-  if ((fp = fopen(this->FileName, "w")) == NULL)
+  if ((fp = fopen(this->FileName, "w")) == nullptr)
   {
     vtkErrorMacro(<< "Couldn't open file: " << this->FileName);
     this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
@@ -188,7 +188,7 @@ void vtkSVRawWriter::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 
   os << indent << "FileName: "
-     << ((this->GetFileName() == NULL) ?
+     << ((this->GetFileName() == nullptr) ?
          "(none)" : this->GetFileName()) << std::endl;
   os << indent << "Input: " << this->GetInput() << std::endl;
 }

@@ -38,12 +38,12 @@ vtkStandardNewMacro(vtkvmtkInternalTetrahedraExtractor);
 vtkvmtkInternalTetrahedraExtractor::vtkvmtkInternalTetrahedraExtractor()
 {
   this->UseCaps = 0;
-  this->CapCenterIds = NULL;
-  this->OutwardNormalsArrayName = NULL;
+  this->CapCenterIds = nullptr;
+  this->OutwardNormalsArrayName = nullptr;
   this->Tolerance = VTK_VMTK_DOUBLE_TOL;
   this->RemoveSubresolutionTetrahedra = 0;
   this->SubresolutionFactor = 1.0;
-  this->Surface = NULL;
+  this->Surface = nullptr;
 }
 
 vtkvmtkInternalTetrahedraExtractor::~vtkvmtkInternalTetrahedraExtractor()
@@ -51,17 +51,17 @@ vtkvmtkInternalTetrahedraExtractor::~vtkvmtkInternalTetrahedraExtractor()
   if (this->CapCenterIds)
     {
     this->CapCenterIds->Delete();
-    this->CapCenterIds = NULL;
+    this->CapCenterIds = nullptr;
     }
   if (this->OutwardNormalsArrayName)
     {
     delete [] this->OutwardNormalsArrayName;
-    this->OutwardNormalsArrayName = NULL;
+    this->OutwardNormalsArrayName = nullptr;
     }
   if (this->Surface)
     {
     this->Surface->Delete();
-    this->Surface = NULL;
+    this->Surface = nullptr;
     }
 }
 

@@ -48,7 +48,7 @@ int main (int argc, char* argv[]) {
   for (i = 0; i < count; i++) {
     CoCreateGuid (&guid);
     StringFromCLSID (&guid, wstrGUID);
-    WideCharToMultiByte (CP_ACP, 0, *wstrGUID, -1, strGUID, MAX_PATH, NULL, NULL);
+    WideCharToMultiByte (CP_ACP, 0, *wstrGUID, -1, strGUID, MAX_PATH, nullptr, nullptr);
     printf ("%s\n", strGUID);
     }
   return 0;

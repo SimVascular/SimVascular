@@ -74,8 +74,8 @@ int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
       num = y->numPts;
       dimensions = y->dim;
 
-      // if filename is NULL, then do not generate an output file
-      if (filename != NULL) {
+      // if filename is nullptr, then do not generate an output file
+      if (filename != nullptr) {
         outfile = fopen(filename, "w");
         fprintf(outfile, "pointcount=%d\nviewinterval=1.00000\nviewwindow=25.00000\nviewcount=%d\n", numOutputPts, numOutputPts);
 
@@ -87,7 +87,7 @@ int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
       }
 
       // return the splined path to the Tcl interpreter
-      if (interp != NULL) {
+      if (interp != nullptr) {
         char rtnstr[2048];
         for (i = 0; i < num; i++) {
           rtnstr[0]='\0';
@@ -141,8 +141,8 @@ int pysys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
       num = y->numPts;
       dimensions = y->dim;
 
-      // if filename is NULL, then do not generate an output file
-      if (filename != NULL) {
+      // if filename is nullptr, then do not generate an output file
+      if (filename != nullptr) {
         outfile = fopen(filename, "w");
         fprintf(outfile, "pointcount=%d\nviewinterval=1.00000\nviewwindow=25.00000\nviewcount=%d\n", numOutputPts, numOutputPts);
 
@@ -154,7 +154,7 @@ int pysys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
       }
 
       // return the splined path to the Tcl interpreter
-      if (output != NULL) {
+      if (output != nullptr) {
         char rtnstr[2048];
         for (i = 0; i < num; i++) {
           rtnstr[0]='\0';

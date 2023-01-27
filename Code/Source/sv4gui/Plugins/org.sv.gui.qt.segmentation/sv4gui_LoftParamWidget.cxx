@@ -48,7 +48,7 @@ sv4guiLoftParamWidget::~sv4guiLoftParamWidget()
 
 void sv4guiLoftParamWidget::UpdateGUI(svLoftingParam* param)
 {
-    if(param==NULL)
+    if(param==nullptr)
         return;
 
     ui->comboBoxMethod->setCurrentText(QString::fromStdString(param->method));
@@ -78,7 +78,7 @@ void sv4guiLoftParamWidget::UpdateGUI(svLoftingParam* param)
 
 void sv4guiLoftParamWidget::UpdateParam(svLoftingParam* param)
 {
-    if(param==NULL)
+    if(param==nullptr)
         return;
 
     param->method=ui->comboBoxMethod->currentText().toStdString();

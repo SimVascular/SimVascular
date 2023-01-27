@@ -218,7 +218,7 @@ int cvLevelSetVelocityExponentialDecay::Valid()
   if ( ! (this->cvLevelSetVelocity::Valid()) ) {
     return SV_ERROR;
   }
-  if ( image_ == NULL ) return SV_ERROR;
+  if ( image_ == nullptr ) return SV_ERROR;
   return SV_OK;
 }
 
@@ -293,7 +293,7 @@ int cvLevelSetVelocityExponentialDecay::Evaluate( double pos[], double *f0, doub
     toDot[2] = 0.0;
     *f0 = 0.0;
     *f1 = 0.0;
-    if ( v != NULL ) {
+    if ( v != nullptr ) {
       v[0] = 0.0;
       v[1] = 0.0;
       v[2] = 0.0;
@@ -389,7 +389,7 @@ int cvLevelSetVelocityExponentialDecay::Evaluate( double pos[], double *f0, doub
   *f1 = tmpF1;
   mag = (*f0) + (*f1);
 
-  if ( v != NULL ) {
+  if ( v != nullptr ) {
     v[0] = n[0] * mag;
     v[1] = n[1] * mag;
     v[2] = n[2] * mag;

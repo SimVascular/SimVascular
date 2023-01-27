@@ -87,16 +87,16 @@ PyObject* PolyDataSolid_AvailableCmd(PyObject* self, PyObject* args);
 PyObject* PolyDataSolid_RegistrarsListCmd( PyObject* self, PyObject* args);
 
 PyMethodDef SolidPolydata_methods[] = {
-  {"Available", PolyDataSolid_AvailableCmd,METH_NOARGS,NULL},
-  {"Registrars", PolyDataSolid_RegistrarsListCmd,METH_NOARGS,NULL},
-  {NULL, NULL}
+  {"Available", PolyDataSolid_AvailableCmd,METH_NOARGS,nullptr},
+  {"Registrars", PolyDataSolid_RegistrarsListCmd,METH_NOARGS,nullptr},
+  {nullptr, nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pySolidPolydatamodule = {
    PyModuleDef_HEAD_INIT,
    "pySolidPolydata",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    SolidPolydata_methods
@@ -110,7 +110,7 @@ PyObject* Polydatasolid_pyInit()
   pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
   
-  if (pySolidModelRegistrar != NULL) {
+  if (pySolidModelRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr( SM_KT_POLYDATA,
       (FactoryMethodPtr) &pyCreatePolyDataSolid );
@@ -130,7 +130,7 @@ PyObject* Polydatasolid_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
   pythonC = PyModule_Create(&pySolidPolydatamodule);
 #endif
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pySolid");
     return SV_PYTHON_ERROR;
@@ -146,7 +146,7 @@ initpySolidPolydata()
   PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
   pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
-  if (pySolidModelRegistrar != NULL) {
+  if (pySolidModelRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr( SM_KT_POLYDATA,
       (FactoryMethodPtr) &pyCreatePolyDataSolid );
@@ -163,7 +163,7 @@ initpySolidPolydata()
 
   PyObject *pythonC;
   pythonC = Py_InitModule("pySolidPolydata", SolidPolydata_methods);
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pySolid");
     return ;
@@ -179,7 +179,7 @@ PyInit_pySolidPolydata()
   pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
 
-  if (pySolidModelRegistrar != NULL) {
+  if (pySolidModelRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr( SM_KT_POLYDATA,
       (FactoryMethodPtr) &pyCreatePolyDataSolid );
@@ -200,7 +200,7 @@ PyInit_pySolidPolydata()
 
   pythonC = PyModule_Create(&pySolidPolydatamodule);
 
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pySolidolydata");
     return SV_PYTHON_ERROR;

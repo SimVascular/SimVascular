@@ -38,10 +38,10 @@
 #include <fstream>
 
 sv4guiMeshTetGen::sv4guiMeshTetGen()
-    : m_cvTetGenMesh(NULL)
+    : m_cvTetGenMesh(nullptr)
 {
     m_Type="TetGen";
-    //m_cvTetGenMesh=new cvTetGenMeshObject(NULL);
+    //m_cvTetGenMesh=new cvTetGenMeshObject(nullptr);
 }
 
 sv4guiMeshTetGen::sv4guiMeshTetGen(const sv4guiMeshTetGen &other)
@@ -52,7 +52,7 @@ sv4guiMeshTetGen::sv4guiMeshTetGen(const sv4guiMeshTetGen &other)
 
 sv4guiMeshTetGen::~sv4guiMeshTetGen()
 {
-    if(m_cvTetGenMesh!=NULL)
+    if(m_cvTetGenMesh!=nullptr)
         delete m_cvTetGenMesh;
 }
 
@@ -63,10 +63,10 @@ sv4guiMeshTetGen* sv4guiMeshTetGen::Clone()
 
 void sv4guiMeshTetGen::InitNewMesher()
 {
-    if(m_cvTetGenMesh!=NULL)
+    if(m_cvTetGenMesh!=nullptr)
         delete m_cvTetGenMesh;
 
-    m_cvTetGenMesh=new cvTetGenMeshObject(NULL);
+    m_cvTetGenMesh=new cvTetGenMeshObject(nullptr);
 }
 
 bool sv4guiMeshTetGen::SetModelElement(sv4guiModelElement* modelElement)
@@ -74,10 +74,10 @@ bool sv4guiMeshTetGen::SetModelElement(sv4guiModelElement* modelElement)
     if(!sv4guiMesh::SetModelElement(modelElement))
         return false;
 
-    if(m_cvTetGenMesh==NULL)
+    if(m_cvTetGenMesh==nullptr)
         return false;
 
-    if(modelElement==NULL||modelElement->GetWholeVtkPolyData()==NULL)
+    if(modelElement==nullptr||modelElement->GetWholeVtkPolyData()==nullptr)
         return false;
 
     std::string modelType=modelElement->GetType();
@@ -98,7 +98,7 @@ bool sv4guiMeshTetGen::SetModelElement(sv4guiModelElement* modelElement)
         return false;
 
 //    //set walls
-//    //m_cvTetGenMesh->SetMeshOptions("MeshWallFirst",0,NULL) //not nessary, because in "SetWalls" it'll be set at 1 again.
+//    //m_cvTetGenMesh->SetMeshOptions("MeshWallFirst",0,nullptr) //not nessary, because in "SetWalls" it'll be set at 1 again.
 //    std::vector<int> wallFaceIDs=modelElement->GetWallFaceIDs();
 //    if(m_cvTetGenMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=SV_OK)
 //        return false;
@@ -124,7 +124,7 @@ bool sv4guiMeshTetGen::SetModelElement(sv4guiModelElement* modelElement)
 
 bool sv4guiMeshTetGen::Execute(std::string flag, double values[20], std::string strValues[5], bool option, std::string& msg)
 {
-    if(m_cvTetGenMesh==NULL)
+    if(m_cvTetGenMesh==nullptr)
     {
         msg="No mesher created";
         return false;
@@ -140,7 +140,7 @@ bool sv4guiMeshTetGen::Execute(std::string flag, double values[20], std::string 
     {
         if(flag=="LocalEdgeSize")
         {
-            if(m_ModelElement==NULL)
+            if(m_ModelElement==nullptr)
             {
                 msg="Model not assigned to the mesher";
                 return false;
@@ -164,7 +164,7 @@ bool sv4guiMeshTetGen::Execute(std::string flag, double values[20], std::string 
     }
     else if(flag=="setWalls")
     {
-        if(m_ModelElement==NULL)
+        if(m_ModelElement==nullptr)
         {
             msg="Model not assigned to the mesher";
             return false;
@@ -181,14 +181,14 @@ bool sv4guiMeshTetGen::Execute(std::string flag, double values[20], std::string 
     else if(flag=="useCenterlineRadius")
     {
         cvPolyData* solid=m_cvTetGenMesh->GetSolid();
-        if(solid==NULL)
+        if(solid==nullptr)
         {
             msg="No mesher model";
             return false;
         }
         vtkPolyData* centerlines=sv4guiModelUtils::CreateCenterlines(solid->GetVtkPolyData());
         vtkPolyData* distance=sv4guiModelUtils::CalculateDistanceToCenterlines(centerlines, solid->GetVtkPolyData());
-        if(distance==NULL)
+        if(distance==nullptr)
         {
             msg="Failed in calculating distance to centerlines";
             return false;
@@ -240,20 +240,20 @@ bool sv4guiMeshTetGen::Execute(std::string flag, double values[20], std::string 
         }
 
         vtkPolyData* surfaceMesh=m_cvTetGenMesh->GetPolyData()->GetVtkPolyData();
-        vtkUnstructuredGrid* volumeMesh = NULL;
-        if (m_cvTetGenMesh->GetUnstructuredGrid() != NULL)
+        vtkUnstructuredGrid* volumeMesh = nullptr;
+        if (m_cvTetGenMesh->GetUnstructuredGrid() != nullptr)
           volumeMesh = m_cvTetGenMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
 
-        if(surfaceMesh==NULL)
+        if(surfaceMesh==nullptr)
         {
             delete m_cvTetGenMesh;
-            m_cvTetGenMesh=NULL;
+            m_cvTetGenMesh=nullptr;
             msg="Empty mesh created";
             return false;
         }
         m_SurfaceMesh=vtkSmartPointer<vtkPolyData>::New();
         m_SurfaceMesh->DeepCopy(surfaceMesh);
-        if (volumeMesh!=NULL)
+        if (volumeMesh!=nullptr)
         {
           m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
           m_VolumeMesh->DeepCopy(volumeMesh);
@@ -263,7 +263,7 @@ bool sv4guiMeshTetGen::Execute(std::string flag, double values[20], std::string 
     {
       // No action
       delete m_cvTetGenMesh;//Get all data;ok to delete inner mesh
-      m_cvTetGenMesh=NULL;
+      m_cvTetGenMesh=nullptr;
     }
     else
     {

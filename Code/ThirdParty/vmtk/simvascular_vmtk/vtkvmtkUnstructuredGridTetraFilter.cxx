@@ -47,7 +47,7 @@ vtkvmtkUnstructuredGridTetraFilter::vtkvmtkUnstructuredGridTetraFilter()
 vtkvmtkUnstructuredGridTetraFilter::~vtkvmtkUnstructuredGridTetraFilter()
 {
   this->Triangulator->Delete();
-  this->Triangulator = NULL;
+  this->Triangulator = nullptr;
 }
 
 int vtkvmtkUnstructuredGridTetraFilter::RequestData(
@@ -170,7 +170,7 @@ void vtkvmtkUnstructuredGridTetraFilter::Execute(vtkUnstructuredGrid *dataSetInp
   // Create an array of points
   vtkCellData *tempCD = vtkCellData::New();
   tempCD->ShallowCopy(inCD);
-  tempCD->SetActiveGlobalIds(NULL);
+  tempCD->SetActiveGlobalIds(nullptr);
 
   outCD->CopyAllocate(tempCD, input->GetNumberOfCells()*5);
   output->Allocate(input->GetNumberOfCells()*5);

@@ -43,7 +43,7 @@
 #include <QMessageBox>
 
 sv4guisvFSIJobCreateAction::sv4guisvFSIJobCreateAction()
-    : m_svFSIJobCreateWidget(NULL), m_Functionality(NULL)
+    : m_svFSIJobCreateWidget(nullptr), m_Functionality(nullptr)
 {
     //m_Interface=new sv4guiDataNodeOperationInterface;
 }
@@ -91,7 +91,7 @@ void sv4guisvFSIJobCreateAction::Run(const QList<mitk::DataNode::Pointer> &selec
 
         /* [DaveP]
         bool ok;
-        QString text = QInputDialog::getText(NULL, tr("Create sv4guisvFSI Job"),
+        QString text = QInputDialog::getText(nullptr, tr("Create sv4guisvFSI Job"),
                                              tr("Job Name:"), QLineEdit::Normal,
                                              "", &ok);
         if(!ok)
@@ -99,13 +99,13 @@ void sv4guisvFSIJobCreateAction::Run(const QList<mitk::DataNode::Pointer> &selec
 
         std::string jobName=text.trimmed().toStdString();
         if(jobName==""){
-            QMessageBox::warning(NULL,"No name for job!","Please give a name for the job!");
+            QMessageBox::warning(nullptr,"No name for job!","Please give a name for the job!");
             return;
         }
 
         mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(jobName.c_str(),selectedNode);
         if(exitingNode){
-            QMessageBox::warning(NULL,"Job Already Created","Please use a different job name!");
+            QMessageBox::warning(nullptr,"Job Already Created","Please use a different job name!");
             return;
         }
 

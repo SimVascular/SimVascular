@@ -65,7 +65,7 @@ vtkSVSuperSquareBoundaryMapper::vtkSVSuperSquareBoundaryMapper()
 // ----------------------
 vtkSVSuperSquareBoundaryMapper::~vtkSVSuperSquareBoundaryMapper()
 {
-  if (this->BoundaryLengths != NULL)
+  if (this->BoundaryLengths != nullptr)
   {
     this->BoundaryLengths->Delete();
   }

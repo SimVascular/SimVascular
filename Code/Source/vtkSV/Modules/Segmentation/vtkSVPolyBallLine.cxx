@@ -51,11 +51,11 @@ vtkStandardNewMacro(vtkSVPolyBallLine);
 // ----------------------
 vtkSVPolyBallLine::vtkSVPolyBallLine()
 {
-  this->Input = NULL;
-  this->InputCellIds = NULL;
+  this->Input = nullptr;
+  this->InputCellIds = nullptr;
   this->InputCellId = -1;
-  this->PolyBallRadiusArrayName = NULL;
-  this->LocalCoordinatesArrayName = NULL;
+  this->PolyBallRadiusArrayName = nullptr;
+  this->LocalCoordinatesArrayName = nullptr;
   this->LastPolyBallCellId = -1;
   this->LastPolyBallCellSubId = -1;
   this->LastPolyBallCellPCoord = 0.0;
@@ -84,34 +84,34 @@ vtkSVPolyBallLine::vtkSVPolyBallLine()
 // ----------------------
 vtkSVPolyBallLine::~vtkSVPolyBallLine()
 {
-  if (this->Input != NULL)
+  if (this->Input != nullptr)
     {
     this->Input->Delete();
-    this->Input = NULL;
+    this->Input = nullptr;
     }
 
-  if (this->InputCellIds != NULL)
+  if (this->InputCellIds != nullptr)
     {
     this->InputCellIds->Delete();
-    this->InputCellIds = NULL;
+    this->InputCellIds = nullptr;
     }
 
-  if (this->PolyBallRadiusArrayName != NULL)
+  if (this->PolyBallRadiusArrayName != nullptr)
     {
     delete[] this->PolyBallRadiusArrayName;
-    this->PolyBallRadiusArrayName = NULL;
+    this->PolyBallRadiusArrayName = nullptr;
     }
 
-  if (this->LocalCoordinatesArrayName != NULL)
+  if (this->LocalCoordinatesArrayName != nullptr)
     {
     delete[] this->LocalCoordinatesArrayName;
-    this->LocalCoordinatesArrayName = NULL;
+    this->LocalCoordinatesArrayName = nullptr;
     }
 
-  if (this->PointLocator != NULL)
+  if (this->PointLocator != nullptr)
     {
       this->PointLocator->Delete();
-    this->PointLocator = NULL;
+    this->PointLocator = nullptr;
     }
 }
 
@@ -174,7 +174,7 @@ void vtkSVPolyBallLine::PreprocessInputForFastEvaluate()
 
   vtkDataArray *polyballRadiusArray = this->Input->GetPointData()->GetArray(this->PolyBallRadiusArrayName);
 
-  if (polyballRadiusArray==NULL)
+  if (polyballRadiusArray==nullptr)
   {
     vtkErrorMacro(<<"PolyBallRadiusArray with name specified does not exist!");
   }
@@ -282,10 +282,10 @@ double vtkSVPolyBallLine::EvaluateFunction(double x[3])
   double localDiffs[3][3], finalLocal[3][3];;
   double t;
   double num, den;
-  vtkDataArray *polyballRadiusArray = NULL;
-  vtkDataArray *localXArray = NULL;
-  vtkDataArray *localYArray = NULL;
-  vtkDataArray *localZArray = NULL;
+  vtkDataArray *polyballRadiusArray = nullptr;
+  vtkDataArray *localXArray = nullptr;
+  vtkDataArray *localYArray = nullptr;
+  vtkDataArray *localZArray = nullptr;
   vtkNew(vtkIdList, tmpList);
   vtkNew(vtkIdList, tmpList2);
 
@@ -313,7 +313,7 @@ double vtkSVPolyBallLine::EvaluateFunction(double x[3])
     {
       polyballRadiusArray = this->Input->GetPointData()->GetArray(this->PolyBallRadiusArrayName);
 
-      if (polyballRadiusArray==NULL)
+      if (polyballRadiusArray==nullptr)
         {
         vtkErrorMacro(<<"PolyBallRadiusArray with name specified does not exist!");
         return SV_ERROR;
@@ -337,7 +337,7 @@ double vtkSVPolyBallLine::EvaluateFunction(double x[3])
     localZArray = this->Input->GetPointData()->GetArray(localZName.c_str());
     }
 
-  if (this->Input->GetLines()==NULL)
+  if (this->Input->GetLines()==nullptr)
     {
     vtkWarningMacro(<<"No lines in Input dataset.");
     return SV_ERROR;
@@ -502,7 +502,7 @@ double vtkSVPolyBallLine::EvaluateFunction(double x[3])
 
       if (this->UseLocalCoordinates)
         {
-        if (localXArray != NULL && localYArray != NULL && localZArray != NULL)
+        if (localXArray != nullptr && localYArray != nullptr && localZArray != nullptr)
           {
           localXArray->GetTuple(ptId0, local0[0]);
           localYArray->GetTuple(ptId0, local0[1]);

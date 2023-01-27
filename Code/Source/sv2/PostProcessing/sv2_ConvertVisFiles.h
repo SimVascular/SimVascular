@@ -56,7 +56,7 @@
   #define gzprintf fprintf
   #define gzFile FILE*
   #define gzclose fclose
-  #define Z_NULL NULL
+  #define Z_nullptr nullptr
   #define gzeof feof
   //gzgets requires different args than fgets
   //#define gzgets fgets

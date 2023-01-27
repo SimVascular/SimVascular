@@ -57,14 +57,14 @@ int Itklset_pyInit()
 }
 
 PyMethodDef pyItkls_methods[] = {
-    {NULL, NULL,0,NULL},
+    {nullptr, nullptr,0,nullptr},
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyItklsmodule = {
    PyModuleDef_HEAD_INIT,
    "pyItkls",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    pyItkls_methods
@@ -80,7 +80,7 @@ initpyItkls(void)
     PyObject* pyItklsm;
     pyItklsm=Py_InitModule("pyItkls",pyItkls_methods);
 
-    SegErr = PyErr_NewException("pyItkls.error",NULL,NULL);
+    SegErr = PyErr_NewException("pyItkls.error",nullptr,nullptr);
     Py_INCREF(SegErr);
     PyModule_AddObject(pyItklsm,"error",SegErr);
 
@@ -105,7 +105,7 @@ PyInit_pyItkls(void)
     PyObject* pyItklsm;
 
     pyItklsm=PyModule_Create(&pyItklsmodule);
-    SegErr = PyErr_NewException("pyItkls.error",NULL,NULL);
+    SegErr = PyErr_NewException("pyItkls.error",nullptr,nullptr);
     Py_INCREF(SegErr);
     PyModule_AddObject(pyItklsm,"error",SegErr);
 

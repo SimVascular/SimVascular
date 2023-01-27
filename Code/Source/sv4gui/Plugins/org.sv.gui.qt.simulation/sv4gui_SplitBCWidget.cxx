@@ -225,7 +225,7 @@ bool sv4guiSplitBCWidget::AreDouble(QString values, int* count)
         if(!ok) return false;
     }
 
-    if(count!=NULL)
+    if(count!=nullptr)
         (*count)=list.size();
 
     return true;

@@ -123,7 +123,7 @@ const QString sv4guiQmitkDataManagerView::VIEW_ID = "org.sv.views.datamanager";
 
 sv4guiQmitkDataManagerView::sv4guiQmitkDataManagerView()
     : m_GlobalReinitOnNodeDelete(true),
-      m_ItemDelegate(NULL)
+      m_ItemDelegate(nullptr)
 {
 }
 
@@ -372,7 +372,7 @@ void sv4guiQmitkDataManagerView::CreateQtPartControl(QWidget* parent)
     , this, SLOT( ComponentActionChanged() ) );
   multiComponentImageDataNodeDescriptor->AddAction(componentAction, false);
   m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(multiComponentImageDataNodeDescriptor,componentAction));
-  if (diffusionImageDataNodeDescriptor!=NULL)
+  if (diffusionImageDataNodeDescriptor!=nullptr)
   {
       diffusionImageDataNodeDescriptor->AddAction(componentAction, false);
       m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(diffusionImageDataNodeDescriptor,componentAction));
@@ -386,7 +386,7 @@ void sv4guiQmitkDataManagerView::CreateQtPartControl(QWidget* parent)
     , this, SLOT( TextureInterpolationToggled(bool) ) );
   imageDataNodeDescriptor->AddAction(m_TextureInterpolation, false);
   m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(imageDataNodeDescriptor,m_TextureInterpolation));
-  if (diffusionImageDataNodeDescriptor!=NULL)
+  if (diffusionImageDataNodeDescriptor!=nullptr)
   {
       diffusionImageDataNodeDescriptor->AddAction(m_TextureInterpolation, false);
       m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(diffusionImageDataNodeDescriptor,m_TextureInterpolation));
@@ -398,7 +398,7 @@ void sv4guiQmitkDataManagerView::CreateQtPartControl(QWidget* parent)
     , this, SLOT( ColormapMenuAboutToShow() ) );
   imageDataNodeDescriptor->AddAction(m_ColormapAction, false);
   m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(imageDataNodeDescriptor, m_ColormapAction));
-  if (diffusionImageDataNodeDescriptor!=NULL)
+  if (diffusionImageDataNodeDescriptor!=nullptr)
   {
       diffusionImageDataNodeDescriptor->AddAction(m_ColormapAction, false);
       m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(diffusionImageDataNodeDescriptor, m_ColormapAction));
@@ -630,14 +630,14 @@ void sv4guiQmitkDataManagerView::OpacityActionChanged()
 void sv4guiQmitkDataManagerView::ComponentActionChanged()
 {
   mitk::DataNode* node = m_NodeTreeModel->GetNode(m_FilterModel->mapToSource(m_NodeTreeView->selectionModel()->currentIndex()));
-  mitk::IntProperty* componentProperty = NULL;
+  mitk::IntProperty* componentProperty = nullptr;
   int numComponents = 0;
   if(node)
   {
     componentProperty =
         dynamic_cast<mitk::IntProperty*>(node->GetProperty("Image.Displayed Component"));
     mitk::Image* img = dynamic_cast<mitk::Image*>(node->GetData());
-    if (img != NULL)
+    if (img != nullptr)
     {
       numComponents = img->GetPixelType().GetNumberOfComponents();
     }
@@ -650,7 +650,7 @@ void sv4guiQmitkDataManagerView::ComponentActionChanged()
   }
   else
   {
-    m_ComponentSlider->SetProperty(static_cast<mitk::IntProperty*>(NULL));
+    m_ComponentSlider->SetProperty(static_cast<mitk::IntProperty*>(nullptr));
   }
 }
 
@@ -911,7 +911,7 @@ void sv4guiQmitkDataManagerView::RemoveSelectedNodes( bool )
   }
   std::vector<mitk::DataNode::Pointer> selectedNodes;
 
-  mitk::DataNode::Pointer node = 0;
+  mitk::DataNode::Pointer node = nullptr;
   QString question = tr("Do you really want to remove ");
 
   for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
@@ -1039,11 +1039,11 @@ void sv4guiQmitkDataManagerView::GlobalReinit( bool )
 {
   mitk::IRenderWindowPart* renderWindow = this->GetRenderWindowPart();
 
-  if (renderWindow == NULL)
+  if (renderWindow == nullptr)
     renderWindow = this->OpenRenderWindowPart(false);
 
   // no render window available
-  if (renderWindow == NULL) return;
+  if (renderWindow == nullptr) return;
 
   mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(this->GetDataStorage());
 }
@@ -1097,12 +1097,13 @@ void sv4guiQmitkDataManagerView::ShowIn(const QString &editorId)
 
 mitk::IRenderWindowPart* sv4guiQmitkDataManagerView::OpenRenderWindowPart(bool activatedEditor)
 {
-  if (activatedEditor)
-  {
-    return this->GetRenderWindowPart(QmitkAbstractView::ACTIVATE | QmitkAbstractView::OPEN);
-  }
-  else
-  {
-    return this->GetRenderWindowPart(QmitkAbstractView::BRING_TO_FRONT | QmitkAbstractView::OPEN);
-  }
+  std::cout << "sv4guiQmitkDataManagerView these MITK functions are not available anymore" << std::endl << std::flush;
+  // if (activatedEditor)
+  // {
+  //   return this->GetRenderWindowPart(QmitkAbstractView::ACTIVATE | QmitkAbstractView::OPEN);
+  // }
+  // else
+  // {
+  //   return this->GetRenderWindowPart(QmitkAbstractView::BRING_TO_FRONT | QmitkAbstractView::OPEN);
+  // }
 }

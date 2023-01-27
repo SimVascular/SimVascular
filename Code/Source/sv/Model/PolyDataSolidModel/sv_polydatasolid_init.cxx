@@ -88,22 +88,22 @@ int PolyDataSolid_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 int Polydatasolid_Init( Tcl_Interp *interp )
 {
   cvFactoryRegistrar* solidModelRegistrar =
-    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
+    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", nullptr);
 
-  if (solidModelRegistrar != NULL) {
+  if (solidModelRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           solidModelRegistrar->SetFactoryMethodPtr( SM_KT_POLYDATA,
       (FactoryMethodPtr) &CreatePolyDataSolid );
 
     Tcl_CreateCommand( interp, "polydata_available", PolyDataSolid_AvailableCmd,
-		       (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		       (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
   }
   else {
     return TCL_ERROR;
   }
 
   Tcl_CreateCommand( interp, "polydatasolid_registrars", PolyDataSolid_RegistrarsListCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+		     (ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr );
 
   // Initialize polydatasolid_utils
   if (PlyDtaUtils_Init() != SV_OK) {
@@ -129,7 +129,7 @@ int PolyDataSolid_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
   cvFactoryRegistrar *solidModelRegistrar =
-    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
+    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", nullptr);
 
   char result[255];
   sprintf( result, "Solid model registrar ptr -> %p\n", solidModelRegistrar );

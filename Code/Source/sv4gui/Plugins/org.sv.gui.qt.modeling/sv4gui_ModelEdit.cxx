@@ -74,24 +74,24 @@ const QString sv4guiModelEdit::EXTENSION_ID = "org.sv.views.modeling";
 sv4guiModelEdit::sv4guiModelEdit() :
     ui(new Ui::sv4guiModelEdit)
 {
-    m_Model=NULL;
-    m_ModelNode=NULL;
+    m_Model=nullptr;
+    m_ModelNode=nullptr;
 
-    m_SegSelectionWidget=NULL;
-    m_CapSelectionWidget=NULL;
+    m_SegSelectionWidget=nullptr;
+    m_CapSelectionWidget=nullptr;
 
-    m_DataInteractor=NULL;
+    m_DataInteractor=nullptr;
     m_ModelSelectFaceObserverTag=-1;
     m_ModelUpdateObserverTag=-1;
 
-    m_BlendTableMenu=NULL;
-    m_BlendTableModel=NULL;
+    m_BlendTableMenu=nullptr;
+    m_BlendTableModel=nullptr;
 
-    m_SphereWidget=NULL;
-    m_PlaneWidget=NULL;
-    m_BoxWidget=NULL;
+    m_SphereWidget=nullptr;
+    m_PlaneWidget=nullptr;
+    m_BoxWidget=nullptr;
 
-    m_PathFolderNode=NULL;
+    m_PathFolderNode=nullptr;
 
     m_OperatingWholeTableModel=false;
 
@@ -117,7 +117,7 @@ void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
 
     m_DisplayWidget=GetActiveStdMultiWidget();
 
-    if(m_DisplayWidget==NULL)
+    if(m_DisplayWidget==nullptr)
     {
         parent->setEnabled(false);
         MITK_ERROR << "Plugin ModelEdit Init Error: No QmitkStdMultiWidget!";
@@ -338,14 +338,14 @@ void sv4guiModelEdit::Hidden()
 void sv4guiModelEdit::SetTimeModified()
 {
     if (m_ModelNode != nullptr) {
-        time_t time = std::time(NULL); 
+        time_t time = std::time(nullptr); 
         m_ModelNode->SetStringProperty("time modified", ctime(&time)); 
     }
 }
 
 int sv4guiModelEdit::GetTimeStep()
 {
-    mitk::SliceNavigationController* timeNavigationController = NULL;
+    mitk::SliceNavigationController* timeNavigationController = nullptr;
     if(m_DisplayWidget)
     {
         timeNavigationController=m_DisplayWidget->GetTimeNavigationController();
@@ -527,11 +527,11 @@ void sv4guiModelEdit::SetupSliderPathPlane(int idx)
         return;
 
     sv4guiPath* path=dynamic_cast<sv4guiPath*>(pathNode->GetData());
-    if(path==NULL)
+    if(path==nullptr)
         return;
 
     sv4guiPathElement* pe=path->GetPathElement(GetTimeStep());
-    if(pe==NULL)
+    if(pe==nullptr)
         return;
 
     if(pe->GetPathPointNumber()>0)
@@ -548,7 +548,7 @@ void sv4guiModelEdit::SetupSliderPathPlane(int idx)
 
 void sv4guiModelEdit::UpdatePlaneWidget(double idx)
 {
-    if(m_PlaneWidget==NULL || !m_PlaneWidget->GetEnabled())
+    if(m_PlaneWidget==nullptr || !m_PlaneWidget->GetEnabled())
         return;
 
     if(m_PathFolderNode.IsNull())
@@ -561,11 +561,11 @@ void sv4guiModelEdit::UpdatePlaneWidget(double idx)
         return;
 
     sv4guiPath* path=dynamic_cast<sv4guiPath*>(pathNode->GetData());
-    if(path==NULL)
+    if(path==nullptr)
         return;
 
     sv4guiPathElement* pe=path->GetPathElement(GetTimeStep());
-    if(pe==NULL)
+    if(pe==nullptr)
         return;
 
     int posIdx=idx;
@@ -590,11 +590,11 @@ void sv4guiModelEdit::SetupSliderPathBox(int idx)
         return;
 
     sv4guiPath* path=dynamic_cast<sv4guiPath*>(pathNode->GetData());
-    if(path==NULL)
+    if(path==nullptr)
         return;
 
     sv4guiPathElement* pe=path->GetPathElement(GetTimeStep());
-    if(pe==NULL)
+    if(pe==nullptr)
         return;
 
     if(pe->GetPathPointNumber()>0)
@@ -611,7 +611,7 @@ void sv4guiModelEdit::SetupSliderPathBox(int idx)
 
 void sv4guiModelEdit::UpdateBoxWidget(double idx)
 {
-    if(m_BoxWidget==NULL || !m_BoxWidget->GetEnabled())
+    if(m_BoxWidget==nullptr || !m_BoxWidget->GetEnabled())
         return;
 
     if(m_PathFolderNode.IsNull())
@@ -624,11 +624,11 @@ void sv4guiModelEdit::UpdateBoxWidget(double idx)
         return;
 
     sv4guiPath* path=dynamic_cast<sv4guiPath*>(pathNode->GetData());
-    if(path==NULL)
+    if(path==nullptr)
         return;
 
     sv4guiPathElement* pe=path->GetPathElement(GetTimeStep());
-    if(pe==NULL)
+    if(pe==nullptr)
         return;
 
     int posIdx=idx;
@@ -647,7 +647,7 @@ void sv4guiModelEdit::UpdateFaceListSelection()
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
     if(!modelElement) return;
 
-    if(m_FaceListTableModel==NULL)
+    if(m_FaceListTableModel==nullptr)
         return;
 
     disconnect( ui->tableViewFaceList->selectionModel()
@@ -689,7 +689,7 @@ void sv4guiModelEdit::SetupFaceListTable()
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     std::vector<sv4guiModelElement::svFace*> faces=modelElement->GetFaces();
 
@@ -706,7 +706,7 @@ void sv4guiModelEdit::SetupFaceListTable()
 
     for(int i=0;i<faces.size();i++)
     {
-        if(faces[i]==NULL )
+        if(faces[i]==nullptr )
             continue;
 
         rowIndex++;
@@ -773,7 +773,7 @@ void sv4guiModelEdit::UpdateFaceData(QStandardItem* item)
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     int row=item->index().row();
     int col=item->index().column();
@@ -783,7 +783,7 @@ void sv4guiModelEdit::UpdateFaceData(QStandardItem* item)
 
     sv4guiModelElement::svFace* face=modelElement->GetFace(id);
 
-    if(face==NULL)
+    if(face==nullptr)
         return;
 
     if(col==1)
@@ -813,9 +813,9 @@ void sv4guiModelEdit::TableFaceListSelectionChanged( const QItemSelection & /*se
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
-    if(m_FaceListTableModel==NULL)
+    if(m_FaceListTableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
@@ -853,7 +853,7 @@ void sv4guiModelEdit::ToggleVisibility(const QModelIndex &index){
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     int row=index.row();
     int col=index.column();
@@ -866,7 +866,7 @@ void sv4guiModelEdit::ToggleVisibility(const QModelIndex &index){
 
     sv4guiModelElement::svFace* face=modelElement->GetFace(id);
 
-    if(face==NULL)
+    if(face==nullptr)
         return;
 
     QStandardItem* itemV= m_FaceListTableModel->item(row,col);
@@ -897,7 +897,7 @@ void sv4guiModelEdit::ChangeColor(const QModelIndex &index)
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     int row=index.row();
     int col=index.column();
@@ -910,7 +910,7 @@ void sv4guiModelEdit::ChangeColor(const QModelIndex &index)
 
     sv4guiModelElement::svFace* face=modelElement->GetFace(id);
 
-    if(face==NULL)
+    if(face==nullptr)
         return;
 
     QStandardItem* itemC= m_FaceListTableModel->item(row,col);
@@ -945,9 +945,9 @@ void sv4guiModelEdit::ShowSelected( bool )
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
-    if(m_FaceListTableModel==NULL)
+    if(m_FaceListTableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
@@ -965,7 +965,7 @@ void sv4guiModelEdit::ShowSelected( bool )
         int id=itemID->text().toInt();
         sv4guiModelElement::svFace* face=modelElement->GetFace(id);
 
-        if(face==NULL)
+        if(face==nullptr)
             continue;
 
         face->visible=true;
@@ -983,9 +983,9 @@ void sv4guiModelEdit::HideSelected( bool )
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
-    if(m_FaceListTableModel==NULL)
+    if(m_FaceListTableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
@@ -1003,7 +1003,7 @@ void sv4guiModelEdit::HideSelected( bool )
         int id=itemID->text().toInt();
         sv4guiModelElement::svFace* face=modelElement->GetFace(id);
 
-        if(face==NULL)
+        if(face==nullptr)
             continue;
 
         face->visible=false;
@@ -1024,9 +1024,9 @@ void sv4guiModelEdit::ChangeOpacitySelected( bool )
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
-    if(m_FaceListTableModel==NULL)
+    if(m_FaceListTableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
@@ -1050,7 +1050,7 @@ void sv4guiModelEdit::ChangeOpacitySelected( bool )
         int id=itemID->text().toInt();
         sv4guiModelElement::svFace* face=modelElement->GetFace(id);
 
-        if(face==NULL)
+        if(face==nullptr)
             continue;
 
         //        face->opacity=opacity; //done by UpateFaceData()
@@ -1067,9 +1067,9 @@ void sv4guiModelEdit::ChangeColorSelected( bool )
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
-    if(m_FaceListTableModel==NULL)
+    if(m_FaceListTableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
@@ -1091,7 +1091,7 @@ void sv4guiModelEdit::ChangeColorSelected( bool )
         int id=itemID->text().toInt();
         sv4guiModelElement::svFace* face=modelElement->GetFace(id);
 
-        if(face==NULL)
+        if(face==nullptr)
             continue;
 
         face->color[0]=newColor.red()/255.0f;
@@ -1112,9 +1112,9 @@ void sv4guiModelEdit::ChangeTypeSelected( bool )
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
-    if(m_FaceListTableModel==NULL)
+    if(m_FaceListTableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
@@ -1141,7 +1141,7 @@ void sv4guiModelEdit::ChangeTypeSelected( bool )
         int id=itemID->text().toInt();
         sv4guiModelElement::svFace* face=modelElement->GetFace(id);
 
-        if(face==NULL)
+        if(face==nullptr)
             continue;
 
         //        face->type=type; //done by UpateFaceData()
@@ -1171,7 +1171,7 @@ void sv4guiModelEdit::SetupBlendTable()
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     std::vector<sv4guiModelElement::svFace*> faces=modelElement->GetFaces();
 
@@ -1188,12 +1188,12 @@ void sv4guiModelEdit::SetupBlendTable()
 
     for(int i=0;i<faces.size();i++)
     {
-        if(faces[i]==NULL || faces[i]->type=="cap" || faces[i]->type=="inlet" || faces[i]->type=="outlet" || faces[i]->name.substr(0,10)=="wall_blend")
+        if(faces[i]==nullptr || faces[i]->type=="cap" || faces[i]->type=="inlet" || faces[i]->type=="outlet" || faces[i]->name.substr(0,10)=="wall_blend")
             continue;
 
         for(int j=i+1;j<faces.size();j++)
         {
-            if(faces[j]==NULL || faces[j]->type=="cap" || faces[j]->type=="inlet" || faces[j]->type=="outlet" || faces[j]->name.substr(0,10)=="wall_blend")
+            if(faces[j]==nullptr || faces[j]->type=="cap" || faces[j]->type=="inlet" || faces[j]->type=="outlet" || faces[j]->name.substr(0,10)=="wall_blend")
                 continue;
 
             //To do: check if two faces are adjcent;
@@ -1270,7 +1270,7 @@ void sv4guiModelEdit::UpdatePolyDataBlendParam()
 
     int timeStep=GetTimeStep();
     sv4guiModelElementPolyData* mepd=dynamic_cast<sv4guiModelElementPolyData*>(m_Model->GetModelElement(timeStep));
-    if(mepd==NULL) return;
+    if(mepd==nullptr) return;
 
     sv4guiModelElement::svBlendParam* param=mepd->GetBlendParam();
 
@@ -1289,9 +1289,9 @@ void sv4guiModelEdit::TableBlendSelectionChanged( const QItemSelection & /*selec
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
-    if(m_BlendTableModel==NULL)
+    if(m_BlendTableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
@@ -1321,7 +1321,7 @@ void sv4guiModelEdit::TableViewBlendContextMenuRequested( const QPoint & pos )
 
 void sv4guiModelEdit::SetRadius(bool)
 {
-    if(m_BlendTableModel==NULL)
+    if(m_BlendTableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
@@ -1348,7 +1348,7 @@ void sv4guiModelEdit::SetRadius(bool)
 
 void sv4guiModelEdit::ClearRadius(bool)
 {
-    if(m_BlendTableModel==NULL)
+    if(m_BlendTableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
@@ -1369,7 +1369,7 @@ void sv4guiModelEdit::ClearRadius(bool)
 
 void sv4guiModelEdit::UseSelectedBlend(bool)
 {
-    if(m_BlendTableModel==NULL)
+    if(m_BlendTableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
@@ -1390,7 +1390,7 @@ void sv4guiModelEdit::UseSelectedBlend(bool)
 
 void sv4guiModelEdit::NotUseSelectedBlend(bool)
 {
-    if(m_BlendTableModel==NULL)
+    if(m_BlendTableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
@@ -1474,15 +1474,15 @@ void sv4guiModelEdit::RemoveObservers()
         std::string user="";
         m_ModelNode->GetStringProperty("interactor user", user);
         if(user=="modeling")
-            m_ModelNode->SetDataInteractor(NULL);
+            m_ModelNode->SetDataInteractor(nullptr);
     }
-    m_DataInteractor=NULL;
+    m_DataInteractor=nullptr;
 }
 
 void sv4guiModelEdit::ClearAll()
 {
-    m_Model=NULL;
-    m_ModelNode=NULL;
+    m_Model=nullptr;
+    m_ModelNode=nullptr;
 
     ui->labelModelName->setText("");
     ui->labelModelType->setText("");
@@ -1516,7 +1516,7 @@ void sv4guiModelEdit::ShowSegSelectionWidget()
         if(m_ModelType=="OpenCASCADE" || m_ModelType=="Parasolid")
         {
             sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*>(rs->GetElement(i)->GetData());
-            if(group==NULL)
+            if(group==nullptr)
                 continue;
         }
         segNodes.push_back(rs->GetElement(i));
@@ -1547,7 +1547,7 @@ void sv4guiModelEdit::ShowCapSelectionWidget()
 
     for(int i=0;i<faces.size();i++)
     {
-        if(faces[i]==NULL )
+        if(faces[i]==nullptr )
             continue;
 
         if (faces[i]->type=="cap")
@@ -1591,13 +1591,13 @@ void sv4guiModelEdit::CreateModel()
     for(int i=0;i<segNodes.size();i++)
     {
         sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*>(segNodes[i]->GetData());
-        if(group!=NULL)
+        if(group!=nullptr)
         {
             numSeg2D++;
             continue;
         }
         sv4guiMitkSeg3D* seg3D = dynamic_cast<sv4guiMitkSeg3D*>(segNodes[i]->GetData());
-        if(seg3D!=NULL)
+        if(seg3D!=nullptr)
         {
             numSeg3D++;
             continue;
@@ -1617,7 +1617,7 @@ void sv4guiModelEdit::CreateModel()
         return;
     }
 
-    sv4guiModelElement* newModelElement=NULL;
+    sv4guiModelElement* newModelElement=nullptr;
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
 
     mitk::ProgressBar::GetInstance()->Reset();
@@ -1626,7 +1626,7 @@ void sv4guiModelEdit::CreateModel()
     mitk::ProgressBar::GetInstance()->Progress();
     WaitCursorOn();
 
-    svLoftingParam* param=NULL;
+    svLoftingParam* param=nullptr;
     int useUniform=m_SegSelectionWidget->IfUseUniform();
     if(useUniform)
         param=new svLoftingParam(m_SegSelectionWidget->GetLoftingParam());
@@ -1644,14 +1644,14 @@ void sv4guiModelEdit::CreateModel()
         }
         else if(m_ModelType=="OpenCASCADE")
         {
-            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,param,NULL,20.0);
+            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,param,nullptr,20.0);
         }
         else if(m_ModelType=="Parasolid")
         {
-            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,NULL,NULL,1.0);
+            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,nullptr,nullptr,1.0);
         }
 
-        if(newModelElement==NULL)
+        if(newModelElement==nullptr)
         {
             statusText="Failed to create model.";
             created = 0;
@@ -1683,7 +1683,7 @@ void sv4guiModelEdit::CreateModel()
       return;
     }
 
-    if(newModelElement!=NULL)
+    if(newModelElement!=nullptr)
     {
 //        m_LocalOperationforBlendRegion=false;
 
@@ -1797,7 +1797,7 @@ void sv4guiModelEdit::CreateModel()
             auto text = QString::fromStdString(info);
             QString title = "A problem was encountered when creating the model";
             QMessageBox::Icon icon = QMessageBox::Warning;
-            QMessageBox mb(NULL); 
+            QMessageBox mb(nullptr); 
             mb.setWindowTitle(title);
             mb.setText(text+"                                                                                         ");
             mb.setIcon(icon);
@@ -1846,10 +1846,10 @@ std::vector<sv4guiModelElement::svBlendParamRadius*> sv4guiModelEdit::GetBlendRa
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL)
+    if(modelElement==nullptr)
         return blendRadii;
 
-    if(m_BlendTableModel==NULL)
+    if(m_BlendTableModel==nullptr)
         return blendRadii;
 
     int rowCount=m_BlendTableModel->rowCount();
@@ -1881,14 +1881,14 @@ std::vector<sv4guiModelElement::svBlendParamRadius*> sv4guiModelEdit::GetBlendRa
 
 void sv4guiModelEdit::BlendModel()
 {
-    if(m_Model==NULL) return;
+    if(m_Model==nullptr) return;
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
 
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
-    sv4guiModelElement* newModelElement=NULL;
+    sv4guiModelElement* newModelElement=nullptr;
 
     std::vector<sv4guiModelElement::svBlendParamRadius*> blendRadii=GetBlendRadii();
     if(blendRadii.size()==0)
@@ -1900,7 +1900,7 @@ void sv4guiModelEdit::BlendModel()
     mitk::ProgressBar::GetInstance()->Progress();
     WaitCursorOn();
 
-    sv4guiModelElement::svBlendParam* param=NULL;
+    sv4guiModelElement::svBlendParam* param=nullptr;
     std::string status="Blending done.";
     if(m_ModelType=="PolyData"){
         param=new sv4guiModelElement::svBlendParam();
@@ -1928,7 +1928,7 @@ void sv4guiModelEdit::BlendModel()
     mitk::ProgressBar::GetInstance()->Progress();
     mitk::StatusBar::GetInstance()->DisplayText(status.c_str());
 
-    if(newModelElement==NULL) return;
+    if(newModelElement==nullptr) return;
 
 //    m_LocalOperationforBlendRegion=false;
 
@@ -1957,9 +1957,9 @@ std::vector<int> sv4guiModelEdit::GetSelectedFaceIDs()
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return faceIDs;
+    if(modelElement==nullptr) return faceIDs;
 
-    if(m_FaceListTableModel==NULL)
+    if(m_FaceListTableModel==nullptr)
         return faceIDs;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
@@ -2023,7 +2023,7 @@ bool sv4guiModelEdit::MarkCells(sv4guiModelElementPolyData* modelElement)
     }
 
     bool hasSphere=false;
-    if(m_SphereWidget!=NULL && m_SphereWidget->GetEnabled() && m_SphereWidget->GetRadius()>0)
+    if(m_SphereWidget!=nullptr && m_SphereWidget->GetEnabled() && m_SphereWidget->GetRadius()>0)
     {
         hasSphere=true;
         if(!modelElement->MarkCellsBySphere(m_SphereWidget->GetRadius(), m_SphereWidget->GetCenter()))
@@ -2039,12 +2039,12 @@ bool sv4guiModelEdit::MarkCells(sv4guiModelElementPolyData* modelElement)
 
 void sv4guiModelEdit::ModelOperate(int operationType)
 {
-    if(m_Model==NULL) return;
+    if(m_Model==nullptr) return;
 
     int timeStep=GetTimeStep();
     sv4guiModelElementPolyData* modelElement=dynamic_cast<sv4guiModelElementPolyData*>(m_Model->GetModelElement(timeStep));
 
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
     sv4guiModelElementPolyData* newModelElement=modelElement->Clone();
 
@@ -2146,7 +2146,7 @@ void sv4guiModelEdit::ModelOperate(int operationType)
             ok=newModelElement->LoopSubdivideLocal(ui->sbLoopDivisionsL->value());
         break;
     case CUT_ABOVE:
-        if(m_PlaneWidget!=NULL && m_PlaneWidget->GetEnabled())
+        if(m_PlaneWidget!=nullptr && m_PlaneWidget->GetEnabled())
         {
             double* origin=m_PlaneWidget->GetOrigin();
             double* point1=m_PlaneWidget->GetPoint1();
@@ -2155,7 +2155,7 @@ void sv4guiModelEdit::ModelOperate(int operationType)
         }
         break;
     case CUT_BELOW:
-        if(m_PlaneWidget!=NULL && m_PlaneWidget->GetEnabled())
+        if(m_PlaneWidget!=nullptr && m_PlaneWidget->GetEnabled())
         {
             double* origin=m_PlaneWidget->GetOrigin();
             double* point1=m_PlaneWidget->GetPoint1();
@@ -2164,7 +2164,7 @@ void sv4guiModelEdit::ModelOperate(int operationType)
         }
         break;
     case CUT_BOX:
-        if(m_BoxWidget!=NULL && m_BoxWidget->GetEnabled())
+        if(m_BoxWidget!=nullptr && m_BoxWidget->GetEnabled())
         {
             vtkSmartPointer<vtkPlanes> boxPlanes=vtkSmartPointer<vtkPlanes>::New();
             m_BoxWidget->GetPlanes(boxPlanes);
@@ -2208,7 +2208,7 @@ void sv4guiModelEdit::ShowSphereInteractor(bool checked)
 {
     if(!checked)
     {
-        if(m_SphereWidget!=NULL)
+        if(m_SphereWidget!=nullptr)
         {
             m_SphereWidget->Off();
         }
@@ -2216,15 +2216,15 @@ void sv4guiModelEdit::ShowSphereInteractor(bool checked)
         return;
     }
 
-    if(m_Model==NULL) return;
+    if(m_Model==nullptr) return;
 
     int timeStep=GetTimeStep();
     sv4guiModelElementPolyData* modelElement=dynamic_cast<sv4guiModelElementPolyData*>(m_Model->GetModelElement(timeStep));
 
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
-    if(modelElement->GetWholeVtkPolyData()==NULL) return;
-    if(m_SphereWidget==NULL)
+    if(modelElement->GetWholeVtkPolyData()==nullptr) return;
+    if(m_SphereWidget==nullptr)
     {
         m_SphereWidget = vtkSmartPointer<vtkSphereWidget>::New();
         m_SphereWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
@@ -2241,7 +2241,7 @@ void sv4guiModelEdit::ShowPlaneInteractor(bool checked)
 {
     if(!checked)
     {
-        if(m_PlaneWidget!=NULL)
+        if(m_PlaneWidget!=nullptr)
         {
             m_PlaneWidget->Off();
         }
@@ -2249,15 +2249,15 @@ void sv4guiModelEdit::ShowPlaneInteractor(bool checked)
         return;
     }
 
-    if(m_Model==NULL) return;
+    if(m_Model==nullptr) return;
 
     int timeStep=GetTimeStep();
     sv4guiModelElementPolyData* modelElement=dynamic_cast<sv4guiModelElementPolyData*>(m_Model->GetModelElement(timeStep));
 
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
-    if(modelElement->GetWholeVtkPolyData()==NULL) return;
-    if(m_PlaneWidget==NULL)
+    if(modelElement->GetWholeVtkPolyData()==nullptr) return;
+    if(m_PlaneWidget==nullptr)
     {
         m_PlaneWidget = vtkSmartPointer<vtkPlaneWidget>::New();
         m_PlaneWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
@@ -2276,7 +2276,7 @@ void sv4guiModelEdit::ShowBoxInteractor(bool checked)
 {
     if(!checked)
     {
-        if(m_BoxWidget!=NULL)
+        if(m_BoxWidget!=nullptr)
         {
             m_BoxWidget->Off();
         }
@@ -2284,15 +2284,15 @@ void sv4guiModelEdit::ShowBoxInteractor(bool checked)
         return;
     }
 
-    if(m_Model==NULL) return;
+    if(m_Model==nullptr) return;
 
     int timeStep=GetTimeStep();
     sv4guiModelElementPolyData* modelElement=dynamic_cast<sv4guiModelElementPolyData*>(m_Model->GetModelElement(timeStep));
 
-    if(modelElement==NULL) return;
+    if(modelElement==nullptr) return;
 
-    if(modelElement->GetWholeVtkPolyData()==NULL) return;
-    if(m_BoxWidget==NULL)
+    if(modelElement->GetWholeVtkPolyData()==nullptr) return;
+    if(m_BoxWidget==nullptr)
     {
         m_BoxWidget = vtkSmartPointer<vtkBoxWidget>::New();
         m_BoxWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
@@ -2313,14 +2313,14 @@ void sv4guiModelEdit::ShowBoxInteractor(bool checked)
 
 void sv4guiModelEdit::ChangeFacetSize()
 {
-    if(m_Model==NULL || m_Model->GetModelElement(GetTimeStep())==NULL)
+    if(m_Model==nullptr || m_Model->GetModelElement(GetTimeStep())==nullptr)
         return;
 
     double facetSize=0;
     QString sizeType="";
 
     sv4guiModelElementAnalytic* meAnalytic=dynamic_cast<sv4guiModelElementAnalytic*>(m_Model->GetModelElement(GetTimeStep()));
-    if(meAnalytic==NULL)
+    if(meAnalytic==nullptr)
         return;
 
     if(m_ModelType=="OpenCASCADE")
@@ -2367,7 +2367,7 @@ void sv4guiModelEdit::ChangeFacetSize()
 
 void sv4guiModelEdit::ConvertToPolyDataModel()
 {
-    if(m_Model==NULL || m_Model->GetModelElement(GetTimeStep())==NULL)
+    if(m_Model==nullptr || m_Model->GetModelElement(GetTimeStep())==nullptr)
         return;
 
     bool ok=false;
@@ -2388,7 +2388,7 @@ void sv4guiModelEdit::ConvertToPolyDataModel()
         return;
     }
 
-    sv4guiModelElement* modelElement=NULL;
+    sv4guiModelElement* modelElement=nullptr;
 
     mitk::ProgressBar::GetInstance()->Reset();
     mitk::ProgressBar::GetInstance()->AddStepsToDo(2);
@@ -2404,7 +2404,7 @@ void sv4guiModelEdit::ConvertToPolyDataModel()
     mitk::ProgressBar::GetInstance()->Progress();
     WaitCursorOff();
 
-    if(modelElement==NULL)
+    if(modelElement==nullptr)
         return;
 
     sv4guiModel::Pointer solidModel=sv4guiModel::New();
@@ -2430,12 +2430,12 @@ void sv4guiModelEdit::SetEstimatedEdgeSize()
 
 double sv4guiModelEdit::EstimateEdgeSize()
 {
-    if(m_Model==NULL || m_Model->GetModelElement(GetTimeStep())==NULL)
+    if(m_Model==nullptr || m_Model->GetModelElement(GetTimeStep())==nullptr)
         return 0;
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return 0;
+    if(modelElement==nullptr) return 0;
 
     double edgeSize= sqrt(modelElement->GetMinFaceArea()/3.1415)/2.5;
     edgeSize=round(10000*edgeSize)/10000;

@@ -203,7 +203,7 @@ std::vector<mitk::DataNode::Pointer> sv4guiSegmentationLegacyIO::ReadFiles(QStri
         reader->SetFileName(filePath.toStdString().c_str());
         reader->Update();
         vtkSmartPointer<vtkPolyData> vpd=reader->GetOutput();
-        if(vpd!=NULL)
+        if(vpd!=nullptr)
         {
             sv4guiSeg3D* seg3D=new sv4guiSeg3D();
             seg3D->SetVtkPolyData(vpd);

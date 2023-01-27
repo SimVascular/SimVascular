@@ -224,13 +224,13 @@ public:
 	cvITKLevelSetBase();
 	virtual ~cvITKLevelSetBase()
 	{
-		if ( m_cvInputImage != NULL ) {
+		if ( m_cvInputImage != nullptr ) {
 			delete m_cvInputImage;
-			m_cvInputImage = NULL;
+			m_cvInputImage = nullptr;
 		}
-		if ( m_cvSeedImage != NULL ) {
+		if ( m_cvSeedImage != nullptr ) {
 			delete m_cvSeedImage;
-			m_cvSeedImage = NULL;
+			m_cvSeedImage = nullptr;
 		}
 
 	};

@@ -54,7 +54,7 @@ sv4guiModelCreate::sv4guiModelCreate(mitk::DataStorage::Pointer dataStorage, mit
     , m_SelecteNode(selectedNode)
     , m_TimeStep(timeStep)
     , m_CreateModel(true)
-    , m_ModelFolderNode(NULL)
+    , m_ModelFolderNode(nullptr)
 {
     m_Interface=new sv4guiDataNodeOperationInterface;
 
@@ -92,7 +92,7 @@ void sv4guiModelCreate::CreateModel()
 {
     mitk::NodePredicateDataType::Pointer isModelFolder = mitk::NodePredicateDataType::New("sv4guiModelFolder");
     mitk::NodePredicateDataType::Pointer isModelNode = mitk::NodePredicateDataType::New("sv4guiModel");
-    mitk::DataNode::Pointer modelNode=NULL;
+    mitk::DataNode::Pointer modelNode=nullptr;
 
     if(m_SelecteNode.IsNull())
         return;
@@ -117,7 +117,7 @@ void sv4guiModelCreate::CreateModel()
 
 
     if(modelName==""){
-        QMessageBox::warning(NULL,"Model Empty","Please give a model name!");
+        QMessageBox::warning(nullptr,"Model Empty","Please give a model name!");
         return;
     }
 
@@ -126,7 +126,7 @@ void sv4guiModelCreate::CreateModel()
         auto modelName = ui->lineEditModelName->text().trimmed();
         QString msg = "The name '" + modelName + "' is not valid.\n" +
                       "Model names " + validName + ".\n";
-        QMessageBox::warning(NULL, "Model", msg);
+        QMessageBox::warning(nullptr, "Model", msg);
         return;
     }
 
@@ -134,7 +134,7 @@ void sv4guiModelCreate::CreateModel()
 
     mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(modelName.c_str(),m_ModelFolderNode);
     if(exitingNode){
-        QMessageBox::warning(NULL,"Model Already Created","Please use a different model name!");
+        QMessageBox::warning(nullptr,"Model Already Created","Please use a different model name!");
         return;
     }
 

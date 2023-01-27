@@ -97,7 +97,7 @@ public:
   // Solid Model factory method that delegates creation of models to the
   //  concrete implementations.
   #ifdef SV_USE_TCL
-  static cvSolidModel* DefaultInstantiateSolidModel( Tcl_Interp *interp = NULL);
+  static cvSolidModel* DefaultInstantiateSolidModel( Tcl_Interp *interp = nullptr);
   #endif
   #ifdef SV_USE_PYTHON
   static cvSolidModel* pyDefaultInstantiateSolidModel();

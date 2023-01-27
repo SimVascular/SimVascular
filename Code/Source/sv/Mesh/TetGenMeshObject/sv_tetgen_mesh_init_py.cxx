@@ -73,15 +73,15 @@ PyMODINIT_FUNC PyInit_pyMeshTetgen();
 #endif
 PyMethodDef MeshTetgen_methods[]=
 {
-  {"Available",TetGenMesh_AvailableCmd,METH_NOARGS,NULL},
-  {NULL,NULL}
+  {"Available",TetGenMesh_AvailableCmd,METH_NOARGS,nullptr},
+  {nullptr,nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyMeshTetgenmodule = {
    PyModuleDef_HEAD_INIT,
    "pyMeshTetgen",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    MeshTetgen_methods
@@ -108,7 +108,7 @@ PyObject* Tetgenmesh_pyInit()
 	MeshKernelRegistryMethodPtr pMeshKernelRegistryMethod =
     (MeshKernelRegistryMethodPtr) PySys_GetObject("MeshSystemRegistrar");
 
-  if (pMeshKernelRegistryMethod != NULL) {
+  if (pMeshKernelRegistryMethod != nullptr) {
     cvMeshSystem* tetGenSystem = new cvTetGenMeshSystem();
     if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) != SV_OK)) {
       //printf("  TetGen module registered\n");
@@ -129,7 +129,7 @@ PyObject* Tetgenmesh_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
   pythonC = PyModule_Create(&pyMeshTetgenmodule);
 #endif
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyMeshTetgen.\n");
     return SV_PYTHON_ERROR;
@@ -154,7 +154,7 @@ initpyMeshTetgen(void)
   // retrieved by the DLLs.
 	MeshKernelRegistryMethodPtr pMeshKernelRegistryMethod =
     (MeshKernelRegistryMethodPtr) PySys_GetObject("MeshSystemRegistrar");
-  if (pMeshKernelRegistryMethod != NULL) {
+  if (pMeshKernelRegistryMethod != nullptr) {
     cvMeshSystem* tetGenSystem = new cvTetGenMeshSystem();
     if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) != SV_OK)) {
       //printf("  TetGen module registered\n");
@@ -172,7 +172,7 @@ initpyMeshTetgen(void)
   }
   PyObject* pythonC;
   pythonC = Py_InitModule("pyMeshTetgen",MeshTetgen_methods);
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyMeshTetgen.\n");
       return;
@@ -199,7 +199,7 @@ PyInit_pyMeshTetgen(void)
   // retrieved by the DLLs.
 	MeshKernelRegistryMethodPtr pMeshKernelRegistryMethod =
     (MeshKernelRegistryMethodPtr) PySys_GetObject("MeshSystemRegistrar");
-  if (pMeshKernelRegistryMethod != NULL) {
+  if (pMeshKernelRegistryMethod != nullptr) {
     cvMeshSystem* tetGenSystem = new cvTetGenMeshSystem();
     if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) != SV_OK)) {
       //printf("  TetGen module registered\n");
@@ -218,7 +218,7 @@ PyInit_pyMeshTetgen(void)
 
   pythonC = PyModule_Create(&pyMeshTetgenmodule);
 
-  if (pythonC==NULL)
+  if (pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyMeshTetgen.\n");
       return SV_PYTHON_ERROR;

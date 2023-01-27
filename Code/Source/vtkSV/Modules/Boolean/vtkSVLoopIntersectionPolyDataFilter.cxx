@@ -250,8 +250,8 @@ vtkSVLoopIntersectionPolyDataFilter::Impl::Impl() :
 {
   for (int i = 0; i < 2; i++)
     {
-    this->Mesh[i]                 = NULL;
-    this->CellIds[i]              = NULL;
+    this->Mesh[i]                 = nullptr;
+    this->CellIds[i]              = nullptr;
     this->IntersectionMap[i]      = new IntersectionMapType();
     this->IntersectionPtsMap[i]   = new IntersectionMapType();
     this->PointEdgeMap[i]         = new PointEdgeMapType();
@@ -676,7 +676,7 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
         vtkCellArray *splitCells = this->SplitCell
           (input, cellIdX, pts, intersectionMap, splitLines,
            inputIndex,numCurrCells);
-        if (splitCells != NULL)
+        if (splitCells != nullptr)
           {
           double pt0[3], pt1[3], pt2[3], normal[3];
           points->GetPoint(pts[0], pt0);
@@ -1103,7 +1103,7 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
     if (this->GetLoops(transformedpd, &loops) != SV_OK)
       {
       splitCells->Delete();
-      splitCells = NULL;
+      splitCells = nullptr;
       delete [] interPtBool;
       return splitCells;
       }
@@ -1199,7 +1199,7 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
           polys = triangulator->GetOutput()->GetPolys();
 
           splitCells->Delete();
-          splitCells = NULL;
+          splitCells = nullptr;
           delete [] pointMapper;
           delete [] interPtBool;
           return splitCells;

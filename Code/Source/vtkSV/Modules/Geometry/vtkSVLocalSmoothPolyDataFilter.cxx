@@ -153,9 +153,9 @@ vtkSVLocalSmoothPolyDataFilter::vtkSVLocalSmoothPolyDataFilter()
   // optional second input
   this->SetNumberOfInputPorts(2);
 
-  this->SmoothCellArrayName  = NULL;
-  this->SmoothPointArrayName = NULL;
-  this->ConstrainArrayName   = NULL;
+  this->SmoothCellArrayName  = nullptr;
+  this->SmoothPointArrayName = nullptr;
+  this->ConstrainArrayName   = nullptr;
   this->UseCellArray = 0;
   this->UsePointArray = 0;
 
@@ -164,20 +164,20 @@ vtkSVLocalSmoothPolyDataFilter::vtkSVLocalSmoothPolyDataFilter()
 
 vtkSVLocalSmoothPolyDataFilter::~vtkSVLocalSmoothPolyDataFilter()
 {
-  if (this->SmoothCellArrayName != NULL)
+  if (this->SmoothCellArrayName != nullptr)
   {
     delete [] this->SmoothCellArrayName;
-    this->SmoothCellArrayName = NULL;
+    this->SmoothCellArrayName = nullptr;
   }
-  if (this->SmoothPointArrayName != NULL)
+  if (this->SmoothPointArrayName != nullptr)
   {
     delete [] this->SmoothPointArrayName;
-    this->SmoothPointArrayName = NULL;
+    this->SmoothPointArrayName = nullptr;
   }
-  if (this->ConstrainArrayName != NULL)
+  if (this->ConstrainArrayName != nullptr)
   {
     delete [] this->ConstrainArrayName;
-    this->ConstrainArrayName = NULL;
+    this->ConstrainArrayName = nullptr;
   }
 }
 
@@ -190,7 +190,7 @@ vtkPolyData *vtkSVLocalSmoothPolyDataFilter::GetSource()
 {
   if (this->GetNumberOfInputConnections(1) < 1)
     {
-    return NULL;
+    return nullptr;
     }
   return vtkPolyData::SafeDownCast(
     this->GetExecutive()->GetInputData(1, 0));
@@ -240,16 +240,16 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
   double x1[3], x2[3], x3[3], l1[3], l2[3];
   double CosFeatureAngle; //Cosine of angle between adjacent polys
   double CosEdgeAngle; // Cosine of angle between adjacent edges
-  double closestPt[3], dist2, *w = NULL;
+  double closestPt[3], dist2, *w = nullptr;
   int iterationNumber;
   vtkIdType numSimple=0, numBEdges=0, numFixed=0, numFEdges=0;
   vtkPolyData *inMesh, *Mesh;
   vtkPoints *inPts;
-  vtkTriangleFilter *toTris=NULL;
+  vtkTriangleFilter *toTris=nullptr;
   vtkCellArray *inVerts, *inLines, *inPolys, *inStrips;
   vtkPoints *newPts;
   vtkMeshVertexPtr Verts;
-  vtkCellLocator *cellLocator=NULL;
+  vtkCellLocator *cellLocator=nullptr;
 
   // Check input
   //
@@ -263,7 +263,7 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
     }
   if (this->UsePointArray)
   {
-    if (this->SmoothPointArrayName == NULL)
+    if (this->SmoothPointArrayName == nullptr)
     {
       std::cout<<"No PointArrayName given." << endl;
       this->SetErrorCode(vtkErrorCode::UserError + 1);
@@ -278,7 +278,7 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
   }
   if (this->UseCellArray)
   {
-    if (this->SmoothCellArrayName == NULL)
+    if (this->SmoothCellArrayName == nullptr)
     {
       std::cout<<"No PointArrayName given." << endl;
       this->SetErrorCode(vtkErrorCode::UserError + 1);
@@ -341,7 +341,7 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
     {
     Verts[i].type = VTK_SIMPLE_VERTEX; //can smooth
     Verts[i].constrain = 1;
-    Verts[i].edges = NULL;
+    Verts[i].edges = nullptr;
     if (fixedPoint[i])
       Verts[i].type = VTK_FIXED_VERTEX;
     }
@@ -392,7 +392,7 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
         { //multiply connected, becomes fixed!
         Verts[pts[j]].type = VTK_FIXED_VERTEX;
         Verts[pts[j]].edges->Delete();
-        Verts[pts[j]].edges = NULL;
+        Verts[pts[j]].edges = nullptr;
         }
 
       } //for all points in this line
@@ -444,12 +444,12 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
         p1 = pts[i];
         p2 = pts[(i+1)%npts];
 
-        if ( Verts[p1].edges == NULL )
+        if ( Verts[p1].edges == nullptr )
           {
           Verts[p1].edges = vtkIdList::New();
           Verts[p1].edges->Allocate(16,6);
           }
-        if ( Verts[p2].edges == NULL )
+        if ( Verts[p2].edges == nullptr )
           {
           Verts[p2].edges = vtkIdList::New();
           Verts[p2].edges->Allocate(16,6);
@@ -677,7 +677,7 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
     maxDist=0.0;
     for (i=0; i<numPts; i++)
       {
-      if ( Verts[i].type != VTK_FIXED_VERTEX && Verts[i].edges != NULL &&
+      if ( Verts[i].type != VTK_FIXED_VERTEX && Verts[i].edges != nullptr &&
       (npts = Verts[i].edges->GetNumberOfIds()) > 0 )
         {
         newPts->GetPoint(i, x); //use current points
@@ -711,7 +711,7 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
             if (movepoint)
 	    {
 	    vtkSmoothPoint *sPtr = this->SmoothPoints->GetSmoothPoint(i);
-	    vtkCell *cell=NULL;
+	    vtkCell *cell=nullptr;
 
 	    if ( sPtr->cellId >= 0 ) //in cell
 	      {
@@ -799,10 +799,10 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
   //free up connectivity storage
   for (i=0; i<numPts; i++)
     {
-    if ( Verts[i].edges != NULL )
+    if ( Verts[i].edges != nullptr )
       {
       Verts[i].edges->Delete();
-      Verts[i].edges = NULL;
+      Verts[i].edges = nullptr;
       }
     }
   delete [] Verts;

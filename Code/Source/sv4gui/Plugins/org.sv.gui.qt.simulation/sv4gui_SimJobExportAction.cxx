@@ -42,7 +42,7 @@
 #include <QFileDialog>
 
 sv4guiSimJobExportAction::sv4guiSimJobExportAction()
-    : m_Functionality(NULL)
+    : m_Functionality(nullptr)
 {
 }
 
@@ -102,7 +102,7 @@ void sv4guiSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &selecte
         if(lastFileSavePath=="")
             lastFileSavePath=QDir::homePath();
 
-        QString dir = QFileDialog::getExistingDirectory(NULL
+        QString dir = QFileDialog::getExistingDirectory(nullptr
                                                         , tr("Export Simulation Data Files (Choose Directory)")
                                                         , lastFileSavePath);
 
@@ -136,14 +136,14 @@ void sv4guiSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &selecte
 
         if(projPath=="" || simFolderName=="")
         {
-            QMessageBox::warning(NULL,"Warning","No project or simualtion folder are found.");
+            QMessageBox::warning(nullptr,"Warning","No project or simualtion folder are found.");
             return;
         }
 
         QString jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+selectedNode->GetName());
         if(!QDir(jobPath).exists())
         {
-            QMessageBox::warning(NULL,"Warning","Make sure data files have been created for the job.");
+            QMessageBox::warning(nullptr,"Warning","Make sure data files have been created for the job.");
             return;
         }
 
@@ -158,7 +158,7 @@ void sv4guiSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &selecte
             QString filePath=jobPath+"/"+fileListRequired[i];
             if(!QFile(filePath).exists())
             {
-                QMessageBox::warning(NULL,"Missing File","Missing: "+ filePath);
+                QMessageBox::warning(nullptr,"Missing File","Missing: "+ filePath);
                 return;
             }
 
@@ -185,7 +185,7 @@ void sv4guiSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &selecte
         }
         else
         {
-            QMessageBox::warning(NULL,"Missing File","Failed to create numstart.dat");
+            QMessageBox::warning(nullptr,"Missing File","Failed to create numstart.dat");
         }
 
     }

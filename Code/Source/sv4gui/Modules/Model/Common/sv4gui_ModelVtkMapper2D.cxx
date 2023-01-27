@@ -87,7 +87,7 @@ vtkProp* sv4guiModelVtkMapper2D::GetVtkProp(mitk::BaseRenderer * renderer)
 //void sv4guiModelVtkMapper2D::Update(mitk::BaseRenderer* renderer)
 //{
 //    const mitk::DataNode* node = GetDataNode();
-//    if( node == NULL )
+//    if( node == nullptr )
 //        return;
 
 //    bool visible = true;
@@ -96,13 +96,13 @@ vtkProp* sv4guiModelVtkMapper2D::GetVtkProp(mitk::BaseRenderer * renderer)
 //        return;
 
 //    sv4guiModel* model  = static_cast<sv4guiModel*>( node->GetData() );
-//    if ( model == NULL )
+//    if ( model == nullptr )
 //        return;
 
 //    this->CalculateTimeStep( renderer );
 
 //    const mitk::TimeGeometry *dataTimeGeometry = model->GetTimeGeometry();
-//    if ( ( dataTimeGeometry == NULL )
+//    if ( ( dataTimeGeometry == nullptr )
 //         || ( dataTimeGeometry->CountTimeSteps() == 0 )
 //         || ( !dataTimeGeometry->IsValidTimeStep( this->GetTimestep() ) ) )
 //    {
@@ -129,7 +129,7 @@ vtkProp* sv4guiModelVtkMapper2D::GetVtkProp(mitk::BaseRenderer * renderer)
 void sv4guiModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 {
     mitk::DataNode* node = GetDataNode();
-    if(node==NULL)
+    if(node==nullptr)
         return;
 
     LocalStorage* localStorage = m_LSH.GetLocalStorage(renderer);
@@ -142,7 +142,7 @@ void sv4guiModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
     }
 
     sv4guiModel* model  = static_cast<sv4guiModel *>( node->GetData() );
-    if(model==NULL)
+    if(model==nullptr)
     {
         localStorage->m_PropAssembly->VisibilityOff();
         return;
@@ -151,21 +151,21 @@ void sv4guiModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
     int timestep=this->GetTimestep();
 
     sv4guiModelElement* me=model->GetModelElement(timestep);
-    if(me==NULL)
+    if(me==nullptr)
     {
         localStorage->m_PropAssembly->VisibilityOff();
         return;
     }
 
     vtkSmartPointer<vtkPolyData> wholePolyData=me->GetWholeVtkPolyData();
-    if ((wholePolyData == NULL) || (wholePolyData->GetNumberOfPoints() < 1))
+    if ((wholePolyData == nullptr) || (wholePolyData->GetNumberOfPoints() < 1))
     {
         localStorage->m_PropAssembly->VisibilityOff();
         return;
     }
 
     const mitk::PlaneGeometry* planeGeometry = renderer->GetCurrentWorldPlaneGeometry();
-    if( ( planeGeometry == NULL ) || ( !planeGeometry->IsValid() ) || ( !planeGeometry->HasReferenceGeometry() ))
+    if( ( planeGeometry == nullptr ) || ( !planeGeometry->IsValid() ) || ( !planeGeometry->HasReferenceGeometry() ))
     {
         localStorage->m_PropAssembly->VisibilityOff();
         return;
@@ -313,7 +313,7 @@ void sv4guiModelVtkMapper2D::ApplyMapperProperties(vtkSmartPointer<vtkPolyDataMa
 {
     const mitk::DataNode * node = GetDataNode();
 
-    if(node == NULL)
+    if(node == nullptr)
     {
         return;
     }

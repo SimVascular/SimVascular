@@ -65,9 +65,9 @@ vtkCxxSetObjectMacro(vtkSVPolyDataRawReader, Locator, vtkIncrementalPointLocator
 // Construct object with merging set to true.
 vtkSVPolyDataRawReader::vtkSVPolyDataRawReader()
 {
-  this->FileName = NULL;
+  this->FileName = nullptr;
   this->Merging = 0;
-  this->Locator = NULL;
+  this->Locator = nullptr;
 
   this->SetNumberOfInputPorts(0);
 }
@@ -108,7 +108,7 @@ int vtkSVPolyDataRawReader::RequestData(
 
   // Initialize
   FILE *fp = fopen(this->FileName, "r");
-  if (fp == NULL)
+  if (fp == nullptr)
   {
     vtkErrorMacro(<< "File " << this->FileName << " not found");
     this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
@@ -143,7 +143,7 @@ int vtkSVPolyDataRawReader::RequestData(
     mergedPolys->Allocate(newPolys->GetSize());
 
     vtkSmartPointer<vtkIncrementalPointLocator> locator = this->Locator;
-    if (this->Locator == NULL)
+    if (this->Locator == nullptr)
     {
       locator.TakeReference(this->NewDefaultLocator());
     }

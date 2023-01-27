@@ -131,53 +131,53 @@ static int pyAdaptObject_init(pyAdaptObject* self, PyObject* args)
 }
 
 static PyMethodDef pyAdaptObject_methods[]={
-  {"NewObject",(PyCFunction)cvAdapt_NewObjectCmd,METH_VARARGS,NULL},
-  { "CreateInternalMeshObject",(PyCFunction)cvAdapt_CreateInternalMeshObjectMtd, METH_VARARGS,NULL},
-  { "LoadModel", (PyCFunction)cvAdapt_LoadModelMtd,METH_VARARGS,NULL},
-  { "LoadMesh",(PyCFunction)cvAdapt_LoadMeshMtd,METH_VARARGS,NULL},
+  {"NewObject",(PyCFunction)cvAdapt_NewObjectCmd,METH_VARARGS,nullptr},
+  { "CreateInternalMeshObject",(PyCFunction)cvAdapt_CreateInternalMeshObjectMtd, METH_VARARGS,nullptr},
+  { "LoadModel", (PyCFunction)cvAdapt_LoadModelMtd,METH_VARARGS,nullptr},
+  { "LoadMesh",(PyCFunction)cvAdapt_LoadMeshMtd,METH_VARARGS,nullptr},
   { "LoadSolutionFromFile",
-    (PyCFunction)cvAdapt_LoadSolutionFromFileMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_LoadSolutionFromFileMtd,METH_VARARGS,nullptr},
   { "LoadYbarFromFile",
-    (PyCFunction)cvAdapt_LoadYbarFromFileMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_LoadYbarFromFileMtd,METH_VARARGS,nullptr},
   { "LoadAvgSpeedFromFile",
-    (PyCFunction)cvAdapt_LoadAvgSpeedFromFileMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_LoadAvgSpeedFromFileMtd,METH_VARARGS,nullptr},
   { "LoadHessianFromFile",
-    (PyCFunction)cvAdapt_LoadHessianFromFileMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_LoadHessianFromFileMtd,METH_VARARGS,nullptr},
   { "ReadSolutionFromMesh",
-    (PyCFunction)cvAdapt_ReadSolutionFromMeshMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_ReadSolutionFromMeshMtd,METH_VARARGS,nullptr},
   { "ReadYbarFromMesh",
-    (PyCFunction)cvAdapt_ReadYbarFromMeshMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_ReadYbarFromMeshMtd,METH_VARARGS,nullptr},
   { "ReadAvgSpeedFromMesh",
-    (PyCFunction)cvAdapt_ReadAvgSpeedFromMeshMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_ReadAvgSpeedFromMeshMtd,METH_VARARGS,nullptr},
   { "SetAdaptOptions",
-    (PyCFunction)cvAdapt_SetAdaptOptionsMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_SetAdaptOptionsMtd,METH_VARARGS,nullptr},
   { "CheckOptions",
-    (PyCFunction)cvAdapt_CheckOptionsMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_CheckOptionsMtd,METH_VARARGS,nullptr},
   { "SetMetric",
-    (PyCFunction)cvAdapt_SetMetricMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_SetMetricMtd,METH_VARARGS,nullptr},
   { "SetupMesh",
-    (PyCFunction)cvAdapt_SetupMeshMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_SetupMeshMtd,METH_VARARGS,nullptr},
   { "RunAdaptor",
-    (PyCFunction)cvAdapt_RunAdaptorMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_RunAdaptorMtd,METH_VARARGS,nullptr},
   { "PrintStats",
-    (PyCFunction)cvAdapt_PrintStatsMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_PrintStatsMtd,METH_VARARGS,nullptr},
   { "GetAdaptedMesh",
-    (PyCFunction)cvAdapt_GetAdaptedMeshMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_GetAdaptedMeshMtd,METH_VARARGS,nullptr},
   { "TransferSolution",
-    (PyCFunction)cvAdapt_TransferSolutionMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_TransferSolutionMtd,METH_VARARGS,nullptr},
   { "TransferRegions",
-    (PyCFunction)cvAdapt_TransferRegionsMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_TransferRegionsMtd,METH_VARARGS,nullptr},
   { "WriteAdaptedModel",
-    (PyCFunction)cvAdapt_WriteAdaptedModelMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_WriteAdaptedModelMtd,METH_VARARGS,nullptr},
   { "WriteAdaptedMesh",
-    (PyCFunction)cvAdapt_WriteAdaptedMeshMtd,METH_VARARGS,NULL},
+    (PyCFunction)cvAdapt_WriteAdaptedMeshMtd,METH_VARARGS,nullptr},
   { "WriteAdaptedSolution",
-    (PyCFunction)cvAdapt_WriteAdaptedSolutionMtd,METH_VARARGS,NULL},
- {NULL}
+    (PyCFunction)cvAdapt_WriteAdaptedSolutionMtd,METH_VARARGS,nullptr},
+ {nullptr}
 };
 
 static PyTypeObject pyAdaptObjectType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   "pyMeshAdapt.pyAdaptObject",             /* tp_name */
   sizeof(pyAdaptObject),             /* tp_basicsize */
   0,                         /* tp_itemsize */
@@ -218,12 +218,12 @@ static PyTypeObject pyAdaptObjectType = {
   0,                  /* tp_new */
 };
 static PyMethodDef pyAdaptMesh_methods[] = {
-  {"Registrars",Adapt_RegistrarsListCmd,METH_NOARGS,NULL},
-  {NULL, NULL}
+  {"Registrars",Adapt_RegistrarsListCmd,METH_NOARGS,nullptr},
+  {nullptr, nullptr}
 };
 
 static PyTypeObject pyAdaptObjectRegistrarType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   "pyMeshAdapt.pyAdaptObjectRegistrar",             /* tp_name */
   sizeof(pyAdaptObjectRegistrar),             /* tp_basicsize */
   0,                         /* tp_itemsize */
@@ -251,7 +251,7 @@ static PyTypeObject pyAdaptObjectRegistrarType = {
 static struct PyModuleDef pyAdaptMeshmodule = {
    PyModuleDef_HEAD_INIT,
    "pyAdaptMesh",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    pyAdaptMesh_methods
@@ -264,7 +264,7 @@ initpyMeshAdapt()
 {
 
   // Associate the adapt object registrar with the python interpreter
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository= new cvRepository();
     fprintf(stdout,"New gRepository created from cv_adapt_init\n");
@@ -291,14 +291,14 @@ initpyMeshAdapt()
   PyObject* pythonC;
   pythonC = Py_InitModule("pyMeshAdapt",pyAdaptMesh_methods);
 
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyMeshAdapt\n");
     return;
 
   }
 
-  PyRunTimeErr = PyErr_NewException("pyMeshAdapt.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyMeshAdapt.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   
   Py_INCREF(&pyAdaptObjectType);
@@ -319,7 +319,7 @@ PyInit_pyMeshAdapt()
 {
 
   // Associate the adapt object registrar with the python interpreter
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository= new cvRepository();
     fprintf(stdout,"New gRepository created from cv_adapt_init\n");
@@ -348,13 +348,13 @@ PyInit_pyMeshAdapt()
 
   pythonC = PyModule_Create(&pyAdaptMeshmodule);
 
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyMeshAdapt\n");
     return SV_PYTHON_ERROR;
   }
 
-  PyRunTimeErr = PyErr_NewException("pyMeshAdapt.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyMeshAdapt.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyAdaptObjectType);
   Py_INCREF(&pyAdaptObjectRegistrarType);
@@ -395,7 +395,7 @@ PyObject* Adapt_RegistrarsListCmd( PyObject* self, PyObject* args)
 
 PyObject* cvAdapt_NewObjectCmd( pyAdaptObject* self, PyObject* args)
 {
-  char *resultName = NULL;
+  char *resultName = nullptr;
 
   char *kernelName;
   if(!(PyArg_ParseTuple(args,"s",&resultName)))
@@ -414,7 +414,7 @@ PyObject* cvAdapt_NewObjectCmd( pyAdaptObject* self, PyObject* args)
   KernelType meshType = KERNEL_INVALID;
   kernelName = cvMeshSystem::GetCurrentKernelName();
   // Instantiate the new mesh:
-  cvAdaptObject *adaptor = NULL;
+  cvAdaptObject *adaptor = nullptr;
   if (!strcmp(kernelName,"TetGen")) {
     meshType = KERNEL_TETGEN;
     cvAdaptObject::gCurrentKernel = KERNEL_TETGEN;
@@ -428,8 +428,8 @@ PyObject* cvAdapt_NewObjectCmd( pyAdaptObject* self, PyObject* args)
   fprintf(stdout, kernelName );
   adaptor = cvAdaptObject::DefaultInstantiateAdaptObject(meshType);
 
-  if ( adaptor == NULL ) {
-    PyErr_SetString(PyRunTimeErr, "adaptor is NULL");
+  if ( adaptor == nullptr ) {
+    PyErr_SetString(PyRunTimeErr, "adaptor is nullptr");
   }
 
   // Register the solid:
@@ -493,8 +493,8 @@ static void AdaptPrintMethods()
 // ----------------
 static PyObject* cvAdapt_CreateInternalMeshObjectMtd( pyAdaptObject* self, PyObject* args)
 {
-  char *meshFileName = NULL;
-  char *solidFileName = NULL;
+  char *meshFileName = nullptr;
+  char *solidFileName = nullptr;
 
   if(!(PyArg_ParseTuple(args,"ss",&meshFileName,&solidFileName)))
   {
@@ -503,8 +503,8 @@ static PyObject* cvAdapt_CreateInternalMeshObjectMtd( pyAdaptObject* self, PyObj
   // Do work of command:
 
   cvAdaptObject *geom =self->geom;
-  if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is nullptr\n");
     
   }
   if (geom->CreateInternalMeshObject(meshFileName,solidFileName) != SV_OK)
@@ -521,7 +521,7 @@ static PyObject* cvAdapt_CreateInternalMeshObjectMtd( pyAdaptObject* self, PyObj
 // ----------------
 static PyObject* cvAdapt_LoadModelMtd( pyAdaptObject* self, PyObject* args)
 {
-  char *solidFileName = NULL;
+  char *solidFileName = nullptr;
 
   if(!(PyArg_ParseTuple(args,"s",&solidFileName)))
   {
@@ -531,8 +531,8 @@ static PyObject* cvAdapt_LoadModelMtd( pyAdaptObject* self, PyObject* args)
 
   // Do work of command:
   cvAdaptObject *geom = self->geom;
-  if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is nullptr\n");
     
   }
   if (geom->LoadModel(solidFileName) != SV_OK)
@@ -549,7 +549,7 @@ static PyObject* cvAdapt_LoadModelMtd( pyAdaptObject* self, PyObject* args)
 // ----------------
 static PyObject* cvAdapt_LoadMeshMtd( pyAdaptObject* self, PyObject* args)
 {
-  char *meshFileName = NULL;
+  char *meshFileName = nullptr;
   if(!(PyArg_ParseTuple(args,"s",&meshFileName)))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char, meshFileName");
@@ -559,8 +559,8 @@ static PyObject* cvAdapt_LoadMeshMtd( pyAdaptObject* self, PyObject* args)
   // Do work of command:
 
   cvAdaptObject *geom =self->geom;
-  if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is nullptr\n");
     
   }
   if (geom->LoadMesh(meshFileName) != SV_OK)
@@ -577,7 +577,7 @@ static PyObject* cvAdapt_LoadMeshMtd( pyAdaptObject* self, PyObject* args)
 // ----------------
 static PyObject* cvAdapt_LoadSolutionFromFileMtd( pyAdaptObject* self, PyObject* args)
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
 
   if(!(PyArg_ParseTuple(args,"s",&fileName)))
@@ -588,8 +588,8 @@ static PyObject* cvAdapt_LoadSolutionFromFileMtd( pyAdaptObject* self, PyObject*
   // Do work of command:
 
   cvAdaptObject *geom = self->geom;
-  if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is nullptr\n");
     
   }
   if (geom->LoadSolutionFromFile(fileName) != SV_OK)
@@ -606,7 +606,7 @@ static PyObject* cvAdapt_LoadSolutionFromFileMtd( pyAdaptObject* self, PyObject*
 // ----------------
 static PyObject* cvAdapt_LoadYbarFromFileMtd( pyAdaptObject* self, PyObject* args)
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   if(!(PyArg_ParseTuple(args,"s",&fileName)))
   {
@@ -616,8 +616,8 @@ static PyObject* cvAdapt_LoadYbarFromFileMtd( pyAdaptObject* self, PyObject* arg
   // Do work of command:
 
   cvAdaptObject *geom = self->geom;
-  if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is nullptr\n");
     
   }
   if (geom->LoadYbarFromFile(fileName) != SV_OK)
@@ -634,7 +634,7 @@ static PyObject* cvAdapt_LoadYbarFromFileMtd( pyAdaptObject* self, PyObject* arg
 // ----------------
 static PyObject* cvAdapt_LoadAvgSpeedFromFileMtd( pyAdaptObject* self, PyObject* args)
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
   if(!(PyArg_ParseTuple(args,"s",&fileName)))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char, fileName.");
@@ -643,8 +643,8 @@ static PyObject* cvAdapt_LoadAvgSpeedFromFileMtd( pyAdaptObject* self, PyObject*
   // Do work of command:
 
   cvAdaptObject *geom = self->geom;
-  if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is nullptr\n");
     
   }
   if (geom->LoadAvgSpeedFromFile(fileName) != SV_OK)
@@ -661,7 +661,7 @@ static PyObject* cvAdapt_LoadAvgSpeedFromFileMtd( pyAdaptObject* self, PyObject*
 // ----------------
 static PyObject* cvAdapt_LoadHessianFromFileMtd( pyAdaptObject* self, PyObject* args)
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   if(!(PyArg_ParseTuple(args,"s",&fileName)))
   {
@@ -671,8 +671,8 @@ static PyObject* cvAdapt_LoadHessianFromFileMtd( pyAdaptObject* self, PyObject* 
   // Do work of command:
 
   cvAdaptObject *geom = self->geom;
-  if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is nullptr\n");
     
   }
   if (geom->LoadHessianFromFile(fileName) != SV_OK)
@@ -735,7 +735,7 @@ static PyObject* cvAdapt_ReadAvgSpeedFromMeshMtd( pyAdaptObject* self, PyObject*
 static PyObject* cvAdapt_SetAdaptOptionsMtd( pyAdaptObject* self, PyObject* args)
 {
   double value=0;
-  char *flag = NULL;
+  char *flag = nullptr;
 
   if(!(PyArg_ParseTuple(args,"sd",&flag,&value)))
   {
@@ -745,8 +745,8 @@ static PyObject* cvAdapt_SetAdaptOptionsMtd( pyAdaptObject* self, PyObject* args
   // Do work of command:
 
   cvAdaptObject *geom = self->geom;
-  if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is nullptr\n");
     
   }
   if (geom->SetAdaptOptions(flag,value) != SV_OK)
@@ -781,7 +781,7 @@ static PyObject* cvAdapt_CheckOptionsMtd( pyAdaptObject* self, PyObject* args)
 // ----------------
 static PyObject* cvAdapt_SetMetricMtd( pyAdaptObject* self, PyObject* args)
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
   int option = -1;
   int strategy = -1;
 
@@ -893,7 +893,7 @@ PyObject* cvAdapt_TransferRegionsMtd( pyAdaptObject* self, PyObject* args)
 // ----------------
 static PyObject* cvAdapt_WriteAdaptedModelMtd( pyAdaptObject* self, PyObject* args)
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
 
   if(!(PyArg_ParseTuple(args,"s",&fileName)))
@@ -903,8 +903,8 @@ static PyObject* cvAdapt_WriteAdaptedModelMtd( pyAdaptObject* self, PyObject* ar
   // Do work of command:
 
   cvAdaptObject *geom = self->geom;
-  if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is nullptr\n");
     
   }
   if (geom->WriteAdaptedModel(fileName) != SV_OK)
@@ -921,7 +921,7 @@ static PyObject* cvAdapt_WriteAdaptedModelMtd( pyAdaptObject* self, PyObject* ar
 // ----------------
 static PyObject* cvAdapt_WriteAdaptedMeshMtd( pyAdaptObject* self, PyObject* args)
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   if(!(PyArg_ParseTuple(args,"s",&fileName)))
   {
@@ -930,8 +930,8 @@ static PyObject* cvAdapt_WriteAdaptedMeshMtd( pyAdaptObject* self, PyObject* arg
   // Do work of command:
 
   cvAdaptObject *geom = self->geom;
-  if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is nullptr\n");
     
   }
   if (geom->WriteAdaptedMesh(fileName) != SV_OK)
@@ -948,7 +948,7 @@ static PyObject* cvAdapt_WriteAdaptedMeshMtd( pyAdaptObject* self, PyObject* arg
 // ----------------
 static PyObject* cvAdapt_WriteAdaptedSolutionMtd( pyAdaptObject* self, PyObject* args)
 {
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   if(!(PyArg_ParseTuple(args,"s",&fileName)))
   {
@@ -957,8 +957,8 @@ static PyObject* cvAdapt_WriteAdaptedSolutionMtd( pyAdaptObject* self, PyObject*
   // Do work of command:
 
   cvAdaptObject *geom = self->geom;
-  if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is NULL\n");
+  if ( geom == nullptr ) {
+    PyErr_SetString(PyRunTimeErr,"Adapt object should already be created! It is nullptr\n");
     
   }
   if (geom->WriteAdaptedSolution(fileName) != SV_OK)

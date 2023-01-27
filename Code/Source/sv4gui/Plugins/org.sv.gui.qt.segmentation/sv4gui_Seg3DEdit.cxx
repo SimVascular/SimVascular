@@ -69,9 +69,9 @@ const QString sv4guiSeg3DEdit::EXTENSION_ID = "org.sv.views.segmentation3d";
 sv4guiSeg3DEdit::sv4guiSeg3DEdit() :
     ui(new Ui::sv4guiSeg3DEdit)
 {
-    m_MitkSeg3DNode=NULL;
-    m_MitkSeg3D=NULL;
-    m_VtkImage=NULL;
+    m_MitkSeg3DNode=nullptr;
+    m_MitkSeg3D=nullptr;
+    m_VtkImage=nullptr;
 }
 
 sv4guiSeg3DEdit::~sv4guiSeg3DEdit()
@@ -86,7 +86,7 @@ void sv4guiSeg3DEdit::CreateQtPartControl( QWidget *parent )
 
     m_DisplayWidget=GetActiveStdMultiWidget();
 
-    if(m_DisplayWidget==NULL)
+    if(m_DisplayWidget==nullptr)
     {
         parent->setEnabled(false);
         MITK_ERROR << "Plugin PathEdit Init Error: No QmitkStdMultiWidget!";
@@ -153,11 +153,11 @@ void sv4guiSeg3DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     m_Parent->setEnabled(true);
 
-    mitk::DataNode::Pointer imageNode=NULL;
+    mitk::DataNode::Pointer imageNode=nullptr;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_MitkSeg3DNode,isProjFolder,false);
 
-    mitk::Image* mImage=NULL;
+    mitk::Image* mImage=nullptr;
     if(rs->size()>0)
     {
         mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
@@ -175,7 +175,7 @@ void sv4guiSeg3DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     }
 
     if(!mImage){
-        QMessageBox::warning(NULL,"No image found for this project","Make sure the image is loaded!");
+        QMessageBox::warning(nullptr,"No image found for this project","Make sure the image is loaded!");
 //        return;
     }
 
@@ -184,7 +184,7 @@ void sv4guiSeg3DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     if(mImage)
         m_VtkImage=sv4guiVtkUtils::MitkImage2VtkImage(mImage);
     else
-        m_VtkImage=NULL;
+        m_VtkImage=nullptr;
 
     double range[2]={0,100};
     if(m_VtkImage)
@@ -204,7 +204,7 @@ void sv4guiSeg3DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     m_DataInteractor->SetDataNode(m_MitkSeg3DNode);
 
     sv4guiSeg3D* seg3D=m_MitkSeg3D->GetSeg3D();
-    sv4guiSeg3DParam* param=NULL;
+    sv4guiSeg3DParam* param=nullptr;
     if(seg3D)
         param=&(seg3D->GetParam());
 
@@ -244,7 +244,7 @@ void sv4guiSeg3DEdit::CreateByCollidingFronts()
         return;
 
     if(!m_VtkImage){
-        QMessageBox::warning(NULL,"No image found for this project","Make sure the image is loaded!");
+        QMessageBox::warning(nullptr,"No image found for this project","Make sure the image is loaded!");
         return;
     }
 
@@ -275,7 +275,7 @@ void sv4guiSeg3DEdit::CreateByCollidingFronts()
 
     if(startSeeds.size()==0 || endSeeds.size()==0)
     {
-        QMessageBox::warning(NULL,"Seeds Missing","Please add seeds before segmenting!");
+        QMessageBox::warning(nullptr,"Seeds Missing","Please add seeds before segmenting!");
         return;
     }
 
@@ -333,10 +333,10 @@ void sv4guiSeg3DEdit::ClearAll()
 {
     if(m_MitkSeg3DNode.IsNotNull())
     {
-        m_MitkSeg3DNode->SetDataInteractor(NULL);
-        m_DataInteractor=NULL;
+        m_MitkSeg3DNode->SetDataInteractor(nullptr);
+        m_DataInteractor=nullptr;
     }
 
-    m_MitkSeg3D=NULL;
-    m_MitkSeg3DNode=NULL;
+    m_MitkSeg3D=nullptr;
+    m_MitkSeg3DNode=nullptr;
 }

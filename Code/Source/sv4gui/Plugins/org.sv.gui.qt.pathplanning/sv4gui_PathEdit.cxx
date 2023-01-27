@@ -62,14 +62,14 @@ const QString sv4guiPathEdit::EXTENSION_ID = "org.sv.views.pathplanning";
 sv4guiPathEdit::sv4guiPathEdit():
     ui(new Ui::sv4guiPathEdit),
     m_PathChangeObserverTag(-1),
-    m_PathNode(NULL),
-    m_Path(NULL),
-    m_PathFolderNode(NULL),
-    m_DisplayWidget(NULL),
-    m_SmoothWidget(NULL),
-    m_PathCreateWidget(NULL),
-    m_PathCreateWidget2(NULL),
-    m_ImageNode(NULL),
+    m_PathNode(nullptr),
+    m_Path(nullptr),
+    m_PathFolderNode(nullptr),
+    m_DisplayWidget(nullptr),
+    m_SmoothWidget(nullptr),
+    m_PathCreateWidget(nullptr),
+    m_PathCreateWidget2(nullptr),
+    m_ImageNode(nullptr),
     m_UpdatingGUI(false)
 {
 }
@@ -169,7 +169,7 @@ void sv4guiPathEdit::Hidden()
 
 int sv4guiPathEdit::GetTimeStep()
 {
-    mitk::SliceNavigationController* timeNavigationController = NULL;
+    mitk::SliceNavigationController* timeNavigationController = nullptr;
     if(m_DisplayWidget)
     {
         timeNavigationController=m_DisplayWidget->GetTimeNavigationController();
@@ -224,8 +224,8 @@ void sv4guiPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         return;
     }
 
-    m_ImageNode=NULL;
-    m_Image=NULL;
+    m_ImageNode=nullptr;
+    m_Image=nullptr;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_PathNode,isProjFolder,false);
     if(rs->size()>0)
@@ -249,7 +249,7 @@ void sv4guiPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     }
 
     rs=GetDataStorage()->GetSources(m_PathNode);
-    m_PathFolderNode=NULL;
+    m_PathFolderNode=nullptr;
     if(rs->size()>0)
         m_PathFolderNode=rs->GetElement(0);
 
@@ -260,7 +260,7 @@ void sv4guiPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     int timeStep=GetTimeStep();
 
     sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL) return;
+    if(pathElement==nullptr) return;
 
     ui->labelPathPointNumber->setText(QString::number(pathElement->GetPathPointNumber()));
 
@@ -281,7 +281,7 @@ void sv4guiPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     m_PointMoveObserverTag = m_Path->AddObserver( sv4guiPathFinishMovePointEvent(), pointMoveCommand);
 
     /*
-    mitk::BaseData* baseData=NULL;
+    mitk::BaseData* baseData=nullptr;
     if(m_ImageNode.IsNotNull())
         baseData=m_ImageNode->GetData();
     else if(m_PathNode.IsNotNull())
@@ -325,12 +325,12 @@ void sv4guiPathEdit::ClearAll()
 
     if(m_PathNode.IsNotNull())
     {
-        m_PathNode->SetDataInteractor(NULL);
-        m_DataInteractor=NULL;
+        m_PathNode->SetDataInteractor(nullptr);
+        m_DataInteractor=nullptr;
     }
 
-    m_Path=NULL;
-    m_PathNode=NULL;
+    m_Path=nullptr;
+    m_PathNode=nullptr;
 
     ui->labelPathName->setText("");
     ui->labelPathPointNumber->setText("");
@@ -339,11 +339,11 @@ void sv4guiPathEdit::ClearAll()
 
 void sv4guiPathEdit::UpdateGUI()
 {
-    if(m_Path==NULL) return;
+    if(m_Path==nullptr) return;
 
     int timeStep=GetTimeStep();
     sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL) return;
+    if(pathElement==nullptr) return;
 
     m_UpdatingGUI=true;
 
@@ -412,7 +412,7 @@ void sv4guiPathEdit::UpdateSlice()
 
 void sv4guiPathEdit::SetupResliceSlider()
 {
-//    mitk::DataNode::Pointer imageNode=NULL;
+//    mitk::DataNode::Pointer imageNode=nullptr;
 //    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
 //    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_PathNode,isProjFolder,false);
 //    if(rs->size()>0)
@@ -436,11 +436,11 @@ void sv4guiPathEdit::SetupResliceSlider()
 
 //    if(m_ImageNode.IsNull())
 //        return;
-    if(m_Path==NULL)
+    if(m_Path==nullptr)
         return;
     int timeStep=GetTimeStep();
     sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL) return;
+    if(pathElement==nullptr) return;
 
     if(pathElement->GetControlPointNumber()>1)
     {
@@ -461,7 +461,7 @@ void sv4guiPathEdit::SetupResliceSlider()
         else if(m_PathNode.IsNotNull())
             ui->resliceSlider->setDataNode(m_PathNode);
         else
-            ui->resliceSlider->setDataNode(NULL);
+            ui->resliceSlider->setDataNode(nullptr);
 
         double resliceSize=m_Path->GetResliceSize();
         if(resliceSize==0)
@@ -486,7 +486,7 @@ void sv4guiPathEdit::GetImageRealBounds(double realBounds[6])
     for(int i=0;i<6;i++)
         realBounds[i]=0.0;
 
-    if(m_Image==NULL)
+    if(m_Image==nullptr)
         return;
 
     mitk::Point3D ori=m_Image->GetGeometry()->GetOrigin();
@@ -515,14 +515,14 @@ double sv4guiPathEdit::GetVolumeImageSpacing()
 
 void sv4guiPathEdit::ChangePath(){
 
-    if(m_Path==NULL) return;
+    if(m_Path==nullptr) return;
 
     int timeStep=GetTimeStep();
 
     sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL) return;
+    if(pathElement==nullptr) return;
 
-    if(m_PathCreateWidget==NULL)
+    if(m_PathCreateWidget==nullptr)
     {
         m_PathCreateWidget=new sv4guiPathCreate(this->GetDataStorage(), this->GetDataManagerSelection().front(), timeStep);
     }
@@ -549,15 +549,15 @@ void sv4guiPathEdit::AddPoint(mitk::Point3D point)
     std::cout << "===================== sv4guiPathEdit::AddPoint =====================" << std::endl;
     std::cout << "[AddPoint] Point: " << point[0] << "  " << point[1] << "  " << point[2] << std::endl;
 
-    if (m_Path==NULL) {
-        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
+    if (m_Path==nullptr) {
+        QMessageBox::information(nullptr,"No Path Selected","Please select a path in data manager!");
         return;
     }
 
     int timeStep=GetTimeStep();
 
     sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL) return;
+    if(pathElement==nullptr) return;
 
     //Check if the point already exists
     if(pathElement->SearchControlPoint(point,0)!=-2)
@@ -595,7 +595,7 @@ void sv4guiPathEdit::AddPoint(mitk::Point3D point)
           index = rows.front().row();
           if (index < 0)
           {
-            QMessageBox::information(NULL,"No Point Selected","For 'Before' or 'After' mode, please select a point in the control point list!");
+            QMessageBox::information(nullptr,"No Point Selected","For 'Before' or 'After' mode, please select a point in the control point list!");
             return;
           }
           break;
@@ -609,7 +609,7 @@ void sv4guiPathEdit::AddPoint(mitk::Point3D point)
           index= rows.front().row()+1;
           if (index < 0)
           {
-            QMessageBox::information(NULL,"No Point Selected","For 'Before' or 'After' mode, please select a point in the control point list!");
+            QMessageBox::information(nullptr,"No Point Selected","For 'Before' or 'After' mode, please select a point in the control point list!");
             return;
           }
           break;
@@ -679,15 +679,15 @@ void sv4guiPathEdit::ManuallyAdd()
 }
 
 void sv4guiPathEdit::DeleteSelected(){
-    if(m_Path==NULL){
-        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
+    if(m_Path==nullptr){
+        QMessageBox::information(nullptr,"No Path Selected","Please select a path in data manager!");
         return;
     }
 
     int timeStep=GetTimeStep();
 
     sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL) return;
+    if(pathElement==nullptr) return;
 
     if(pathElement->GetControlPointNumber()<1){
         return;
@@ -723,7 +723,7 @@ void sv4guiPathEdit::SelectPoint(int index)
     {
         int timeStep=GetTimeStep();
         sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-        if(pathElement==NULL) return;
+        if(pathElement==nullptr) return;
 
         pathElement->DeselectControlPoint();
         pathElement->SetControlPointSelected(index,true);
@@ -762,7 +762,7 @@ void sv4guiPathEdit::SelectPoint(const QModelIndex & idx)
 
 void sv4guiPathEdit::SmoothCurrentPath()
 {
-    if(m_SmoothWidget==NULL)
+    if(m_SmoothWidget==nullptr)
     {
         m_SmoothWidget=new sv4guiPathSmooth();
     }

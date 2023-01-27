@@ -72,7 +72,7 @@
 // repository.  If a query is made (i.e. GetNextName) when that
 // condition is not satisfied (i.e. the last call to InitIterator was
 // prior to either a more recent Register or UnRegister), then
-// GetNextName returns NULL.
+// GetNextName returns nullptr.
 
 #include "sv_RepositoryData.h"
 #include "SimVascular.h"

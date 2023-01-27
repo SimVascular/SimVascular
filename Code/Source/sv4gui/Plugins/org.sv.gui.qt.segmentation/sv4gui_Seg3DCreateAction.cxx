@@ -40,7 +40,7 @@
 #include <QMessageBox>
 
 sv4guiSeg3DCreateAction::sv4guiSeg3DCreateAction()
-    : m_Functionality(NULL)
+    : m_Functionality(nullptr)
 {
     m_Interface=new sv4guiDataNodeOperationInterface;
 }
@@ -83,7 +83,7 @@ void sv4guiSeg3DCreateAction::Run(const QList<mitk::DataNode::Pointer> &selected
 //        }
 
         bool ok;
-        QString text = QInputDialog::getText(NULL, tr("Create 3D Segmentation"),
+        QString text = QInputDialog::getText(nullptr, tr("Create 3D Segmentation"),
                                              tr("Name:"), QLineEdit::Normal,
                                              "", &ok);
         if (!ok || text.trimmed().isEmpty())
@@ -93,7 +93,7 @@ void sv4guiSeg3DCreateAction::Run(const QList<mitk::DataNode::Pointer> &selected
 
         mitk::DataNode::Pointer existingNode=m_DataStorage->GetNamedDerivedNode(segName.c_str(),segFolderNode);
         if(existingNode){
-            QMessageBox::warning(NULL,"Name Already Exists","Please use a different name!");
+            QMessageBox::warning(nullptr,"Name Already Exists","Please use a different name!");
             return;
         }
 

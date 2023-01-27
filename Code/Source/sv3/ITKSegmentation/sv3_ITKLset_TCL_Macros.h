@@ -34,7 +34,7 @@
 
 #define CVTCLFunctionInit(Prefix,FunctionName,TclName)  						\
 		Tcl_CreateCommand( interp, #TclName, Prefix##_##FunctionName ,				\
-			(ClientData)NULL, (Tcl_CmdDeleteProc *)NULL ); 						\
+			(ClientData)nullptr, (Tcl_CmdDeleteProc *)nullptr ); 						\
 
 #define CVTCLObjMethodInit(Prefix,FunctionName,TclName) 									\
 		if ( Tcl_StringMatch( argv[1], #TclName ) ) {						 	\
@@ -47,7 +47,7 @@
 #define CVTCLRepositoryExistsMacro(obj) 										\
 		if ( gRepository->Exists( obj ) ) { 									\
 			Tcl_AppendResult( interp, "object ", obj, " already exists", 		\
-					(char *)NULL ); 											\
+					(char *)nullptr ); 											\
 					return TCL_ERROR;											\
 		}																		\
 
@@ -85,7 +85,7 @@
 			type input; 														\
 			int table_size = 1;													\
 			ARG_Entry arg_table[] = {											\
-					{ "-input", cv_type, &input, NULL, REQUIRED, 0, { 0 } },	\
+					{ "-input", cv_type, &input, nullptr, REQUIRED, 0, { 0 } },	\
 			};																	\
 			usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );			\
 			CVTCLParseTclStrMacro(2)											\
@@ -104,13 +104,13 @@
 			char * objName;														\
 			int table_size = 1; 												\
 			ARG_Entry arg_table[] = {											\
-					{ "-out", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } }, \
+					{ "-out", STRING_Type, &objName, nullptr, REQUIRED, 0, { 0 } }, \
 			};																	\
 			usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );			\
 			CVTCLTestArgsMacro(2)												\
 			CVTCLParseTclStrMacro(2)											\
 			cvObj = ls->Get##property (); 										\
-			if ( cvObj == NULL ) { 												\
+			if ( cvObj == nullptr ) { 												\
 				Tcl_SetResult( interp, "error, obj is null", TCL_STATIC ); 		\
 				return TCL_ERROR;												\
 			}																	\

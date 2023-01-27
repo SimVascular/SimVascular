@@ -71,9 +71,9 @@ PyObject* circleContour_AvailableCmd(PyObject* self,PyObject* args);
 PyObject* circleContour_RegistrarsListCmd(PyObject* self, PyObject* args);
 
 PyMethodDef circleContour_methods[] = {
-  {"Available", circleContour_AvailableCmd,METH_NOARGS,NULL},
-  {"Registrars", circleContour_RegistrarsListCmd,METH_NOARGS,NULL},
-  {NULL, NULL}
+  {"Available", circleContour_AvailableCmd,METH_NOARGS,nullptr},
+  {"Registrars", circleContour_RegistrarsListCmd,METH_NOARGS,nullptr},
+  {nullptr, nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 2
@@ -88,7 +88,7 @@ initpyCircleContour()
   pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
   
-  if (contourObjectRegistrar != NULL) {
+  if (contourObjectRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_CIRCLE,
       (FactoryMethodPtr) &CreateCircleContour );
@@ -102,7 +102,7 @@ initpyCircleContour()
 
   PyObject* pythonC;
   pythonC = Py_InitModule("pyCircleContour", circleContour_methods);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyCircleContour\n");
     return;
@@ -114,7 +114,7 @@ initpyCircleContour()
 static struct PyModuleDef pyCircleContourModule = {
    PyModuleDef_HEAD_INIT,
    "pyCircleContour",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    circleContour_methods
@@ -133,7 +133,7 @@ PyInit_pyCircleContour()
   pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
   
-  if (contourObjectRegistrar != NULL) {
+  if (contourObjectRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_CIRCLE,
       (FactoryMethodPtr) &CreateCircleContour );
@@ -147,7 +147,7 @@ PyInit_pyCircleContour()
 
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyCircleContourModule);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyCircleContour\n");
     Py_RETURN_NONE;

@@ -49,7 +49,7 @@ static int ARG_FindArgvIx( char *name, int argc, CONST84 char *argv[] );
 
 /* For string args, this function is going to simply copy pointers
  * from argv into the arg address given in arg_table.  Also note that
- * if the pointer to use for storing an arg's value is NULL, this is
+ * if the pointer to use for storing an arg's value is nullptr, this is
  * taken to be a normal indication that this arg should simply be
  * skipped (i.e. not parsed).  However, this is useful only for
  * clarity, since any entries that are left out of the table in the
@@ -103,7 +103,7 @@ int ARG_ParseTclStr( Tcl_Interp *interp,
     addr = arg_table[i].addr;
     str = &(arg_table[i].str_repr);
 
-    if (addr == NULL) {
+    if (addr == nullptr) {
       return TCL_ERROR;
     }
 
@@ -237,7 +237,7 @@ int ARG_ParseTclListStatic( Tcl_Interp *interp, ARG_List list, ARG_Type t,
     return TCL_ERROR;
   }
 
-  if ( arr == NULL ) {
+  if ( arr == nullptr ) {
     return TCL_ERROR;
   }
 
@@ -520,6 +520,6 @@ void ARG_Show( int table_size, ARG_Entry arg_table[] )
 
 void tcl_printstr( Tcl_Interp *interp, char *str )
 {
-  Tcl_VarEval( interp, "puts [list ", str, "]", (char *) NULL );
+  Tcl_VarEval( interp, "puts [list ", str, "]", (char *) nullptr );
   return;
 }

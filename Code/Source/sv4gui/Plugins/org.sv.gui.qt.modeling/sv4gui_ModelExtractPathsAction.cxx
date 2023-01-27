@@ -47,7 +47,7 @@
 
 sv4guiModelExtractPathsAction::sv4guiModelExtractPathsAction()
 {
-    m_Thread=NULL;
+    m_Thread=nullptr;
     m_Interface=new sv4guiDataNodeOperationInterface;
 }
 
@@ -131,7 +131,7 @@ void sv4guiModelExtractPathsAction::Run(const QList<mitk::DataNode::Pointer> &se
 
     if(threadRunning)
     {
-        QMessageBox::warning(NULL,"Project is Busy","A work thread is running in the project!");
+        QMessageBox::warning(nullptr,"Project is Busy","A work thread is running in the project!");
         return;
     }
 

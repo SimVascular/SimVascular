@@ -95,22 +95,22 @@ void sv4guiProjectCreate::CreateNewProject()
     QString projParentDir=ui->lineEditDir->text().trimmed();
 
     if(projName.isEmpty()){
-        QMessageBox::warning(NULL,"No Name","Please give a project name!");
+        QMessageBox::warning(nullptr,"No Name","Please give a project name!");
         return;
     }
 
     if(projParentDir.isEmpty()){
-        QMessageBox::warning(NULL,"No Dir","Please give a directory!");
+        QMessageBox::warning(nullptr,"No Dir","Please give a directory!");
         return;
     }else if(!QFile::exists(projParentDir)){
-        QMessageBox::warning(NULL,"No Dir Exists","Please give a existing directory!");
+        QMessageBox::warning(nullptr,"No Dir Exists","Please give a existing directory!");
         return;
     }
 
     QDir dir(projParentDir);
     if(dir.exists(projName))
     {
-        QMessageBox::warning(NULL,"Project Exists","Please give a new project!");
+        QMessageBox::warning(nullptr,"Project Exists","Please give a new project!");
         return;
     }
 

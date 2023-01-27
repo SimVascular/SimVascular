@@ -56,7 +56,7 @@ void vtkvmtkCenterlineUtilities::GetGroupsIdList(vtkPolyData* centerlines, const
 {
   vtkDataArray* groupIdsArray = centerlines->GetCellData()->GetArray(groupIdsArrayName);
 
-  vtkDataArray* blankingArray = NULL;
+  vtkDataArray* blankingArray = nullptr;
 
   if (blankingArrayName)
   {
@@ -86,7 +86,7 @@ void vtkvmtkCenterlineUtilities::GetGroupsIdList(vtkPolyData* centerlines, const
 
 void vtkvmtkCenterlineUtilities::GetGroupsIdList(vtkPolyData* centerlines, const char* groupIdsArrayName, vtkIdList* groupIds)
 {
-  vtkvmtkCenterlineUtilities::GetGroupsIdList(centerlines,groupIdsArrayName,NULL,0,groupIds);
+  vtkvmtkCenterlineUtilities::GetGroupsIdList(centerlines,groupIdsArrayName,nullptr,0,groupIds);
 }
 
 void vtkvmtkCenterlineUtilities::GetNonBlankedGroupsIdList(vtkPolyData* centerlines, const char* groupIdsArrayName, const char* blankingArrayName, vtkIdList* groupIds)

@@ -71,16 +71,16 @@ PyObject* thresholdContour_AvailableCmd(PyObject* self,PyObject* args);
 PyObject* thresholdContour_RegistrarsListCmd(PyObject* self, PyObject* args);
 
 PyMethodDef thresholdContour_methods[] = {
-  {"Available", thresholdContour_AvailableCmd,METH_NOARGS,NULL},
-  {"Registrars", thresholdContour_RegistrarsListCmd,METH_NOARGS,NULL},
-  {NULL, NULL}
+  {"Available", thresholdContour_AvailableCmd,METH_NOARGS,nullptr},
+  {"Registrars", thresholdContour_RegistrarsListCmd,METH_NOARGS,nullptr},
+  {nullptr, nullptr}
 };
 
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyThresholdContourModule = {
    PyModuleDef_HEAD_INIT,
    "pyThresholdContour",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "", /* module documentation, may be nullptr */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
    thresholdContour_methods
@@ -99,7 +99,7 @@ initpyThresholdContour()
   pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
 
-  if (contourObjectRegistrar != NULL) {
+  if (contourObjectRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_THRESHOLD,
       (FactoryMethodPtr) &CreateThresholdContour );
@@ -112,7 +112,7 @@ initpyThresholdContour()
 
   PyObject* pythonC;
   pythonC = Py_InitModule("pyThresholdContour", thresholdContour_methods);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyThresholdContour");
     return;
@@ -132,7 +132,7 @@ PyInit_pyThresholdContour()
   pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
 
-  if (contourObjectRegistrar != NULL) {
+  if (contourObjectRegistrar != nullptr) {
           // Register this particular factory method with the main app.
           contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_THRESHOLD,
       (FactoryMethodPtr) &CreateThresholdContour );
@@ -145,7 +145,7 @@ PyInit_pyThresholdContour()
 
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyThresholdContourModule);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyThresholdContour");
     Py_RETURN_NONE;

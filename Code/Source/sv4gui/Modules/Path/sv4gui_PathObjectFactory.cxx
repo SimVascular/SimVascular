@@ -62,7 +62,7 @@ mitk::Mapper::Pointer sv4guiPathObjectFactory::CreateMapper(mitk::DataNode* node
 
   if ( id == mitk::BaseRenderer::Standard2D )
   {
-    if( dynamic_cast<sv4guiPath*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiPath*>(node->GetData())!=nullptr )
     {
       newMapper = sv4guiPathVtkMapper2D::New();
       newMapper->SetDataNode(node);
@@ -70,7 +70,7 @@ mitk::Mapper::Pointer sv4guiPathObjectFactory::CreateMapper(mitk::DataNode* node
   }
   else if ( id == mitk::BaseRenderer::Standard3D )
   {
-    if( dynamic_cast<sv4guiPath*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiPath*>(node->GetData())!=nullptr )
     {
       newMapper = sv4guiPathVtkMapper3D::New();
       newMapper->SetDataNode(node);
@@ -83,15 +83,15 @@ mitk::Mapper::Pointer sv4guiPathObjectFactory::CreateMapper(mitk::DataNode* node
 void sv4guiPathObjectFactory::SetDefaultProperties(mitk::DataNode* node)
 {
 
-  if(node==NULL)
+  if(node==nullptr)
     return;
 
   mitk::DataNode::Pointer nodePointer = node;
 
-  if(node->GetData() ==NULL)
+  if(node->GetData() ==nullptr)
     return;
 
-  if( dynamic_cast<sv4guiPath*>(node->GetData())!=NULL )
+  if( dynamic_cast<sv4guiPath*>(node->GetData())!=nullptr )
   {
     sv4guiPathVtkMapper2D::SetDefaultProperties(node);
     sv4guiPathVtkMapper3D::SetDefaultProperties(node);

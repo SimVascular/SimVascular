@@ -130,7 +130,7 @@ cvRepositoryData::~cvRepositoryData()
   Tcl_DString *dsPtr;
 
   for ( entryPtr = Tcl_FirstHashEntry( &labels_, &search );
-	entryPtr != NULL;
+	entryPtr != nullptr;
 	entryPtr = Tcl_NextHashEntry( &search ) ) {
     dsPtr = (Tcl_DString *) Tcl_GetHashValue( entryPtr );
     Tcl_DStringFree( dsPtr );
@@ -191,7 +191,7 @@ int cvRepositoryData::GetNumLabels()
   int numEntries = 0;
 
   for ( entryPtr = Tcl_FirstHashEntry( &labels_, &search );
-	entryPtr != NULL;
+	entryPtr != nullptr;
 	entryPtr = Tcl_NextHashEntry( &search ) ) {
     numEntries++;
   }
@@ -218,7 +218,7 @@ void cvRepositoryData::GetLabelKeys( int *numKeys, char **keys[] )
 
   i = 0;
   for ( entryPtr = Tcl_FirstHashEntry( &labels_, &search );
-	entryPtr != NULL;
+	entryPtr != nullptr;
 	entryPtr = Tcl_NextHashEntry( &search ) ) {
     (*keys)[i] = (char*)(Tcl_GetHashKey( &labels_, entryPtr ));
     i++;
@@ -237,7 +237,7 @@ int cvRepositoryData::IsLabelPresent( char *key )
   Tcl_HashEntry *entryPtr;
 
   entryPtr = Tcl_FindHashEntry( &labels_, key );
-  if ( entryPtr == NULL ) {
+  if ( entryPtr == nullptr ) {
     return SV_ERROR;
   }
   return SV_OK;
@@ -255,7 +255,7 @@ int cvRepositoryData::GetLabel( char *key, char **value )
   Tcl_DString *dsPtr;
 
   entryPtr = Tcl_FindHashEntry( &labels_, key );
-  if ( entryPtr == NULL ) {
+  if ( entryPtr == nullptr ) {
     return SV_ERROR;
   }
 
@@ -300,7 +300,7 @@ void cvRepositoryData::ClearLabel( char *key )
   Tcl_DString *dsPtr;
 
   entryPtr = Tcl_FindHashEntry( &labels_, key );
-  if ( entryPtr == NULL ) {
+  if ( entryPtr == nullptr ) {
     return;
   }
 

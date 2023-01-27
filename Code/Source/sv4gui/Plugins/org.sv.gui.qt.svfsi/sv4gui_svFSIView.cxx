@@ -60,15 +60,15 @@ const QString sv4guisvFSIView::EXTENSION_ID = "org.sv.views.svfsi";
 
 sv4guisvFSIView::sv4guisvFSIView() : ui(new Ui::sv4guisvFSIView)
 {
-    m_MitkJob=NULL;
-    m_Job=NULL;
-    m_JobNode=NULL;
+    m_MitkJob=nullptr;
+    m_Job=nullptr;
+    m_JobNode=nullptr;
 
     m_InternalSolverPath="";
     m_ExternalSolverPath="";
 
-    m_RealVal=NULL;
-    m_IntVal=NULL;
+    m_RealVal=nullptr;
+    m_IntVal=nullptr;
 
     m_EnableSave=true;
 }
@@ -526,7 +526,7 @@ void sv4guisvFSIView::Hidden()
 
 void sv4guisvFSIView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
 {
-    if(prefs==NULL)
+    if(prefs==nullptr)
         return;
 
     m_ExternalSolverPath=prefs->Get("svFSI solver path","");
@@ -869,7 +869,7 @@ void sv4guisvFSIView::AddEquation()
 
     QString eqName = items.first()->text();
 
-    QListWidgetItem* item=NULL;
+    QListWidgetItem* item=nullptr;
 //    int row=0;
     bool includingFluid=false;
 
@@ -1524,7 +1524,7 @@ void sv4guisvFSIView::StopSimulation()
     if(m_JobNode.IsNull())
         return;
 
-    if (QMessageBox::question(NULL, "Stop Simulation", "Are you sure to stop simulation for this job?",
+    if (QMessageBox::question(nullptr, "Stop Simulation", "Are you sure to stop simulation for this job?",
                               QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
     {
       return;
@@ -1535,7 +1535,7 @@ void sv4guisvFSIView::StopSimulation()
 
       if(running)
       {
-          sv4guisvFSISolverProcessHandler* handler=NULL;
+          sv4guisvFSISolverProcessHandler* handler=nullptr;
           bool ok=m_JobNode->GetPropertyValue<sv4guisvFSISolverProcessHandler*>("process handler",handler);
 
           if(ok && handler)
@@ -1546,7 +1546,7 @@ void sv4guisvFSIView::StopSimulation()
       }
       else
       {
-          QMessageBox::information(NULL,"Info","The selected job is not running.");
+          QMessageBox::information(nullptr,"Info","The selected job is not running.");
           return;
       }
 
@@ -1579,7 +1579,7 @@ void sv4guisvFSIView::UpdateJobStatus()
 void sv4guisvFSIView::CreateNewJob()
 {
     bool ok;
-    QString text = QInputDialog::getText(NULL, tr("Create svFSI Job"),
+    QString text = QInputDialog::getText(nullptr, tr("Create svFSI Job"),
                                          tr("Job Name:"), QLineEdit::Normal,
                                          "", &ok);
     if(!ok)
@@ -1587,13 +1587,13 @@ void sv4guisvFSIView::CreateNewJob()
 
     std::string jobName=text.trimmed().toStdString();
     if(jobName==""){
-        QMessageBox::warning(NULL,"No name for job!","Please give a name for the job!");
+        QMessageBox::warning(nullptr,"No name for job!","Please give a name for the job!");
         return;
     }
 
     mitk::DataNode::Pointer exitingNode=GetDataStorage()->GetNamedNode(jobName.c_str());
     if(exitingNode){
-        QMessageBox::warning(NULL,"Job Already Created","Please use a different job name!");
+        QMessageBox::warning(nullptr,"Job Already Created","Please use a different job name!");
         return;
     }
 
@@ -1650,7 +1650,7 @@ void sv4guisvFSIView::SaveJob()
 void sv4guisvFSIView::LoadJob()
 {
     auto sv4guisvFSI_dir = sv4guisvFSIUtil.getsv4guisvFSIDir();
-    QString dir = QFileDialog::getOpenFileName(NULL
+    QString dir = QFileDialog::getOpenFileName(nullptr
                                                     , tr("Choose .fsijob file")
                                                     , sv4guisvFSI_dir.absolutePath()
                                                     , tr("Job file (*.fsijob)"));
@@ -1757,7 +1757,7 @@ sv4guisvFSISolverProcessHandler::sv4guisvFSISolverProcessHandler(QProcess* proce
     , m_TotalSteps(totalSteps)
     , m_RunDir(runDir)
     , m_Parent(parent)
-    , m_Timer(NULL)
+    , m_Timer(nullptr)
 {
 }
 
@@ -1772,7 +1772,7 @@ sv4guisvFSISolverProcessHandler::~sv4guisvFSISolverProcessHandler()
 
 void sv4guisvFSISolverProcessHandler::Start()
 {
-    if(m_Process==NULL)
+    if(m_Process==nullptr)
         return;
 
     if(m_JobNode.IsNull())
@@ -1806,7 +1806,7 @@ void sv4guisvFSISolverProcessHandler::AfterProcessFinished(int exitCode, QProces
     QString title="";
     QString text="";
     QMessageBox::Icon icon=QMessageBox::NoIcon;
-    QMessageBox mb(NULL); //svSimualtionView maybe doesn't exist.
+    QMessageBox mb(nullptr); //svSimualtionView maybe doesn't exist.
     QString status="";
 
     if(exitStatus==QProcess::NormalExit)

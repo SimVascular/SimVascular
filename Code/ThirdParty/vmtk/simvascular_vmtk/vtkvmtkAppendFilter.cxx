@@ -101,7 +101,7 @@ int vtkvmtkAppendFilter::RequestData(
       {
       ds = vtkDataSet::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
       }
-    if (ds != NULL)
+    if (ds != nullptr)
       {
       if ( ds->GetNumberOfPoints() <= 0 && ds->GetNumberOfCells() <= 0 )
         {
@@ -202,7 +202,7 @@ int vtkvmtkAppendFilter::RequestData(
       {
       ds = vtkDataSet::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
       }
-    if ( ds != NULL &&
+    if ( ds != nullptr &&
          (ds->GetNumberOfPoints() > 0 || ds->GetNumberOfCells() > 0) )
       {
       numPts = ds->GetNumberOfPoints();
