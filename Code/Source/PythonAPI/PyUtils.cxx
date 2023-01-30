@@ -90,7 +90,6 @@ void PyUtilApiFunction::warning(std::string msg)
   PyErr_WarnEx(nullptr, emsg.c_str(), stack_level);
 }
 
-
 //---------------------
 // PyUtilGetObjectType
 //---------------------
@@ -641,6 +640,66 @@ PyUtilComputeNormalFromlPoints(const std::vector<std::array<double,3>>& points)
   normal[2] = nz / mag;
 
   return normal;
+}
+
+//---------------------
+// PyUtilSetLoftParams
+//---------------------
+// Set the values for svLoftingParam from the LoftOptions Python class 
+// defined in SimVascular/Python/site-packages/sv/loft_options.py
+//
+void PyUtilSetLoftParams(PyUtilApiFunction& api, PyObject* loftOpts, svLoftingParam& params) 
+{
+  // Create a map used to set svLoftingParam from a key/value pair.
+  //
+  using ParamType = svLoftingParam&;
+  using ValType = PyObject*;
+  using SetParamValueMapType = std::map<std::string, std::function<void(ParamType params, ValType obj)>>;
+
+  SetParamValueMapType SetParamValue = {
+    {"add_caps", [](ParamType params, ValType value) -> void { params.addCaps = PyLong_AsLong(value); }},
+    {"bias", [](ParamType params, ValType value) -> void { params.bias = PyLong_AsLong(value); }},
+    {"continuity", [](ParamType params, ValType value) -> void { params.continuity = PyLong_AsLong(value); }},
+
+    {"linear_multiplier", [](ParamType params, ValType value) -> void { params.linearMuliplier = PyLong_AsLong(value); }},
+
+    {"method", [](ParamType params, ValType value) -> void { params.method = PyString_AsString(value); }},
+
+    {"num_modes", [](ParamType params, ValType value) -> void { params.numModes = PyLong_AsLong(value); }},
+    {"num_out_pts_along_length", [](ParamType params, ValType value) -> void { params.numOutPtsAlongLength = PyLong_AsLong(value); }},
+    {"num_out_pts_in_segs", [](ParamType params, ValType value) -> void { params.numOutPtsInSegs = PyLong_AsLong(value); }},
+    {"num_pts_in_linear_sample_along_length", [](ParamType params, ValType value) -> void { params.numPtsInLinearSampleAlongLength = PyLong_AsLong(value); }},
+    {"num_super_pts", [](ParamType params, ValType value) -> void { params.numSuperPts = PyLong_AsLong(value); }},
+
+    {"sample_per_segment", [](ParamType params, ValType value) -> void { params.samplePerSegment = PyLong_AsLong(value); }},
+    {"spline_type", [](ParamType params, ValType value) -> void { params.splineType = PyLong_AsLong(value); }},
+    {"tension", [](ParamType params, ValType value) -> void { params.tension = PyLong_AsLong(value); }},
+    {"u_degree", [](ParamType params, ValType value) -> void { params.uDegree = PyLong_AsLong(value); }},
+    {"v_degree", [](ParamType params, ValType value) -> void { params.vDegree = PyLong_AsLong(value); }},
+
+    {"u_knot_span_type", [](ParamType params, ValType value) -> void { params.uKnotSpanType = PyString_AsString(value); }},
+    {"v_knot_span_type", [](ParamType params, ValType value) -> void { params.vKnotSpanType = PyString_AsString(value); }},
+    {"u_parametric_span_type", [](ParamType params, ValType value) -> void { params.uParametricSpanType = PyString_AsString(value); }},
+    {"v_parametric_span_type", [](ParamType params, ValType value) -> void { params.vParametricSpanType = PyString_AsString(value); }},
+
+    {"use_linear_sample_along_length", [](ParamType params, ValType value) -> void { params.useLinearSampleAlongLength = PyLong_AsLong(value); }},
+    {"use_fft", [](ParamType params, ValType value) -> void { params.useFFT = PyLong_AsLong(value); }},
+    {"vec_flag", [](ParamType params, ValType value) -> void { params.vecFlag = PyLong_AsLong(value); }},
+  };
+
+  // Iterate over the key/value pairs in the dict.
+  //
+  PyObject *key, *value;
+  Py_ssize_t pos = 0;
+
+  while (PyDict_Next(loftOpts, &pos, &key, &value)) {
+    auto name = std::string(PyString_AsString(key));
+    try {
+      SetParamValue[name](params, value);
+    } catch (const std::bad_function_call& except) {
+      api.error("Unknown svLoftingParam name '" + name + "'.");
+    }
+  }
 }
 
 //------------------------

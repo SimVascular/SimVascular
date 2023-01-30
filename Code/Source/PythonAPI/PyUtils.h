@@ -41,6 +41,7 @@
 #include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "sv3_Contour.h"
+#include "sv4gui_ContourGroup.h"
 
 #include <array>
 #include <map>
@@ -126,6 +127,8 @@ PyObject * PyUtilPointVectorDataToPyList(const std::vector<std::array<double,3>>
 PyObject* PyUtilResetException(PyObject * PyRunTimeErr);
 
 void PyUtilSetErrorMsg(PyObject* pyRunTimeErr, std::string& msgp, std::string msg);
+
+void PyUtilSetLoftParams(PyUtilApiFunction& api, PyObject* loftOpts, svLoftingParam& params);
 
 void PyUtilSetupApiFunction(const char* functionName, std::string& format, std::string& msg);
 
