@@ -143,7 +143,9 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
 
     connect(ui->btnNewGroup,SIGNAL(clicked()), this, SLOT(NewGroup()));
 
-    m_DisplayWidget=GetActiveStdMultiWidget();
+    std::cout << "GetActiveStdMultiWidget does not exist anymore" << std::endl << std::flush;
+    // m_DisplayWidget=GetActiveStdMultiWidget();
+    exit(1);
 
     if(m_DisplayWidget==nullptr)
     {
@@ -283,10 +285,11 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
     std::cout << "OnSelectionChanged\n";
 
-    if(!IsVisible())
-    {
-        return;
-    }
+    // IsVisibile not available anymore. I am not sure why.
+    // if(!IsVisible())
+    // {
+    //     return;
+    // }
 
     if(nodes.size()==0)
     {

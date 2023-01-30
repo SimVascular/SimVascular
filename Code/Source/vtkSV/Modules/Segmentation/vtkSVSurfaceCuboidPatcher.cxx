@@ -541,7 +541,8 @@ int vtkSVSurfaceCuboidPatcher::RunFilter()
     // Loop through points to evaluate function at each point
     vtkDebugMacro("Computing closest centerline points per cell of group " << groupId);
 
-    vtkIdType nlinepts, *linepts;
+    vtkIdType nlinepts;
+    const vtkIdType *linepts;
     int centerlineId = this->MergedCenterlines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(groupId);
     this->MergedCenterlines->GetCellPoints(centerlineId, nlinepts, linepts);
     int isTerminating = 1;
@@ -636,7 +637,8 @@ int vtkSVSurfaceCuboidPatcher::RunFilter()
     {
       // Get cell point coords
       double pts[3][3];
-      vtkIdType npts, *ptids;
+      vtkIdType npts;
+      const vtkIdType *ptids;
       branchPd->GetCellPoints(j, npts, ptids);
       for (int k=0; k<npts; k++)
         branchPd->GetPoint(ptids[k], pts[k]);
@@ -923,7 +925,8 @@ int vtkSVSurfaceCuboidPatcher::RunFilter()
       // Loop through points to evaluate function at each point
       vtkDebugMacro("Computing boundary vectors of group " << groupId);
 
-      vtkIdType nlinepts, *linepts;
+      vtkIdType nlinepts;
+      const vtkIdType *linepts;
       int centerlineId = this->MergedCenterlines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(groupId);
       this->MergedCenterlines->GetCellPoints(centerlineId, nlinepts, linepts);
       int isTerminating = 1;
@@ -1663,7 +1666,8 @@ int vtkSVSurfaceCuboidPatcher::RunFilter()
   for (int i=0; i<numGroups; i++)
   {
     int groupId = groupIds->GetId(i);
-    vtkIdType nlinepts, *linepts;
+    vtkIdType nlinepts;
+    const vtkIdType *linepts;
     int centerlineId = this->MergedCenterlines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(groupId);
     this->MergedCenterlines->GetCellPoints(centerlineId, nlinepts, linepts);
 
@@ -2896,7 +2900,8 @@ int vtkSVSurfaceCuboidPatcher::FixPatchesWithPolycube()
         // Mark for deletion! but not the current cell
         for (int k=0; k<cellIds->GetNumberOfIds(); k++)
         {
-          vtkIdType npts_new, *pts_new;
+          vtkIdType npts_new;
+          const vtkIdType *pts_new;
           polycubePd->GetCellPoints(cellIds->GetId(k), npts_new, pts_new);
 
           int ptFound = 0;

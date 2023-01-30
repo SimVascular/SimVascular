@@ -36,6 +36,8 @@
 #include "sv4gui_MitkSeg3DDataInteractor.h"
 #include "sv4gui_QmitkFunctionality.h"
 
+#include <QmitkStdMultiWidget.h>
+
 #include <vtkImageData.h>
 
 #include <ctkRangeWidget.h>
@@ -74,7 +76,8 @@ public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
+    // this needed to be override for QmitkFunctionality. Need to understand if it is needed
+    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes);
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -86,9 +89,11 @@ public:
 
 //    virtual void Deactivated() override;
 
-    virtual void Visible() override;
+    // this needed to be override for QmitkFunctionality. Need to understand if it is needed
+    virtual void Visible();
 
-    virtual void Hidden() override;
+    // this needed to be override for QmitkFunctionality. Need to understand if it is needed
+    virtual void Hidden();
 
 //    bool IsExclusiveFunctionality() const override;
 

@@ -372,7 +372,7 @@ int vtkSVParameterizeVolumeOnPolycube::RunFilter()
 
   vtkNew(vtkIdFilter, ider2);
   ider2->SetInputData(mappedSurface);
-  ider2->SetIdsArrayName("TmpInternalIds");
+  ider2->SetCellIdsArrayName("TmpInternalIds");
   ider2->Update();
   vtkDataArray *tmpArray = ider2->GetOutput()->GetPointData()->GetArray("TmpInternalIds");
   mappedSurface->GetPointData()->AddArray(tmpArray);
@@ -431,7 +431,7 @@ int vtkSVParameterizeVolumeOnPolycube::RunFilter()
 
     vtkNew(vtkIdFilter, ider3);
     ider3->SetInputData(realHexMesh);
-    ider3->SetIdsArrayName(this->GridIdsArrayName);
+    ider3->SetCellIdsArrayName(this->GridIdsArrayName);
     ider3->Update();
 
     vtkNew(vtkAppendFilter, converter);

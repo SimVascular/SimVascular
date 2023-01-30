@@ -200,7 +200,8 @@ public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
+    // this was overriden in QmitkFunctionality. Need to figure out if we need it
+    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes);
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -212,9 +213,11 @@ public:
 
 //    virtual void Deactivated() override;
 
-    virtual void Visible() override;
+    // this was overriden in QmitkFunctionality. Need to figure out if we need it
+    virtual void Visible();
 
-    virtual void Hidden() override;
+    // this was overriden in QmitkFunctionality. Need to figure out if we need it
+    virtual void Hidden();
 
 //    bool IsExclusiveFunctionality() const override;
 

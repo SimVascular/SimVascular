@@ -123,7 +123,7 @@ int cvCalculateWallShearStress::CalcWallShearFromStresses() {
 
     polys->InitTraversal();
     vtkIdType celltype = 0;
-    vtkIdType *ids;
+    const vtkIdType *ids;
     for (i = 0; i < numCells; i++) {
         polys->GetNextCell(celltype,ids);
         //fprintf(stdout,"checking cell: %i type: %i\n",i,celltype);
@@ -211,7 +211,7 @@ int cvCalculateWallShearStress::CalcWallShearFromTractions() {
 
     polys->InitTraversal();
     vtkIdType celltype = 0;
-    vtkIdType *ids;
+    const vtkIdType *ids;
     for (i = 0; i < numCells; i++) {
         polys->GetNextCell(celltype,ids);
         //fprintf(stdout,"checking cell: %i type: %i\n",i,celltype);

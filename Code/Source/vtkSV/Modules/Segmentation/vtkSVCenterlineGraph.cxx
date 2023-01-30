@@ -1603,17 +1603,18 @@ int vtkSVCenterlineGraph::RotateVecAroundLine(const double inVec[3],
 int vtkSVCenterlineGraph::FlipLinePoints(vtkPolyData *pd, const int cellId)
 {
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   pd->GetCellPoints(cellId, npts, pts);
 
   double *tmpPts = new double[npts];
   for (int i=0; i<npts; i++)
     tmpPts[i] = pts[i];
 
+  vtkIdType* ptsCopy = new vtkIdType[npts];
   for (int i=0; i<npts; i++)
-    pts[(npts-1)-i] = tmpPts[i];
+    ptsCopy[(npts-1)-i] = tmpPts[i];
 
-  pd->ReplaceCell(cellId, npts, pts);
+  pd->ReplaceCell(cellId, npts, ptsCopy);
   pd->Modified();
   pd->BuildLinks();
 

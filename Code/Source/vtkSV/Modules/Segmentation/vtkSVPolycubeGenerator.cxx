@@ -424,7 +424,7 @@ int vtkSVPolycubeGenerator::GetVolumePolycube()
 
     vtkNew(vtkIdFilter, ider);
     ider->SetInputData(paraHexMesh);
-    ider->SetIdsArrayName(this->GridIdsArrayName);
+    ider->SetCellIdsArrayName(this->GridIdsArrayName);
     ider->Update();
 
     vtkNew(vtkAppendFilter, converter);
@@ -1832,7 +1832,8 @@ int vtkSVPolycubeGenerator::GetPolycubeDivisions(vtkSVCenterlineGCell *gCell,
 
   // L div
   double f0Pts[2][3];
-  vtkIdType f0npts, *f0PtIds;
+  vtkIdType f0npts;
+  const vtkIdType *f0PtIds;
   polycubePd->GetCellPoints(0, f0npts, f0PtIds);
   polycubePd->GetPoint(f0PtIds[0], f0Pts[0]);
   polycubePd->GetPoint(f0PtIds[1], f0Pts[1]);
@@ -1853,19 +1854,23 @@ int vtkSVPolycubeGenerator::FormParametricHexMesh(vtkSVCenterlineGCell *gCell, v
                                                   int w_div, int h_div, int l_div)
 {
   // GetFace 0, right side face
-  vtkIdType f0npts, *f0PtIds;
+  vtkIdType f0npts;
+  const vtkIdType *f0PtIds;
   polycubePd->GetCellPoints(0, f0npts, f0PtIds);
 
   // GetFace 1, face underneath
-  vtkIdType f1npts, *f1PtIds;
+  vtkIdType f1npts;
+  const vtkIdType *f1PtIds;
   polycubePd->GetCellPoints(1, f1npts, f1PtIds);
 
   // GetFace 2, left side face
-  vtkIdType f2npts, *f2PtIds;
+  vtkIdType f2npts;
+  const vtkIdType *f2PtIds;
   polycubePd->GetCellPoints(2, f2npts, f2PtIds);
 
   // GetFace 3, face on top
-  vtkIdType f3npts, *f3PtIds;
+  vtkIdType f3npts;
+  const vtkIdType *f3PtIds;
   polycubePd->GetCellPoints(3, f3npts, f3PtIds);
 
   if (f0npts != f2npts || f1npts != f3npts)
@@ -3059,7 +3064,8 @@ int vtkSVPolycubeGenerator::CheckFace(vtkPolyData *polycubePd, int faceId,
 {
   double tol = 1.0e-4;
   vtkDebugMacro("CHECKING FACE: " <<  faceId);
-  vtkIdType npts, *ptIds;
+  vtkIdType npts;
+  const vtkIdType *ptIds;
   polycubePd->GetCellPoints(faceId, npts, ptIds);
 
   double (*pts)[3] = new double[npts][3];

@@ -537,7 +537,8 @@ int vtkSVCenterlinesBasedNormals::RunFilter()
     {
       // Get cell point coords
       double pts[3][3];
-      vtkIdType npts, *ptids;
+      vtkIdType npts;
+      const vtkIdType *ptids = new vtkIdType;
       branchPd->GetCellPoints(j, npts, ptids);
       for (int k=0; k<npts; k++)
         branchPd->GetPoint(ptids[k], pts[k]);
@@ -660,17 +661,18 @@ int vtkSVCenterlinesBasedNormals::ComputeRotationMatrix(const double vx[3],
 int vtkSVCenterlinesBasedNormals::FlipLinePoints(vtkPolyData *pd, const int cellId)
 {
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   pd->GetCellPoints(cellId, npts, pts);
 
   double *tmpPts = new double[npts];
   for (int i=0; i<npts; i++)
     tmpPts[i] = pts[i];
 
+  vtkIdType *newPts = new vtkIdType[npts];
   for (int i=0; i<npts; i++)
-    pts[(npts-1)-i] = tmpPts[i];
+    newPts[(npts-1)-i] = tmpPts[i];
 
-  pd->ReplaceCell(cellId, npts, pts);
+  pd->ReplaceCell(cellId, npts, newPts);
   pd->Modified();
   pd->BuildLinks();
 

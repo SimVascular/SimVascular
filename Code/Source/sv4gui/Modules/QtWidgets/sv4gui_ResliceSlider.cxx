@@ -186,15 +186,23 @@ void sv4guiResliceSlider::updateReslice()
     //    }
 
     currentSlicedGeometry=sv4guiSegmentationUtils::CreateSlicedGeometry(m_PathPoints, baseData, resliceSize);
-    displayWidget->changeLayoutTo2x2Dand3DWidget();
+
+    std::cout << "changeLayoutTo2x2Dand3DWidget This method doesn't exist anymore" << std::endl << std::flush;
+    exit(1);
+    // displayWidget->changeLayoutTo2x2Dand3DWidget();
 
     mitk::SliceNavigationController::Pointer intensityController=intensityWindow->GetSliceNavigationController();
-    intensityController->SetInputWorldGeometry3D(currentSlicedGeometry);
+
+    std::cout << "SetInputWorldGeometry3D This method doesn't exist anymore" << std::endl << std::flush;
+    exit(1);
+    // intensityController->SetInputWorldGeometry3D(currentSlicedGeometry);
     intensityController->SetViewDirection(mitk::SliceNavigationController::Original);
     intensityController->Update();
 
     mitk::SliceNavigationController::Pointer potentialController=potentialWindow->GetSliceNavigationController();
-    potentialController->SetInputWorldGeometry3D(currentSlicedGeometry);
+    std::cout << "SetInputWorldGeometry3D This method doesn't exist anymore" << std::endl << std::flush;
+    exit(1);
+    // potentialController->SetInputWorldGeometry3D(currentSlicedGeometry);
     potentialController->SetViewDirection(mitk::SliceNavigationController::Original);
     potentialController->Update();
     if(image)
@@ -349,7 +357,9 @@ void sv4guiResliceSlider::restoreDisplayWidget()
     //        currentSlicedGeometry=nullptr;
     //    }
 
-    displayWidget->changeLayoutToDefault();
+    std::cout << "changeLayoutToDefault This method doesn't exist anymore" << std::endl << std::flush;
+    exit(1);
+    // displayWidget->changeLayoutToDefault();
 
     if ( baseData && baseData->GetTimeGeometry()->IsValid() )
     {

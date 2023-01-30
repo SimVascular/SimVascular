@@ -209,6 +209,7 @@ void sv4guiMeshEdit::SetupGUI(QWidget *parent )
       , this
       , SLOT( TableRegionListSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
+    std::cout << "m_TableMenuRegion doesnt exist" << std::endl << std::flush;
     m_TableMenuRegion=new QMenu(ui->tableViewRegion);
     QAction* setRegionTAction=m_TableMenuRegion->addAction("Set Regional Size");
     QAction* deleteRegionTAction=m_TableMenuRegion->addAction("Delete");
@@ -379,7 +380,9 @@ void sv4guiMeshEdit::ClearLocal(bool)
 
 void sv4guiMeshEdit::TableViewLocalContextMenuRequested( const QPoint & pos )
 {
-    m_TableMenuLocal->popup(QCursor::pos());
+    std::cout << "m_TableMenuLocal" << std::endl << std::flush;
+    exit(1);
+    // m_TableMenuLocal->popup(QCursor::pos());
 }
 
 void sv4guiMeshEdit::TableRegionListSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
@@ -479,7 +482,9 @@ void sv4guiMeshEdit::TableDomainsListSelectionChanged( const QItemSelection & /*
         point[1]= plist[1].toDouble();
         point[2]= plist[2].toDouble();
 
-        m_DisplayWidget->MoveCrossToPosition(point);
+        std::cout << "MoveCrossToPosition does not exist" << std::endl << std::flush;
+        exit(1);
+        // m_DisplayWidget->MoveCrossToPosition(point);
     }
 }
 
@@ -635,12 +640,16 @@ void sv4guiMeshEdit::DeleteSelectedDomains(bool)
 
 void sv4guiMeshEdit::TableViewRegionContextMenuRequested( const QPoint & pos )
 {
-    m_TableMenuRegion->popup(QCursor::pos());
+    std::cout << "m_TableMenuRegion doesnt exist" << std::endl << std::flush;
+    exit(1);
+    // m_TableMenuRegion->popup(QCursor::pos());
 }
 
 void sv4guiMeshEdit::TableViewDomainsContextMenuRequested( const QPoint & pos )
 {
-    m_TableMenuDomains->popup(QCursor::pos());
+    std::cout << "m_TableMenuDomains doesnt exist" << std::endl << std::flush;
+    exit(1);
+    // m_TableMenuDomains->popup(QCursor::pos());
 }
 
 void sv4guiMeshEdit::SetEstimatedEdgeSize()
@@ -1172,10 +1181,12 @@ int sv4guiMeshEdit::GetTimeStep()
 void sv4guiMeshEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
 //    if(!IsActivated())
-    if(!IsVisible())
-    {
-        return;
-    }
+    std::cout << "IsVisible does not exist" << std::flush;
+    exit(1);
+    // if(!IsVisible())
+    // {
+    //     return;
+    // }
 
     if(nodes.size()==0)
     {
@@ -1984,11 +1995,13 @@ void sv4guiMeshEdit::AddHole()
     item->setEditable(false);
     m_TableModelDomains->setItem(regionRowIndex, 1, item);
 
-    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
-    QString coordinates=QString::number(point[0])+" "+QString::number(point[1])+" "+QString::number(point[2]);
+    std::cout << "GetCrossPosition does not exist" << std::endl << std::flush;
+    exit(1);
+    // mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
+    // QString coordinates=QString::number(point[0])+" "+QString::number(point[1])+" "+QString::number(point[2]);
 
-    item= new QStandardItem(coordinates);
-    m_TableModelDomains->setItem(regionRowIndex, 2, item);
+    // item= new QStandardItem(coordinates);
+    // m_TableModelDomains->setItem(regionRowIndex, 2, item);
 }
 
 void sv4guiMeshEdit::AddSubDomain()
@@ -2004,11 +2017,13 @@ void sv4guiMeshEdit::AddSubDomain()
     item= new QStandardItem("");
     m_TableModelDomains->setItem(regionRowIndex, 1, item);
 
-    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
-    QString coordinates=QString::number(point[0])+" "+QString::number(point[1])+" "+QString::number(point[2]);
+    std::cout << "GetCrossPosition does not exist" << std::endl << std::flush;
+    exit(1);
+    // mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
+    // QString coordinates=QString::number(point[0])+" "+QString::number(point[1])+" "+QString::number(point[2]);
 
-    item= new QStandardItem(coordinates);
-    m_TableModelDomains->setItem(regionRowIndex, 2, item);
+    // item= new QStandardItem(coordinates);
+    // m_TableModelDomains->setItem(regionRowIndex, 2, item);
 }
 
 void sv4guiMeshEdit::ShowSphereInteractor(bool checked)

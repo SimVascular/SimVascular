@@ -254,7 +254,7 @@ int vtkSVPlanarMapper::PrepFilter()
   {
     vtkNew(vtkIdFilter, ider);
     ider->SetInputData(this->WorkPd);
-    ider->SetIdsArrayName(this->InternalIdsArrayName);
+    ider->SetCellIdsArrayName(this->InternalIdsArrayName);
     ider->Update();
     this->WorkPd->DeepCopy(ider->GetOutput());
   }

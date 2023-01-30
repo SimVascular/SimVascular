@@ -72,7 +72,7 @@
 #include <AppStd_Application.hxx>
 #include <TDocStd_Document.hxx>
 #include <TDocStd_XLinkTool.hxx>
-#include <CDF_Session.hxx>
+// #include <CDF_Session.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XCAFApp_Application.hxx>
 #include "Standard_Version.hxx"

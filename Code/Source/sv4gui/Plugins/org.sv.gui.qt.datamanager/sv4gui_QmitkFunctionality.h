@@ -36,13 +36,17 @@
 // #include <org_mitk_gui_qt_common_legacy_Export.h>
 #include <org_mitk_gui_qt_common_Export.h>
 
-#include <QmitkFunctionality.h>
+#include <QmitkAbstractView.h>
 
 #include <QWidget>
 #include <QStandardItemModel>
 #include <QItemDelegate>
 
-class SV_QT_DATAMANAGER sv4guiQmitkFunctionality : public QmitkFunctionality
+// This class previously inherited from QmitkFunctionality. We transition to
+// QmitkAbstractView following 
+// https://www.mitk.org/wiki/Views_Without_Multi_Widget
+
+class SV_QT_DATAMANAGER sv4guiQmitkFunctionality : public QmitkAbstractView
 {
     Q_OBJECT
 
@@ -53,6 +57,12 @@ public:
     sv4guiQmitkFunctionality();
 
     virtual ~sv4guiQmitkFunctionality();
+
+    void SetFocus() {
+        std::cout << "setFocus() needs to be implemented" << std::endl << std::flush;
+        // Fore more info, see https://www.mitk.org/wiki/Views_Without_Multi_Widget
+
+    }
 
 public:
 
@@ -80,8 +90,12 @@ private:
     //{
     /// PRIVATE OBJECTS FROM QmitkFunctionality
     /// object to observe BlueBerry selections
-    QmitkFunctionalitySelectionProvider* m_SelectionProvider;
+    QmitkAbstractViewSelectionProvider* m_SelectionProvider;
     QScopedPointer<berry::ISelectionListener> m_BlueBerrySelectionListener;
+
+    // originally this was include in QmitkFunctionality. Adding it now for
+    // compatibility during transition to QmitkAbstractView
+    QWidget* m_Parent;
     //}
 
 

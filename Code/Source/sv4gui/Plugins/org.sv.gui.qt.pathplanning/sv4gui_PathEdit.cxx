@@ -104,7 +104,9 @@ void sv4guiPathEdit::CreateQtPartControl(QWidget* parent)
     connect(ui->comboBoxAddingMode, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateAddingMode(int )));
 
     // Get access to the four-window widget in the centre of the application.
-    m_DisplayWidget = GetActiveStdMultiWidget();
+    std::cout << "GetActiveStdMultiWidget does not exist" << std::endl << std::flush;
+    exit(1);
+    // m_DisplayWidget = GetActiveStdMultiWidget();
 
     if(m_DisplayWidget) {
         //instead set zero in svappication
@@ -188,10 +190,12 @@ void sv4guiPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     MITK_INFO << msgPrefix;
 
 //    if(!IsActivated())
-    if(!IsVisible())
-    {
-        return;
-    }
+    std::cout << "IsVisible does not exist" << std::endl << std::flush;
+    exit(1);
+    // if(!IsVisible())
+    // {
+    //     return;
+    // }
 
     if(nodes.size()==0)
     {
@@ -641,9 +645,11 @@ void sv4guiPathEdit::AddPoint(mitk::Point3D point)
 void sv4guiPathEdit::SmartAdd()
 {
     std::cout << "===================== sv4guiPathEdit::SmartAdd =====================" << std::endl;
-    mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
+    std::cout << "GetCrossPosition does not exist anymore" << std::endl << std::flush;
+    exit(1);
+    // mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
 
-    AddPoint(point);
+    // AddPoint(point);
 }
 
 void sv4guiPathEdit::ManuallyAdd()
@@ -735,7 +741,9 @@ void sv4guiPathEdit::SelectPoint(int index)
         }
         else
         {
-            m_DisplayWidget->MoveCrossToPosition(pathElement->GetControlPoint(index));
+            std::cout << "MoveCrossToPosition doesnt exist" << std::endl << std::flush;
+            exit(1);
+            // m_DisplayWidget->MoveCrossToPosition(pathElement->GetControlPoint(index));
         }
 
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();

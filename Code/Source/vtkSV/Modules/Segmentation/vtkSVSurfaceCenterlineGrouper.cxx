@@ -914,7 +914,8 @@ int vtkSVSurfaceCenterlineGrouper::FixGroupsWithCenterlines(int fixIters)
   double pt[3], newCenterPt[3];
   vtkIdType npts;
   const vtkIdType *pts = new vtkIdType;
-  vtkIdType nlinepts, *linepts;
+  vtkIdType nlinepts;
+  const vtkIdType *linepts;
   vtkNew(vtkIdList, edgeCellIds);
   vtkNew(vtkIdList, frontNeighbors);
   vtkNew(vtkIdList, backNeighbors);
@@ -1454,7 +1455,8 @@ int vtkSVSurfaceCenterlineGrouper::FixGroupsWithPolycube()
         // Mark for deletion! but not the current cell
         for (int k=0; k<cellIds->GetNumberOfIds(); k++)
         {
-          vtkIdType npts_new, *pts_new;
+          vtkIdType npts_new;
+          const vtkIdType *pts_new;
           polycubePd->GetCellPoints(cellIds->GetId(k), npts_new, pts_new);
 
           int ptFound = 0;

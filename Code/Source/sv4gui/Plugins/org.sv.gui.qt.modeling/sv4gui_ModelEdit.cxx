@@ -115,7 +115,9 @@ void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
 
     //    parent->setMaximumWidth(450);
 
-    m_DisplayWidget=GetActiveStdMultiWidget();
+    std::cout << "GetActiveStdMultiWidget doesn't exist anymore" << std::endl << std::flush;
+    exit(1);
+    // m_DisplayWidget=GetActiveStdMultiWidget();
 
     if(m_DisplayWidget==nullptr)
     {
@@ -361,11 +363,13 @@ void sv4guiModelEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
     m_LocalOperationforBlendRegion=false;
 
+    std::cout << "IsVisible does not exist anymore" << std::endl << std::flush;
+    exit(1);
     //    if(!IsActivated())
-    if(!IsVisible())
-    {
-        return;
-    }
+    // if(!IsVisible())
+    // {
+    //     return;
+    // }
 
     if(nodes.size()==0)
     {

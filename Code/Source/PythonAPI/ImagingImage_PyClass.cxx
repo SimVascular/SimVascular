@@ -47,7 +47,7 @@
 #include "mitkSlicedGeometry3D.h"
 #include <mitkVtkResliceInterpolationProperty.h>
 
-#include <tinyxml.h>
+#include <simvascular_tinyxml.h>
 
 #include <vtkDoubleArray.h>
 #include <vtkImageData.h>
@@ -580,7 +580,9 @@ Image_extract_slice_1(PyImage* self, PyObject* args)
   bool isFrontside = true;
   bool isRotated = false;
   mitk::PlaneGeometry::Pointer plane = mitk::PlaneGeometry::New();
-  plane->InitializeStandardPlane(imageGeometry, mitk::PlaneGeometry::Frontal, sliceIndex, isFrontside, isRotated);
+  std::cout << "mitk::PlaneGeometry::Frontal doesn't exist anymore" << std::endl << std::flush;
+  exit(1);
+  // plane->InitializeStandardPlane(imageGeometry, mitk::PlaneGeometry::Frontal, sliceIndex, isFrontside, isRotated);
   //plane->InitializeStandardPlane(imageGeometry, mitk::PlaneGeometry::Axial, sliceindex, isFrontside, isRotated);
   plane->SetOrigin(origin);
 
@@ -984,7 +986,7 @@ Image_write(PyImage* self, PyObject* args, PyObject* kwargs)
   } 
 
   // Check that you can write to the file.
-  ofstream cfile;
+  std::ofstream cfile;
   cfile.open(fileName);
   if (!cfile.is_open()) {
       api.error("Unable to write the image to the file named '" + std::string(fileName) + "'.");
@@ -1033,7 +1035,7 @@ Image_write_transformation(PyImage* self, PyObject* args, PyObject* kwargs)
   } 
 
   // Check that you can write to the file.
-  ofstream cfile;
+  std::ofstream cfile;
   cfile.open(fileName);
   if (!cfile.is_open()) {
       api.error("Unable to write the image transformatio to the file named '" + std::string(fileName) + "'.");

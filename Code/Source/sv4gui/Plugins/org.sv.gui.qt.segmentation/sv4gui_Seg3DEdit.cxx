@@ -84,7 +84,9 @@ void sv4guiSeg3DEdit::CreateQtPartControl( QWidget *parent )
     m_Parent=parent;
     ui->setupUi(parent);
 
-    m_DisplayWidget=GetActiveStdMultiWidget();
+    std::cout << "GetActiveStdMultiWidget does not exist anymore" << std::endl << std::flush;
+    exit(1);
+    // m_DisplayWidget=GetActiveStdMultiWidget();
 
     if(m_DisplayWidget==nullptr)
     {
@@ -121,10 +123,13 @@ void sv4guiSeg3DEdit::Hidden()
 void sv4guiSeg3DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
 //    if(!IsActivated())
-    if(!IsVisible())
-    {
-        return;
-    }
+    std::cout << "IsVisible does not exist anymore, I am not sure why" << std::endl << std::flush;
+
+    // if(!IsVisible())
+    // {
+    //     return;
+    // }
+    exit(1);
 
     if(nodes.size()==0)
     {

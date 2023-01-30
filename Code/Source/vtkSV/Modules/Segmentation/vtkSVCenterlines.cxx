@@ -1107,7 +1107,7 @@ int vtkSVCenterlines::RequestData(
 #else
   voronoiCostFunctionCalculator->SetInputData(voronoiDiagram);
 #endif
-  voronoiCostFunctionCalculator->SetAttributeModeToUsePointData();
+  voronoiCostFunctionCalculator->SetAttributeTypeToPointData();
   voronoiCostFunctionCalculator->AddScalarVariable("R",this->RadiusArrayName,0);
   voronoiCostFunctionCalculator->SetFunction(this->CostFunction);
   voronoiCostFunctionCalculator->SetResultArrayName(this->CostFunctionArrayName);
@@ -1388,9 +1388,14 @@ int vtkSVCenterlines::RequestData(
         else
           input->GetPoint(this->SourceSeedIds->GetId(0), startPt);
 
+        vtkIdType fromId = 0;
         int newPointId = newPoints->InsertNextPoint(startPt);
         newLine->GetPointIds()->InsertNextId(newPointId);
-        newPointData->CopyData(appender->GetInput(fullCenterlineEdges[i][0])->GetPointData(), 0, newPointId);
+        newPointData->CopyData(appender->GetInput(fullCenterlineEdges[i][0])->GetPointData(), fromId, newPointId);
+
+        // int newPointId = newPoints->InsertNextPoint(startPt);
+        // newLine->GetPointIds()->InsertNextId(newPointId);
+        // newPointData->CopyData(appender->GetInput(fullCenterlineEdges[i][0])->GetPointData(), 0, newPointId);
       }
     }
 

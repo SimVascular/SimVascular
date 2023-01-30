@@ -77,10 +77,12 @@ sv4guiQmitkFunctionality::~sv4guiQmitkFunctionality()
 // --------- FOLLOWING FROM QmitkFunctionality ------------------------------
 std::vector<mitk::DataNode*> sv4guiQmitkFunctionality::GetDataManagerSelection() const
 {
-  berry::ISelection::ConstPointer selection( this->GetSite()->GetWorkbenchWindow()->GetSelectionService()->GetSelection("org.sv.views.datamanager"));
-    // buffer for the data manager selection
-  mitk::DataNodeSelection::ConstPointer currentSelection = selection.Cast<const mitk::DataNodeSelection>();
-  return this->DataNodeSelectionToVector(currentSelection);
+  std::cout << "This needs to be implemented (maybe)" << std::endl << std::flush;
+  exit(1);
+  // berry::ISelection::ConstPointer selection( this->GetSite()->GetWorkbenchWindow()->GetSelectionService()->GetSelection("org.sv.views.datamanager"));
+  //   // buffer for the data manager selection
+  // mitk::DataNodeSelection::ConstPointer currentSelection = selection.Cast<const mitk::DataNodeSelection>();
+  // return this->DataNodeSelectionToVector(currentSelection);
 }
 
 void sv4guiQmitkFunctionality::CreatePartControl(QWidget* parent)
@@ -121,19 +123,21 @@ void sv4guiQmitkFunctionality::CreatePartControl(QWidget* parent)
 
 void sv4guiQmitkFunctionality::AfterCreateQtPartControl()
 {
-  // REGISTER DATASTORAGE LISTENER
-  this->GetDefaultDataStorage()->AddNodeEvent.AddListener( mitk::MessageDelegate1<QmitkFunctionality, const mitk::DataNode*>
-    ( this, &QmitkFunctionality::NodeAddedProxy ) );
-  this->GetDefaultDataStorage()->ChangedNodeEvent.AddListener( mitk::MessageDelegate1<QmitkFunctionality, const mitk::DataNode*>
-    ( this, &QmitkFunctionality::NodeChangedProxy ) );
-  this->GetDefaultDataStorage()->RemoveNodeEvent.AddListener( mitk::MessageDelegate1<QmitkFunctionality, const mitk::DataNode*>
-    ( this, &QmitkFunctionality::NodeRemovedProxy ) );
+  std::cout << "I couldn't find obvious replacements for these functions" << std::endl << std::flush;
+  // // REGISTER DATASTORAGE LISTENER
+  // this->GetDataStorage()->AddNodeEvent.AddListener( mitk::MessageDelegate1<QmitkAbstractView, const mitk::DataNode*>
+  //   ( this, &QmitkAbstractView::NodeAdded ) );
+  // this->GetDataStorage()->ChangedNodeEvent.AddListener( mitk::MessageDelegate1<QmitkAbstractView, const mitk::DataNode*>
+  //   ( this, &QmitkAbstractView::NodeChanged ) );
+  // this->GetDataStorage()->RemoveNodeEvent.AddListener( mitk::MessageDelegate1<QmitkAbstractView, const mitk::DataNode*>
+  //   ( this, &QmitkAbstractView::NodeRemoved ) );
 
   // REGISTER PREFERENCES LISTENER
   berry::IBerryPreferences::Pointer prefs = this->GetPreferences().Cast<berry::IBerryPreferences>();
-  if(prefs.IsNotNull())
-    prefs->OnChanged.AddListener(berry::MessageDelegate1<QmitkFunctionality
-    , const berry::IBerryPreferences*>(this, &QmitkFunctionality::OnPreferencesChanged));
+  // OnPreferencesChanged has become private in QmitkAbstractView
+  // if(prefs.IsNotNull())
+  //   prefs->OnChanged.AddListener(berry::MessageDelegate1<QmitkAbstractView
+  //   , const berry::IBerryPreferences*>(this, &QmitkAbstractView::OnPreferencesChanged));
 
   // REGISTER FOR WORKBENCH SELECTION EVENTS
   m_BlueBerrySelectionListener.reset(new berry::SelectionChangedAdapter<sv4guiQmitkFunctionality>(
@@ -151,55 +155,64 @@ void sv4guiQmitkFunctionality::AfterCreateQtPartControl()
 
   // EMULATE INITIAL SELECTION EVENTS
 
-  // by default a a multi widget is always available
-  this->StdMultiWidgetAvailable(*this->GetActiveStdMultiWidget());
+  // by default a multi widget is always available
+  // this doesn't work for some reason
+  // https://www.mitk.org/wiki/Views_Without_Multi_Widget
+  // this->RenderWindowPartActivated(this->GetRenderWindowPart());
 
   // send datamanager selection
-  this->OnSelectionChanged(this->GetDataManagerSelection());
+  // this method now accepts to arguments. We need to figure out what they 
+  // should be
+  // this->OnSelectionChanged(this->GetDataManagerSelection());
 
   // send preferences changed event
-  this->OnPreferencesChanged(this->GetPreferences().Cast<berry::IBerryPreferences>().GetPointer());
+  // this->OnPreferencesChanged(this->GetPreferences().Cast<berry::IBerryPreferences>().GetPointer());
 }
 
 void sv4guiQmitkFunctionality::BlueBerrySelectionChanged(const berry::IWorkbenchPart::Pointer& sourcepart,
                                                    const berry::ISelection::ConstPointer& selection)
 {
-  if(sourcepart.IsNull() || sourcepart->GetSite()->GetId() != "org.sv.views.datamanager")
-    return;
+  
+  std::cout << "sv4guiQmitkFunctionality::BlueBerrySelectionChanged still need to implement this method" << std::endl << std::flush;
 
-  mitk::DataNodeSelection::ConstPointer _DataNodeSelection
-    = selection.Cast<const mitk::DataNodeSelection>();
-  this->OnSelectionChanged(this->DataNodeSelectionToVector(_DataNodeSelection));
+  // if(sourcepart.IsNull() || sourcepart->GetSite()->GetId() != "org.sv.views.datamanager")
+  //   return;
+
+  // mitk::DataNodeSelection::ConstPointer _DataNodeSelection
+  //   = selection.Cast<const mitk::DataNodeSelection>();
+  // this->OnSelectionChanged(this->DataNodeSelectionToVector(_DataNodeSelection));
 }
 
 void sv4guiQmitkFunctionality::ClosePartProxy()
 {
-  this->GetDefaultDataStorage()->AddNodeEvent.RemoveListener( mitk::MessageDelegate1<QmitkFunctionality, const mitk::DataNode*>
-    ( this, &QmitkFunctionality::NodeAddedProxy ) );
-  this->GetDefaultDataStorage()->RemoveNodeEvent.RemoveListener( mitk::MessageDelegate1<QmitkFunctionality, const mitk::DataNode*>
-    ( this, &QmitkFunctionality::NodeRemovedProxy) );
-  this->GetDefaultDataStorage()->ChangedNodeEvent.RemoveListener( mitk::MessageDelegate1<QmitkFunctionality, const mitk::DataNode*>
-    ( this, &QmitkFunctionality::NodeChangedProxy ) );
+  std::cout << "sv4guiQmitkFunctionality::BlueBerrySelectionChanged still need to implement this method" << std::endl << std::flush;
 
-  berry::IBerryPreferences::Pointer prefs = this->GetPreferences().Cast<berry::IBerryPreferences>();
-  if(prefs.IsNotNull())
-  {
-    prefs->OnChanged.RemoveListener(berry::MessageDelegate1<QmitkFunctionality
-    , const berry::IBerryPreferences*>(this, &QmitkFunctionality::OnPreferencesChanged));
-    // flush the preferences here (disabled, everyone should flush them by themselves at the right moment)
-    // prefs->Flush();
-  }
+  // this->GetDefaultDataStorage()->AddNodeEvent.RemoveListener( mitk::MessageDelegate1<QmitkFunctionality, const mitk::DataNode*>
+  //   ( this, &QmitkFunctionality::NodeAddedProxy ) );
+  // this->GetDefaultDataStorage()->RemoveNodeEvent.RemoveListener( mitk::MessageDelegate1<QmitkFunctionality, const mitk::DataNode*>
+  //   ( this, &QmitkFunctionality::NodeRemovedProxy) );
+  // this->GetDefaultDataStorage()->ChangedNodeEvent.RemoveListener( mitk::MessageDelegate1<QmitkFunctionality, const mitk::DataNode*>
+  //   ( this, &QmitkFunctionality::NodeChangedProxy ) );
 
-  // REMOVE SELECTION PROVIDER
-  this->GetSite()->SetSelectionProvider(berry::ISelectionProvider::Pointer(nullptr));
+  // berry::IBerryPreferences::Pointer prefs = this->GetPreferences().Cast<berry::IBerryPreferences>();
+  // if(prefs.IsNotNull())
+  // {
+  //   prefs->OnChanged.RemoveListener(berry::MessageDelegate1<QmitkFunctionality
+  //   , const berry::IBerryPreferences*>(this, &QmitkFunctionality::OnPreferencesChanged));
+  //   // flush the preferences here (disabled, everyone should flush them by themselves at the right moment)
+  //   // prefs->Flush();
+  // }
 
-  berry::ISelectionService* s = GetSite()->GetWorkbenchWindow()->GetSelectionService();
-  if(s)
-  {
-    s->RemovePostSelectionListener(m_BlueBerrySelectionListener.data());
-  }
+  // // REMOVE SELECTION PROVIDER
+  // this->GetSite()->SetSelectionProvider(berry::ISelectionProvider::Pointer(nullptr));
 
-  this->ClosePart();
+  // berry::ISelectionService* s = GetSite()->GetWorkbenchWindow()->GetSelectionService();
+  // if(s)
+  // {
+  //   s->RemovePostSelectionListener(m_BlueBerrySelectionListener.data());
+  // }
+
+  // this->ClosePart();
 }
 
 // --------------------------------------------------------------------------

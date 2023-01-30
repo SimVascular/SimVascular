@@ -64,6 +64,7 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QApplication>
+#include <QTimer>
 
 sv4guiSolverProcessHandlerROM::sv4guiSolverProcessHandlerROM(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent)
     : m_Process(process)

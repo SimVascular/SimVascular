@@ -182,7 +182,7 @@ bool ROMSim_WriteRCRFile(sv4guiROMSimulationPython& pythonInterface, std::vector
 
   // Write the rcr values to a file.
   std::string fileName = outputDir + "/" + std::string(BOUNDARY_CONDITION_RCR_FILE_NAME);
-  ofstream outs;
+  std::ofstream outs;
   outs.open(fileName, std::ofstream::out);
   if (outs.fail()) {
       throw std::runtime_error("Unable to open the file '" + fileName + "' for writing.");
@@ -232,7 +232,7 @@ bool ROMSim_WriteResistanceFile(sv4guiROMSimulationPython& pythonInterface, std:
 
   // Write the resistance values to a file.
   std::string fileName = outputDir + "/" + std::string(BOUNDARY_CONDITION_RESISTANCE_FILE_NAME);
-  ofstream outs;
+  std::ofstream outs;
   outs.open(fileName, std::ofstream::out);
   if (outs.fail()) {
       throw std::runtime_error("Unable to open the file '" + fileName + "' for writing.");
@@ -402,7 +402,7 @@ ROMSim_AddModelParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* 
   //
   auto outletFaceNames = PyUtilGetStringListAttr(modelObj, MODEL_OUTLET_FACE_NAMES);
   std::string fileName = outputDir + "/" + std::string(MODEL_OUTLET_FACE_FILE_NAME);
-  ofstream outs;
+  std::ofstream outs;
   outs.open(fileName, std::ofstream::out);
   if (outs.fail()) {
       throw std::runtime_error("Unable to open the file '" + fileName + "' for writing.");

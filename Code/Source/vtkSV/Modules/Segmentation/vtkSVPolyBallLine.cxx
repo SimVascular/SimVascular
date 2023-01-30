@@ -273,7 +273,7 @@ double vtkSVPolyBallLine::EvaluateFunction(double x[3])
 {
   vtkIdType i, k;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  vtkIdType *pts;
   double polyballFunctionValue, minPolyBallFunctionValue;
   double point0[3], point1[3];
   double radius0, radius1;
@@ -456,8 +456,8 @@ double vtkSVPolyBallLine::EvaluateFunction(double x[3])
         {
         continue;
         }
-
-      this->Input->GetCellPoints(cellId,npts,pts);
+      const vtkIdType *constPts = const_cast<vtkIdType*>(pts);
+      this->Input->GetCellPoints(cellId,npts,constPts);
     }
 
     for (i=0; i<npts-1; i++)

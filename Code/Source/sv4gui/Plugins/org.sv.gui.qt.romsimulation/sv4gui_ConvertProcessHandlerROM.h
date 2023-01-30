@@ -48,6 +48,8 @@
 #include <QStandardItemModel>
 #include <QProcess>
 #include <QMessageBox>
+#include <QTimer>
+#include <QmitkStdMultiWidget.h>
 
 class sv4guiConvertProcessHandlerROM : public QObject
 {

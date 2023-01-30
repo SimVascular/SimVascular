@@ -1710,9 +1710,11 @@ void sv4guiROMSimulationView::OnPreferencesChanged(const berry::IBerryPreference
 //
 void sv4guiROMSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
-    if (!IsVisible()) {
-        return;
-    }
+    std::cout << "IsVisible doesn't exist anymore" << std::endl << std::flush;
+    exit(1);
+    // if (!IsVisible()) {
+    //     return;
+    // }
 
     if (nodes.size() == 0) {
         RemoveObservers();

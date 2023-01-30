@@ -800,7 +800,8 @@ int vtkSVNewParameterizeSurfaceOnPolycube::RotateGroupToGlobalAxis(vtkPolyData *
   vtkSVGeneralUtils::ThresholdPd(pd, thresholdId, thresholdId, 1, arrayName, thresholdPd);
   thresholdPd->BuildLinks();
 
-  vtkIdType f3npts, *f3PtIds;
+  vtkIdType f3npts;
+  const vtkIdType *f3PtIds = new vtkIdType;
   thresholdPd->GetCellPoints(3, f3npts, f3PtIds);
 
   double pts[3][3];

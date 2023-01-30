@@ -45,6 +45,8 @@
 
 #include <QWidget>
 #include <QItemSelection>
+#include <QmitkStdMultiWidget.h>
+#include <QmitkRenderWindow.h>
 
 namespace Ui {
 class sv4guiModelEdit;
@@ -167,7 +169,8 @@ public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
+    // This was override when using QmitkFunctionality, we need to understand if it is required
+    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes);
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -179,9 +182,11 @@ public:
 
 //    virtual void Deactivated() override;
 
-    virtual void Visible() override;
+// This was override when using QmitkFunctionality, we need to understand if it is required
+    virtual void Visible();
 
-    virtual void Hidden() override;
+// This was override when using QmitkFunctionality, we need to understand if it is required
+    virtual void Hidden();
 
 protected:
 

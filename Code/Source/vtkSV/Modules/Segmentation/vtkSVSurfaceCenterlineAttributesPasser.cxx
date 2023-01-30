@@ -496,7 +496,8 @@ int vtkSVSurfaceCenterlineAttributesPasser::RunFilter()
     // Loop through points to evaluate function at each point
     vtkDebugMacro("Computing closest centerline points per cell of group " << groupId);
 
-    vtkIdType nlinepts, *linepts;
+    vtkIdType nlinepts;
+    const vtkIdType *linepts;
     int centerlineId = this->MergedCenterlines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(groupId);
     this->MergedCenterlines->GetCellPoints(centerlineId, nlinepts, linepts);
     int isTerminating = 0;
@@ -509,7 +510,8 @@ int vtkSVSurfaceCenterlineAttributesPasser::RunFilter()
     {
       // Get cell point coords
       double pts[3][3];
-      vtkIdType npts, *ptids;
+      vtkIdType npts;
+      const vtkIdType *ptids;
       branchPd->GetCellPoints(j, npts, ptids);
       for (int k=0; k<npts; k++)
         branchPd->GetPoint(ptids[k], pts[k]);
@@ -736,7 +738,8 @@ int vtkSVSurfaceCenterlineAttributesPasser::RunFilter()
       // Loop through points to evaluate function at each point
       vtkDebugMacro("Computing boundary vectors of group " << groupId);
 
-      vtkIdType nlinepts, *linepts;
+      vtkIdType nlinepts;
+      const vtkIdType *linepts;
       int centerlineId = this->MergedCenterlines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(groupId);
       this->MergedCenterlines->GetCellPoints(centerlineId, nlinepts, linepts);
       int isTerminating = 0;
@@ -1501,7 +1504,8 @@ int vtkSVSurfaceCenterlineAttributesPasser::GetCellDirectNeighbors(vtkPolyData *
     std::vector<int> neighborCells;
 
     // Get cell points
-    vtkIdType *pts, npts;
+    const vtkIdType *pts;
+    vtkIdType npts;
     pd->GetCellPoints(i, npts, pts);
 
     // Get cell edge neighbors

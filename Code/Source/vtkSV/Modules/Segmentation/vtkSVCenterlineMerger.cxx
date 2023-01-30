@@ -561,7 +561,8 @@ int vtkSVCenterlineMerger::RemovePointsWithinBifurcationRadius(vtkPolyData *pd)
   newCellData->CopyAllocate(pd->GetCellData(),
                             pd->GetNumberOfPoints());
 
-  vtkIdType nlinepts, *linepts;
+  vtkIdType nlinepts;
+  const vtkIdType *linepts;
   for (int i=0; i<pd->GetNumberOfCells(); i++)
   {
     pd->GetCellPoints(i, nlinepts, linepts);

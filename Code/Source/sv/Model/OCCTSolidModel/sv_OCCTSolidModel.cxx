@@ -92,7 +92,7 @@
 #include "BRepAlgoAPI_Common.hxx"
 #include "BRepAlgoAPI_Cut.hxx"
 #include "BRepAdaptor_Curve.hxx"
-#include "BRepAdaptor_HCurve.hxx"
+// #include "BRepAdaptor_HCurve.hxx"
 #include "BRepFill_Filling.hxx"
 #include "BRepFill_CurveConstraint.hxx"
 #include "BRepFilletAPI_MakeFillet.hxx"
@@ -117,7 +117,7 @@
 #include "GCPnts_AbscissaPoint.hxx"
 #include "Adaptor3d_Curve.hxx"
 #include "Adaptor3d_CurveOnSurface.hxx"
-#include "Adaptor3d_HCurveOnSurface.hxx"
+// #include "Adaptor3d_HCurveOnSurface.hxx"
 #include "BRepGProp.hxx"
 #include "GProp_GProps.hxx"
 #include "TColgp_SequenceOfXY.hxx"
@@ -911,20 +911,22 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
   double angcoeff = max_dist * M_PI/180.0;
   int uIsoLine= 0;
   int vIsoLine= 0;
-  IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher(
-      devcoeff,angcoeff,uIsoLine,vIsoLine);
-  aMesher->Build(aShapeImpl,aDataImpl);
+  std::cout << "IVtkOCC_ShapeMesher's interface has changed" << std::endl << std::flush;
+  exit(1);
+  // IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher(
+  //     devcoeff,angcoeff,uIsoLine,vIsoLine);
+  // aMesher->Build(aShapeImpl,aDataImpl);
 
-  pd = vtkPolyData::New();
-  pd->DeepCopy(aDataImpl->getVtkPolyData());
-  //if (max_dist != -1)
-  //{
-    this->GetOnlyPD(pd,max_dist);
-  //}
+  // pd = vtkPolyData::New();
+  // pd->DeepCopy(aDataImpl->getVtkPolyData());
+  // //if (max_dist != -1)
+  // //{
+  //   this->GetOnlyPD(pd,max_dist);
+  // //}
 
-  result = new cvPolyData(pd);
-  pd->Delete();
-  return result;
+  // result = new cvPolyData(pd);
+  // pd->Delete();
+  // return result;
 }
 
 // ------------
@@ -1076,18 +1078,20 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
   double angcoeff = max_dist * M_PI/180.0;
   int uIsoLine= 0;
   int vIsoLine= 0;
-  IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher(
-      devcoeff,angcoeff,uIsoLine,vIsoLine);
-  aMesher->Build(aShapeImpl,aDataImpl);
+  std::cout << "IVtkOCC_ShapeMesher's interface has changes" << std::endl << std::flush;
+  exit(1);
+  // IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher(
+  //     devcoeff,angcoeff,uIsoLine,vIsoLine);
+  // aMesher->Build(aShapeImpl,aDataImpl);
 
-  pd = vtkPolyData::New();
-  pd->DeepCopy(aDataImpl->getVtkPolyData());
-  //if (max_dist != -1)
-    this->GetOnlyPD(pd,max_dist);
+  // pd = vtkPolyData::New();
+  // pd->DeepCopy(aDataImpl->getVtkPolyData());
+  // //if (max_dist != -1)
+  //   this->GetOnlyPD(pd,max_dist);
 
-  result = new cvPolyData(pd);
-  pd->Delete();
-  return result;
+  // result = new cvPolyData(pd);
+  // pd->Delete();
+  // return result;
 }
 
 // ---------------
@@ -1313,16 +1317,18 @@ int cvOCCTSolidModel::ReadNative( char *filename )
   this->NewShape();
   if (!strncmp(extension,"brep",4)) {
     fprintf(stdout,"Reading file %s\n",filename);
-    Standard_Boolean worked =
-      BRepTools::Read(*geom_,filename,builder,progress);
-    if (worked = Standard_True)
-      fprintf(stdout,"File read\n");
-    else
-    {
-      fprintf(stderr,"File was not read\n");
-      return SV_ERROR;
-    }
-    this->AddShape();
+    std::cout << "The interface of Read function in OpenCascade has changed" << std::endl << std::flush;
+    exit(1);
+    // Standard_Boolean worked =
+    //   BRepTools::Read(*geom_,filename,builder,progress);
+    // if (worked = Standard_True)
+    //   fprintf(stdout,"File read\n");
+    // else
+    // {
+    //   fprintf(stderr,"File was not read\n");
+    //   return SV_ERROR;
+    // }
+    // this->AddShape();
   }
   else if (!strncmp(extension,"step",4)) {
     Handle(TDocStd_Document) aDoc;
@@ -1378,15 +1384,17 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
   Handle(Message_ProgressIndicator) progress;
   if (!strncmp(extension,"brep",4)) {
     fprintf(stdout,"Writing file %s\n",filename);
-    Standard_Boolean worked =
-      BRepTools::Write(*geom_,filename,progress);
-    if (worked = Standard_True)
-      fprintf(stdout,"File written\n");
-    else
-    {
-      fprintf(stderr,"File was not written\n");
-      return SV_ERROR;
-    }
+    std::cout << "Write's interface has changes" << std::endl << std::flush;
+    exit(1);
+    // Standard_Boolean worked =
+    //   BRepTools::Write(*geom_,filename,progress);
+    // if (worked = Standard_True)
+    //   fprintf(stdout,"File written\n");
+    // else
+    // {
+    //   fprintf(stderr,"File was not written\n");
+    //   return SV_ERROR;
+    // }
   }
   else if (!strncmp(extension,"step",4)) {
     fprintf(stdout,"Writing file %s\n",filename);
