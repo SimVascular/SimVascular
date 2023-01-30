@@ -30,6 +30,7 @@
  */
 
 #include "PyUtils.h"
+#include <functional>
 #include <string>
 #include <iostream>
 
