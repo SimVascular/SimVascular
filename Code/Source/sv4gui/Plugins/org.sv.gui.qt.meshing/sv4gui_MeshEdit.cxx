@@ -141,30 +141,32 @@ void sv4guiMeshEdit::CreateQtPartControl( QWidget *parent )
 
 //    parent->setMaximumWidth(450);
 
-    m_DisplayWidget=GetActiveStdMultiWidget();
+    std::cout << "GetActiveStdMultiWidget does not exist anymore" << std::endl << std::flush;
+    exit(1);
+    // m_DisplayWidget=GetActiveStdMultiWidget();
 
-    if(m_DisplayWidget==nullptr)
-    {
-        parent->setEnabled(false);
-        MITK_ERROR << "Plugin MeshEdit Init Error: No QmitkStdMultiWidget Available!";
-        return;
-    }
+    // if(m_DisplayWidget==nullptr)
+    // {
+    //     parent->setEnabled(false);
+    //     MITK_ERROR << "Plugin MeshEdit Init Error: No QmitkStdMultiWidget Available!";
+    //     return;
+    // }
 
-    connect(ui->btnRunMesher, SIGNAL(clicked()), this, SLOT(RunMesher()) );
+    // connect(ui->btnRunMesher, SIGNAL(clicked()), this, SLOT(RunMesher()) );
 
-    SetupGUI(parent);
+    // SetupGUI(parent);
 
-    if(m_SphereWidget==nullptr)
-    {
-        m_SphereWidget = vtkSmartPointer<sv4guiVtkMeshSphereWidget>::New();
-        m_SphereWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
-    //    m_SphereWidget->SetRepresentationToSurface();
-        sv4guiVtkMeshSphereWidget* sphereWidget=dynamic_cast<sv4guiVtkMeshSphereWidget*>(m_SphereWidget.GetPointer());
-        sphereWidget->SetMeshEdit(this);
-    }
+    // if(m_SphereWidget==nullptr)
+    // {
+    //     m_SphereWidget = vtkSmartPointer<sv4guiVtkMeshSphereWidget>::New();
+    //     m_SphereWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
+    // //    m_SphereWidget->SetRepresentationToSurface();
+    //     sv4guiVtkMeshSphereWidget* sphereWidget=dynamic_cast<sv4guiVtkMeshSphereWidget*>(m_SphereWidget.GetPointer());
+    //     sphereWidget->SetMeshEdit(this);
+    // }
 
-    connect(ui->btnMeshInfo, SIGNAL(clicked()), this, SLOT(DisplayMeshInfo()) );
-    connect(ui->checkBoxShowModel, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
+    // connect(ui->btnMeshInfo, SIGNAL(clicked()), this, SLOT(DisplayMeshInfo()) );
+    // connect(ui->checkBoxShowModel, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
 }
 
 void sv4guiMeshEdit::SetupGUI(QWidget *parent )
@@ -209,7 +211,6 @@ void sv4guiMeshEdit::SetupGUI(QWidget *parent )
       , this
       , SLOT( TableRegionListSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
-    std::cout << "m_TableMenuRegion doesnt exist" << std::endl << std::flush;
     m_TableMenuRegion=new QMenu(ui->tableViewRegion);
     QAction* setRegionTAction=m_TableMenuRegion->addAction("Set Regional Size");
     QAction* deleteRegionTAction=m_TableMenuRegion->addAction("Delete");
@@ -380,9 +381,7 @@ void sv4guiMeshEdit::ClearLocal(bool)
 
 void sv4guiMeshEdit::TableViewLocalContextMenuRequested( const QPoint & pos )
 {
-    std::cout << "m_TableMenuLocal" << std::endl << std::flush;
-    exit(1);
-    // m_TableMenuLocal->popup(QCursor::pos());
+    m_TableMenuLocal->popup(QCursor::pos());
 }
 
 void sv4guiMeshEdit::TableRegionListSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
@@ -640,16 +639,12 @@ void sv4guiMeshEdit::DeleteSelectedDomains(bool)
 
 void sv4guiMeshEdit::TableViewRegionContextMenuRequested( const QPoint & pos )
 {
-    std::cout << "m_TableMenuRegion doesnt exist" << std::endl << std::flush;
-    exit(1);
-    // m_TableMenuRegion->popup(QCursor::pos());
+    m_TableMenuRegion->popup(QCursor::pos());
 }
 
 void sv4guiMeshEdit::TableViewDomainsContextMenuRequested( const QPoint & pos )
 {
-    std::cout << "m_TableMenuDomains doesnt exist" << std::endl << std::flush;
-    exit(1);
-    // m_TableMenuDomains->popup(QCursor::pos());
+    m_TableMenuDomains->popup(QCursor::pos());
 }
 
 void sv4guiMeshEdit::SetEstimatedEdgeSize()

@@ -1538,7 +1538,7 @@ void sv4guiWorkbenchWindowAdvisor::RemoveSelectedNodes( bool )
         return;
     }
 
-    mitk::DataNode::Pointer node = 0;
+    mitk::DataNode::Pointer node = nullptr;
 
     std::vector<mitk::DataNode::Pointer> selectedNodes;
 
@@ -2028,7 +2028,7 @@ void sv4guiWorkbenchWindowAdvisor::SetCrosshairGapZero()
         return;
 
 
-    QmitkStdMultiWidget* multiWidget=editor->GetStdMultiWidget();
+    QmitkStdMultiWidget* multiWidget=editor->GetMultiWidget();
     if(multiWidget)
     {
         multiWidget->GetWidgetPlane1()->SetIntProperty("Crosshair.Gap Size", 0);

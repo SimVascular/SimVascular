@@ -47,6 +47,7 @@
 #include <QItemDelegate>
 #include <QItemSelection>
 #include <QmitkStdMultiWidget.h>
+#include <QMenu>
 
 namespace Ui {
 class sv4guiMeshEdit;

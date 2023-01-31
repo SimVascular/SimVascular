@@ -52,6 +52,8 @@
 #include <QProcess>
 #include <QMessageBox>
 #include <QItemSelection>
+#include <QMenu>
+#include <QmitkStdMultiWidget.h>
 
 namespace Ui {
 class sv4guiSimulationView;
@@ -156,7 +158,7 @@ public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
+    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes);
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -168,9 +170,9 @@ public:
 
 //    virtual void Deactivated() override;
 
-    virtual void Visible() override;
+    virtual void Visible();
 
-    virtual void Hidden() override;
+    virtual void Hidden();
 
     virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
 

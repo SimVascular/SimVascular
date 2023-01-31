@@ -372,9 +372,11 @@ void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* 
 //
 void sv4guiSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
-    if (!IsVisible()) {
-        return;
-    }
+    std::cout << "IsVisible does not exist" << std::endl << std::flush;
+    exit(1);
+    // if (!IsVisible()) {
+    //     return;
+    // }
 
     if(nodes.size()==0) {
         RemoveObservers();
