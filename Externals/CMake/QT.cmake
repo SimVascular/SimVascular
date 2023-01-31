@@ -132,6 +132,7 @@ set(SV_EXTERNALS_QT5_COMPONENTS
     Sql
     Svg
     Widgets
+    WebEngineWidgets
     Xml
     XmlPatterns
     UiTools
