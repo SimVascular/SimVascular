@@ -248,7 +248,10 @@ void QmitkSegmentationView::CreateNewSegmentation()
          QmitkNewSegmentationDialog* dialog = new QmitkNewSegmentationDialog(m_Parent); // needs a QWidget as parent, "this" is not QWidget
          QStringList organColors = mitk::OrganNamesHandling::GetDefaultOrganColorString();;
 
-         dialog->SetSuggestionList(organColors);
+         
+         std::cout << "organColors does not exist anymore" << std::endl << std::flush;
+         exit(1);
+        //  dialog->SetSuggestionList(organColors);
 
          int dialogReturnValue = dialog->exec();
          if (dialogReturnValue == QDialog::Rejected)
@@ -265,40 +268,42 @@ void QmitkSegmentationView::CreateNewSegmentation()
          {
            try
            {
-             std::string newNodeName = dialog->GetSegmentationName().toStdString();
-             if (newNodeName.empty())
-             {
-               newNodeName = "no_name";
-             }
+             std::cout << "GetSegmentationName doesn't exist anymore" << std::endl << std::flush;
+             exit(1);
+            //  std::string newNodeName = dialog->GetSegmentationName().toStdString();
+            //  if (newNodeName.empty())
+            //  {
+            //    newNodeName = "no_name";
+            //  }
 
-             mitk::DataNode::Pointer emptySegmentation = firstTool->CreateEmptySegmentationNode(image, newNodeName, dialog->GetColor());
-             // initialize showVolume to false to prevent recalculating the volume while working on the segmentation
-             emptySegmentation->SetProperty("showVolume", mitk::BoolProperty::New(false));
-             if (!emptySegmentation)
-             {
-               return; // could be aborted by user
-             }
+            //  mitk::DataNode::Pointer emptySegmentation = firstTool->CreateEmptySegmentationNode(image, newNodeName, dialog->GetColor());
+            //  // initialize showVolume to false to prevent recalculating the volume while working on the segmentation
+            //  emptySegmentation->SetProperty("showVolume", mitk::BoolProperty::New(false));
+            //  if (!emptySegmentation)
+            //  {
+            //    return; // could be aborted by user
+            //  }
 
-             mitk::OrganNamesHandling::UpdateOrganList(organColors, dialog->GetSegmentationName(), dialog->GetColor());
+            //  mitk::OrganNamesHandling::UpdateOrganList(organColors, dialog->GetSegmentationName(), dialog->GetColor());
 
-             // escape ';' here (replace by '\;'), see longer comment above
-             QString stringForStorage = organColors.replaceInStrings(";", "\\;").join(";");
-             MITK_DEBUG << "Will store: " << stringForStorage;
-             this->GetPreferences()->Put("Organ-Color-List", stringForStorage);
-             this->GetPreferences()->Flush();
+            //  // escape ';' here (replace by '\;'), see longer comment above
+            //  QString stringForStorage = organColors.replaceInStrings(";", "\\;").join(";");
+            //  MITK_DEBUG << "Will store: " << stringForStorage;
+            //  this->GetPreferences()->Put("Organ-Color-List", stringForStorage);
+            //  this->GetPreferences()->Flush();
 
-             if (mitk::ToolManagerProvider::GetInstance()->GetToolManager()->GetWorkingData(0))
-             {
-               mitk::ToolManagerProvider::GetInstance()->GetToolManager()->GetWorkingData(0)->SetSelected(false);
-             }
-             emptySegmentation->SetSelected(true);
-             this->GetDataStorage()->Add(emptySegmentation, node); // add as a child, because the segmentation "derives" from the original
+            //  if (mitk::ToolManagerProvider::GetInstance()->GetToolManager()->GetWorkingData(0))
+            //  {
+            //    mitk::ToolManagerProvider::GetInstance()->GetToolManager()->GetWorkingData(0)->SetSelected(false);
+            //  }
+            //  emptySegmentation->SetSelected(true);
+            //  this->GetDataStorage()->Add(emptySegmentation, node); // add as a child, because the segmentation "derives" from the original
 
-             this->FireNodeSelected(emptySegmentation);
-             this->OnSelectionChanged(emptySegmentation);
+            //  this->FireNodeSelected(emptySegmentation);
+            //  this->OnSelectionChanged(emptySegmentation);
 
-             m_Controls->segImageSelector->SetSelectedNode(emptySegmentation);
-             mitk::RenderingManager::GetInstance()->InitializeViews(emptySegmentation->GetData()->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true);
+            //  m_Controls->segImageSelector->SetSelectedNode(emptySegmentation);
+            //  mitk::RenderingManager::GetInstance()->InitializeViews(emptySegmentation->GetData()->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true);
            }
            catch (const std::bad_alloc&)
            {
@@ -712,55 +717,57 @@ void QmitkSegmentationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*
 void QmitkSegmentationView::OnContourMarkerSelected(const mitk::DataNode *node)
 {
    QmitkRenderWindow* selectedRenderWindow = 0;
-   QmitkRenderWindow* axialRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("axial");
-   QmitkRenderWindow* sagittalRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("sagittal");
-   QmitkRenderWindow* coronalRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("coronal");
-   QmitkRenderWindow* _3DRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("3d");
-   bool PlanarFigureInitializedWindow = false;
+   std::cout << "OPEN does not exist anymore" << std::endl << std::flush;
+   exit(1);
+  //  QmitkRenderWindow* axialRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("axial");
+  //  QmitkRenderWindow* sagittalRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("sagittal");
+  //  QmitkRenderWindow* coronalRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("coronal");
+  //  QmitkRenderWindow* _3DRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("3d");
+  //  bool PlanarFigureInitializedWindow = false;
 
-   // find initialized renderwindow
-   if (node->GetBoolProperty("PlanarFigureInitializedWindow",
-      PlanarFigureInitializedWindow, axialRenderWindow->GetRenderer()))
-   {
-      selectedRenderWindow = axialRenderWindow;
-   }
-   if (!selectedRenderWindow && node->GetBoolProperty(
-      "PlanarFigureInitializedWindow", PlanarFigureInitializedWindow,
-      sagittalRenderWindow->GetRenderer()))
-   {
-      selectedRenderWindow = sagittalRenderWindow;
-   }
-   if (!selectedRenderWindow && node->GetBoolProperty(
-      "PlanarFigureInitializedWindow", PlanarFigureInitializedWindow,
-      coronalRenderWindow->GetRenderer()))
-   {
-      selectedRenderWindow = coronalRenderWindow;
-   }
-   if (!selectedRenderWindow && node->GetBoolProperty(
-      "PlanarFigureInitializedWindow", PlanarFigureInitializedWindow,
-      _3DRenderWindow->GetRenderer()))
-   {
-      selectedRenderWindow = _3DRenderWindow;
-   }
+  //  // find initialized renderwindow
+  //  if (node->GetBoolProperty("PlanarFigureInitializedWindow",
+  //     PlanarFigureInitializedWindow, axialRenderWindow->GetRenderer()))
+  //  {
+  //     selectedRenderWindow = axialRenderWindow;
+  //  }
+  //  if (!selectedRenderWindow && node->GetBoolProperty(
+  //     "PlanarFigureInitializedWindow", PlanarFigureInitializedWindow,
+  //     sagittalRenderWindow->GetRenderer()))
+  //  {
+  //     selectedRenderWindow = sagittalRenderWindow;
+  //  }
+  //  if (!selectedRenderWindow && node->GetBoolProperty(
+  //     "PlanarFigureInitializedWindow", PlanarFigureInitializedWindow,
+  //     coronalRenderWindow->GetRenderer()))
+  //  {
+  //     selectedRenderWindow = coronalRenderWindow;
+  //  }
+  //  if (!selectedRenderWindow && node->GetBoolProperty(
+  //     "PlanarFigureInitializedWindow", PlanarFigureInitializedWindow,
+  //     _3DRenderWindow->GetRenderer()))
+  //  {
+  //     selectedRenderWindow = _3DRenderWindow;
+  //  }
 
-   // make node visible
-   if (selectedRenderWindow)
-   {
-      std::string nodeName = node->GetName();
-      unsigned int t = nodeName.find_last_of(" ");
-      unsigned int id = atof(nodeName.substr(t+1).c_str())-1;
+  //  // make node visible
+  //  if (selectedRenderWindow)
+  //  {
+  //     std::string nodeName = node->GetName();
+  //     unsigned int t = nodeName.find_last_of(" ");
+  //     unsigned int id = atof(nodeName.substr(t+1).c_str())-1;
 
-      {
-         ctkPluginContext* context = mitk::PluginActivator::getContext();
-         ctkServiceReference ppmRef = context->getServiceReference<mitk::PlanePositionManagerService>();
-         mitk::PlanePositionManagerService* service = context->getService<mitk::PlanePositionManagerService>(ppmRef);
-         selectedRenderWindow->GetSliceNavigationController()->ExecuteOperation(service->GetPlanePosition(id));
-         context->ungetService(ppmRef);
-      }
+  //     {
+  //        ctkPluginContext* context = mitk::PluginActivator::getContext();
+  //        ctkServiceReference ppmRef = context->getServiceReference<mitk::PlanePositionManagerService>();
+  //        mitk::PlanePositionManagerService* service = context->getService<mitk::PlanePositionManagerService>(ppmRef);
+  //        selectedRenderWindow->GetSliceNavigationController()->ExecuteOperation(service->GetPlanePosition(id));
+  //        context->ungetService(ppmRef);
+  //     }
 
-      selectedRenderWindow->GetRenderer()->GetCameraController()->Fit();
-      mitk::RenderingManager::GetInstance()->RequestUpdateAll();
-   }
+  //     selectedRenderWindow->GetRenderer()->GetCameraController()->Fit();
+  //     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+  //  }
 }
 
 void QmitkSegmentationView::OnTabWidgetChanged(int id)

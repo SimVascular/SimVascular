@@ -191,7 +191,9 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
   ui->setupUi(parent);
 
   // Get access to the four-window widget in the centre of the application.
-  m_DisplayWidget = GetActiveStdMultiWidget();
+  std::cout << "GetActiveStdMultiWidget does not exist" << std::endl << std::flush;
+  exit(1);
+  // m_DisplayWidget = GetActiveStdMultiWidget();
 
   if (m_DisplayWidget == nullptr) {
       parent->setEnabled(false);
@@ -704,12 +706,14 @@ int sv4guiImageProcessing::FindClosesetPoint(vtkPolyData* polyData, std::array<d
 //
 void sv4guiImageProcessing::AddStartSeed()
 {
-  mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
-  int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
-  m_SeedContainer->AddStartSeed(point[0], point[1], point[2]);
+  std::cout << "GetCrossPosition doesnt exist" << std::endl << std::flush;
+  exit(1);
+  // mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
+  // int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
+  // m_SeedContainer->AddStartSeed(point[0], point[1], point[2]);
 
-  // TODO:DaveP] Do we need to updata all?
-  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+  // // TODO:DaveP] Do we need to updata all?
+  // mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 
@@ -720,20 +724,22 @@ void sv4guiImageProcessing::AddStartSeed()
 //
 void sv4guiImageProcessing::AddEndSeed()
 {
-  mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
+  std::cout << "GetCrossPosition does not exist" << std::endl << std::flush;
+  exit(1);
+  // mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
 
-  // A start seed must have been selected.
-  int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
-  if (numStartSeeds < 1) { 
-    QMessageBox::warning(nullptr,"","No start seeds have been defined.");
-    return;
-  }
+  // // A start seed must have been selected.
+  // int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
+  // if (numStartSeeds < 1) { 
+  //   QMessageBox::warning(nullptr,"","No start seeds have been defined.");
+  //   return;
+  // }
 
-  // Add add an end seed to the current start seed.
-  m_SeedContainer->AddEndSeed(point[0], point[1], point[2]);
+  // // Add add an end seed to the current start seed.
+  // m_SeedContainer->AddEndSeed(point[0], point[1], point[2]);
 
-  // TODO:DaveP] Do we need to updata all?
-  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+  // // TODO:DaveP] Do we need to updata all?
+  // mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 //------------
@@ -997,11 +1003,12 @@ sv4guiImageProcessing::getItkImage(int index)
     return nullptr;
   }
 
-  image->GetScalarValueMin();
-  sv4guiImageProcessingUtils::itkImPoint itkImage = sv4guiImageProcessingUtils::itkImageType::New();
-  mitk::CastToItkImage(image, itkImage);
+  std::cout << "GetScalarValueMin does not exist" << std::endl << std::flush;
+  // image->GetScalarValueMin();
+  // sv4guiImageProcessingUtils::itkImPoint itkImage = sv4guiImageProcessingUtils::itkImageType::New();
+  // mitk::CastToItkImage(image, itkImage);
 
-  return itkImage;
+  // return itkImage;
 }
 
 void sv4guiImageProcessing::storeImage(sv4guiImageProcessingUtils::itkImPoint image){

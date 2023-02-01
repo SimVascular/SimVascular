@@ -174,6 +174,12 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "berryQtViewPart.h"                              #mitk/plugins/org.blueberry.ui.qt
                     "berryQtWorkbenchAdvisor.h"                      #mitk/plugins/org.blueberry.ui.qt/application
                     "berryIntroPart.h"                               #mitk/plugins/org.blueberry.ui.qt/intro
+                    "QmitkSlicesInterpolator.h"
+                    "QmitkToolGUIArea.h"
+                    # "QmitkToolReferenceDataSelectionBox.h"
+                    "QmitkToolSelectionBox.h"
+                    "mitkTool.h"
+                    "QmitkNewSegmentationDialog.h"
                     )
 
 if(${proj}_VERSION STREQUAL "2016.03")

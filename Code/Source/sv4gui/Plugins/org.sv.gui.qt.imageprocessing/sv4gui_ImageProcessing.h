@@ -91,7 +91,7 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 
     mitk::Image::Pointer getImage(std::string image_name);
 
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
+    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes);
 
     sv4guiImageProcessingUtils::itkImPoint getItkImage(int index);
 

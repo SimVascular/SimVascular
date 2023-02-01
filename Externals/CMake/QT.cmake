@@ -133,6 +133,7 @@ set(SV_EXTERNALS_QT5_COMPONENTS
     Svg
     Widgets
     WebEngineWidgets
+    WebEngineView
     Xml
     XmlPatterns
     UiTools

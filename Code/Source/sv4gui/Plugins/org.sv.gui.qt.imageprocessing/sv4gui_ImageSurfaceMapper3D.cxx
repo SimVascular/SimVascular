@@ -61,6 +61,7 @@
 #include <vtkPointData.h>
 #include <vtkPlaneCollection.h>
 #include <vtkSmartPointer.h>
+#include <vtkTexture.h>
 
 const mitk::sv4guiSurface* mitk::sv4guiImageSurfaceMapper3D::GetInput()
 {

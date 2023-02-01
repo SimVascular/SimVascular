@@ -45,6 +45,15 @@
 #include "tcl.h"
 #include "tk.h"
 
+// we need to add these to avoid conflicts with X11/Xlib
+#ifdef Status
+#undef Status
+#endif
+
+#ifdef Success
+#undef Success
+#endif 
+
 #include "vtkToolkits.h"
 #include "sv_VTK.h"
 
@@ -57,7 +66,7 @@
 
 #include "vtkToolkits.h"
 
-#include "sv_repos_init.h"
+// #include "sv_repos_init.h"
 #include "sv2_Lset_init.h"
 #include "sv_geom_init.h"
 #include "sv2_image_init.h"
@@ -142,6 +151,16 @@ void SimVascularWelcome( Tcl_Interp *interp )
 #ifndef SV_USE_VTK_SHARED
 # include "vtktcl_static_prototypes.h"
 #endif
+
+
+// TODO temporary fix!! I don't know why these symbols are not in VTK
+vtkTimerLogCleanup::~vtkTimerLogCleanup()
+{
+}
+
+vtkTimerLogCleanup::vtkTimerLogCleanup()
+{
+}
 
 int SimVascular_Init( Tcl_Interp *interp )
 {

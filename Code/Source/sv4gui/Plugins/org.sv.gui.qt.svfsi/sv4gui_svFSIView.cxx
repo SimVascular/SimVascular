@@ -53,7 +53,7 @@
 #include <QTextStream>
 #include <QThread>
 #include <QInputDialog>
-
+#include <QTimer>
 #include <iostream>
 
 const QString sv4guisvFSIView::EXTENSION_ID = "org.sv.views.svfsi";
@@ -148,9 +148,11 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
 //
 void sv4guisvFSIView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes)
 {
-    if (!IsVisible()) {
-        return;
-    }
+    std::cout << "IsVisible does not exist anymore" << std::endl << std::flush;
+    exit(1);
+    // if (!IsVisible()) {
+    //     return;
+    // }
 
     if(nodes.size()==0) {
         ui->Subpanel_Widget->setEnabled(false);

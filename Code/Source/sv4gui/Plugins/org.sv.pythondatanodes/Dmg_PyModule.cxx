@@ -60,7 +60,7 @@
 #include "sv_UnstructuredGrid.h"
 #include "sv_arg.h"
 #include "sv_VTK.h"
-#include "vtkTclUtil.h"
+// #include "vtkTclUtil.h"
 #include "vtkPythonUtil.h"
 #include "PyUtils.h"
 #include "sv4gui_ContourGroupIO.h"

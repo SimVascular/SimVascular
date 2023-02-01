@@ -58,8 +58,9 @@
 #include <QWebView>
 #include <QWebPage>
 #else
-#include <QWebEngineView>
-#include <QWebEnginePage>
+// QtWebEngineWidgets might not be necessary. TODO: change cmake file
+#include <QtWebEngineWidgets/QWebEngineView>
+#include <QtWebEngineWidgets/QWebEnginePage>
 #endif
 #include <QUrlQuery>
 

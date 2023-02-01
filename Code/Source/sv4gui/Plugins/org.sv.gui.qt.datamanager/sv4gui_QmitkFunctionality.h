@@ -85,6 +85,11 @@ public:
     void CreatePartControl(QWidget* parent) override;
     //}
 
+protected:
+    // originally this was include in QmitkFunctionality. Adding it now for
+    // compatibility during transition to QmitkAbstractView
+    QWidget* m_Parent;
+
 private:
 
     //{
@@ -93,9 +98,6 @@ private:
     QmitkAbstractViewSelectionProvider* m_SelectionProvider;
     QScopedPointer<berry::ISelectionListener> m_BlueBerrySelectionListener;
 
-    // originally this was include in QmitkFunctionality. Adding it now for
-    // compatibility during transition to QmitkAbstractView
-    QWidget* m_Parent;
     //}
 
 
