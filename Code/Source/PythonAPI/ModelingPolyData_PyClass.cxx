@@ -562,15 +562,20 @@ ModelingPolyData_compute_boundary_faces(PyModelingModel* self, PyObject* args, P
 // The following code replicates sv4guiModelUtils::CreateCenterlines().
 //
 PyDoc_STRVAR(ModelingPolyData_compute_centerlines_doc,
-  "compute_centerlines(inlet_ids, outlet_ids)  \n\
+  "compute_centerlines(inlet_ids, outlet_ids, use_face_ids=False)  \n\
    \n\
-   Compute the boundary faces for the solid model. \n\
+   Compute the centerlines for the solid model.                     \n\
    \n\
    \n\
    Args: \n\
-     angle (float): The angle used to distinguish faces in a model.         \n\
+     inlet_ids (list[int]): The list of integer IDs identifying the vessel \n\
+        inlet faces.                                                       \n\
+     outlet_ids (list[int]): The list of integer IDs identifying the vessel\n\
+        outlet faces. \n\
+     use_face_ids (bool): If True then the input IDs are face IDs, else    \n\
+        they are VTK point IDs.                                            \n\
    \n\
-   Returns list([int]): The list of integer face IDs. \n\
+   Returns (vtkPolyData): The centerlines geometry (lines) and data.       \n\
 ");
 
 static PyObject *
