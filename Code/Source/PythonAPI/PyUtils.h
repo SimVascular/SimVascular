@@ -86,6 +86,9 @@ std::array<double,3> PyUtilComputeNormalFromlPoints(const std::vector<std::array
 std::array<double,3> 
 PyUtilComputePointsCenter(const std::vector<std::array<double,3>>& points);
 
+std::vector<int>
+PyUtilConvertFaceIdsToNodeIds(PyUtilApiFunction& api, vtkPolyData* polydata, std::vector<int>& faceIds);
+
 bool PyUtilConvertPointData(PyObject* data, int index, std::string& msg, double point[3]);
 
 bool PyUtilConvertPointData(PyObject* data, int index, std::string& msg, int point[3]);

@@ -556,6 +556,250 @@ ModelingPolyData_compute_boundary_faces(PyModelingModel* self, PyObject* args, P
   return faceList;
 }
 
+//---------------------
+// compute_centerlines
+//---------------------
+// The following code replicates sv4guiModelUtils::CreateCenterlines().
+//
+PyDoc_STRVAR(ModelingPolyData_compute_centerlines_doc,
+  "compute_centerlines(inlet_ids, outlet_ids, use_face_ids=False)  \n\
+   \n\
+   Compute the centerlines for the solid model.                     \n\
+   \n\
+   \n\
+   Args: \n\
+     inlet_ids (list[int]): The list of integer IDs identifying the vessel \n\
+        inlet faces.                                                       \n\
+     outlet_ids (list[int]): The list of integer IDs identifying the vessel\n\
+        outlet faces. \n\
+     use_face_ids (bool): If True then the input IDs are face IDs, else    \n\
+        they are VTK point IDs.                                            \n\
+   \n\
+   Returns (vtkPolyData): The centerlines geometry (lines) and data.       \n\
+");
+
+static PyObject *
+ModelingPolyData_compute_centerlines(PyModelingModel* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("O!O!|O!", PyRunTimeErr, __func__);
+  static char *keywords[] = {"inlet_ids", "outlet_ids", "use_face_ids", NULL};
+  PyObject* inletIdsArg;
+  PyObject* outletIdsArg;
+  PyObject* useFaceIdsArg = nullptr;
+  bool useFaceIds = false;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &inletIdsArg,
+      &PyList_Type, &outletIdsArg, &PyBool_Type, &useFaceIdsArg)) {
+    return api.argsError();
+  }
+
+  // Get source IDs.
+  //
+  int numInletIds = PyList_Size(inletIdsArg);
+
+  if (numInletIds == 0) {
+    api.error("The 'inlet_ids' argument is empty.");
+    return nullptr;
+  }
+
+  std::set<int> sources;
+  auto sourceCapIds = vtkSmartPointer<vtkIdList>::New();
+
+  for (int i = 0; i < numInletIds; i++) {
+    auto item = PyList_GetItem(inletIdsArg, i);
+    if (!PyLong_Check(item)) {
+      api.error("The 'inlet_ids' argument is not a list of integers.");
+      return nullptr;
+    }
+    int id = PyLong_AsLong(item);
+    //std::cout << "[Vmtk_centerlines]   ID: " << id << std::endl;
+    sources.insert(id);
+    sourceCapIds->InsertNextId(id);
+  }
+
+  // Get the target IDs.
+  //
+  int numOutletIds = PyList_Size(outletIdsArg);
+  std::set<int> targets;
+  auto targetCapIds = vtkSmartPointer<vtkIdList>::New();
+
+  if (numOutletIds == 0) {
+    api.error("The 'outlet_ids' argument is empty.");
+    return nullptr;
+  }
+  for (int i = 0; i < numOutletIds; i++) {
+    auto item = PyList_GetItem(outletIdsArg, i);
+    if (!PyLong_Check(item)) {
+      api.error("The 'outlet_ids' argument is not a list of integers.");
+      return nullptr;
+    }
+    int id = PyLong_AsLong(item);
+    targets.insert(id);
+    targetCapIds->InsertNextId(id);
+  }
+
+  // Check for IDs given as both sources and targets.
+  //
+  std::vector<int> commonIds;
+  std::set_intersection(sources.begin(), sources.end(), targets.begin(), targets.end(), 
+      std::back_inserter(commonIds));
+  if (commonIds.size() != 0) {
+    std::ostringstream ids;
+    std::copy(commonIds.begin(), commonIds.end()-1, std::ostream_iterator<int>(ids, ", "));
+    ids << commonIds.back();
+    api.error("The 'inlet_ids' and 'outlet_ids' arguments contain identical IDs '" + ids.str() + "'.");
+    return nullptr;
+  }
+
+  // Get the model PolyData:
+  //
+  auto model = self->solidModel;
+  double max_dist = -1.0;
+  int useMaxDist = 0;
+
+  auto cvPolydata = model->GetPolyData(useMaxDist, max_dist);
+  auto fullpd = vtkSmartPointer<vtkPolyData>::New();
+  fullpd->DeepCopy(cvPolydata->GetVtkPolyData());
+
+  if (fullpd == NULL) {
+    api.error("Could not get polydata for the solid model.");
+    return nullptr;
+  }
+
+  auto inpd = vtkSmartPointer<vtkPolyData>::New();
+  inpd->DeepCopy(fullpd);
+
+  // Get the face IDs.
+  //
+  auto faceIDs = ModelingModelGetFaceIDs(api, self);
+  if (faceIDs.size() == 0) {
+    api.error("The model has no face IDs.");
+    return nullptr;
+  }
+
+  // Classify each face as a cap or wall and add the
+  // result to a bool list.
+  //
+  double tolerance = 1e-5;
+  std::vector<int> cap_ids;
+
+  for (auto faceID : faceIDs) {
+    try {
+      if (classify_face(self, faceID, api, tolerance)) {
+        cap_ids.push_back(faceID);
+        //std::cout << "[centerlines] Cap ID: " << faceID << std::endl;
+      }
+    } catch (std::exception &e) {
+      api.error(e.what());
+      return nullptr;
+    }
+  }
+
+  if (useFaceIdsArg != nullptr) {
+    useFaceIds = PyObject_IsTrue(useFaceIdsArg);
+  }
+
+  auto sourcePtIds = vtkSmartPointer<vtkIdList>::New();
+  auto targetPtIds = vtkSmartPointer<vtkIdList>::New();
+  vtkPolyData* centerlines;
+
+  // If using face IDs then we have do all of this,
+  // not sure why though.
+  //
+  if (useFaceIds) { 
+
+    // Remove the cells defining the model caps.
+    sv4guiModelUtils::DeleteRegions(inpd, cap_ids);
+
+    cvPolyData *src = new cvPolyData(inpd);
+    auto cleaned = sys_geom_Clean(src);
+    delete src;
+
+    // Recap the model surface.
+    //
+    cvPolyData *capped  = NULL;
+    int numCapCenterIds;
+    int *capCenterIds = NULL;
+    int capUsingCenter = 1;     // Cap using a point in the cap center.
+
+    if (sys_geom_cap_for_centerlines(cleaned, &capped, &numCapCenterIds, &capCenterIds, 
+        capUsingCenter) != SV_OK) {
+      delete cleaned;
+      if (capped != NULL) {
+        delete capped;
+      }
+      api.error("Capping for centerlines has failed.");
+      return nullptr;
+    }
+
+    auto locator = vtkSmartPointer<vtkCellLocator>::New();
+    locator->SetDataSet(fullpd);
+    locator->BuildLocator();
+    auto genericCell = vtkSmartPointer<vtkGenericCell>::New();
+    std::map<int,int> facePtIdMap;
+
+    for (int i = 0;  i < numCapCenterIds; i++) {
+      int ptId = capCenterIds[i];
+      double capPt[3];
+      capped->GetVtkPolyData()->GetPoint(ptId, capPt);
+
+      int subId;
+      double closestPt[3];
+      vtkIdType closestCellId;
+      double distance;
+      locator->FindClosestPoint(capPt, closestPt, genericCell, closestCellId, subId, distance);
+
+      int capFaceId = fullpd->GetCellData()->GetArray("ModelFaceID")->GetTuple1(closestCellId);
+      facePtIdMap[capFaceId] = ptId;
+    }
+
+    // Add point IDs to the source and target lists.
+    //
+    for (auto face : facePtIdMap) {
+      int capFaceId = face.first;
+      int ptId = face.second;
+
+      if (sourceCapIds->IsId(capFaceId) != -1) {
+        sourcePtIds->InsertNextId(ptId);
+        //std::cout << "[centerlines] Add source: " << capFaceId << std::endl;
+      } else if (targetCapIds->IsId(capFaceId) != -1) {
+        targetPtIds->InsertNextId(ptId);
+        //std::cout << "[centerlines] Add target: " << capFaceId << std::endl;
+      }
+    }
+
+    centerlines = sv4guiModelUtils::CreateCenterlines(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
+
+    delete [] capCenterIds;
+    delete capped;
+
+  // Cap IDs are given as node IDs.
+  //
+  } else {
+
+    auto points = fullpd->GetPoints();
+
+    for (int id : sources) {
+      sourcePtIds->InsertNextId(id);
+      auto pt = points->GetPoint(id);
+      std::cout << "[centerlines] Add source: " << id << std::endl;
+      std::cout << "[centerlines]   pt: " << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+    }
+
+    for (int id : targets) {
+      targetPtIds->InsertNextId(id);
+      auto pt = points->GetPoint(id);
+      std::cout << "[centerlines] Add target: " << id << std::endl;
+      std::cout << "[centerlines]   pt: " << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+    }
+
+    centerlines = sv4guiModelUtils::CreateCenterlines(fullpd, sourcePtIds, targetPtIds);
+  }
+
+
+  return vtkPythonUtil::GetObjectFromPointer(centerlines);
+}
+
 //-------------------------------
 // ModelingPolyData_delete_faces
 //-------------------------------
@@ -853,6 +1097,8 @@ PyMethodDef PyPolyDataSolidMethods[] = {
   { "combine_faces", (PyCFunction)ModelingPolyData_combine_faces, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_combine_faces_doc},
 
   { "compute_boundary_faces", (PyCFunction)ModelingPolyData_compute_boundary_faces, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_compute_boundary_faces_doc},
+
+  { "compute_centerlines", (PyCFunction)ModelingPolyData_compute_centerlines, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_compute_centerlines_doc},
 
   { "create_vessel_model", (PyCFunction)ModelingPolyData_create_vessel_model, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_create_vessel_model_doc},
 
