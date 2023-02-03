@@ -121,7 +121,7 @@ if(SV_USE_${proj})
         WebEngineWidgets
         WebView
         )
-    elseif(${proj}_VERSION VERSION_EQUAL "5.11.3")
+    else()
       list(APPEND SV_${proj}_COMPONENTS
         WebEngineCore
         WebEngineWidgets

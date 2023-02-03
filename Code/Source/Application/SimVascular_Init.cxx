@@ -152,7 +152,6 @@ void SimVascularWelcome( Tcl_Interp *interp )
 # include "vtktcl_static_prototypes.h"
 #endif
 
-
 // TODO temporary fix!! I don't know why these symbols are not in VTK
 vtkTimerLogCleanup::~vtkTimerLogCleanup()
 {

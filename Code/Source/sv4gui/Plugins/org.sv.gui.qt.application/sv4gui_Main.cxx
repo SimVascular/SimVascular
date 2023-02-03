@@ -99,7 +99,6 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
      int single_argc = 1;
      //mitk::BaseApplication app(single_argc, argv);
      sv4guiMitkApp app(single_argc, argv);
-
      // note: this command doesn't seem to work.
      // US_LOAD_IMPORTED_MODULES_INTO_MAIN(svmodel svpath ...)
      #ifdef QT_STATICPLUGIN
@@ -274,6 +273,5 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
 #endif
 
      return app.run();
-
 }
 
