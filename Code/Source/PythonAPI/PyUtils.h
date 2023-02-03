@@ -41,6 +41,7 @@
 #include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "sv3_Contour.h"
+#include "sv4gui_ContourGroup.h"
 
 #include <array>
 #include <map>
@@ -85,6 +86,9 @@ std::array<double,3> PyUtilComputeNormalFromlPoints(const std::vector<std::array
 std::array<double,3> 
 PyUtilComputePointsCenter(const std::vector<std::array<double,3>>& points);
 
+std::vector<int>
+PyUtilConvertFaceIdsToNodeIds(PyUtilApiFunction& api, vtkPolyData* polydata, std::vector<int>& faceIds);
+
 bool PyUtilConvertPointData(PyObject* data, int index, std::string& msg, double point[3]);
 
 bool PyUtilConvertPointData(PyObject* data, int index, std::string& msg, int point[3]);
@@ -126,6 +130,8 @@ PyObject * PyUtilPointVectorDataToPyList(const std::vector<std::array<double,3>>
 PyObject* PyUtilResetException(PyObject * PyRunTimeErr);
 
 void PyUtilSetErrorMsg(PyObject* pyRunTimeErr, std::string& msgp, std::string msg);
+
+void PyUtilSetLoftParams(PyUtilApiFunction& api, PyObject* loftOpts, svLoftingParam& params);
 
 void PyUtilSetupApiFunction(const char* functionName, std::string& format, std::string& msg);
 

@@ -89,83 +89,6 @@ GetVtkPolyData(PyUtilApiFunction& api, PyObject* obj)
   return polydata;
 }
 
-//-------------------------
-// ConvertFaceIdsToNodeIds
-//-------------------------
-// Convert a list of face IDs to node IDs.
-//
-// The face ID is mapped to the node ID that is closest to the face center.
-//
-static std::vector<int>
-ConvertFaceIdsToNodeIds(PyUtilApiFunction& api, vtkPolyData* polydata, std::vector<int>& faceIds)
-{
-  std::vector<int> nodeIds;
-  int numCells = polydata->GetNumberOfCells();
-  auto points = polydata->GetPoints();
-  auto cellData = vtkIntArray::SafeDownCast(polydata->GetCellData()->GetArray("ModelFaceID"));
-  if (cellData == nullptr) {
-      api.error("No 'ModelFaceID' data found for the input polydata.");
-      return nodeIds;
-  }
-
-  // Find the node ID for each face ID.
-  //
-  for (auto const& faceID : faceIds) {
-      int cellID = -1;
-      std::vector<int> cellIds;
-      for (int i = 0; i < numCells; i++) {
-          if (cellData->GetValue(i) == faceID) {
-              cellIds.push_back(i);
-          }
-      }
-      if (cellIds.size() == 0) {
-          api.error("No node found for face ID '" + std::to_string(faceID) + "'.");
-          return nodeIds;
-      }
-
-      // Get face center.
-      std::vector<int> faceNodeIds;
-      int numFacePts = 0;
-      double point[3];
-      double center[3] = {0.0, 0.0, 0.0};
-      for (auto const& cellID : cellIds) {
-          auto cell = polydata->GetCell(cellID);
-          auto ids = cell->GetPointIds();
-          for (vtkIdType i = 0; i < ids->GetNumberOfIds(); i++) {
-              int id = ids->GetId(i);
-              faceNodeIds.push_back(id);
-              points->GetPoint(id, point);
-              center[0] += point[0];
-              center[1] += point[1];
-              center[2] += point[2];
-              numFacePts += 1;
-          }
-      }
-
-      center[0] /= numFacePts;
-      center[1] /= numFacePts;
-      center[2] /= numFacePts;
-
-      // Find the closest node.
-      double min_d = 1e6;
-      int min_id = -1;
-      for (auto const& id : faceNodeIds) {
-          points->GetPoint(id, point);
-          auto dx = point[0] - center[0];
-          auto dy = point[1] - center[1];
-          auto dz = point[2] - center[2];
-          auto d = dx*dx + dy*dy + dz*dz;
-          if (d < min_d) {
-              min_d = d;
-              min_id = id;
-          }
-      }
-      nodeIds.push_back(min_id);
-  }
-
-  return nodeIds;
-}
-
 //////////////////////////////////////////////////////
 //          M o d u l e  F u n c t i o n s          //
 //////////////////////////////////////////////////////
@@ -456,8 +379,8 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
       useFaceIds = PyObject_IsTrue(useFaceIdsArg);
   }
   if (useFaceIds) {
-      sources = ConvertFaceIdsToNodeIds(api, surfPolydata, sources);
-      targets = ConvertFaceIdsToNodeIds(api, surfPolydata, targets);
+      sources = PyUtilConvertFaceIdsToNodeIds(api, surfPolydata, sources);
+      targets = PyUtilConvertFaceIdsToNodeIds(api, surfPolydata, targets);
       if ((sources.size() == 0) || (targets.size() == 0)) {
           return nullptr;
       }

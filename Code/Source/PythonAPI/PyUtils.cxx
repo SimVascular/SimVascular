@@ -30,8 +30,11 @@
  */
 
 #include "PyUtils.h"
+#include <functional>
 #include <string>
 #include <iostream>
+
+#include "vtkCellData.h"
 
 //////////////////////////////////////////////////////
 //             PyUtilApiFunction                    //
@@ -90,7 +93,6 @@ void PyUtilApiFunction::warning(std::string msg)
   PyErr_WarnEx(nullptr, emsg.c_str(), stack_level);
 }
 
-
 //---------------------
 // PyUtilGetObjectType
 //---------------------
@@ -138,6 +140,83 @@ std::string PyUtilGetFunctionName(const char* functionName)
 //////////////////////////////////////////////////////
 //        U t i l i t y     F u n c t i o n s       //
 //////////////////////////////////////////////////////
+
+//-------------------------
+// ConvertFaceIdsToNodeIds
+//-------------------------
+// Convert a list of face IDs to node IDs.
+//
+// The face ID is mapped to the node ID that is closest to the face center.
+//
+std::vector<int>
+PyUtilConvertFaceIdsToNodeIds(PyUtilApiFunction& api, vtkPolyData* polydata, std::vector<int>& faceIds)
+{
+  std::vector<int> nodeIds;
+  int numCells = polydata->GetNumberOfCells();
+  auto points = polydata->GetPoints();
+  auto cellData = vtkIntArray::SafeDownCast(polydata->GetCellData()->GetArray("ModelFaceID"));
+  if (cellData == nullptr) {
+      api.error("No 'ModelFaceID' data found for the input polydata.");
+      return nodeIds;
+  }
+
+  // Find the node ID for each face ID.
+  //
+  for (auto const& faceID : faceIds) {
+      int cellID = -1;
+      std::vector<int> cellIds;
+      for (int i = 0; i < numCells; i++) {
+          if (cellData->GetValue(i) == faceID) {
+              cellIds.push_back(i);
+          }
+      }
+      if (cellIds.size() == 0) {
+          api.error("No node found for face ID '" + std::to_string(faceID) + "'.");
+          return nodeIds;
+      }
+
+      // Get face center.
+      std::vector<int> faceNodeIds;
+      int numFacePts = 0;
+      double point[3];
+      double center[3] = {0.0, 0.0, 0.0};
+      for (auto const& cellID : cellIds) {
+          auto cell = polydata->GetCell(cellID);
+          auto ids = cell->GetPointIds();
+          for (vtkIdType i = 0; i < ids->GetNumberOfIds(); i++) {
+              int id = ids->GetId(i);
+              faceNodeIds.push_back(id);
+              points->GetPoint(id, point);
+              center[0] += point[0];
+              center[1] += point[1];
+              center[2] += point[2];
+              numFacePts += 1;
+          }
+      }
+
+      center[0] /= numFacePts;
+      center[1] /= numFacePts;
+      center[2] /= numFacePts;
+
+      // Find the closest node.
+      double min_d = 1e6;
+      int min_id = -1;
+      for (auto const& id : faceNodeIds) {
+          points->GetPoint(id, point);
+          auto dx = point[0] - center[0];
+          auto dy = point[1] - center[1];
+          auto dz = point[2] - center[2];
+          auto d = dx*dx + dy*dy + dz*dz;
+          if (d < min_d) {
+              min_d = d;
+              min_id = id;
+          }
+      }
+      nodeIds.push_back(min_id);
+  }
+
+  return nodeIds;
+}
 
 //--------------------
 // PyUtilGetMsgPrefix 
@@ -641,6 +720,66 @@ PyUtilComputeNormalFromlPoints(const std::vector<std::array<double,3>>& points)
   normal[2] = nz / mag;
 
   return normal;
+}
+
+//---------------------
+// PyUtilSetLoftParams
+//---------------------
+// Set the values for svLoftingParam from the LoftOptions Python class 
+// defined in SimVascular/Python/site-packages/sv/loft_options.py
+//
+void PyUtilSetLoftParams(PyUtilApiFunction& api, PyObject* loftOpts, svLoftingParam& params) 
+{
+  // Create a map used to set svLoftingParam from a key/value pair.
+  //
+  using ParamType = svLoftingParam&;
+  using ValType = PyObject*;
+  using SetParamValueMapType = std::map<std::string, std::function<void(ParamType params, ValType obj)>>;
+
+  SetParamValueMapType SetParamValue = {
+    {"add_caps", [](ParamType params, ValType value) -> void { params.addCaps = PyLong_AsLong(value); }},
+    {"bias", [](ParamType params, ValType value) -> void { params.bias = PyLong_AsLong(value); }},
+    {"continuity", [](ParamType params, ValType value) -> void { params.continuity = PyLong_AsLong(value); }},
+
+    {"linear_multiplier", [](ParamType params, ValType value) -> void { params.linearMuliplier = PyLong_AsLong(value); }},
+
+    {"method", [](ParamType params, ValType value) -> void { params.method = PyString_AsString(value); }},
+
+    {"num_modes", [](ParamType params, ValType value) -> void { params.numModes = PyLong_AsLong(value); }},
+    {"num_out_pts_along_length", [](ParamType params, ValType value) -> void { params.numOutPtsAlongLength = PyLong_AsLong(value); }},
+    {"num_out_pts_in_segs", [](ParamType params, ValType value) -> void { params.numOutPtsInSegs = PyLong_AsLong(value); }},
+    {"num_pts_in_linear_sample_along_length", [](ParamType params, ValType value) -> void { params.numPtsInLinearSampleAlongLength = PyLong_AsLong(value); }},
+    {"num_super_pts", [](ParamType params, ValType value) -> void { params.numSuperPts = PyLong_AsLong(value); }},
+
+    {"sample_per_segment", [](ParamType params, ValType value) -> void { params.samplePerSegment = PyLong_AsLong(value); }},
+    {"spline_type", [](ParamType params, ValType value) -> void { params.splineType = PyLong_AsLong(value); }},
+    {"tension", [](ParamType params, ValType value) -> void { params.tension = PyLong_AsLong(value); }},
+    {"u_degree", [](ParamType params, ValType value) -> void { params.uDegree = PyLong_AsLong(value); }},
+    {"v_degree", [](ParamType params, ValType value) -> void { params.vDegree = PyLong_AsLong(value); }},
+
+    {"u_knot_span_type", [](ParamType params, ValType value) -> void { params.uKnotSpanType = PyString_AsString(value); }},
+    {"v_knot_span_type", [](ParamType params, ValType value) -> void { params.vKnotSpanType = PyString_AsString(value); }},
+    {"u_parametric_span_type", [](ParamType params, ValType value) -> void { params.uParametricSpanType = PyString_AsString(value); }},
+    {"v_parametric_span_type", [](ParamType params, ValType value) -> void { params.vParametricSpanType = PyString_AsString(value); }},
+
+    {"use_linear_sample_along_length", [](ParamType params, ValType value) -> void { params.useLinearSampleAlongLength = PyLong_AsLong(value); }},
+    {"use_fft", [](ParamType params, ValType value) -> void { params.useFFT = PyLong_AsLong(value); }},
+    {"vec_flag", [](ParamType params, ValType value) -> void { params.vecFlag = PyLong_AsLong(value); }},
+  };
+
+  // Iterate over the key/value pairs in the dict.
+  //
+  PyObject *key, *value;
+  Py_ssize_t pos = 0;
+
+  while (PyDict_Next(loftOpts, &pos, &key, &value)) {
+    auto name = std::string(PyString_AsString(key));
+    try {
+      SetParamValue[name](params, value);
+    } catch (const std::bad_function_call& except) {
+      api.error("Unknown svLoftingParam name '" + name + "'.");
+    }
+  }
 }
 
 //------------------------
