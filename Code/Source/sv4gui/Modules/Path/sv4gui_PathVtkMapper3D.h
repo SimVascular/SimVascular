@@ -62,7 +62,7 @@ public:
     virtual vtkProp* GetVtkProp(mitk::BaseRenderer* renderer) override;
     virtual void UpdateVtkTransform(mitk::BaseRenderer* renderer) override;
 
-    static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = nullptr, bool overwrite = false);
+    static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = nullptr, bool overwrite = true);
 
     void ReleaseGraphicsResources(mitk::BaseRenderer* renderer) override;
 

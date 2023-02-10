@@ -285,27 +285,6 @@ void sv4guiPathVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *rendere
         return;
     }
 
-// create new vtk render objects (e.g. sphere for a point)
-#if MITK_MAJOR_VERSION == 2022 && MITK_MINOR_VERSION == 9
-    // might be a problem later on?
-    std::cout << "Need to figure out what to do here" << std::endl;
-    exit(1);
-    // m_VtkSelectedPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
-    // m_VtkUnselectedPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
-    // m_VtkSplinePointsPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
-    // m_VtkSplinePolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
-#elif MITK_MAJOR_VERSION == 2018 && MITK_MINOR_VERSION == 04
-    m_VtkSelectedPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
-    m_VtkUnselectedPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
-    m_VtkSplinePointsPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
-    m_VtkSplinePolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
-#else
-    SetVtkMapperImmediateModeRendering(m_VtkSelectedPolyDataMapper);
-    SetVtkMapperImmediateModeRendering(m_VtkUnselectedPolyDataMapper);
-    SetVtkMapperImmediateModeRendering(m_VtkSplinePointsPolyDataMapper);
-    SetVtkMapperImmediateModeRendering(m_VtkSplinePolyDataMapper);
-#endif
-
     mitk::Mapper::BaseLocalStorage *ls = m_LSH.GetLocalStorage(renderer);
     bool needGenerateData = ls->IsGenerateDataRequired( renderer, this, GetDataNode() );
 
@@ -314,7 +293,6 @@ void sv4guiPathVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *rendere
         mitk::FloatProperty * pointSizeProp = dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("point size"));
         mitk::FloatProperty * splinePointSizeProp = dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("spline point size"));
         mitk::FloatProperty * splineSizeProp = dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("spline size"));
-
         // only create new vtk render objects if property values were changed
         if(pointSizeProp && m_PointSize!=pointSizeProp->GetValue() )
             needGenerateData = true;
@@ -377,7 +355,6 @@ void sv4guiPathVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *rendere
     {
         m_SplinePointsActor->VisibilityOff();
     }
-
 }
 
 void sv4guiPathVtkMapper3D::ResetMapper( mitk::BaseRenderer* /*renderer*/ )
@@ -537,23 +514,6 @@ void sv4guiPathVtkMapper3D::CreateSpline()
         spline->SetPoints(points);
         spline->SetLines(lines);
 
-//        vtkSmartPointer<vtkTubeFilter> tubeFilter = vtkSmartPointer<vtkTubeFilter>::New();
-//        tubeFilter->SetNumberOfSides( 12 );
-//        tubeFilter->SetInputData(spline);
-
-//        //check for property contoursize.
-//        m_SplineRadius = 1;
-//        mitk::FloatProperty::Pointer splineSizeProp = dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("spline size") );
-
-//        if (splineSizeProp.IsNotNull())
-//            m_SplineRadius = splineSizeProp->GetValue();
-
-//        tubeFilter->SetRadius( m_SplineRadius );
-//        tubeFilter->Update();
-
-//        //add to pipeline
-//        vtkSplinePolyData->AddInputConnection(tubeFilter->GetOutputPort());
-//        m_VtkSplinePolyDataMapper->SetInputConnection(vtkSplinePolyData->GetOutputPort());
         m_VtkSplinePolyDataMapper->SetInputData(spline);
 
         int lineWidth=1;
@@ -561,18 +521,17 @@ void sv4guiPathVtkMapper3D::CreateSpline()
         if (splineSizeProp.IsNotNull())
             lineWidth = splineSizeProp->GetValue();
 
+        std::cout << lineWidth << std::endl << std::flush;
+
         m_SplineActor->SetMapper(m_VtkSplinePolyDataMapper);
         m_SplineActor->GetProperty()->SetLineWidth(lineWidth);
         m_PropAssembly->AddPart(m_SplineActor);
 
     }
-
 }
 
 void sv4guiPathVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
 {
-//    Superclass::SetDefaultProperties(node, renderer, overwrite);
-
     node->AddProperty( "show points", mitk::BoolProperty::New(true), renderer, overwrite );
     node->AddProperty( "show spline 3D points", mitk::BoolProperty::New(false), renderer, overwrite );
     node->AddProperty( "point size", mitk::FloatProperty::New(1.0), renderer, overwrite);
@@ -582,14 +541,9 @@ void sv4guiPathVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::Bas
     node->AddProperty( "spline point color",mitk::ColorProperty::New(0,1,0),renderer, overwrite );
 
     node->AddProperty( "show spline", mitk::BoolProperty::New(true), renderer, overwrite );
-    node->AddProperty( "line width", mitk::IntProperty::New(1), renderer, overwrite );
-
-//    node->AddProperty( "layer", mitk::IntProperty::New(1), renderer, overwrite );
+    node->AddProperty( "line width", mitk::IntProperty::New(3), renderer, overwrite );
     node->AddProperty( "color", mitk::ColorProperty::New(1.0f, 1.0f, 0.2f), renderer, overwrite);
     node->AddProperty( "opacity", mitk::FloatProperty::New(1.0f), renderer, overwrite );
-//    node->AddProperty( "updateDataOnRender", mitk::BoolProperty::New(true), renderer, overwrite );
 
     Superclass::SetDefaultProperties(node, renderer, overwrite);
-
-
 }

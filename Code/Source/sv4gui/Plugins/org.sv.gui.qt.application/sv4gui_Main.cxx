@@ -221,7 +221,7 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
          token = strtok( custom_plugins, seps );
          while( token != nullptr ) {
            // While there are tokens in "string"
-           //printf( " %s\n", token );
+           // printf( " %s\n", token );
            QString newPlugin = token;
            pluginsToStart.push_back(newPlugin);
            std::cout << "   Adding custom plugin (" << newPlugin.toStdString() << ")" << std::endl << std::flush;
@@ -237,7 +237,7 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
          token = strtok( custom_plugins, seps );
          while( token != nullptr ) {
            // While there are tokens in "string"
-           //printf( " %s\n", token );
+           //  printf( " %s\n", token );
            QString newPlugin = token;
            pluginsToStart.push_back(newPlugin);
            std::cout << "   Adding custom plugin (" << newPlugin.toStdString() << ")" << std::endl << std::flush;

@@ -145,6 +145,7 @@ svCatchDebugger() {
  int main( int argc, char *argv[] )
  {
 
+  std::cout << "1" << std::endl << std::flush;
   // default to qt gui if built
   // default to python if built
   bool use_tcl = false;
