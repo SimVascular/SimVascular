@@ -31,13 +31,9 @@
 # Plug-ins must be ordered according to their dependencies
 
 set(SV_PLUGINS
-
   org.sv.gui.qt.application:ON
-
   org.sv.projectdatanodes:ON
-
   org.sv.pythondatanodes:ON
-
   org.sv.gui.qt.projectmanager:ON
   org.sv.gui.qt.datamanager:ON
   org.sv.gui.qt.pathplanning:ON
@@ -49,6 +45,7 @@ set(SV_PLUGINS
   org.sv.gui.qt.svfsi:ON
   org.sv.gui.qt.imageprocessing:ON
 )
+
 if(SV_USE_MITK_SEGMENTATION)
     LIST(APPEND SV_PLUGINS org.sv.gui.qt.mitksegmentation:ON)
 endif()

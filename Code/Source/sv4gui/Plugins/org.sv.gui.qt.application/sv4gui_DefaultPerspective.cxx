@@ -34,10 +34,12 @@
 
 sv4guiDefaultPerspective::sv4guiDefaultPerspective()
 {
+    std::cout << "In sv4guiDefaultPerspective::sv4guiDefaultPerspective" << std::endl << std::flush;
 }
 
 void sv4guiDefaultPerspective::CreateInitialLayout(berry::IPageLayout::Pointer layout)
 {
+    std::cout << "In sv4guiDefaultPerspective::CreateInitialLayout" << std::endl << std::flush;
     QString editorArea = layout->GetEditorArea();
 
     layout->AddView("org.sv.views.datamanager", berry::IPageLayout::LEFT, 0.2f, editorArea);

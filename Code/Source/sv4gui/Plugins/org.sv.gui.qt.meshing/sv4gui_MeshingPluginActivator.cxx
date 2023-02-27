@@ -44,6 +44,7 @@ void sv4guiMeshingPluginActivator::start(ctkPluginContext* context)
 //    m_Instance = this;
 //    m_Context = context;
 
+    std::cout << "sv4guiMeshingPluginActivator::start()" << std::endl;
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiMeshCreateAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiMeshLegacySaveAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiMeshLoadSurfaceAction, context)

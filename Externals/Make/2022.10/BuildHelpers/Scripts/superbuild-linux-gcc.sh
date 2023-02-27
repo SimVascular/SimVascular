@@ -217,14 +217,14 @@ fi
 #  tcl/tk 8.6
 if [[ $SV_SUPER_OPTIONS == *BUILD_TCL* ]]; then
   echo "BUILD_TCL"
-  ./tmp/compile.make.tcl.gcc.sh >& ./tmp/stdout.tcl.txt
+  ./tmp/compile.make.tcl.gcc.sh #  >& ./tmp/stdout.tcl.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 ## python
 if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   echo "BUILD_PYTHON"
-  ./tmp/compile.cmake.python.gcc.sh >& ./tmp/stdout.python.gcc.txt
+  ./tmp/compile.cmake.python.gcc.sh # >& ./tmp/stdout.python.gcc.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
@@ -234,14 +234,14 @@ export PATH=$PYPATH/share/python3.9:$PYPATH/bin/:$PYPATH/include/:$PYPATH/lib/:$
 #  swig
 if [[ $SV_SUPER_OPTIONS == *BUILD_SWIG* ]]; then
   echo "BUILD_SWIG"
-  time ./tmp/compile.make.swig.gcc.sh >& ./tmp/stdout.swig.txt
+  time ./tmp/compile.make.swig.gcc.sh # >& ./tmp/stdout.swig.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # numpy
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "BUILD_NUMPY"
-  ./tmp/compile.python.numpy-linux.sh >& ./tmp/stdout.numpy.python.txt
+  ./tmp/compile.python.numpy-linux.sh # >& ./tmp/stdout.numpy.python.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
@@ -249,42 +249,42 @@ fi
 ## want to run post install after numpy is built
 if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   echo "BUILD_PYTHON post-install"
-  ./tmp/post-install-python-linux.sh >& ./tmp/stdout.post-install-python-linux.txt
+  ./tmp/post-install-python-linux.sh # >& ./tmp/stdout.post-install-python-linux.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 tinyxml2
 if [[ $SV_SUPER_OPTIONS == *BUILD_TINYXML2* ]]; then
   echo "BUILD_TINYXML2"
-  ./tmp/compile.cmake.tinyxml2.gcc.sh >& ./tmp/stdout.tinyxml2.gcc.txt
+  ./tmp/compile.cmake.tinyxml2.gcc.sh # >& ./tmp/stdout.tinyxml2.gcc.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 #  qt
 if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
   echo "BUILD_QT"
-  time ./tmp/compile.make.qt.gcc.sh >& ./tmp/stdout.qt.txt
+  time ./tmp/compile.make.qt.gcc.sh # >& ./tmp/stdout.qt.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # freetype
 if [[ $SV_SUPER_OPTIONS == *BUILD_FREETYPE* ]]; then
   echo "BUILD_FREETYPE"
-  ./tmp/compile.cmake.freetype.gcc.sh >& ./tmp/stdout.freetype.gcc.txt
+  ./tmp/compile.cmake.freetype.gcc.sh # >& ./tmp/stdout.freetype.gcc.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # gdcm
 if [[ $SV_SUPER_OPTIONS == *BUILD_GDCM* ]]; then
   echo "BUILD_GDCM"
-  ./tmp/compile.cmake.gdcm.gcc.sh >& ./tmp/stdout.gdcm.gcc.txt
+  ./tmp/compile.cmake.gdcm.gcc.sh # >& ./tmp/stdout.gdcm.gcc.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # hdf5
 if [[ $SV_SUPER_OPTIONS == *BUILD_HDF5* ]]; then
   echo "BUILD_HDF5"
-  ./tmp/compile.cmake.hdf5.gcc.sh >& ./tmp/stdout.hdf5.gcc.txt
+  ./tmp/compile.cmake.hdf5.gcc.sh # >& ./tmp/stdout.hdf5.gcc.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
@@ -303,14 +303,14 @@ fi
 # itk
 if [[ $SV_SUPER_OPTIONS == *BUILD_ITK* ]]; then
   echo "BUILD_ITK"
-  ./tmp/compile.cmake.itk.gcc.sh >& ./tmp/stdout.itk.gcc.txt
+  ./tmp/compile.cmake.itk.gcc.sh # >& ./tmp/stdout.itk.gcc.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # opencascade
 if [[ $SV_SUPER_OPTIONS == *BUILD_OPENCASCADE* ]]; then
   echo "BUILD_OPENCASCADE"s
-  ./tmp/compile.cmake.opencascade.gcc.sh >& ./tmp/stdout.opencascade.gcc.txt
+  ./tmp/compile.cmake.opencascade.gcc.sh # >& ./tmp/stdout.opencascade.gcc.txt
   ./tmp/post-install-opencascade-linux.sh >& ./tmp/stdout.post-install-linux.opencascade.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
@@ -318,7 +318,7 @@ fi
 # mmg
 if [[ $SV_SUPER_OPTIONS == *BUILD_MMG* ]]; then
   echo "BUILD_MMG"
-  ./tmp/compile.cmake.mmg.gcc.sh >& ./tmp/stdout.mmg.gcc.txt
+  ./tmp/compile.cmake.mmg.gcc.sh # >& ./tmp/stdout.mmg.gcc.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
@@ -342,7 +342,7 @@ popd
 # mitk
 if [[ $SV_SUPER_OPTIONS == *BUILD_MITK* ]]; then
   echo "BUILD_MITK"
-  ./tmp/compile.cmake.mitk.gcc.sh >& ./tmp/stdout.mitk.gcc.txt
+  ./tmp/compile.cmake.mitk.gcc.sh # >& ./tmp/stdout.mitk.gcc.txt
   ./tmp/post-install-mitk-linux.sh >& ./tmp/stdout.post-install-mitk-linux.txt
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi

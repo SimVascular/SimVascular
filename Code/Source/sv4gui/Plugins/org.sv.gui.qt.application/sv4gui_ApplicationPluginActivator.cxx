@@ -89,6 +89,8 @@ void sv4guiApplicationPluginActivator::start(ctkPluginContext* context)
     {
       MITK_WARN << "Configuration Admin service unavailable, cannot set home page url.";
     }
+
+
 }
 
 void sv4guiApplicationPluginActivator::stop(ctkPluginContext* context)

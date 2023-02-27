@@ -1141,6 +1141,12 @@ void sv4guiWorkbenchWindowAdvisor::SetupDataManagerDoubleClick()
     if(page.IsNull())
         return;
 
+    // auto views = window->GetActivePage()->GetViews();
+    // for (auto view : views)
+    // {
+    //     std::cout << "view: " << view->GetClassName() << std::endl << std::flush;
+    // }
+
     berry::IViewPart::Pointer dataManagerView = window->GetActivePage()->FindView("org.sv.views.datamanager");
     if(dataManagerView.IsNull())
         return;

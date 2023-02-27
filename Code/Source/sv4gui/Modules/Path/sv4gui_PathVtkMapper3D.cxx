@@ -521,12 +521,9 @@ void sv4guiPathVtkMapper3D::CreateSpline()
         if (splineSizeProp.IsNotNull())
             lineWidth = splineSizeProp->GetValue();
 
-        std::cout << lineWidth << std::endl << std::flush;
-
         m_SplineActor->SetMapper(m_VtkSplinePolyDataMapper);
         m_SplineActor->GetProperty()->SetLineWidth(lineWidth);
         m_PropAssembly->AddPart(m_SplineActor);
-
     }
 }
 

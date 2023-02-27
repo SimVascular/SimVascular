@@ -35,6 +35,7 @@
 void sv4guiImageProcessingPluginActivator::start(ctkPluginContext* context)
 {
 
+    std::cout << "sv4guiImageProcessingPluginActivator::start()" << std::endl;
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiImageProcessing, context)
 
 }

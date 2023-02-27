@@ -83,12 +83,12 @@ esac
 # initial setup
 #
 
-# echo "Deleting previous build dir ($EXTERNALS_BUILD_TOP)"
-# sudo rm -Rf $EXTERNALS_BUILD_TOP
-# sudo mkdir -p $EXTERNALS_BUILD_TOP
+echo "Deleting previous build dir ($EXTERNALS_BUILD_TOP)"
+sudo rm -Rf $EXTERNALS_BUILD_TOP
+sudo mkdir -p $EXTERNALS_BUILD_TOP
 
-# echo "Deleting previous src+bin dir ($EXTERNALS_TOP)"cd
-# sudo rm -Rf $EXTERNALS_TOP
+echo "Deleting previous src+bin dir ($EXTERNALS_TOP)"cd
+sudo rm -Rf $EXTERNALS_TOP
 
 sudo mkdir -p /usr/local/sv
 sudo chmod a+rwx /usr/local/sv

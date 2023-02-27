@@ -124,6 +124,7 @@ void sv4guiQmitkFunctionality::CreatePartControl(QWidget* parent)
 void sv4guiQmitkFunctionality::AfterCreateQtPartControl()
 {
   std::cout << "I couldn't find obvious replacements for these functions" << std::endl << std::flush;
+  exit(1);
   // // REGISTER DATASTORAGE LISTENER
   // this->GetDataStorage()->AddNodeEvent.AddListener( mitk::MessageDelegate1<QmitkAbstractView, const mitk::DataNode*>
   //   ( this, &QmitkAbstractView::NodeAdded ) );
@@ -174,6 +175,7 @@ void sv4guiQmitkFunctionality::BlueBerrySelectionChanged(const berry::IWorkbench
 {
   
   std::cout << "sv4guiQmitkFunctionality::BlueBerrySelectionChanged still need to implement this method" << std::endl << std::flush;
+  exit(1);
 
   // if(sourcepart.IsNull() || sourcepart->GetSite()->GetId() != "org.sv.views.datamanager")
   //   return;
@@ -186,6 +188,7 @@ void sv4guiQmitkFunctionality::BlueBerrySelectionChanged(const berry::IWorkbench
 void sv4guiQmitkFunctionality::ClosePartProxy()
 {
   std::cout << "sv4guiQmitkFunctionality::BlueBerrySelectionChanged still need to implement this method" << std::endl << std::flush;
+  exit(1);
 
   // this->GetDefaultDataStorage()->AddNodeEvent.RemoveListener( mitk::MessageDelegate1<QmitkFunctionality, const mitk::DataNode*>
   //   ( this, &QmitkFunctionality::NodeAddedProxy ) );

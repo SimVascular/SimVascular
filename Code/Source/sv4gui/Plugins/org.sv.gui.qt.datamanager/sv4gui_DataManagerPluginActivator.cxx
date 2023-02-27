@@ -51,8 +51,24 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 //namespace mitk {
 
+// ctkPluginContext* sv4guiDataManagerPluginActivator::_context = nullptr;
+// sv4guiDataManagerPluginActivator* sv4guiDataManagerPluginActivator::inst = nullptr;
+
+
+// sv4guiDataManagerPluginActivator::sv4guiDataManagerPluginActivator()
+// {
+//   inst = this;
+// }
+
+// sv4guiDataManagerPluginActivator::~sv4guiDataManagerPluginActivator()
+// {
+
+// }
+
+
 void sv4guiDataManagerPluginActivator::start(ctkPluginContext* context)
 {
+  std::cout << "sv4guiDataManagerPluginActivator::start()" << std::endl;
   BERRY_REGISTER_EXTENSION_CLASS(sv4guiQmitkDataManagerView, context)
   BERRY_REGISTER_EXTENSION_CLASS(sv4guiQmitkDataManagerPreferencePage, context)
   BERRY_REGISTER_EXTENSION_CLASS(sv4guiQmitkDataManagerHotkeysPrefPage, context)

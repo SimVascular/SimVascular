@@ -138,7 +138,6 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
        app.setProperty(mitk::BaseApplication::ARG_PLUGIN_DIRS, "");
 
        QStringList pluginsToStart;
-       QString pluginPath;
 
        // Note: You can specify full URL filenames as well, e.g.
        // pluginsToStart.push_back("file:///C:/.../liborg_commontk_eventadmin.dll");

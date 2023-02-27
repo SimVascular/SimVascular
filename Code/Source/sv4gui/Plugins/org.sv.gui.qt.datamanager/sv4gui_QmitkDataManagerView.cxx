@@ -125,6 +125,7 @@ sv4guiQmitkDataManagerView::sv4guiQmitkDataManagerView()
     : m_GlobalReinitOnNodeDelete(true),
       m_ItemDelegate(nullptr)
 {
+  std::cout << "sv4guiQmitkDataManagerView" << std::endl << std::flush;
 }
 
 sv4guiQmitkDataManagerView::~sv4guiQmitkDataManagerView()
@@ -1097,13 +1098,14 @@ void sv4guiQmitkDataManagerView::ShowIn(const QString &editorId)
 
 mitk::IRenderWindowPart* sv4guiQmitkDataManagerView::OpenRenderWindowPart(bool activatedEditor)
 {
-  std::cout << "sv4guiQmitkDataManagerView these MITK functions are not available anymore" << std::endl << std::flush;
-  // if (activatedEditor)
-  // {
-  //   return this->GetRenderWindowPart(QmitkAbstractView::ACTIVATE | QmitkAbstractView::OPEN);
-  // }
-  // else
-  // {
-  //   return this->GetRenderWindowPart(QmitkAbstractView::BRING_TO_FRONT | QmitkAbstractView::OPEN);
-  // }
+  if (activatedEditor)
+  {
+    return this->GetRenderWindowPart(mitk::WorkbenchUtil::IRenderWindowPartStrategy::ACTIVATE | 
+         mitk::WorkbenchUtil::IRenderWindowPartStrategy::OPEN);
+  }
+  else
+  {
+    return this->GetRenderWindowPart(mitk::WorkbenchUtil::IRenderWindowPartStrategy::BRING_TO_FRONT |
+         mitk::WorkbenchUtil::IRenderWindowPartStrategy::OPEN);
+  }
 }
