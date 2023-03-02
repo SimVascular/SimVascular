@@ -370,7 +370,7 @@ void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* 
 // This method is also called when SimVascular starts and there is a SV Simulation plugin 
 // panel left over from a previous session. In this case nodes.size()==0.
 //
-void sv4guiSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
+void sv4guiSimulationView::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes )
 {
     std::cout << "IsVisible does not exist" << std::endl << std::flush;
     exit(1);

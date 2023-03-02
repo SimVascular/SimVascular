@@ -201,7 +201,7 @@ public:
     virtual void CreateQtPartControl(QWidget *parent) override;
 
     // this was overriden in QmitkFunctionality. Need to figure out if we need it
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes);
+    virtual void OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes);
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 

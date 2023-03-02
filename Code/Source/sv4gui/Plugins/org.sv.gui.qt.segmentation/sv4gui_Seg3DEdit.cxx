@@ -120,7 +120,7 @@ void sv4guiSeg3DEdit::Hidden()
 //    return true;
 //}
 
-void sv4guiSeg3DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
+void sv4guiSeg3DEdit::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes )
 {
 //    if(!IsActivated())
     std::cout << "IsVisible does not exist anymore, I am not sure why" << std::endl << std::flush;

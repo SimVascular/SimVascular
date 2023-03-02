@@ -75,13 +75,13 @@ sv4guiQmitkFunctionality::~sv4guiQmitkFunctionality()
 }
 
 // --------- FOLLOWING FROM QmitkFunctionality ------------------------------
-std::vector<mitk::DataNode*> sv4guiQmitkFunctionality::GetDataManagerSelection() const
+QList<mitk::DataNode::Pointer> sv4guiQmitkFunctionality::GetDataManagerSelection() const
 {
   std::cout << "This needs to be implemented (maybe)" << std::endl << std::flush;
+  berry::ISelection::ConstPointer selection( this->GetSite()->GetWorkbenchWindow()->GetSelectionService()->GetSelection("org.sv.views.datamanager"));
+    // buffer for the data manager selection
+  mitk::DataNodeSelection::ConstPointer currentSelection = selection.Cast<const mitk::DataNodeSelection>();
   exit(1);
-  // berry::ISelection::ConstPointer selection( this->GetSite()->GetWorkbenchWindow()->GetSelectionService()->GetSelection("org.sv.views.datamanager"));
-  //   // buffer for the data manager selection
-  // mitk::DataNodeSelection::ConstPointer currentSelection = selection.Cast<const mitk::DataNodeSelection>();
   // return this->DataNodeSelectionToVector(currentSelection);
 }
 

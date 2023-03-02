@@ -58,19 +58,13 @@ public:
 
     virtual ~sv4guiQmitkFunctionality();
 
-    void SetFocus() {
-        std::cout << "setFocus() needs to be implemented" << std::endl << std::flush;
-        exit(1);
-        // Fore more info, see https://www.mitk.org/wiki/Views_Without_Multi_Widget
-    }
-
 public:
 
     //{
     // FUNCTIONS THAT NEED TO BE HIDDEN FROM QmitkFunctionality SO THAT
     // WE CAN USE org.sv.views.datamanager INSTEAD OF org.mitk.views.datamanager
     // HIDING Function from mitk data manager
-    std::vector<mitk::DataNode*> GetDataManagerSelection() const;
+    QList<mitk::DataNode::Pointer> GetDataManagerSelection() const;
     /// Called immediately after CreateQtPartControl().
     /// Here standard event listeners for a QmitkFunctionality are registered
     void AfterCreateQtPartControl();
@@ -85,8 +79,14 @@ public:
     void CreatePartControl(QWidget* parent) override;
     //}
 
+     void SetFocus() {
+        std::cout << "setFocus() needs to be implemented" << std::endl << std::flush;
+        exit(1);
+        // Fore more info, see https://www.mitk.org/wiki/Views_Without_Multi_Widget
+    }
+
 protected:
-    // originally this was include in QmitkFunctionality. Adding it now for
+    // originally this was included in QmitkFunctionality. Adding it now for
     // compatibility during transition to QmitkAbstractView
     QWidget* m_Parent;
 

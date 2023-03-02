@@ -146,7 +146,7 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
 // OnSelectionChanged
 //--------------------
 //
-void sv4guisvFSIView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes)
+void sv4guisvFSIView::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes)
 {
     std::cout << "IsVisible does not exist anymore" << std::endl << std::flush;
     exit(1);

@@ -1708,7 +1708,7 @@ void sv4guiROMSimulationView::OnPreferencesChanged(const berry::IBerryPreference
 //    m_JobNode 
 //    m_MitkJob 
 //
-void sv4guiROMSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
+void sv4guiROMSimulationView::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes )
 {
     std::cout << "IsVisible doesn't exist anymore" << std::endl << std::flush;
     exit(1);

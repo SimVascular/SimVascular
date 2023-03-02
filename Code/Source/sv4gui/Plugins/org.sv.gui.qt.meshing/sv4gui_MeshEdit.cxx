@@ -1173,7 +1173,7 @@ int sv4guiMeshEdit::GetTimeStep()
         return 0;
 }
 
-void sv4guiMeshEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
+void sv4guiMeshEdit::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes )
 {
 //    if(!IsActivated())
     std::cout << "IsVisible does not exist" << std::flush;

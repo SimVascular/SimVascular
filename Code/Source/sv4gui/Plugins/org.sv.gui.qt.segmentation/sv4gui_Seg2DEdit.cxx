@@ -281,10 +281,11 @@ int sv4guiSeg2DEdit::GetTimeStep()
 //
 //   m_Image
 //
-void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
+void sv4guiSeg2DEdit::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes )
 {
-    std::cout << "OnSelectionChanged\n";
 
+    std::cout << "OnSelectionChanged\n";
+    exit(1);
     // IsVisibile not available anymore. I am not sure why.
     // if(!IsVisible())
     // {

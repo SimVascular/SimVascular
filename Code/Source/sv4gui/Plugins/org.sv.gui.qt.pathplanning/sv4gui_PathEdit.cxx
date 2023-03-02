@@ -184,7 +184,7 @@ int sv4guiPathEdit::GetTimeStep()
 
 }
 
-void sv4guiPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
+void sv4guiPathEdit::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes )
 {
     auto msgPrefix = "[sv4guiPathEdit_OnSelectionChanged] ";
     MITK_INFO << msgPrefix;

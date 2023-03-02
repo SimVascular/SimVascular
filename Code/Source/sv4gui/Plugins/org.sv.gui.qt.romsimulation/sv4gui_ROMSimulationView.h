@@ -308,7 +308,7 @@ public:
 
     // This was override in QmitkFunctionality, need to figure out if it's still
     // needed
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes);
+    virtual void OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes);
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 

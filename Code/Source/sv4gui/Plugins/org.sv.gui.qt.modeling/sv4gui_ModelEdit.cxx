@@ -359,7 +359,7 @@ int sv4guiModelEdit::GetTimeStep()
         return 0;
 }
 
-void sv4guiModelEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
+void sv4guiModelEdit::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes )
 {
     m_LocalOperationforBlendRegion=false;
 
