@@ -124,8 +124,8 @@ void sv4guiQmitkFunctionality::CreatePartControl(QWidget* parent)
 void sv4guiQmitkFunctionality::AfterCreateQtPartControl()
 {
   std::cout << "I couldn't find obvious replacements for these functions" << std::endl << std::flush;
-  exit(1);
-  // // REGISTER DATASTORAGE LISTENER
+  // exit(1);
+  // REGISTER DATASTORAGE LISTENER
   // this->GetDataStorage()->AddNodeEvent.AddListener( mitk::MessageDelegate1<QmitkAbstractView, const mitk::DataNode*>
   //   ( this, &QmitkAbstractView::NodeAdded ) );
   // this->GetDataStorage()->ChangedNodeEvent.AddListener( mitk::MessageDelegate1<QmitkAbstractView, const mitk::DataNode*>

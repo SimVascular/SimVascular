@@ -60,26 +60,7 @@ void sv4guiPathCreateAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
 
     try
     {
-//        if(!m_Functionality)
-//            return;
-
-//        QmitkDataManagerView* dmView=dynamic_cast<QmitkDataManagerView*>(m_Functionality);
-
-//        if(!dmView)
-//            return;
-
-//        mitk::IRenderWindowPart* renderWindowPart = dmView->GetRenderWindowPart();
-
-//        if(!renderWindowPart)
-//            return;
-
-//        mitk::SliceNavigationController* timeNavigationController=renderWindowPart->GetTimeNavigationController();
         int timeStep=0;
-//        if(timeNavigationController)
-//        {
-//            timeStep=timeNavigationController->GetTime()->GetPos();
-//        }
-
         if(m_PathCreateWidget)
         {
             delete m_PathCreateWidget;
@@ -88,8 +69,6 @@ void sv4guiPathCreateAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
         m_PathCreateWidget=new sv4guiPathCreate(m_DataStorage, selectedNode, timeStep);
         m_PathCreateWidget->show();
         m_PathCreateWidget->SetFocus();
-
-
     }
     catch(...)
     {

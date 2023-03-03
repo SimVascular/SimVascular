@@ -104,20 +104,19 @@ void sv4guiPathEdit::CreateQtPartControl(QWidget* parent)
     connect(ui->comboBoxAddingMode, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateAddingMode(int )));
 
     // Get access to the four-window widget in the centre of the application.
-    std::cout << "GetActiveStdMultiWidget does not exist" << std::endl << std::flush;
-    exit(1);
-    // m_DisplayWidget = GetActiveStdMultiWidget();
+    // std::cout << "GetActiveStdMultiWidget does not exist" << std::endl << std::flush;
+    // m_DisplayWidget = dynamic_cast<QmitkStdMultiWidget*>(GetRenderWindowPart());
 
-    if(m_DisplayWidget) {
-        //instead set zero in svappication
-//        m_DisplayWidget->GetWidgetPlane1()->SetIntProperty("Crosshair.Gap Size", 0);
-//        m_DisplayWidget->GetWidgetPlane2()->SetIntProperty("Crosshair.Gap Size", 0);
-//        m_DisplayWidget->GetWidgetPlane3()->SetIntProperty("Crosshair.Gap Size", 0);
-    } else {
-        parent->setEnabled(false);
-        MITK_ERROR << "Plugin PathEdit Init Error: No QmitkStdMultiWidget!";
-        return;
-    }
+//     if(m_DisplayWidget) {
+//         //instead set zero in svappication
+// //        m_DisplayWidget->GetWidgetPlane1()->SetIntProperty("Crosshair.Gap Size", 0);
+// //        m_DisplayWidget->GetWidgetPlane2()->SetIntProperty("Crosshair.Gap Size", 0);
+// //        m_DisplayWidget->GetWidgetPlane3()->SetIntProperty("Crosshair.Gap Size", 0);
+//     } else {
+//         parent->setEnabled(false);
+//         MITK_ERROR << "Plugin PathEdit Init Error: No QmitkStdMultiWidget!";
+//         return;
+//     }
 
     // The panel top right 'Add Path' and 'Change Type' buttons.
     connect(ui->btnNewPath, SIGNAL(clicked()), this, SLOT(NewPath()) );
@@ -137,7 +136,7 @@ void sv4guiPathEdit::CreateQtPartControl(QWidget* parent)
     connect(ui->listWidget,SIGNAL(itemSelectionChanged()), this, SLOT(SelectPoint()) );
     connect(ui->listWidget,SIGNAL(clicked(const QModelIndex &)), this, SLOT(SelectPoint(const QModelIndex &)) );
 
-    ui->resliceSlider->SetDisplayWidget(m_DisplayWidget);
+    // ui->resliceSlider->SetDisplayWidget(m_DisplayWidget);
     //ui->resliceSlider->setCheckBoxVisible(true);
     ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_CUBIC);
     connect(ui->resliceSlider,SIGNAL(resliceSizeChanged(double)), this, SLOT(UpdatePathResliceSize(double)) );

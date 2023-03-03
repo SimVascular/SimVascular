@@ -89,7 +89,8 @@ sv4guiPathCreate::sv4guiPathCreate(mitk::DataStorage::Pointer dataStorage, mitk:
         }
     }
 
-    move(400,400);
+    std::cout << "for some reason the move method makes the object disappear" << std::endl << std::flush;
+    // move(400,400);
 }
 
 sv4guiPathCreate::~sv4guiPathCreate()

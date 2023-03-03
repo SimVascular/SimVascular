@@ -80,8 +80,8 @@ public:
     //}
 
      void SetFocus() {
-        std::cout << "setFocus() needs to be implemented" << std::endl << std::flush;
-        exit(1);
+        // std::cout << "setFocus() needs to be implemented" << std::endl << std::flush;
+        // exit(1);
         // Fore more info, see https://www.mitk.org/wiki/Views_Without_Multi_Widget
     }
 
