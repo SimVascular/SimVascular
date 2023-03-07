@@ -72,6 +72,7 @@ void sv4guiPathCreateAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
     }
     catch(...)
     {
+        exit(1);
         MITK_ERROR << "Path Creation Error!";
     }
 }

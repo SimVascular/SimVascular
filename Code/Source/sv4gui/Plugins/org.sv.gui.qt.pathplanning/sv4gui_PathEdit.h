@@ -110,7 +110,8 @@ public:
 
     //    virtual void OnSelectionChanged(const QList<mitk::DataNode::Pointer>& nodes ) override;
     // In Qmitk this was override. Need to understand if it's still required.
-    virtual void OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes);
+    virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/,
+                                    const QList<mitk::DataNode::Pointer>& /*nodes*/) override;
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 

@@ -172,7 +172,8 @@ void sv4guiPathEdit::CreateQtPartControl(QWidget* parent)
 
 void sv4guiPathEdit::Visible()
 {
-    OnSelectionChanged(GetDataManagerSelection());
+    OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
+                       GetDataManagerSelection());
 }
 
 void sv4guiPathEdit::Hidden()
@@ -202,18 +203,11 @@ int sv4guiPathEdit::GetTimeStep()
 
 }
 
-void sv4guiPathEdit::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes )
+void sv4guiPathEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
+                                    const QList<mitk::DataNode::Pointer>& nodes)
 {
     auto msgPrefix = "[sv4guiPathEdit_OnSelectionChanged] ";
     MITK_INFO << msgPrefix;
-
-//    if(!IsActivated())
-    std::cout << "IsVisible does not exist" << std::endl << std::flush;
-    exit(1);
-    // if(!IsVisible())
-    // {
-    //     return;
-    // }
 
     if(nodes.size()==0)
     {
@@ -333,7 +327,8 @@ void sv4guiPathEdit::NodeAdded(const mitk::DataNode* node)
 
 void sv4guiPathEdit::NodeRemoved(const mitk::DataNode* node)
 {
-    OnSelectionChanged(GetDataManagerSelection());
+    OnSelectionChanged(berry::IWorkbenchPart::Pointer(),
+                       GetDataManagerSelection());
 }
 
 void sv4guiPathEdit::ClearAll()
@@ -664,9 +659,9 @@ void sv4guiPathEdit::SmartAdd()
 {
     std::cout << "===================== sv4guiPathEdit::SmartAdd =====================" << std::endl;
     std::cout << "GetCrossPosition does not exist anymore" << std::endl << std::flush;
-    // mitk::Point3D point = m_DisplayWidget->GetSelectedPosition("hey");
+    mitk::Point3D point = m_renderWindow->GetSelectedPosition();
     std::cout << "GetCrossPosition does not exist anymore yee" << std::endl << std::flush;
-    // AddPoint(point);
+    AddPoint(point);
 }
 
 void sv4guiPathEdit::ManuallyAdd()

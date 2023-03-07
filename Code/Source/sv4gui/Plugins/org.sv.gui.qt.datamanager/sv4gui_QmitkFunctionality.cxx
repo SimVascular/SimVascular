@@ -36,6 +36,7 @@
 #include <berryPlatform.h>
 #include <berryIWorkbenchWindow.h>
 #include <berryISelectionService.h>
+#include <berryISelectionProvider.h>
 
 // #include <internal/QmitkFunctionalityUtil.h>
 // #include <internal/QmitkCommonLegacyActivator.h>
@@ -220,35 +221,28 @@ QList<mitk::DataNode::Pointer> sv4guiQmitkFunctionality::DataNodeSelectionToQLis
 
 void sv4guiQmitkFunctionality::ClosePartProxy()
 {
-  std::cout << "sv4guiQmitkFunctionality::BlueBerrySelectionChanged still need to implement this method" << std::endl << std::flush;
-  exit(1);
+  this->GetDataStorage()->AddNodeEvent.RemoveListener( mitk::MessageDelegate1<sv4guiQmitkFunctionality, const mitk::DataNode*>
+    ( this, &sv4guiQmitkFunctionality::NodeAdded ) );
+  this->GetDataStorage()->RemoveNodeEvent.RemoveListener( mitk::MessageDelegate1<sv4guiQmitkFunctionality, const mitk::DataNode*>
+    ( this, &sv4guiQmitkFunctionality::NodeRemoved) );
+  this->GetDataStorage()->ChangedNodeEvent.RemoveListener( mitk::MessageDelegate1<sv4guiQmitkFunctionality, const mitk::DataNode*>
+    ( this, &sv4guiQmitkFunctionality::NodeChanged ) );
 
-  // this->GetDefaultDataStorage()->AddNodeEvent.RemoveListener( mitk::MessageDelegate1<QmitkFunctionality, const mitk::DataNode*>
-  //   ( this, &QmitkFunctionality::NodeAddedProxy ) );
-  // this->GetDefaultDataStorage()->RemoveNodeEvent.RemoveListener( mitk::MessageDelegate1<QmitkFunctionality, const mitk::DataNode*>
-  //   ( this, &QmitkFunctionality::NodeRemovedProxy) );
-  // this->GetDefaultDataStorage()->ChangedNodeEvent.RemoveListener( mitk::MessageDelegate1<QmitkFunctionality, const mitk::DataNode*>
-  //   ( this, &QmitkFunctionality::NodeChangedProxy ) );
-
-  // berry::IBerryPreferences::Pointer prefs = this->GetPreferences().Cast<berry::IBerryPreferences>();
-  // if(prefs.IsNotNull())
-  // {
-  //   prefs->OnChanged.RemoveListener(berry::MessageDelegate1<QmitkFunctionality
-  //   , const berry::IBerryPreferences*>(this, &QmitkFunctionality::OnPreferencesChanged));
-  //   // flush the preferences here (disabled, everyone should flush them by themselves at the right moment)
-  //   // prefs->Flush();
-  // }
+  berry::IBerryPreferences::Pointer prefs = this->GetPreferences().Cast<berry::IBerryPreferences>();
+  if(prefs.IsNotNull())
+  {
+    prefs->OnChanged.RemoveListener(berry::MessageDelegate1<sv4guiQmitkFunctionality
+    , const berry::IBerryPreferences*>(this, &sv4guiQmitkFunctionality::OnPreferencesChanged));
+  }
 
   // // REMOVE SELECTION PROVIDER
-  // this->GetSite()->SetSelectionProvider(berry::ISelectionProvider::Pointer(nullptr));
+  this->GetSite()->SetSelectionProvider(berry::ISelectionProvider::Pointer(nullptr));
 
-  // berry::ISelectionService* s = GetSite()->GetWorkbenchWindow()->GetSelectionService();
-  // if(s)
-  // {
-  //   s->RemovePostSelectionListener(m_BlueBerrySelectionListener.data());
-  // }
-
-  // this->ClosePart();
+  berry::ISelectionService* s = GetSite()->GetWorkbenchWindow()->GetSelectionService();
+  if(s)
+  {
+    s->RemovePostSelectionListener(m_BlueBerrySelectionListener.data());
+  }
 }
 
 // --------------------------------------------------------------------------
