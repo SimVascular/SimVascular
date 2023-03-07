@@ -32,6 +32,8 @@
 #ifndef SV4GUI_PATHEDIT_H
 #define SV4GUI_PATHEDIT_H
 
+#include <mitkRenderingManager.h>
+
 #include "sv4gui_PathSmooth.h"
 #include "sv4gui_PathCreate.h"
 #include "sv4gui_Path.h"
@@ -40,7 +42,6 @@
 #include "sv4gui_QmitkFunctionality.h"
 
 #include <QmitkStdMultiWidget.h>
-
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
 #include <mitkDataInteractor.h>
@@ -158,7 +159,7 @@ protected:
 
     mitk::DataNode::Pointer m_ImageNode;
 
-    QmitkStdMultiWidget* m_DisplayWidget;
+    mitk::IRenderWindowPart* m_renderWindow;
 
     bool m_UpdatingGUI;
 };

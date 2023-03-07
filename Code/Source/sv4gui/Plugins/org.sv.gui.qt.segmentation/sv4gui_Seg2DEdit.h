@@ -320,6 +320,7 @@ protected:
 
     bool m_MachineLearninginitialized = false;
 
+    mitk::IRenderWindowPart* m_renderWindow;
 };
 
 #endif // SV4GUI_SEG2DEDIT_H

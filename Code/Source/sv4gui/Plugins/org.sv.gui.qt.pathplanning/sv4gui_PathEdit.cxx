@@ -47,6 +47,8 @@
 #include <mitkIDataStorageService.h>
 #include <mitkDataStorageEditorInput.h>
 
+#include <QmitkStdMultiWidgetEditor.h>
+
 #include <usModuleRegistry.h>
 
 // Qt
@@ -65,7 +67,7 @@ sv4guiPathEdit::sv4guiPathEdit():
     m_PathNode(nullptr),
     m_Path(nullptr),
     m_PathFolderNode(nullptr),
-    m_DisplayWidget(nullptr),
+    m_renderWindow(nullptr),
     m_SmoothWidget(nullptr),
     m_PathCreateWidget(nullptr),
     m_PathCreateWidget2(nullptr),
@@ -104,8 +106,24 @@ void sv4guiPathEdit::CreateQtPartControl(QWidget* parent)
     connect(ui->comboBoxAddingMode, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateAddingMode(int )));
 
     // Get access to the four-window widget in the centre of the application.
-    // std::cout << "GetActiveStdMultiWidget does not exist" << std::endl << std::flush;
-    // m_DisplayWidget = dynamic_cast<QmitkStdMultiWidget*>(GetRenderWindowPart());
+    std::cout << "GetActiveStdMultiWidget does not exist" << std::endl << std::flush;
+
+    m_renderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
+
+    // auto renderWindowPart = dynamic_cast<QmitkStdMultiWidgetEditor*>(GetRenderWindowPart(mitk::WorkbenchUtil::ACTIVATE));
+
+    // m_DisplayWidget = renderWindowPart->GetMultiWidget();
+
+    // get the QmitkStdMultiWidgetEditor
+
+
+    // m_DisplayWidget = GetRenderWindowPart()->GetActiveStdMultiWidget();
+
+    // QmitkRenderWindow* qmitkRenderWindow = GetRenderWindowPart()->GetActiveQmitkRenderWindow();
+    // mitk::BaseRenderer::Pointer activeBaseRenderer = GetRenderWindowPart()->GetRenderingManager()->GetActiveRenderer();
+    // m_DisplayWidget = dynamic_cast<QmitkStdMultiWidget*>(qmitkRenderWindow->GetRenderWindow(activeBaseRenderer)->GetParentWidget());
+
+    // m_DisplayWidget = GetRenderWindowPart()->GetRenderingManager()->GetActiveStdMultiWidget();
 
 //     if(m_DisplayWidget) {
 //         //instead set zero in svappication
@@ -136,8 +154,8 @@ void sv4guiPathEdit::CreateQtPartControl(QWidget* parent)
     connect(ui->listWidget,SIGNAL(itemSelectionChanged()), this, SLOT(SelectPoint()) );
     connect(ui->listWidget,SIGNAL(clicked(const QModelIndex &)), this, SLOT(SelectPoint(const QModelIndex &)) );
 
-    // ui->resliceSlider->SetDisplayWidget(m_DisplayWidget);
-    //ui->resliceSlider->setCheckBoxVisible(true);
+    ui->resliceSlider->SetRenderWindow(m_renderWindow);
+    ui->resliceSlider->setCheckBoxVisible(true);
     ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_CUBIC);
     connect(ui->resliceSlider,SIGNAL(resliceSizeChanged(double)), this, SLOT(UpdatePathResliceSize(double)) );
 
@@ -170,16 +188,17 @@ void sv4guiPathEdit::Hidden()
 
 int sv4guiPathEdit::GetTimeStep()
 {
-    mitk::SliceNavigationController* timeNavigationController = nullptr;
-    if(m_DisplayWidget)
-    {
-        timeNavigationController=m_DisplayWidget->GetTimeNavigationController();
-    }
+    std::cout <<  "GetTimeStep does not exist" << std::endl << std::flush;
+    // mitk::SliceNavigationController* timeNavigationController = nullptr;
+    // if(m_DisplayWidget)
+    // {
+    //     timeNavigationController=m_DisplayWidget->GetTimeNavigationController();
+    // }
 
-    if(timeNavigationController)
-        return timeNavigationController->GetTime()->GetPos();
-    else
-        return 0;
+    // if(timeNavigationController)
+    //     return timeNavigationController->GetTime()->GetPos();
+    // else
+    //     return 0;
 
 }
 
@@ -645,9 +664,8 @@ void sv4guiPathEdit::SmartAdd()
 {
     std::cout << "===================== sv4guiPathEdit::SmartAdd =====================" << std::endl;
     std::cout << "GetCrossPosition does not exist anymore" << std::endl << std::flush;
-    exit(1);
-    // mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
-
+    // mitk::Point3D point = m_DisplayWidget->GetSelectedPosition("hey");
+    std::cout << "GetCrossPosition does not exist anymore yee" << std::endl << std::flush;
     // AddPoint(point);
 }
 

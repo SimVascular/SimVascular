@@ -39,7 +39,7 @@
 #include <mitkDataNode.h>
 #include <mitkSlicedGeometry3D.h>
 #include <mitkExtractSliceFilter.h>
-
+#include <mitkIRenderWindowPart.h>
 #include <QWidget>
 #include <QCheckBox>
 
@@ -64,8 +64,6 @@ public slots:
     bool isResliceOn();
 
     bool isStepperSynchronized();
-
-    void SetDisplayWidget(QmitkStdMultiWidget* widget);
 
     void setDataNode(mitk::DataNode::Pointer imageNode);
 
@@ -115,6 +113,8 @@ public slots:
 
     void SetStartingSlicePos(int pos);
 
+    void SetRenderWindow(mitk::IRenderWindowPart* renderWindow);
+
 signals:
     void resliceSizeChanged(double newSize);
 
@@ -129,8 +129,6 @@ protected:
     mitk::DataNode::Pointer currentDataNode;
 
     double resliceSize;
-
-    QmitkStdMultiWidget* displayWidget=nullptr;
 
     mitk::SlicedGeometry3D::Pointer currentSlicedGeometry;
 
@@ -155,6 +153,8 @@ protected:
     mitk::ExtractSliceFilter::ResliceInterpolation m_ResliceMode;
 
     int m_StartingSlicePos;
+
+    mitk::IRenderWindowPart* m_renderWindow;
 
 };
 

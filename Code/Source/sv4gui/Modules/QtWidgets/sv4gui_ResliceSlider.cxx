@@ -55,9 +55,9 @@ sv4guiResliceSlider::sv4guiResliceSlider(QWidget *parent)
 {
 }
 
-void sv4guiResliceSlider::SetDisplayWidget(QmitkStdMultiWidget* widget)
+void sv4guiResliceSlider::SetRenderWindow(mitk::IRenderWindowPart* renderWindow)
 {
-    displayWidget=widget;
+    m_renderWindow = renderWindow;
 
     currentSlicedGeometry=nullptr;
 
@@ -79,14 +79,14 @@ void sv4guiResliceSlider::SetDisplayWidget(QmitkStdMultiWidget* widget)
     resliceCheckBox->setChecked(false);
     resliceCheckBox->setToolTip("Show image reslice perpendicular to the path.");
 
-    intensityWindow=displayWidget->GetRenderWindow1();
+    intensityWindow=m_renderWindow->GetQmitkRenderWindow("axial");
     QmitkSliderNavigatorWidget* intensitySlider=new QmitkSliderNavigatorWidget;
     //    intensitySlider->hide();
     intensityStepper = new QmitkStepperAdapter(intensitySlider,
                                                intensityWindow->GetSliceNavigationController()->GetSlice(),
                                                "IntensityStepper");
 
-    potentialWindow=displayWidget->GetRenderWindow2();
+    potentialWindow=m_renderWindow->GetQmitkRenderWindow("sagittal");
     QmitkSliderNavigatorWidget* potentialSlider=new QmitkSliderNavigatorWidget;
     potentialSlider->hide();
     potentialStepper = new QmitkStepperAdapter(potentialSlider,
@@ -106,11 +106,10 @@ void sv4guiResliceSlider::SetDisplayWidget(QmitkStdMultiWidget* widget)
     vlayout->addWidget(sliderContainer);
     //    vlayout->addStretch();
 
-    coronalWindow=displayWidget->GetRenderWindow3();
+    coronalWindow=m_renderWindow->GetQmitkRenderWindow("coronal");
 
     connect(resliceCheckBox, SIGNAL(toggled(bool)), this, SLOT(changeDisplayWidget(bool)));
-    connect(btnResliceSize, SIGNAL(clicked()), this, SLOT(updateResliceSize()) );
-
+    connect(btnResliceSize, SIGNAL(clicked()), this, SLOT(updateResliceSize()) );    
 }
 
 sv4guiResliceSlider::~sv4guiResliceSlider()
@@ -253,7 +252,8 @@ void sv4guiResliceSlider::updateReslice()
     }
 
     intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(true);
-    intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetBoolProperty( "in plane resample size by geometry", mitk::BoolProperty::New( true ),displayWidget->GetRenderWindow4()->GetRenderer());
+    std::cout << "not sure about 3D" << std::endl << std::flush;
+    intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetBoolProperty( "in plane resample size by geometry", mitk::BoolProperty::New( true ),m_renderWindow->GetQmitkRenderWindow("3D")->GetRenderer());
     potentialWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(false);
     coronalWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(false);
 
@@ -346,7 +346,8 @@ void sv4guiResliceSlider::restoreDisplayWidget()
         currentDataNode->GetPropertyList(intensityWindow->GetRenderer())->DeleteProperty("reslice interpolation");
     }
 
-    intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->GetPropertyList(displayWidget->GetRenderWindow4()->GetRenderer())->DeleteProperty("in plane resample size by geometry");
+    std::cout << "not sure about 3D here" << std::endl << std::flush;
+    intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->GetPropertyList(m_renderWindow->GetQmitkRenderWindow("3D")->GetRenderer())->DeleteProperty("in plane resample size by geometry");
     intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(true);
     potentialWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(true);
     coronalWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(true);

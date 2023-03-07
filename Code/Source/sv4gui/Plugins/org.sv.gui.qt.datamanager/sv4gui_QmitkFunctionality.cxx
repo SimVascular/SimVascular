@@ -87,6 +87,7 @@ QList<mitk::DataNode::Pointer> sv4guiQmitkFunctionality::GetDataManagerSelection
 
 void sv4guiQmitkFunctionality::CreatePartControl(QWidget* parent)
 {
+  std::cout << "sv4guiQmitkFunctionality::CreatePartControl" << std::endl << std::flush;
   // scrollArea
   QScrollArea* scrollArea = new QScrollArea;
   //QVBoxLayout* scrollAreaLayout = new QVBoxLayout(scrollArea);
@@ -119,6 +120,7 @@ void sv4guiQmitkFunctionality::CreatePartControl(QWidget* parent)
   parentQWidget->setLayout(parentLayout);
 
   this->AfterCreateQtPartControl();
+  std::cout << "sv4guiQmitkFunctionality::CreatePartControl end" << std::endl << std::flush;
 }
 
 void sv4guiQmitkFunctionality::AfterCreateQtPartControl()

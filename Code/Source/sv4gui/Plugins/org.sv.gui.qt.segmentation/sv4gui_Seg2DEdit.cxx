@@ -144,7 +144,7 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->btnNewGroup,SIGNAL(clicked()), this, SLOT(NewGroup()));
 
     std::cout << "GetActiveStdMultiWidget does not exist anymore" << std::endl << std::flush;
-    // m_DisplayWidget=GetActiveStdMultiWidget();
+    m_renderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
     exit(1);
 
     if(m_DisplayWidget==nullptr)
@@ -154,7 +154,7 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
         return;
     }
 
-    ui->resliceSlider->SetDisplayWidget(m_DisplayWidget);
+    ui->resliceSlider->SetRenderWindow(m_renderWindow);
     ui->resliceSlider->setCheckBoxVisible(false);
 //    ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_NEAREST);
 //    ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_LINEAR);
