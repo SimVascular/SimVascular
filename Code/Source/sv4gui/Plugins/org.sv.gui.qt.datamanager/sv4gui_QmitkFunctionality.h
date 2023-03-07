@@ -85,12 +85,31 @@ public:
         // Fore more info, see https://www.mitk.org/wiki/Views_Without_Multi_Widget
     }
 
+    // implementation copied from QmitkAbstractViewPrivate
+    QList<mitk::DataNode::Pointer> DataNodeSelectionToQList(mitk::DataNodeSelection::ConstPointer currentSelection) const;
+
 protected:
     // originally this was included in QmitkFunctionality. Adding it now for
     // compatibility during transition to QmitkAbstractView
     QWidget* m_Parent;
 
 private:
+
+    // we need to reimplement these functions from QmitkAbstractView because
+    // they became private
+
+    void NodeAdded( const mitk::DataNode*  /*node*/ ) override;
+
+    void NodeRemoved( const mitk::DataNode*  /*node*/ ) override;
+
+    void NodeChanged( const mitk::DataNode* /*node*/ ) override;
+
+    void OnNullSelection(berry::IWorkbenchPart::Pointer /*part*/) override;
+
+    void OnPreferencesChanged(const berry::IBerryPreferences* /*preferences*/) override;
+
+    void OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/,
+                            const QList<mitk::DataNode::Pointer>& /*nodes*/) override;
 
     //{
     /// PRIVATE OBJECTS FROM QmitkFunctionality
