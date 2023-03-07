@@ -189,17 +189,16 @@ void sv4guiPathEdit::Hidden()
 
 int sv4guiPathEdit::GetTimeStep()
 {
-    std::cout <<  "GetTimeStep does not exist" << std::endl << std::flush;
-    // mitk::SliceNavigationController* timeNavigationController = nullptr;
-    // if(m_DisplayWidget)
-    // {
-    //     timeNavigationController=m_DisplayWidget->GetTimeNavigationController();
-    // }
+    mitk::SliceNavigationController* timeNavigationController = nullptr;
+    if(m_renderWindow)
+    {
+        timeNavigationController=m_renderWindow->GetTimeNavigationController();
+    }
 
-    // if(timeNavigationController)
-    //     return timeNavigationController->GetTime()->GetPos();
-    // else
-    //     return 0;
+    if(timeNavigationController)
+        return timeNavigationController->GetTime()->GetPos();
+    else
+        return 0;
 
 }
 
@@ -264,6 +263,7 @@ void sv4guiPathEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
         }
     }
 
+    // 
     rs=GetDataStorage()->GetSources(m_PathNode);
     m_PathFolderNode=nullptr;
     if(rs->size()>0)
