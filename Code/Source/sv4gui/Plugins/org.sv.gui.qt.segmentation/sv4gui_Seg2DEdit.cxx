@@ -143,11 +143,9 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
 
     connect(ui->btnNewGroup,SIGNAL(clicked()), this, SLOT(NewGroup()));
 
-    std::cout << "GetActiveStdMultiWidget does not exist anymore" << std::endl << std::flush;
     m_renderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
-    exit(1);
 
-    if(m_DisplayWidget==nullptr)
+    if(m_renderWindow==nullptr)
     {
         parent->setEnabled(false);
         MITK_ERROR << "Plugin PathEdit Init Error: No QmitkStdMultiWidget!";
@@ -243,7 +241,8 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
 void sv4guiSeg2DEdit::Visible()
 {
 //    ui->resliceSlider->turnOnReslice(true);
-    OnSelectionChanged(GetDataManagerSelection());
+    OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
+                       GetDataManagerSelection());
 }
 
 void sv4guiSeg2DEdit::Hidden()
@@ -260,9 +259,9 @@ void sv4guiSeg2DEdit::Hidden()
 int sv4guiSeg2DEdit::GetTimeStep()
 {
     mitk::SliceNavigationController* timeNavigationController = nullptr;
-    if(m_DisplayWidget)
+    if(m_renderWindow)
     {
-        timeNavigationController=m_DisplayWidget->GetTimeNavigationController();
+        timeNavigationController=m_renderWindow->GetTimeNavigationController();
     }
 
     if(timeNavigationController)
@@ -281,16 +280,9 @@ int sv4guiSeg2DEdit::GetTimeStep()
 //
 //   m_Image
 //
-void sv4guiSeg2DEdit::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes )
+void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
+                                         const QList<mitk::DataNode::Pointer>& nodes)
 {
-
-    std::cout << "OnSelectionChanged\n";
-    exit(1);
-    // IsVisibile not available anymore. I am not sure why.
-    // if(!IsVisible())
-    // {
-    //     return;
-    // }
 
     if(nodes.size()==0)
     {
@@ -1185,7 +1177,8 @@ void sv4guiSeg2DEdit::NodeAdded(const mitk::DataNode* node)
 
 void sv4guiSeg2DEdit::NodeRemoved(const mitk::DataNode* node)
 {
-    OnSelectionChanged(GetDataManagerSelection());
+    OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
+                       GetDataManagerSelection());
 }
 
 void sv4guiSeg2DEdit::ClearAll()

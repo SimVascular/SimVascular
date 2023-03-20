@@ -106,35 +106,18 @@ void sv4guiPathEdit::CreateQtPartControl(QWidget* parent)
     connect(ui->comboBoxAddingMode, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateAddingMode(int )));
 
     // Get access to the four-window widget in the centre of the application.
-    std::cout << "GetActiveStdMultiWidget does not exist" << std::endl << std::flush;
-
     m_renderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
 
-    // auto renderWindowPart = dynamic_cast<QmitkStdMultiWidgetEditor*>(GetRenderWindowPart(mitk::WorkbenchUtil::ACTIVATE));
-
-    // m_DisplayWidget = renderWindowPart->GetMultiWidget();
-
-    // get the QmitkStdMultiWidgetEditor
-
-
-    // m_DisplayWidget = GetRenderWindowPart()->GetActiveStdMultiWidget();
-
-    // QmitkRenderWindow* qmitkRenderWindow = GetRenderWindowPart()->GetActiveQmitkRenderWindow();
-    // mitk::BaseRenderer::Pointer activeBaseRenderer = GetRenderWindowPart()->GetRenderingManager()->GetActiveRenderer();
-    // m_DisplayWidget = dynamic_cast<QmitkStdMultiWidget*>(qmitkRenderWindow->GetRenderWindow(activeBaseRenderer)->GetParentWidget());
-
-    // m_DisplayWidget = GetRenderWindowPart()->GetRenderingManager()->GetActiveStdMultiWidget();
-
-//     if(m_DisplayWidget) {
-//         //instead set zero in svappication
-// //        m_DisplayWidget->GetWidgetPlane1()->SetIntProperty("Crosshair.Gap Size", 0);
-// //        m_DisplayWidget->GetWidgetPlane2()->SetIntProperty("Crosshair.Gap Size", 0);
-// //        m_DisplayWidget->GetWidgetPlane3()->SetIntProperty("Crosshair.Gap Size", 0);
-//     } else {
-//         parent->setEnabled(false);
-//         MITK_ERROR << "Plugin PathEdit Init Error: No QmitkStdMultiWidget!";
-//         return;
-//     }
+    if(m_renderWindow) {
+        //instead set zero in svappication
+//        m_DisplayWidget->GetWidgetPlane1()->SetIntProperty("Crosshair.Gap Size", 0);
+//        m_DisplayWidget->GetWidgetPlane2()->SetIntProperty("Crosshair.Gap Size", 0);
+//        m_DisplayWidget->GetWidgetPlane3()->SetIntProperty("Crosshair.Gap Size", 0);
+    } else {
+        parent->setEnabled(false);
+        MITK_ERROR << "Plugin PathEdit Init Error: No M_renderWindow!";
+        return;
+    }
 
     // The panel top right 'Add Path' and 'Change Type' buttons.
     connect(ui->btnNewPath, SIGNAL(clicked()), this, SLOT(NewPath()) );
@@ -181,11 +164,6 @@ void sv4guiPathEdit::Hidden()
     ui->resliceSlider->turnOnReslice(false);
     ClearAll();
 }
-
-//bool sv4guiPathEdit::IsExclusiveFunctionality() const
-//{
-//    return true;
-//}
 
 int sv4guiPathEdit::GetTimeStep()
 {
@@ -263,7 +241,6 @@ void sv4guiPathEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
         }
     }
 
-    // 
     rs=GetDataStorage()->GetSources(m_PathNode);
     m_PathFolderNode=nullptr;
     if(rs->size()>0)
@@ -295,21 +272,6 @@ void sv4guiPathEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
     itk::SimpleMemberCommand<sv4guiPathEdit>::Pointer pointMoveCommand = itk::SimpleMemberCommand<sv4guiPathEdit>::New();
     pointMoveCommand->SetCallbackFunction(this, &sv4guiPathEdit::UpdateSlice);
     m_PointMoveObserverTag = m_Path->AddObserver( sv4guiPathFinishMovePointEvent(), pointMoveCommand);
-
-    /*
-    mitk::BaseData* baseData=nullptr;
-    if(m_ImageNode.IsNotNull())
-        baseData=m_ImageNode->GetData();
-    else if(m_PathNode.IsNotNull())
-        baseData=m_PathNode->GetData();
-
-    if ( baseData && baseData->GetTimeGeometry()->IsValid() )
-    {
-        mitk::RenderingManager::GetInstance()->InitializeViews(
-                    baseData->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
-        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
-    }
-    */
 
     SetupResliceSlider();
 
@@ -429,30 +391,6 @@ void sv4guiPathEdit::UpdateSlice()
 
 void sv4guiPathEdit::SetupResliceSlider()
 {
-//    mitk::DataNode::Pointer imageNode=nullptr;
-//    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
-//    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_PathNode,isProjFolder,false);
-//    if(rs->size()>0)
-//    {
-//        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
-
-//        rs=GetDataStorage()->GetDerivations (projFolderNode,mitk::NodePredicateDataType::New("sv4guiImageFolder"));
-//        if(rs->size()>0)
-//        {
-
-//            mitk::DataNode::Pointer imageFolderNode=rs->GetElement(0);
-//            rs=GetDataStorage()->GetDerivations(imageFolderNode);
-//            if(rs->size()<1) return;
-//            imageNode=rs->GetElement(0);
-//            m_Image=dynamic_cast<mitk::Image*>(imageNode->GetData());
-
-//        }
-//    }
-
-//    if(imageNode.IsNull()) return;
-
-//    if(m_ImageNode.IsNull())
-//        return;
     if(m_Path==nullptr)
         return;
     int timeStep=GetTimeStep();

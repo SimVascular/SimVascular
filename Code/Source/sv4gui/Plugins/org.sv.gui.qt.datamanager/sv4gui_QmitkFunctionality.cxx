@@ -185,8 +185,6 @@ void sv4guiQmitkFunctionality::AfterCreateQtPartControl()
   // this->RenderWindowPartActivated(this->GetRenderWindowPart());
 
   // send datamanager selection
-  // this method now accepts two arguments. We need to figure out what they 
-  // should be
   this->OnSelectionChanged(berry::IWorkbenchPart::Pointer(),this->GetDataManagerSelection());
 
   // send preferences changed event

@@ -33,6 +33,7 @@
 #include "sv4gui_SegmentationUtils.h"
 
 #include <QmitkSliderNavigatorWidget.h>
+#include <QmitkStdMultiWidgetEditor.h>
 
 #include <mitkSliceNavigationController.h>
 #include <mitkLookupTable.h>
@@ -187,87 +188,113 @@ void sv4guiResliceSlider::updateReslice()
     currentSlicedGeometry=sv4guiSegmentationUtils::CreateSlicedGeometry(m_PathPoints, baseData, resliceSize);
 
     std::cout << "changeLayoutTo2x2Dand3DWidget This method doesn't exist anymore" << std::endl << std::flush;
-    exit(1);
-    // displayWidget->changeLayoutTo2x2Dand3DWidget();
+
+    QmitkStdMultiWidgetEditor *multiWidgetEditor = dynamic_cast<QmitkStdMultiWidgetEditor*>(m_renderWindow);
+    if (multiWidgetEditor) 
+    {
+        QmitkMultiWidgetLayoutManager layoutManager(multiWidgetEditor->GetMultiWidget());
+        layoutManager.SetAll2DLeft3DRightLayout();
+
+        // auto coronalWindow = m_renderWindow->GetQmitkRenderWindow("coronal");
+        // coronalWindow->close();
+        // mitk::RenderingManager::GetInstance()->RemoveRenderWindow(coronalWindow->GetVtkRenderWindow());
+    }
+    else
+    {
+        MITK_ERROR <<  "No MultiWidgetEditor!" << std::endl;
+        return;
+    }
+    // QmitkAbstractMultiWidget* multiWidget = GetMultiWidget();
+    // QmitkMultiWidgetLayoutManager layoutManager(nullptr);
+
+    // m_renderWindow->GetActiveQmitkRenderWindow()->UpdateLayoutDesignList(QmitkRenderWindowMenu::LayoutDesign::ALL_2D_LEFT_3D_RIGHT);
+
+    // // m_renderWindow->GetMultiWidgetLayoutManager();
+    // // m_renderWindow->GetQmitkRenderWindow()->SetProperty(mitk::IRenderWindowPartLayoutProperty::New(4, mitk::IRenderWindowPartLayout::LAYOUT_2x2D_AND_3D));
+
+    // // m_renderWindow->GetQmitkRenderWindow()->GetRenderWindow()->Render();
+
+    // exit(1);
+    // // displayWidget->changeLayoutTo2x2Dand3DWidget();
 
     mitk::SliceNavigationController::Pointer intensityController=intensityWindow->GetSliceNavigationController();
 
-    std::cout << "SetInputWorldGeometry3D This method doesn't exist anymore" << std::endl << std::flush;
-    exit(1);
-    // intensityController->SetInputWorldGeometry3D(currentSlicedGeometry);
+    // std::cout << "SetInputWorldGeometry3D This method doesn't exist anymore" << std::endl << std::flush;
+    // exit(1);
+    // intensityController->SetInputWorldTimeGeometry(currentSlicedGeometry->GetTimeGeometry());
     intensityController->SetViewDirection(mitk::SliceNavigationController::Original);
     intensityController->Update();
 
-    mitk::SliceNavigationController::Pointer potentialController=potentialWindow->GetSliceNavigationController();
-    std::cout << "SetInputWorldGeometry3D This method doesn't exist anymore" << std::endl << std::flush;
-    exit(1);
-    // potentialController->SetInputWorldGeometry3D(currentSlicedGeometry);
-    potentialController->SetViewDirection(mitk::SliceNavigationController::Original);
-    potentialController->Update();
-    if(image)
-    {
-        mitk::LookupTable::Pointer mitkLut = mitk::LookupTable::New();
-        mitkLut->SetType(mitk::LookupTable::GRAYSCALE);
-        mitk::LookupTableProperty::Pointer mitkLutProp = mitk::LookupTableProperty::New();
-        mitkLutProp->SetLookupTable(mitkLut);
-        currentDataNode->SetProperty("LookupTable", mitkLutProp,potentialWindow->GetRenderer());
+    // mitk::SliceNavigationController::Pointer potentialController=potentialWindow->GetSliceNavigationController();
+    // std::cout << "SetInputWorldGeometry3D This method doesn't exist anymore" << std::endl << std::flush;
+    // exit(1);
+    // // potentialController->SetInputWorldGeometry3D(currentSlicedGeometry);
+    // potentialController->SetViewDirection(mitk::SliceNavigationController::Original);
+    // potentialController->Update();
+    // if(image)
+    // {
+    //     mitk::LookupTable::Pointer mitkLut = mitk::LookupTable::New();
+    //     mitkLut->SetType(mitk::LookupTable::GRAYSCALE);
+    //     mitk::LookupTableProperty::Pointer mitkLutProp = mitk::LookupTableProperty::New();
+    //     mitkLutProp->SetLookupTable(mitkLut);
+    //     currentDataNode->SetProperty("LookupTable", mitkLutProp,potentialWindow->GetRenderer());
 
-        currentDataNode->SetBoolProperty("show gradient", true, potentialWindow->GetRenderer());
-        if(m_UseGeometrySpacing)
-        {
-            currentDataNode->SetBoolProperty( "in plane resample extent by geometry", mitk::BoolProperty::New( true ),intensityWindow->GetRenderer());
-            currentDataNode->SetBoolProperty( "in plane resample extent by geometry", mitk::BoolProperty::New( true ),potentialWindow->GetRenderer());
-        }
+    //     currentDataNode->SetBoolProperty("show gradient", true, potentialWindow->GetRenderer());
+    //     if(m_UseGeometrySpacing)
+    //     {
+    //         currentDataNode->SetBoolProperty( "in plane resample extent by geometry", mitk::BoolProperty::New( true ),intensityWindow->GetRenderer());
+    //         currentDataNode->SetBoolProperty( "in plane resample extent by geometry", mitk::BoolProperty::New( true ),potentialWindow->GetRenderer());
+    //     }
 
-        if(m_UseGeometrySize)
-        {
-            currentDataNode->SetBoolProperty( "in plane resample size by geometry", mitk::BoolProperty::New( true ),intensityWindow->GetRenderer());
-            currentDataNode->SetBoolProperty( "in plane resample size by geometry", mitk::BoolProperty::New( true ),potentialWindow->GetRenderer());
-        }
+    //     if(m_UseGeometrySize)
+    //     {
+    //         currentDataNode->SetBoolProperty( "in plane resample size by geometry", mitk::BoolProperty::New( true ),intensityWindow->GetRenderer());
+    //         currentDataNode->SetBoolProperty( "in plane resample size by geometry", mitk::BoolProperty::New( true ),potentialWindow->GetRenderer());
+    //     }
 
-        if(m_UseMinimumSpacing)
-        {
-            currentDataNode->SetBoolProperty( "in plane resample extent by minimum spacing", mitk::BoolProperty::New( true ),intensityWindow->GetRenderer());
-            currentDataNode->SetBoolProperty( "in plane resample extent by minimum spacing", mitk::BoolProperty::New( true ),potentialWindow->GetRenderer());
-        }
+    //     if(m_UseMinimumSpacing)
+    //     {
+    //         currentDataNode->SetBoolProperty( "in plane resample extent by minimum spacing", mitk::BoolProperty::New( true ),intensityWindow->GetRenderer());
+    //         currentDataNode->SetBoolProperty( "in plane resample extent by minimum spacing", mitk::BoolProperty::New( true ),potentialWindow->GetRenderer());
+    //     }
 
-        mitk::VtkResliceInterpolationProperty::Pointer interProp=mitk::VtkResliceInterpolationProperty::New();
-        switch(m_ResliceMode)
-        {
-        case mitk::ExtractSliceFilter::RESLICE_NEAREST:
-            interProp->SetInterpolationToNearest();
-            break;
-        case mitk::ExtractSliceFilter::RESLICE_LINEAR:
-            interProp->SetInterpolationToLinear();
-            break;
-        case mitk::ExtractSliceFilter::RESLICE_CUBIC:
-            interProp->SetInterpolationToCubic();
-            break;
-        default:
-            break;
-        }
-        currentDataNode->SetProperty("reslice interpolation", interProp,intensityWindow->GetRenderer());
-        currentDataNode->SetProperty("reslice interpolation", interProp,potentialWindow->GetRenderer());
+    //     mitk::VtkResliceInterpolationProperty::Pointer interProp=mitk::VtkResliceInterpolationProperty::New();
+    //     switch(m_ResliceMode)
+    //     {
+    //     case mitk::ExtractSliceFilter::RESLICE_NEAREST:
+    //         interProp->SetInterpolationToNearest();
+    //         break;
+    //     case mitk::ExtractSliceFilter::RESLICE_LINEAR:
+    //         interProp->SetInterpolationToLinear();
+    //         break;
+    //     case mitk::ExtractSliceFilter::RESLICE_CUBIC:
+    //         interProp->SetInterpolationToCubic();
+    //         break;
+    //     default:
+    //         break;
+    //     }
+    //     currentDataNode->SetProperty("reslice interpolation", interProp,intensityWindow->GetRenderer());
+    //     currentDataNode->SetProperty("reslice interpolation", interProp,potentialWindow->GetRenderer());
 
-    }
+    // }
 
-    intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(true);
-    std::cout << "not sure about 3D" << std::endl << std::flush;
-    intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetBoolProperty( "in plane resample size by geometry", mitk::BoolProperty::New( true ),m_renderWindow->GetQmitkRenderWindow("3D")->GetRenderer());
-    potentialWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(false);
-    coronalWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(false);
+    // intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(true);
+    // std::cout << "not sure about 3D" << std::endl << std::flush;
+    // intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetBoolProperty( "in plane resample size by geometry", mitk::BoolProperty::New( true ),m_renderWindow->GetQmitkRenderWindow("3D")->GetRenderer());
+    // potentialWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(false);
+    // coronalWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(false);
 
-    intensityWindow->GetRenderer()->GetCameraController()->Fit();
-    potentialWindow->GetRenderer()->GetCameraController()->Fit();
-    if(!stepperSynchronized){
-        connect(intensityStepper, SIGNAL(Refetch()), this, SLOT(intensityOnRefetch()));
-        connect(potentialStepper, SIGNAL(Refetch()), this, SLOT(potentialOnRefetch()));
-        stepperSynchronized=true;
-    }
+    // intensityWindow->GetRenderer()->GetCameraController()->Fit();
+    // potentialWindow->GetRenderer()->GetCameraController()->Fit();
+    // if(!stepperSynchronized){
+    //     connect(intensityStepper, SIGNAL(Refetch()), this, SLOT(intensityOnRefetch()));
+    //     connect(potentialStepper, SIGNAL(Refetch()), this, SLOT(potentialOnRefetch()));
+    //     stepperSynchronized=true;
+    // }
 
-    mitk::RenderingManager::GetInstance()->ForceImmediateUpdateAll();
-    sliderContainer->show();
-    setSlicePos(m_StartingSlicePos);
+    // mitk::RenderingManager::GetInstance()->ForceImmediateUpdateAll();
+    // sliderContainer->show();
+    // setSlicePos(m_StartingSlicePos);
 }
 
 int sv4guiResliceSlider::getCurrentSliceIndex(){

@@ -115,14 +115,12 @@ void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
 
     //    parent->setMaximumWidth(450);
 
-    std::cout << "GetActiveStdMultiWidget doesn't exist anymore" << std::endl << std::flush;
-    exit(1);
-    // m_DisplayWidget=GetActiveStdMultiWidget();
+    m_renderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
 
-    if(m_DisplayWidget==nullptr)
+    if(m_renderWindow==nullptr)
     {
         parent->setEnabled(false);
-        MITK_ERROR << "Plugin ModelEdit Init Error: No QmitkStdMultiWidget!";
+        MITK_ERROR << "Plugin ModelEdit Init Error: No M_renderWindow!";
         return;
     }
 
@@ -322,7 +320,8 @@ void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
 void sv4guiModelEdit::Visible()
 {
     ui->tabWidget->setCurrentIndex(0);
-    OnSelectionChanged(GetDataManagerSelection());
+    OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
+                       GetDataManagerSelection());
 }
 
 void sv4guiModelEdit::Hidden()
@@ -348,9 +347,9 @@ void sv4guiModelEdit::SetTimeModified()
 int sv4guiModelEdit::GetTimeStep()
 {
     mitk::SliceNavigationController* timeNavigationController = nullptr;
-    if(m_DisplayWidget)
+    if(m_renderWindow)
     {
-        timeNavigationController=m_DisplayWidget->GetTimeNavigationController();
+        timeNavigationController=m_renderWindow->GetTimeNavigationController();
     }
 
     if(timeNavigationController)
@@ -359,17 +358,10 @@ int sv4guiModelEdit::GetTimeStep()
         return 0;
 }
 
-void sv4guiModelEdit::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes )
+void sv4guiModelEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
+                                         const QList<mitk::DataNode::Pointer>& nodes)
 {
     m_LocalOperationforBlendRegion=false;
-
-    std::cout << "IsVisible does not exist anymore" << std::endl << std::flush;
-    exit(1);
-    //    if(!IsActivated())
-    // if(!IsVisible())
-    // {
-    //     return;
-    // }
 
     if(nodes.size()==0)
     {
@@ -2231,7 +2223,8 @@ void sv4guiModelEdit::ShowSphereInteractor(bool checked)
     if(m_SphereWidget==nullptr)
     {
         m_SphereWidget = vtkSmartPointer<vtkSphereWidget>::New();
-        m_SphereWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
+        // m_SphereWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
+        m_SphereWidget->SetInteractor(m_renderWindow->GetQmitkRenderWindow("3d")->GetVtkRenderWindow()->GetInteractor());
         //    m_SphereWidget->SetRepresentationToSurface();
     }
 
@@ -2264,7 +2257,8 @@ void sv4guiModelEdit::ShowPlaneInteractor(bool checked)
     if(m_PlaneWidget==nullptr)
     {
         m_PlaneWidget = vtkSmartPointer<vtkPlaneWidget>::New();
-        m_PlaneWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
+        // m_PlaneWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
+        m_PlaneWidget->SetInteractor(m_renderWindow->GetQmitkRenderWindow("3d")->GetVtkRenderWindow()->GetInteractor());
         m_PlaneWidget->GetHandleProperty()->SetOpacity(0.8);
         m_PlaneWidget->GetPlaneProperty()->SetLineWidth(1);
         //    m_PlaneWidget->SetRepresentationToSurface();
@@ -2299,7 +2293,8 @@ void sv4guiModelEdit::ShowBoxInteractor(bool checked)
     if(m_BoxWidget==nullptr)
     {
         m_BoxWidget = vtkSmartPointer<vtkBoxWidget>::New();
-        m_BoxWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
+        // m_BoxWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
+        m_BoxWidget->SetInteractor(m_renderWindow->GetQmitkRenderWindow("3d")->GetVtkRenderWindow()->GetInteractor());
         m_BoxWidget->OutlineCursorWiresOff();
         m_BoxWidget->RotationEnabledOn();
         m_BoxWidget->TranslationEnabledOn();

@@ -170,7 +170,8 @@ public:
     virtual void CreateQtPartControl(QWidget *parent) override;
 
     // This was override when using QmitkFunctionality, we need to understand if it is required
-    virtual void OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes);
+    virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
+                                    const QList<mitk::DataNode::Pointer>& nodes);
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -209,8 +210,6 @@ protected:
     long m_ModelSelectFaceObserverTag;
     long m_ModelUpdateObserverTag;
 
-    QmitkStdMultiWidget* m_DisplayWidget;
-
     QMenu* m_BlendTableMenu;
     QStandardItemModel* m_BlendTableModel;
 
@@ -226,6 +225,8 @@ protected:
     bool m_OperatingWholeTableModel;
 
     bool m_LocalOperationforBlendRegion;
+
+    mitk::IRenderWindowPart* m_renderWindow;
 
 private:
     void SetTimeModified();

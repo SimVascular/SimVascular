@@ -201,7 +201,8 @@ public:
     virtual void CreateQtPartControl(QWidget *parent) override;
 
     // this was overriden in QmitkFunctionality. Need to figure out if we need it
-    virtual void OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes);
+    virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/,
+                                    const QList<mitk::DataNode::Pointer>& /*nodes*/) override;
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -291,8 +292,6 @@ protected:
 
 
     bool m_ContourChanging;
-
-    QmitkStdMultiWidget* m_DisplayWidget;
 
     std::vector<sv4guiPathElement::sv4guiPathPoint> m_PathPoints;
 

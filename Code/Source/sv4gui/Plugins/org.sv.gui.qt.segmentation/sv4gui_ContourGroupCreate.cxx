@@ -62,7 +62,9 @@ sv4guiContourGroupCreate::sv4guiContourGroupCreate(mitk::DataStorage::Pointer da
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(CreateGroup()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(Cancel()));
     connect(ui->lineEditGroupName, SIGNAL(returnPressed()), this, SLOT(CreateGroup()));
-    move(400,400);
+
+    // move makes the widget disappear for some reason
+    // move(400,400);
 
     Activated();
 }
