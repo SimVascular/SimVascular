@@ -51,6 +51,7 @@
 #include <berryIPreferences.h>
 #include <berryPlatform.h>
 
+#include <QmitkRenderWindow.h>
 #include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
@@ -139,34 +140,32 @@ void sv4guiMeshEdit::CreateQtPartControl( QWidget *parent )
     m_Parent=parent;
     ui->setupUi(parent);
 
-//    parent->setMaximumWidth(450);
+    m_renderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
 
-    std::cout << "GetActiveStdMultiWidget does not exist anymore" << std::endl << std::flush;
-    exit(1);
-    // m_DisplayWidget=GetActiveStdMultiWidget();
+   parent->setMaximumWidth(450);
 
-    // if(m_DisplayWidget==nullptr)
-    // {
-    //     parent->setEnabled(false);
-    //     MITK_ERROR << "Plugin MeshEdit Init Error: No QmitkStdMultiWidget Available!";
-    //     return;
-    // }
+    if(m_renderWindow==nullptr)
+    {
+        parent->setEnabled(false);
+        MITK_ERROR << "Plugin MeshEdit Init Error: No m_renderWindow Available!";
+        return;
+    }
 
-    // connect(ui->btnRunMesher, SIGNAL(clicked()), this, SLOT(RunMesher()) );
+    connect(ui->btnRunMesher, SIGNAL(clicked()), this, SLOT(RunMesher()) );
 
-    // SetupGUI(parent);
+    SetupGUI(parent);
 
-    // if(m_SphereWidget==nullptr)
-    // {
-    //     m_SphereWidget = vtkSmartPointer<sv4guiVtkMeshSphereWidget>::New();
-    //     m_SphereWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
-    // //    m_SphereWidget->SetRepresentationToSurface();
-    //     sv4guiVtkMeshSphereWidget* sphereWidget=dynamic_cast<sv4guiVtkMeshSphereWidget*>(m_SphereWidget.GetPointer());
-    //     sphereWidget->SetMeshEdit(this);
-    // }
+    if(m_SphereWidget==nullptr)
+    {
+        m_SphereWidget = vtkSmartPointer<sv4guiVtkMeshSphereWidget>::New();
+        m_SphereWidget->SetInteractor(m_renderWindow->GetQmitkRenderWindow("3d")->GetVtkRenderWindow()->GetInteractor());
+    //    m_SphereWidget->SetRepresentationToSurface();
+        sv4guiVtkMeshSphereWidget* sphereWidget=dynamic_cast<sv4guiVtkMeshSphereWidget*>(m_SphereWidget.GetPointer());
+        sphereWidget->SetMeshEdit(this);
+    }
 
-    // connect(ui->btnMeshInfo, SIGNAL(clicked()), this, SLOT(DisplayMeshInfo()) );
-    // connect(ui->checkBoxShowModel, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
+    connect(ui->btnMeshInfo, SIGNAL(clicked()), this, SLOT(DisplayMeshInfo()) );
+    connect(ui->checkBoxShowModel, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
 }
 
 void sv4guiMeshEdit::SetupGUI(QWidget *parent )
@@ -1150,7 +1149,8 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsM()
 
 void sv4guiMeshEdit::Visible()
 {
-    OnSelectionChanged(GetDataManagerSelection());
+    OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
+                    GetDataManagerSelection());
 }
 
 void sv4guiMeshEdit::Hidden()
@@ -1162,9 +1162,9 @@ void sv4guiMeshEdit::Hidden()
 int sv4guiMeshEdit::GetTimeStep()
 {
     mitk::SliceNavigationController* timeNavigationController = nullptr;
-    if(m_DisplayWidget)
+    if(m_renderWindow)
     {
-        timeNavigationController=m_DisplayWidget->GetTimeNavigationController();
+        timeNavigationController=m_renderWindow->GetTimeNavigationController();
     }
 
     if(timeNavigationController)
@@ -1173,15 +1173,9 @@ int sv4guiMeshEdit::GetTimeStep()
         return 0;
 }
 
-void sv4guiMeshEdit::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes )
+void sv4guiMeshEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
+                                    const QList<mitk::DataNode::Pointer>& nodes)
 {
-//    if(!IsActivated())
-    std::cout << "IsVisible does not exist" << std::flush;
-    exit(1);
-    // if(!IsVisible())
-    // {
-    //     return;
-    // }
 
     if(nodes.size()==0)
     {

@@ -151,7 +151,8 @@ public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
-    virtual void OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes);
+    virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
+                                    const QList<mitk::DataNode::Pointer>& nodes) override;
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -194,8 +195,6 @@ protected:
     long m_ModelSelectFaceObserverTag;
 //    long m_SphereObserverTag;
 
-    QmitkStdMultiWidget* m_DisplayWidget;
-
     QMenu* m_TableMenuLocal;
     QStandardItemModel* m_TableModelLocal;
 
@@ -217,7 +216,8 @@ protected:
     sv4guiLocalTableDelegate* m_CustomDelegate;
 
     QItemDelegate* m_DefaultDelegate;
-
+    
+    mitk::IRenderWindowPart* m_renderWindow;
 };
 
 #endif // SV4GUI_MESHEDIT_H

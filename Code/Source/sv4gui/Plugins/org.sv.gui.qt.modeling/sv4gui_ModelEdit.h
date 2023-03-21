@@ -171,7 +171,7 @@ public:
 
     // This was override when using QmitkFunctionality, we need to understand if it is required
     virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
-                                    const QList<mitk::DataNode::Pointer>& nodes);
+                                    const QList<mitk::DataNode::Pointer>& nodes) override;
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
