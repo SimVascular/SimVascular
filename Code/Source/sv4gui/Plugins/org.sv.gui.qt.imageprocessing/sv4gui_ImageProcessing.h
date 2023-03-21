@@ -91,7 +91,8 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 
     mitk::Image::Pointer getImage(std::string image_name);
 
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes);
+    virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
+                                    const QList<mitk::DataNode::Pointer>& nodes) override;
 
     sv4guiImageProcessingUtils::itkImPoint getItkImage(int index);
 
@@ -152,8 +153,6 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 
     QWidget *m_parent;
 
-    QmitkStdMultiWidget* m_DisplayWidget;
-
     std::string m_selectedAlgorithm;
 
     sv4guiDataNodeOperationInterface* m_Interface;
@@ -191,6 +190,8 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 
     // [TODO:DaveP] this is a hack! Don't keep!
     QString m_LastSegmentationNodeName;
+
+    mitk::IRenderWindowPart* m_renderWindow;
 
   private: 
 

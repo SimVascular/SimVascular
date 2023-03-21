@@ -191,11 +191,9 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
   ui->setupUi(parent);
 
   // Get access to the four-window widget in the centre of the application.
-  std::cout << "GetActiveStdMultiWidget does not exist" << std::endl << std::flush;
-  exit(1);
-  // m_DisplayWidget = GetActiveStdMultiWidget();
+  m_renderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
 
-  if (m_DisplayWidget == nullptr) {
+  if (m_renderWindow == nullptr) {
       parent->setEnabled(false);
       MITK_ERROR << "Plugin ImageProcessing Init Error: No QmitkStdMultiWidget!";
       return;
@@ -707,13 +705,12 @@ int sv4guiImageProcessing::FindClosesetPoint(vtkPolyData* polyData, std::array<d
 void sv4guiImageProcessing::AddStartSeed()
 {
   std::cout << "GetCrossPosition doesnt exist" << std::endl << std::flush;
-  exit(1);
-  // mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
-  // int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
-  // m_SeedContainer->AddStartSeed(point[0], point[1], point[2]);
+  mitk::Point3D point = m_renderWindow->GetSelectedPosition();
+  int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
+  m_SeedContainer->AddStartSeed(point[0], point[1], point[2]);
 
-  // // TODO:DaveP] Do we need to updata all?
-  // mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+  // TODO:DaveP] Do we need to updata all?
+  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 
@@ -725,21 +722,20 @@ void sv4guiImageProcessing::AddStartSeed()
 void sv4guiImageProcessing::AddEndSeed()
 {
   std::cout << "GetCrossPosition does not exist" << std::endl << std::flush;
-  exit(1);
-  // mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
+  mitk::Point3D point = m_renderWindow->GetSelectedPosition();
 
-  // // A start seed must have been selected.
-  // int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
-  // if (numStartSeeds < 1) { 
-  //   QMessageBox::warning(nullptr,"","No start seeds have been defined.");
-  //   return;
-  // }
+  // A start seed must have been selected.
+  int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
+  if (numStartSeeds < 1) { 
+    QMessageBox::warning(nullptr,"","No start seeds have been defined.");
+    return;
+  }
 
-  // // Add add an end seed to the current start seed.
-  // m_SeedContainer->AddEndSeed(point[0], point[1], point[2]);
+  // Add add an end seed to the current start seed.
+  m_SeedContainer->AddEndSeed(point[0], point[1], point[2]);
 
-  // // TODO:DaveP] Do we need to updata all?
-  // mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+  // TODO:DaveP] Do we need to updata all?
+  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 //------------
@@ -902,8 +898,13 @@ void sv4guiImageProcessing::SeedSize()
 // OnSelectionChanged
 //--------------------
 //
-void sv4guiImageProcessing::OnSelectionChanged(std::vector<mitk::DataNode*> nodes)
+void sv4guiImageProcessing::OnSelectionChanged(berry::IWorkbenchPart::Pointer 
+                                               part,
+                                               const
+                                               QList<mitk::DataNode::Pointer>& 
+                                               nodes)
 {
+  std::cout << "OnSelectionChanged" << std::endl;
   m_DataStorage = GetDataStorage();
 
   if (m_DataStorage == nullptr) {
