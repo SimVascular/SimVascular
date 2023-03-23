@@ -108,6 +108,8 @@ sv4guiModelEdit::~sv4guiModelEdit()
 
 void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
 {
+    if (!m_isVisible) return;
+
     m_Parent=parent;
     ui->setupUi(parent);
 
@@ -319,6 +321,7 @@ void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
 
 void sv4guiModelEdit::Visible()
 {
+    m_isVisible = true;
     ui->tabWidget->setCurrentIndex(0);
     OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
                        GetDataManagerSelection());
@@ -326,8 +329,16 @@ void sv4guiModelEdit::Visible()
 
 void sv4guiModelEdit::Hidden()
 {
-    //    ClearAll();
+    m_isVisible = false;
     RemoveObservers();
+}
+
+void sv4guiModelEdit::Activated()
+{
+}
+
+void sv4guiModelEdit::Deactivated()
+{
 }
 
 //------------------
@@ -361,6 +372,8 @@ int sv4guiModelEdit::GetTimeStep()
 void sv4guiModelEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
                                          const QList<mitk::DataNode::Pointer>& nodes)
 {
+    if (!m_isVisible) return;
+
     m_LocalOperationforBlendRegion=false;
 
     if(nodes.size()==0)

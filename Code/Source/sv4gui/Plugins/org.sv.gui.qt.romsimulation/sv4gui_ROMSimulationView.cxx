@@ -1710,6 +1710,8 @@ void sv4guiROMSimulationView::OnPreferencesChanged(const berry::IBerryPreference
 //
 void sv4guiROMSimulationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/, const QList<mitk::DataNode::Pointer>& nodes)
 {
+    if (!m_isVisible) return;
+
     if (nodes.size() == 0) {
         RemoveObservers();
         EnableTool(false);
@@ -1914,13 +1916,23 @@ void sv4guiROMSimulationView::NodeRemoved(const mitk::DataNode* node)
 
 void sv4guiROMSimulationView::Visible()
 {
+    m_isVisible = true;
     OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
                     GetDataManagerSelection());
 }
 
 void sv4guiROMSimulationView::Hidden()
 {
+    m_isVisible = false;
     RemoveObservers();
+}
+
+void sv4guiROMSimulationView::Activated()
+{
+}
+
+void sv4guiROMSimulationView::Deactivated()
+{
 }
 
 //--------------

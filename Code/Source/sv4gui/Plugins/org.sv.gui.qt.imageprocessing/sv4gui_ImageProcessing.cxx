@@ -902,6 +902,8 @@ void sv4guiImageProcessing::OnSelectionChanged(berry::IWorkbenchPart::Pointer
                                                QList<mitk::DataNode::Pointer>& 
                                                nodes)
 {
+  if (!m_isVisible) return;
+
   m_DataStorage = GetDataStorage();
 
   if (m_DataStorage == nullptr) {
@@ -944,6 +946,24 @@ sv4guiImageProcessing::GetImageSpacing()
   auto mitkImage = getImage(image_name);
   auto spacing = mitkImage->GetGeometry()->GetSpacing();
   return std::array<double,3> {spacing[0], spacing[1], spacing[2]};
+}
+
+void sv4guiImageProcessing::Activated()
+{
+
+}
+void sv4guiImageProcessing::Deactivated()
+{
+
+}
+void sv4guiImageProcessing::Visible()
+{
+  m_isVisible = true;
+}
+
+void sv4guiImageProcessing::Hidden()
+{
+  m_isVisible = false;
 }
 
 //----------

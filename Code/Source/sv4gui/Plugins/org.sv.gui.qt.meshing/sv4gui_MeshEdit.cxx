@@ -142,7 +142,7 @@ void sv4guiMeshEdit::CreateQtPartControl( QWidget *parent )
 
     m_renderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
 
-   parent->setMaximumWidth(450);
+    parent->setMaximumWidth(450);
 
     if(m_renderWindow==nullptr)
     {
@@ -1147,6 +1147,14 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsM()
     return cmds;
 }
 
+void sv4guiMeshEdit::Activated()
+{
+}
+
+void sv4guiMeshEdit::Deactivated()
+{
+}
+
 void sv4guiMeshEdit::Visible()
 {
     OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
@@ -1176,6 +1184,7 @@ int sv4guiMeshEdit::GetTimeStep()
 void sv4guiMeshEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
                                     const QList<mitk::DataNode::Pointer>& nodes)
 {
+    if (!m_isVisible) return;
 
     if(nodes.size()==0)
     {

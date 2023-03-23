@@ -179,15 +179,13 @@ public:
 
     virtual void NodeRemoved(const mitk::DataNode* node) override;
 
-//    virtual void Activated() override;
+   virtual void Activated() override;
 
-//    virtual void Deactivated() override;
+   virtual void Deactivated() override;
 
-// This was override when using QmitkFunctionality, we need to understand if it is required
-    virtual void Visible();
+    virtual void Visible() override;
 
-// This was override when using QmitkFunctionality, we need to understand if it is required
-    virtual void Hidden();
+    virtual void Hidden() override;
 
 protected:
 

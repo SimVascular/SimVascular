@@ -105,24 +105,31 @@ void sv4guiSeg3DEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->btnCreateCF, SIGNAL(clicked()), this, SLOT(CreateByCollidingFronts()) );
 }
 
+void sv4guiSeg3DEdit::Activated()
+{
+}
+
+void sv4guiSeg3DEdit::Deactivated()
+{
+}
+
 void sv4guiSeg3DEdit::Visible()
 {
+    m_isVisible = true;
     OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
                        GetDataManagerSelection());
 }
 
 void sv4guiSeg3DEdit::Hidden()
 {
+    m_isVisible = false;
     ClearAll();
 }
 
-//bool sv4guiSeg3DEdit::IsExclusiveFunctionality() const
-//{
-//    return true;
-//}
-
 void sv4guiSeg3DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/, const QList<mitk::DataNode::Pointer>& nodes)
-{
+{   
+    if (!m_isVisible) return;
+
     if(nodes.size()==0)
     {
         ClearAll();

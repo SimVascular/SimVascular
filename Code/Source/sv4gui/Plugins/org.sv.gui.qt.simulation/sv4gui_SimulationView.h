@@ -167,13 +167,13 @@ public:
 
     virtual void NodeRemoved(const mitk::DataNode* node) override;
 
-//    virtual void Activated() override;
+    virtual void Activated() override;
 
-//    virtual void Deactivated() override;
+    virtual void Deactivated() override;
 
-    virtual void Visible();
+    virtual void Visible() override;
 
-    virtual void Hidden();
+    virtual void Hidden() override;
 
     virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
 

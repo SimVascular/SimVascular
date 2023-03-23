@@ -145,6 +145,11 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
     void runThreshold();
     void runZeroLevel();
 
+    virtual void Activated() override;
+    virtual void Deactivated() override;
+    virtual void Visible() override;
+    virtual void Hidden() override;
+
   protected:
 
     QString hello_str;

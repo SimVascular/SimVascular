@@ -238,8 +238,17 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
     }
 }
 
+void sv4guiSeg2DEdit::Activated()
+{
+}
+
+void sv4guiSeg2DEdit::Deactivated()
+{
+}
+
 void sv4guiSeg2DEdit::Visible()
 {
+    m_isVisible = true;
 //    ui->resliceSlider->turnOnReslice(true);
     OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
                        GetDataManagerSelection());
@@ -247,6 +256,7 @@ void sv4guiSeg2DEdit::Visible()
 
 void sv4guiSeg2DEdit::Hidden()
 {
+    m_isVisible = false;
     ui->resliceSlider->turnOnReslice(false);
     ClearAll();
 }
@@ -283,6 +293,7 @@ int sv4guiSeg2DEdit::GetTimeStep()
 void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
                                          const QList<mitk::DataNode::Pointer>& nodes)
 {
+    if (!m_isVisible) return;
 
     if(nodes.size()==0)
     {

@@ -148,11 +148,7 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
 //
 void sv4guisvFSIView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/, const QList<mitk::DataNode::Pointer>& nodes)
 {
-    // std::cout << "IsVisible does not exist anymore" << std::endl << std::flush;
-    // exit(1);
-    // if (!IsVisible()) {
-    //     return;
-    // }
+    if (!m_isVisible) return;
 
     if(nodes.size()==0) {
         ui->Subpanel_Widget->setEnabled(false);
@@ -512,19 +508,26 @@ void sv4guisvFSIView::NodeRemoved(const mitk::DataNode* node)
 
 }
 
-//    virtual void Activated() {}
+void sv4guisvFSIView::Activated() 
+{
 
-//    virtual void Deactivated() {}
+}
+
+void sv4guisvFSIView::Deactivated() 
+{
+
+}
 
 void sv4guisvFSIView::Visible()
 {
+    m_isVisible = true;
     OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
                        GetDataManagerSelection());
 }
 
 void sv4guisvFSIView::Hidden()
 {
-
+    m_isVisible = false;
 }
 
 void sv4guisvFSIView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)

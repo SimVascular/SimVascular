@@ -53,7 +53,7 @@ namespace Ui {
   class sv4guiPathEdit;
 }
 
-class sv4guiPathEdit : public sv4guiQmitkFunctionality, public mitk::ILifecycleAwarePart
+class sv4guiPathEdit : public sv4guiQmitkFunctionality
 
 {
     Q_OBJECT
@@ -110,10 +110,8 @@ public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
-    //    virtual void OnSelectionChanged(const QList<mitk::DataNode::Pointer>& nodes ) override;
-    // In Qmitk this was override. Need to understand if it's still required.
     virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/,
-                                    const QList<mitk::DataNode::Pointer>& /*nodes*/) override;
+                                    const QList<mitk::DataNode::Pointer>&  nodes) override;
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -128,10 +126,6 @@ public:
     virtual void Visible() override;
 
     virtual void Hidden() override;
-
-    virtual void SetFocus() override {
-        std::cout << "SetFocus()" << std::endl << std::flush;
-    }
 
 //    bool IsExclusiveFunctionality() const override;
 
@@ -169,8 +163,6 @@ protected:
     mitk::IRenderWindowPart* m_renderWindow;
 
     bool m_UpdatingGUI;
-
-    bool m_isVisible; 
 };
 
 #endif // SV4GUI_PATHEDIT_H

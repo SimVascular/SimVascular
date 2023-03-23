@@ -373,6 +373,8 @@ void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* 
 void sv4guiSimulationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/,
                                               const QList<mitk::DataNode::Pointer>& nodes)
 {
+    if (!m_isVisible) return;
+
     if(nodes.size()==0) {
         RemoveObservers();
         EnableTool(false);
@@ -495,14 +497,26 @@ void sv4guiSimulationView::NodeRemoved(const mitk::DataNode* node)
 
 }
 
+void sv4guiSimulationView::Activated() 
+{
+
+}
+
+void sv4guiSimulationView::Deactivated() 
+{
+
+}
+
 void sv4guiSimulationView::Visible()
 {
+    m_isVisible = true;
     OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
                        GetDataManagerSelection());
 }
 
 void sv4guiSimulationView::Hidden()
 {
+    m_isVisible = false;
     RemoveObservers();
 }
 

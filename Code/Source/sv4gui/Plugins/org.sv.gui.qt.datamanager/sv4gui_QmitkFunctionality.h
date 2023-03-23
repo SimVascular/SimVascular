@@ -37,6 +37,7 @@
 #include <org_mitk_gui_qt_common_Export.h>
 
 #include <QmitkAbstractView.h>
+#include <mitkILifecycleAwarePart.h>
 
 #include <QWidget>
 #include <QStandardItemModel>
@@ -46,7 +47,7 @@
 // QmitkAbstractView following 
 // https://www.mitk.org/wiki/Views_Without_Multi_Widget
 
-class SV_QT_DATAMANAGER sv4guiQmitkFunctionality : public QmitkAbstractView
+class SV_QT_DATAMANAGER sv4guiQmitkFunctionality : public QmitkAbstractView, public mitk::ILifecycleAwarePart
 {
     Q_OBJECT
 
@@ -80,8 +81,6 @@ public:
     //}
 
      void SetFocus() {
-        // std::cout << "setFocus() needs to be implemented" << std::endl << std::flush;
-        // exit(1);
         // Fore more info, see https://www.mitk.org/wiki/Views_Without_Multi_Widget
     }
 
@@ -92,6 +91,8 @@ protected:
     // originally this was included in QmitkFunctionality. Adding it now for
     // compatibility during transition to QmitkAbstractView
     QWidget* m_Parent;
+
+    bool m_isVisible;
 
 private:
 
