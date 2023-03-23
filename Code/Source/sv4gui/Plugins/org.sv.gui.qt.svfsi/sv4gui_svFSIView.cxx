@@ -146,10 +146,10 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
 // OnSelectionChanged
 //--------------------
 //
-void sv4guisvFSIView::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes)
+void sv4guisvFSIView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/, const QList<mitk::DataNode::Pointer>& nodes)
 {
-    std::cout << "IsVisible does not exist anymore" << std::endl << std::flush;
-    exit(1);
+    // std::cout << "IsVisible does not exist anymore" << std::endl << std::flush;
+    // exit(1);
     // if (!IsVisible()) {
     //     return;
     // }
@@ -518,7 +518,8 @@ void sv4guisvFSIView::NodeRemoved(const mitk::DataNode* node)
 
 void sv4guisvFSIView::Visible()
 {
-    OnSelectionChanged(GetDataManagerSelection());
+    OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
+                       GetDataManagerSelection());
 }
 
 void sv4guisvFSIView::Hidden()

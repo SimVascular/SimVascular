@@ -41,6 +41,7 @@
 #include "sv4gui_PathCreate.h"
 #include "sv4gui_QmitkFunctionality.h"
 
+#include <mitkILifecycleAwarePart.h>
 #include <QmitkStdMultiWidget.h>
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
@@ -52,7 +53,8 @@ namespace Ui {
   class sv4guiPathEdit;
 }
 
-class sv4guiPathEdit : public sv4guiQmitkFunctionality
+class sv4guiPathEdit : public sv4guiQmitkFunctionality, public mitk::ILifecycleAwarePart
+
 {
     Q_OBJECT
 
@@ -119,13 +121,17 @@ public:
 
     virtual void NodeRemoved(const mitk::DataNode* node) override;
 
-//    virtual void Activated() override;
+    virtual void Activated() override;
 
-//    virtual void Deactivated() override;
+    virtual void Deactivated() override;
 
-    virtual void Visible();
+    virtual void Visible() override;
 
-    virtual void Hidden();
+    virtual void Hidden() override;
+
+    virtual void SetFocus() override {
+        std::cout << "SetFocus()" << std::endl << std::flush;
+    }
 
 //    bool IsExclusiveFunctionality() const override;
 
@@ -163,6 +169,8 @@ protected:
     mitk::IRenderWindowPart* m_renderWindow;
 
     bool m_UpdatingGUI;
+
+    bool m_isVisible; 
 };
 
 #endif // SV4GUI_PATHEDIT_H

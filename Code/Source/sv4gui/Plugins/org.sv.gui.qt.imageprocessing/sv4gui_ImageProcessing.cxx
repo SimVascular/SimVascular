@@ -704,7 +704,6 @@ int sv4guiImageProcessing::FindClosesetPoint(vtkPolyData* polyData, std::array<d
 //
 void sv4guiImageProcessing::AddStartSeed()
 {
-  std::cout << "GetCrossPosition doesnt exist" << std::endl << std::flush;
   mitk::Point3D point = m_renderWindow->GetSelectedPosition();
   int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
   m_SeedContainer->AddStartSeed(point[0], point[1], point[2]);
@@ -721,7 +720,6 @@ void sv4guiImageProcessing::AddStartSeed()
 //
 void sv4guiImageProcessing::AddEndSeed()
 {
-  std::cout << "GetCrossPosition does not exist" << std::endl << std::flush;
   mitk::Point3D point = m_renderWindow->GetSelectedPosition();
 
   // A start seed must have been selected.
@@ -904,7 +902,6 @@ void sv4guiImageProcessing::OnSelectionChanged(berry::IWorkbenchPart::Pointer
                                                QList<mitk::DataNode::Pointer>& 
                                                nodes)
 {
-  std::cout << "OnSelectionChanged" << std::endl;
   m_DataStorage = GetDataStorage();
 
   if (m_DataStorage == nullptr) {
@@ -1004,12 +1001,10 @@ sv4guiImageProcessing::getItkImage(int index)
     return nullptr;
   }
 
-  std::cout << "GetScalarValueMin does not exist" << std::endl << std::flush;
-  // image->GetScalarValueMin();
-  // sv4guiImageProcessingUtils::itkImPoint itkImage = sv4guiImageProcessingUtils::itkImageType::New();
-  // mitk::CastToItkImage(image, itkImage);
+  sv4guiImageProcessingUtils::itkImPoint itkImage = sv4guiImageProcessingUtils::itkImageType::New();
+  mitk::CastToItkImage(image, itkImage);
 
-  // return itkImage;
+  return itkImage;
 }
 
 void sv4guiImageProcessing::storeImage(sv4guiImageProcessingUtils::itkImPoint image){

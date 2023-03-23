@@ -107,7 +107,8 @@ void sv4guiSeg3DEdit::CreateQtPartControl( QWidget *parent )
 
 void sv4guiSeg3DEdit::Visible()
 {
-    OnSelectionChanged(GetDataManagerSelection());
+    OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
+                       GetDataManagerSelection());
 }
 
 void sv4guiSeg3DEdit::Hidden()
@@ -120,17 +121,8 @@ void sv4guiSeg3DEdit::Hidden()
 //    return true;
 //}
 
-void sv4guiSeg3DEdit::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes )
+void sv4guiSeg3DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/, const QList<mitk::DataNode::Pointer>& nodes)
 {
-//    if(!IsActivated())
-    std::cout << "IsVisible does not exist anymore, I am not sure why" << std::endl << std::flush;
-
-    // if(!IsVisible())
-    // {
-    //     return;
-    // }
-    exit(1);
-
     if(nodes.size()==0)
     {
         ClearAll();
@@ -331,7 +323,8 @@ void sv4guiSeg3DEdit::NodeAdded(const mitk::DataNode* node)
 
 void sv4guiSeg3DEdit::NodeRemoved(const mitk::DataNode* node)
 {
-    OnSelectionChanged(GetDataManagerSelection());
+    OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
+                       GetDataManagerSelection());
 }
 
 void sv4guiSeg3DEdit::ClearAll()

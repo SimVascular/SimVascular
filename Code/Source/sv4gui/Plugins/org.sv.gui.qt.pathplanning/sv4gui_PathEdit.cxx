@@ -145,22 +145,24 @@ void sv4guiPathEdit::CreateQtPartControl(QWidget* parent)
     ui->listWidget->installEventFilter(this);
 }
 
-//void sv4guiPathEdit::Activated()
-//{
-//}
+void sv4guiPathEdit::Activated()
+{
+}
 
-//void sv4guiPathEdit::Deactivated()
-//{
-//}
+void sv4guiPathEdit::Deactivated()
+{
+}
 
 void sv4guiPathEdit::Visible()
 {
+    m_isVisible = true;
     OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
                        GetDataManagerSelection());
 }
 
 void sv4guiPathEdit::Hidden()
 {
+    m_isVisible = false;
     ui->resliceSlider->turnOnReslice(false);
     ClearAll();
 }
@@ -177,12 +179,13 @@ int sv4guiPathEdit::GetTimeStep()
         return timeNavigationController->GetTime()->GetPos();
     else
         return 0;
-
 }
 
 void sv4guiPathEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
                                     const QList<mitk::DataNode::Pointer>& nodes)
 {
+    if (!m_isVisible) return;
+
     auto msgPrefix = "[sv4guiPathEdit_OnSelectionChanged] ";
     MITK_INFO << msgPrefix;
 
@@ -206,6 +209,8 @@ void sv4guiPathEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
     m_PathNode=pathNode;
     m_Path=dynamic_cast<sv4guiPath*>(pathNode->GetData());
 
+    // if casting fails it means that we selected a node that is not a path.
+    // Then, we set Enabled to false and return.
     if(!m_Path)
     {
         mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("sv4guiContourGroup");

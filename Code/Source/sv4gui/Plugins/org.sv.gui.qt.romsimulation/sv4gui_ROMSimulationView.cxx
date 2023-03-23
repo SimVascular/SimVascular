@@ -1708,14 +1708,8 @@ void sv4guiROMSimulationView::OnPreferencesChanged(const berry::IBerryPreference
 //    m_JobNode 
 //    m_MitkJob 
 //
-void sv4guiROMSimulationView::OnSelectionChanged(QList<mitk::DataNode::Pointer> nodes )
+void sv4guiROMSimulationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/, const QList<mitk::DataNode::Pointer>& nodes)
 {
-    std::cout << "IsVisible doesn't exist anymore" << std::endl << std::flush;
-    exit(1);
-    // if (!IsVisible()) {
-    //     return;
-    // }
-
     if (nodes.size() == 0) {
         RemoveObservers();
         EnableTool(false);
@@ -1920,7 +1914,8 @@ void sv4guiROMSimulationView::NodeRemoved(const mitk::DataNode* node)
 
 void sv4guiROMSimulationView::Visible()
 {
-    OnSelectionChanged(GetDataManagerSelection());
+    OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
+                    GetDataManagerSelection());
 }
 
 void sv4guiROMSimulationView::Hidden()
