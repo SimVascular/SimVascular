@@ -142,7 +142,7 @@ void sv4guiMeshEdit::CreateQtPartControl( QWidget *parent )
 
     m_renderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
 
-    parent->setMaximumWidth(450);
+    // parent->setMaximumWidth(450);
 
     if(m_renderWindow==nullptr)
     {
