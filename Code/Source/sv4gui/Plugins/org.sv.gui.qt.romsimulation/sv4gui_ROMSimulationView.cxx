@@ -199,7 +199,7 @@ const QString sv4guiROMSimulationView::MODEL_SURFACE_FILE_NAME = "model_surface.
 const QString sv4guiROMSimulationView::OUTLET_FACE_NAMES_FILE_NAME = "outlet_face_names.dat";
 const QString sv4guiROMSimulationView::RCR_BC_FILE_NAME = "rcrt.dat";
 const QString sv4guiROMSimulationView::RESISTANCE_BC_FILE_NAME = "resistance.dat";
-const QString sv4guiROMSimulationView::SOLVER_0D_FILE_NAME = "solver_0d.in";
+const QString sv4guiROMSimulationView::SOLVER_0D_FILE_NAME = "solver_0d.json";
 const QString sv4guiROMSimulationView::SOLVER_1D_FILE_NAME = "solver_1d.in";
 const QString sv4guiROMSimulationView::SOLVER_LOG_FILE_NAME = "svromsolver.log";
 
