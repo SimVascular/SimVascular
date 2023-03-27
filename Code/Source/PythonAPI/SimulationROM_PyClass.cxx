@@ -117,7 +117,7 @@ namespace ROMSim_Parameters {
 
   static const char* MODEL_ORDER = "model_order";
   static const char* PYTHON_ROM_SIMULATION_MODULE_NAME = "sv_rom_simulation";
-  static const char *SOLVER_0D_FILE_NAME = "solver_0d.in";
+  static const char *SOLVER_0D_FILE_NAME = "solver_0d.json";
   static const char *SOLVER_1D_FILE_NAME = "solver_1d.in";
 }
 
