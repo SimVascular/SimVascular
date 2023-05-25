@@ -142,8 +142,6 @@ void sv4guiMeshEdit::CreateQtPartControl( QWidget *parent )
 
     m_renderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
 
-    // parent->setMaximumWidth(450);
-
     if(m_renderWindow==nullptr)
     {
         parent->setEnabled(false);
@@ -264,7 +262,7 @@ void sv4guiMeshEdit::TableFaceListSelectionChanged( const QItemSelection & /*sel
 
     int timeStep=GetTimeStep();
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==nullptr) return;
+    if(modelElement==nullptr) return; 
 
     QStandardItemModel* tableModel=m_TableModelLocal;
     QTableView* tableView=ui->tableViewLocal;
@@ -670,6 +668,7 @@ double sv4guiMeshEdit::EstimateEdgeSize()
 void sv4guiMeshEdit::RunMesher()
 {
     RunCommands(true);
+    std::cout << "End of RunMesher" << std::endl << std::flush;
 }
 
 void sv4guiMeshEdit::RunHistory()
@@ -679,8 +678,10 @@ void sv4guiMeshEdit::RunHistory()
 
 void sv4guiMeshEdit::RunCommands(bool fromGUI)
 {
+    std::cout << "1" << std::endl << std::flush;
     int timeStep=GetTimeStep();
     sv4guiMesh* originalMesh=m_MitkMesh->GetMesh(timeStep);
+    std::cout << "GetMesh" << std::endl << std::flush;
     if(originalMesh&&originalMesh->GetSurfaceMesh()==nullptr)
     {
         std::string path="";
@@ -701,6 +702,8 @@ void sv4guiMeshEdit::RunCommands(bool fromGUI)
 
     }
 
+    std::cout << "2" << std::endl << std::flush;
+
     if (QMessageBox::question(m_Parent, "Meshing", "The meshing may take a while. Do you want to continue?",
                               QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
     {
@@ -711,16 +714,22 @@ void sv4guiMeshEdit::RunCommands(bool fromGUI)
 
     if(!m_Model) return;
 
+    std::cout << "3" << std::endl << std::flush;
+
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
     std::string modelType=modelElement->GetType();
 
     if(!modelElement) return;
+
+    std::cout << "4" << std::endl << std::flush;
 
     if( m_MeshType=="MeshSim" && (modelType=="PolyData" || modelType=="OpenCASCADE") )
     {
         QMessageBox::warning(nullptr,"Not Compatible!", QString::fromStdString(m_MeshType)+ " doesn't work with " +QString::fromStdString(modelType) + " model.");
         return;
     }
+
+    std::cout << "5" << std::endl << std::flush;
 
     if( m_MeshType=="TetGen" && modelType!="PolyData")
     {
@@ -734,6 +743,8 @@ void sv4guiMeshEdit::RunCommands(bool fromGUI)
     else if(m_MeshType=="MeshSim")
         ges=ui->lineEditGlobalSizeM->text().trimmed();
 
+    std::cout << "6" << std::endl << std::flush;
+
     bool ok=false;
     ges.toDouble(&ok);
     if(!ok)
@@ -741,6 +752,8 @@ void sv4guiMeshEdit::RunCommands(bool fromGUI)
         QMessageBox::warning(m_Parent,"Warning","Error in Global Size!");
         return;
     }
+
+    std::cout << "7" << std::endl << std::flush;
 
     sv4guiMesh* newMesh=sv4guiMeshFactory::CreateMesh(m_MeshType);
 
@@ -750,9 +763,13 @@ void sv4guiMeshEdit::RunCommands(bool fromGUI)
     //add fake progress
     mitk::ProgressBar::GetInstance()->AddStepsToDo(3);
 
+    std::cout << "8" << std::endl << std::flush;
+
     mitk::StatusBar::GetInstance()->DisplayText("Creating mesh...");
     mitk::ProgressBar::GetInstance()->Progress();
     WaitCursorOn();
+
+    std::cout << "9" << std::endl << std::flush;
 
     newMesh->InitNewMesher();
     newMesh->SetModelElement(modelElement);
@@ -770,6 +787,8 @@ void sv4guiMeshEdit::RunCommands(bool fromGUI)
         cmds=originalMesh->GetCommandHistory();
     }
 
+    std::cout << "10" << std::endl << std::flush;
+
     std::string msg;
     if(!newMesh->ExecuteCommands(cmds, msg))
     {
@@ -780,6 +799,8 @@ void sv4guiMeshEdit::RunCommands(bool fromGUI)
         return;
     }
 
+    std::cout << "11" << std::endl << std::flush;
+
     newMesh->SetCommandHistory(cmds);
 
     if(m_UndoAble)
@@ -788,6 +809,8 @@ void sv4guiMeshEdit::RunCommands(bool fromGUI)
     }
 
     sv4guiMitkMeshOperation* doOp = new sv4guiMitkMeshOperation(sv4guiMitkMeshOperation::OpSETMESH,timeStep,newMesh);
+
+    std::cout << "12" << std::endl << std::flush;
 
     if(m_UndoAble)
     {
@@ -1430,6 +1453,7 @@ void sv4guiMeshEdit::UpdateTetGenGUI()
 
     //then udpate with command history
     //========================================
+    std::cout << "here1" << std::endl << std::flush;
     sv4guiMesh* mesh=m_MitkMesh->GetMesh(GetTimeStep());
     if(mesh==nullptr)
         return;
@@ -1770,6 +1794,7 @@ void sv4guiMeshEdit::UpdateMeshSimGUI()
 
     //then udpate with command history
     //========================================
+    std::cout << "here2" << std::endl << std::flush;
     sv4guiMesh* mesh=m_MitkMesh->GetMesh(GetTimeStep());
     if(mesh==nullptr)
         return;
@@ -2194,6 +2219,7 @@ void sv4guiMeshEdit::ClearAll()
 
 void sv4guiMeshEdit::DisplayMeshInfo()
 {
+    std::cout << "DisplayMeshInfo" << std::endl << std::flush;
     if(m_MeshNode.IsNull())
         return;
 
@@ -2205,6 +2231,8 @@ void sv4guiMeshEdit::DisplayMeshInfo()
     if(!mesh)
         return;
 
+    std::cout << "DisplayMeshInfo 1" << std::endl << std::flush;
+
     std::string path="";
     m_MeshNode->GetStringProperty("path",path);
     std::string surfaceFileName = path+"/"+m_MeshNode->GetName()+".vtp";
@@ -2215,6 +2243,8 @@ void sv4guiMeshEdit::DisplayMeshInfo()
     {
         surfaceMesh=mesh->CreateSurfaceMeshFromFile(surfaceFileName);
     }
+
+    std::cout << "DisplayMeshInfo 2" << std::endl << std::flush;
 
     vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=mesh->GetVolumeMesh();
     if(volumeMesh==nullptr && path!="")
@@ -2233,19 +2263,26 @@ void sv4guiMeshEdit::DisplayMeshInfo()
       nMeshEdges=nMeshFaces*3/2;
     }
 
+    std::cout << "DisplayMeshInfo 3" << std::endl << std::flush;
+
     if(volumeMesh)
     {
       num_nodes = volumeMesh->GetNumberOfPoints();
       num_elems = volumeMesh->GetNumberOfCells();
     }
 
+    std::cout << "DisplayMeshInfo 4" << std::endl << std::flush;
+
     QString stat="Number of Nodes: " + QString::number(num_nodes)
             + "\n" + "Number of Elems: " + QString::number(num_elems)
             + "\n" + "Number of Edges: " + QString::number(nMeshEdges)
             + "\n" + "Number of Faces: " + QString::number(nMeshFaces);
 
+    std::cout << stat << std::endl << std::flush;
 
-    QMessageBox::information(m_Parent,"Mesh Statistics","Mesh done. Statistics:           \n\n"+stat);
+    QMessageBox::information(m_Parent,"Mesh Statistics","Mesh done. hello");
+    // QMessageBox::information(m_Parent,"Mesh Statistics","Mesh done. Statistics:           \n\n"+stat);
+    std::cout << "DisplayMEshInfo 5" << std::endl << std::flush;
 }
 
 void sv4guiMeshEdit::UpdateAdaptGUI(int selected)

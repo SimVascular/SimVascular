@@ -211,12 +211,12 @@ foreach(p ${${proj}_POSSIBLE_PATHS})
 endforeach()
 
 set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS}
-  ${${proj}_DIR}
-  ${${proj}_DIR}/shared_object
-  ${${proj}_DIR}/dll
-  ${${proj}_DIR}/lib/${CMAKE_BUILD_TYPE}
-  ${${proj}_DIR}/lib64
-  ${${proj}_DIR}/lib64/${CMAKE_BUILD_TYPE}
+  ${${proj}_DIR};
+  ${${proj}_DIR}/shared_object;
+  ${${proj}_DIR}/dll;
+  ${${proj}_DIR}/lib/${CMAKE_BUILD_TYPE};
+  ${${proj}_DIR}/lib64;
+  ${${proj}_DIR}/lib64/${CMAKE_BUILD_TYPE};
   )
 
 set(${proj}_LIBS_MISSING ${${proj}_LIBNAMES})

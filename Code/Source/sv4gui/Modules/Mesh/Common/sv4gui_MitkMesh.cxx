@@ -102,6 +102,7 @@ bool sv4guiMitkMesh::IsEmptyTimeStep(unsigned int t) const
 
 void sv4guiMitkMesh::Expand(unsigned int timeSteps)
 {
+    std::cout << "Expand" << std::endl << std::flush;
     unsigned int oldSize = m_MeshSet.size();
 
     if ( timeSteps > oldSize )
@@ -124,6 +125,7 @@ unsigned int sv4guiMitkMesh::GetTimeSize() const
 
 sv4guiMesh* sv4guiMitkMesh::GetMesh(unsigned int t) const
 {
+    std::cout << "GetMesh" << std::endl << std::flush;
     if ( t < m_MeshSet.size() )
     {
         return m_MeshSet[t];
@@ -150,6 +152,7 @@ void sv4guiMitkMesh::SetMesh(sv4guiMesh* mesh, unsigned int t)
 
 void sv4guiMitkMesh::ExecuteOperation( mitk::Operation* operation )
 {
+    std::cout << "ExecuteOperation" << std::endl << std::flush;
     int timeStep = -1;
 
     sv4guiMitkMeshOperation* meshOperation = dynamic_cast<sv4guiMitkMeshOperation*>(operation);
@@ -183,16 +186,18 @@ void sv4guiMitkMesh::ExecuteOperation( mitk::Operation* operation )
         break;
 
     default:
-        itkWarningMacro("sv4guiMitkMesh could not understrand the operation. Please check!");
+        itkWarningMacro("sv4guiMitkMesh could not understand the operation. Please check!");
         break;
     }
 
     mitk::OperationEndEvent endevent(operation);
     ((const itk::Object*)this)->InvokeEvent(endevent);
+    std::cout << "ExecuteOperation end" << std::endl << std::flush;
 }
 
 void sv4guiMitkMesh::CalculateBoundingBox(double *bounds,unsigned int t)
 {
+    std::cout << "CalculateBoundingBox" << std::endl << std::flush;
     sv4guiMesh* mesh=GetMesh(t);
     if(mesh)
     {
@@ -222,6 +227,7 @@ void sv4guiMitkMesh::SetModelName(std::string name)
 
 void sv4guiMitkMesh::UpdateOutputInformation()
 {
+    std::cout << "UpdateOutputInformation" << std::endl << std::flush;
     if ( this->GetSource( ) )
     {
         this->GetSource( )->UpdateOutputInformation( );

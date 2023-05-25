@@ -208,6 +208,7 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
   mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
   mitk::DataNode::Pointer projFolderNode = m_DataStorage->GetNode(isProjFolder);
   if (projFolderNode == nullptr) {
+    std::cout << "Entering here 2" << std::endl << std::flush;
     parent->setEnabled(false);
     return;
   }

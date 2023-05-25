@@ -100,6 +100,10 @@ vtkProp* sv4guiMitkMeshMapper2D::GetVtkProp(mitk::BaseRenderer * renderer)
 
 void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 {
+    std::cout << "sv4guiMitkMeshMapper2D::GenerateDataForRenderer" << std::endl;
+
+    std::cout << "1" << std::endl << std::flush;
+
     mitk::DataNode* node = GetDataNode();
     if(node==nullptr)
         return;
@@ -120,6 +124,8 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
         return;
     }
 
+    std::cout << "2" << std::endl << std::flush;
+
     int timestep=this->GetTimestep();
 
     sv4guiMesh* mesh=mitkMesh->GetMesh(timestep);
@@ -136,6 +142,8 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
         return;
     }
 
+    std::cout << "3" << std::endl << std::flush;
+
     const mitk::PlaneGeometry* planeGeometry = renderer->GetCurrentWorldPlaneGeometry();
     if( ( planeGeometry == nullptr ) || ( !planeGeometry->IsValid() ) || ( !planeGeometry->HasReferenceGeometry() ))
     {
@@ -150,6 +158,8 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
     origin[1] = planeGeometry->GetOrigin()[1];
     origin[2] = planeGeometry->GetOrigin()[2];
 
+    std::cout << "4" << std::endl << std::flush;
+
     double normal[3];
     normal[0] = planeGeometry->GetNormal()[0];
     normal[1] = planeGeometry->GetNormal()[1];
@@ -160,24 +170,34 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
     float opacity = 1.0f;
     node->GetOpacity(opacity, renderer, "opacity");
 
+    std::cout << "5" << std::endl << std::flush;
+
     bool showContour=true;
     if(showContour && mesh->GetSurfaceMesh())
     {
+        std::cout << "5.1" << std::endl << std::flush;
         float lineWidth = 1.0f;
         node->GetFloatProperty("line 2D width", lineWidth, renderer);
 
+        std::cout << "5.2" << std::endl << std::flush;
         vtkSmartPointer<vtkPlane> cuttingPlane = vtkSmartPointer<vtkPlane>::New();
         cuttingPlane->SetOrigin(origin);
         cuttingPlane->SetNormal(normal);
 
+        std::cout << "5.3" << std::endl << std::flush;
         vtkSmartPointer<vtkCutter> cutter = vtkSmartPointer<vtkCutter>::New();
         cutter->SetCutFunction(cuttingPlane);
         vtkSmartPointer<vtkLinearTransform> vtktransform = GetDataNode()->GetVtkTransform(this->GetTimestep());
+        std::cout << "5.4" << std::endl << std::flush;
         vtkSmartPointer<vtkTransformPolyDataFilter> filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
         filter->SetTransform(vtktransform);
         filter->SetInputData(mesh->GetSurfaceMesh());
+        std::cout << "5.5" << std::endl << std::flush;
         cutter->SetInputConnection(filter->GetOutputPort());
+        std::cout << "5.6" << std::endl << std::flush;
         cutter->Update();
+
+        std::cout << "6" << std::endl << std::flush;
 
         vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
         mapper->ScalarVisibilityOff();
@@ -190,6 +210,8 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
         actor->GetProperty()->SetOpacity(opacity);
         actor->GetProperty()->SetLineWidth(lineWidth);
         actor->GetProperty()->SetLighting(0);
+
+        std::cout << "7" << std::endl << std::flush;
 
         localStorage->m_PropAssembly->AddPart(actor );
     }
@@ -208,6 +230,8 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
         cuttingPlane->SetOrigin(origin);
         cuttingPlane->SetNormal(normal);
 
+        std::cout << "8" << std::endl << std::flush;
+
         vtkSmartPointer<vtkExtractGeometry> extracter = vtkSmartPointer<vtkExtractGeometry>::New();
         extracter->ExtractBoundaryCellsOn();
         extracter->SetImplicitFunction(cuttingPlane);
@@ -223,6 +247,8 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
         inverseNormal[1] = -normal[1];
         inverseNormal[2] = -normal[2];
         cuttingPlane->SetNormal(inverseNormal);
+
+        std::cout << "9" << std::endl << std::flush;
 
         extracter = vtkSmartPointer<vtkExtractGeometry>::New();
         extracter->ExtractBoundaryCellsOn();
@@ -270,6 +296,8 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
         surfaceFilter->Update();
         vtkSmartPointer<vtkPolyData> meshPolydata = surfaceFilter->GetOutput();
 
+        std::cout << "10" << std::endl << std::flush;
+
 #if VTK_MAJOR_VERSION == 6
         vtkSmartPointer<vtkPainterPolyDataMapper> meshMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
 #else
@@ -279,6 +307,8 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
 
         vtkSmartPointer<vtkActor> meshActor= vtkSmartPointer<vtkActor>::New();
         meshActor->SetMapper(meshMapper);
+
+        std::cout << "11" << std::endl << std::flush;
 
         Superclass::ApplyColorAndOpacityProperties( renderer, meshActor ) ;
         this->ApplyShaderProperties(renderer);
@@ -291,10 +321,13 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
         }
 
         localStorage->m_PropAssembly->AddPart(meshActor );
+        std::cout << "12" << std::endl << std::flush;
     }
 
     if(visible)
         localStorage->m_PropAssembly->VisibilityOn();
+
+    std::cout << "sv4guiMitkMeshMapper2D::GenerateDataForRenderer end" << std::endl;
 }
 
 void sv4guiMitkMeshMapper2D::ApplyMapperProperties(vtkSmartPointer<vtkPolyDataMapper> mapper, mitk::BaseRenderer* renderer)

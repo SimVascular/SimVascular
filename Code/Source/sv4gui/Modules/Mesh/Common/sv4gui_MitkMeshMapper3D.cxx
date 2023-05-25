@@ -103,6 +103,7 @@ void sv4guiMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
 
     int timestep=this->GetTimestep();
 
+    std::cout << "This GetMesh" << std::endl << std::flush;
     sv4guiMesh* mesh=mitkMesh->GetMesh(timestep);
     if(mesh==nullptr)
     {
@@ -110,6 +111,7 @@ void sv4guiMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
         return;
     }
 
+    std::cout << "This GetSurfaceMesh" << std::endl << std::flush;
     vtkSmartPointer<vtkPolyData> surfaceMesh=mesh->GetSurfaceMesh();
     if (surfaceMesh == nullptr)
     {
@@ -117,6 +119,7 @@ void sv4guiMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
         return;
     }
 
+    std::cout << "This RemoveAllItems" << std::endl << std::flush;
     ls->m_PropAssembly->GetParts()->RemoveAllItems();
 
     float edgeColor[3]= { 0.0f, 0.0f, 1.0f };
@@ -124,6 +127,8 @@ void sv4guiMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
 
     bool showEdges=false;
     node->GetBoolProperty("show edges", showEdges, renderer);
+
+    std::cout << "++" << std::endl << std::flush;
 
 #if VTK_MAJOR_VERSION == 6
     vtkSmartPointer<vtkPainterPolyDataMapper> mapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
@@ -134,6 +139,8 @@ void sv4guiMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
 
     vtkSmartPointer<vtkActor> actor= vtkSmartPointer<vtkActor>::New();
     actor->SetMapper(mapper);
+
+    std::cout << "+++" << std::endl << std::flush;
 
     Superclass::ApplyColorAndOpacityProperties( renderer, actor ) ;
     this->ApplyShaderProperties(renderer);
@@ -147,20 +154,25 @@ void sv4guiMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
     }
     ls->m_Actor=actor;
 
+    std::cout << "++++" << std::endl << std::flush;
+
     ls->m_PropAssembly->AddPart(ls->m_Actor);
 
-    if(visible)
-        ls->m_PropAssembly->VisibilityOn();
+    // if(visible)
+    //     ls->m_PropAssembly->VisibilityOn();
+    std::cout << "+++++" << std::endl << std::flush;
 }
 
 void sv4guiMitkMeshMapper3D::ResetMapper( mitk::BaseRenderer* renderer )
 {
+    std::cout << "ResetMapper" << std::endl << std::flush;
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
     ls->m_PropAssembly->VisibilityOff();
 }
 
 void sv4guiMitkMeshMapper3D::ApplyMitkPropertiesToVtkProperty(mitk::DataNode *node, vtkProperty* property, mitk::BaseRenderer* renderer)
 {
+    std::cout << "ApplyMitkPropertiesToVtkProperty" << std::endl << std::flush;
     // Backface culling
     {
         mitk::BoolProperty::Pointer p;
@@ -472,16 +484,19 @@ void sv4guiMitkMeshMapper3D::ApplyAllProperties(mitk::DataNode *node, mitk::Base
            mapper->RemoveAllClippingPlanes();
        }
    }
+    std::cout << "ApplyMitkPropertiesToVtkProperty end" << std::endl << std::flush;
 }
 
 vtkProp *sv4guiMitkMeshMapper3D::GetVtkProp(mitk::BaseRenderer *renderer)
 {
+    std::cout << "GetVtkProp" << std::endl << std::flush;
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
     return ls->m_PropAssembly;
 }
 
 void sv4guiMitkMeshMapper3D::CheckForClippingProperty( mitk::BaseRenderer* renderer, mitk::BaseProperty *property, mitk::LocalStorageHandler<LocalStorage>* handler )
 {
+    std::cout << "CheckForClippingProperty" << std::endl << std::flush;
     LocalStorage *ls = handler->GetLocalStorage(renderer);
 
     mitk::ClippingProperty *clippingProperty = dynamic_cast< mitk::ClippingProperty * >( property );
@@ -502,6 +517,7 @@ void sv4guiMitkMeshMapper3D::CheckForClippingProperty( mitk::BaseRenderer* rende
 
 void sv4guiMitkMeshMapper3D::SetDefaultPropertiesForVtkProperty(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
 {
+    std::cout << "SetDefaultPropertiesForVtkProperty" << std::endl << std::flush;
     // Shading
     {
         node->AddProperty( "material.wireframeLineWidth", mitk::FloatProperty::New(1.0f)          , renderer, overwrite );
@@ -528,6 +544,7 @@ void sv4guiMitkMeshMapper3D::SetDefaultPropertiesForVtkProperty(mitk::DataNode* 
 
 void sv4guiMitkMeshMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
 {
+    std::cout << "SetDefaultProperties" << std::endl << std::flush;
     node->AddProperty( "color", mitk::ColorProperty::New(1.0f,1.0f,1.0f), renderer, overwrite );
     node->AddProperty( "opacity", mitk::FloatProperty::New(1.0), renderer, overwrite );
 

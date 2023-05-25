@@ -178,12 +178,6 @@ void sv4guiQmitkFunctionality::AfterCreateQtPartControl()
 
   // EMULATE INITIAL SELECTION EVENTS
 
-  // by default a multi widget is always available
-  // this doesn't work for some reason
-  // https://www.mitk.org/wiki/Views_Without_Multi_Widget
-  std::cout << "I don't think this function is needed" << std::endl << std::flush;
-  // this->RenderWindowPartActivated(this->GetRenderWindowPart());
-
   // send datamanager selection
   this->OnSelectionChanged(berry::IWorkbenchPart::Pointer(),this->GetDataManagerSelection());
 

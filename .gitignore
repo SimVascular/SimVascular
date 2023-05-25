@@ -1,4 +1,4 @@
-build
+build*
 __pycache__
 Code/SV3
 Code/svSolver
