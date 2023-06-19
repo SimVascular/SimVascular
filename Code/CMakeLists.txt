@@ -37,7 +37,6 @@
 # to build SimVascular with those externals, this is the right place to be.
 #-----------------------------------------------------------------------------
 
-variable_watch(SV_EXT_PYTHON_BIN_DIR)
 
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 3.10.0)
