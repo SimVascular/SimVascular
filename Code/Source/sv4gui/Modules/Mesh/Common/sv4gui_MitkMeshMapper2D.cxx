@@ -63,6 +63,7 @@
 #include <vtkOpenGLPolyDataMapper.h>
 #endif
 #include <vtkPlanes.h>
+#include <vtkXMLPolyDataWriter.h>
 
 sv4guiMitkMeshMapper2D::LocalStorage::LocalStorage()
 {
@@ -183,6 +184,8 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
         vtkSmartPointer<vtkPlane> cuttingPlane = vtkSmartPointer<vtkPlane>::New();
         cuttingPlane->SetOrigin(origin);
         cuttingPlane->SetNormal(normal);
+        std::cout << origin[0] << " " << origin[1] << " " << origin[2] <<  std::endl;
+        std::cout << normal[0] << " " << normal[1] << " " << normal[2] <<  std::endl;
 
         std::cout << "5.3" << std::endl << std::flush;
         vtkSmartPointer<vtkCutter> cutter = vtkSmartPointer<vtkCutter>::New();
@@ -191,7 +194,21 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
         std::cout << "5.4" << std::endl << std::flush;
         vtkSmartPointer<vtkTransformPolyDataFilter> filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
         filter->SetTransform(vtktransform);
+        if (!vtktransform)
+        {
+            std::cout << "ooooops1" << std::endl << std::flush;
+        }
         filter->SetInputData(mesh->GetSurfaceMesh());
+        auto surface = mesh->GetSurfaceMesh();
+        auto writer = vtkXMLPolyDataWriter::New();
+        writer->SetInputData(mesh->GetSurfaceMesh());
+        writer->SetFileName("output.vtp");
+        writer->Write();
+
+        if (!mesh->GetSurfaceMesh())
+        {
+            std::cout << "ooooops2" << std::endl << std::flush;
+        }
         std::cout << "5.5" << std::endl << std::flush;
         cutter->SetInputConnection(filter->GetOutputPort());
         std::cout << "5.6" << std::endl << std::flush;

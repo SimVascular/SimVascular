@@ -193,8 +193,6 @@ void sv4guiResliceSlider::updateReslice()
         std::cout << "sliced geometry is nullptr" << std::endl << std::flush;
     }
 
-    std::cout << "changeLayoutTo2x2Dand3DWidget This method doesn't exist anymore" << std::endl << std::flush;
-
     QmitkStdMultiWidgetEditor *multiWidgetEditor = dynamic_cast<QmitkStdMultiWidgetEditor*>(m_renderWindow);
     if (multiWidgetEditor) 
     {
@@ -230,32 +228,34 @@ void sv4guiResliceSlider::updateReslice()
     // std::cout << "SetInputWorldGeometry3D This method doesn't exist anymore" << std::endl << std::flush;
     // exit(1);
 
-    std::cout << ".1" << std::endl << std::flush;
-    auto createdTimeGeometry = mitk::ArbitraryTimeGeometry::New();
-    createdTimeGeometry->ReserveSpaceForGeometries(0);
-    std::cout << ".1.5" << std::endl << std::flush;
-    if (!currentSlicedGeometry->IsValidSlice())
-    {
-        std::cout << "not a valid slice" << std::endl << std::flush;
-    }
-    std::cout << ".2" << std::endl << std::flush;
-    createdTimeGeometry->AppendNewTimeStep(currentSlicedGeometry,0,0);
-    std::cout << ".3" << std::endl << std::flush;
-    createdTimeGeometry->Update();
-    std::cout << ".4" << std::endl << std::flush;
-    intensityController->SetInputWorldTimeGeometry(createdTimeGeometry);
-    std::cout << ".5" << std::endl << std::flush;
-    intensityController->SetViewDirection(mitk::SliceNavigationController::Original);
-    std::cout << ".6" << std::endl << std::flush;
+    // std::cout << ".1" << std::endl << std::flush;
+    // auto createdTimeGeometry = mitk::ArbitraryTimeGeometry::New();
+    // createdTimeGeometry->Initialize(currentSlicedGeometry, 1);
+    // createdTimeGeometry->ReserveSpaceForGeometries(1);
+    // std::cout << ".1.5" << std::endl << std::flush;
+    // if (!currentSlicedGeometry->IsValidSlice())
+    // {
+    //     std::cout << "not a valid slice" << std::endl << std::flush;
+    // }
+    // std::cout << ".2" << std::endl << std::flush;
+    // createdTimeGeometry->AppendNewTimeStep(currentSlicedGeometry,0,0);
+    // std::cout << ".3" << std::endl << std::flush;
+    // createdTimeGeometry->Update();
+    // std::cout << ".4" << std::endl << std::flush;
+    // intensityController->SetInputWorldTimeGeometry(createdTimeGeometry);
+    // std::cout << ".5" << std::endl << std::flush;
+    // intensityController->SetViewDirection(mitk::SliceNavigationController::Original);
+    // std::cout << ".6" << std::endl << std::flush;
 
-    try {
-        intensityController->Update();
-    }
-    catch (const std::exception& e)
-    {
-        std::cout << "intensityController->Update() failed" << std::endl << std::flush;
-        std::cout << e.what() << std::endl << std::flush;
-    }
+    // try {
+    //     intensityController->Update();
+    // }
+    // catch (const std::exception& e)
+    // {
+    //     std::cout << "intensityController->Update() failed" << std::endl << std::flush;
+    //     std::cout << e.what() << std::endl << std::flush;
+    // }
+    // std::cout << ".7" << std::endl << std::flush;
     // mitk::SliceNavigationController::Pointer potentialController=potentialWindow->GetSliceNavigationController();
     // std::cout << "SetInputWorldGeometry3D This method doesn't exist anymore" << std::endl << std::flush;
     // exit(1);
