@@ -550,12 +550,12 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   {
     fullPolyData->GetCellPoints(i,npts,pts);
 
-    // this could fail if pts has more than 2 components?
-    const vtkIdType pts_[2] = {pts[1], pts[0]};
+    // // this could fail if pts has more than 2 components?
+    const vtkIdType pts_[3] = {pts[1], pts[0], pts[2]};
     // tmp = pts[0];
     // pts[0] = pts[1];
     // pts[1] = tmp;
-    fullPolyData->ReplaceCell(i,npts,pts_);
+    fullPolyData->ReplaceCell(i,npts,pts);
   }
 
   delete [] pointMapping;

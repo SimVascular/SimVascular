@@ -105,20 +105,17 @@ sv4guiModelElement* sv4guiMesh::GetModelElement() const
 
 bool sv4guiMesh::SetModelElement(sv4guiModelElement* modelElement)
 {
-    std::cout << "SetModelElement" << std::endl << std::flush;
     SetModelElementOnly(modelElement);
     return true;
 }
 
 void sv4guiMesh::SetModelElementOnly(sv4guiModelElement* modelElement)
 {
-    std::cout << "SetModelElementOnly" << std::endl << std::flush;
     m_ModelElement=modelElement;
 }
 
 void sv4guiMesh::CalculateBoundingBox(double *bounds)
 {
-    std::cout << "CalculateBoundingBox" << std::endl << std::flush;
     bounds[0]=0;
     bounds[1]=0;
     bounds[2]=0;
@@ -136,7 +133,6 @@ void sv4guiMesh::CalculateBoundingBox(double *bounds)
 
 bool sv4guiMesh::ExecuteCommand(std::string cmd, std::string& msg)
 {
-    std::cout << "ExecuteCommand" << std::endl << std::flush;
     std::string flag="";
     double values[20]={0};
     std::string strValues[5]={""};
@@ -153,7 +149,6 @@ bool sv4guiMesh::ExecuteCommand(std::string cmd, std::string& msg)
 
 bool sv4guiMesh::ExecuteCommands(std::vector<std::string> cmds, std::string& msg)
 {
-    std::cout << "ExecuteCommands" << std::endl << std::flush;
     for(int i=0;i<cmds.size();i++)
     {
         std::string cmd=sv4guiStringUtils_trim(cmds[i]);
@@ -170,19 +165,16 @@ bool sv4guiMesh::ExecuteCommands(std::vector<std::string> cmds, std::string& msg
 
 std::vector<std::string> sv4guiMesh::GetCommandHistory() const
 {
-    std::cout << "GetCommandHistory" << std::endl << std::flush;
     return m_CommandHistory;
 }
 
 void sv4guiMesh::SetCommandHistory(std::vector<std::string> history)
 {
-    std::cout << "SetCommandHistory" << std::endl << std::flush;
     m_CommandHistory=history;
 }
 
 bool sv4guiMesh::ExecuteCommandHistory(std::string& msg)
 {
-    std::cout << "ExecuteCommandHistory" << std::endl << std::flush;
     if(!ExecuteCommands(m_CommandHistory, msg)) {
             return false;
     }
@@ -191,31 +183,26 @@ bool sv4guiMesh::ExecuteCommandHistory(std::string& msg)
 
 vtkSmartPointer<vtkPolyData> sv4guiMesh::GetSurfaceMesh()
 {
-    std::cout << "GetSurfaceMesh" << std::endl << std::flush;
     return m_SurfaceMesh;
 }
 
 vtkSmartPointer<vtkUnstructuredGrid> sv4guiMesh::GetVolumeMesh()
 {
-    std::cout << "GetVolumeMesh" << std::endl << std::flush;
     return m_VolumeMesh;
 }
 
 void sv4guiMesh::SetSurfaceMesh(vtkSmartPointer<vtkPolyData> surfaceMesh)
 {
-    std::cout << "SetSurfaceMesh" << std::endl << std::flush;
     m_SurfaceMesh=surfaceMesh;
 }
 
 void sv4guiMesh::SetVolumeMesh(vtkSmartPointer<vtkUnstructuredGrid> volumeMesh)
 {
-    std::cout << "SetVolumeMesh" << std::endl << std::flush;
     m_VolumeMesh=volumeMesh;
 }
 
 bool sv4guiMesh::WriteSurfaceFile(std::string filePath)
 {
-    std::cout << "WriteSurfaceFile" << std::endl << std::flush;
     if(m_SurfaceMesh)
     {
         vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
@@ -233,7 +220,6 @@ bool sv4guiMesh::WriteSurfaceFile(std::string filePath)
 
 bool sv4guiMesh::WriteVolumeFile(std::string filePath)
 {
-    std::cout << "WriteVolumeFile" << std::endl << std::flush;
     if(m_VolumeMesh)
     {
         vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
@@ -251,7 +237,6 @@ bool sv4guiMesh::WriteVolumeFile(std::string filePath)
 
 bool sv4guiMesh::ReadSurfaceFile(std::string filePath)
 {
-    std::cout << "ReadSurfaceFile" << std::endl << std::flush;
     m_SurfaceMesh=CreateSurfaceMeshFromFile(filePath);
 
     return true;
@@ -259,7 +244,6 @@ bool sv4guiMesh::ReadSurfaceFile(std::string filePath)
 
 bool sv4guiMesh::ReadVolumeFile(std::string filePath)
 {
-    std::cout << "ReadVolumeFile" << std::endl << std::flush;
     m_VolumeMesh=CreateVolumeMeshFromFile(filePath);
 
     return true;
@@ -267,7 +251,6 @@ bool sv4guiMesh::ReadVolumeFile(std::string filePath)
 
 vtkSmartPointer<vtkPolyData> sv4guiMesh::CreateSurfaceMeshFromFile(std::string filePath)
 {
-    std::cout << "CreateSurfaceMeshFromFile" << std::endl << std::flush;
     vtkSmartPointer<vtkPolyData> surfaceMesh=nullptr;
     std::ifstream surfaceFile(filePath);
     if (surfaceFile) {
@@ -283,7 +266,6 @@ vtkSmartPointer<vtkPolyData> sv4guiMesh::CreateSurfaceMeshFromFile(std::string f
 
 vtkSmartPointer<vtkUnstructuredGrid> sv4guiMesh::CreateVolumeMeshFromFile(std::string filePath)
 {
-    std::cout << "CreateVolumeMeshFromFile" << std::endl << std::flush;
     vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=nullptr;
     std::ifstream volumeFile(filePath);
     if (volumeFile) {

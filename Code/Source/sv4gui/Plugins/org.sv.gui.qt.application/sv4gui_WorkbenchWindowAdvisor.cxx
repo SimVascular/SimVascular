@@ -1126,17 +1126,14 @@ std::list< mitk::DataNode::Pointer > sv4guiWorkbenchWindowAdvisor::GetSelectedDa
 
 void sv4guiWorkbenchWindowAdvisor::SetupDataManagerDoubleClick()
 {
-    std::cout << "SetupDataManagerDoubleClick()" << std::endl << std::flush;
     berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
     if(workbench==nullptr)
         return;
 
-    std::cout << "SetupDataManagerDoubleClick()1" << std::endl << std::flush;
 //    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow(); //not active window set yet
     if(workbench->GetWorkbenchWindows().size()==0)
         return;
 
-    std::cout << "SetupDataManagerDoubleClick()2" << std::endl << std::flush;
     berry::IWorkbenchWindow::Pointer window=workbench->GetWorkbenchWindows()[0];
     if(window.IsNull())
         return;
@@ -1144,7 +1141,6 @@ void sv4guiWorkbenchWindowAdvisor::SetupDataManagerDoubleClick()
     berry::IWorkbenchPage::Pointer page = window->GetActivePage();
     if(page.IsNull())
         return;
-    std::cout << "SetupDataManagerDoubleClick()3" << std::endl << std::flush;
 
     // auto views = window->GetActivePage()->GetViews();
     // for (auto view : views)
@@ -1156,11 +1152,9 @@ void sv4guiWorkbenchWindowAdvisor::SetupDataManagerDoubleClick()
     if(dataManagerView.IsNull())
         return;
 
-    std::cout << "SetupDataManagerDoubleClick()4" << std::endl << std::flush;
     sv4guiQmitkDataManagerView* dataManager=dynamic_cast<sv4guiQmitkDataManagerView*>(dataManagerView.GetPointer());
     QTreeView* treeView=dataManager->GetTreeView();
 
-    std::cout << "Adding double clicked =======" << std::endl << std::flush;
     QObject::connect(treeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(ShowSVView()));
 }
 
