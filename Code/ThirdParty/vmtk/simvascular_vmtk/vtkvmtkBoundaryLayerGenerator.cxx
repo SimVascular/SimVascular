@@ -216,7 +216,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
     }
 
   vtkIdType npts; //, *pts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   vtkIdType *surfacePts;
 
   if (this->IncludeSurfaceCells)
@@ -898,7 +898,7 @@ void vtkvmtkBoundaryLayerGenerator::IncrementalWarpPoints(vtkUnstructuredGrid* i
     }
 
   vtkIdType npts;
-  const vtkIdType* pts = new vtkIdType;
+  const vtkIdType* pts;
   vtkIdList* cellIds = vtkIdList::New();
   vtkIdType cellId;
 

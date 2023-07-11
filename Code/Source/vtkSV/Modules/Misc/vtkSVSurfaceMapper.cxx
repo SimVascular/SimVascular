@@ -347,7 +347,7 @@ int vtkSVSurfaceMapper::MapSourceToTarget(vtkPolyData *sourceBaseDomainPd,
         if (pointCellsValues->IsId(firstCheckVal) == -1)
         {
           vtkIdType npts;
-          const vtkIdType *pts = new vtkIdType;
+          const vtkIdType *pts;
           targetBaseDomainPd->GetCellPoints(closestCell, npts, pts);
 
           vtkNew(vtkIdList, cellCloseVals);
@@ -392,7 +392,7 @@ int vtkSVSurfaceMapper::MapSourceToTarget(vtkPolyData *sourceBaseDomainPd,
     }
 
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     targetBaseDomainPd->GetCellPoints(closestCell, npts, pts);
     double pt0[3], pt1[3], pt2[3], a0, a1, a2;
     targetBaseDomainPd->GetPoint(pts[0], pt0);
@@ -537,7 +537,7 @@ int vtkSVSurfaceMapper::FindBoundary(vtkPolyData *pd, vtkIntArray *isBoundary, i
   {
     // Get cell points
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     pd->GetCellPoints(i, npts, pts);
     for (int j=0; j<npts; j++)
     {
@@ -677,7 +677,7 @@ int vtkSVSurfaceMapper::BoundaryPointsOnCell(vtkPolyData *pd, int targCellId, vt
 
   // Get target cell points
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   pd->GetCellPoints(targCellId, npts, pts);
 
   // Initialize the boundaryPts

@@ -71,7 +71,7 @@ double vtkvmtkPolyBallLine::EvaluateFunction(double x[3])
 {
   vtkIdType i, k;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double polyballFunctionValue, minPolyBallFunctionValue;
   double point0[3], point1[3];
   double radius0, radius1;

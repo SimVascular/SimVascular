@@ -1321,7 +1321,7 @@ int vtkSVSurfaceCenterlineAttributesPasser::GetOpenBoundaryEdges(vtkPolyData *pd
   for (int i=0; i<numCells; i++)
   {
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     pd->GetCellPoints(i, npts, pts);
 
     for (int j=0; j<npts; j++)

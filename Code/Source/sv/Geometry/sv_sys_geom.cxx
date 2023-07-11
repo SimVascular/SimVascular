@@ -545,7 +545,7 @@ int sys_geom_assign_ids_based_on_faces( cvPolyData *model, cvPolyData **faces,in
   vtkIdType cellId = 0;
   vtkIdType closestCell;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   int subId = 0;
   double distance;
   double centroid[3];
@@ -2075,7 +2075,7 @@ int sys_geom_Classify( cvPolyData *obj, double pt[], int *result )
   vtkCellArray *polys;
   int numPolys;
   vtkFloatingPointType tmp[3];
-  const vtkIdType *ptIds = new vtkIdType;
+  const vtkIdType *ptIds;
   vtkIdType npts;
 
   ggemsGeoPoint *verts;
@@ -3385,7 +3385,7 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
   {
     double centroid[3];
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     int numCells = tmp->GetNumberOfCells();
     if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) != SV_OK)
     {

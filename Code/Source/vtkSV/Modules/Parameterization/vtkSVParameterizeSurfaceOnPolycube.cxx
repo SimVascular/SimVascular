@@ -453,7 +453,7 @@ int vtkSVParameterizeSurfaceOnPolycube::RunFilter()
   {
     int getCellId = realCellIds->LookupValue(i);
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     tmpPd->GetCellPoints(getCellId, npts, pts);
 
     vtkNew(vtkIdList, newPointIds);
@@ -623,7 +623,7 @@ int vtkSVParameterizeSurfaceOnPolycube::RotateGroupToGlobalAxis(vtkPolyData *pd,
   thresholdPd->BuildLinks();
 
   vtkIdType f3npts;
-  const vtkIdType *f3PtIds = new vtkIdType;
+  const vtkIdType *f3PtIds;
   thresholdPd->GetCellPoints(3, f3npts, f3PtIds);
 
   double pts[3][3];

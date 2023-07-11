@@ -428,7 +428,7 @@ int sys_geom_IntegrateScalarSurf( cvPolyData *src, double *q )
   vtkPolyData *pd;
   vtkDataArray *scalars = nullptr;
   vtkIdType celltype = 0;
-  const vtkIdType *ids = new vtkIdType;
+  const vtkIdType *ids;
   int numPolys;
   double qflow;
   double qtotal = 0.0;
@@ -563,7 +563,7 @@ int sys_geom_IntegrateScalarThresh( cvPolyData *src, double wssthresh, double *q
   vtkPolyData *pd;
   vtkDataArray *scalars = nullptr;
   vtkIdType celltype = 0;
-  const vtkIdType *ids = new vtkIdType;
+  const vtkIdType *ids;
   int numPolys;
   double qflow;
   double qtotal = 0.0;

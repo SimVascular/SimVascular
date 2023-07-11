@@ -719,7 +719,7 @@ int cvTetGenMeshObject::WriteMetisAdjacency(char *filename) {
     vtkIdType meshCellId;
     vtkIdType p1,p2,p3;
     vtkIdType npts = 0;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     vtkSmartPointer<vtkCellArray> volCells = vtkSmartPointer<vtkCellArray>::New();
     vtkSmartPointer<vtkIntArray> globalIds = vtkSmartPointer<vtkIntArray>::New();
     vtkSmartPointer<vtkIdList> ptIds = vtkSmartPointer<vtkIdList>::New();

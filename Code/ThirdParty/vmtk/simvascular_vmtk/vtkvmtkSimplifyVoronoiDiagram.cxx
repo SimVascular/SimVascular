@@ -110,7 +110,7 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   vtkIdType i, j, id;
   vtkIdType n;
   vtkIdType npts, ncells;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   npts = 0;
   pts = nullptr;
   vtkIdType edge[2];

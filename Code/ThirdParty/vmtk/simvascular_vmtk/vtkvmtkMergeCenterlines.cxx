@@ -417,7 +417,7 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
   for (i=0; i<numberOfMergedCells; i++)
     {
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     npts = 0;
     outputLines->GetNextCell(npts,pts);
     vtkIdType tupleValue[2];

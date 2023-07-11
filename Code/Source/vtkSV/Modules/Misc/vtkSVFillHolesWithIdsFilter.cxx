@@ -100,7 +100,7 @@ int vtkSVFillHolesWithIdsFilter::RequestData(
 
   // check the input, build data structures as necessary
   vtkIdType numPts, npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   vtkPoints *inPts=input->GetPoints();
   vtkIdType numPolys = input->GetNumberOfPolys();
   vtkIdType numStrips = input->GetNumberOfStrips();

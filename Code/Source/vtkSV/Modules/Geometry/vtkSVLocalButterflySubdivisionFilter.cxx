@@ -77,7 +77,7 @@ int vtkSVLocalButterflySubdivisionFilter::GenerateSubdivisionPoints(
   vtkPointData *outputPD)
 {
   double *weights, *weights1, *weights2;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   vtkIdType cellId, newId, i, j;
   int edgeId;
   vtkIdType npts = 0;
@@ -365,7 +365,7 @@ void vtkSVLocalButterflySubdivisionFilter::GenerateBoundaryStencil(
   vtkIdList *cellIds = vtkIdList::New();
   vtkIdType *cells;
   vtkIdType ncells;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   vtkIdType npts;
   int i, j;
   vtkIdType p0, p3;
@@ -603,7 +603,7 @@ int vtkSVLocalButterflySubdivisionFilter::SetFixedCells(vtkPolyData *pd, int *no
   }
   int numPoints = pd->GetNumberOfPoints();
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   if (this->UsePointArray)
   {
     for (vtkIdType cellId=0;cellId < numCells;cellId++)

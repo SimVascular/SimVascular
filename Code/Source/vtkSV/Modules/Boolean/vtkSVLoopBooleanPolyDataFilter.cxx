@@ -237,7 +237,7 @@ int vtkSVLoopBooleanPolyDataFilter::Impl::FindRegion(int inputIndex,
       {
       vtkIdType cellId = this->CheckCells->GetId(c);
       //Get the three points of the cell
-      const vtkIdType *pts = new vtkIdType;
+      const vtkIdType *pts;
       vtkIdType npts = 0;
       this->Mesh[inputIndex]->GetCellPoints(cellId, npts, pts);
       if (this->Checked[inputIndex][cellId] == 0)
@@ -338,7 +338,7 @@ int vtkSVLoopBooleanPolyDataFilter::Impl::FindRegionTipToe(
       neighborIds->Reset();
       vtkIdType cellId = this->CheckCellsCareful->GetId(c);
       //Get the three points of the cell
-      const vtkIdType *pts = new vtkIdType;
+      const vtkIdType *pts;
       vtkIdType npts = 0;
       this->Mesh[inputIndex]->GetCellPoints(cellId, npts, pts);
       //Update this cell to have been checked carefully and assign it
@@ -613,7 +613,7 @@ int vtkSVLoopBooleanPolyDataFilter::Impl::GetCellOrientation(
 
   // Get cell points
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   pd->BuildLinks();
   pd->GetCellPoints(cellId,npts,pts);
 
@@ -1602,7 +1602,7 @@ void vtkSVLoopBooleanPolyDataFilter::Impl::ThresholdRegions(vtkPolyData **surfac
       {
       int value = this->BooleanArray[i]->GetValue(j);
       vtkIdType npts;
-      const vtkIdType *pts = new vtkIdType;
+      const vtkIdType *pts;
       this->Mesh[i]->GetCellPoints(j, npts, pts);
       if (value < 0)
         {

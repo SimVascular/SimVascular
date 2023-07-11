@@ -217,7 +217,7 @@ int vtkSVCenterlineGraph::BuildGraph()
 
   // Check to see if we need to flip the first line
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   this->Lines->BuildLinks();
   int cellId = this->Lines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(this->Root->GroupId);
   this->Lines->GetCellPoints(cellId, npts, pts);
@@ -357,7 +357,7 @@ int vtkSVCenterlineGraph::GetConnectingLineGroups(const int groupId, std::vector
 {
   // Get first cell points
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   int cellId = this->Lines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(groupId);
   this->Lines->GetCellPoints(cellId, npts, pts);
 
@@ -843,7 +843,7 @@ int vtkSVCenterlineGraph::GetGraphPoints()
 
     // Get Cell points
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     this->Lines->GetCellPoints(cellId, npts, pts);
 
     double length = 0.0;
@@ -1319,7 +1319,7 @@ int vtkSVCenterlineGraph::UpdateBranchReferenceDirections()
 
     // Get Cell points
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     this->Lines->GetCellPoints(cellId, npts, pts);
 
     int isTerminating = 0;

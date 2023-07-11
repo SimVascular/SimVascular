@@ -152,7 +152,7 @@ int vtkSVUnstructuredGridRawReader::RequestData(
     locator->InitPointInsertion(mergedPts, newPts->GetBounds());
 
     int nextCell = 0;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     vtkIdType npts;
     for (newCells->InitTraversal(); newCells->GetNextCell(npts, pts);)
     {

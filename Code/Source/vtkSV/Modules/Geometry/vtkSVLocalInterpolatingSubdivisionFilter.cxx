@@ -133,7 +133,7 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
   vtkCellArray *polys = inputDS->GetPolys();
   int hasTris = 0;
   vtkIdType numCellPts = 0;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   polys->InitTraversal();
 
   while(polys->GetNextCell(numCellPts, pts))
@@ -335,7 +335,7 @@ void vtkSVLocalInterpolatingSubdivisionFilter::GenerateSubdivisionCells (vtkPoly
   vtkIdType cellId, newId;
   int id;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double edgePts[3];
   vtkIdType newCellPts[3];
   vtkCellData *inputCD = inputDS->GetCellData();

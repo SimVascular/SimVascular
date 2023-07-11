@@ -234,7 +234,7 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
   vtkIdType numPts, numCells, i, numPolys, numStrips;
   int j, k;
   vtkIdType npts = 0;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   vtkIdType p1, p2;
   double x[3], y[3], deltaX[3], xNew[3], conv, maxDist, dist, factor;
   double x1[3], x2[3], x3[3], l1[3], l2[3];
@@ -411,7 +411,7 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
     vtkIdType cellId;
     int numNei, nei, edge;
     vtkIdType numNeiPts;
-    const vtkIdType *neiPts = new vtkIdType;
+    const vtkIdType *neiPts;
     double normal[3], neiNormal[3];
     vtkIdList *neighbors;
 
@@ -902,7 +902,7 @@ int vtkSVLocalSmoothPolyDataFilter::SetFixedPoints(vtkPolyData *pd,int *fixedPoi
   if (this->UseCellArray)
   {
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     for (vtkIdType cellId = 0;cellId < numCells; cellId ++)
     {
       pd->GetCellPoints(cellId,npts,pts);

@@ -303,7 +303,7 @@ int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfa
   tetgenio::polygon *p;
   vtkIdType i,j;
   vtkIdType npts = 0;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   vtkIdType cellId;
   vtkSmartPointer<vtkPoints> uPoints = vtkSmartPointer<vtkPoints>::New();
   vtkSmartPointer<vtkCellArray> pPolys = vtkSmartPointer<vtkCellArray>::New();
@@ -379,7 +379,7 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   vtkIdType i, j;
   vtkIdType vtkId;
   vtkIdType npts = 0;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
 
   vtkIdType numPts,numPolys,numFaces;
 
@@ -644,7 +644,7 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
   int count=0;
   vtkIdType cellId;
   vtkIdType npts = 0;
- const vtkIdType *pts = new vtkIdType;
+ const vtkIdType *pts;
   vtkIdType globalElement2=-1;
   double ptCmps[3];
 
@@ -818,7 +818,7 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
   vtkIdType p1,p2,p3;
   vtkIdType ns = 0;
   vtkIdType npts = 0;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   vtkSmartPointer<vtkCellArray> volCells = vtkSmartPointer<vtkCellArray>::New();
   vtkSmartPointer<vtkIntArray> globalIds = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIdList> ptIds = vtkSmartPointer<vtkIdList>::New();
@@ -1125,7 +1125,7 @@ int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
   double value;
   double factor;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   vtkIdType pointId,cellId;
   double min = 0;
   double range[2];
@@ -1252,7 +1252,7 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   int count;
   int bigcount;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double distance;
   double closestPt[3];
   double tolerance = 1.0;
@@ -1326,7 +1326,7 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   int count;
   int bigcount;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double distance;
   double closestPt[3];
   double tolerance = 1.0;
@@ -1436,7 +1436,7 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   int count;
   int bigcount;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double distance;
   double closestPt[3];
   double tolerance = 1.0;
@@ -1526,7 +1526,7 @@ int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd, int meshInfo[3])
 {
   fprintf(stdout,"Checking surface mesh\n");
   vtkIdType npts,p0,p1;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   int NonManifoldEdges = 0,FreeEdges = 0;
   int Regions=0;
   vtkSmartPointer<vtkCleanPolyData> cleaner =
@@ -1592,7 +1592,7 @@ int TGenUtils_SetLocalMeshSize(vtkPolyData *pd,int regionId,double size)
 {
   vtkIdType pointId, cellId;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   vtkSmartPointer<vtkIntArray> regionarray =
     vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkDoubleArray> meshSizeArray =

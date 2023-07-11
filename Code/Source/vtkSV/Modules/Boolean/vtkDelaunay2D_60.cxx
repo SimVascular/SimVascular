@@ -150,7 +150,7 @@ vtkIdType vtkDelaunay2D_60::FindTriangle(double x[3], vtkIdType ptIds[3],
   vtkIdType npts, newNei;
   double p[3][3], n[2], vp[2], vx[2], dp, minProj;
 
-  const vtkIdType* pts = new vtkIdType;
+  const vtkIdType* pts;
   // get local triangle info
   this->Mesh->GetCellPoints(tri,npts,pts);
   for (i=0; i<3; i++)
@@ -245,7 +245,7 @@ void vtkDelaunay2D_60::CheckEdge(vtkIdType ptId, double x[3], vtkIdType p1,
 {
   int i;
   vtkIdType npts, numNei, nei, p3;
-  const vtkIdType* pts = new vtkIdType;
+  const vtkIdType* pts;
   double x1[3], x2[3], x3[3];
   vtkIdList *neighbors;
   vtkIdType swapTri[3];
@@ -341,8 +341,8 @@ int vtkDelaunay2D_60::RequestData(
   vtkCellArray *triangles;
   int ncells;
   vtkIdType nodes[4][3];
-  const vtkIdType *neiPts = new vtkIdType;
-  const vtkIdType *triPts = new vtkIdType;
+  const vtkIdType *neiPts;
+  const vtkIdType *triPts;
   vtkIdType numNeiPts;
   vtkIdType npts = 0;
   vtkIdType pts[3], swapPts[3];
@@ -953,7 +953,7 @@ int vtkDelaunay2D_60::RequestData(
     {
     vtkCellArray *alphaTriangles = vtkCellArray::New();
     alphaTriangles->Allocate(numTriangles);
-    const vtkIdType *alphaTriPts = new vtkIdType;
+    const vtkIdType *alphaTriPts;
 
     for (i=0; i<numTriangles; i++)
       {
@@ -1002,7 +1002,7 @@ int *vtkDelaunay2D_60::RecoverBoundary(vtkPolyData *source)
 {
   vtkCellArray *lines=source->GetLines();
   vtkCellArray *polys=source->GetPolys();
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   vtkIdType npts = 0;
   vtkIdType i, p1, p2;
   int *triUse;
@@ -1064,7 +1064,7 @@ int vtkDelaunay2D_60::RecoverEdge(vtkIdType p1, vtkIdType p2)
   double x1[3], x2[3], sepNormal[3], v21[3];
   int ncells, v1=0, v2=0, signX1=0, signX2, signP1, signP2;
   vtkIdType *leftTris, *rightTris, npts, numRightTris, numLeftTris;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   int success=0;
 
   vtkIdList *cells=vtkIdList::New(); cells->Allocate(64);
@@ -1259,8 +1259,8 @@ void vtkDelaunay2D_60::FillPolygons(vtkCellArray *polys, int *triUse)
 {
   vtkIdType p1, p2, j, kk;
   int i, k;
-  const vtkIdType *pts = new vtkIdType;
-  const vtkIdType *triPts = new vtkIdType;
+  const vtkIdType *pts;
+  const vtkIdType *triPts;
   vtkIdType npts = 0;
   vtkIdType numPts;
   static double xyNormal[3]={0.0,0.0,1.0};

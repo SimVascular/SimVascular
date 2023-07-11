@@ -149,7 +149,7 @@ int vtkSVCenterlinesEdgeWeightedCVT::InitializeGenerators()
       // Get cell point coords
       double pts[3][3];
       vtkIdType npts;
-      const vtkIdType *ptids = new vtkIdType;
+      const vtkIdType *ptids;
       this->WorkPd->GetCellPoints(i, npts, ptids);
       for (int j=0; j<npts; j++)
         this->WorkPd->GetPoint(ptids[j], pts[j]);

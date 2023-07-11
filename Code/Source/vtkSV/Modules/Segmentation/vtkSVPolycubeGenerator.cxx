@@ -3147,7 +3147,7 @@ int vtkSVPolycubeGenerator::GetMinimumEdgeLength(vtkPolyData *polycubePd,
   double dist;
   minEdgeLength = VTK_SV_LARGE_DOUBLE;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   for (int i=0; i<numCells; i++)
   {
     polycubePd->GetCellPoints(i, npts, pts);

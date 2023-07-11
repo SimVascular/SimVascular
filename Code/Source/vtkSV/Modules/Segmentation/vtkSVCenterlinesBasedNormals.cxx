@@ -281,7 +281,7 @@ int vtkSVCenterlinesBasedNormals::RunFilter()
   //for (int i=0; i<numCells; i++)
   //{
   //  vtkIdType npts;
-  // const vtkIdType *pts = new vtkIdType;
+  // const vtkIdType *pts;
   //  centerlinesWorkPd->GetCellPoints(i, npts, pts);
 
   //  vtkNew(vtkIdList, pt0Cells);
@@ -343,7 +343,7 @@ int vtkSVCenterlinesBasedNormals::RunFilter()
 
   //  // cell points
   //  vtkIdType npts;
-  // const vtkIdType *pts = new vtkIdType;
+  // const vtkIdType *pts;
   //  centerlinesWorkPd->GetCellPoints(i, npts, pts);
 
   //  double startX[3];
@@ -397,7 +397,7 @@ int vtkSVCenterlinesBasedNormals::RunFilter()
 
   //  // cell points
   //  vtkIdType npts;
-  // const vtkIdType *pts = new vtkIdType;
+  // const vtkIdType *pts;
   //  centerlinesWorkPd->GetCellPoints(i, npts, pts);
 
   //  // start vector
@@ -538,7 +538,7 @@ int vtkSVCenterlinesBasedNormals::RunFilter()
       // Get cell point coords
       double pts[3][3];
       vtkIdType npts;
-      const vtkIdType *ptids = new vtkIdType;
+      const vtkIdType *ptids;
       branchPd->GetCellPoints(j, npts, ptids);
       for (int k=0; k<npts; k++)
         branchPd->GetPoint(ptids[k], pts[k]);

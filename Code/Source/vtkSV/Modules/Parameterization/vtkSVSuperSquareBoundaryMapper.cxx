@@ -120,7 +120,7 @@ int vtkSVSuperSquareBoundaryMapper::CalculateSquareEdgeLengths(vtkIntArray *actu
   {
     // Initialize update vars
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     int checkPt = -1;
     double boundaryDistance = 0.0;
     int done = 0;
@@ -204,7 +204,7 @@ int vtkSVSuperSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
     // Update variables
     double currLength = 0.0;
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
 
     // Get id we are looking for
     int lastPt  = pointIds->LookupValue(actualIds->GetValue((i+1)%numBoundaryPts));

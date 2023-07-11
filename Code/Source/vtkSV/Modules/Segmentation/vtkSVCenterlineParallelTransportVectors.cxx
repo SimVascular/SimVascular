@@ -233,7 +233,7 @@ int vtkSVCenterlineParallelTransportVectors::RunFilter()
 
     // Get Cell points
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     this->WorkPd->GetCellPoints(cellId, npts, pts);
 
     int isTerminating = 0;

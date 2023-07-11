@@ -310,7 +310,7 @@ int vtkSVUpdeSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
   //  double closestPt[3], distance;
   //  double closeTriPts[3][3], xyTriPts[3][3];
   //  vtkIdType npts;
-  //  const vtkIdType *pts = new vtkIdType;
+  //  const vtkIdType *pts;
   //  vtkIdType closestCellId;
   //  vtkNew(vtkGenericCell, genericCell);
 
@@ -401,7 +401,7 @@ int vtkSVUpdeSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
   this->CellPoints.clear();
   this->CellPoints.resize(numPts);
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   for (int i=0; i<numCells; i++)
   {
     this->WorkPd->GetCellPoints(i, npts, pts);
@@ -948,9 +948,9 @@ int vtkSVUpdeSmoothing::SmoothSurface(vtkDoubleArray *shapeImproveFunction,
   vtkNew(vtkGenericCell, genericCell);
 
   vtkIdType nspts;
-  const vtkIdType *spts = new vtkIdType;
+  const vtkIdType *spts;
   vtkIdType ntpts;
-  const vtkIdType *tpts = new vtkIdType;
+  const vtkIdType *tpts;
   vtkNew(vtkIdList, allCapableNeighbors);
   vtkNew(vtkIdList, cellEdgeNeighbors);
   double maxBad = 0.0;
@@ -1484,7 +1484,7 @@ int vtkSVUpdeSmoothing::RunFilter(vtkPolyData *original, vtkPolyData *output)
   int iter = 0;
   int minCell;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double newPt[3];
   double minFunc, funcVal, moveDist;
   double pt0[3], pt1[3], pt2[3], oppositePt[3];
@@ -1551,7 +1551,7 @@ int vtkSVUpdeSmoothing::ComputeOptimizationPoint(int pointId, double pt0[3], dou
   int edgeStatus = 0;
   int atOptimumLocation = 0;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double funcVal, newFuncVal;
   double minFunc;
   double newDir[3];
@@ -1697,7 +1697,7 @@ int vtkSVUpdeSmoothing::ComputeOptimizationDirection(double pt0[3], double pt1[3
 int vtkSVUpdeSmoothing::PointCellStatus(double currentPt[3], int sourceCell, int &pointCellStatus)
 {
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double sourcePts[3][3];
   this->SourcePd->GetCellPoints(sourceCell, npts, pts);
 
@@ -1739,7 +1739,7 @@ int vtkSVUpdeSmoothing::PointCellStatus(double currentPt[3], int sourceCell, int
 int vtkSVUpdeSmoothing::EdgeStatusWithDir(double currentPt[3], int sourceCell, double moveDir[3], int &edgeStatus)
 {
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double sourcePts[3][3];
   this->SourcePd->GetCellPoints(sourceCell, npts, pts);
 
@@ -1821,7 +1821,7 @@ int vtkSVUpdeSmoothing::MovePointToEdge(double currentPt[3], int sourceCell, dou
 {
 
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double sourcePts[3][3];
   this->SourcePd->GetCellPoints(sourceCell, npts, pts);
 

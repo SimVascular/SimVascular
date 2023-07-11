@@ -78,7 +78,7 @@ static double LoopWeights[4] =
 int vtkSVLocalLoopSubdivisionFilter::GenerateSubdivisionPoints (vtkPolyData *inputDS,vtkIntArray *edgeData, vtkPoints *outputPts, vtkPointData *outputPD)
 {
   double *weights;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   vtkIdType numPts, cellId, newId;
   int edgeId;
   vtkIdType npts;
@@ -462,7 +462,7 @@ int vtkSVLocalLoopSubdivisionFilter::RequestData(
   vtkCellArray *polys = input->GetPolys();
   int hasTris = 0;
   vtkIdType numPts = 0;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
 
   input->BuildLinks();
 
@@ -506,7 +506,7 @@ int vtkSVLocalLoopSubdivisionFilter::SetFixedCells(vtkPolyData *pd, int *noSubdi
   }
   int numPoints = pd->GetNumberOfPoints();
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   if (this->UsePointArray)
   {
     for (vtkIdType cellId=0;cellId < numCells;cellId++)

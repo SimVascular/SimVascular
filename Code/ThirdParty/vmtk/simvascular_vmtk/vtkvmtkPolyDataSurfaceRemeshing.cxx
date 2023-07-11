@@ -395,7 +395,7 @@ void vtkvmtkPolyDataSurfaceRemeshing::BuildEntityBoundary(vtkPolyData* input, vt
   vtkIdList* cellIds = vtkIdList::New();
   vtkIdType numberOfCells = input->GetNumberOfCells();
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   for (int i=0; i<numberOfCells; i++)
     {
     if (input->GetCellType(i) != VTK_TRIANGLE)
@@ -443,7 +443,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::GetNumberOfBoundaryEdges(vtkIdType cellId)
   int numberOfBoundaryEdges = 0;
   vtkIdList* cellEdgeNeighbors = vtkIdList::New();
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   this->Mesh->GetCellPoints(cellId,npts,pts);
   for (int j=0; j<npts; j++)
     {
@@ -469,7 +469,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnBoundary(vtkIdType pointId)
   for (int i=0; i<ncells; i++)
     {
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     this->Mesh->GetCellPoints(cells[i],npts,pts);
     for (int j=0; j<npts; j++)
       {
@@ -504,7 +504,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::EdgeFlipConnectivityOptimizationIteration()
       continue;
       }
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     this->Mesh->GetCellPoints(i,npts,pts);
     vtkIdType tripts[3];
     tripts[0] = pts[0];
@@ -536,7 +536,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::EdgeFlipIteration()
       continue;
       }
     vtkIdType npts;
-    const vtkIdType* pts = new vtkIdType;
+    const vtkIdType* pts;
     this->Mesh->GetCellPoints(i,npts,pts);
     vtkIdType tripts[3];
     tripts[0] = pts[0];
@@ -1006,7 +1006,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(vtkIdType pt1, 
   else if (numberOfNeighborTriangles == 1)
     {
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     this->Mesh->GetCellPoints(cell1,npts,pts);
     for (int i=0; i<3; i++)
       {
@@ -1027,7 +1027,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(vtkIdType pt1, 
   vtkIdType pt4tmp = -1;
   bool reverse = false;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   this->Mesh->GetCellPoints(cell1,npts,pts);
   for (int i=0; i<3; i++)
     {
@@ -1092,7 +1092,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitTriangle(vtkIdType cellId)
     }
 
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   this->Mesh->GetCellPoints(cellId,npts,pts);
   vtkIdType pt1 = pts[0];
   vtkIdType pt2 = pts[1];
@@ -1607,7 +1607,7 @@ double vtkvmtkPolyDataSurfaceRemeshing::ComputeTriangleTargetArea(vtkIdType cell
   else if (this->ElementSizeMode == TARGET_AREA_ARRAY)
     {
     vtkIdType npts;
-    const vtkIdType* pts = new vtkIdType;
+    const vtkIdType* pts;
     this->Mesh->GetCellPoints(cellId,npts,pts);
     double point1[3], point2[3], point3[3];
     this->Mesh->GetPoint(pts[0],point1);
@@ -1648,7 +1648,7 @@ double vtkvmtkPolyDataSurfaceRemeshing::ComputeTriangleTargetArea(vtkIdType cell
 int vtkvmtkPolyDataSurfaceRemeshing::TestTriangleSplit(vtkIdType cellId)
 {
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   this->Mesh->GetCellPoints(cellId,npts,pts);
 
   vtkIdType tri[3];
@@ -1681,7 +1681,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
   pt2 = -1;
 
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   this->Mesh->GetCellPoints(cellId,npts,pts);
 
   vtkIdType tri[3];
@@ -1825,7 +1825,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAreaSplitEdge(vtkIdType cellId, vtkIdTy
   pt2 = -1;
 
   vtkIdType npts;
-  const vtkIdType* pts = new vtkIdType; 
+  const vtkIdType* pts; 
   this->Mesh->GetCellPoints(cellId,npts,pts);
 
   vtkIdType tri[3];

@@ -182,7 +182,7 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
   int refineCt=0;
   MMG5_pTria  tria;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   for (int i=0;i<numTris;i++)
   {
     refineCt=0;
@@ -456,7 +456,7 @@ int MMGUtils_PassCellArray(vtkPolyData *newgeom,
   int i,j,k;
   int subId;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double distance;
   double closestPt[3];
   double minmax[2];
@@ -585,7 +585,7 @@ int MMGUtils_BuildRidgeTable(vtkPolyData *polydatasolid, vtkEdgeTable *ridges, s
   ridgePtArray = vtkIntArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(ridgePtArrayName.c_str()));
 
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   int numPts = polydatasolid->GetNumberOfPoints();
   int numTris = polydatasolid->GetNumberOfCells();
   ridges->InitEdgeInsertion(numPts, 1);

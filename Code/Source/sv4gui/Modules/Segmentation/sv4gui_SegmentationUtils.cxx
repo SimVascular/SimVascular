@@ -916,7 +916,7 @@ sv4guiContour* sv4guiSegmentationUtils::CreateThresholdContour(sv4guiPathElement
 std::deque<int> sv4guiSegmentationUtils::GetOrderedPtIDs(vtkCellArray* lines, bool& ifClosed)
 {
 
-    const vtkIdType *ptIds = new vtkIdType;
+    const vtkIdType *ptIds;
     vtkIdType npts;
 
     lines->InitTraversal();

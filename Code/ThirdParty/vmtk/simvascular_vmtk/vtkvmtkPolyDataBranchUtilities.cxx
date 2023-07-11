@@ -89,7 +89,7 @@ void vtkvmtkPolyDataBranchUtilities::ExtractGroup(vtkPolyData* surface, const ch
   vtkCellArray* polys = groupSurface->GetPolys();
   polys->Reset();
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   for (int j=0; j<numberOfCells; j++)
     {
     surface->GetCellPoints(j,npts,pts);

@@ -66,7 +66,7 @@ int vtkvmtkPolyDataToUnstructuredGridFilter::RequestData(
   int* cellTypes = new int[numberOfCells];
 
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   int cellType;
   for (int i=0; i<numberOfCells; i++)
     {

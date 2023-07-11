@@ -508,7 +508,7 @@ int vtkSVFindGeodesicPath::GetNeighborBoundaryPoints(const int ptId,
   {
     // Get cell points
     vtkIdType npts;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     this->WorkPd->GetCellPoints(cells->GetId(0), npts, pts);
 
     // Loop through neighbor points

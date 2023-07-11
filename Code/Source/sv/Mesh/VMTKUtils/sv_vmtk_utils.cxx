@@ -722,7 +722,7 @@ int sys_geom_mapandcorrectids( cvPolyData *originalpd, cvPolyData *newpd, cvPoly
   int subId;
   int count;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double distance;
   double closestPt[3];
   double minmax[2];
@@ -1800,7 +1800,7 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newGeom, vtkPolyData *originalGe
   for (int cellId = 0; cellId < newGeom->GetNumberOfCells(); cellId++) {
       // Calculate cell center.
       vtkIdType npts;
-      const vtkIdType *pts = new vtkIdType;
+      const vtkIdType *pts;
       double center[3];
       newGeom->GetCellPoints(cellId, npts, pts);
       auto polyPts = vtkSmartPointer<vtkPoints>::New();
@@ -1843,7 +1843,7 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom, vtkPolyData *originalge
   int count;
   int bigcount;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double distance;
   double closestPt[3];
   double tolerance = 1.0;

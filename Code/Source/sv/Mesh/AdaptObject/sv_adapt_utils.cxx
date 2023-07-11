@@ -107,7 +107,7 @@ int AdaptUtils_SmoothHessians(vtkUnstructuredGrid *mesh)
   double nodalHessian[6];
   vtkIdType checkPt;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   vtkIdType p1,p2;
   vtkIdType pointId,cellId;
   vtkIdType surfacePt,volumePt;
@@ -561,7 +561,7 @@ int AdaptUtils_modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
   int count;
   int bigcount;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double distance;
   double mappingPt[3];
   double closestPt[3];
@@ -1118,7 +1118,7 @@ double AdaptUtils_maxLocalError(vtkUnstructuredGrid *mesh,vtkIdType vertex, doub
   double maxLocE=0;
   vtkIdType cellId,pointId;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   vtkSmartPointer<vtkIdList> attachedCells =
     vtkSmartPointer<vtkIdList>::New();
   vtkSmartPointer<vtkIdList> firstPointList =

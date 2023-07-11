@@ -339,7 +339,7 @@ void vtkSVLocalApproximatingSubdivisionFilter::GenerateSubdivisionCells (
   vtkIdType cellId, newId;
   int id;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
   double edgePts[3];
   vtkIdType newCellPts[3];
   vtkCellData *inputCD = inputDS->GetCellData();

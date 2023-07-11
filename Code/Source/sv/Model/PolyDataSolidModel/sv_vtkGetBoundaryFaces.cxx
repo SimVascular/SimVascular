@@ -276,7 +276,7 @@ void vtkGetBoundaryFaces::FindBoundaryRegion(int reg,int start)
     //Variables used in function
     int i;
     vtkIdType j,k,l,cellId;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     vtkIdType npts = 0;
     vtkIdType numNei, nei, p1, p2, nIds, neis;
 
@@ -368,7 +368,7 @@ void vtkGetBoundaryFaces::FindBoundaryRegionTipToe(int reg)
     //Variables used in function
     int i;
     vtkIdType j,k,l;
-    const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts;
     vtkIdType npts = 0;
     vtkIdType cellId;
     vtkIdType numNei, nei, p1, p2, nIds, neiId;

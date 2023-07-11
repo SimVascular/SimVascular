@@ -188,7 +188,7 @@ void vtkvmtkBoundaryReferenceSystems::OrientBoundaryNormalOutwards(vtkPolyData* 
   vtkIdType ncells;
   vtkIdType *cells;
   vtkIdType npts;
-  const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts;
 
   double boundaryPoint[3], neighborPoint[3];
 
