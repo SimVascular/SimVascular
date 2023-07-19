@@ -57,7 +57,7 @@ set(HDRS sv2_image.h sv2_img_offsets.h
   )
 
 if(SV_USE_PYTHON)
-  list(APPEND CXXSRCS sv2_image_init_py.cxx)
+  list(APPEND CXXSRCS )
 endif()
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
