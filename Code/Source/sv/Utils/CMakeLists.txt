@@ -49,7 +49,7 @@ SET(HDRS sv_misc_utils.h sv_vtk_utils.h
   sv_Math.h sv_arg.h sv_FactoryRegistrar.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_utils_init.cxx sv_math_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}

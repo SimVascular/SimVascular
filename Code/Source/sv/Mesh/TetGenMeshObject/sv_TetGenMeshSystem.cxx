@@ -69,12 +69,15 @@ int cvTetGenMeshSystem::LogOff()
  *  @brief Function to create and return a new mesh system. called once
  *  upon startup of SimVascular
  */
-#ifdef SV_USE_TCL
+
+#if 0 
+//#ifdef SV_USE_TCL
 cvMeshObject* cvTetGenMeshSystem::CreateMeshObject( Tcl_Interp *interp )
 {
   return new cvTetGenMeshObject(interp);
 }
 #endif
+
 #ifdef SV_USE_PYTHON
 cvMeshObject* cvTetGenMeshSystem::CreateMeshObject()
 {

@@ -43,7 +43,7 @@ include_directories(${TETGEN_INCLUDE_DIR})
 set(CXXSRCS sv_SolidModel.cxx)
 set(HDRS    sv_SolidModel.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_solid_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}

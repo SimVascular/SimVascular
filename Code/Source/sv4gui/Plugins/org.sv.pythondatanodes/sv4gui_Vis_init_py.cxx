@@ -38,7 +38,6 @@
 #include "sv_UnstructuredGrid.h"
 #include "sv_arg.h"
 #include "sv_VTK.h"
-#include "vtkTclUtil.h"
 #include "vtkPythonUtil.h"
 
 // The following is needed for Windows

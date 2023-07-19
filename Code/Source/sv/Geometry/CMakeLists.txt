@@ -45,7 +45,7 @@ set(CXXSRCS sv_sys_geom.cxx sv_ggems.cxx
 set(HDRS sv_sys_geom.h sv_ggems.h
 	sv_spline.h sv_integrate_surface.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_geom_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}

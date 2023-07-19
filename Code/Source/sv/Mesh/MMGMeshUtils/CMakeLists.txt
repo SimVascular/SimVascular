@@ -39,7 +39,7 @@ include_directories(${MMG_INCLUDE_DIR})
 SET(CXXSRCS sv_mmg_mesh_utils.cxx)
 SET(HDRS sv_mmg_mesh_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_mmg_mesh_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}

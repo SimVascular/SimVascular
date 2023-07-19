@@ -40,7 +40,7 @@
 
 #include "sv_TetGenAdapt.h"
 #include "sv_tetgenmesh_utils.h"
-#include "sv_mesh_init.h"
+//#include "sv_mesh_init.h"
 
 #include "sv_adapt_utils.h"
 
@@ -155,7 +155,8 @@ int cvTetGenAdapt::Copy( const cvAdaptObject& src)
 // -----------------------
 //  CreateInternalMeshObject
 // -----------------------
-#ifdef SV_USE_TCL
+//#ifdef SV_USE_TCL
+#if 0 
 int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 		char *meshFileName,
 		char *solidFileName)
@@ -237,7 +238,9 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 }
 #endif
 #else
-#ifdef SV_USE_TCL
+
+//#ifdef SV_USE_TCL
+#if 0 
 // -----------------------
 //  CreateInternalMeshObject
 // -----------------------

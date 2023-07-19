@@ -61,11 +61,6 @@
   #include "Python.h"
 #endif
 
-#ifdef SV_USE_TCL
-  #include "tcl.h"
-  #include "tk.h"
-#endif
-
 #include <windows.h>
 #include <stdio.h>
 #include <tchar.h>
@@ -102,7 +97,6 @@ errno_t cv_getenv_s(
 #ifdef SV_USE_WIN32_REGISTRY
 
 int sv_parse_reg();
-int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_Interp *interp );
 void QueryKey(HKEY hKey);
 int sv_parse_registry_for_plugins();
 int sv_main_append_to_envvar(char* envvar_to_update, char* appendme);

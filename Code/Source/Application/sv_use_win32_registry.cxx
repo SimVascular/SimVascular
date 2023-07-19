@@ -34,45 +34,6 @@
 
 #include "sv_use_win32_registry.h"
 
-int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_Interp *interp ) {
-
-  HKEY hKey;
-  LONG returnStatus;
-  DWORD dwType=REG_SZ;
-  DWORD dwSize=2048;
-  char lszValue[2048];
-  char mykey[1024];
-  char scmd[4096];
-  SecureZeroMemory(lszValue,sizeof(lszValue));
-  mykey[0]='\0';
-  scmd[0]='\0';
-  
-  sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
-  returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey);
-  if (returnStatus != ERROR_SUCCESS) {
-    fprintf(stderr,"FATAL ERROR: SV registry error!\n(%s)\n",mykey);
-    exit(-1);
-  }
-
-  returnStatus = RegQueryValueEx(hKey, regVarName, NULL, &dwType,(LPBYTE)&lszValue, &dwSize);
-  RegCloseKey(hKey);
-
-  if (returnStatus != ERROR_SUCCESS) {
-    fprintf(stderr,"  FATAL ERROR: Invalid application registry (%s).\n\n",regVarName);
-    exit(-1);
-  }
-
-  PathRemoveBackslash(lszValue);
-  // set the variable in tcl interpreter
-  sprintf(scmd,"set %s {%s}\n",interpVarName,lszValue);
-  if (Tcl_Eval(interp,scmd) == TCL_ERROR) {
-    fprintf ( stderr,"error on (%s)\n",scmd);
-    return TCL_ERROR;
-  }
-
-  return TCL_OK;
-}
-
 // QueryKey - Enumerates the subkeys of key and its associated values.
 //     hKey - Key whose subkeys and values are to be enumerated.
 

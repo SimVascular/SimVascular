@@ -112,7 +112,9 @@ int cvMeshSystem::RegisterKernel( cvMeshObject::KernelType kernel_type, cvMeshSy
 // registered in the repository.  Subsequent cvMeshSystem lookup's
 // currently DO NOT check for NULL values.  The idea is that objects
 // are checked for validity *before* they get registered.
-#ifdef SV_USE_TCL
+
+#if 0 
+//#ifdef SV_USE_TCL
 cvMeshObject* cvMeshSystem::DefaultInstantiateMeshObject( Tcl_Interp *interp,
                                                           char *const meshFileName,
                                                           char *const solidFileName )

@@ -306,7 +306,8 @@ int sys_geom_Pick( cvPolyData *src, double pos[], cvPolyData **dst )
   cvSolidModel *solid = NULL;
   int foundOne = 0;
 
-  solid = cvSolidModel::DefaultInstantiateSolidModel();
+  solid = cvSolidModel::pyDefaultInstantiateSolidModel();
+
   if ( solid == NULL ) {
     printf("ERR: default instantiate solid model failed\n");
     return SV_ERROR;

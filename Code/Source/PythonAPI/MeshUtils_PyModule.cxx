@@ -36,7 +36,7 @@
 #include "SimVascular.h"
 #include "SimVascular_python.h"
 #include "sv_misc_utils.h"
-#include "sv_mmg_mesh_init.h"
+//#include "sv_mmg_mesh_init.h"
 #include "sv_vmtk_utils.h"
 #include "sv_arg.h"
 #include "PyUtils.h"

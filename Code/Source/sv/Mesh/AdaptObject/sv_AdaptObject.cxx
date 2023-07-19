@@ -63,7 +63,8 @@ cvAdaptObject::~cvAdaptObject()
 // ----------------------------
 // DefaultInstantiateAdaptObject
 // ----------------------------
-#ifdef SV_USE_TCL
+//#ifdef SV_USE_TCL
+#if 0 
 cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp,KernelType t )
 {
   // Get the adapt object factory registrar associated with this Tcl interpreter.

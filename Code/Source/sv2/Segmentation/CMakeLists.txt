@@ -57,7 +57,7 @@ set(HDRS sv2_LevelSet.h sv2_LevelSetNode.h
   sv2_IntArrayList.h sv2_StateArray.h sv2_Timer.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv2_LsetCore_init.cxx sv2_LsetV_init.cxx sv2_Lset_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
   ${ITK_LIBRARIES} ${VTK_LIBRARIES}

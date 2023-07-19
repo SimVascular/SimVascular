@@ -31,7 +31,6 @@
 
 #include "sv3_ITKLevelSet.h"
 
-
 //Filters needed to generate seed image in ITK
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkBinaryBallStructuringElement.h"

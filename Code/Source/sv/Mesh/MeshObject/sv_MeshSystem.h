@@ -51,10 +51,12 @@ public:
 
   // Mesh object factory method that delegates creation of meshes to the
   //  concrete implementations.
-  #ifdef SV_USE_TCL
+  #if 0 
+  //#ifdef SV_USE_TCL
   static cvMeshObject* DefaultInstantiateMeshObject( Tcl_Interp *interp = NULL,
     char *const meshFileName = NULL, char *const solidFileName = NULL );
   #endif
+
   #ifdef SV_USE_PYTHON
   static cvMeshObject* DefaultInstantiateMeshObject(
     char *const meshFileName = NULL, char *const solidFileName = NULL );
@@ -65,9 +67,11 @@ public:
   virtual int LogOff() = 0;
 
 protected:
-  #ifdef SV_USE_TCL
+  #if 0 
+  //#ifdef SV_USE_TCL
   virtual cvMeshObject* CreateMeshObject( Tcl_Interp *interp ) = 0;
   #endif
+
   #ifdef SV_USE_PYTHON
   virtual cvMeshObject* CreateMeshObject() = 0;
   #endif

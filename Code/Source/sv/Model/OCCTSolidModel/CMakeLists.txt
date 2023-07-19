@@ -41,7 +41,7 @@ list(APPEND CORELIBS ${lib})
 set(CXXSRCS sv_OCCTSolidModel.cxx sv_occtsolid_utils.cxx)
 set(HDRS sv_OCCTSolidModel.h sv_occtsolid_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_occt_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}

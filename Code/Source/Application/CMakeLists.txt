@@ -33,11 +33,7 @@ project(simvascular)
 set(APP_NAME ${SV_EXE})
 set(APP_SHOW_CONSOLE ON)
 
-set(CXXSRCS main.cxx SimVascular_Init.cxx)
-
-if(SV_USE_TCL)
-  LIST(APPEND CXXSRCS svTcl_AppInit.cxx)
-endif()
+set(CXXSRCS main.cxx)
 
 if(SV_USE_WIN32_REGISTRY)
   LIST(APPEND CXXSRCS sv_use_win32_registry.cxx)
@@ -49,11 +45,6 @@ if(SV_USE_PYTHON)
 endif()
 
 unset(OPTLIBS)
-
-if(NOT ${USE_SYSTEM_TCL})
-	include_directories(${TCL_INCLUDE_PATH})
-	include_directories(${TK_INCLUDE_PATH})
-endif()
 
 if(SV_USE_TETGEN)
 	set(OPTLIBS ${OPTLIBS} ${SV_LIB_TETGEN_MESH_NAME})
@@ -218,7 +209,7 @@ if(SV_USE_SV4_GUI)
 endif()
 
 target_link_libraries(${SV_EXE} PRIVATE ${OPTLIBS}
-  ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+  ${VTK_LIBRARIES} 
   ${ZLIB_LIBRARY} ${ITK_LIBRARIES}
   ${GDCM_LIBRARIES}
   ${INTELRUNTIME_LIBRARIES}

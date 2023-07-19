@@ -60,7 +60,7 @@ if(SV_USE_PYTHON)
   list(APPEND CXXSRCS sv2_image_init_py.cxx)
 endif()
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv2_image_init.cxx )
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

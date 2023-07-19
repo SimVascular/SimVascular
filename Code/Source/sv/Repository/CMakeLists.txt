@@ -52,7 +52,7 @@ SET(HDRS sv_Repository.h sv_RepositoryData.h
   sv_DataSet.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_repos_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 # Set up for exports
 string(TOUPPER ${export_directive} EXPORT_NAME)

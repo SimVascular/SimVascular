@@ -39,7 +39,7 @@ include_directories(${MMG_INCLUDE_DIR})
 SET(CXXSRCS sv_vmtk_utils.cxx)
 SET(HDRS sv_vmtk_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_vmtk_utils_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
   ${VTK_LIBRARIES}
