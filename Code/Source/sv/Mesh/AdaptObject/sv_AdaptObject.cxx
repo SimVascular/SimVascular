@@ -36,21 +36,12 @@
 #include "sv_MeshObject.h"
 #include "sv_misc_utils.h"
 
-#ifdef SV_USE_PYTHON
-#include "Python.h"
-#include "sv_adapt_init_py.h"
-#endif
-
 #include <string.h>
 #include <assert.h>
 
-#include "sv2_globals.h"
-
 KernelType cvAdaptObject::gCurrentKernel = KERNEL_TETGEN;
-cvFactoryRegistrar cvAdaptObject::gRegistrar;
 
-cvAdaptObject::cvAdaptObject( KernelType t)
-  : cvRepositoryData( ADAPTOR_T )
+cvAdaptObject::cvAdaptObject( KernelType t) : cvRepositoryData( ADAPTOR_T )
 {
   adapt_kernel_ = t;
 }
@@ -60,70 +51,3 @@ cvAdaptObject::~cvAdaptObject()
   ;
 }
 
-// ----------------------------
-// DefaultInstantiateAdaptObject
-// ----------------------------
-//#ifdef SV_USE_TCL
-#if 0 
-cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp,KernelType t )
-{
-  // Get the adapt object factory registrar associated with this Tcl interpreter.
-  cvFactoryRegistrar* adaptObjectRegistrar;
-  if (interp == NULL) {
-    fprintf(stdout,"WARNING:  Null interpreter passed to AdaptObject.  Overriding with default.\n");
-    fflush(stdout);
-  }
-  Tcl_Interp* myinterp = NULL;
-  myinterp = gVtkTclInterp;
-  assert(myinterp);
-
-  adaptObjectRegistrar = (cvFactoryRegistrar *) Tcl_GetAssocData( myinterp, "AdaptObjectRegistrar", NULL);
-
-  cvAdaptObject* adaptor = NULL;
-  if (t == KERNEL_TETGEN ||
-      t == KERNEL_MESHSIM)
-  {
-    adaptor = (cvAdaptObject *) (adaptObjectRegistrar->UseFactoryMethod( t ));
-    if (adaptor == NULL) {
-		  fprintf( stdout, "Unable to create adaptor object for kernel (%i)\n",cvAdaptObject::gCurrentKernel);
-    }
-
-  } else {
-    fprintf( stdout, "current kernel is not valid (%i)\n",t);
-    Tcl_SetResult( interp, "current kernel is not valid", TCL_STATIC );
-  }
-
-  return adaptor;
-}
-#endif
-// ----------------------------
-// DefaultInstantiateAdaptObject for python
-// ----------------------------
-#ifdef SV_USE_PYTHON
-cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject(KernelType t )
-{
-  // Get the adapt object factory registrar associated with the python interpreter
-  
-  PyObject* pyGlobal = PySys_GetObject("AdaptObjectRegistrar");
-  pyAdaptObjectRegistrar* tmp = (pyAdaptObjectRegistrar *) pyGlobal;
-  cvFactoryRegistrar* adaptObjectRegistrar =tmp->registrar;
-  if (adaptObjectRegistrar==NULL)
-  {
-    fprintf(stdout,"Cannot get AdaptObjectRegistrar from pySys");
-  }
-  cvAdaptObject* adaptor = NULL;
-  if (t == KERNEL_TETGEN ||
-      t == KERNEL_MESHSIM)
-  {
-    adaptor = (cvAdaptObject *) (adaptObjectRegistrar->UseFactoryMethod( t ));
-    if (adaptor == NULL) {
-		  fprintf( stdout, "Unable to create adaptor object for kernel (%i)\n",cvAdaptObject::gCurrentKernel);
-    }
-
-  } else {
-    fprintf( stdout, "current kernel is not valid (%i)\n",t);
-  }
-
-  return adaptor;
-}
-#endif

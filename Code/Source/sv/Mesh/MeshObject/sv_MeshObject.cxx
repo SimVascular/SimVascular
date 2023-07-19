@@ -44,8 +44,7 @@ const std::string cvMeshObject::ModelFaceInfo::MODEL_ID = "modelID";
 // cvMeshObject
 // -------------
 
-cvMeshObject::cvMeshObject()
-  : cvRepositoryData( MESH_T )
+cvMeshObject::cvMeshObject() : cvRepositoryData( MESH_T )
 {
 
 }

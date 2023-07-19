@@ -673,9 +673,15 @@ int cvLevelSetSparseGrid::BuildSeedInterface( cvSolidModel *seed )
     return SV_OK;
   }
 
+  logicalSolid = nullptr; 
+  seedBound = nullptr; 
+  seedIntfSolid = nullptr; 
+
+  /*
   logicalSolid = cvSolidModel::DefaultInstantiateSolidModel();
   seedBound = cvSolidModel::DefaultInstantiateSolidModel();
   seedIntfSolid = cvSolidModel::DefaultInstantiateSolidModel();
+  */
 
   if ( ( logicalSolid == NULL ) || ( seedBound == NULL ) ||
        ( seedIntfSolid == NULL ) ) {
@@ -1147,7 +1153,8 @@ int cvLevelSetSparseGrid::ConstructHT( cvPolyData *front )
   // InitPhi(cvPolyData*).
 
   if ( ! init_ ) {
-    sm = cvSolidModel::DefaultInstantiateSolidModel();
+    sm = nullptr; 
+    //sm = cvSolidModel::DefaultInstantiateSolidModel();
     if ( sm == NULL ) {
       return SV_ERROR;
     }

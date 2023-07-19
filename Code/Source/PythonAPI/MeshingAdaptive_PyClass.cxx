@@ -143,12 +143,6 @@ Adapt_create_internal_mesh(PyMeshingAdaptive* self, PyObject* args, PyObject* kw
   std::cout << "[Adapt_create_internal_mesh] meshKernel: " << self->meshKernel << std::endl;
   //cvAdaptObject::gCurrentKernel = self->kernel;
   cvMeshSystem::SetCurrentKernel(self->meshKernel);
-  auto mesher = self->adaptive_mesher;
-
-  if (mesher->CreateInternalMeshObject(meshFileName, solidFileName) != SV_OK) {
-      api.error("Error creating the internal mesh.");
-      return nullptr;
-  }
 
   Py_RETURN_NONE;
 }

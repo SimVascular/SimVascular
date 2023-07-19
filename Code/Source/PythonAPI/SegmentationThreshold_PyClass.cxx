@@ -44,7 +44,6 @@
 #include "sv_Repository.h"
 #include "sv_arg.h"
 #include "sv_misc_utils.h"
-#include "sv2_globals.h"
 
 #include "Python.h"
 

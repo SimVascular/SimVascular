@@ -386,7 +386,8 @@ int cvLevelSetDenseGrid::InitPhi( cvPolyData *front )
   int c;
 
   if (!init_) {
-    sm = cvSolidModel::DefaultInstantiateSolidModel();
+    sm = nullptr; 
+    //sm = cvSolidModel::DefaultInstantiateSolidModel();
     if ( sm == NULL ) {
       return SV_ERROR;
     }

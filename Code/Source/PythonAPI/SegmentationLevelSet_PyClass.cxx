@@ -47,7 +47,6 @@
 #include "sv_misc_utils.h"
 
 #include "Python.h"
-#include "sv2_globals.h"
 
 // The following is needed for Windows
 #ifdef GetObject

@@ -169,7 +169,6 @@ endif(DOXYGEN_FOUND)
 # Basic Core Libs
 set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
   "Source/PythonAPI"
-  "Source/sv2/Globals"
   "Source/sv/Utils"
   "Source/sv/Repository"
   "Source/sv3/Path"

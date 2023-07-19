@@ -33,7 +33,6 @@
 
 #include "sv_IOstream.h"
 
-#include "sv2_globals.h"
 #include "sv_Repository.h"
 
 // ----------

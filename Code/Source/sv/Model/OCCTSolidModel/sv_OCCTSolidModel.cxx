@@ -29,19 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file sv_OCCTSolidModel.cxx
- *  @brief The implementations of functions in OCCTSolidModel
- *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- *  @note Most functions in class call functions in cv_occtsolid_utils.
- */
-
 #include "SimVascular.h"
 
-#include "sv2_globals.h"
 #include "simvascular_options.h"
 
 #include "sv_OCCTSolidModel.h"
@@ -150,6 +139,9 @@
 #include "IGESCAFControl_Reader.hxx"
 #include "StlAPI_Writer.hxx"
 
+// This used to be defined in sv2/Globals/sv2_globals.h but
+// it seemed that it was never set.
+void *cvOCCTSolidModel::gOCCTManager = nullptr; 
 
 // ----------
 // OCCTSolidModel
@@ -158,8 +150,7 @@
  * @brief Constructor for OCCTSolidModel (Should never be called directly)
  */
 
-cvOCCTSolidModel::cvOCCTSolidModel()
-  : cvSolidModel( SM_KT_OCCT)
+cvOCCTSolidModel::cvOCCTSolidModel() : cvSolidModel( SM_KT_OCCT)
 {
 /**
  * @brief Data Member is a vtkPolyData. It is initiated as NULL. When a
@@ -170,8 +161,7 @@ cvOCCTSolidModel::cvOCCTSolidModel()
 
   //Get the document created inside of the manager
   Handle(TDocStd_Document) doc;
-  Handle(XCAFApp_Application) OCCTManager =
-    static_cast<XCAFApp_Application*>(gOCCTManager);
+  Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
   OCCTManager->GetDocument(1,doc);
 
   shapetool_ = XCAFDoc_DocumentTool::ShapeTool(doc->Main());

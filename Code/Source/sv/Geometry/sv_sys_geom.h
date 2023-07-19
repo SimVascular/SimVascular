@@ -63,8 +63,6 @@ SV_EXPORT_SYSGEOM int sys_geom_NumClosedLineRegions( cvPolyData *src, int *num )
 
 SV_EXPORT_SYSGEOM int sys_geom_GetClosedLineRegion( cvPolyData *src, int id, cvPolyData **dst );
 
-SV_EXPORT_SYSGEOM int sys_geom_Pick( cvPolyData *src, double pos[], cvPolyData **dst );
-
 SV_EXPORT_SYSGEOM int sys_geom_Reduce( cvPolyData *src, double tol, cvPolyData **dst );
 
 SV_EXPORT_SYSGEOM int sys_geom_ReverseAllCells( cvPolyData *src, cvPolyData **dst );

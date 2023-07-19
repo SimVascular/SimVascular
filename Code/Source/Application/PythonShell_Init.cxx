@@ -54,8 +54,6 @@
 #undef GetObject
 #endif
 
-#include "sv2_globals.h"
-
 #ifdef WIN32
 #include <windows.h>
 #include <tchar.h>

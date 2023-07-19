@@ -29,18 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file sv_TetGenAdapt.cxx
- *  @brief The implementations of functions in cvTetGenAdapt
- *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- */
-
 #include "sv_TetGenAdapt.h"
 #include "sv_tetgenmesh_utils.h"
-//#include "sv_mesh_init.h"
 
 #include "sv_adapt_utils.h"
 
@@ -55,7 +45,6 @@
 
 #include "sv_Repository.h"
 #include "sv_RepositoryData.h"
-#include "sv2_globals.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -64,14 +53,8 @@
 #endif
 
 #include <iostream>
-#ifdef SV_USE_PYTHON
-#include "Python.h"
-#include "sv_mesh_init_py.h"
-#endif
 
-
-cvTetGenAdapt::cvTetGenAdapt()
-  : cvAdaptObject(KERNEL_TETGEN)
+cvTetGenAdapt::cvTetGenAdapt() : cvAdaptObject(KERNEL_TETGEN)
 {
   meshobject_ = NULL;
   inmesh_  = NULL;
@@ -101,8 +84,7 @@ cvTetGenAdapt::cvTetGenAdapt()
   errormetric_ = NULL;
 }
 
-cvTetGenAdapt::cvTetGenAdapt( const cvTetGenAdapt& Adapt)
-  : cvAdaptObject( KERNEL_TETGEN)
+cvTetGenAdapt::cvTetGenAdapt( const cvTetGenAdapt& Adapt) : cvAdaptObject( KERNEL_TETGEN)
 {
   Copy(Adapt);
 }
@@ -110,9 +92,6 @@ cvTetGenAdapt::cvTetGenAdapt( const cvTetGenAdapt& Adapt)
 
 cvTetGenAdapt::~cvTetGenAdapt()
 {
-  if (meshobject_ != NULL)
-    gRepository->UnRegister(meshobject_->GetName());
-
   if (inmesh_ != NULL)
     inmesh_->Delete();
   if (insurface_mesh_ != NULL)
@@ -147,241 +126,6 @@ int cvTetGenAdapt::Copy( const cvAdaptObject& src)
 
   return SV_OK;
 }
-
-#ifdef NOT_ADAMS_CREATEINTERNALMESHOBJECT_CODE
-
-#include "sv_TetGenMeshObject.h"
-
-// -----------------------
-//  CreateInternalMeshObject
-// -----------------------
-//#ifdef SV_USE_TCL
-#if 0 
-int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
-		char *meshFileName,
-		char *solidFileName)
-{
-  if (meshobject_ != NULL)
-  {
-    fprintf(stderr,"Cannot create a mesh object, one already exists\n");
-    return SV_ERROR;
-  }
-
-  char* mesh_name = "/adapt/internal/meshobject";
-
-  char evalmestr[1024];
-
-  if ( gRepository->Exists(mesh_name) ) {
-    fprintf(stderr,"Object %s already exists\n",mesh_name);
-    return SV_ERROR;
-  }
-
-  /*
-  evalmestr[0]='\0';
-  sprintf(evalmestr,"%s %s","repos_exists -obj ",mesh_name);
-
-  if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
-    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-    return SV_ERROR;
-  }
-
-  if(strcmp(Tcl_GetStringResult(interp),"1")) {
-    fprintf(stderr,"Object %s already exists\n",mesh_name);
-    return SV_ERROR;
-  }
-  */
-
-  evalmestr[0]='\0';
-  sprintf(evalmestr,"%s","mesh_setKernel -name TetGen");
-
-  if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
-    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-    return SV_ERROR;
-  }
-
-  evalmestr[0]='\0';
-  sprintf(evalmestr,"%s %s","mesh_newObject -result ",mesh_name);
-
-  if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
-    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-    return SV_ERROR;
-  }
-
-  if (solidFileName != NULL)
-  {
-    evalmestr[0]='\0';
-    sprintf(evalmestr,"%s %s %s",mesh_name," LoadModel -file ",solidFileName);
-
-    if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
-      fprintf(stderr,"Error loading solid model in internal object creation\n");
-      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-      return SV_ERROR;
-    }
-  }
-
-  if (meshFileName != NULL)
-  {
-    evalmestr[0]='\0';
-    sprintf(evalmestr,"%s %s %s",mesh_name," LoadMesh -file ",meshFileName);
-
-    if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
-      fprintf(stderr,"Error loading mesh in internal object creation\n");
-      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-      return SV_ERROR;
-    }
-  }
-
-  meshobject_ = dynamic_cast<cvTetGenMeshObject*>(gRepository->GetObject(mesh_name));
-
-  return SV_OK;
-
-}
-#endif
-#else
-
-//#ifdef SV_USE_TCL
-#if 0 
-// -----------------------
-//  CreateInternalMeshObject
-// -----------------------
-int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
-		char *meshFileName,
-		char *solidFileName)
-{
-  if (meshobject_ != NULL)
-  {
-    fprintf(stderr,"Cannot create a mesh object, one already exists\n");
-    return SV_ERROR;
-  }
-
-  char* mesh_name = "/adapt/internal/meshobject";
-  if ( gRepository->Exists(mesh_name) ) {
-    fprintf(stderr,"Object %s already exists\n",mesh_name);
-    return TCL_ERROR;
-  }
-  cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("TetGen");
-  meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,meshFileName,solidFileName);
-  if ( meshobject_ == NULL ) {
-    fprintf(stderr,"Mesh Object is null after instantiation!\n");
-    return SV_ERROR;
-  }
-
-  int reg_status = gRepository->Register(mesh_name, meshobject_ );
-  // Register the mesh:
-  if ( reg_status == 0 ) {
-    Tcl_AppendResult( interp, "error registering obj ", mesh_name,
-        	      " in repository", (char *)NULL );
-    fprintf(stderr,"Error when registering\n");
-    delete meshobject_;
-    return SV_ERROR;
-  }
-  meshobject_->SetName(mesh_name);
-  Tcl_SetResult( interp, meshobject_->GetName(), TCL_VOLATILE );
-  Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvMesh_ObjectCmd,
-        	     (ClientData)meshobject_, fakeDeleteMesh );
-
-  if (solidFileName != NULL)
-  {
-    if (this->LoadModel(solidFileName) != SV_OK)
-    {
-      fprintf(stderr,"Error loading solid model in internal object creation\n");
-      return SV_ERROR;
-    }
-  }
-  if (meshFileName != NULL)
-  {
-    if (this->LoadMesh(meshFileName) != SV_OK)
-    {
-      fprintf(stderr,"Error loading mesh in internal object creation\n");
-      return SV_ERROR;
-    }
-  }
-
-  return SV_OK;
-}
-#endif
-#endif
-
-#ifdef SV_USE_PYTHON
-// -----------------------
-//  CreateInternalMeshObject for python
-// -----------------------
-int cvTetGenAdapt::CreateInternalMeshObject(
-		char *meshFileName,
-		char *solidFileName)
-{
-  if (meshobject_ != NULL)
-  {
-    fprintf(stderr,"Cannot create a mesh object, one already exists\n");
-    return SV_ERROR;
-  }
-
-  char* mesh_name = "adaptInternalMeshobject";
-  if ( gRepository->Exists(mesh_name) ) {
-    fprintf(stderr,"Object %s already exists\n",mesh_name);
-    return TCL_ERROR;
-  }
-  cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("TetGen");
-  meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject(meshFileName,solidFileName);
-  if ( meshobject_ == NULL ) {
-    fprintf(stderr,"Mesh Object is null after instantiation!\n");
-    return SV_ERROR;
-  }
-
-  char evalmestr[1024];
-  PyObject* mod=PyImport_ImportModule("MeshObject");
-  PyObject* globals=PyModule_GetDict(mod);
-
-  evalmestr[0]='\0';
-  sprintf(evalmestr,"SetKernel('TetGen')");
-
-  if (!PyRun_String(evalmestr, Py_single_input, globals, globals))
-  {
-    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-    return SV_ERROR;
-  }
-
-  evalmestr[0]='\0';
-  sprintf(evalmestr,"%s=pyMeshObject()",mesh_name);
-  if (!PyRun_String(evalmestr, Py_single_input, globals, globals))
-  {
-    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-    return SV_ERROR;
-  }
-
-  evalmestr[0]='\0';
-  sprintf(evalmestr,"%s.NewObject('%s')",mesh_name,mesh_name);
-  if (!PyRun_String(evalmestr, Py_single_input, globals, globals))
-  {
-    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-    return SV_ERROR;
-  }
-  if (solidFileName != NULL)
-  {
-    evalmestr[0]='\0';
-    sprintf(evalmestr,"%s.LoadModel('%s')",mesh_name,solidFileName);
-
-    if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
-    {
-      fprintf(stderr,"Error loading solid model in internal object creation\n");
-      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-      return SV_ERROR;
-    }
-  }
-  if (meshFileName != NULL)
-  {
-    evalmestr[0]='\0';
-    sprintf(evalmestr,"%s.LoadMesh('%s')",mesh_name,meshFileName);
-    if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
-    {
-      fprintf(stderr,"Error loading mesh in internal object creation\n");
-      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-      return SV_ERROR;
-    }
-  }
-  return SV_OK;
-}
-#endif
 
 // -----------------------
 //  LoadModel

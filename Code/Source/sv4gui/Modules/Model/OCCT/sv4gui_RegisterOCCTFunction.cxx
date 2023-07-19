@@ -33,8 +33,6 @@
 
 #include <sv4guiModuleModelOCCTExports.h>
 
-#include "sv2_globals.h"
-
 #include "sv4gui_ModelElementFactory.h"
 #include "sv4gui_ModelElementOCCT.h"
 
@@ -52,7 +50,7 @@ sv4guiRegisterOCCTFunction::sv4guiRegisterOCCTFunction()
         sv4guiModelElementFactory::RegisterFileExtensions(type, tempme->GetFileExtensions());
         delete tempme;
 
-        Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
+        Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(cvOCCTSolidModel::gOCCTManager);
         OCCTManager = XCAFApp_Application::GetApplication();
         Handle(TDocStd_Document) doc;
         OCCTManager->NewDocument("MDTV-XCAF",doc);

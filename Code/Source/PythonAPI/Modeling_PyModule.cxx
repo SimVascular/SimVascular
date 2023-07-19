@@ -61,7 +61,6 @@
 #undef GetObject
 #endif
 
-#include "sv2_globals.h"
 #include "Python.h"
 #include <structmember.h>
 #include "vtkPythonUtil.h"

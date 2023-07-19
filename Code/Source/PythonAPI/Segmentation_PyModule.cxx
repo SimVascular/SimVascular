@@ -96,8 +96,6 @@
 #undef GetObject
 #endif
 
-#include "sv2_globals.h"
-
 // Exception type used by PyErr_SetString() to set the for the error indicator.
 static PyObject * PyRunTimeErr;
 
