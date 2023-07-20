@@ -399,7 +399,7 @@ PyTetGenAdaptInit(PyTetGenAdapt* self, PyObject* args, PyObject *kwds)
   self->super.adaptive_mesher = new cvTetGenAdapt();
   // Create a cvTetGenMeshObject object that is used to perform
   // the actual adaptive mesh generation.
-  self->mesher = new cvTetGenMeshObject(NULL);
+  self->mesher = new cvTetGenMeshObject();
   self->meshGenerated = false;
   numObjs += 1;
   return 0;

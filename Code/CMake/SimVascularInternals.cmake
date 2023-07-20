@@ -35,7 +35,6 @@ set(SV_LIBS
   GEOM
   IMAGE
   ITK_LSET
-  LSET
   MATH
   PATH
   COMMON

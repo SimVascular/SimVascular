@@ -89,7 +89,6 @@ public:
 
   // Global variables that handle management of solid model kernels.
   static SolidModel_KernelT gCurrentKernel;
-  //static cvFactoryRegistrar gRegistrar;
 
   // Modeler operations:
   virtual void Clear() = 0;

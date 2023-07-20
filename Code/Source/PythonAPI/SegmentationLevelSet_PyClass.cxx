@@ -38,12 +38,9 @@
 #include "sv3_Contour.h"
 #include "Segmentation_PyModule.h"
 #include "sv3_LevelSetContour.h"
-#include "sv_arg.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "sv_Repository.h"
-#include "sv_arg.h"
 #include "sv_misc_utils.h"
 
 #include "Python.h"

@@ -38,7 +38,7 @@ set(export_file_name sv3PathExports.h)
 
 list(APPEND CORELIBS ${lib})
 
-include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH} ${TINYXML_INCLUDE_DIR})
+include_directories(${TINYXML_INCLUDE_DIR})
 
 set(CXXSRCS sv3_PathUtils.cxx sv3_PathElement.cxx sv3_PathGroup.cxx sv3_VtkParametricSpline.cxx sv3_Spline.cxx sv3_PathIO.cxx 
   )
@@ -48,7 +48,7 @@ set(HDRS sv3_PathUtils.h sv3_PathElement.h sv3_PathGroup.h sv3_VtkParametricSpli
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 target_link_libraries(${lib}
-  ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+  ${VTK_LIBRARIES} 
   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_COMMON_NAME})
 
 if(SV_USE_TINYXML)

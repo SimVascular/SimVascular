@@ -44,7 +44,7 @@ SET(HDRS sv_MeshObject.h sv_MeshSystem.h)
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
-	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+	${VTK_LIBRARIES} 
 	${ZLIB_LIBRARY}
 	${SV_LIB_GLOBALS_NAME} ${SV_LIB_REPOSITORY_NAME}
 	${SV_LIB_SOLID_NAME}

@@ -38,7 +38,7 @@ set(export_file_name sv3SegmentationExports.h)
 
 list(APPEND CORELIBS ${lib})
 
-include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH} ${TINYXML_INCLUDE_DIR})
+include_directories(${TINYXML_INCLUDE_DIR})
 
 set(CXXSRCS sv3_Contour.cxx sv3_LevelSetContour.cxx sv3_SegmentationUtils.cxx sv3_CircleContour.cxx sv3_PolygonContour.cxx sv3_SplinePolygonContour.cxx sv3_ThresholdContour.cxx)
 set(HDRS sv3_Contour.h sv3_LevelSetContour.h sv3_SegmentationUtils.h sv3_CircleContour.h sv3_PolygonContour.h sv3_SplinePolygonContour.h sv3_ThresholdContour.h)
@@ -46,7 +46,7 @@ set(HDRS sv3_Contour.h sv3_LevelSetContour.h sv3_SegmentationUtils.h sv3_CircleC
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 target_link_libraries(${lib}
-  ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+  ${VTK_LIBRARIES} 
   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_GEOM_NAME} ${SV_LIB_COMMON_NAME} ${SV_LIB_ITK_LSET_NAME} ${SV_LIB_PATH_NAME})
 
 if(SV_USE_TINYXML)

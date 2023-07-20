@@ -36,7 +36,6 @@
 #include <sv3SegmentationExports.h>
 
 #include "sv3_Contour.h"
-#include "sv_RepositoryData.h"
 #include "sv3_PathElement.h"
 
 #include "vtkPolyData.h"

@@ -51,7 +51,7 @@ if(SV_USE_MMG)
 endif()
 
 target_link_libraries(${lib}
-   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+   ${VTK_LIBRARIES} 
    ${OPTLIBS}
    ${TETGEN_LIBRARY}
    ${ZLIB_LIBRARY}

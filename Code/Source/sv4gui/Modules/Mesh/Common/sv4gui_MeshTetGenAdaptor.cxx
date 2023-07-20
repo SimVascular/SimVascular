@@ -32,8 +32,7 @@
 #include "sv4gui_MeshTetGenAdaptor.h"
 
 
-sv4guiMeshTetGenAdaptor::sv4guiMeshTetGenAdaptor()
-    : m_cvTetGetMesh(new cvTetGenMeshObject(NULL))
+sv4guiMeshTetGenAdaptor::sv4guiMeshTetGenAdaptor() : m_cvTetGetMesh(new cvTetGenMeshObject())
     , m_cvTetGenAdaptor(new cvTetGenAdapt())
 {
     m_Type="TetGen";

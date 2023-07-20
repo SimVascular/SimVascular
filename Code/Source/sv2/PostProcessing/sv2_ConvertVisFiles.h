@@ -40,7 +40,6 @@
 #include "SimVascular.h"
 #include "svPostExports.h" // For exports
 
-#include "sv_RepositoryData.h"
 #include "sv_UnstructuredGrid.h"
 #include "sv_PolyData.h"
 

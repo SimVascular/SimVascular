@@ -38,7 +38,6 @@ set(export_file_name svGeometryExports.h)
 
 list(APPEND CORELIBS ${lib})
 
-include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
 set(CXXSRCS sv_sys_geom.cxx sv_ggems.cxx
 	sv_spline.cxx sv_integrate_surface.cxx)
@@ -48,7 +47,7 @@ set(HDRS sv_sys_geom.h sv_ggems.h
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
-	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+	${VTK_LIBRARIES} 
 	${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_REPOSITORY_NAME} ${SV_LIB_SOLID_NAME}
   ${SV_LIB_VTKSVBOOLEAN_NAME} ${SV_LIB_VTKSVGEOMETRY_NAME} ${SV_LIB_VTKSVMISC_NAME}
   ${SV_LIB_VTKSVNURBS_NAME}

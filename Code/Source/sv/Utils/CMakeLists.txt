@@ -41,18 +41,18 @@ list(APPEND CORELIBS ${lib})
 
 SET(CXXSRCS sv_misc_utils.cxx sv_vtk_utils.cxx
   sv_cgeom.cxx
-  sv_Math.cxx sv_arg.cxx
+  sv_Math.cxx 
   sv_FactoryRegistrar.cxx
   )
 SET(HDRS sv_misc_utils.h sv_vtk_utils.h
   sv_cgeom.h
-  sv_Math.h sv_arg.h sv_FactoryRegistrar.h
+  sv_Math.h sv_FactoryRegistrar.h
   )
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
-	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+	${VTK_LIBRARIES} 
 	${SV_LIB_GLOBALS_NAME}
   )
 

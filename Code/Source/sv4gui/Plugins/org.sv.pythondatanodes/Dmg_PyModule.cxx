@@ -52,12 +52,10 @@
 #include "PathPlanning_PyModule.h"
 #include "Modeling_PyModule.h"
 
-//#include "sv_Repository.h"
 #include "sv_PolyData.h"
 #include "sv_PolyDataSolid.h"
 #include "sv_StrPts.h"
 #include "sv_UnstructuredGrid.h"
-#include "sv_arg.h"
 #include "sv_VTK.h"
 #include "vtkPythonUtil.h"
 #include "PyUtils.h"

@@ -38,15 +38,13 @@ set(export_file_name svRepositoryExports.h)
 
 list(APPEND CORELIBS ${lib})
 
-include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
-
-SET(CXXSRCS sv_Repository.cxx sv_RepositoryData.cxx
+SET(CXXSRCS sv_RepositoryData.cxx
   sv_DataObject.cxx sv_PolyData.cxx
   sv_StrPts.cxx sv_UnstructuredGrid.cxx
   sv_DataSet.cxx
   )
 
-SET(HDRS sv_Repository.h sv_RepositoryData.h
+SET(HDRS sv_RepositoryData.h
   sv_DataObject.h sv_PolyData.h
   sv_StrPts.h sv_UnstructuredGrid.h
   sv_DataSet.h
@@ -70,7 +68,7 @@ generate_export_header(${lib}
 
 
 target_link_libraries(${lib}
-  ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+  ${VTK_LIBRARIES} 
   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME}
   )
 

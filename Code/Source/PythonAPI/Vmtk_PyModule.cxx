@@ -43,7 +43,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "sv_Repository.h"
 #include "sv_RepositoryData.h"
 #include "sv_PolyData.h"
 #include "sv_vmtk_utils.h"

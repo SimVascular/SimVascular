@@ -46,15 +46,12 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "sv_Repository.h"
-#include "sv_RepositoryData.h"
 #include "sv_PolyData.h"
 #include "Geometry_PyModule.h"
 #include "sv_sys_geom.h"
 #include "sv_SolidModel.h"
 #include "Modeling_PyModule.h"
 #include "sv_integrate_surface.h"
-#include "sv_arg.h"
 #include "sv_misc_utils.h"
 #include "sv_vtk_utils.h"
 #include "vtkSmartPointer.h"
@@ -1203,34 +1200,6 @@ PyInit_PyGeometry(void)
   PyModule_AddObject(module, GEOMETRY_LOFT_NURBS_OPTIONS_CLASS, (PyObject*)&PyLoftNurbsOptionsType);
 
   return module;
-}
-
-#endif
-
-
-//---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 2
-//---------------------------------------------------------------------------
-
-#if PYTHON_MAJOR_VERSION == 2
-
-//------------
-// initpyGeom
-//------------
-//
-PyMODINIT_FUNC initpyGeom(void)
-{
-  PyObject *pyC;
-  if ( gRepository == NULL ) {
-    gRepository = new cvRepository();
-    fprintf( stdout, "gRepository created from sv_geom_init\n" );
-  }
-  pyC = Py_InitModule("pyGeom",pyGeom_methods);
-
-  PyRunTimeErr = PyErr_NewException("pyGeom.error",NULL,NULL);
-  Py_INCREF(PyRunTimeErr);
-  PyModule_AddObject(pyC,"error",PyRunTimeErr);
-
 }
 
 #endif

@@ -43,9 +43,6 @@
 #include "vtkPointData.h"
 #include "vtkSmartPointer.h"
 
-#include "sv_Repository.h"
-#include "sv_RepositoryData.h"
-
 #ifdef WIN32
 #include <windows.h>
 #include <tchar.h>

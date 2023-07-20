@@ -34,7 +34,6 @@
 
 #include "SimVascular.h"
 #include "svImageExports.h" // For exports
-#include "sv_Repository.h"
 #include "sv_PolyData.h"
 #include "sv_VTK.h"
 
