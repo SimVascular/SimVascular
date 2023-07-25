@@ -100,6 +100,15 @@ endif()
 
 #-----------------------------------------------------------------------------
 # TCL
+# proj: TCL
+# version: ${SV_EXTERNALS_TCL_VERSION}
+# use: ON
+# shared: ON
+# dirname: tcl
+# install_dirname: tcltk
+#
+# [NOTE:DaveP] set use=OFF does not work.
+#sv_externals_add_new_external(TCL ${SV_EXTERNALS_TCL_VERSION} OFF ON tcl tcltk)
 sv_externals_add_new_external(TCL ${SV_EXTERNALS_TCL_VERSION} ON ON tcl tcltk)
 #-----------------------------------------------------------------------------
 

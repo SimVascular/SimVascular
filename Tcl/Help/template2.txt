@@ -1,6 +1,0 @@
-#A second help page
-##A second help
-
-
-
-

@@ -80,10 +80,12 @@ if(NOT SV_INSTALL_DOXYGEN_DIR)
   set(SV_INSTALL_DOXYGEN_DIR ${SV_INSTALL_DOC_DIR}/doxygen)
 endif()
 
-if(NOT SV_INSTALL_TCL_CODE_DIR)
-  #this refers to simvascular TCL code, not tcltk itself
-  set(SV_INSTALL_TCL_CODE_DIR Tcl)
-endif()
+#[NOTE:DaveP] don't need this i think.
+#if(NOT SV_INSTALL_TCL_CODE_DIR)
+#  this refers to simvascular TCL code, not tcltk itself
+#  set(SV_INSTALL_TCL_CODE_DIR Tcl)
+#endif()
+
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

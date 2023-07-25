@@ -148,7 +148,7 @@ option(SV_USE_TINYXML "Use TinyXML" ON)
 
 option(SV_USE_PYTHON "Use Python" ON)
 
-option(SV_USE_TCL "Use Tcl" ON)
+option(SV_USE_TCL "Use Tcl" OFF)
 
 option(SV_USE_SOLVERIO "Use SolverIO" OFF)
 #-----------------------------------------------------------------------------
