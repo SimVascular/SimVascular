@@ -38,7 +38,7 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VMTK_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VMTK_INCDIR) $(VTK_INCDIRS) \
 	   $(PYTHON_INCDIR)
 
 ifeq ($(SV_USE_OPENCASCADE),1)
@@ -60,13 +60,6 @@ HDRS	= \
 CXXSRCS	= \
   sv_sys_geom.cxx sv_ggems.cxx \
   sv_spline.cxx sv_integrate_surface.cxx
-
-DLLHDRS = sv_geom_init.h
-
-DLLSRCS = sv_geom_init.cxx
-
-SVPYHDRS = sv_geom_init_py.h
-SVPYSRCS = sv_geom_init_py.cxx
 
 SV_PYTHON_MODULE_NAME = pyGeom
 

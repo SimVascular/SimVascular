@@ -35,7 +35,7 @@ TOP=../../../../BuildWithMake
 include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
-	   $(TCLTK_INCDIR) $(PYTHON_INCDIR) $(DEFINES)
+	   $(PYTHON_INCDIR) $(DEFINES)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_UTILS
 CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_UTILS
@@ -49,12 +49,6 @@ HDRS	= sv_misc_utils.h sv_vtk_utils.h \
 
 CXXSRCS	= sv_misc_utils.cxx sv_vtk_utils.cxx \
 	  sv_cgeom.cxx sv_Math.cxx sv_arg.cxx sv_FactoryRegistrar.cxx
-
-DLLHDRS = sv_utils_init.h sv_math_init.h
-DLLSRCS = sv_utils_init.cxx sv_math_init.cxx
-
-SVPYHDRS = sv_utils_init_py.h sv_math_init_py.h
-SVPYSRCS = sv_utils_init_py.cxx sv_math_init_py.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_UTILS_NAME)
 

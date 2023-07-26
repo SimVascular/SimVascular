@@ -38,7 +38,7 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) \
            $(ZLIB_INCDIR) $(TETGEN_INCDIR) \
            $(ITK_INCDIRS) $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) $(SV_MMG_INCDIR) \
            $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) $(QT_DEFS) \
@@ -47,11 +47,6 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
 HDRS	= 
 
 CXXSRCS = main.cxx SimVascular_Init.cxx 
-
-ifeq ($(SV_USE_TCL),1)
-  HDRS += svTcl_AppInit.h
-  CXXSRCS += svTcl_AppInit.cxx
-endif
 
 ifeq ($(SV_USE_WIN32_REGISTRY),1)
   HDRS += sv_use_win32_registry.h
@@ -113,10 +108,6 @@ endif
 ifeq ($(CLUSTER), x64_macosx)
   LINK_EXE_LFLAGS += $(QT_LIBS)
 endif
-endif
-
-ifeq ($(SV_USE_TCL),1)
-  LINK_EXE_LFLAGS += $(TCLTK_LIBS)
 endif
 
 ifeq ($(SV_USE_PYTHON),1)

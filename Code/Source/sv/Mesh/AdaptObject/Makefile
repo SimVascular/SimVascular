@@ -65,18 +65,11 @@ endif
 
 CXXFLAGS += $(LOCAL_INCDIR) \
 	    $(VTK_INCDIRS) \
-	    $(TCLTK_INCDIR) \
             $(PYTHON_INCDIR)
 
 HDRS	= sv_AdaptObject.h sv_adapt_utils.h sv_eispack.h
 
 CXXSRCS	= sv_AdaptObject.cxx sv_adapt_utils.cxx sv_eispack.cxx
-
-DLLHDRS = sv_adapt_init.h
-DLLSRCS = sv_adapt_init.cxx
-
-SVPYHDRS = sv_adapt_init_py.h
-SVPYSRCS = sv_adapt_init_py.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_ADAPTOR_NAME)
 

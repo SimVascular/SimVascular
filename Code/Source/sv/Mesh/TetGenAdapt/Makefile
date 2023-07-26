@@ -41,7 +41,6 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
-	   $(TCLTK_INCDIR) \
 	   $(PYTHON_INCDIR)
 
 # double hack for now, want to make code consistent with meshsim code
@@ -70,12 +69,6 @@ endif
 HDRS	= sv_TetGenAdapt.h
 
 CXXSRCS = sv_TetGenAdapt.cxx
-
-DLLHDRS = sv_tetgen_adapt_init.h
-DLLSRCS = sv_tetgen_adapt_init.cxx
-
-SVPYHDRS = sv_tetgen_adapt_init_py.h
-SVPYSRCS = sv_tetgen_adapt_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_ADAPTOR_NAME)$(LIBLINKEXT) \
           $(SOLVERIO_LIB)

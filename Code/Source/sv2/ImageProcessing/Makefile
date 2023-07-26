@@ -34,7 +34,7 @@ TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(PYTHON_INCDIR) $(VTK_INCDIRS)
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(PYTHON_INCDIR) $(VTK_INCDIRS)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_IMAGE
 CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_IMAGE
@@ -49,12 +49,6 @@ CXXSRCS	= sv2_image.cxx sv2_read_header.cxx sv2_decode.cxx \
 	  sv2_calc_correction_eqn.cxx \
 	  sv2_img_threshold.cxx sv2_DistanceMap.cxx \
 	  sv2_mask_image_in_place.cxx
-
-DLLHDRS = sv2_image_init.h
-DLLSRCS = sv2_image_init.cxx
-
-SVPYHDRS = sv2_image_init_py.h
-SVPYSRCS = sv2_image_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \

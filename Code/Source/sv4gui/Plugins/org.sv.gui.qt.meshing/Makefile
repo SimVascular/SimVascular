@@ -37,7 +37,6 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
-	   $(TCLTK_INCDIR) \
            $(PYTHON_INCDIR) \
            $(ZLIB_INCDIR) \
            $(TETGEN_INCDIR) \
