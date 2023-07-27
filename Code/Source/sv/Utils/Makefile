@@ -30,6 +30,8 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+$(info ########## sv/Utils ##########)
+
 TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
@@ -44,16 +46,17 @@ CREATE_EXPORTS_CV_FILE_H=svUtilsExports.h
 CXXFLAGS += -DSV_EXPORT_UTILS_COMPILE
 
 HDRS	= sv_misc_utils.h sv_vtk_utils.h \
-	  sv_cgeom.h sv_Math.h sv_arg.h sv_FactoryRegistrar.h
+	  sv_cgeom.h sv_Math.h sv_FactoryRegistrar.h
 
 
 CXXSRCS	= sv_misc_utils.cxx sv_vtk_utils.cxx \
-	  sv_cgeom.cxx sv_Math.cxx sv_arg.cxx sv_FactoryRegistrar.cxx
+	  sv_cgeom.cxx sv_Math.cxx sv_FactoryRegistrar.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_UTILS_NAME)
 
 SV_PYTHON_MODULE_NAME = pyMath
 
-DLLLIBS = $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
+DLLLIBS = 
+#DLLLIBS = $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
 include $(TOP)/targetlib.mk
