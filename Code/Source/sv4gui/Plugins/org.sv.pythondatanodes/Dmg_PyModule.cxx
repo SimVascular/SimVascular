@@ -735,7 +735,6 @@ Dmg_get_path(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args, api.format, &pathName)) {
       return api.argsError();
   }
-  std::cout << "[Dmg_get_path] Path name: " << pathName << std::endl;
 
   // Get the Data Storage node.
   auto dataStorage = GetDataStorage(api);
@@ -759,13 +758,11 @@ Dmg_get_path(PyObject* self, PyObject* args)
       return nullptr;
   }
 
-  std::cout << "[Dmg_get_path] Get path from node ... " << std::endl;
   auto path = dynamic_cast<sv4guiPath*>(node->GetData());
   if (path == nullptr) {
       api.error("The Path node '" + std::string(pathName) + "' does not have data.");
       return nullptr;
   }
-  std::cout << "[Dmg_get_path] Path: "<< path  << std::endl;
 
   // Create a copy of the path.
   auto pathElem = path->GetPathElement();
@@ -903,11 +900,9 @@ Dmg_add_segmentation(PyObject* self, PyObject* args, PyObject* kwargs)
   }
 
   // Get the Segmentation node.
-  std::cout << "##### GetToolNode" << std::endl;
   auto segNode = GetToolNode(dataStorage, projFolderNode, SvDataManagerNodes::Segmentation);
 
   // Get a list of segmentation objects.
-  std::cout << "##### Get a list of segmentation objects" << std::endl;
   int numSegmentations = PyList_Size(segList);
   std::vector<PySegmentation*> segmentations;
   for (int i = 0; i < numSegmentations; i++) {
@@ -916,7 +911,6 @@ Dmg_add_segmentation(PyObject* self, PyObject* args, PyObject* kwargs)
   }
 
   // Add the segmentation data node.
-  std::cout << "##### AddSegmentationDataNode " << std::endl;
   if (AddSegmentationDataNode(dataStorage, segmentations, segNode, segName, pathName, path) == SV_ERROR) {
       api.error("Error adding the segmentation data node '" + std::string(segName) + "' to the parent node '" +
             segNode->GetName() + "'.");
@@ -1119,14 +1113,11 @@ Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
   int time = 0;
   auto solidModelElement = model->GetModelElement(time);
   int numFaces = solidModelElement->GetFaceNumber();
-  std::cout << "[add_model] numFaces: " << numFaces << std::endl;
 
   auto mepd = dynamic_cast<sv4guiModelElementPolyData*>(solidModelElement);
   double angle = 30.0;
   bool success = mepd->ExtractFaces(angle);
   numFaces = solidModelElement->GetFaceNumber();
-  std::cout << "[add_model] numFaces: " << numFaces << std::endl;
-                                
 
   return SV_PYTHON_OK;
 }
