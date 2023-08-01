@@ -1,7 +1,7 @@
 #!/bin/bash
 
-build_dir=build2
-rm -rf build2
+build_dir=build
+rm -rf build
 mkdir $build_dir
 
 # Python libraries are not found by the interpreter
