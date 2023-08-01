@@ -34,7 +34,7 @@ TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(PYTHON_INCDIR) $(VTK_INCDIRS) \
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(PYTHON_INCDIR) $(VTK_INCDIRS) \
 	   $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_OPENCASCADE
@@ -45,12 +45,6 @@ CXXFLAGS += -DSV_EXPORT_OPENCASCADE_COMPILE
 
 HDRS	= sv_OCCTSolidModel.h sv_occtsolid_utils.h
 CXXSRCS	= sv_OCCTSolidModel.cxx sv_occtsolid_utils.cxx
-
-DLLHDRS = sv_occt_init.h
-DLLSRCS = sv_occt_init.cxx
-
-SVPYHDRS = sv_occt_init_py.h
-SVPYSRCS = sv_occt_init_py.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_OpenCASCADE_SOLID_NAME)
 

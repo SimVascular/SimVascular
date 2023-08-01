@@ -41,11 +41,10 @@ list(APPEND CORELIBS ${lib})
 set(CXXSRCS sv2_ConvertVisFiles.cxx sv2_CalculateWallShearStress.cxx sv2_CalculateTKE.cxx)
 set(HDRS sv2_ConvertVisFiles.h sv2_CalculateWallShearStress.h sv2_CalculateTKE.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv2_post_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
-	${VTK_LIBRARIES} ${TCL_LIBRARY}
-	${TK_LIBRARY}
+	${VTK_LIBRARIES} 
 	${ZLIB_LIBRARY}
 	${SV_LIB_GLOBALS_NAME} ${SV_LIB_REPOSITORY_NAME})
 

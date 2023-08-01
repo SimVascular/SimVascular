@@ -43,10 +43,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "sv_Repository.h"
 #include "sv_RepositoryData.h"
 #include "sv_PolyData.h"
-#include "sv_vmtk_utils_init.h"
 #include "sv_vmtk_utils.h"
 #include "sv_SolidModel.h"
 #include "sv_vtk_utils.h"
@@ -58,8 +56,6 @@
 #ifdef GetObject
 #undef GetObject
 #endif
-
-#include "sv2_globals.h"
 
 // Exception type used by PyErr_SetString() to set the for the error indicator.
 static PyObject * PyRunTimeErr;

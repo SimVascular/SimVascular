@@ -31,7 +31,6 @@
 
 #include "sv3_ITKLevelSet.h"
 
-
 //Filters needed to generate seed image in ITK
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkBinaryBallStructuringElement.h"
@@ -67,8 +66,6 @@
 #include <vtkImageCast.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkContourFilter.h>
-
-
 
 cvITKLevelSet::cvITKLevelSet(){
 
@@ -265,19 +262,19 @@ int cvITKLevelSet::ComputeGACLevelSet(float expFactorRising)
 	{
 		std::cerr << "ExceptionObject caught !" << std::endl;
 		std::cerr << "LevelSet Error! :"<<err << std::endl;
-		return TCL_ERROR;
+		return SV_ERROR;
 	}
 	catch(const std::exception& ex)
 	{
 		std::cerr << "std exception caught !" << std::endl;
 		std::cerr << "LevelSet Error! :"<<ex.what() << std::endl;
-		return TCL_ERROR;
+		return SV_ERROR;
 
 	}
 	catch(...)
 	{
 		std::cerr << "Unknown Error!" << std::endl;
-		return TCL_ERROR;
+		return SV_ERROR;
 
 	}
 
@@ -292,7 +289,7 @@ int cvITKLevelSet::ComputeGACLevelSet(float expFactorRising)
 	{
 		std::cerr << "ExceptionObject caught !" << std::endl;
 		std::cerr << "LevelSet Error! :"<<err << std::endl;
-		return TCL_ERROR;
+		return SV_ERROR;
 	}
 
 	//copy seed to VTK
@@ -384,7 +381,7 @@ int cvITKLevelSet::ComputeGACLevelSet(float expFactorRising)
 
 #endif
 
-	return TCL_OK;
+	return SV_OK;
 
 
 }
@@ -435,19 +432,19 @@ int cvITKLevelSet::ComputePhaseOneLevelSet(float kc,
 	{
 		std::cerr << "ExceptionObject caught !" << std::endl;
 		std::cerr << "LevelSet Error! :"<<err << std::endl;
-		return TCL_ERROR;
+		return SV_ERROR;
 	}
 	catch(const std::exception& ex)
 	{
 		std::cerr << "std exception caught !" << std::endl;
 		std::cerr << "LevelSet Error! :"<<ex.what() << std::endl;
-		return TCL_ERROR;
+		return SV_ERROR;
 
 	}
 	catch(...)
 	{
 		std::cerr << "Unknown Error!" << std::endl;
-		return TCL_ERROR;
+		return SV_ERROR;
 
 	}
 	DeallocateFrontObjs();
@@ -461,7 +458,7 @@ int cvITKLevelSet::ComputePhaseOneLevelSet(float kc,
 	{
 		std::cerr << "ExceptionObject caught !" << std::endl;
 		std::cerr << "LevelSet Error! :"<<err << std::endl;
-		return TCL_ERROR;
+		return SV_ERROR;
 	}
 
 	//copy seed to VTK
@@ -549,7 +546,7 @@ int cvITKLevelSet::ComputePhaseOneLevelSet(float kc,
 	}
 #endif
 
-	return TCL_OK;
+	return SV_OK;
 }
 int cvITKLevelSet::ComputePhaseTwoLevelSet(float kupp,float klow)
 {
@@ -595,19 +592,19 @@ int cvITKLevelSet::ComputePhaseTwoLevelSet(float kupp,float klow)
 	{
 		std::cerr << "ExceptionObject caught !" << std::endl;
 		std::cerr << "LevelSet Error! :"<<err << std::endl;
-		return TCL_ERROR;
+		return SV_ERROR;
 	}
 	catch(const std::exception& ex)
 	{
 		std::cerr << "std exception caught !" << std::endl;
 		std::cerr << "LevelSet Error! :"<<ex.what() << std::endl;
-		return TCL_ERROR;
+		return SV_ERROR;
 
 	}
 	catch(...)
 	{
 		std::cerr << "Unknown Error!" << std::endl;
-		return TCL_ERROR;
+		return SV_ERROR;
 
 	}
 
@@ -697,7 +694,7 @@ int cvITKLevelSet::ComputePhaseTwoLevelSet(float kupp,float klow)
 	}
 #endif
 
-	return TCL_OK;
+	return SV_OK;
 
 
 }

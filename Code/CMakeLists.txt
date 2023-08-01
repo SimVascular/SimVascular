@@ -142,8 +142,11 @@ set(SV_CORE_EXECUTABLE_DIRS "")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# [NOTE:DaveP] I'm not sure what this is for but commenting it 
+# out seems OK.
+#
 # Tcl Setup
-include(SimVascularTclSetup)
+#include(SimVascularTclSetup)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -170,7 +173,6 @@ endif(DOXYGEN_FOUND)
 # Basic Core Libs
 set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
   "Source/PythonAPI"
-  "Source/sv2/Globals"
   "Source/sv/Utils"
   "Source/sv/Repository"
   "Source/sv3/Path"
@@ -185,7 +187,6 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
   "Source/vtkSV/Modules/Segmentation"
   "Source/sv2/ImageProcessing"
   "Source/sv/Geometry"
-  "Source/sv2/Segmentation"
   "Source/sv/Model/SolidModel"
   "Source/sv2/PostProcessing"
   "Source/sv/Mesh/MeshObject"

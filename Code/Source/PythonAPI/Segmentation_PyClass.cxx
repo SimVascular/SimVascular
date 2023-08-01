@@ -561,12 +561,6 @@ Segmentation_create_smooth_contour(PySegmentation* self, PyObject* args)
     //Contour *newContour = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, contour->GetPathPoint());
     newContour= contour->CreateSmoothedContour(fourierNumber);
 
-    if ( !( gRepository->Register(contourName, newContour))) {
-        delete newContour;
-        api.error("Could not add the new contour into the repository.");
-        return nullptr;
-    }
-
     Py_INCREF(newContour);
     PySegmentation* pyNewCt;
     pyNewCt = PyCreateSegmentationType();

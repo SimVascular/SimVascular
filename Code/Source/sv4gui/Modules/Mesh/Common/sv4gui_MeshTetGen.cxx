@@ -66,7 +66,7 @@ void sv4guiMeshTetGen::InitNewMesher()
     if(m_cvTetGenMesh!=nullptr)
         delete m_cvTetGenMesh;
 
-    m_cvTetGenMesh=new cvTetGenMeshObject(nullptr);
+    m_cvTetGenMesh = new cvTetGenMeshObject();
 }
 
 bool sv4guiMeshTetGen::SetModelElement(sv4guiModelElement* modelElement)

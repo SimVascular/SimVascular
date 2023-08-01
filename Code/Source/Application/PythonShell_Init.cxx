@@ -49,15 +49,10 @@
 #include <string.h>
 #include <iostream>
 
-#include "tcl.h"
-#include "tk.h"
-
 // The following is needed for Windows
 #ifdef GetObject
 #undef GetObject
 #endif
-
-#include "sv2_globals.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -86,8 +81,6 @@
 #else
 #define SV_PYTHON_MAXPATH 16384
 #endif
-
-#include "SimVascular_Init.h"
 
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY

@@ -175,7 +175,7 @@ SetOcctSolidTypeFields(PyTypeObject& solidType)
 void
 InitOcct()
 {
-  Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
+  Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(cvOCCTSolidModel::gOCCTManager);
   OCCTManager = XCAFApp_Application::GetApplication();
   Handle(TDocStd_Document) doc;
   OCCTManager->NewDocument("MDTV-XCAF", doc);

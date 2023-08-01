@@ -36,21 +36,21 @@ set(export_directive segitk)
 set(export_file_name svSegITKExports.h)
 
 list(APPEND PLUGINLIBS ${lib})
-include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH} ${TINYXML_INCLUDE_DIR})
+include_directories(${TINYXML_INCLUDE_DIR})
 
 set(CXXSRCS  sv3_ITKUtils.cxx sv3_ITKLevelSet.cxx)
-set(HDRS sv3_ITKLevelSet.h sv3_ITKLevelSetBase.h
+set(HDRS sv3_ITKLevelSet.h
         sv3_VascularPhaseOneLevelSetFunction.hxx
 	sv3_VascularPhaseOneLevelSetImageFilter.hxx
 	sv3_VascularPhaseTwoLevelSetFunction.hxx
 	sv3_VascularPhaseTwoLevelSetImageFilter.hxx
 	sv3_VascularLevelSetObserver.h
         sv3_ITKLset_ConnectVTKITK.h sv3_ITKLset_ITK_Macros.h
-        sv3_ITKLset_Macros.h sv3_ITKLset_TCL_Macros.h
+        sv3_ITKLset_Macros.h 
         sv3_ITKLset_VTK_Macros.h sv3_ITKLset_ImgInfo.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv3_ITKUtils_init.cxx sv3_ITKLset2d_init.cxx sv3_ITKLset3d_init.cxx sv3_ITKLset_init.cxx )
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
  ${SV_LIB_REPOSITORY_NAME}

@@ -60,9 +60,6 @@ public:
   int LogOff();
 
 protected:
-  #ifdef SV_USE_TCL
-  cvMeshObject* CreateMeshObject( Tcl_Interp *interp );
-  #endif
   #ifdef SV_USE_PYTHON
   cvMeshObject* CreateMeshObject();
   #endif

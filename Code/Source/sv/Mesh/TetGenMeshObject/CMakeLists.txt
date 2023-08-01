@@ -40,7 +40,7 @@ include_directories(${TETGEN_INCLUDE_DIR})
 SET(CXXSRCS sv_TetGenMeshObject.cxx sv_TetGenMeshSystem.cxx sv_tetgenmesh_utils.cxx)
 SET(HDRS sv_TetGenMeshObject.h sv_TetGenMeshSystem.h sv_tetgenmesh_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_tetgen_mesh_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 if(SV_USE_VMTK)
   SET(OPTLIBS ${SV_LIB_VMTK_UTILS_NAME})
@@ -51,7 +51,7 @@ if(SV_USE_MMG)
 endif()
 
 target_link_libraries(${lib}
-   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+   ${VTK_LIBRARIES} 
    ${OPTLIBS}
    ${TETGEN_LIBRARY}
    ${ZLIB_LIBRARY}

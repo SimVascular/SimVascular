@@ -34,10 +34,8 @@
 
 #include "SimVascular.h"
 #include "svRepositoryExports.h" // For exports
-#include "tcl.h"
 
 #define RD_MAX_NAME_LEN  1024
-
 
 // Each class derived from cvRepositoryData should have a type in the
 // following enum.  Note that the enumerations start at 1.  A
@@ -61,21 +59,17 @@ typedef enum {
 SV_EXPORT_REPOSITORY RepositoryDataT RepositoryDataT_StrToEnum( char *name );
 SV_EXPORT_REPOSITORY char *RepositoryDataT_EnumToStr( RepositoryDataT val );
 
-
+//------------------
+// cvRepositoryData
+//------------------
 // This is simply a container class which is used to unify access to
-// objects stored in cvRepository.  Type-querying for the particular
+// objects stored in cvRepository. Type-querying for the particular
 // derived classes is the only reason currently for having this
 // class.
-
+//
 class SV_EXPORT_REPOSITORY cvRepositoryData {
 
 public:
-
-  // Parent class constructors are called before derived class
-  // constructors.  Constructors of classes derived from
-  // cvRepositoryData should include an explicit call to the
-  // cvRepositoryData constructor which includes the specific
-  // RepositoryDataT specific to that derived class.
 
   cvRepositoryData( RepositoryDataT type );
   virtual ~cvRepositoryData();
@@ -104,8 +98,7 @@ private:
   RepositoryDataT type_;
   char name_[RD_MAX_NAME_LEN];
   int lockCnt_;
-  Tcl_HashTable labels_;
-
+  //Tcl_HashTable labels_;
 };
 
 

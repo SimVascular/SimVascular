@@ -36,15 +36,10 @@
 #include "sv3_Contour.h"
 #include "Segmentation_PyModule.h"
 #include "sv3_ThresholdContour.h"
-//#include "sv_adapt_utils.h"
-#include "sv_arg.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "sv_Repository.h"
-#include "sv_arg.h"
 #include "sv_misc_utils.h"
-#include "sv2_globals.h"
 
 #include "Python.h"
 

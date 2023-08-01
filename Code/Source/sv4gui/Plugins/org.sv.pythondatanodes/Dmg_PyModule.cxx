@@ -44,7 +44,6 @@
 // by Python API functions to read files (e.g. .ctgr) created by SV.
 //
 #include "SimVascular.h"
-#include "sv2_globals.h"
 #include "SimVascular_python.h"
 
 #include "Dmg_PyModule.h"
@@ -53,14 +52,11 @@
 #include "PathPlanning_PyModule.h"
 #include "Modeling_PyModule.h"
 
-//#include "sv_Repository.h"
 #include "sv_PolyData.h"
 #include "sv_PolyDataSolid.h"
 #include "sv_StrPts.h"
 #include "sv_UnstructuredGrid.h"
-#include "sv_arg.h"
 #include "sv_VTK.h"
-// #include "vtkTclUtil.h"
 #include "vtkPythonUtil.h"
 #include "PyUtils.h"
 #include "sv4gui_ContourGroupIO.h"
@@ -1382,35 +1378,6 @@ PyInit_PyDmg(void)
   PyModule_AddObject(module, DMG_EXCEPTION_OBJECT, PyRunTimeErr);
 
   return module;
-}
-
-#endif
-
-//---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 2
-//---------------------------------------------------------------------------
-
-//------------------
-//  initpyDmg
-//------------------
-#if PYTHON_MAJOR_VERSION == 2
-PyMODINIT_FUNC initpyDmg(void)
-
-{
-  PyObject *pyDmg;
-
-  if ( gRepository == nullptr ) {
-    gRepository = new cvRepository();
-    fprintf( stdout, "gRepository created from pyDmg\n" );
-    return;
-  }
-
-  pyDmg = Py_InitModule("pyDmg", PyDmgMethods);
-
-  PyRunTimeErr = PyErr_NewException("dmg.DmgError",nullptr,nullptr);
-  Py_INCREF(PyRunTimeErr);
-  PyModule_AddObject(pyDmg,"DmgError",PyRunTimeErr);
-
 }
 
 #endif

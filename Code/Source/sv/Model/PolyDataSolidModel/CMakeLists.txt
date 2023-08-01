@@ -41,10 +41,10 @@ list(APPEND CORELIBS ${lib})
 set(CXXSRCS sv_PolyDataSolid.cxx sv_polydatasolid_utils.cxx sv_vtkGetBoundaryFaces.cxx)
 set(HDRS sv_PolyDataSolid.h sv_polydatasolid_utils.h sv_vtkGetBoundaryFaces.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_polydatasolid_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
-	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+	${VTK_LIBRARIES} 
   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME}
   ${SV_LIB_REPOSITORY_NAME} ${SV_LIB_SOLID_NAME} ${SV_LIB_GEOM_NAME}
   ${VSV_LIB_VTKSVBOOLEAN_NAME}

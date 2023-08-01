@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The methods here are only used by the SV Python API.
+
 #include "SimVascular.h"
 
 #include "sv_SolidModel.h"
@@ -36,115 +38,18 @@
 #include "sv_misc_utils.h"
 #include <string.h>
 #include <assert.h>
-#ifdef SV_USE_PYTHON
-  #include "Python.h"
-  #include "sv_solid_init_py.h"
-#endif
 
-// Globals:
-// --------
-
-#include "sv2_globals.h"
-
-//SolidModel_KernelT cvSolidModel::gCurrentKernel = SM_KT_INVALID;
 SolidModel_KernelT cvSolidModel::gCurrentKernel = SM_KT_PARASOLID;
-cvFactoryRegistrar cvSolidModel::gRegistrar;
 
-// ----------------------------
-// cvSolidModel::DefaultInstantiateSolidModel
-// ----------------------------
-// This is the ONLY place that we should actually invoke construction
-// of any concrete classes derived from cvSolidModel.  In particular,
-// all the object method handling functions here should just call this
-// function and use the returned cvSolidModel*.  Note that this function
-// also takes in the interpreter so that an informative error message
-// about kernel types can be returned if necessary.
-
-// PLEASE note that checking the return value of this function is
-// CRITICAL for things to work right.  If we return nullptr here, we
-// absolutely need to trap that in the callers (i.e. cvSolidModel
-// instantiation functions) to make sure those nullptr ptr's don't get
-// registered in the repository.  Subsequent cvSolidModel lookup's
-// currently DO NOT check for nullptr values.  The idea is that objects
-// are checked for validity *before* they get registered.
-#ifdef SV_USE_TCL
-cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
-{
-  // Get the solid model factory registrar associated with this Tcl interpreter.
-  cvFactoryRegistrar* solidModelRegistrar;
-  if (interp == nullptr) {
-    fprintf(stdout,"WARNING:  Null interpreter passed to SolidModel.  Overriding with default.\n");
-    fflush(stdout);
-  }
-  Tcl_Interp* myinterp = nullptr;
-  myinterp = gVtkTclInterp;
-  assert(myinterp);
-
-  solidModelRegistrar = (cvFactoryRegistrar *) Tcl_GetAssocData( myinterp, "SolidModelRegistrar", nullptr);
-
-  cvSolidModel* solid = nullptr;
-  if (cvSolidModel::gCurrentKernel == SM_KT_PARASOLID ||
-      cvSolidModel::gCurrentKernel == SM_KT_DISCRETE ||
-      cvSolidModel::gCurrentKernel == SM_KT_POLYDATA ||
-      cvSolidModel::gCurrentKernel == SM_KT_OCCT ||
-      cvSolidModel::gCurrentKernel == SM_KT_MESHSIMSOLID) {
-
-    solid = (cvSolidModel *) (solidModelRegistrar->UseFactoryMethod( cvSolidModel::gCurrentKernel ));
-    if (solid == nullptr) {
-		  fprintf( stdout, "Unable to create solid model kernel (%i)\n",cvSolidModel::gCurrentKernel);
-		  //Tcl_SetResult( interp, "Unable to create solid model", TCL_STATIC );
-    }
-  } else {
-    fprintf( stdout, "current kernel is not valid (%i)\n",cvSolidModel::gCurrentKernel);
-    //Tcl_SetResult( interp, "current kernel is not valid", TCL_STATIC );
-  }
-  return solid;
-
-}
-#endif
-
-#ifdef SV_USE_PYTHON
-cvSolidModel* cvSolidModel::pyDefaultInstantiateSolidModel()
-{
-  // Get the solid model factory registrar associated with the python interpreter.
-  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
-  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
-  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
-  if (pySolidModelRegistrar==nullptr)
-  {
-    fprintf(stdout,"Cannot get solidModelRegistrar from pySys");
-  }
-  cvSolidModel* solid = nullptr;
-  if (cvSolidModel::gCurrentKernel == SM_KT_PARASOLID ||
-      cvSolidModel::gCurrentKernel == SM_KT_DISCRETE ||
-      cvSolidModel::gCurrentKernel == SM_KT_POLYDATA ||
-      cvSolidModel::gCurrentKernel == SM_KT_OCCT ||
-      cvSolidModel::gCurrentKernel == SM_KT_MESHSIMSOLID)
-      {
-        solid = (cvSolidModel *) (pySolidModelRegistrar->UseFactoryMethod( cvSolidModel::gCurrentKernel ));
-        if (solid == nullptr) {
-		  fprintf( stdout, "Unable to create solid model kernel (%i)\n",cvSolidModel::gCurrentKernel);
-		  //Tcl_SetResult( interp, "Unable to create solid model", TCL_STATIC );
-    }
-  } else {
-    fprintf( stdout, "current kernel is not valid (%i)\n",cvSolidModel::gCurrentKernel);
-    //Tcl_SetResult( interp, "current kernel is not valid", TCL_STATIC );
-  }
-  return solid;
-
-}
-#endif
 // ----------
 // cvSolidModel
 // ----------
 
-cvSolidModel::cvSolidModel( SolidModel_KernelT t )
-  : cvRepositoryData( SOLID_MODEL_T )
+cvSolidModel::cvSolidModel( SolidModel_KernelT t ) : cvRepositoryData( SOLID_MODEL_T )
 {
   kernel_ = t;
   tol_ = 1e6 * FindMachineEpsilon();
 }
-
 
 // -----------
 // ~cvSolidModel
@@ -152,9 +57,7 @@ cvSolidModel::cvSolidModel( SolidModel_KernelT t )
 
 cvSolidModel::~cvSolidModel()
 {
-  ;
 }
-
 
 // ----------------------------
 // SolidModel_KernelT_StrToEnum

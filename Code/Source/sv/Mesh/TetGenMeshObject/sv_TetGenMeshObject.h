@@ -102,9 +102,6 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
   } TGoptions;
 
   public:
-  #ifdef SV_USE_TCL
-  cvTetGenMeshObject( Tcl_Interp *interp ); // default constructor
-  #endif
   #ifdef SV_USE_PYTHON
   cvTetGenMeshObject(); // default constructor for python
   #endif
@@ -118,12 +115,7 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
   int SetSolidFileName( const char* solidFileName );
 
   int Update();
-  #ifdef SV_USE_TCL
   int Print();
-  #endif
-  #ifdef SV_USE_PYTHON
-  int pyPrint();
-  #endif
   cvMeshObject *Copy() const;
 
   // Routines promoted to abstract class from concrete implementation
@@ -198,9 +190,6 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
   char meshFileName_[MAXPATHLEN];
   char solidFileName_[MAXPATHLEN];
 
-  #ifdef SV_USE_TCL
-  Tcl_Interp* interp_;
-  #endif
   int loadedVolumeMesh_;
   int numModelRegions_ ;
   int numBoundaryRegions_;

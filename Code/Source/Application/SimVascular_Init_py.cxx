@@ -46,25 +46,15 @@
 
 #include "vtkToolkits.h"
 
-//#include "sv_repos_init_py.h"
 #include "Geometry_PyModule.h"
 #include "Imaging_PyModule.h"
-//#include "sv2_image_init_py.h"
 #include "Math_PyModule.h"
-//#include "sv_polydatasolid_init_py.h"
 
 #include "Modeling_PyModule.h"
 #include "PathPlanning_PyModule.h"
-//#include "sv3_PathGroup_init_py.h"
 #include "Segmentation_PyModule.h"
 #include "Simulation_PyModule.h"
-//#include "sv3_CircleContour_init_py.h"
-//#include "sv3_LevelSetContour_init_py.h"
-//#include "sv3_ThresholdContour_init_py.h"
-//#include "sv3_SplinePolygonContour_init_py.h"
-//#include "sv3_PolygonContour_init_py.h"
 #include "Project_PyModule.h"
-//#include "sv4gui_Vis_init_py.h"
 
 #ifdef SV_USE_VMTK
   #include "Vmtk_PyModule.h"
@@ -76,11 +66,6 @@
 
 #ifdef SV_USE_MMG
   #include "MeshUtils_PyModule.h"
-#endif
-
-#ifdef SV_USE_TETGEN_ADAPTOR
-  //#include "sv_adapt_init_py.h"
-  //#include "sv_tetgen_adapt_init_py.h"
 #endif
 
 //---------------------------------------------------------------------------
@@ -95,7 +80,7 @@
 // Initialize the SV Python C API modules.
 //
 // The module names and initialization functions are implemented 
-// in *init_py.{cxx,h} files for most sv pipeline functionality:
+// in *init.{cxx,h} files for most sv pipeline functionality:
 // Mesh, Path, Model, etc.
 //
 void SimVascular_pyInit()
@@ -213,6 +198,15 @@ void SimVascular_pyInit()
     
 }
 #endif
+
+// TODO temporary fix!! I don't know why these symbols are not in VTK
+vtkTimerLogCleanup::~vtkTimerLogCleanup()
+{
+}
+
+vtkTimerLogCleanup::vtkTimerLogCleanup()
+{
+}
 
 void SimVascular_pyImport()
 {

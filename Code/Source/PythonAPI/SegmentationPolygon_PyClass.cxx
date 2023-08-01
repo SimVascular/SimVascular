@@ -48,16 +48,12 @@
 #include "sv3_Contour.h"
 #include "Segmentation_PyModule.h"
 #include "sv3_PolygonContour.h"
-#include "sv_arg.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "sv_Repository.h"
-#include "sv_arg.h"
 #include "sv_misc_utils.h"
 
 #include "Python.h"
-#include "sv2_globals.h"
 
 // The following is needed for Windows
 #ifdef GetObject

@@ -42,10 +42,8 @@
 #include <stdio.h>
 #include <string.h>
 
-//#include "sv_Repository.h"
 #include "Modeling_PyModule.h"
 #include "sv_SolidModel.h"
-#include "sv_arg.h"
 #include "sv_misc_utils.h"
 #include "sv_vtk_utils.h"
 #include "sv_PolyData.h"
@@ -61,7 +59,6 @@
 #undef GetObject
 #endif
 
-#include "sv2_globals.h"
 #include "Python.h"
 #include <structmember.h>
 #include "vtkPythonUtil.h"

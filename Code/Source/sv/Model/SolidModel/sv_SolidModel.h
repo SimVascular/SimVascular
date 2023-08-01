@@ -29,6 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #ifndef __CVSOLID_MODEL_H
 #define __CVSOLID_MODEL_H
 
@@ -72,19 +73,11 @@ typedef enum {
 SV_EXPORT_SOLID SolidModel_SimplifyT SolidModel_SimplifyT_StrToEnum( char *name );
 SV_EXPORT_SOLID char *SolidModel_SimplifyT_EnumToStr( SolidModel_SimplifyT val );
 
-
-// Some elementary notes on abstract base classes (ABC's)
-// ------------------------------------------------------
-// ABC's provide a means for defining an *interface*.  Since (by
-// definition) they contain pure virtual methods, objects of these
-// classes can not be instantiated.  Clients of ABC's are interested
-// in using the abstract interface, but can not work with the objects
-// themselves.  Instead, clients instantiate concrete classes derived
-// from the ABC.  And then, to use the abstraction, clients use
-// *pointers* or *references* to the ABC.  See Meyers' Effective C++,
-// Item 34.
-
-
+//--------------
+// cvSolidModel
+//--------------
+// The cvSolidModel class is used as an abstract interface for solid modelers.
+//
 class SV_EXPORT_SOLID cvSolidModel : public cvRepositoryData {
 
 public:
@@ -94,18 +87,8 @@ public:
 
   SolidModel_KernelT GetKernelT() const { return kernel_; }
 
-  // Solid Model factory method that delegates creation of models to the
-  //  concrete implementations.
-  #ifdef SV_USE_TCL
-  static cvSolidModel* DefaultInstantiateSolidModel( Tcl_Interp *interp = nullptr);
-  #endif
-  #ifdef SV_USE_PYTHON
-  static cvSolidModel* pyDefaultInstantiateSolidModel();
-  #endif
-
   // Global variables that handle management of solid model kernels.
   static SolidModel_KernelT gCurrentKernel;
-  static cvFactoryRegistrar gRegistrar;
 
   // Modeler operations:
   virtual void Clear() = 0;

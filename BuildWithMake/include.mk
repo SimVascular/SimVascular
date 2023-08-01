@@ -50,9 +50,9 @@ NO_DEPEND = 1
 # CLUSTER = { x64_cygwin, x64_linux, x64_macosx }
 # -----------------------------------------------------------
 
-CLUSTER = x64_cygwin
+#CLUSTER = x64_cygwin
 #CLUSTER = x64_linux
-#CLUSTER = x64_macosx
+CLUSTER = x64_macosx
 
 # ---------------------------------------------------------------------
 # CXX_COMPILER_VERSION = { icpc, msvc-19.0, msvc-19.16, clang,
@@ -133,8 +133,8 @@ SV_USE_ZLIB = 1
 # Compile with tcl
 # -----------------------------------------------------
 
-SV_USE_TCL = 1
-SV_USE_TCL_SHARED = 1
+SV_USE_TCL = 0
+SV_USE_TCL_SHARED = 0
 
 # -----------------------------------------------------
 # Compile with python interpreter
@@ -518,7 +518,6 @@ ifeq ($(SV_USE_SHARED),1)
 	  ../Code/Source/sv/Geometry \
 	  ../Code/Source/sv2/ImageProcessing \
 	  ../Code/Source/sv2/PostProcessing \
-	  ../Code/Source/sv2/Segmentation \
 	  ../Code/Source/sv3/Common \
 	  ../Code/Source/sv3/Path
 else
@@ -538,7 +537,6 @@ else
 	  ../Code/Source/sv/Geometry \
 	  ../Code/Source/sv2/ImageProcessing \
 	  ../Code/Source/sv2/PostProcessing \
-	  ../Code/Source/sv2/Segmentation \
 	  ../Code/Source/sv3/Common \
 	  ../Code/Source/sv3/Path
 endif
@@ -696,10 +694,12 @@ endif
 SV_LIB_ADAPTOR_NAME=_simvascular_adaptor
 SV_LIB_COMMON_NAME=_simvascular_common
 SV_LIB_GEOM_NAME=_simvascular_geom
-SV_LIB_GLOBALS_NAME=_simvascular_globals
+#SV_LIB_GLOBALS_NAME=
+#SV_LIB_GLOBALS_NAME=_simvascular_globals
 SV_LIB_IMAGE_NAME=_simvascular_image
 SV_LIB_ITK_LSET_NAME=_simvascular_itk_lset
-SV_LIB_LSET_NAME=_simvascular_lset
+#SV_LIB_LSET_NAME=
+#SV_LIB_LSET_NAME=_simvascular_lset
 SV_LIB_MESH_NAME=_simvascular_mesh
 SV_LIB_MMG_MESH_NAME=_simvascular_mmg_mesh
 SV_LIB_OpenCASCADE_SOLID_NAME=_simvascular_opencascade_solid
@@ -770,8 +770,7 @@ endif
 LFLAGS 	 = $(GLOBAL_LFLAGS)
 
 ifneq ($(SV_USE_SHARED),1)
-  LFLAGS     += $(SVLIBFLAG)$(SV_LIB_LSET_NAME)$(LIBLINKEXT) \
-              $(SVLIBFLAG)$(SV_LIB_IMAGE_NAME)$(LIBLINKEXT) \
+  LFLAGS     += $(SVLIBFLAG)$(SV_LIB_IMAGE_NAME)$(LIBLINKEXT) \
               $(SVLIBFLAG)$(SV_LIB_MESH_NAME)$(LIBLINKEXT) \
               $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
               $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \

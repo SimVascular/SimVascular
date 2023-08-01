@@ -37,7 +37,6 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
-	   $(TCLTK_INCDIR) \
 	   $(PYTHON_INCDIR)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_SOLID
@@ -56,12 +55,6 @@ endif
 
 HDRS	= sv_SolidModel.h
 CXXSRCS	= sv_SolidModel.cxx
-
-DLLHDRS = sv_solid_init.h
-DLLSRCS = sv_solid_init.cxx
-
-SVPYHDRS = sv_solid_init_py.h
-SVPYSRCS = sv_solid_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT)

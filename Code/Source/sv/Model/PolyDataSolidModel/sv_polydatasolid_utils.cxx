@@ -29,15 +29,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file sv_polydatasolid_utils.cxx
- *  @brief The implementations of functions in cv_polydatasolid_utils
- *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- */
-
 #include "SimVascular.h"
 
 #include <stdio.h>
@@ -50,7 +41,6 @@
 #include "sv_vtk_utils.h"
 #include "sv_sys_geom.h"
 
-#include "sv2_globals.h"
 #include "vtkConnectivityFilter.h"
 #include "vtkSmartPointer.h"
 #include "vtkSTLReader.h"

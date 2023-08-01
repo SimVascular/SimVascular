@@ -32,7 +32,6 @@
 #ifndef _CVSPLINE_H
 #define _CVSPLINE_H
 
-#include "tcl.h"
 #include "SimVascular.h"
 #include "svGeometryExports.h" // For exports
 

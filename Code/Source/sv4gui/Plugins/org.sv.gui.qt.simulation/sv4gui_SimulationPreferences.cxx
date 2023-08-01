@@ -92,14 +92,6 @@ void sv4guiSimulationPreferences::InitializeSolverLocations()
 //---------------
 // Set the post processing binary svpost.
 //
-// There are two locations to check:
-//
-//     1) /usr/local/svsolver/      - contains the script 'svpost'
-//
-//     2) /usr/local/svsolver/bin   - contains the binary
-//
-// Use the script version if it exists.
-//
 void sv4guiSimulationPreferences::SetPostSolver(const QString& solverPath, const QString& applicationPath)
 {
   QString svPost = UnknownBinary;
@@ -109,11 +101,7 @@ void sv4guiSimulationPreferences::SetPostSolver(const QString& solverPath, const
   QString svPostName = "/svpost";
   QString filePath = "";
 
-  if(QFile(filePath=solverPath+svPostName).exists()) {
-    svPost = filePath;
-  } else if(QFile(filePath=solverPath+"/bin/"+svPostName).exists()) {
-    svPost = filePath;
-  } else if(QFile(filePath=applicationPath+svPostName).exists()) {
+  if(QFile(filePath=solverPath+"/bin/"+svPostName).exists()) {
     svPost = filePath;
   } else if(QFile(filePath=applicationPath+"/bin/"+svPostName).exists()) {
     svPost = filePath;
@@ -143,14 +131,6 @@ QString sv4guiSimulationPreferences::GetPostSolver()
 //------------------
 // Set the location of the svpre binary.
 //
-// There are two locations to check:
-//
-//     1) /usr/local/svsolver/      - contains the script 'svpost'
-//
-//     2) /usr/local/svsolver/bin   - contains the binary
-//
-// Use the script version if it exists.
-//
 void sv4guiSimulationPreferences::SetPreSolver(const QString& solverPath, const QString& applicationPath)
 {
   QString filePath = "";
@@ -158,24 +138,16 @@ void sv4guiSimulationPreferences::SetPreSolver(const QString& solverPath, const 
   QString svPresolver = UnknownBinary;
 
 #if defined(Q_OS_LINUX)
-  if(QFile(filePath=solverPath+svPreName).exists()) {
-    svPresolver = filePath;
-  } else if(QFile(filePath=solverPath+"/bin/"+svPreName).exists()) {
-    svPresolver = filePath;
-  } else if(QFile(filePath=applicationPath+svPreName).exists()) {
+  if(QFile(filePath=solverPath+"/bin/"+svPreName).exists()) {
     svPresolver = filePath;
   } else if(QFile(filePath=applicationPath+"/bin/"+svPreName).exists()) {
     svPresolver = filePath;
   }
 
 #elif defined(Q_OS_MAC)
-  if(QFile(filePath=solverPath+svPreName).exists()) {
-    svPresolver = filePath;
-  } else if(QFile(filePath=solverPath+"/bin/"+svPreName).exists()) {
+  if(QFile(filePath=solverPath+"/bin/"+svPreName).exists()) {
     svPresolver = filePath;
   } else if(QFile(filePath=applicationPath+"/bin/"+svPreName).exists()) {
-    svPresolver = filePath;
-  } else if(QFile(filePath=applicationPath+svPreName).exists()) {
     svPresolver = filePath;
   }
 
@@ -201,14 +173,6 @@ QString sv4guiSimulationPreferences::GetPreSolver()
 //-----------
 // Set the svsolver binary, with or without mpi.
 //
-// There are two locations to check:
-//
-//     1) /usr/local/svsolver/      - contains the script 'svpost'
-//
-//     2) /usr/local/svsolver/bin   - contains the binary
-//
-// Use the script version if it exists.
-//
 void sv4guiSimulationPreferences::SetSolver(const QString& solverInstallPath, const QString& applicationPath)
 {
   QString svSolver = UnknownBinary;
@@ -222,11 +186,7 @@ void sv4guiSimulationPreferences::SetSolver(const QString& solverInstallPath, co
   // For the flow solver with mpi, prefer to use the script one which sets 
   // paths to libs needed in Ubuntu 16. 
   //
-  if(QFile(filePath=solverInstallPath+svSolverName).exists()) {
-    svSolver = filePath;
-  } else if(QFile(filePath=solverInstallPath+"/bin/"+svSolverName).exists()) {
-    svSolver = filePath;
-  } else if(QFile(filePath=applicationPath+svSolverName).exists()) {
+  if(QFile(filePath=solverInstallPath+"/bin/"+svSolverName).exists()) {
     svSolver = filePath;
   } else if(QFile(filePath=applicationPath+"/bin/"+svSolverName).exists()) {
     svSolver = filePath;
@@ -252,14 +212,6 @@ void sv4guiSimulationPreferences::SetSolver(const QString& solverInstallPath, co
 //---------------
 // Set the svsolver binary, with or without mpi.
 //
-// There are two locations to check:
-//
-//     1) /usr/local/svsolver/      - contains the script 'svpost'
-//
-//     2) /usr/local/svsolver/bin   - contains the binary
-//
-// Use the script version if it exists.
-//
 void sv4guiSimulationPreferences::SetSolverNOMPI(const QString& solverInstallPath, const QString& applicationPath)
 {
   QString svSolverNOMPI = UnknownBinary;
@@ -273,11 +225,7 @@ void sv4guiSimulationPreferences::SetSolverNOMPI(const QString& solverInstallPat
   // For the flow solver with mpi, prefer to use the script one which sets 
   // paths to libs needed in Ubuntu 16. 
   //
-  if(QFile(filePath=solverInstallPath+svSolverNOMPIName).exists()) {
-    svSolverNOMPI = filePath;
-  } else if(QFile(filePath=solverInstallPath+"/bin/"+svSolverNOMPIName).exists()) {
-    svSolverNOMPI = filePath;
-  } else if(QFile(filePath=applicationPath+svSolverNOMPIName).exists()) {
+  if(QFile(filePath=solverInstallPath+"/bin/"+svSolverNOMPIName).exists()) {
     svSolverNOMPI = filePath;
   } else if(QFile(filePath=applicationPath+"/bin/"+svSolverNOMPIName).exists()) {
     svSolverNOMPI = filePath;

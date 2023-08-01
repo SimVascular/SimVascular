@@ -86,7 +86,6 @@
 #include <map>
 #include <functional>
 #include <iostream>
-#include "sv_Repository.h"
 #include "sv_RepositoryData.h"
 #include "sv_PolyData.h"
 #include "vtkSmartPointer.h"
@@ -95,8 +94,6 @@
 #ifdef GetObject
 #undef GetObject
 #endif
-
-#include "sv2_globals.h"
 
 // Exception type used by PyErr_SetString() to set the for the error indicator.
 static PyObject * PyRunTimeErr;

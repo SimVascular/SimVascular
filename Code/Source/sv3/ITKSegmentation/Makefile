@@ -50,12 +50,6 @@ HDRS	=  sv3_ITKLset_ITKUtils.h sv3_ITKLevelSet.h \
 
 CXXSRCS	=  sv3_ITKUtils.cxx sv3_ITKLevelSet.cxx
 
-DLLHDRS = sv3_ITKUtils_init.h sv3_ITKLset2d_init.h sv3_ITKLset3d_init.h sv3_ITKLset_init.h
-DLLSRCS = sv3_ITKUtils_init.cxx sv3_ITKLset2d_init.cxx  sv3_ITKLset3d_init.cxx sv3_ITKLset_init.cxx
-
-SVPYHDRS = sv3_ITKLset_init_py.h  sv3_ITKUtils_init_py.h sv3_ITKLset2d_init_py.h sv3_ITKLset3d_init_py.h
-SVPYSRCS = sv3_ITKLset_init_py.cxx  sv3_ITKUtils_init_py.cxx sv3_ITKLset2d_init_py.cxx  sv3_ITKLset3d_init_py.cxx
-
 TARGET_LIB_NAME = $(SV_LIB_ITK_LSET_NAME)
 
 SV_PYTHON_MODULE_NAME = pyItkls

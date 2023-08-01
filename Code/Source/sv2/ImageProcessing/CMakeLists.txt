@@ -43,8 +43,6 @@ if(SV_USE_PYTHON)
 	  ${PYTHON_INCLUDE_DIRS})
 endif()
 
-include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
-
 set(CXXSRCS sv2_image.cxx sv2_read_header.cxx
   sv2_decode.cxx sv2_calc_correction_eqn.cxx
   sv2_img_threshold.cxx sv2_DistanceMap.cxx
@@ -57,17 +55,17 @@ set(HDRS sv2_image.h sv2_img_offsets.h
   )
 
 if(SV_USE_PYTHON)
-  list(APPEND CXXSRCS sv2_image_init_py.cxx)
+  list(APPEND CXXSRCS )
 endif()
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv2_image_init.cxx )
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
 endif()
 
 target_link_libraries(${lib}
-  ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+  ${VTK_LIBRARIES} 
   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_GEOM_NAME})
 
 # Set up for exports

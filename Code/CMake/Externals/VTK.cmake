@@ -43,7 +43,20 @@ if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
     set(${proj}_DLL_PATH "${SV_${proj}_DIR}/bin" CACHE PATH "Force VTK DLL Path")
   endif()
 endif()
+
 # Find VTK, specific components
+#
+# [NOTE:DaveP] Commenting out vtkWrappingTcl and vtkRenderingTk causes
+# build to fail
+#
+# Undefined symbols for architecture x86_64:
+#   "vtkInteractionStyle_AutoInit_Destruct()", referenced from:
+#      vtkRenderingCore_AutoInit::~vtkRenderingCore_AutoInit() in sv_vtk_utils.cxx.o
+#     vtkRenderingCore_AutoInit::~vtkRenderingCore_AutoInit() in sv_cgeom.cxx.o
+#    vtkRenderingCore_AutoInit::~vtkRenderingCore_AutoInit() in sv_Math.cxx.o
+#
+# We need to build VTK withour TCL bindings I guess.
+#
 simvascular_external(${proj}
   COMPONENTS
   FiltersFlowPaths

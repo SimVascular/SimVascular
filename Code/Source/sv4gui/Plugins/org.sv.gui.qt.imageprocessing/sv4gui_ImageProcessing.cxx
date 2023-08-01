@@ -68,7 +68,6 @@
 #include <mitkImageCast.h>
 
 #include "sv_PolyData.h"
-#include "sv_vmtk_utils_init.h"
 #include "sv_vmtk_utils.h"
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkXMLPolyDataWriter.h>

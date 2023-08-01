@@ -35,8 +35,6 @@
 #include <math.h>
 #include "sv_VTK.h"
 #include "sv_Math.h"
-#include "sv_Repository.h"
-#include "sv_RepositoryData.h"
 #include "sv_PolyData.h"
 #include "sv_sys_geom.h"
 #include "sv2_calc_correction_eqn.h"
