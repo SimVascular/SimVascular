@@ -90,7 +90,6 @@ set(CMAKE_PREFIX_PATH "${${proj}_DIR}" "${CMAKE_PREFIX_PATH}")
 # We must replace any occurences of tcl with the specified tcl. This can also
 # cause problems if it is not the same tcl used to compile vtk.
 
-get_filename_component(tmp_replace_tcl_lib_name ${TCL_LIBRARY} NAME)
 if(SV_USE_PYTHON)
  get_filename_component(tmp_replace_python_lib_name ${PYTHON_LIBRARY} NAME)
 endif()
@@ -108,9 +107,6 @@ foreach (_variableName ${_variableNames})
    string(SUBSTRING ${_variableName} 0 ${myloc} modname)
 #   math(EXPR myloc "$myloc - 1")
 #message("modname ${_variableName} ${modname}")
-   # tcl
-   simvascular_list_find_and_replace(${_variableName} "${tmp_replace_tcl_lib_name}" ${TCL_LIBRARY})
-   simvascular_property_list_find_and_replace(${modname} INTERFACE_LINK_LIBRARIES "${tmp_replace_tcl_lib_name}" ${TCL_LIBRARY})
    # python
    if(SV_USE_PYTHON)
      simvascular_list_find_and_replace(${_variableName} "${tmp_replace_python_lib_name}" ${PYTHON_LIBRARY})
@@ -127,10 +123,6 @@ endforeach()
 # If using python, we must replace any replace any occurences of python
 # with the python specified. Note: This can cause issues if the python
 # specified is not the same version as the one used to build vtk
-
-get_filename_component(tmp_replace_tcl_lib_name ${TCL_LIBRARY} NAME)
-#message("replace tcl name ${tmp_replace_tcl_lib_name}")
-simvascular_list_find_and_replace(${proj}_LIBRARIES "${tmp_replace_tcl_lib_name}" ${TCL_LIBRARY})
 
 if(SV_USE_PYTHON)
   get_filename_component(tmp_replace_python_lib_name ${PYTHON_LIBRARY} NAME)

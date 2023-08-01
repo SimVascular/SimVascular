@@ -103,9 +103,6 @@ if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
   simvascular_add_new_external(TINYXML2 ${TINYXML2_VERSION} ON ON tinyxml2 tinyxml2)
 endif()
 
-# TCL
-simvascular_add_new_external(TCL ${TCL_VERSION} ON ON tcltk)
-
 #PYTHON
 simvascular_add_new_external(PYTHON ${PYTHON_VERSION} ON ON python)
 
