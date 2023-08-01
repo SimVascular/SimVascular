@@ -59,19 +59,36 @@ class Sv4GuiXmlWriter
     Sv4GuiXmlWriter();
     ~Sv4GuiXmlWriter();
 
-    tinyxml2::XMLElement* add_general(const sv4guisvFSIJob* job, tinyxml2::XMLDocument& doc);
-
     void create_document(const sv4guisvFSIJob* job, const std::string& file_name);
 
   private:
-    std::ofstream file_stream_;
+    
+    // The XML document to create.
+    tinyxml2::XMLDocument doc_;
 
-    tinyxml2::XMLElement* add_child(tinyxml2::XMLDocument& doc, tinyxml2::XMLElement* parent, const std::string& name);
+    // The root element of the document.
+    tinyxml2::XMLElement* root_;
 
-    tinyxml2::XMLElement* add_mesh(const sv4guisvFSIJob* job, sv4guisvFSIDomain& domain, tinyxml2::XMLDocument& doc);
+    template <typename T>
+    tinyxml2::XMLElement* add_child(tinyxml2::XMLElement* parent, const std::string& name, T value);
+
+    tinyxml2::XMLElement* add_sub_child(tinyxml2::XMLElement* parent, const std::string& name);
+
+    void add_equations(const sv4guisvFSIJob* job);
+
+    void add_equation_solver(const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation);
+
+    void add_fsi_equation(const sv4guisvFSIeqClass& equation, tinyxml2::XMLElement* xml_equation);
+
+    void add_general(const sv4guisvFSIJob* job);
+
+    void add_mesh(const sv4guisvFSIJob* job, sv4guisvFSIDomain& domain, const int domain_id);
+
+    void add_projection(const sv4guisvFSIJob* job);
+
+    void add_single_physics_equation(const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation);
 
     std::vector<sv4guisvFSIDomain> sort_domains(const sv4guisvFSIJob* job);
-
 
 };
 

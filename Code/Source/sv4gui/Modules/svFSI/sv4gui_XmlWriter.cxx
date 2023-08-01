@@ -32,6 +32,7 @@
 #include "sv4gui_XmlWriter.h"
 
 #include <fstream>
+#include <type_traits>
 
 //-----------------
 // Sv4GuiXmlWriter
@@ -48,14 +49,139 @@ Sv4GuiXmlWriter::~Sv4GuiXmlWriter()
 //-----------
 // add_child
 //-----------
-// Add a child element to a parent.
+// Define a template function for adding a child element to a parent element.
 //
+template <typename T>
 tinyxml2::XMLElement*
-Sv4GuiXmlWriter::add_child(tinyxml2::XMLDocument& doc, tinyxml2::XMLElement* parent, const std::string& name)
+Sv4GuiXmlWriter::add_child(tinyxml2::XMLElement* parent, const std::string& name, T value)
 {
-  auto child = doc.NewElement(name.c_str());
+  auto child = doc_.NewElement(name.c_str());
+  child->SetText(value);
   parent->InsertEndChild(child);
   return child;
+}
+
+// Handle QString that must be converted to std::string.
+template<> 
+tinyxml2::XMLElement*
+Sv4GuiXmlWriter::add_child<QString>(tinyxml2::XMLElement* parent, const std::string& name, QString value)
+{
+  return add_child(parent, name, value.toStdString().c_str());
+}
+
+// Handle std::string that must be converted to char*.
+template<> 
+tinyxml2::XMLElement* 
+Sv4GuiXmlWriter::add_child<std::string>(tinyxml2::XMLElement* parent, const std::string& name, std::string value)
+{
+  return add_child(parent, name, value.c_str());
+}
+
+//---------------
+// add_sub_child
+//---------------
+// Create a sub-section child element.
+//
+tinyxml2::XMLElement*
+Sv4GuiXmlWriter::add_sub_child(tinyxml2::XMLElement* parent, const std::string& name)
+{
+  auto child = doc_.NewElement(name.c_str());
+  parent->InsertEndChild(child);
+  return child;
+}
+
+//---------------
+// add_equations
+//---------------
+// Add equations.
+//
+void Sv4GuiXmlWriter::add_equations(const sv4guisvFSIJob* job)
+{
+  for (auto& eq : job->m_Eqs) {
+    auto xml_equation = add_sub_child(root_, "Add_equation");
+    xml_equation->SetAttribute("type", eq.physName.toStdString().c_str());
+
+    add_child(xml_equation, "Coupled", eq.coupled);
+    add_child(xml_equation, "Min_iterations", eq.minItr);
+    add_child(xml_equation, "Max_iterations", eq.maxItr);
+    add_child(xml_equation, "Tolerance", eq.tol);
+
+    if (eq.physName == "fluid") {
+      add_child(xml_equation, "Backflow_stabilization_coefficient", eq.backflowStab);
+    }
+
+    if (eq.getPhysName() == "FSI") {
+      add_fsi_equation(eq, xml_equation);
+
+    } else {
+      add_single_physics_equation(eq, xml_equation);
+    }
+
+    if (eq.physName != "mesh") {
+      add_equation_solver(eq, xml_equation);
+    }
+  }
+}
+
+//---------------------
+// add_equation_solver
+//---------------------
+// Add the linear solver section to an equation section.
+//
+void Sv4GuiXmlWriter::add_equation_solver(const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation)
+{
+  auto linear_solver = add_sub_child(xml_equation, "LS");
+  linear_solver->SetAttribute("type", eq.lsType.toStdString().c_str());
+
+  add_child(linear_solver, "Preconditioner", eq.lsPreconditioner); 
+  add_child(linear_solver, "Max_iterations", eq.lsMaxItr); 
+  add_child(linear_solver, "Tolerance", eq.tol);
+  add_child(linear_solver, "Krylov_space_dimension", eq.lsKrylovDim);
+
+  if (eq.lsType == "NS") {
+    add_child(linear_solver, "NS_GM_max_iterations", eq.lsNSGMMaxItr);
+    add_child(linear_solver, "NS_GM_tolerance", eq.lsNSGMTol);
+
+    add_child(linear_solver, "NS_CG_max_iterations", eq.lsNSCGMaxItr);
+    add_child(linear_solver, "NS_CG_tolerance", eq.lsNSCGTol); 
+  }
+
+}
+
+//------------------
+// add_fsi_equation
+//------------------
+// Add an FSI equation.
+//
+void Sv4GuiXmlWriter::add_fsi_equation(const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation)
+{
+  // Add fluid domain 1.
+  //
+  // This seems to have ID 1 ?
+  //
+  auto domain_1 = add_sub_child(xml_equation, "Domain");
+  domain_1->SetAttribute("id", 1);
+
+  add_child(domain_1, "Equation", "fluid");
+  add_child(domain_1, "Density", eq.getPropValue(0));
+
+  auto viscosity = add_sub_child(domain_1, "Viscosity");
+  viscosity->SetAttribute("model", eq.getPropValue(1));
+
+  add_child(domain_1, "Backflow_stabilization_coefficient", eq.backflowStab);
+
+  // Add struct domain 2.
+  //
+  auto domain_2 = add_sub_child(xml_equation, "Domain");
+  domain_2->SetAttribute("id", 2);
+
+  add_child(domain_2, "Equation", "struct");
+  auto Constitutive_model = add_sub_child(domain_2, "Constitutive_model");
+  Constitutive_model->SetAttribute("model", eq.constitutiveModel.toStdString().c_str());
+
+  add_child(domain_2, "Density", eq.getPropValue(2));
+  add_child(domain_2, "Elasticity_modulus", eq.getPropValue(3));
+  add_child(domain_2, "Poisson_ratio", eq.getPropValue(4));
 }
 
 //-------------
@@ -63,94 +189,97 @@ Sv4GuiXmlWriter::add_child(tinyxml2::XMLDocument& doc, tinyxml2::XMLElement* par
 //-------------
 // Add data for the 'GeneralSimulationParameters' section.
 //
-tinyxml2::XMLElement*
-Sv4GuiXmlWriter::add_general(const sv4guisvFSIJob* job, tinyxml2::XMLDocument& doc)
+void Sv4GuiXmlWriter::add_general(const sv4guisvFSIJob* job)
 {
-  auto general = doc.NewElement("GeneralSimulationParameters");
+  auto general = add_sub_child(root_, "GeneralSimulationParameters");
 
   // Time stepping
   //
-  auto Number_of_spatial_dimensions = add_child(doc, general, "Number_of_spatial_dimensions");
-  Number_of_spatial_dimensions->SetText(job->nsd);
-
-  auto Number_of_time_steps = add_child(doc, general, "Number_of_time_steps");
-  Number_of_time_steps->SetText(job->timeSteps);
-
-  auto Time_step_size = add_child(doc, general, "Time_step_size");
-  Time_step_size->SetText(job->stepSize.c_str());
+  add_child(general, "Number_of_spatial_dimensions", job->nsd);
+  add_child(general, "Number_of_time_steps", job->timeSteps);
+  add_child(general, "Time_step_size", job->stepSize.c_str());
 
   // Restart files.
   //
-  auto Continue_previous_simulation = add_child(doc, general, "Continue_previous_simulation");
-  Continue_previous_simulation->SetText(job->continuePrevious);
-
-  auto Restart_file_name = add_child(doc, general, "Restart_file_name");
-  Restart_file_name->SetText(job->restartFileName.c_str());
-
-  auto Increment_in_saving_restart_files = add_child(doc, general, "Increment_in_saving_restart_files");
-  Increment_in_saving_restart_files->SetText(job->restartInc);
-
-  auto Save_averaged_results = add_child(doc, general, "Save_averaged_results");
-  Save_averaged_results->SetText(job->saveAvgResult);
+  add_child(general, "Continue_previous_simulation", job->continuePrevious);
+  add_child(general, "Restart_file_name", job->restartFileName);
+  add_child(general, "Increment_in_saving_restart_files", job->restartInc);
+  add_child(general, "Save_averaged_results", job->saveAvgResult);
 
   // VTK output.
   //
-  auto Save_results_to_VTK_format = add_child(doc, general, "Save_results_to_VTK_format");
-  Save_results_to_VTK_format->SetText(job->vtkSaveResults);
-
-  auto Name_prefix_of_saved_VTK_files = add_child(doc, general, "Name_prefix_of_saved_VTK_files");
-  Name_prefix_of_saved_VTK_files->SetText(job->vtkFileName.c_str());
-
-  auto Increment_in_saving_VTK_files = add_child(doc, general, "Increment_in_saving_VTK_files");
-  Increment_in_saving_VTK_files->SetText(job->vtkInc);
+  add_child(general, "Save_results_to_VTK_format", job->vtkSaveResults);
+  add_child(general, "Name_prefix_of_saved_VTK_files", job->vtkFileName);
+  add_child(general, "Increment_in_saving_VTK_files", job->vtkInc);
 
   // Misc 
   //
-  auto Spectral_radius_of_infinite_time_step = add_child(doc, general, "Spectral_radius_of_infinite_time_step");
-  Spectral_radius_of_infinite_time_step->SetText(job->rhoInf);
+  add_child(general, "Spectral_radius_of_infinite_time_step", job->rhoInf);
+  add_child(general, "Searched_file_name_to_trigger_stop", job->stopFileName);
+  add_child(general, "Simulation_requires_remeshing", job->remeshing);
 
-  auto Searched_file_name_to_trigger_stop = add_child(doc, general, "Searched_file_name_to_trigger_stop");
-  Searched_file_name_to_trigger_stop->SetText(job->stopFileName.c_str());
-
-  auto Simulation_requires_remeshing = add_child(doc, general, "Simulation_requires_remeshing");
-  Simulation_requires_remeshing->SetText(job->remeshing);
-
-  auto Verbose = add_child(doc, general, "Verbose");
-  Verbose->SetText(job->verbose);
-
-  auto Warning = add_child(doc, general, "Warning");
-  Warning->SetText(job->warn);
-
-  auto Debug = add_child(doc, general, "Debug");
-  Debug->SetText(job->debug);
-
-  return general;
+  add_child(general, "Verbose", job->verbose);
+  add_child(general, "Warning", job->warn);
+  add_child(general, "Debug", job->debug);
 }
 
-//-----------
-// add_meshe
-//-----------
+//----------
+// add_mesh
+//----------
 //
-tinyxml2::XMLElement*
-Sv4GuiXmlWriter::add_mesh(const sv4guisvFSIJob* job, sv4guisvFSIDomain& domain,
-    tinyxml2::XMLDocument& doc)
+void Sv4GuiXmlWriter::add_mesh(const sv4guisvFSIJob* job, sv4guisvFSIDomain& domain, const int domain_id)
 {
-  auto mesh = doc.NewElement("Add_mesh");
+  auto mesh = add_sub_child(root_, "Add_mesh");
   mesh->SetAttribute("name", domain.name.c_str());
 
-  auto Mesh_file_path = add_child(doc, mesh, "Mesh_file_path");
-  Mesh_file_path->SetText(domain.folderName.c_str());
+  add_child(mesh, "Mesh_file_path", domain.folderName);
 
   for ( auto& face_name : domain.faceNames ) {
-    auto face = add_child(doc, mesh, "Add_face");
-    //auto face = doc.NewElement("Add_face");
+    auto face = add_sub_child( mesh, "Add_face");
     face->SetAttribute("name", face_name.c_str());
-    auto Face_file_path = add_child(doc, face, "Face_file_path");
     auto face_file = domain.folderName + path_sep_ + domain.faceFolderName + path_sep_ + face_name+".vtp";
-    Face_file_path->SetText(face_file.c_str());
+    add_child(face, "Face_file_path", face_file);
   }
 
-  return mesh;
+  add_child( mesh, "Domain", domain_id);
+}
+
+//----------------
+// add_projection
+//----------------
+// Add projection between fluid-solid surfaces.
+//
+void Sv4GuiXmlWriter::add_projection(const sv4guisvFSIJob* job)
+{
+  for (auto& eq: job->m_Eqs) {
+    if (eq.physName != "FSI") {
+      break;
+    }
+
+    for (auto& fbc : eq.faceBCs ) {
+      auto& iBc = fbc.second;
+
+      if (iBc.bcType == "Projection") {
+        auto projection = add_sub_child(root_, "Add_projection");
+        projection->SetAttribute("name", iBc.faceName.toStdString().c_str());
+        add_child(projection, "Project_from_face", iBc.projectionFaceName);
+      }
+    }
+  }
+}
+
+//-----------------------------
+// add_single_physics_equation
+//-----------------------------
+// Add an equation for a single physics simulation.
+//
+void Sv4GuiXmlWriter::add_single_physics_equation(const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation)
+{
+  for (int i = 0; i < eq.getPropCount(); i++) {
+    auto name = eq.getPropName(i).toStdString();
+    std::replace(name.begin(), name.end(), ' ', '_');
+    add_child(xml_equation, name, eq.getPropValue(i));
+  }
 }
 
 //-----------------
@@ -160,25 +289,30 @@ Sv4GuiXmlWriter::add_mesh(const sv4guisvFSIJob* job, sv4guisvFSIDomain& domain,
 //
 void Sv4GuiXmlWriter::create_document(const sv4guisvFSIJob* job, const std::string& file_name)
 {
-  tinyxml2::XMLDocument doc;
-  tinyxml2::XMLElement* root = doc.NewElement("svFSIFile");
-  root->SetAttribute("version", "1.0");
-  doc.InsertFirstChild(root);
+  root_ = doc_.NewElement("svFSIFile");
+  root_->SetAttribute("version", "1.0");
+  doc_.InsertFirstChild(root_);
 
   // Add data for the GeneralSimulationParameters section.
-  auto general = add_general(job, doc);
-  root->InsertEndChild(general);
+  add_general(job);
 
   // If there are two domains set the first domain to the fluid domain.
   auto domains = sort_domains(job);
 
   // Add mesh data for the Add_mesh sections.
+  int domain_id = 0;
   for (auto& domain : domains) {
-    auto mesh = add_mesh(job, domain, doc);
-    root->InsertEndChild(mesh);
+    add_mesh(job, domain, domain_id);
+    domain_id += 1;
   }
 
-  doc.SaveFile(file_name.c_str());
+  // Add projection between fluid-solid surfaces.
+  add_projection(job);
+
+  // Add equations.
+  add_equations(job);
+
+  doc_.SaveFile(file_name.c_str());
 }
 
 //--------------
@@ -211,6 +345,4 @@ Sv4GuiXmlWriter::sort_domains(const sv4guisvFSIJob* job)
 
   return domains;
 }
-
-
 
