@@ -76,15 +76,21 @@ class Sv4GuiXmlWriter
 
     void add_equations(const sv4guisvFSIJob* job);
 
+    void add_equation_bcs(const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation);
+                        
+    void add_equation_output(const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation);
+
     void add_equation_solver(const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation);
 
-    void add_fsi_equation(const sv4guisvFSIeqClass& equation, tinyxml2::XMLElement* xml_equation);
+    void add_fsi_equation(const sv4guisvFSIJob* job, const sv4guisvFSIeqClass& equation, tinyxml2::XMLElement* xml_equation);
 
     void add_general(const sv4guisvFSIJob* job);
 
     void add_mesh(const sv4guisvFSIJob* job, sv4guisvFSIDomain& domain, const int domain_id);
 
     void add_projection(const sv4guisvFSIJob* job);
+
+    void add_remeshing(const sv4guisvFSIJob* job, const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation);
 
     void add_single_physics_equation(const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation);
 

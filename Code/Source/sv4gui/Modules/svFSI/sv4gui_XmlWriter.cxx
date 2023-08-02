@@ -90,6 +90,66 @@ Sv4GuiXmlWriter::add_sub_child(tinyxml2::XMLElement* parent, const std::string& 
   return child;
 }
 
+//------------------
+// add_equation_bcs
+//------------------
+//
+void Sv4GuiXmlWriter::add_equation_bcs(const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation)
+{
+  for (auto& fbc : eq.faceBCs) {
+    auto& iBc = fbc.second;
+    if (iBc.bcType == "Projection") {
+      continue;
+    }
+
+    auto boundary_condition = add_sub_child(xml_equation, "Add_BC");
+    boundary_condition->SetAttribute("name", iBc.faceName.toStdString().c_str());
+
+    add_child(boundary_condition, "Type", iBc.bcGrp);
+    add_child(boundary_condition, "Time_dependence", iBc.bcType);
+
+    if (iBc.bcType == "Steady") {
+      add_child(boundary_condition, "Value", iBc.g);
+
+    } else if (iBc.bcType == "Unsteady") {
+      add_child(boundary_condition, "Temporal_values_file_path", iBc.gtFile);
+
+    } else if (iBc.bcType == "Resistance") {
+      add_child(boundary_condition, "Value", iBc.r);
+
+    } else if (iBc.bcType == "General") {
+      add_child(boundary_condition, "Temporal_and_spatialvalues_file_path", iBc.gmFile);
+
+    }
+
+    add_child(boundary_condition, "Profile", iBc.profile);
+
+    if (iBc.profile == "User_defined") {
+      add_child(boundary_condition, "Spatial_profile_file_path", iBc.gxFile);
+    }
+
+    if (iBc.zperm) {
+      add_child(boundary_condition, "Zero_out_perimeter", iBc.zperm);
+    }
+
+    if (iBc.flux) {
+      add_child(boundary_condition, "Impose_flux", iBc.flux);
+    }
+
+    if (iBc.imposeIntegral) {
+      add_child(boundary_condition, "Impose_on_state_variable_integral", iBc.imposeIntegral);
+    }
+
+    if (iBc.effectiveDirection.trimmed() != "") {
+      auto list = iBc.effectiveDirection.trimmed().split(QRegExp("[(),{}-\\s+]"),QString::SkipEmptyParts);
+      auto dir = "(" + list[0].toStdString() + ", " + list[1].toStdString() + ", " + list[2].toStdString() + ")";
+      add_child(boundary_condition, "Effective_direction", dir);
+    }
+
+  }
+
+}
+
 //---------------
 // add_equations
 //---------------
@@ -111,16 +171,39 @@ void Sv4GuiXmlWriter::add_equations(const sv4guisvFSIJob* job)
     }
 
     if (eq.getPhysName() == "FSI") {
-      add_fsi_equation(eq, xml_equation);
+      add_fsi_equation(job, eq, xml_equation);
 
     } else {
       add_single_physics_equation(eq, xml_equation);
+
+      if (eq.getPhysName() == "struct"){
+        add_child(xml_equation, "Constitutive_model", eq.constitutiveModel);
+      }
     }
 
     if (eq.physName != "mesh") {
       add_equation_solver(eq, xml_equation);
     }
+
+    add_equation_output(eq, xml_equation);
+
+    add_equation_bcs(eq, xml_equation);
   }
+}
+
+//---------------------
+// add_equation_output
+//---------------------
+//
+void Sv4GuiXmlWriter::add_equation_output(const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation)
+{
+  auto output = add_sub_child(xml_equation, "Output");
+  output->SetAttribute("type", "Spatial");
+
+  foreach ( auto& outName , eq.getOutputNames() ) {
+    add_child(output, outName.toStdString(), true); 
+  }
+ 
 }
 
 //---------------------
@@ -133,7 +216,10 @@ void Sv4GuiXmlWriter::add_equation_solver(const sv4guisvFSIeqClass& eq, tinyxml2
   auto linear_solver = add_sub_child(xml_equation, "LS");
   linear_solver->SetAttribute("type", eq.lsType.toStdString().c_str());
 
-  add_child(linear_solver, "Preconditioner", eq.lsPreconditioner); 
+  if ((eq.lsPreconditioner != "") && (eq.lsPreconditioner != "Default")) {
+    add_child(linear_solver, "Preconditioner", eq.lsPreconditioner); 
+  }
+
   add_child(linear_solver, "Max_iterations", eq.lsMaxItr); 
   add_child(linear_solver, "Tolerance", eq.tol);
   add_child(linear_solver, "Krylov_space_dimension", eq.lsKrylovDim);
@@ -153,35 +239,46 @@ void Sv4GuiXmlWriter::add_equation_solver(const sv4guisvFSIeqClass& eq, tinyxml2
 //------------------
 // Add an FSI equation.
 //
-void Sv4GuiXmlWriter::add_fsi_equation(const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation)
+void Sv4GuiXmlWriter::add_fsi_equation(const sv4guisvFSIJob* job, const sv4guisvFSIeqClass& eq, 
+    tinyxml2::XMLElement* xml_equation)
 {
   // Add fluid domain 1.
   //
   // This seems to have ID 1 ?
   //
   auto domain_1 = add_sub_child(xml_equation, "Domain");
-  domain_1->SetAttribute("id", 1);
+  domain_1->SetAttribute("id", 0);
 
   add_child(domain_1, "Equation", "fluid");
   add_child(domain_1, "Density", eq.getPropValue(0));
 
   auto viscosity = add_sub_child(domain_1, "Viscosity");
-  viscosity->SetAttribute("model", eq.getPropValue(1));
+  viscosity->SetAttribute("model", "Constant");
+  add_child(viscosity, "Value", eq.getPropValue(1));
 
   add_child(domain_1, "Backflow_stabilization_coefficient", eq.backflowStab);
 
   // Add struct domain 2.
   //
   auto domain_2 = add_sub_child(xml_equation, "Domain");
-  domain_2->SetAttribute("id", 2);
+  domain_2->SetAttribute("id", 1);
 
   add_child(domain_2, "Equation", "struct");
-  auto Constitutive_model = add_sub_child(domain_2, "Constitutive_model");
-  Constitutive_model->SetAttribute("model", eq.constitutiveModel.toStdString().c_str());
+
+  // For Constitutive_model with no sub-elements we need to use
+  // 'add_child()' with an empty value.
+  //
+  auto Constitutive_model = add_child(domain_2, "Constitutive_model", "");
+  Constitutive_model->SetAttribute("type", eq.constitutiveModel.toStdString().c_str());
 
   add_child(domain_2, "Density", eq.getPropValue(2));
   add_child(domain_2, "Elasticity_modulus", eq.getPropValue(3));
   add_child(domain_2, "Poisson_ratio", eq.getPropValue(4));
+
+  if (eq.remesher != "None") {
+    add_remeshing(job, eq, xml_equation);
+  }
+ 
 }
 
 //-------------
@@ -201,9 +298,10 @@ void Sv4GuiXmlWriter::add_general(const sv4guisvFSIJob* job)
 
   // Restart files.
   //
-  add_child(general, "Continue_previous_simulation", job->continuePrevious);
   add_child(general, "Restart_file_name", job->restartFileName);
   add_child(general, "Increment_in_saving_restart_files", job->restartInc);
+  add_child(general, "Start_saving_after_time_step", job->startSavingStep);
+  add_child(general, "Continue_previous_simulation", job->continuePrevious);
   add_child(general, "Save_averaged_results", job->saveAvgResult);
 
   // VTK output.
@@ -232,7 +330,8 @@ void Sv4GuiXmlWriter::add_mesh(const sv4guisvFSIJob* job, sv4guisvFSIDomain& dom
   auto mesh = add_sub_child(root_, "Add_mesh");
   mesh->SetAttribute("name", domain.name.c_str());
 
-  add_child(mesh, "Mesh_file_path", domain.folderName);
+  auto mesh_file = domain.folderName + path_sep_ + domain.fileName;
+  add_child(mesh, "Mesh_file_path", mesh_file);
 
   for ( auto& face_name : domain.faceNames ) {
     auto face = add_sub_child( mesh, "Add_face");
@@ -266,6 +365,30 @@ void Sv4GuiXmlWriter::add_projection(const sv4guisvFSIJob* job)
       }
     }
   }
+}
+
+//---------------
+// add_remeshing
+//---------------
+//
+void Sv4GuiXmlWriter::add_remeshing(const sv4guisvFSIJob* job, const sv4guisvFSIeqClass& eq, 
+    tinyxml2::XMLElement* xml_equation)
+{
+  auto remesher  = add_sub_child(xml_equation, "Remsher");
+  remesher->SetAttribute("type", eq.remesher.toStdString().c_str());
+
+  for (auto& pair : job->m_Domains) {
+    auto domainName = pair.first;
+    auto& domain = pair.second;
+    auto Max_edge_size = add_sub_child(xml_equation, "Max_edge_size");
+    Max_edge_size->SetAttribute("name", domainName.c_str()); 
+    Max_edge_size->SetAttribute("value", domain.edgeSize);
+  }
+
+  add_child(remesher, "Min_dihedral_angle", eq.rmMinAngle); 
+  add_child(remesher, "Max_radius_ratio", eq.rmMaxRadiusRatio); 
+  add_child(remesher, "Remesh_frequency", eq.rmFrequency); 
+  add_child(remesher, "Frequency_for_copying_data", eq.rmCopyFrequency); 
 }
 
 //-----------------------------

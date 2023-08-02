@@ -321,14 +321,19 @@ bool sv4guisvFSIJob::WriteFile(std::string filePath)
                 return false;
             }
             out << tabS << tabS << "Time dependence: " << iBc.bcType << endL;
+
             if ( iBc.bcType == "Steady" ) {
                 out << tabS << tabS << "Value: " << iBc.g << endL;
+
             } else if ( iBc.bcType == "Unsteady" ) {
                 out << tabS << tabS << "Temporal values file path: " << iBc.gtFile << endL;
+
             } else if ( iBc.bcType == "Resistance" ) {
                     out << tabS << tabS << "Value: " << iBc.r << endL;
+
             } else if ( iBc.bcType == "Coupled" ) {
                 // Noting special is required
+
             } else if ( iBc.bcType == "General" ) {
                 out << tabS << tabS << "Temporal and spatial values file path: " << iBc.gmFile << endL;
             }
