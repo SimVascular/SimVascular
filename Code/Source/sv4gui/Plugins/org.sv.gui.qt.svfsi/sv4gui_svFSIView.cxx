@@ -1402,11 +1402,16 @@ void sv4guisvFSIView::SaveRemesher()
     DataChanged();
 }
 
-
+//-----------------
+// CreateInputFile
+//-----------------
+// Create a text or XML input file of solver commands.
+//
 void sv4guisvFSIView::CreateInputFile()
 {
-    if(!m_MitkJob)
+    if (!m_MitkJob) {
         return;
+    }
 
     QString jobPath=GetJobPath();
     if(jobPath=="" || !QDir(jobPath).exists())
@@ -1415,14 +1420,33 @@ void sv4guisvFSIView::CreateInputFile()
         return;
     }
 
-    std::string mfsFileName=m_JobNode->GetName()+".txt";
-    std::string mfsFullFilePath=jobPath.toStdString()+"/"+mfsFileName;
 
-    if(m_Job->WriteFile(mfsFullFilePath))
-    {
-        m_MitkJob->SetStatus("Input file created");
-        m_JobNode->SetBoolProperty("dummy",true);//trigger NodeChanged to update job status
-        mitk::StatusBar::GetInstance()->DisplayText("Input file (.msf) have been created.");
+    // If the 'xml_format_radioButton' is selected then write
+    // out an XML format file for svFSIplus.
+    //
+    bool xml_format = ui->xml_format_radioButton->isChecked();
+
+    if (xml_format) { 
+      std::string mfsFileName=m_JobNode->GetName()+".xml";
+      std::string mfsFullFilePath=jobPath.toStdString()+"/"+mfsFileName;
+
+      if (m_Job->WriteXmlFile(mfsFullFilePath)) {
+          m_MitkJob->SetStatus("Input XML file created");
+          m_JobNode->SetBoolProperty("dummy",true);//trigger NodeChanged to update job status
+          mitk::StatusBar::GetInstance()->DisplayText("Input file (.msf) have been created.");
+      }
+
+    // Write out a plain text format file for svFSI.
+    //
+    } else {
+      std::string mfsFileName=m_JobNode->GetName()+".txt";
+      std::string mfsFullFilePath=jobPath.toStdString()+"/"+mfsFileName;
+
+      if (m_Job->WriteFile(mfsFullFilePath)) {
+          m_MitkJob->SetStatus("Input file created");
+          m_JobNode->SetBoolProperty("dummy",true);//trigger NodeChanged to update job status
+          mitk::StatusBar::GetInstance()->DisplayText("Input file (.msf) have been created.");
+      }
     }
 }
 

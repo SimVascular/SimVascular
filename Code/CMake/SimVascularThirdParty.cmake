@@ -82,6 +82,10 @@ if(SV_USE_TINYXML)
 else()
 	unset(TINYXML_LIBRARY CACHE)
 endif()
+
+simvascular_third_party(tinyxml2)
+set(TINYXML2_LIBRARY ${SV_LIB_THIRDPARTY_TINYXML2_NAME})
+
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
