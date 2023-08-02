@@ -390,7 +390,7 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
             } else {
               ui->resliceSlider->turnOnReslice(false);
               m_HasImageData = false;
-              EnableControls(false);
+              EnableGuiControls(false);
             }
         }
 
@@ -566,9 +566,13 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     if (m_HasImageData) { 
       ui->resliceSlider->turnOnReslice(true);
+
+    // If there is no image data then disable the reslice slider
+    // and most GUI controls to prevent SV from crashing.
+    //
     } else {
       ui->resliceSlider->turnOnReslice(false);
-      EnableControls(false);
+      EnableGuiControls(false);
     }
 
     m_DataInteractor->SetPathPoints(m_PathPoints);
