@@ -113,6 +113,7 @@ class SV4GUIMODULESVFSI_EXPORT sv4guisvFSIJob
     std::vector<sv4guisvFSIeqClass> m_Eqs;
 
     bool WriteFile(std::string filePath);
+    bool WriteXmlFile(std::string filePath);
   };
 
 #endif // sv4guisvFSIJOB_H

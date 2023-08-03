@@ -1,3 +1,5 @@
+# Hey emacs, this is a -*- makefile -*-
+
 # Copyright (c) Stanford University, The Regents of the University of
 #               California, and others.
 #
@@ -28,28 +30,17 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(H_FILES
-    sv4gui_svFSIbcClass.h
-    sv4gui_svFSIeqClass.h
-    sv4gui_svFSIJob.h
-    sv4gui_svFSViscosity.h
-    sv4gui_MitksvFSIJob.h
-    sv4gui_MitksvFSIJobIO.h
-    sv4gui_MitksvFSIObjectFactory.h
-    sv4gui_XmlWriter.h
-)
+TOP=../../../../BuildWithMake
 
-set(CPP_FILES
-    sv4gui_svFSIbcClass.cxx
-    sv4gui_svFSIeqClass.cxx
-    sv4gui_svFSIJob.cxx
-    sv4gui_svFSViscosity.cxx
-    sv4gui_MitksvFSIJob.cxx
-    sv4gui_MitksvFSIJobIO.cxx
-    sv4gui_MitksvFSIObjectFactory.cxx
-    sv4gui_XmlWriter.cxx
-)
+include $(TOP)/include.mk
 
-set(RESOURCE_FILES
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR)
 
-)
+HDRS	= tinystr.h tinyxml.h
+
+CXXSRCS	= tinyxml.cxx tinyxmlparser.cxx tinyxmlerror.cxx tinystr.cxx
+
+TARGET_LIB_NAME = $(SV_LIB_THIRDPARTY_TINYXML_NAME)
+
+include $(TOP)/targetlib.mk
+

@@ -28,28 +28,30 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(H_FILES
-    sv4gui_svFSIbcClass.h
-    sv4gui_svFSIeqClass.h
-    sv4gui_svFSIJob.h
-    sv4gui_svFSViscosity.h
-    sv4gui_MitksvFSIJob.h
-    sv4gui_MitksvFSIJobIO.h
-    sv4gui_MitksvFSIObjectFactory.h
-    sv4gui_XmlWriter.h
-)
+# Set  the minimum  required version  of cmake  for a  project.
+cmake_minimum_required(VERSION 3.10)
+project(TINYXML)
 
-set(CPP_FILES
-    sv4gui_svFSIbcClass.cxx
-    sv4gui_svFSIeqClass.cxx
-    sv4gui_svFSIJob.cxx
-    sv4gui_svFSViscosity.cxx
-    sv4gui_MitksvFSIJob.cxx
-    sv4gui_MitksvFSIJobIO.cxx
-    sv4gui_MitksvFSIObjectFactory.cxx
-    sv4gui_XmlWriter.cxx
-)
+# source files for tinyxml2
+SET(SRCS tinyxml2.cpp) 
+SET(HDRS tinyxml2.h)
 
-set(RESOURCE_FILES
+set(lib ${SV_LIB_THIRDPARTY_TINYXML2_NAME})
+if(SV_USE_THIRDPARTY_SHARED_LIBRARIES)
+  add_library(${lib} SHARED ${SRCS})
+else()
+  add_library(${lib} STATIC ${SRCS})
+endif()
 
-)
+if(SV_INSTALL_LIBS)
+	install(TARGETS ${lib}
+		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ThirdPartyExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ThirdPartyLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT ThirdPartyLibraries
+		)
+endif()
+if(SV_INSTALL_HEADERS)
+        install(FILES ${HDRS}
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/thirdparty/tinyxml2 COMPONENT ThirdPartyHeaders
+		)
+endif()

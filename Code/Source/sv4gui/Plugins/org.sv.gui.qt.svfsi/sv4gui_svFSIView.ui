@@ -275,7 +275,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>434</width>
+           <width>449</width>
            <height>581</height>
           </rect>
          </property>
@@ -1929,7 +1929,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>434</width>
+           <width>449</width>
            <height>609</height>
           </rect>
          </property>
@@ -2436,6 +2436,26 @@
             </property>
            </spacer>
           </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="btnStopSim">
+            <property name="text">
+             <string>Stop</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item row="1" column="0">
            <widget class="QWidget" name="widgetRun" native="true">
             <layout class="QGridLayout" name="gridLayout_42">
@@ -2454,17 +2474,30 @@
              <property name="spacing">
               <number>5</number>
              </property>
-             <item row="2" column="1">
-              <widget class="ctkSliderWidget" name="sliderNumProcs" native="true"/>
+             <item row="0" column="1">
+              <widget class="QRadioButton" name="xml_format_radioButton">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If selected then write the solver commands in XML format used by svFSIplus.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>XML Format</string>
+               </property>
+              </widget>
              </item>
-             <item row="0" column="0" colspan="2">
+             <item row="0" column="0">
               <widget class="QPushButton" name="btnCreateInputFile">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string>Create Input File</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
+             <item row="1" column="1">
+              <widget class="ctkSliderWidget" name="sliderNumProcs" native="true"/>
+             </item>
+             <item row="1" column="0">
               <widget class="QLabel" name="label_5">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -2477,7 +2510,7 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="0" colspan="2">
+             <item row="2" column="0" colspan="2">
               <widget class="QPushButton" name="btnRunSim">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -2494,26 +2527,6 @@
               </widget>
              </item>
             </layout>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="btnStopSim">
-            <property name="text">
-             <string>Stop</string>
-            </property>
            </widget>
           </item>
          </layout>

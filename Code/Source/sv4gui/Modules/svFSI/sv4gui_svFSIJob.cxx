@@ -35,6 +35,8 @@
 
 #include "sv4gui_svFSIJob.h"
 
+#include "sv4gui_XmlWriter.h"
+
 #include <QFile>
 #include <QTextStream>
 
@@ -66,6 +68,32 @@ sv4guisvFSIJob* sv4guisvFSIJob::Clone()
     return new sv4guisvFSIJob(*this);
 }
 
+//--------------
+// WriteXmlFile
+//--------------
+// Write simulation parameters to a XML format file for svFSIplus.
+//
+bool sv4guisvFSIJob::WriteXmlFile(std::string file_name)
+{
+  if ( (m_Domains.size() <= 0) || (m_Domains.size() > 2)) {
+    return false;
+  }
+
+  std::ofstream file_stream(file_name);
+  if (!file_stream.is_open()) {
+    return false;
+  }
+  file_stream.close(); 
+
+  Sv4GuiXmlWriter xml_writer;
+
+  xml_writer.create_document(this, file_name);
+
+  std::cout << "Writing svFSIplus input file to " << file_name << std::endl;
+
+  return true;
+}
+
 //-----------
 // WriteFile
 //-----------
@@ -73,7 +101,7 @@ sv4guisvFSIJob* sv4guisvFSIJob::Clone()
 //
 bool sv4guisvFSIJob::WriteFile(std::string filePath)
 {
-    std::cout << "writing svFSI input file\n";
+    std::cout << "writing svFSI input file. \n";
 
     if ( (m_Domains.size() <= 0) || (m_Domains.size() > 2)) {
         return false;
@@ -293,14 +321,19 @@ bool sv4guisvFSIJob::WriteFile(std::string filePath)
                 return false;
             }
             out << tabS << tabS << "Time dependence: " << iBc.bcType << endL;
+
             if ( iBc.bcType == "Steady" ) {
                 out << tabS << tabS << "Value: " << iBc.g << endL;
+
             } else if ( iBc.bcType == "Unsteady" ) {
                 out << tabS << tabS << "Temporal values file path: " << iBc.gtFile << endL;
+
             } else if ( iBc.bcType == "Resistance" ) {
                     out << tabS << tabS << "Value: " << iBc.r << endL;
+
             } else if ( iBc.bcType == "Coupled" ) {
                 // Noting special is required
+
             } else if ( iBc.bcType == "General" ) {
                 out << tabS << tabS << "Temporal and spatial values file path: " << iBc.gmFile << endL;
             }
