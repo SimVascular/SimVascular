@@ -238,10 +238,51 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
     }
 }
 
+//------------------
+// EnableGuiControls
+//------------------
+// Enable/disable GUI controls.
+//
+// This was added to disable GUI controls if image data
+// is not defined.
+//
+void sv4guiSeg2DEdit::EnableGuiControls(bool enable)
+{
+  ui->btnLevelSet->setEnabled(enable);
+  ui->btnThreshold->setEnabled(enable);
+  ui->btnCircle->setEnabled(enable); 
+  ui->btnEllipse->setEnabled(enable);
+  ui->btnSplinePoly->setEnabled(enable);
+  ui->btnPolygon->setEnabled(enable);
+  ui->btnSmooth->setEnabled(enable);
+  ui->btnCopy->setEnabled(enable);
+  ui->btnPaste->setEnabled(enable);
+  ui->btnML->setEnabled(enable);
+  ui->multiSegButton->setEnabled(enable);
+}
+
+//------------------------
+// ShowNoImageDataWarning
+//------------------------
+// Display a popup warning that no image data is defined and the
+// tool is mostly disabled.
+//
+void sv4guiSeg2DEdit::ShowNoImageDataWarning()
+{
+  if (m_NoImageDataWarningShown) {
+    return;
+  }
+
+  QMessageBox::warning(NULL, "The Segmentation Tool is disabled.", 
+    "No image data has been loaded so the Segmentation Tool is disabled.\n\nLoad an image to enable full functionality.");
+  m_NoImageDataWarningShown = true;
+}
+
 void sv4guiSeg2DEdit::Visible()
 {
 //    ui->resliceSlider->turnOnReslice(true);
     OnSelectionChanged(GetDataManagerSelection());
+
 }
 
 void sv4guiSeg2DEdit::Hidden()
@@ -281,8 +322,6 @@ int sv4guiSeg2DEdit::GetTimeStep()
 //
 void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
-    std::cout << "OnSelectionChanged\n";
-
     if(!IsVisible())
     {
         return;
@@ -298,7 +337,7 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     mitk::DataNode::Pointer groupNode=nodes.front();
 
-    if(m_ContourGroupNode==groupNode)
+    if(m_ContourGroupNode==groupNode && m_HasImageData)
     {
         ui->resliceSlider->turnOnReslice(true);
         return;
@@ -310,7 +349,7 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     m_ContourGroup=dynamic_cast<sv4guiContourGroup*>(groupNode->GetData());
     if(!m_ContourGroup)
     {
-        std::cout << "no contour group selected\n";
+        std::cout << "No contour group selected\n";
         ui->resliceSlider->turnOnReslice(false);
         ClearAll();
         ui->SinglePathTab->setEnabled(false);
@@ -338,13 +377,21 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         if(rs->size()>0) {
             mitk::DataNode::Pointer imageFolderNode=rs->GetElement(0);
             rs=GetDataStorage()->GetDerivations(imageFolderNode);
+
             if(rs->size()>0) {
                 imageNode=rs->GetElement(0);
                 if(imageNode.IsNotNull()) {
                     m_Image= dynamic_cast<mitk::Image*>(imageNode->GetData());
                 }
-            }
 
+            // If there is no image data then disable the reslice slider
+            // and most GUI controls to prevent SV from crashing.
+            //
+            } else {
+              ui->resliceSlider->turnOnReslice(false);
+              m_HasImageData = false;
+              EnableGuiControls(false);
+            }
         }
 
         rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiPathFolder"));
@@ -517,7 +564,16 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     m_ContourGroupNode->GetBoolProperty("lofting",lofting);
     ui->checkBoxLoftingPreview->setChecked(lofting);
 
-    ui->resliceSlider->turnOnReslice(true);
+    if (m_HasImageData) { 
+      ui->resliceSlider->turnOnReslice(true);
+
+    // If there is no image data then disable the reslice slider
+    // and most GUI controls to prevent SV from crashing.
+    //
+    } else {
+      ui->resliceSlider->turnOnReslice(false);
+      EnableGuiControls(false);
+    }
 
     m_DataInteractor->SetPathPoints(m_PathPoints);
     m_DataInteractor->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
@@ -525,6 +581,9 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     connect(ui->resliceSlider,SIGNAL(reslicePositionChanged(int)), this, SLOT(UpdatePathPoint(int)) );
 
+    if (!m_HasImageData) { 
+      ShowNoImageDataWarning();
+    }
 }
 
 double sv4guiSeg2DEdit::GetVolumeImageSpacing()
@@ -1779,8 +1838,6 @@ void sv4guiSeg2DEdit::ShowPath(bool checked)
 //
 void sv4guiSeg2DEdit::PreparePreviewInteraction(QString method)
 {
-    //std::cout << "========== sv4guiSeg2DEdit::PreparePreviewInteraction ========== " << std::endl;
-
     // Create Data Node to show threshold contour.
     m_PreviewContourModel = sv4guiContourModel::New();
     m_PreviewDataNode = mitk::DataNode::New();
@@ -1956,7 +2013,6 @@ void sv4guiSeg2DEdit::segTabSelected(){
  */
 void sv4guiSeg2DEdit::initialize()
 {
-  std::cout << "========== sv4guiSeg2DEdit::initialize ==========" << std::endl;
   bool ml_init;
   GetDataStorage()->GetNamedNode("Segmentations")->GetBoolProperty("ml_init",ml_init);
 
@@ -1974,7 +2030,6 @@ void sv4guiSeg2DEdit::initialize()
 
   std::string projPath;
   projFolderNode->GetStringProperty("project path", projPath);
-  std::cout << "[initialize] projPath: " << projPath << std::endl;
   mitk::DataNode::Pointer imageNode;
 
   auto rs = GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiImageFolder"));
@@ -1987,12 +2042,10 @@ void sv4guiSeg2DEdit::initialize()
   } 
 
   if (imageNode.IsNull()) {
-    std::cout << "[initialize] imageNode is nullptr " << std::endl;
     return;
   }
 
   if (imageNode->GetStringProperty("image_absolute_file_name", m_imageFilePath)) { 
-    std::cout << "[initialize] image_absolute_file_name: " << m_imageFilePath << std::endl;
   }
 
   ml_utils = sv4gui_MachineLearningUtils::getInstance("googlenet_c30_train300k_aug10_clean");
@@ -2032,7 +2085,7 @@ void sv4guiSeg2DEdit::updatePaths(){
     return ;
   }
 
-  auto rs       = dss->GetDerivations(path_folder_node);
+  auto rs = dss->GetDerivations(path_folder_node);
 
   if (rs->size() == 0){
     std::cout << "No paths found\n";
@@ -2104,7 +2157,6 @@ void sv4guiSeg2DEdit::segmentPaths(){
       }
 
       m_selected_paths.push_back(name);
-      std::cout << "selected " << name << "\n";
     }
   }
 

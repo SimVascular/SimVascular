@@ -216,6 +216,9 @@ public:
 
     virtual void Hidden() override;
 
+    void EnableGuiControls(bool enable);
+    void ShowNoImageDataWarning();
+
 //    bool IsExclusiveFunctionality() const override;
 
     void PreparePreviewInteraction(QString method);
@@ -317,6 +320,8 @@ protected:
 
     bool m_MachineLearninginitialized = false;
 
+    bool m_HasImageData = true;
+    bool m_NoImageDataWarningShown = false;
 };
 
 #endif // SV4GUI_SEG2DEDIT_H
