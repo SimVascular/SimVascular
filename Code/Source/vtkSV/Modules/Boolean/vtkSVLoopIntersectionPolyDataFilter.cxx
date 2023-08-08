@@ -142,7 +142,7 @@ protected:
 
   /// \brief Split cells into polygons created by intersection lines
   vtkCellArray* SplitCell(vtkPolyData *input, vtkIdType cellId,
-                          vtkIdType *cellPts,
+                          const vtkIdType *cellPts,
                           IntersectionMapType *map,
                           vtkPolyData *interLines, int inputIndex,
                           int numCurrCells);
@@ -151,7 +151,7 @@ protected:
   int AddToPointEdgeMap(int index, vtkIdType ptId, double x[3],
                         vtkPolyData *mesh, vtkIdType cellId,
                         vtkIdType edgeId, vtkIdType lineId,
-                        vtkIdType triPts[3]);
+                        const vtkIdType triPts[3]);
 
   /// \brief Function to add information about the new cell data
   void AddToNewCellMap(int inputIndex, int interPtCount, int interPts[3],
@@ -731,7 +731,7 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
 // Impl::SplitCell
 // ----------------------
 vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
-::SplitCell(vtkPolyData *input, vtkIdType cellId, vtkIdType *cellPts,
+::SplitCell(vtkPolyData *input, vtkIdType cellId, const vtkIdType *cellPts,
             IntersectionMapType *map,
             vtkPolyData *interLines, int inputIndex,
             int numCurrCells)
@@ -1335,7 +1335,7 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
 int vtkSVLoopIntersectionPolyDataFilter::Impl
 ::AddToPointEdgeMap(int index, vtkIdType ptId, double x[3], vtkPolyData *mesh,
                     vtkIdType cellId, vtkIdType edgeId, vtkIdType lineId,
-                    vtkIdType triPtIds[3])
+                    const vtkIdType triPtIds[3])
 {
   int value = -1;
   vtkIdType edgePtId0 = triPtIds[edgeId];

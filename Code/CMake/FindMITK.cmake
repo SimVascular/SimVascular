@@ -54,18 +54,18 @@ endif()
 #-----------------------------------------------------------------------------
 # Libraries
 set(${proj}_LIBNAMES CppMicroServices
-                     CTKCommandLineModulesBackendLocalProcess
-                     CTKCommandLineModulesCore
-                     CTKCommandLineModulesFrontendQtGui
-                     CTKCore
-                     CTKDICOMCore
-                     CTKDICOMWidgets
-                     CTKPluginFramework
-                     CTKScriptingPythonCore
-                     CTKScriptingPythonWidgets
+                     # CTKCommandLineModulesBackendLocalProcess
+                     # CTKCommandLineModulesCore
+                     # CTKCommandLineModulesFrontendQtGui
+                     # CTKCore
+                     # CTKDICOMCore
+                     # CTKDICOMWidgets
+                     # CTKPluginFramework
+                     # CTKScriptingPythonCore
+                     # CTKScriptingPythonWidgets
                      # CTKVisualizationVTKCore
-                     CTKWidgets
-                     CTKXNATCore
+                     # CTKWidgets
+                     # CTKXNATCore
                      mbilog
                      MitkAlgorithmsExt
                      MitkAppUtil

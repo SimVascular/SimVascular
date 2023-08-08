@@ -84,21 +84,21 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::DoRead()
     }
 
     sv4guiMitksvFSIJob::Pointer mitkSimJob = sv4guiMitksvFSIJob::New();
-    char* modelName="";
-    char* meshName="";
-    char* status="";
+    const char** modelName;
+    const char** meshName;
+    const char** status;
     int procNum=1;
-    mjElement->QueryStringAttribute("model_name",&modelName);
-    mjElement->QueryStringAttribute("mesh_name",&meshName);
-    mjElement->QueryStringAttribute("status",&status);
+    mjElement->QueryStringAttribute("model_name",modelName);
+    mjElement->QueryStringAttribute("mesh_name",meshName);
+    mjElement->QueryStringAttribute("status",status);
     mjElement->QueryIntAttribute("process_number",&procNum);
 
-    mitkSimJob->SetModelName(modelName);
-    mitkSimJob->SetMeshName(meshName);
-    mitkSimJob->SetStatus(status);
+    mitkSimJob->SetModelName(*modelName);
+    mitkSimJob->SetMeshName(*meshName);
+    mitkSimJob->SetStatus(*status);
     mitkSimJob->SetProcessNumber(procNum);
 
-    char* strValue="";
+    const char* strValue;
 
     tinyxml2::XMLElement* jobElement = mjElement->FirstChildElement("job");
 
@@ -107,18 +107,18 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::DoRead()
 
         jobElement->QueryIntAttribute("nsd",&job->nsd);
         jobElement->QueryIntAttribute("timeSteps",&job->timeSteps);
-        char* stepSize="";
+        const char* stepSize;
         jobElement->QueryStringAttribute("stepSize",&stepSize);
         job->stepSize = stepSize;
         jobElement->QueryBoolAttribute("continuePrevious",&job->continuePrevious);
 
-        char* restartFileName="";
+        const char* restartFileName;
         jobElement->QueryStringAttribute("restartFileName", &restartFileName);
         job->restartFileName = restartFileName;
         jobElement->QueryIntAttribute("restartInc", &job->restartInc);
 
         jobElement->QueryBoolAttribute("vtkSaveResults", &job->vtkSaveResults);
-        char* vtkFileName="";
+        const char* vtkFileName;
         jobElement->QueryStringAttribute("vtkFileName", &vtkFileName);
         job->vtkFileName = vtkFileName;
         jobElement->QueryIntAttribute("vtkInc", &job->vtkInc);
@@ -126,7 +126,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::DoRead()
         jobElement->QueryIntAttribute("startSavingStep",&job->startSavingStep);
         jobElement->QueryBoolAttribute("saveAvgResult",&job->saveAvgResult);
         jobElement->QueryDoubleAttribute("rhoInf",&job->rhoInf);
-        char* stopFileName="";
+        const char* stopFileName;
         jobElement->QueryStringAttribute("stopFileName",&stopFileName);
         job->stopFileName = stopFileName;
         jobElement->QueryBoolAttribute("remeshing",&job->remeshing);
@@ -145,12 +145,12 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::DoRead()
 //                    continue;
 
                 sv4guisvFSIDomain domain;
-                char* name="";
-                char* type="";
-                char* folderName="";
-                char* fileName="";
-                char* surfaceName="";
-                char* faceFolderName="";
+                const char* name;
+                const char* type;
+                const char* folderName;
+                const char* fileName;
+                const char* surfaceName;
+                const char* faceFolderName;
                 domainElement->QueryStringAttribute("name", &name);
                 domainElement->QueryStringAttribute("type", &type);
                 domainElement->QueryStringAttribute("folder_name", &folderName);
@@ -168,7 +168,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::DoRead()
                     faceElement !=nullptr;
                     faceElement = faceElement->NextSiblingElement("face"))
                 {
-                    char* faceName="";
+                    const char* faceName;
                     faceElement->QueryStringAttribute("name",&faceName);
                     domain.faceNames.push_back(faceName);
                 }
@@ -210,7 +210,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::DoRead()
                     {
                         strValue="";
                         propElement->QueryStringAttribute("name",&strValue);
-                        char* strValue2="";
+                        const char* strValue2;
                         propElement->QueryStringAttribute("value",&strValue2);
 
                         if(strValue=="Constitutive model")
