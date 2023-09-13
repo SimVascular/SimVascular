@@ -43,7 +43,7 @@ if(SV_USE_${proj})
           set(${proj}_DIR ${SV_${proj}_DIR}/share/lib/cmake/tinyxml2 CACHE PATH "Force ${proj} dir to externals" FORCE)
 	elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2019.02")
           set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/tinyxml2 CACHE PATH "Force ${proj} dir to externals" FORCE)
-	elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.06")
+	elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2019.06")
           set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/tinyxml2 CACHE PATH "Force ${proj} dir to externals" FORCE)
   elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2022.10")
           set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/tinyxml2 CACHE PATH "Force ${proj} dir to externals" FORCE)
@@ -76,8 +76,11 @@ if(SV_USE_${proj})
     REQUIRED
     )
 
+  if(APPLE)
+    set(TINYXML2_LIBRARY "${SV_${proj}_DIR}/lib/libtinyxml2.dylib")
+  endif()
+
   # Set SV_HDF5_DIR to the directory that was found to contain HDF5
   set(SV_${proj}_DIR ${${proj}_DIR})
-
 endif()
 #-----------------------------------------------------------------------------

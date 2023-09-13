@@ -166,7 +166,7 @@ LoftNurbsOptionsGetDouble(PyObject* loftOptions, std::string name)
   return value;
 }
 
-static char *
+const static char *
 LoftNurbsOptionsGetString(PyObject* loftOptions, std::string name)
 {
   auto obj = PyObject_GetAttrString(loftOptions, name.c_str());

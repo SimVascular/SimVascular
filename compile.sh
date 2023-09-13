@@ -9,4 +9,4 @@ export LD_LIBRARY_PATH=$(pwd)/$build_dir/Externals-build/svExternals/bin/python-
 
 cd $build_dir
 cmake ..
-make -j 8
+make -j 4

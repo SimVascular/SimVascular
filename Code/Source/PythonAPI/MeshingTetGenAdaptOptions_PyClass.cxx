@@ -380,7 +380,7 @@ PyTetGenOptions_set_step(PyMeshingTetGenAdaptOpt* self, PyObject* arg, void* clo
 PyGetSetDef PyTetGenAdaptOptGetSets[] = {
 
     { TetGenAdaptOption::error_reduction_factor,
-          (getter)PyTetGenOptions_get_error_reduction_factor, (setter)PyTetGenOptions_set_error_reduction_factor, nullptr,  error_reduction_factor_doc },
+          (getter)PyTetGenOptions_get_error_reduction_factor, (setter)PyTetGenOptions_set_error_reduction_factor, nullptr,  const_cast<char*>(error_reduction_factor_doc) },
 
     { TetGenAdaptOption::step,
           (getter)PyTetGenOptions_get_step, (setter)PyTetGenOptions_set_step, nullptr,  nullptr },

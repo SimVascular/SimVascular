@@ -678,10 +678,10 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
   int vDegree = LoftNurbsOptionsGetInt(loftOptsArg, LoftNurbsOptions::V_DEGREE);
   double uSpacing = 1.0 / (num_sections * numProfiles);
   double vSpacing = 1.0 / numProfilePoints;
-  char* uKnotSpanType = LoftNurbsOptionsGetString(loftOptsArg, LoftNurbsOptions::U_KNOT_SPAN_TYPE);
-  char* vKnotSpanType = LoftNurbsOptionsGetString(loftOptsArg, LoftNurbsOptions::V_KNOT_SPAN_TYPE);
-  char* uParametricSpanType = LoftNurbsOptionsGetString(loftOptsArg, LoftNurbsOptions::U_PARAMETRIC_SPAN_TYPE);
-  char* vParametricSpanType = LoftNurbsOptionsGetString(loftOptsArg, LoftNurbsOptions::V_PARAMETRIC_SPAN_TYPE);
+  const char* uKnotSpanType = LoftNurbsOptionsGetString(loftOptsArg, LoftNurbsOptions::U_KNOT_SPAN_TYPE);
+  const char* vKnotSpanType = LoftNurbsOptionsGetString(loftOptsArg, LoftNurbsOptions::V_KNOT_SPAN_TYPE);
+  const char* uParametricSpanType = LoftNurbsOptionsGetString(loftOptsArg, LoftNurbsOptions::U_PARAMETRIC_SPAN_TYPE);
+  const char* vParametricSpanType = LoftNurbsOptionsGetString(loftOptsArg, LoftNurbsOptions::V_PARAMETRIC_SPAN_TYPE);
 
   #ifdef dbg_Geom_loft_nurbs
   std::cout << "[Geom_loft_nurbs] numProfilePoints: " << numProfilePoints << std::endl;

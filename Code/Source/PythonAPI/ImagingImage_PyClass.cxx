@@ -861,7 +861,8 @@ Image_set_origin(PyImage* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
 
-  mitk::Point3D mitkOrigin = {origin.data()};
+  mitk::Point3D mitkOrigin;
+  mitkOrigin.FillPoint(origin.data());
   self->image_data->SetOrigin(mitkOrigin);
 
   Py_RETURN_NONE;

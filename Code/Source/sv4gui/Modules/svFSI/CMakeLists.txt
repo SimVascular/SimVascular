@@ -39,7 +39,9 @@ simvascular_create_module(
   LIBRARY_DEPENDS
   ${MITK_LIBRARIES}
   ${ITK_LIBRARIES}
-  ${QT_LIBRARIES})
+  ${QT_LIBRARIES}
+  ${TINYXML2_LIBRARY}
+  )
 #-----------------------------------------------------------------------------
 
 include_directories(${TINYXML_INCLUDE_DIR})

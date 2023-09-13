@@ -2038,7 +2038,7 @@ void sv4guiWorkbenchWindowAdvisor::SetCrosshairGapZero()
         return;
 
 
-    QmitkStdMultiWidget* multiWidget=editor->GetMultiWidget();
+    QmitkStdMultiWidget* multiWidget=dynamic_cast<QmitkStdMultiWidget*>(editor->GetMultiWidget());
     if(multiWidget)
     {
         multiWidget->GetWidgetPlane1()->SetIntProperty("Crosshair.Gap Size", 0);
