@@ -47,6 +47,7 @@ class sv4guiROMSimulationPreferencePage;
 //
 namespace sv4guiROMSimulationPreferenceDBKey {
     const QString ONED_SOLVER_PATH = "oned solver path";
+    const QString ZEROD_SOLVER_PATH = "zerod solver path";
 };
 
 
@@ -69,6 +70,7 @@ public:
 
 private slots:
   void SetOneDSolverFile();
+  void SetZeroDSolverFile();
 
 private:
   berry::IPreferences::Pointer m_Preferences;
@@ -76,6 +78,7 @@ private:
   QWidget* m_Control;
   sv4guiROMSimulationPreferences m_DefaultPrefs;
   void SetOneDSolver();
+  void SetZeroDSolver();
 
 };
 
