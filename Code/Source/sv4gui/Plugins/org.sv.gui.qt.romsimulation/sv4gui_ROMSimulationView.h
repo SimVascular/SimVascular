@@ -93,8 +93,9 @@ public:
     static const QString OUTLET_FACE_NAMES_FILE_NAME;
     static const QString RCR_BC_FILE_NAME;
     static const QString RESISTANCE_BC_FILE_NAME;
-	static const QString SOLVER_0D_FILE_NAME;
-	static const QString SOLVER_1D_FILE_NAME;
+    static const QString SOLVER_0D_FILE_NAME;
+    static const QString SOLVER_0D_OUTPUT_FILE_NAME;
+    static const QString SOLVER_1D_FILE_NAME;
 
     sv4guiROMSimulationView();
 
@@ -428,6 +429,7 @@ private:
     QString m_SolverInputFile;
 
     QString m_SolverExecutable;
+    QString m_ZeroDSolverExecutable;
 
     QString m_SolverTemplatePath;
     bool m_UseCustom;
@@ -463,6 +465,7 @@ private:
     bool SetWallProperites(sv4guiROMSimJob* job, std::string& msg, bool checkValidity);
     bool SetSolverParameters(sv4guiROMSimJob* job, std::string& msg, bool checkValidity);
     QString GetSolverExecutable();
+    QString GetZeroDSolverExecutable();
 
     bool CheckBCsInputState(bool checkValidity=true);
     bool CheckInputState(DataInputStateType type = DataInputStateType::ALL);
