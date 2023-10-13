@@ -141,14 +141,9 @@ class SV_QT_ROMSIMULATION sv4guiROMSimulationPython
     // The name of the ROM Python package in SimVascular/Python/site-packages.
     const std::string m_PythonROMSimulationModuleName = "sv_rom_simulation";
 
-    // The 0D solver Python package name.
-    const std::string m_PythonZeroDSolverModuleName = "svZeroDSolver.svzerodsolver";
-    const std::string m_PythonZeroDSolverFileName = "solver_0d.json";
-
     std::string AddArgument(const std::string& arg, const std::string& value, bool last=false);
     bool AddParameter(const std::string& name, const std::string& value);
     bool AddParameterList(const std::string& name, const std::vector<std::string>& values);
-    bool ExecuteZeroDSimulation(const std::string outputDirectory, const sv4guiROMSimJob* job);
     bool GenerateMesh(const std::string& outputDir, const std::string& centerlinesFile, const std::string& meshFile);
     bool GenerateSolverInput(const std::string outputDirectory, const sv4guiROMSimJob* job);
     std::string StartCommand();
