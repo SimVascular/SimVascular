@@ -3465,9 +3465,10 @@ QString sv4guiROMSimulationView::GetZeroDSolverExecutable()
     }
 
     if (m_ZeroDSolverExecutable == "") { 
-        QString msg1 = "The 0D solver executable has not been set.\n";
-        QString msg2 = "Set the path to the executable in the SimVascular Preferences / SimVascular ROM Simulation panel.\n"; 
-        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2); 
+        QString msg1 = "The 0D solver executable can't be found.\n\n";
+        QString msg3 = "The 0D solver is a separate svZeroDSolver application downloaded from SimTK (https://simtk.org/projects/simvascular).\n"; 
+        QString msg2 = "Set the path to the 0D solver executable in the SimVascular Preferences / SimVascular ROM Simulation paneli:\n";
+        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2+msg3); 
         return nullptr;
     }
 
