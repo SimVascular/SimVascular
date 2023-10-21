@@ -58,6 +58,12 @@ if(SV_USE_${proj})
       endif()
   endif()
 
+  # temporary fix: there is some inconsistency between TINYXML2 and tinyxml2.
+  # These few lines allow adding tinyxml2 to the startup script in the CMakeList 
+  # in Code/Scripts
+  set(SV_tinyxml2_DIR ${SV_${proj}_DIR})
+  set(SV_INSTALL_tinyxml2_LIBRARY_DIR "${SV_${proj}_DIR}/lib")
+
   set(tinyxml2_DIR ${${proj}_DIR})
 
   # No version in tinyxml2 config files, leave version out
@@ -80,7 +86,6 @@ if(SV_USE_${proj})
     set(TINYXML2_LIBRARY "${SV_${proj}_DIR}/lib/libtinyxml2.dylib")
   endif()
 
-  # Set SV_HDF5_DIR to the directory that was found to contain HDF5
   set(SV_${proj}_DIR ${${proj}_DIR})
 endif()
 #-----------------------------------------------------------------------------
