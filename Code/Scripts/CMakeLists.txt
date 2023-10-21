@@ -206,7 +206,7 @@ foreach(proj ${SV_EXTERNAL_SHARED_LIBS})
 
 	# on unix systems we only need this path if its installed (moved)
 	# if this library was not specified USE_SYSTEM, it will need to be installed, and the path updated.
-	if(SV_INSTALL_${proj}_LIBRARY_DIR)
+  if(SV_INSTALL_${proj}_LIBRARY_DIR)
   #if there is an install library directory, add it to the path for installation, it will be installed there.
     if(SV_${proj}_DIR)
       append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_${proj}_DIR}/lib" developer_script_string)
