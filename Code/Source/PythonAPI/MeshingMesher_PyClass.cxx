@@ -83,7 +83,7 @@ MeshExists(PyUtilApiFunction& api, cvMeshObject* mesher)
 {
   if (!mesher->HasVolumeMesh()) {
       api.error("No volume mesh has been generated.");
-      return nullptr;
+      return false;
   }
 
   return true;

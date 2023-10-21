@@ -351,7 +351,7 @@ SetOptions(PyUtilApiFunction& api, cvMeshObject* mesher, PyObject* options)
           values = PyTetGenOptionsGetValues(options, pyName);
       } catch (const std::exception& exception) {
           api.error(exception.what());
-          return nullptr;
+          return false;
       }
 
       int numValues = values.size();
@@ -391,7 +391,7 @@ SetOptions(PyUtilApiFunction& api, cvMeshObject* mesher, PyObject* options)
           valuesList = PyTetGenOptionsGetListValues(options, pyName);
       } catch (const std::exception& exception) {
           api.error(exception.what());
-          return nullptr;
+          return false;
       }
 
       int numListValues = valuesList.size();

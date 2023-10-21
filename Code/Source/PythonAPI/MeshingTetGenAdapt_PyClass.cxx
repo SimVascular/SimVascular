@@ -104,7 +104,7 @@ TetGenAdaptSetOptions(PyTetGenAdapt* self, PyUtilApiFunction& api, PyObject* opt
 
       if (mesher->SetAdaptOptions(svName, value) != SV_OK) {
           api.error("Error setting TetGen adaptive meshing '" + std::string(pyName) + "' option.");
-          return nullptr;
+          return false;
       }
   }
 
@@ -115,14 +115,14 @@ TetGenAdaptSetOptions(PyTetGenAdapt* self, PyUtilApiFunction& api, PyObject* opt
       auto svName = TetGenAdaptOption::pyToSvNameMap[TetGenAdaptOption::end_step];
       if (mesher->SetAdaptOptions(svName, value) != SV_OK) {
           api.error("Error setting TetGen adaptive meshing '" + std::string(TetGenAdaptOption::step) + "' option.");
-          return nullptr;
+          return false;
       }
   }
 
   // Set metric option.
   if (mesher->SetAdaptOptions(TetGenAdaptOption::metric_option, metric_option) != SV_OK) {
       api.error("Error setting TetGen adaptive meshing '" + std::string(TetGenAdaptOption::metric_option) + "' option.");
-      return nullptr;
+      return false;
   }
 
   return true;
