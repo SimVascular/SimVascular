@@ -66,7 +66,8 @@ sv4guiROMSimulationPreferences::~sv4guiROMSimulationPreferences()
 //
 void sv4guiROMSimulationPreferences::InitializeSolverLocations()
 {
-  // Set the default install location of the solver.
+  // Set the default install location of the 1D solver.
+  //
   QString solverInstallPath = "/usr/local/sv/oneDSolver";
   QStringList dirList = QDir(solverInstallPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
   if (dirList.size() != 0) {
@@ -75,12 +76,25 @@ void sv4guiROMSimulationPreferences::InitializeSolverLocations()
 
   // Set the path to the SimVascular-build/bin directory.
   QString applicationPath = "";
-  //QString applicationPath = QCoreApplication::applicationDirPath();
-
-  //sv4gui_parse_registry_for_svsolver();
   
   // Set the solver binaries.
   SetOneDSolver(solverInstallPath, applicationPath);
+
+
+  // Set the default install location of the 0D solver.
+  //
+  solverInstallPath = "/usr/local/sv/ZeroDSolver";
+  dirList = QDir(solverInstallPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
+  if (dirList.size() != 0) {
+    solverInstallPath += "/" + dirList.back();
+  }
+
+  // Set the path to the SimVascular-build/bin directory.
+  applicationPath = "";
+
+  // Set the solver binaries.
+  SetZeroDSolver(solverInstallPath, applicationPath);
+
 }
 
 //---------------
@@ -138,6 +152,59 @@ QString sv4guiROMSimulationPreferences::GetOneDSolver()
   return m_svOneDSolver;
 }
 
+//----------------
+// SetZeroDSolver 
+//----------------
+// Set the ZeroDSolver binary. 
+//
+void sv4guiROMSimulationPreferences::SetZeroDSolver(const QString& solverInstallPath, const QString& applicationPath)
+{
+  QString svZeroDSolver = UnknownBinary;
 
+#if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
+  QString filePath = "";
+  QString svZeroDSolverName = "/svzerodsolver";
+
+  // For the flow solver with mpi, prefer to use the script one which sets 
+  // paths to libs needed in Ubuntu 16. 
+  //
+  if(QFile(filePath=solverInstallPath+svZeroDSolverName).exists()) {
+    svZeroDSolver = filePath;
+
+  } else if(QFile(filePath=solverInstallPath+"/bin/"+svZeroDSolverName).exists()) {
+    svZeroDSolver = filePath;
+
+  } else if(QFile(filePath=applicationPath+svZeroDSolverName).exists()) {
+    svZeroDSolver = filePath;
+
+  } else if(QFile(filePath=applicationPath+"/bin/"+svZeroDSolverName).exists()) {
+    svZeroDSolver = filePath;
+  }
+
+#elif defined(Q_OS_WIN)
+
+  char result[1024];
+  result[0] = '\0';
+
+  // This returns the full path including the executable for the svZeroDSolver.
+  //
+  // The most recent installed solver is returned.
+  //
+  // The registry entry name is 'SVONEDSOLVER_EXE' and is located under WOW6432Node/SimVascular/Solvers/svZeroDSolver.
+  //
+  if (sv4gui_rom_parse_registry_for_svonedsolver("SVZERODSOLVER_EXE",result) == SV_OK) {
+     svZeroDSolver = result;
+  }
+
+#endif
+
+  m_svZeroDSolver = svZeroDSolver;
+  std::cout << "svZeroDSolver executable: '" << m_svZeroDSolver.toStdString() << "'" << std::endl;
+}
+
+QString sv4guiROMSimulationPreferences::GetZeroDSolver()
+{
+  return m_svZeroDSolver;
+}
 
 

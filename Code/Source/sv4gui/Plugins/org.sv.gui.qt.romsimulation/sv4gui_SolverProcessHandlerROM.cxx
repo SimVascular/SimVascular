@@ -103,7 +103,7 @@ void sv4guiSolverProcessHandlerROM::ProcessError(QProcess::ProcessError error)
 
   if (error == QProcess::FailedToStart) {
     title = "Simulation cannot be started";
-    text = "Unable to execute the 1D solver.";
+    text = "Unable to execute the solver.";
     MITK_ERROR << text; 
   } else {
     title = "Simulation failed";

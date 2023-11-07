@@ -59,6 +59,7 @@ sv4guiROMSimulationPreferencePage::~sv4guiROMSimulationPreferencePage()
 void sv4guiROMSimulationPreferencePage::InitializeSolverLocations()
 {
     SetOneDSolver();
+    SetZeroDSolver();
 }
 
 void sv4guiROMSimulationPreferencePage::CreateQtControl(QWidget* parent)
@@ -71,7 +72,10 @@ void sv4guiROMSimulationPreferencePage::CreateQtControl(QWidget* parent)
     Q_ASSERT(prefService);
 
     m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.romsimulation");
+
     connect( m_Ui->SolverExecutablePath_Button, SIGNAL(clicked()), this, SLOT(SetOneDSolverFile()) );
+    connect( m_Ui->ZeroDSolverExecutablePath_Button, SIGNAL(clicked()), this, SLOT(SetZeroDSolverFile()) );
+
     this->Update();
 
     // Set the locations of the solver binary.
@@ -85,6 +89,7 @@ void sv4guiROMSimulationPreferencePage::CreateQtControl(QWidget* parent)
 //
 void sv4guiROMSimulationPreferencePage::SetOneDSolverFile()
 {
+  std::cout << "sv4guiROMSimulationPreferencePage::SetOneDSolverFile()" << std::endl;
     QString filePath = QFileDialog::getOpenFileName(m_Control, "Select the 1D solver executable");
 
     if (!filePath.isEmpty()) {
@@ -100,6 +105,7 @@ void sv4guiROMSimulationPreferencePage::SetOneDSolverFile()
 //
 void sv4guiROMSimulationPreferencePage::SetOneDSolver()
 {
+  std::cout << "sv4guiROMSimulationPreferencePage::SetOneDSolver()" << std::endl;
   QString solver = m_Ui->SolverExecutablePath_LineEdit->text().trimmed();
   if (!solver.isEmpty() && (solver != m_DefaultPrefs.UnknownBinary)) {
     return;
@@ -108,6 +114,42 @@ void sv4guiROMSimulationPreferencePage::SetOneDSolver()
   solver = m_DefaultPrefs.GetOneDSolver();
   m_Ui->SolverExecutablePath_LineEdit->setText(solver);
 }
+
+//--------------------
+// SetZeroDSolverFile 
+//--------------------
+// Set the location of the 9D solver executable using a file browser.
+//
+void sv4guiROMSimulationPreferencePage::SetZeroDSolverFile()
+{
+  std::cout << "sv4guiROMSimulationPreferencePage::SetZeroDSolverFile()" << std::endl;
+
+    QString filePath = QFileDialog::getOpenFileName(m_Control, "Select the 0D solver executable");
+
+    if (!filePath.isEmpty()) {
+        m_Ui->ZeroDSolverExecutablePath_LineEdit->setText(filePath);
+    }
+}
+
+//---------------
+// SetZeroDSolver
+//---------------
+// Set the 0D solver executable from the GUI line edit widget
+// or from the default value.
+//
+void sv4guiROMSimulationPreferencePage::SetZeroDSolver()
+{
+  std::cout << "sv4guiROMSimulationPreferencePage::SetZeroDSolver()" << std::endl;
+
+  QString solver = m_Ui->ZeroDSolverExecutablePath_LineEdit->text().trimmed();
+  if (!solver.isEmpty() && (solver != m_DefaultPrefs.UnknownBinary)) {
+    return;
+  }
+
+  solver = m_DefaultPrefs.GetZeroDSolver();
+  m_Ui->ZeroDSolverExecutablePath_LineEdit->setText(solver);
+}
+
 
 QWidget* sv4guiROMSimulationPreferencePage::GetQtControl() const
 {
@@ -125,13 +167,19 @@ void sv4guiROMSimulationPreferencePage::PerformCancel()
 bool sv4guiROMSimulationPreferencePage::PerformOk()
 {
     using namespace sv4guiROMSimulationPreferenceDBKey;
+
     QString oneDSolverPath = m_Ui->SolverExecutablePath_LineEdit->text().trimmed();
     m_Preferences->Put(ONED_SOLVER_PATH, oneDSolverPath);
+
+    QString zeroDSolverPath = m_Ui->ZeroDSolverExecutablePath_LineEdit->text().trimmed();
+    m_Preferences->Put(ZEROD_SOLVER_PATH, zeroDSolverPath);
+
     return true;
 }
 
 void sv4guiROMSimulationPreferencePage::Update()
 {
     m_Ui->SolverExecutablePath_LineEdit->setText(m_Preferences->Get("1d solver executable path",""));
+    m_Ui->ZeroDSolverExecutablePath_LineEdit->setText(m_Preferences->Get("0d solver executable path",""));
 }
 

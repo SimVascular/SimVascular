@@ -200,6 +200,7 @@ const QString sv4guiROMSimulationView::OUTLET_FACE_NAMES_FILE_NAME = "outlet_fac
 const QString sv4guiROMSimulationView::RCR_BC_FILE_NAME = "rcrt.dat";
 const QString sv4guiROMSimulationView::RESISTANCE_BC_FILE_NAME = "resistance.dat";
 const QString sv4guiROMSimulationView::SOLVER_0D_FILE_NAME = "solver_0d.json";
+const QString sv4guiROMSimulationView::SOLVER_0D_OUTPUT_FILE_NAME = "solver_0d.csv";
 const QString sv4guiROMSimulationView::SOLVER_1D_FILE_NAME = "solver_1d.in";
 const QString sv4guiROMSimulationView::SOLVER_LOG_FILE_NAME = "svromsolver.log";
 
@@ -1694,6 +1695,7 @@ void sv4guiROMSimulationView::OnPreferencesChanged(const berry::IBerryPreference
 
     // Set the 1D solver binary. 
     m_SolverExecutable = prefs->Get(ONED_SOLVER_PATH, m_DefaultPrefs.GetOneDSolver());
+    m_ZeroDSolverExecutable = prefs->Get(ZEROD_SOLVER_PATH, m_DefaultPrefs.GetZeroDSolver());
 }
 
 //--------------------
@@ -3333,26 +3335,39 @@ void sv4guiROMSimulationView::RunJob()
 //
 void sv4guiROMSimulationView::RunZeroDSimulationJob(const QString& jobPath)
 {
+    // Get the solver executable.
+    auto solverExecutable = GetZeroDSolverExecutable();
+    if (solverExecutable == nullptr) {
+        return;
+    }
+
     // Set job properties used to write solver log.
     //
-    m_JobNode->SetStringProperty("output directory", GetJobPath().toStdString().c_str());
+    auto outputDir = GetJobPath().toStdString();
+    m_JobNode->SetStringProperty("output directory", outputDir.c_str());
     m_JobNode->SetStringProperty("solver log file", sv4guiROMSimulationView::SOLVER_LOG_FILE_NAME.toStdString().c_str());
 
-    sv4guiROMSimJob* job = m_MitkJob->GetSimJob();
-
-    QDir dir(jobPath);
-    dir.mkpath(jobPath);
-
     // Execute the 0D solver.
-    auto pythonInterface = sv4guiROMSimulationPython();
-    auto statusMsg = "Executing a 0D simulation ..."; 
-    ui->JobStatusValueLabel->setText(statusMsg);
-    mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
-    auto status = pythonInterface.ExecuteZeroDSimulation(jobPath.toStdString(), job);
+    //
+    mitk::StatusBar::GetInstance()->DisplayText("Running 0D simulation ...");
 
-    statusMsg = "The 0D simulation has completed."; 
-    ui->JobStatusValueLabel->setText(statusMsg);
-    mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
+    QProcess* solverProcess = new QProcess(m_Parent);
+    solverProcess->setWorkingDirectory(jobPath);
+    solverProcess->setProgram(solverExecutable);
+
+    // Set the solver arguments: input JSON file and output CSV file.
+    QStringList arguments;
+    arguments << m_SolverInputFile;
+    arguments << GetJobPath() + "/" + SOLVER_0D_OUTPUT_FILE_NAME;
+    solverProcess->setArguments(arguments);
+
+    int startStep = 0;
+    int totalSteps = 2000;
+
+    // Run the solver job.
+    sv4guiSolverProcessHandlerROM* handler = new sv4guiSolverProcessHandlerROM(solverProcess, m_JobNode, startStep, totalSteps,
+        jobPath, m_Parent);
+    handler->Start();
 }
 
 //----------------------
@@ -3436,6 +3451,42 @@ QString sv4guiROMSimulationView::GetSolverExecutable()
     }
 
     return m_SolverExecutable;
+}
+
+//--------------------------
+// GetZeroDSolverExecutable
+//--------------------------
+// Get the 0d solver executable set in the preferences page.
+//
+QString sv4guiROMSimulationView::GetZeroDSolverExecutable()
+{
+    if (m_Parent == NULL) { 
+        return nullptr;
+    }
+
+    if (m_ZeroDSolverExecutable == "") { 
+        QString msg1 = "The 0D solver executable can't be found.\n\n";
+        QString msg3 = "The 0D solver is a separate svZeroDSolver application downloaded from SimTK (https://simtk.org/projects/simvascular).\n"; 
+        QString msg2 = "Set the path to the 0D solver executable in the SimVascular Preferences / SimVascular ROM Simulation paneli:\n";
+        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2+msg3); 
+        return nullptr;
+    }
+
+    QFileInfo check_file(m_ZeroDSolverExecutable);
+
+    if (!check_file.exists()) { 
+        auto msg = "The 0D solver executable '" + m_ZeroDSolverExecutable + "' does not exist.\n"; 
+        QMessageBox::warning(m_Parent, MsgTitle, msg); 
+        return nullptr;
+    }
+
+    if (!check_file.isFile()) {
+        auto msg = "The 0D solver executable '" + m_ZeroDSolverExecutable + "' is not a file.\n"; 
+        QMessageBox::warning(m_Parent, MsgTitle, msg); 
+        return nullptr;
+    }
+
+    return m_ZeroDSolverExecutable;
 }
 
 //-----------------
@@ -3552,13 +3603,15 @@ bool sv4guiROMSimulationView::CreateDataFiles(QString outputDir, bool outputAllF
     pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, outputDir.toStdString());
     WriteBCFiles(outputDir, job, pythonInterface);
 
-	QString solverFileName;
-	if (modelOrder == "0")
-		solverFileName = SOLVER_0D_FILE_NAME;
-	if (modelOrder == "1")
-		solverFileName = SOLVER_1D_FILE_NAME;
-	pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE,
-			solverFileName.toStdString());
+    QString solverFileName;
+
+    if (modelOrder == "0")
+        solverFileName = SOLVER_0D_FILE_NAME;
+
+    if (modelOrder == "1")
+      solverFileName = SOLVER_1D_FILE_NAME;
+
+    pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE, solverFileName.toStdString());
 
     // Add basic physical parameters.
     auto density = m_TableModelBasic->item(TableModelBasicRow::Density,1)->text().trimmed().toStdString();
@@ -3588,7 +3641,7 @@ bool sv4guiROMSimulationView::CreateDataFiles(QString outputDir, bool outputAllF
         return false;
     }
 
-	m_SolverInputFile = outputDir + "/" + solverFileName;
+    m_SolverInputFile = outputDir + "/" + solverFileName;
     ui->RunSimulationPushButton->setEnabled(true);
 
     statusMsg = "Simulation files have been created."; 
