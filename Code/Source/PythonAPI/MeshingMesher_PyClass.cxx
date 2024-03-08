@@ -39,6 +39,7 @@
 #include <functional>
 
 #include "sv_TetGenMeshObject.h"
+#include "vtkPolyDataNormals.h"
 
 extern cvSolidModel * GetModelFromPyObj(PyObject* obj);
 
@@ -238,6 +239,43 @@ Mesher_get_face_polydata(PyMeshingMesher* self, PyObject* args, PyObject* kwargs
 
   vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
   polydata = cvPolydata->GetVtkPolyData();
+
+  // Add a Normals point or cell array.
+  //
+  bool have_cell_normals = true;
+  #define compute_cell_normals
+  #ifdef compute_cell_normals
+  auto normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+  normals->SplittingOff();
+  normals->ConsistencyOn();
+  normals->AutoOrientNormalsOn();
+  normals->ComputeCellNormalsOn();
+  normals->ComputePointNormalsOff();
+  normals->SetInputData(polydata);
+  normals->Update();
+  have_cell_normals = true;
+
+  #else
+  auto normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+  normals->SetInputData(polydata);
+  normals->ConsistencyOn();
+  normals->AutoOrientNormalsOn();
+  normals->FlipNormalsOff();
+  normals->ComputePointNormalsOn();
+  normals->ComputeCellNormalsOff();
+  normals->SplittingOn();
+  normals->Update();
+  have_cell_normals = false;
+  #endif
+
+  polydata->DeepCopy(normals->GetOutput());
+
+  if (have_cell_normals) { 
+    polydata->GetCellData()->GetNormals()->SetName("Normals");
+  } else {
+    polydata->GetPointData()->GetNormals()->SetName("Normals");
+  }
+
   return PyUtilGetVtkObject(api, polydata);
 }
 
@@ -535,8 +573,9 @@ Mesher_get_surface(PyMeshingMesher* self, PyObject* args)
       return nullptr;
   }
 
-  vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+  auto polydata = vtkSmartPointer<vtkPolyData>::New();
   polydata = cvPolydata->GetVtkPolyData();
+
   return PyUtilGetVtkObject(api, polydata);
 }
 

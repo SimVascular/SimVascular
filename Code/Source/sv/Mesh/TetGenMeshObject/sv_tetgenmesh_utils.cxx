@@ -661,6 +661,7 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
   vtkSmartPointer<vtkIntArray> lessNodeIds = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> lessElementIds = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> globalElement2Ids = vtkSmartPointer<vtkIntArray>::New();
+  vtkSmartPointer<vtkIntArray> modelFaceIds = vtkSmartPointer<vtkIntArray>::New();
 
   if (VtkUtils_PDCheckArrayName(mesh,0,"GlobalNodeID") != SV_OK)
   {
@@ -747,6 +748,7 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
       selectFaces->InsertNextCell(facePointIds);
       globalElement2Ids->InsertNextValue(globalElement2);
       lessElementIds->InsertNextValue(globalElementIds->GetValue(cellId));
+      modelFaceIds->InsertNextValue(id);
     }
   }
 
@@ -766,6 +768,10 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
   lessElementIds->SetName("GlobalElementID");
   tempFace->GetCellData()->AddArray(lessElementIds);
   tempFace->GetCellData()->SetActiveScalars("GlobalElementID");
+
+  modelFaceIds->SetName("ModelFaceID");
+  tempFace->GetCellData()->AddArray(modelFaceIds);
+  tempFace->GetCellData()->SetActiveScalars("ModelFaceID");
 
   delete [] pointOnFace;
   delete [] pointMapping;
