@@ -661,6 +661,9 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
   vtkSmartPointer<vtkIntArray> lessNodeIds = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> lessElementIds = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> globalElement2Ids = vtkSmartPointer<vtkIntArray>::New();
+  vtkSmartPointer<vtkIntArray> modelFaceIds = vtkSmartPointer<vtkIntArray>::New();
+  vtkSmartPointer<vtkIntArray> modelFaceRegionIds = vtkSmartPointer<vtkIntArray>::New();
+  vtkSmartPointer<vtkIntArray> modelRegionIds = vtkSmartPointer<vtkIntArray>::New();
 
   if (VtkUtils_PDCheckArrayName(mesh,0,"GlobalNodeID") != SV_OK)
   {
@@ -668,17 +671,27 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
     fprintf(stderr," IDs on mesh may not have been assigned properly\n");
     return SV_ERROR;
   }
+
   if (VtkUtils_PDCheckArrayName(mesh,1,"GlobalElementID") != SV_OK)
   {
     fprintf(stderr,"Array name 'GlobalElementID' does not exist.");
     fprintf(stderr," IDs on mesh may not have been assigned properly\n");
     return SV_ERROR;
   }
+
   if (VtkUtils_PDCheckArrayName(mesh,1,"ModelFaceID") != SV_OK)
   {
     fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified");
 		fprintf(stderr," and named 'ModelFaceID' prior to this function call\n");
     return SV_ERROR;
+  }
+
+  bool has_ModelRegionIDs = false;
+
+  if (VtkUtils_PDCheckArrayName(mesh,1,"ModelRegionID") == SV_OK)
+  {
+    has_ModelRegionIDs = true;
+    modelRegionIds = vtkIntArray::SafeDownCast(mesh->GetCellData()->GetScalars("ModelRegionID"));
   }
 
   globalNodeIds = vtkIntArray::SafeDownCast(mesh->GetPointData()->GetScalars("GlobalNodeID"));
@@ -747,6 +760,10 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
       selectFaces->InsertNextCell(facePointIds);
       globalElement2Ids->InsertNextValue(globalElement2);
       lessElementIds->InsertNextValue(globalElementIds->GetValue(cellId));
+      modelFaceIds->InsertNextValue(id);
+      if (has_ModelRegionIDs) { 
+        modelFaceRegionIds->InsertNextValue(modelRegionIds->GetValue(cellId));
+      }
     }
   }
 
@@ -766,6 +783,30 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
   lessElementIds->SetName("GlobalElementID");
   tempFace->GetCellData()->AddArray(lessElementIds);
   tempFace->GetCellData()->SetActiveScalars("GlobalElementID");
+
+  modelFaceIds->SetName("ModelFaceID");
+  tempFace->GetCellData()->AddArray(modelFaceIds);
+  tempFace->GetCellData()->SetActiveScalars("ModelFaceID");
+
+  if (has_ModelRegionIDs) { 
+    modelFaceRegionIds->SetName("ModelRegionID");
+    tempFace->GetCellData()->AddArray(modelFaceRegionIds);
+    tempFace->GetCellData()->SetActiveScalars("ModelRegionID");
+  }
+
+  // Add cell normals.
+  //
+  auto normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+  normals->SplittingOff();
+  normals->ConsistencyOn();
+  normals->AutoOrientNormalsOn();
+  normals->ComputeCellNormalsOn();
+  normals->ComputePointNormalsOff();
+  normals->SetInputData(tempFace);
+  normals->Update();
+
+  tempFace->DeepCopy(normals->GetOutput());
+  tempFace->GetCellData()->GetNormals()->SetName("Normals");
 
   delete [] pointOnFace;
   delete [] pointMapping;

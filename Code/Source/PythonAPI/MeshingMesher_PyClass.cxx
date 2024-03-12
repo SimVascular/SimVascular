@@ -39,6 +39,7 @@
 #include <functional>
 
 #include "sv_TetGenMeshObject.h"
+#include "vtkPolyDataNormals.h"
 
 extern cvSolidModel * GetModelFromPyObj(PyObject* obj);
 
@@ -238,6 +239,7 @@ Mesher_get_face_polydata(PyMeshingMesher* self, PyObject* args, PyObject* kwargs
 
   vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
   polydata = cvPolydata->GetVtkPolyData();
+
   return PyUtilGetVtkObject(api, polydata);
 }
 
@@ -535,8 +537,9 @@ Mesher_get_surface(PyMeshingMesher* self, PyObject* args)
       return nullptr;
   }
 
-  vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+  auto polydata = vtkSmartPointer<vtkPolyData>::New();
   polydata = cvPolydata->GetVtkPolyData();
+
   return PyUtilGetVtkObject(api, polydata);
 }
 
