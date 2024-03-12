@@ -875,7 +875,7 @@ PyTetGenOptionsCreateFromList(cvMeshObject* mesher, std::vector<std::string>& op
           try {
               SetValueMap[name](options, tokens, faceMap);
           } catch (const std::bad_function_call& except) {
-              std::cout << "[PyTetGenOptionsCreateFromList]       Unknown name: " << name << std::endl;
+              std::cout << "[SV.PythonAPI] An unknown meshing option '" << name << "' was found in the MESH.msh file." << std::endl;
           }
 
       // Save commands not processed in cvTetGenMeshObject::SetMeshOptions().
