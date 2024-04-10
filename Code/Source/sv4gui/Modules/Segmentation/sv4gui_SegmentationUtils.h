@@ -113,7 +113,8 @@ public:
 
     static mitk::PlaneGeometry::Pointer CreatePlaneGeometry(sv4guiPathElement::sv4guiPathPoint pathPoint, mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing = false);
 
-    static mitk::SlicedGeometry3D::Pointer CreateSlicedGeometry(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints, mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing = false);
+    static mitk::ProportionalTimeGeometry::Pointer CreateSlicedGeometry(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints, mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing = false);
+    //static mitk::SlicedGeometry3D::Pointer CreateSlicedGeometry(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints, mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing = false);
 
 
     static mitk::Image::Pointer GetSliceImage(const mitk::PlaneGeometry* planeGeometry, const mitk::Image* image, unsigned int timeStep = 0);

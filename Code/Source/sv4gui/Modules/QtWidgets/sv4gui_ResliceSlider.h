@@ -130,17 +130,23 @@ protected:
 
     double resliceSize;
 
-    mitk::SlicedGeometry3D::Pointer currentSlicedGeometry;
+    // [davep] change type.
+    mitk::ProportionalTimeGeometry::Pointer currentSlicedGeometry;
+    //mitk::SlicedGeometry3D::Pointer currentSlicedGeometry;
 
     QCheckBox* resliceCheckBox;
+
+    QmitkRenderWindow* threeDWindow;
     QmitkRenderWindow* intensityWindow;
     QmitkRenderWindow* potentialWindow;
     QmitkRenderWindow* coronalWindow;
+
     QWidget* sliderContainer;
 //    QmitkSliderNavigatorWidget* intensitySlider;
 //    QmitkSliderNavigatorWidget* potentialSlider;
     QmitkStepperAdapter* intensityStepper;
     QmitkStepperAdapter* potentialStepper;
+    QmitkStepperAdapter* threeDStepper;
 
     QPushButton* btnResliceSize;
 

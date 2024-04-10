@@ -154,8 +154,6 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
 
     ui->resliceSlider->SetRenderWindow(m_renderWindow);
     ui->resliceSlider->setCheckBoxVisible(false);
-//    ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_NEAREST);
-//    ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_LINEAR);
     ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_CUBIC);
 
     m_CurrentParamWidget=nullptr;
@@ -176,7 +174,6 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
     ui->batchWidget->hide();
 
     parent->setMinimumWidth(400);
-//    parent->setFixedWidth(400);
 
     connect(ui->checkBoxShowPath, SIGNAL(clicked(bool)), this, SLOT(ShowPath(bool)) );
 
@@ -236,6 +233,7 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
     } else {
         ui->SinglePathTab->setEnabled(true);
     }
+
 }
 
 void sv4guiSeg2DEdit::Activated()
@@ -249,7 +247,6 @@ void sv4guiSeg2DEdit::Deactivated()
 void sv4guiSeg2DEdit::Visible()
 {
     m_isVisible = true;
-//    ui->resliceSlider->turnOnReslice(true);
     OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
                        GetDataManagerSelection());
 }
@@ -261,14 +258,10 @@ void sv4guiSeg2DEdit::Hidden()
     ClearAll();
 }
 
-//bool sv4guiSeg2DEdit::IsExclusiveFunctionality() const
-//{
-//    return true;
-//}
-
 int sv4guiSeg2DEdit::GetTimeStep()
 {
     mitk::SliceNavigationController* timeNavigationController = nullptr;
+
     if(m_renderWindow)
     {
         timeNavigationController=m_renderWindow->GetTimeNavigationController();
@@ -326,11 +319,8 @@ void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
 
     m_Parent->setEnabled(true);
     ui->SinglePathTab->setEnabled(true);
-    ////remove_toolbox     ui->segToolbox->setCurrentIndex(1);
-//    std::string groupPathName=m_ContourGroup->GetPathName();
-    int  groupPathID=m_ContourGroup->GetPathID();
+    int  groupPathID = m_ContourGroup->GetPathID();
 
-//    mitk::DataNode::Pointer pathNode=nullptr;
     mitk::DataNode::Pointer imageNode=nullptr;
     m_Image=nullptr;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
@@ -375,11 +365,6 @@ void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
         }
 
     }
-
-//    if(!m_Image){
-//        QMessageBox::warning(nullptr,"No image found for this project","Make sure the image is loaded!");
-////        return;
-//    }
 
     if(!m_Path){
         QMessageBox::warning(nullptr,"No path found for this contour group","Make sure the path for the contour group exits!");
@@ -468,13 +453,11 @@ void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
 
     //set resice slider
     ui->resliceSlider->setPathPoints(pathPoints);
-    if(imageNode.IsNotNull())
+    if(imageNode.IsNotNull()) {
         ui->resliceSlider->setDataNode(imageNode);
-    else
+    } else {
         ui->resliceSlider->setDataNode(m_PathNode);
-
-    //ui->resliceSlider->setDataNode(m_ContourGroupNode);
-
+    }
 
     double resliceSize=m_ContourGroup->GetResliceSize();
     if(resliceSize==0)
@@ -831,8 +814,6 @@ void sv4guiSeg2DEdit::CreateContours(SegmentationMethod method)
 
         mitk::ProgressBar::GetInstance()->Progress(1);
     }
-
-    //LoftContourGroup();
 }
 
 void sv4guiSeg2DEdit::SetSecondaryWidgetsVisible(bool visible)
@@ -1787,7 +1768,7 @@ void sv4guiSeg2DEdit::ShowPath(bool checked)
 //
 void sv4guiSeg2DEdit::PreparePreviewInteraction(QString method)
 {
-    //std::cout << "========== sv4guiSeg2DEdit::PreparePreviewInteraction ========== " << std::endl;
+    std::cout << "========== sv4guiSeg2DEdit::PreparePreviewInteraction ========== " << std::endl;
 
     // Create Data Node to show threshold contour.
     m_PreviewContourModel = sv4guiContourModel::New();

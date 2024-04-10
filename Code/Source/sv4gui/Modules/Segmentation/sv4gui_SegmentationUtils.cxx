@@ -243,6 +243,8 @@ mitk::PlaneGeometry::Pointer
 sv4guiSegmentationUtils::CreatePlaneGeometryFromSpacing(sv4guiPathElement::sv4guiPathPoint pathPoint, 
     mitk::Vector3D spacing, double size)
 {
+    //std::cout << "[CreatePlaneGeometryFromSpacing] ========== CreatePlaneGeometryFromSpacing ========== " << std::endl;
+
     auto tr=GetvtkTransform(pathPoint);
     mitk::PlaneGeometry::Pointer planegeometry = mitk::PlaneGeometry::New();
     planegeometry->SetIndexToWorldTransformByVtkMatrix(tr->GetMatrix());
@@ -261,6 +263,8 @@ sv4guiSegmentationUtils::CreatePlaneGeometryFromSpacing(sv4guiPathElement::sv4gu
 
     double width=size/spacing[0];
     double height=size/spacing[1];
+    //std::cout << "[CreatePlaneGeometryFromSpacing] width: " << width << std::endl;
+    //std::cout << "[CreatePlaneGeometryFromSpacing] height: " << height << std::endl;
 
     mitk::ScalarType bounds[6] = { 0, width, 0, height, 0, 1 };
     planegeometry->SetBounds( bounds );
@@ -282,11 +286,15 @@ mitk::PlaneGeometry::Pointer
 sv4guiSegmentationUtils::CreatePlaneGeometry(sv4guiPathElement::sv4guiPathPoint pathPoint, 
     mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing)
 {
+    //std::cout << "[CreatePlaneGeometry] ========== CreatePlaneGeometry ==========" << std::endl;
+    //std::cout << "[CreatePlaneGeometry] useOnlyMinimumSpacing: " << useOnlyMinimumSpacing << std::endl;
+
     mitk::Vector3D newSpacing;
     mitk::Image* image = dynamic_cast<mitk::Image*>(baseData);
 
     if (image) {
         mitk::Vector3D imageSpacing = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetSpacing();
+
         if (useOnlyMinimumSpacing) {
             double minSpacing = std::min(imageSpacing[0],std::min(imageSpacing[1],imageSpacing[2]));
             newSpacing.Fill(minSpacing);
@@ -311,6 +319,7 @@ sv4guiSegmentationUtils::CreatePlaneGeometry(sv4guiPathElement::sv4guiPathPoint 
             image->GetTimeGeometry()->GetGeometryForTimeStep(0)->WorldToIndex( right, rightInIndex );
             image->GetTimeGeometry()->GetGeometryForTimeStep(0)->WorldToIndex( bottom, bottomInIndex );
             image->GetTimeGeometry()->GetGeometryForTimeStep(0)->WorldToIndex( normal, normalInIndex );
+
             newSpacing[0] = size/rightInIndex.GetNorm();
             newSpacing[1] = size/bottomInIndex.GetNorm();
             newSpacing[2] = 1.0/normalInIndex.GetNorm();
@@ -321,6 +330,8 @@ sv4guiSegmentationUtils::CreatePlaneGeometry(sv4guiPathElement::sv4guiPathPoint 
         newSpacing[1] = 0.1;
         newSpacing[2] = 0.1;
     }
+
+    //std::cout << "[CreatePlaneGeometry] newSpacing: " << newSpacing[0] << " " << newSpacing[1] << " " << newSpacing[2] << std::endl;
 
     mitk::PlaneGeometry::Pointer planeGeometry = CreatePlaneGeometryFromSpacing(pathPoint, newSpacing, size);
 
@@ -335,37 +346,71 @@ sv4guiSegmentationUtils::CreatePlaneGeometry(sv4guiPathElement::sv4guiPathPoint 
 // CreateSlicedGeometry
 //----------------------
 //
-mitk::SlicedGeometry3D::Pointer sv4guiSegmentationUtils::CreateSlicedGeometry(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints, mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing)
+// [davep] modify to return a ProportionalTimeGeometry object. 
+//
+mitk::ProportionalTimeGeometry::Pointer
+//mitk::SlicedGeometry3D::Pointer 
+sv4guiSegmentationUtils::CreateSlicedGeometry(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints, 
+    mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing)
 {
-    mitk::SlicedGeometry3D::Pointer slicedGeo3D=mitk::SlicedGeometry3D::New();
+    //std::string msg = "[CreateSlicedGeometry] ";
+    //std::cout << msg << "========== CreateSlicedGeometry ========== " << std::endl;
+    //std::cout << msg << "pathPoints.size(): " << pathPoints.size() << std::endl;
+    //std::cout << msg << "size: " << size << std::endl;
+
+    // Create a ProportionalTimeGeometry object to store a slicedGeo3D object. 
+    //std::cout << msg << "Create prop_time_geom ... " << std::endl;
+    auto prop_time_geom = mitk::ProportionalTimeGeometry::New();
+
+    //std::cout << msg << "Create slicedGeo3D ... " << std::endl;
+    mitk::SlicedGeometry3D::Pointer slicedGeo3D = mitk::SlicedGeometry3D::New();
     slicedGeo3D->SetEvenlySpaced(false);
     slicedGeo3D->InitializeSlicedGeometry(pathPoints.size());
-    mitk::Image* image=dynamic_cast<mitk::Image*>(baseData);
+    mitk::Image* image = dynamic_cast<mitk::Image*>(baseData);
+
+    //std::cout << msg << "Add planegeometry ... " << std::endl;
 
     for (int i = 0; i < pathPoints.size(); i++) {
-        mitk::PlaneGeometry::Pointer planegeometry = CreatePlaneGeometry(pathPoints[i], baseData,
+        //std::cout << msg << "----- i " << i << " -----" << std::endl;
+        mitk::PlaneGeometry::Pointer plane_geometry = CreatePlaneGeometry(pathPoints[i], baseData,
           size, useOnlyMinimumSpacing);
 
         if (image) {
-            planegeometry->SetImageGeometry(true);
+            plane_geometry->SetImageGeometry(true);
          }
 
-        slicedGeo3D->SetPlaneGeometry(planegeometry,i);
+        slicedGeo3D->SetPlaneGeometry(plane_geometry,i);
     }
 
     if (baseData) {
+        //std::cout << msg << "Have baseData " << baseData << std::endl;
+        //std::cout << msg << "Set reference geometry ... " << std::endl;
         auto geometry = baseData->GetTimeGeometry()->GetGeometryForTimeStep(0);
         slicedGeo3D->SetReferenceGeometry(geometry);
         slicedGeo3D->SetBounds(geometry->GetBounds());
         slicedGeo3D->SetOrigin(geometry->GetOrigin());
         slicedGeo3D->SetIndexToWorldTransform(geometry->GetIndexToWorldTransform());
+        auto origin = geometry->GetOrigin();
+        //std::cout << msg << "reference geometry origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
     }
-    return slicedGeo3D;
+
+    //std::cout << msg << "prop_time_geom->Initialize ... " << std::endl;
+    prop_time_geom->Initialize(slicedGeo3D, 1);
+
+    // This causes a segfault using the new extrnals.
+    //std::cout << msg << "########### clone ... " << std::endl;
+    //auto cgeom = slicedGeo3D->Clone();
+    //mitk::BaseGeometry::Pointer cgeom = slicedGeo3D->Clone();
+
+    //std::cout << msg << "return ... " << std::endl;
+    return prop_time_geom;
+    //return slicedGeo3D;
 }
 
 //---------------
 // GetSliceImage
 //---------------
+// this is not used.
 //
 mitk::Image::Pointer sv4guiSegmentationUtils::GetSliceImage(const mitk::PlaneGeometry* planeGeometry, const mitk::Image* image, unsigned int timeStep)
 {
@@ -380,6 +425,10 @@ mitk::Image::Pointer sv4guiSegmentationUtils::GetSliceImage(const mitk::PlaneGeo
     //use ExtractSliceFilter with our specific vtkImageReslice for overwriting and extracting
     //    mitk::ExtractSliceFilter::Pointer extractor =  mitk::ExtractSliceFilter::New(reslice);
 
+#if 0
+   std::cout << "========== GetSliceImage ===========" << std::endl;
+   exit(0);
+ 
     mitk::ExtractSliceFilter::Pointer extractor =  mitk::ExtractSliceFilter::New();
     extractor->SetInput( image );
     extractor->SetTimeStep( timeStep );
@@ -393,6 +442,7 @@ mitk::Image::Pointer sv4guiSegmentationUtils::GetSliceImage(const mitk::PlaneGeo
     mitk::Image::Pointer slice = extractor->GetOutput();
 
     return slice;
+#endif
 }
 
 //------------------
@@ -404,7 +454,7 @@ mitk::Image::Pointer sv4guiSegmentationUtils::GetSliceImage(const mitk::PlaneGeo
 vtkImageData * 
 sv4guiSegmentationUtils::GetSlicevtkImage(const mitk::PlaneGeometry* planeGeometry, const mitk::Image* image, unsigned int timeStep)
 {
-    if ( !image || !planeGeometry ) return nullptr;
+    if ( !image || !planeGeometry ) return NULL;
 
     //    //Make sure that for reslicing and overwriting the same alogrithm is used. We can specify the mode of the vtk reslicer
     //    vtkSmartPointer<mitkVtkImageOverwrite> reslice = vtkSmartPointer<mitkVtkImageOverwrite>::New();
@@ -506,6 +556,7 @@ sv4guiSegmentationUtils::GetImageTransformation(mitk::Image* image)
 cvStrPts * 
 sv4guiSegmentationUtils::GetSlicevtkImage_old(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeImage, double size)
 {
+#if 0
     // Compute a slice transformation from the 'pathPoint' path point, normal and tangent.
     //
     auto sliceTransform = GetvtkTransform(pathPoint);
@@ -538,12 +589,14 @@ sv4guiSegmentationUtils::GetSlicevtkImage_old(sv4guiPathElement::sv4guiPathPoint
     imageReslice->Update();
 
     return vtkImageData2cvStrPts(imageReslice->GetOutput());
+#endif
 }
 
 //------------------
 // GetSlicevtkImage
 //------------------
 // Extract a 2D slice from a 3D volume using a path point.
+// This is called when segmenting a 2D slice.
 //
 // An image slice is extracted using 'vtkImageReslice' from a 'vtkImageData' image volume. 
 // However, 'vtkImageData' does not store a rotation matrix and so supports only axis-parallel 
@@ -556,6 +609,8 @@ cvStrPts *
 sv4guiSegmentationUtils::GetSlicevtkImage(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeImage, 
     double size, vtkTransform* imageTransform) 
 {
+    std::cout << "========== GetSlicevtkImage ===========" << std::endl;
+ 
     // Compute the transformation to define a slice plane aligned with
     // the 'pathPoint' point, normal and tangent.
     //
@@ -689,7 +744,7 @@ sv4guiSegmentationUtils::CreateLSContour(sv4guiPathElement::sv4guiPathPoint path
     }
 
     // Create seed curve.
-    cvPolyData *seedPd = nullptr;
+    cvPolyData *seedPd = NULL;
     double center[3];
     center[0] = param->ctrx;
     center[1] = param->ctry;
@@ -915,24 +970,20 @@ sv4guiContour* sv4guiSegmentationUtils::CreateThresholdContour(sv4guiPathElement
 
 std::deque<int> sv4guiSegmentationUtils::GetOrderedPtIDs(vtkCellArray* lines, bool& ifClosed)
 {
-
     const vtkIdType *ptIds;
     vtkIdType npts;
 
     lines->InitTraversal();
-
     std::vector<std::vector<int>> lineList;
-
     std::deque<int> linkedPtList;
 
-    while ( lines->GetNextCell( npts, ptIds ) ) {
-
-        if(npts!=2) break;
-
+    while (lines->GetNextCell(npts, ptIds)) {
+        if (npts != 2) {
+            break;
+        }
         std::vector<int> ids;
         ids.push_back(ptIds[0]);
         ids.push_back(ptIds[1]);
-
         lineList.push_back(ids);
     }
 
