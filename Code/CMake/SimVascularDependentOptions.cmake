@@ -251,12 +251,18 @@ endif()
 #-----------------------------------------------------------------------------
 # Gui Options: Qt GUI
 if(SV_USE_SV4_GUI OR (SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED))
-  SimVascularFunctionCheckCompilerFlags("-std=c++11" SimVascular_CXX11_FLAG)
-  if(NOT SimVascular_CXX11_FLAG)
+
+  # [DaveP] Don't set compiler here.
+  #
+  #SimVascularFunctionCheckCompilerFlags("-std=c++11" SimVascular_CXX11_FLAG)
+
+  #if(NOT SimVascular_CXX11_FLAG)
     # Older gcc compilers use -std=c++0x
-    SimVascularFunctionCheckCompilerFlags("-std=c++0x" SimVascular_CXX11_FLAG)
-  endif()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SimVascular_CXX11_FLAG}")
+    #SimVascularFunctionCheckCompilerFlags("-std=c++0x" SimVascular_CXX11_FLAG)
+  #endif()
+
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SimVascular_CXX11_FLAG}")
+
   if(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32_WINNT=0x0501 -DPOCO_NO_UNWINDOWS -DWIN32_LEAN_AND_MEAN -DNOMINMAX")
   endif()
@@ -280,8 +286,9 @@ if(SV_USE_SV4_GUI)
   set(SV_USE_QT "ON" CACHE BOOL "Force ON" FORCE)
   set(SV_USE_QT_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 
-  set(SV_USE_Qt5 "ON" CACHE BOOL "Force ON" FORCE)
-  set(SV_USE_Qt5_SHARED "ON" CACHE BOOL "Force ON" FORCE)
+  # [DaveP] Change to Qt6
+  set(SV_USE_Qt6 "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_Qt6_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 else()
   # Not perfect, but download of externals crashes if CppMicroServices isn't
   # present so leave mitk on originally and then turn off if need be

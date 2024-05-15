@@ -1713,7 +1713,7 @@ int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd,double &max_dist) const
     //Set Input Array to 0 port,0 connection,1 for Cell Data, and MESh_TYPES is the type name
     thresholder->SetInputArrayToProcess(0,0,0,1,"MESH_TYPES");
     //Source polydata is on MESH_TYPE 7
-    thresholder->ThresholdBetween(7,7);
+    //dp thresholder->ThresholdBetween(7,7);
     thresholder->Update();
     //Extract surface
     vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =

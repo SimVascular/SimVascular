@@ -86,7 +86,7 @@ option(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR "If ON, SV_EXTERNALS_TOPLEVEL_BIN_DIR w
 option(SV_EXTERNALS_INSTALL_HEADERS "If ON, The externals headers will be included in the installation" OFF)
 
 # Qt
-simvascular_add_new_external(Qt5 ${Qt5_VERSION} ON ON qt)
+simvascular_add_new_external(Qt6 ${Qt6_VERSION} ON ON qt)
 
 # ML
 if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.02")

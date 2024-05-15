@@ -559,7 +559,9 @@ function(simvascular_generate_plugin_manifest QRC_SRCS)
 configure_file("${SV_SOURCE_DIR}/CMake/MANIFEST.MF.in" "${_manifest_filepath}" @ONLY)
   configure_file("${SV_SOURCE_DIR}/CMake/plugin_manifest.qrc.in" "${_manifest_qrc_filepath}" @ONLY)
 
-  if (CTK_QT_VERSION VERSION_GREATER "4")
+  if (CTK_QT_VERSION VERSION_GREATER "5")
+    QT6_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
+  elseif (CTK_QT_VERSION VERSION_GREATER "4")
     QT5_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
   else()
     QT4_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
@@ -682,7 +684,8 @@ macro(simvascular_generate_plugin_resource_file QRC_SRCS)
 ")
 configure_file("${SV_SOURCE_DIR}/CMake/plugin_resources_cached.qrc.in" "${_qrc_filepath}" @ONLY)
 
-  qt5_add_resources(${QRC_SRCS} ${_qrc_filepath})
+  qt6_add_resources(${QRC_SRCS} ${_qrc_filepath})
+  #dp qt5_add_resources(${QRC_SRCS} ${_qrc_filepath})
 
 endmacro()
 
@@ -712,17 +715,21 @@ function(simvascular_create_plugin)
   usFunctionGenerateModuleInit(CPP_FILES)
 
   #------------------------------------QT-------------------------------------
-  qt5_wrap_ui(UISrcs ${UI_FILES})
-  qt5_add_resources(QRCSrcs ${QRC_FILES})
+  qt6_wrap_ui(UISrcs ${UI_FILES})
+  qt6_add_resources(QRCSrcs ${QRC_FILES})
+  #qt5_wrap_ui(UISrcs ${UI_FILES})
+  #qt5_add_resources(QRCSrcs ${QRC_FILES})
+
   set(MOC_OPTIONS "-DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED")
   foreach(moc_src ${MOC_H_FILES})
-    qt5_wrap_cpp(MOCSrcs ${moc_src} OPTIONS -f${moc_src} ${MOC_OPTIONS} -DHAVE_QT5 TARGET ${lib_name})
+    qt6_wrap_cpp(MOCSrcs ${moc_src} OPTIONS -f${moc_src} ${MOC_OPTIONS} -DHAVE_QT6 TARGET ${lib_name})
+    #qt5_wrap_cpp(MOCSrcs ${moc_src} OPTIONS -f${moc_src} ${MOC_OPTIONS} -DHAVE_QT5 TARGET ${lib_name})
   endforeach()
   #------------------------------------QT-------------------------------------
 
   #---------------------------------MANIFEST----------------------------------
   # If a file named manifest_headers.cmake exists, read it
-  set(CTK_QT_VERSION "${Qt5_MAJOR_VERSION}.${Qt5_MINOR_VERSION}")
+  set(CTK_QT_VERSION "${Qt6_MAJOR_VERSION}.${Qt6_MINOR_VERSION}")
   set(manifest_headers_dep )
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake")
     include(${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake)
@@ -853,9 +860,12 @@ function(simvascular_create_module)
   endif()
 
   include(${CMAKE_CURRENT_SOURCE_DIR}/files.cmake)
-  qt5_wrap_ui(UISrcs ${UI_FILES})
-  qt5_add_resources(QRCSrcs ${QRC_FILES})
-  qt5_wrap_cpp(MOCSrcs ${MOC_H_FILES})
+  qt6_wrap_ui(UISrcs ${UI_FILES})
+  qt6_add_resources(QRCSrcs ${QRC_FILES})
+  qt6_wrap_cpp(MOCSrcs ${MOC_H_FILES})
+  #qt5_wrap_ui(UISrcs ${UI_FILES})
+  #qt5_add_resources(QRCSrcs ${QRC_FILES})
+  #qt5_wrap_cpp(MOCSrcs ${MOC_H_FILES})
 
   usFunctionGenerateModuleInit(CPP_FILES)
   if(RESOURCE_FILES)
@@ -1311,7 +1321,21 @@ endmacro()
 #-----------------------------------------------------------------------------
 # sv_externals_add_new_external
 # \brief Create new external and set variables with default values based on inputs
+#
+# Sets
+#
+#  SV_EXTERNALS_${proj}_BINARIES_URL - location of tar file on /downloads/public/simvascular/externals
+#
 macro(sv_externals_add_new_external proj version use shared dirname install_dirname)
+
+  message(STATUS " ")
+  message(STATUS "========== sv_externals_add_new_external ==========")
+  message(STATUS "[sv_externals_add_new_external] ARGC: ${ARGC} ")
+  message(STATUS "[sv_externals_add_new_external] proj: ${proj} ")
+  message(STATUS "[sv_externals_add_new_external] version: ${version} ")
+  message(STATUS "[sv_externals_add_new_external] dirname: ${dirname} ")
+  message(STATUS "[sv_externals_add_new_external] install_dirname: ${install_dirname} ")
+
   option(SV_EXTERNALS_ENABLE_${proj} "Enable ${proj} Plugin" ${use})
   option(SV_EXTERNALS_ENABLE_${proj}_SHARED "Build ${proj} libraries as shared libs" ${shared})
   mark_as_advanced(SV_EXTERNALS_ENABLE_${proj}_SHARED)
@@ -1321,6 +1345,7 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
   # Version
   set(SV_EXTERNALS_${proj}_VERSION "${version}")
   simvascular_get_major_minor_patch_version(${SV_EXTERNALS_${proj}_VERSION} SV_EXTERNALS_${proj}_MAJOR_VERSION SV_EXTERNALS_${proj}_MINOR_VERSION SV_EXTERNALS_${proj}_PATCH_VERSION)
+  message(STATUS "[sv_externals_add_new_external] SV_EXTERNALS_${proj}_VERSION ${version}")
 
   # Src, bin, build, prefic dirs
   set(${proj}_VERSION_DIR ${dirname}-${SV_EXTERNALS_${proj}_VERSION})
@@ -1340,6 +1365,7 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
 
   if(NOT SV_EXTERNALS_INSTALL_${proj}_LIBRARY_DIR)
     set(SV_EXTERNALS_INSTALL_${proj}_LIBRARY_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/lib)
+    message(STATUS "[sv_externals_add_new_external] SV_EXTERNALS_INSTALL_${proj}_LIBRARY_DIR: ${SV_EXTERNALS_${proj}_BIN_DIR}/lib") 
   endif()
 
   if(NOT SV_EXTERNALS_INSTALL_${proj}_ARCHIVE_DIR)
@@ -1363,16 +1389,23 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
     string(TOLOWER "${SV_BUILD_TYPE_DIR}" SV_BUILD_TYPE_LOWER)
     simvascular_today(YEAR MONTH DAY)
     set(SV_EXTERNALS_${proj}_TAR_INSTALL_NAME ${SV_PLATFORM_DIR}.${SV_PLATFORM_VERSION_DIR}.${SV_COMPILER_DIR}.${SV_COMPILER_VERSION_DIR}.${SV_ARCH_DIR}.${SV_BUILD_TYPE_LOWER}.${YEAR}.${MONTH}.${DAY}.${install_dirname}.${SV_EXTERNALS_${proj}_VERSION})
+
+    # Generates installation rules for a project.
+    #
     if(EXISTS "${SV_EXTERNALS_TAR_INSTALL_DIR}")
       install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_${proj}_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_${proj}_BIN_DIR}
         WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR})")
     endif()
   endif()
 
-  # Set up download stuff if downloading
+  # Set up file download. 
+  #
+
   if(NOT "${install_dirname}" STREQUAL "none")
     if(SV_EXTERNALS_DOWNLOAD_${proj})
+      message(STATUS "[sv_externals_add_new_external] SV_EXTERNALS_DOWNLOAD_${proj} true") 
       set(${proj}_TEST_FILE "${SV_EXTERNALS_URL}/${SV_EXTERNALS_VERSION_NUMBER}/${SV_KERNEL_DIR}/${SV_PLATFORM_DIR}/externals_compiler_info.txt")
+      message(STATUS "[sv_externals_add_new_external] Download externals_compiler_info.tx") 
       file(DOWNLOAD "${${proj}_TEST_FILE}" "${SV_EXTERNALS_${proj}_PFX_DIR}/externals_compiler_info.txt" STATUS _status LOG _log INACTIVITY_TIMEOUT 5 TIMEOUT 5)
       list(GET _status 0 err)
       list(GET _status 1 msg)
@@ -1383,6 +1416,7 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
         sv_externals_check_versioning("${FILE_CONTENTS}" ${SV_PLATFORM_VERSION_DIR} ${SV_COMPILER_DIR} ${SV_COMPILER_VERSION_DIR} SV_DOWNLOAD_DIR)
         string(REPLACE "/" "." SV_TAR_PREFIX "${SV_DOWNLOAD_DIR}")
         set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_URL}/${SV_EXTERNALS_VERSION_NUMBER}/${SV_KERNEL_DIR}/${SV_PLATFORM_DIR}/${SV_DOWNLOAD_DIR}/${SV_PLATFORM_DIR}.${SV_TAR_PREFIX}.${install_dirname}.${SV_EXTERNALS_${proj}_VERSION}.tar.gz")
+        message(STATUS "[sv_externals_add_new_external] SV_EXTERNALS_${proj}_BINARIES_URL: ${SV_EXTERNALS_${proj}_BINARIES_URL}") 
       endif()
     endif()
   endif()
@@ -1520,11 +1554,11 @@ macro(sv_externals_check_versioning check_file_contents platform_version compile
 
   elseif(platform_only)
     # Even worse, issue warning and leave
-    message(WARNING "${GENERIC_MESSAGE} Pre-built binaries for ${SV_PLATFORM_DIR} version ${platform_version} and compiler ${platform_only_oldest_compiler}-${platform_only_oldest_compiler_ver} are being downloaded and used. Proceed with caution!")
+    #message(WARNING "${GENERIC_MESSAGE} Pre-built binaries for ${SV_PLATFORM_DIR} version ${platform_version} and compiler ${platform_only_oldest_compiler}-${platform_only_oldest_compiler_ver} are being downloaded and used. Proceed with caution!")
     set(${output_dir} "${platform_version}/${platform_only_oldest_compiler}/${platform_only_oldest_compiler_ver}/${platform_only_rest_of_line}")
   else()
     # The worst! fatal error
-    message(WARNING "${GENERIC_MESSAGE} Pre-built binaries for ${SV_PLATFORM_DIR} version ${nothing_oldest_platform_ver} and compiler ${nothing_oldest_compiler}/${nothing_oldest_compiler_ver}")
+    #message(WARNING "${GENERIC_MESSAGE} Pre-built binaries for ${SV_PLATFORM_DIR} version ${nothing_oldest_platform_ver} and compiler ${nothing_oldest_compiler}/${nothing_oldest_compiler_ver}")
     set(${output_dir} "${nothing_oldest_platform_ver}/${nothing_oldest_compiler}/${nothing_oldest_compiler_ver}/${nothing_rest_of_line}")
   endif()
 

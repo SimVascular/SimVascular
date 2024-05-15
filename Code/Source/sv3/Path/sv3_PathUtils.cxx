@@ -75,7 +75,7 @@ PathUtils::ExtractCenterlinesSections(vtkSmartPointer<vtkPolyData>& centerlines)
       auto threshold = vtkSmartPointer<vtkThreshold>::New();
       threshold->SetInputData(centerlines);
       threshold->SetInputArrayToProcess(0, 0, 0, "vtkDataObject::FIELD_ASSOCIATION_CELLS", CenterlineIdsArrayName.c_str());
-      threshold->ThresholdBetween(cid, cid);
+      //dp threshold->ThresholdBetween(cid, cid);
       threshold->Update();
 
       auto surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
@@ -90,7 +90,7 @@ PathUtils::ExtractCenterlinesSections(vtkSmartPointer<vtkPolyData>& centerlines)
       auto groupThreshold = vtkSmartPointer<vtkThreshold>::New();
       groupThreshold->SetInputData(centerlinesCidThreshold);
       groupThreshold->SetInputArrayToProcess(0, 0, 0, "vtkDataObject::FIELD_ASSOCIATION_CELLS", GroupIdsArrayName.c_str());
-      groupThreshold->ThresholdBetween(lowerValue, upperValue);
+      //dp groupThreshold->ThresholdBetween(lowerValue, upperValue);
       groupThreshold->Update();
 
       auto groupSurfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();

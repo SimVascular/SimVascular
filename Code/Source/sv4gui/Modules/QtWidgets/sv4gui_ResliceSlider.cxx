@@ -32,7 +32,7 @@
 #include "sv4gui_ResliceSlider.h"
 #include "sv4gui_SegmentationUtils.h"
 
-#include <QmitkSliderNavigatorWidget.h>
+#include <QmitkSliceNavigationWidget.h>
 #include <QmitkStdMultiWidgetEditor.h>
 
 #include <mitkBaseGeometry.h>
@@ -45,6 +45,7 @@
 #include <mitkVtkResliceInterpolationProperty.h>
 
 #include <QInputDialog>
+#include <QVBoxLayout>
 
 sv4guiResliceSlider::sv4guiResliceSlider(QWidget *parent)
     : QWidget(parent)
@@ -89,18 +90,16 @@ void sv4guiResliceSlider::SetRenderWindow(mitk::IRenderWindowPart* renderWindow)
 
     // Setup axial slice window?
     intensityWindow = m_renderWindow->GetQmitkRenderWindow("axial");
-    QmitkSliderNavigatorWidget* intensitySlider = new QmitkSliderNavigatorWidget;
-    intensityStepper = new QmitkStepperAdapter(intensitySlider,
-                                               intensityWindow->GetSliceNavigationController()->GetSlice(),
-                                               "IntensityStepper");
+    QmitkSliceNavigationWidget* intensitySlider = new QmitkSliceNavigationWidget;
+    intensityStepper = new QmitkStepperAdapter(intensitySlider, intensityWindow->GetSliceNavigationController()->GetStepper());
+    //dp intensityStepper = new QmitkStepperAdapter(intensitySlider, intensityWindow->GetSliceNavigationController()->GetSlice(), "IntensityStepper");
 
     // Setup sagittal slice window?
     potentialWindow = m_renderWindow->GetQmitkRenderWindow("sagittal");
-    QmitkSliderNavigatorWidget* potentialSlider = new QmitkSliderNavigatorWidget;
+    QmitkSliceNavigationWidget* potentialSlider = new QmitkSliceNavigationWidget;
     potentialSlider->hide();
-    potentialStepper = new QmitkStepperAdapter(potentialSlider,
-                                               potentialWindow->GetSliceNavigationController()->GetSlice(),
-                                               "PotentialStepper");
+    potentialStepper = new QmitkStepperAdapter(potentialSlider, potentialWindow->GetSliceNavigationController()->GetStepper());
+    //dp potentialStepper = new QmitkStepperAdapter(potentialSlider, potentialWindow->GetSliceNavigationController()->GetSlice(), "PotentialStepper");
 
     btnResliceSize = new QPushButton("Size");
     btnResliceSize->setToolTip("Change reslice size");
@@ -123,7 +122,7 @@ void sv4guiResliceSlider::SetRenderWindow(mitk::IRenderWindowPart* renderWindow)
     // These seem to be the renderers used with the different slice planes.
     //
     //threeDWindow = m_renderWindow->GetQmitkRenderWindow("3d");
-    //QmitkSliderNavigatorWidget* threeDSlider = new QmitkSliderNavigatorWidget;
+    //QmitkSliceNavigationWidget* threeDSlider = new QmitkSliceNavigationWidget;
     //ThreeDStepper = new QmitkStepperAdapter(threeDSlider,
         //threeDWindow->GetSliceNavigationController()->GetSlice(), "ThreeDStepper");
 
@@ -240,17 +239,19 @@ void sv4guiResliceSlider::updateReslice()
     auto intensityController = intensityWindow->GetSliceNavigationController();
     intensityController->SetInputWorldTimeGeometry(currentSlicedGeometry);
     //intensityController->SetInputWorldGeometry3D(currentSlicedGeometry);
-    intensityController->SetViewDirection(mitk::SliceNavigationController::Original);
+
+    intensityController->SetViewDirection(mitk::AnatomicalPlane::Original);
+    //dp intensityController->SetViewDirection(mitk::SliceNavigationController::Original);
     intensityController->Update();
 
     // This is displayed in the sagittal window.
     auto potentialController = potentialWindow->GetSliceNavigationController();
     potentialController->SetInputWorldTimeGeometry(currentSlicedGeometry);
     //potentialController->SetInputWorldGeometry3D(currentSlicedGeometry);
-    potentialController->SetViewDirection(mitk::SliceNavigationController::Original);
+
+    potentialController->SetViewDirection(mitk::AnatomicalPlane::Original);
+    //dp potentialController->SetViewDirection(mitk::SliceNavigationController::Original);
     potentialController->Update();
-
-
 
     if (image) {
         std::cout << msg << "Have image " << std::endl;
@@ -385,16 +386,22 @@ void sv4guiResliceSlider::updateReslice()
 //----------------------
 //
 int sv4guiResliceSlider::getCurrentSliceIndex(){
-    return intensityWindow->GetSliceNavigationController()->GetSlice()->GetPos();
+    return intensityWindow->GetSliceNavigationController()->GetStepper()->GetPos();
+    //dp return intensityWindow->GetSliceNavigationController()->GetSlice()->GetPos();
 }
 
 void sv4guiResliceSlider::intensityOnRefetch()
 {
-    int pos1=intensityWindow->GetSliceNavigationController()->GetSlice()->GetPos();
-    int pos2=potentialWindow->GetSliceNavigationController()->GetSlice()->GetPos();
+    int pos1=intensityWindow->GetSliceNavigationController()->GetStepper()->GetPos();
+    int pos2=potentialWindow->GetSliceNavigationController()->GetStepper()->GetPos();
+
+    //dp int pos1=intensityWindow->GetSliceNavigationController()->GetSlice()->GetPos();
+    //dp int pos2=potentialWindow->GetSliceNavigationController()->GetSlice()->GetPos();
+
     if(pos1!=pos2)
     {
-        potentialWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos1);
+        potentialWindow->GetSliceNavigationController()->GetStepper()->SetPos(pos1);
+        //dp potentialWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos1);
         //        intensityWindow->GetRenderer()->GetDisplayGeometry()->Fit();
         //        intensityWindow->GetRenderer()->GetVtkRenderer()->ResetCamera();
         //        potentialWindow->GetRenderer()->GetDisplayGeometry()->Fit();
@@ -410,11 +417,16 @@ void sv4guiResliceSlider::intensityOnRefetch()
 
 void sv4guiResliceSlider::potentialOnRefetch()
 {
-    int pos1=intensityWindow->GetSliceNavigationController()->GetSlice()->GetPos();
-    int pos2=potentialWindow->GetSliceNavigationController()->GetSlice()->GetPos();
+    int pos1=intensityWindow->GetSliceNavigationController()->GetStepper()->GetPos();
+    int pos2=potentialWindow->GetSliceNavigationController()->GetStepper()->GetPos();
+
+    //dp int pos1=intensityWindow->GetSliceNavigationController()->GetSlice()->GetPos();
+    //dp int pos2=potentialWindow->GetSliceNavigationController()->GetSlice()->GetPos();
+
     if(pos1!=pos2)
     {
-        intensityWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos2);
+        intensityWindow->GetSliceNavigationController()->GetStepper()->SetPos(pos2);
+        //dp intensityWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos2);
         //        intensityWindow->GetRenderer()->GetDisplayGeometry()->Fit();
         //        intensityWindow->GetRenderer()->GetVtkRenderer()->ResetCamera();
         //        potentialWindow->GetRenderer()->GetDisplayGeometry()->Fit();
@@ -518,8 +530,12 @@ void sv4guiResliceSlider::setCheckBoxVisible(bool visible)
 void sv4guiResliceSlider::setSlicePos(int pos)
 {
     //threeDWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos);
-    intensityWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos);
-    potentialWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos);
+
+    intensityWindow->GetSliceNavigationController()->GetStepper()->SetPos(pos);
+    potentialWindow->GetSliceNavigationController()->GetStepper()->SetPos(pos);
+
+    //dp intensityWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos);
+    //dp potentialWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos);
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 

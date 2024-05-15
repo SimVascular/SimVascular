@@ -32,8 +32,8 @@
 #include "sv4gui_ROMSimulationLinesContainer.h"
 #include "math.h"
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 sv4guiSimulationLinesContainer::sv4guiSimulationLinesContainer()

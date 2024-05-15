@@ -576,7 +576,8 @@ PyTetGenOptionsGetValues(PyObject* meshingOptions, std::string name)
   if (PyFloat_Check(obj)) {
       auto value = PyFloat_AsDouble(obj);
       values.push_back(value);
-  } else if (PyInt_Check(obj)) {
+  } else if (PyLong_Check(obj)) {
+  //dp } else if (PyInt_Check(obj)) {
       auto value = PyLong_AsDouble(obj);
       values.push_back(value);
   } else if (PyTuple_Check(obj)) {
@@ -640,9 +641,9 @@ PyTetGenOptionsGetListValues(PyObject* meshingOptions, std::string name)
               PyObject *ptype, *pvalue, *ptraceback;
               PyErr_Fetch(&ptype, &pvalue, &ptraceback);
               auto pystr = PyObject_Str(pvalue);
-              auto valMsg = std::string(PyString_AsString(pystr));
+              auto valMsg = std::string(PyUnicode_AsUTF8(pystr));
               auto itemRep = PyObject_Repr(item);
-              auto itemStr = std::string(PyString_AsString(itemRep));
+              auto itemStr = std::string(PyUnicode_AsUTF8(itemRep));
               std::string msg = itemStr + ": " + valMsg;
               if (msg != errorMsg) {
                   msg += ". " + errorMsg;

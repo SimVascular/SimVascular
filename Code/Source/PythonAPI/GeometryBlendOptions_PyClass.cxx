@@ -104,7 +104,8 @@ BlendOptionsGetInt(PyObject* blendOptions, std::string name)
       std::cout << "Internal error: The '" + name + "' BlendOptions paramater is not correctly setup." << std::endl;
       return 0;
   }
-  auto value = PyInt_AsLong(obj);
+  auto value = PyLong_AsLong(obj);
+  //dp auto value = PyInt_AsLong(obj);
   Py_DECREF(obj);
   return value;
 }

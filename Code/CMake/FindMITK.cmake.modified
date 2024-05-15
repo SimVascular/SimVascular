@@ -36,6 +36,8 @@
 #  MITK_INCLUDE_DIRS, include search path
 #  MITK_FOUND, If false, do not try to use this library.
 
+message(STATUS "=================== FindMITK.cmake ====================")
+
 set(proj MITK)
 
 include(CMakeFindFrameworks)
@@ -47,12 +49,15 @@ if(NOT ${proj}_DIR)
   message(FATAL_ERROR "${proj}_DIR was not specified. Set ${proj}_DIR to the toplevel ${proj} dir that contains bin, lib, include")
 endif()
 
+message(STATUS "[FindMITK.cmake] proj: ${proj}")
+
 #-----------------------------------------------------------------------------
 # Set what we need to find
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Libraries
+message(STATUS "[FindMITK.cmake] set ${proj}_LIBNAMES ... ")
 set(${proj}_LIBNAMES CppMicroServices
                      # CTKCommandLineModulesBackendLocalProcess
                      # CTKCommandLineModulesCore
@@ -66,23 +71,16 @@ set(${proj}_LIBNAMES CppMicroServices
                      # CTKVisualizationVTKCore
                      # CTKWidgets
                      # CTKXNATCore
-                     # dp mbilog
                      MitkAlgorithmsExt
                      MitkAppUtil
                      MitkCore
                      MitkContourModel
                      MitkDataTypesExt
-                     MitkImageDenoising
                      MitkMapperExt
                      MitkQtWidgets
                      MitkQtWidgetsExt
                      MitkSceneSerialization
-                     MitkSegmentation
-                     MitkSegmentationUI
-                     MitkSurfaceInterpolation
-                     # dp PythonQt
                      # tinyxml
-                     # dp mbilog
                      PocoFoundation
                      PocoUtil
                      dcmjpeg
@@ -105,8 +103,10 @@ set(${proj}_LIBNAMES CppMicroServices
                      dcmdata
                      )
 if(SV_USE_MITK_SEGMENTATION)
-    list(APPEND ${proj}_LIBNAMES MitkMultilabel)
+    #list(APPEND ${proj}_LIBNAMES MitkMultilabel)
 endif()
+
+message(STATUS "[FindMITK.cmake] set ${proj}_PLUGIN_LIBNAMES ... ")
 
 set(${proj}_PLUGIN_LIBNAMES org_mitk_core_services
                             org_mitk_gui_common
@@ -122,86 +122,13 @@ set(${proj}_PLUGIN_LIBNAMES org_mitk_core_services
 # Add requestion components
 set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})
 
-#-----------------------------------------------------------------------------
-# Header
-set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
-                    "ctkPluginFrameworkLauncher.h"                   #ctk/PluginFramework
-                    "signature_of_eigen3_matrix_library"             #eigen3
-                    "mitkVersion.h"                                  #mitk
-                    "usGlobalConfig.h"                               #mitk/configs
-                    "MitkAlgorithmsExtExports.h"                     #mitk/exports
-                    "ui_QmitkAboutDialogGUI.h"                       #mitk/ui_files
-                    "itkIntelligentBinaryClosingFilter.h"            #mitk/AlgorithmsExt/include
-                    "mitkBaseApplication.h"                          #mitk/AppUtil/include
-                    "itkImportMitkImageContainer.h"                  #mitk/Core/include
-                    "usAny.h"                                        #mitk/CppMicroServices/core/include
-                    "mitkAffineBaseDataInteractor3D.h"               #mitk/DataTypesExt/include
-                    "mitkEnhancedPointSetVtkMapper3D.h"              #mitk/MapperExt/include
-                    "mitkExtrudePlanarFigureFilter.h"                #mitk/PlanarFigure/include
-                    "ui_QmitkFileReaderOptionsDialog.h"              #mitk/QtWidgets
-                    "QmitkApplicationCursor.h"                       #mitk/QtWidgets/include
-                    "ui_QmitkAboutDialogGUI.h"                       #mitk/QtWidgetsExt
-                    "QmitkAboutDialog.h"                             #mitk/QtWidgetsExt/include
-                    "mitkSceneIO.h"                                  #mitk/SceneSerialization/include
-                    # dp "mbilog.h"                                       #mitk/Utilities/mbilog
-                    "mitkLog.h"  # dp
-                    "mitkContourElement.h"                           #mitk/Modules/ContourModel/DataManagement
-                    "usCoreModuleContext_p.h"                        #mitk/Modules/CppMicroServices/core/src/module
-                    "usLDAPExpr_p.h"                                 #mitk/Modules/CppMicroServices/core/src/service
-                    "usAtomicInt_p.h"                                #mitk/Modules/CppMicroServices/core/src/util
-                    "itkLocalVariationImageFilter.h"                 #mitk/Modules/ImageDenoising
-                    "mitkGL.h"                                       #mitk/Modules/LegacyGL
-                    "mitkLabel.h"                                    #mitk/Modules/Multilabel
-                    "itkAdaptiveThresholdIterator.h"                 #mitk/Modules/Segmentation/Algorithms
-                    "mitkSegmentationInterpolationController.h"      #mitk/Modules/Segmentation/Controllers
-                    # "mitkAdaptiveRegionGrowingTool.h"                #mitk/Modules/Segmentation/Interactions
-                    # "ui_QmitkAdaptiveRegionGrowingToolGUIControls.h" #mitk/Modules/SegmentationUI
-                    # "QmitkAdaptiveRegionGrowingToolGUI.h"            #mitk/Modules/SegmentationUI/Qmitk
-                    "mitkSurfaceInterpolationController.h"           #mitk/Modules/SurfaceInterpolation
-                    "ui_QmitkFileReaderOptionsDialog.h"              #mitk/Modules/QtWidgets
-                    # dp "PythonQt.h"                                     #PythonQt
-                    # "tinyxml.h"                                      #tinyxml
-                    "mitkIDataStorageService.h"                      #mitk/plugins/org.mitk.core.services
-                    "mitkDataNodeSelection.h"                        #mitk/plugins/org.mitk.gui.common
-                    "QmitkFileOpenAction.h"                          #mitk/plugins/org.mitk.gui.qt.application
-                    "QmitkAbstractView.h"                            #mitk/plugins/org.mitk.gui.qt.common
-                    # "QmitkFunctionality.h"                           #mitk/plugins/org.mitk.gui.qt.common.legacy
-                    "mitkIContextMenuAction.h"                       #mitk/plugins/org.mitk.gui.qt.datamanager
-                    "QmitkStdMultiWidgetEditor.h"                    #mitk/plugins/org.mitk.gui.qt.stdmultiwidgeteditor
-                    "QmitkExtActionBarAdvisor.h"                     #mitk/plugins/org.mitk.gui.qt.ext
-                    "berryMacros.h"                                  #mitk/plugins/org.blueberry.core.runtime
-                    "berryIApplication.h"                            #mitk/plugins/org.blueberry.core.runtime/application
-                    "berryIConfigurationElement.h"                   #mitk/plugins/org.blueberry.core.runtime/registry
-                    "berryQtViewPart.h"                              #mitk/plugins/org.blueberry.ui.qt
-                    "berryQtWorkbenchAdvisor.h"                      #mitk/plugins/org.blueberry.ui.qt/application
-                    "berryIntroPart.h"                               #mitk/plugins/org.blueberry.ui.qt/intro
-                    "QmitkSlicesInterpolator.h"
-                    "QmitkToolGUIArea.h"
-                    # "QmitkToolReferenceDataSelectionBox.h"
-                    "QmitkToolSelectionBox.h"
-                    "mitkTool.h"
-                    "QmitkNewSegmentationDialog.h"
-                    )
 
-if(${proj}_VERSION STREQUAL "2016.03")
-  list(APPEND ${proj}_HEADERS
-    "mitkLogoOverlay.h"                              #mitk/Modules/Overlays
-    )
-elseif(${proj}_VERSION VERSION_GREATER "2018.01")
-  list(APPEND ${proj}_HEADERS
-    "mitkLogoAnnotation.h"                           #mitk/Modules/Annotation
-    )
-endif()
-if(SV_USE_MITK_SEGMENTATION)
-    list(APPEND ${proj}_HEADERS
-        "mitkLabelSetImage.h"                            #mitk/Modules/Multilabel
-        "mitkBooleanOperation.h"                         #mitk/Modules/Segmentation/SegmentationUtilities/BooleanOperations
-        "mitkMorphologicalOperations.h"                  #mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations
-        )
-endif()
 #-----------------------------------------------------------------------------
 # Find Libraries
 #-----------------------------------------------------------------------------
+message(STATUS "[FindMITK.cmake] ------------------------------------------------")
+message(STATUS "[FindMITK.cmake] Find Libraries ... ")
+message(STATUS "[FindMITK.cmake] ------------------------------------------------")
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
 set(lib_sub_path "lib")
 set(lib64_sub_path "lib64")
@@ -220,26 +147,33 @@ set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS}
   ${${proj}_DIR}/lib64/${CMAKE_BUILD_TYPE};
   )
 
+if(APPLE)
+  #message(STATUS "[FindMITK.cmake] Add ${proj}_POSSIBLE_LIB_PATHS: ${${proj}_DIR}/MitkWorkbench.app/Contents/MacOS/") 
+  set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS}
+    ${${proj}_DIR}/MitkWorkbench.app/Contents/MacOS/ )
+endif()
+
+#message(STATUS "[FindMITK.cmake] ${proj}_POSSIBLE_PATHS: ${${proj}_POSSIBLE_PATHS}")
+#message(STATUS "[FindMITK.cmake] ${proj}_POSSIBLE_LIB_PATHS: ${${proj}_POSSIBLE_LIB_PATHS}")
+
 set(${proj}_LIBS_MISSING ${${proj}_LIBNAMES})
 list(REMOVE_DUPLICATES ${proj}_LIBS_MISSING)
 set(${proj}_LIBRARIES_WORK "")
+
 foreach(lib ${${proj}_LIBNAMES})
-	#find library
+  message(STATUS "[FindMITK.cmake] Search for lib: ${lib}")
   unset(${proj}_${lib}_LIBRARY CACHE)
-	find_library(${proj}_${lib}_LIBRARY
-		NAMES
-		${lib}
-    ${lib}d
-		PATHS
-		${${proj}_POSSIBLE_LIB_PATHS}
-		NO_DEFAULT_PATH
-    )
-	mark_as_advanced(${proj}_${lib}_LIBRARY)
-	set(${proj}_LIB_FULLNAMES ${${proj}_LIB_FULLNAMES} ${proj}_${lib}_LIBRARY)
-	if(${proj}_${lib}_LIBRARY)
-		set(${proj}_LIBRARIES_WORK ${${proj}_LIBRARIES_WORK} "${${proj}_${lib}_LIBRARY}")
-		list(REMOVE_ITEM ${proj}_LIBS_MISSING ${lib})
-	endif()
+  find_library(${proj}_${lib}_LIBRARY NAMES ${lib} ${lib}d PATHS ${${proj}_POSSIBLE_LIB_PATHS} NO_DEFAULT_PATH)
+  mark_as_advanced(${proj}_${lib}_LIBRARY)
+  set(${proj}_LIB_FULLNAMES ${${proj}_LIB_FULLNAMES} ${proj}_${lib}_LIBRARY)
+
+  if(${proj}_${lib}_LIBRARY)
+    set(${proj}_LIBRARIES_WORK ${${proj}_LIBRARIES_WORK} "${${proj}_${lib}_LIBRARY}")
+    list(REMOVE_ITEM ${proj}_LIBS_MISSING ${lib})
+  else()
+    message(STATUS "[FindMITK.cmake] **** Can't find lib: ${lib}")
+  endif()
+
 endforeach()
 
 #message("${proj}_LIBRARIES_WORK: ${${proj}_LIBRARIES_WORK}")
@@ -271,6 +205,9 @@ endif()
 #-----------------------------------------------------------------------------
 # Find Plugins
 #-----------------------------------------------------------------------------
+message(STATUS "[FindMITK.cmake] ------------------------------------------------")
+message(STATUS "[FindMITK.cmake] Find Plugins ... ")
+message(STATUS "[FindMITK.cmake] ------------------------------------------------")
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
 set(lib_sub_path "lib")
 
@@ -291,6 +228,12 @@ set(${proj}_POSSIBLE_PLUGIN_LIB_PATHS ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
     ${${proj}_DIR}/lib/plugins/MinSizeRel
     ${${proj}_DIR}/bin/plugins/MinSizeRel
   )
+
+if(APPLE)
+  #message(STATUS "[FindMITK.cmake] Add ${proj}_POSSIBLE_LIB_PATHS: ${${proj}_DIR}/MitkWorkbench.app/Contents/MacOS/") 
+  set(${proj}_POSSIBLE_PLUGIN_LIB_PATHS ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
+    ${${proj}_DIR}/MitkWorkbench.app/Contents/MacOS/plugins )
+endif()
 
 set(${proj}_PLUGIN_LIBS_MISSING ${${proj}_PLUGIN_LIBNAMES})
 list(REMOVE_DUPLICATES ${proj}_PLUGIN_LIBS_MISSING)
@@ -341,8 +284,13 @@ if(${proj}_PLUGIN_LIBRARIES)
 endif()
 
 #-----------------------------------------------------------------------------
-# Find Include Directory
+# Find header files 
 #-----------------------------------------------------------------------------
+
+message(STATUS "[FindMITK.cmake] ------------------------------------------------")
+message(STATUS "[FindMITK.cmake] Find Headers ... ")
+message(STATUS "[FindMITK.cmake] ------------------------------------------------")
+set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
 
 set(${proj}_POSSIBLE_INCLUDE_PATHS
   "${${proj}_DIR}/*"
@@ -354,8 +302,140 @@ set(${proj}_POSSIBLE_INCLUDE_PATHS
   "${${proj}_DIR}/include/*/*/*/*/*/*"
   )
 
+if(APPLE)
+  set(${proj}_POSSIBLE_INCLUDE_PATHS ${${proj}_POSSIBLE_INCLUDE_PATHS}
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/AppUtil/include;
+    /Users/parkerda/software/mitk/git-src/build/MITK-build/Modules/CppMicroServices/include;
+    /Users/parkerda/software/mitk/git-src/build/MITK-build/Modules/AlgorithmsExt;
+    /Users/parkerda/software/mitk/git-src/build/MITK-build/Modules/QtWidgetsExt;
+    /Users/parkerda/software/mitk/git-src/build/MITK-build/Modules/QtWidgets;
+
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/AlgorithmsExt/include;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/Core/include;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/CppMicroServices/core/include;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/DataTypesExt/include;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/MapperExt/include;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/PlanarFigure/include;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/QtWidgets/include;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/QtWidgetsExt/include;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/SceneSerialization/include;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/Annotation/include;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/ContourModel/DataManagement;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/CppMicroServices/core/src/module;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/CppMicroServices/core/src/service;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/CppMicroServices/core/src/util;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/ImageDenoising;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/Multilabel;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/LegacyGL;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/Segmentation/Algorithms;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/Segmentation/Controllers;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/Segmentation/Interactions;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/Segmentation/SegmentationUtilities/BooleanOperations;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/SegmentationUI/Qmitk;
+    /Users/parkerda/software/mitk/git-src/MITK/Modules/SurfaceInterpolation;
+
+    /Users/parkerda/software/mitk/git-src/MITK/Plugins/org.mitk.core.services/src;
+    /Users/parkerda/software/mitk/git-src/MITK/Plugins/org.mitk.gui.qt.common/src;
+    /Users/parkerda/software/mitk/git-src/MITK/Plugins/org.mitk.gui.common/src;
+    /Users/parkerda/software/mitk/git-src/MITK/Plugins/org.mitk.gui.qt.application/src;
+    /Users/parkerda/software/mitk/git-src/MITK/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src;
+    /Users/parkerda/software/mitk/git-src/MITK/Plugins/org.mitk.gui.qt.ext/src;
+    /Users/parkerda/software/mitk/git-src/MITK/Plugins/org.blueberry.core.runtime/src;
+    /Users/parkerda/software/mitk/git-src/MITK/Plugins/org.blueberry.core.runtime/src/application;
+    /Users/parkerda/software/mitk/git-src/MITK/Plugins/org.blueberry.core.runtime/src/registry;
+    /Users/parkerda/software/mitk/git-src/MITK/Plugins/org.blueberry.ui.qt/src;
+    /Users/parkerda/software/mitk/git-src/MITK/Plugins/org.blueberry.ui.qt/src/application;
+    /Users/parkerda/software/mitk/git-src/MITK/Plugins/org.blueberry.ui.qt/src/intro;
+    /Users/parkerda/software/mitk/git-src/MITK/Plugins/org.mitk.gui.qt.segmentation/src;
+  )
+endif()
+
+#message(STATUS "[FindMITK.cmake] ${proj}_POSSIBLE_INCLUDE_PATHS: ${${proj}_POSSIBLE_INCLUDE_PATHS}")
+
 #-----------------------------------------------------------------------------
-# Search for header
+# Define header files
+#-----------------------------------------------------------------------------
+
+message(STATUS "[FindMITK.cmake] set ${proj}_HEADERS ... ")
+
+set(${proj}_HEADERS 
+  # dp "ctkAbstractFactory.h"                           #ctk
+  # dp "ctkPluginFrameworkLauncher.h"                   #ctk/PluginFramework
+  "signature_of_eigen3_matrix_library"             #eigen3
+  #"mitkVersion.h"                                  #mitk
+  "usGlobalConfig.h"                               #mitk/configs
+  "MitkAlgorithmsExtExports.h"                     #mitk/exports
+  "ui_QmitkAboutDialogGUI.h"                       #mitk/ui_files
+  "itkIntelligentBinaryClosingFilter.h"            #mitk/AlgorithmsExt/include
+  "mitkBaseApplication.h"                          #mitk/AppUtil/include
+  "itkImportMitkImageContainer.h"                  #mitk/Core/include
+  "usAny.h"                                        #mitk/CppMicroServices/core/include
+  "mitkAffineBaseDataInteractor3D.h"               #mitk/DataTypesExt/include
+  "mitkEnhancedPointSetVtkMapper3D.h"              #mitk/MapperExt/include
+  "mitkExtrudePlanarFigureFilter.h"                #mitk/PlanarFigure/include
+  "ui_QmitkFileReaderOptionsDialog.h"              #mitk/QtWidgets
+  "QmitkApplicationCursor.h"                       #mitk/QtWidgets/include
+  "ui_QmitkAboutDialogGUI.h"                       #mitk/QtWidgetsExt
+  "QmitkAboutDialog.h"                             #mitk/QtWidgetsExt/include
+  "mitkSceneIO.h"                                  #mitk/SceneSerialization/include
+  #dp "mbilog.h"                                       #mitk/Utilities/mbilog
+  "mitkContourElement.h"                           #mitk/Modules/ContourModel/DataManagement
+  "usCoreModuleContext_p.h"                        #mitk/Modules/CppMicroServices/core/src/module
+  "usLDAPExpr_p.h"                                 #mitk/Modules/CppMicroServices/core/src/service
+  "usAtomicInt_p.h"                                #mitk/Modules/CppMicroServices/core/src/util
+  "itkLocalVariationImageFilter.h"                 #mitk/Modules/ImageDenoising
+  "mitkGL.h"                                       #mitk/Modules/LegacyGL
+  "mitkLabel.h"                                    #mitk/Modules/Multilabel
+  "itkAdaptiveThresholdIterator.h"                 #mitk/Modules/Segmentation/Algorithms
+  "mitkSegmentationInterpolationController.h"      #mitk/Modules/Segmentation/Controllers
+  # "mitkAdaptiveRegionGrowingTool.h"                #mitk/Modules/Segmentation/Interactions
+  # "ui_QmitkAdaptiveRegionGrowingToolGUIControls.h" #mitk/Modules/SegmentationUI
+  # "QmitkAdaptiveRegionGrowingToolGUI.h"            #mitk/Modules/SegmentationUI/Qmitk
+  "mitkSurfaceInterpolationController.h"           #mitk/Modules/SurfaceInterpolation
+  "ui_QmitkFileReaderOptionsDialog.h"              #mitk/Modules/QtWidgets
+  # dp "PythonQt.h"                                     #PythonQt
+  # "tinyxml.h"                                      #tinyxml
+  "mitkIDataStorageService.h"                      #mitk/plugins/org.mitk.core.services
+  "mitkDataNodeSelection.h"                        #mitk/plugins/org.mitk.gui.common
+  "QmitkFileOpenAction.h"                          #mitk/plugins/org.mitk.gui.qt.application
+  "QmitkAbstractView.h"                            #mitk/plugins/org.mitk.gui.qt.common
+  # "QmitkFunctionality.h"                           #mitk/plugins/org.mitk.gui.qt.common.legacy
+  "mitkIContextMenuAction.h"                       #mitk/plugins/org.mitk.gui.qt.datamanager
+  "QmitkStdMultiWidgetEditor.h"                    #mitk/plugins/org.mitk.gui.qt.stdmultiwidgeteditor
+  "QmitkExtActionBarAdvisor.h"                     #mitk/plugins/org.mitk.gui.qt.ext
+  "berryMacros.h"                                  #mitk/plugins/org.blueberry.core.runtime
+  "berryIApplication.h"                            #mitk/plugins/org.blueberry.core.runtime/application
+  "berryIConfigurationElement.h"                   #mitk/plugins/org.blueberry.core.runtime/registry
+  "berryQtViewPart.h"                              #mitk/plugins/org.blueberry.ui.qt
+  "berryQtWorkbenchAdvisor.h"                      #mitk/plugins/org.blueberry.ui.qt/application
+  "berryIntroPart.h"                               #mitk/plugins/org.blueberry.ui.qt/intro
+  # dp "QmitkSlicesInterpolator.h"
+  "QmitkToolGUIArea.h"
+  # "QmitkToolReferenceDataSelectionBox.h"
+  "QmitkToolSelectionBox.h"
+  "mitkTool.h"
+  "QmitkNewSegmentationDialog.h"
+)
+
+if(${proj}_VERSION STREQUAL "2016.03")
+  list(APPEND ${proj}_HEADERS
+    "mitkLogoOverlay.h"                              #mitk/Modules/Overlays
+    )
+elseif(${proj}_VERSION VERSION_GREATER "2018.01")
+  list(APPEND ${proj}_HEADERS
+    "mitkLogoAnnotation.h"                           #mitk/Modules/Annotation
+    )
+endif()
+if(SV_USE_MITK_SEGMENTATION)
+    list(APPEND ${proj}_HEADERS
+        "mitkLabelSetImage.h"                            #mitk/Modules/Multilabel
+        "mitkBooleanOperation.h"                         #mitk/Modules/Segmentation/SegmentationUtilities/BooleanOperations
+        "mitkMorphologicalOperations.h"                  #mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations
+        )
+endif()
+
+
 set(${proj}_HEADERS_MISSING ${${proj}_HEADERS})
 list(REMOVE_DUPLICATES ${proj}_HEADERS_MISSING)
 set(${proj}_HEADERS_WORK "")

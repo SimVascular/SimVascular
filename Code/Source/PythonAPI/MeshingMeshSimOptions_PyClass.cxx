@@ -202,7 +202,7 @@ namespace MeshSimOption {
       {
           std::string paramErrMsg = "The " + paramName + " parameter must be a " + description;
           auto objRep = PyObject_Repr(obj);
-          const char* objStr = PyString_AsString(objRep);
+          const char* objStr = PyUnicode_AsUTF8(objRep);
           auto objErrorMsg = "Error in option '" + std::string(objStr) + "'. ";
           auto errorMsg = objErrorMsg + paramErrMsg;
           return errorMsg;
@@ -385,7 +385,7 @@ PyMeshSimOptionsGetValues(PyObject* meshingOptions, std::string name)
   if (PyFloat_Check(obj)) {
       auto value = PyFloat_AsDouble(obj);
       values.push_back(value);
-  } else if (PyInt_Check(obj)) {
+  } else if (PyLong_Check(obj)) {
       auto value = PyLong_AsDouble(obj);
       values.push_back(value);
   } else if (PyTuple_Check(obj)) {
@@ -485,7 +485,7 @@ PyMeshSimOptions_parse_python_meshsim_options(PyMeshingMeshSimOptions* self, PyO
           std::cout << "[PyMeshSimOptions_check]   bool value: " << boolValue << std::endl;
       } else if (itemType == "MeshSimListOption") {
           auto listName = PyObject_GetAttrString(item, "name");
-          std::string name(PyString_AsString(listName));
+          std::string name(PyUnicode_AsUTF8(listName));
           auto dList = PyObject_GetAttrString(item, "dlist");
           PyTypeObject* type = dList->ob_type;
           auto itemType = std::string(type->tp_name);

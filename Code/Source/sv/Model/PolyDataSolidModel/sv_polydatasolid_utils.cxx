@@ -219,7 +219,7 @@ int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *fac
   idThreshold->SetInputData(geom);
   //Set Input Array to 0 port,0 connection,1 for Cell Data, and Regions is the type name
   idThreshold->SetInputArrayToProcess(0,0,0,1,"ModelFaceID");
-  idThreshold->ThresholdBetween(facenum,facenum);
+  //dp idThreshold->ThresholdBetween(facenum,facenum);
   idThreshold->Update();
 
   tempGrid = idThreshold->GetOutput();

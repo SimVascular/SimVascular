@@ -42,6 +42,7 @@ ExternalProject_Add("${proj}_networks"
   PREFIX            ${ML_PFX_DIR}
   DOWNLOAD_DIR      ${ML_SRC_DIR}
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/../Python/site-packages/sv_ml/results
+  DOWNLOAD_NO_PROGRESS ON
   UPDATE_COMMAND    ""
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""

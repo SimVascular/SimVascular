@@ -414,7 +414,7 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
     thresholder->SetInputData(pd);
      //Set Input Array to 0 port,0 connection,1 for Cell Data, and WallID is the type name
     thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
-    thresholder->ThresholdBetween(1,1);
+    //dp thresholder->ThresholdBetween(1,1);
     thresholder->Update();
 
     vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =

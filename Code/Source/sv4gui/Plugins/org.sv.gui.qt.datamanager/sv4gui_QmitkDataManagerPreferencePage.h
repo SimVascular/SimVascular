@@ -51,7 +51,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 #include "berryIQtPreferencePage.h"
 #include <org_sv_gui_qt_datamanager_Export.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferences.h>
+//dp #include <berryIPreferences.h>
 
 class QWidget;
 class QCheckBox;
@@ -94,7 +95,7 @@ protected:
   QCheckBox* m_GlobalReinitOnNodeDelete;
   QCheckBox* m_GlobalReinitOnNodeAdded;
   QCheckBox* m_UseSurfaceDecimation;
-  berry::IPreferences::Pointer m_DataManagerPreferencesNode;
+  mitk::IPreferences* m_DataManagerPreferencesNode;
 };
 
 #endif /* SV4GUI_QMITKDATAMANAGERPREFERENCEPAGE_H_ */

@@ -31,29 +31,39 @@
 
 #include "sv4gui_LoftingUtils.h"
 
-#include <berryIPreferences.h>
-#include <berryIPreferencesService.h>
+#include <mitkIPreferences.h>
+//dp #include <berryIPreferences.h>
+
+#include <mitkIPreferencesService.h>
+//#include <berryIPreferencesService.h>
+
 #include <berryPlatform.h>
 
 void sv4guiLoftingUtils::SetPreferencedValues(svLoftingParam* param)
 {
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    //berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     Q_ASSERT(prefService);
-    berry::IPreferences::Pointer preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.lofting");
-    if(preferences.IsNull())
+
+    mitk::IPreferences* preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.lofting");
+    //berry::IPreferences::Pointer preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.lofting");
+
+    if(preferences != nullptr) {
         return;
+    }
 
     if(param==nullptr)
         return;
 
-     param->method= preferences->Get("Lofting Method", QString::fromStdString(param->method)).toStdString();
+     param->method = preferences->Get("Lofting Method", param->method);
+     //dp param->method= preferences->Get("Lofting Method", QString::fromStdString(param->method)).toStdString();
 
      param->uDegree= preferences->GetInt("NURBS Lofting U Degree", param->uDegree);
      param->vDegree= preferences->GetInt("NURBS Lofting V Degree", param->vDegree);
-     param->uKnotSpanType= preferences->Get("NURBS Lofting U Knot Span Type", QString::fromStdString(param->uKnotSpanType)).toStdString();
-     param->vKnotSpanType= preferences->Get("NURBS Lofting V Knot Span Type", QString::fromStdString(param->vKnotSpanType)).toStdString();
-     param->uParametricSpanType= preferences->Get("NURBS Lofting U Parametric Span Type", QString::fromStdString(param->uParametricSpanType)).toStdString();
-     param->vParametricSpanType= preferences->Get("NURBS Lofting V Parametric Span Type", QString::fromStdString(param->vParametricSpanType)).toStdString();
+     param->uKnotSpanType= preferences->Get("NURBS Lofting U Knot Span Type", param->uKnotSpanType);
+     param->vKnotSpanType= preferences->Get("NURBS Lofting V Knot Span Type", param->vKnotSpanType);
+     param->uParametricSpanType= preferences->Get("NURBS Lofting U Parametric Span Type", param->uParametricSpanType);
+     param->vParametricSpanType= preferences->Get("NURBS Lofting V Parametric Span Type", param->vParametricSpanType);
 
      param->numOutPtsInSegs= preferences->GetInt("Spline Sampling", param->numOutPtsInSegs);
      param->samplePerSegment= preferences->GetInt("Spline Point Number Per Segment", param->samplePerSegment);

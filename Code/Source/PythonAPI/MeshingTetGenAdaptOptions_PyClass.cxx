@@ -179,7 +179,7 @@ PyTetGenAdaptOptGetValue(PyObject* meshingOptions, std::string name, double& val
 
   if (PyFloat_Check(obj)) {
       value = PyFloat_AsDouble(obj);
-  } else if (PyInt_Check(obj)) {
+  } else if (PyLong_Check(obj)) {
       value = PyLong_AsDouble(obj);
   }
 

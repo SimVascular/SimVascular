@@ -49,6 +49,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #ifndef SV4GUI_QMITKDATAMANAGERHOTKEYSPREFPAGE_H_
 #define SV4GUI_QMITKDATAMANAGERHOTKEYSPREFPAGE_H_
 
+#include "mitkIPreferences.h"
 #include "berryIQtPreferencePage.h"
 #include <org_sv_gui_qt_datamanager_Export.h>
 
@@ -90,7 +91,8 @@ protected:
   ///
   /// The node from which the properties are taken (will be catched from the preferences service in ctor)
   ///
-  berry::IPreferences::WeakPtr m_DataManagerHotkeysPreferencesNode;
+  mitk::IPreferences* m_DataManagerHotkeysPreferencesNode;
+  //dp berry::IPreferences::WeakPtr m_DataManagerHotkeysPreferencesNode;
 
   ///
   /// Maps a label to hotkey lineedit, e.g. "Toggle Visibility of selected nodes" => QmitkHotkeyLineEdit

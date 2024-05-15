@@ -42,7 +42,7 @@
 
 #include "sv4gui_ModelDataInteractor.h"
 
-#include <berryIBerryPreferences.h>
+#include <mitkIPreferences.h>
 
 #include <QWidget>
 #include <QStandardItemModel>

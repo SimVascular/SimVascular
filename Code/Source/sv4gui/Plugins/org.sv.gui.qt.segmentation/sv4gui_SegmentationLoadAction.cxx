@@ -37,8 +37,12 @@
 
 #include <mitkNodePredicateDataType.h>
 #include <berryPlatform.h>
-#include <berryIPreferences.h>
-#include <berryIPreferencesService.h>
+
+#include <mitkIPreferences.h>
+#include <mitkIPreferencesService.h>
+
+//dp #include <berryIPreferences.h>
+//dp #include <berryIPreferencesService.h>
 
 #include <mitkIOUtil.h>
 
@@ -69,22 +73,21 @@ void sv4guiSegmentationLoadAction::Run(const QList<mitk::DataNode::Pointer> &sel
 
     try
     {
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
-        if (prefService)
-        {
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
+
+        if (prefService) {
             prefs = prefService->GetSystemPreferences()->Node("/General");
-        }
-        else
-        {
-            prefs = berry::IPreferences::Pointer(0);
+        } else {
+            prefs = nullptr;
         }
 
         QString lastFilePath="";
-        if(prefs.IsNotNull())
-        {
-            lastFilePath = prefs->Get("LastFileOpenPath", "");
+
+        if(prefs != nullptr) {
+            lastFilePath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
         }
+
         if(lastFilePath=="")
             lastFilePath=QDir::homePath();
 
@@ -171,9 +174,8 @@ void sv4guiSegmentationLoadAction::Run(const QList<mitk::DataNode::Pointer> &sel
             }
         }
 
-        if(prefs.IsNotNull())
-         {
-             prefs->Put("LastFileOpenPath", filePath);
+        if(prefs != nullptr) {
+             prefs->Put("LastFileOpenPath", filePath.toStdString());
              prefs->Flush();
          }
     }

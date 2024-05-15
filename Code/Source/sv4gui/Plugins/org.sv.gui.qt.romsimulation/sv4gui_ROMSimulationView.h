@@ -58,7 +58,7 @@
 
 #include "sv4gui_ModelDataInteractor.h"
 
-#include <berryIBerryPreferences.h>
+#include <mitkIPreferences.h>
 
 #include <QWidget>
 #include <QStandardItemModel>
@@ -324,7 +324,7 @@ public:
 
     virtual void Hidden() override;
 
-    virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
+    virtual void OnPreferencesChanged(const mitk::IPreferences* prefs) override;
 
     sv4guiROMSimJob* CreateJob(std::string& msg, bool checkValidity = true);
 

@@ -32,6 +32,8 @@
 # Qt
 set(proj Qt5)
 
+message(FATAL_ERROR "====================== Qt5.cmake ==========")
+ 
 if(SV_USE_${proj})
   if(SV_EXTERNALS_USE_PREBUILT_QT)
     set(Qt5_DIR ${SV_EXTERNALS_PREBUILT_QT_PATH} CACHE PATH "Force ${proj} dir to prebuilt Qt" FORCE)

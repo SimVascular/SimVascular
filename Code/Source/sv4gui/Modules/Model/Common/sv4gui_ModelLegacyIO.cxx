@@ -43,10 +43,13 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include <QDir>
+#include <QRegularExpression>
 
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkErrorCode.h>
+
+static QString qt_endl = "\n";
 
 //-------------------------------
 // sv4guiModelLegacyIO::ReadFile
@@ -88,7 +91,7 @@ mitk::DataNode::Pointer sv4guiModelLegacyIO::ReadFile(QString filePath, QString 
 
             if(line.contains(handlerPolyData) || line.contains(handlerOCCT))
             {
-                QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                QStringList list = line.split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
                 sv4guiModelElement::svFace* face=new sv4guiModelElement::svFace;
                 face->id=list[2].toInt();
                 face->name=list[3].toStdString();
@@ -229,19 +232,19 @@ void sv4guiModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePa
             QFileInfo fileInfo(filePath);
             QString fileName = fileInfo.fileName();
 
-            out<<"global "<<handler<<endl;
-            out<<"global "<<handler<<"Info"<<endl;
+            out<<"global "<<handler<<qt_endl;
+            out<<"global "<<handler<<"Info"<<qt_endl;
 
-            out<<"set "<<handler<<"Info(timestamp) {1500000000}"<<endl;
+            out<<"set "<<handler<<"Info(timestamp) {1500000000}"<<qt_endl;
             //out<<"set "<<handler<<"Info(model_file_md5) {FCCF69239480A681C5579A153F2D552A}"<<endl;
-            out<<"set "<<handler<<"Info(model_file_name) {"<<fileName<<"}"<<endl;
+            out<<"set "<<handler<<"Info(model_file_name) {"<<fileName<<"}"<<qt_endl;
 
             std::vector<sv4guiModelElement::svFace*> faces=modelElement->GetFaces();
             for(int i=0;i<faces.size();i++){
                 sv4guiModelElement::svFace* face=faces[i];
                 if(face)
                 {
-                    out<<"set "<< handler<<"("<<face->id<<") {"<<QString::fromStdString(face->name)<<"}"<<endl;
+                    out<<"set "<< handler<<"("<<face->id<<") {"<<QString::fromStdString(face->name)<<"}"<<qt_endl;
                 }
             }
 

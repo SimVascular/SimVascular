@@ -53,7 +53,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <QFormLayout>
 #include <QCheckBox>
 
-#include <berryIPreferencesService.h>
+#include <mitkIPreferencesService.h>
+//dp #include <berryIPreferencesService.h>
 #include <berryPlatform.h>
 
 sv4guiQmitkDataManagerPreferencePage::sv4guiQmitkDataManagerPreferencePage()
@@ -69,9 +70,11 @@ void sv4guiQmitkDataManagerPreferencePage::Init(berry::IWorkbench::Pointer )
 
 void sv4guiQmitkDataManagerPreferencePage::CreateQtControl(QWidget* parent)
 {
-  berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  //dp berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
 
-  m_DataManagerPreferencesNode = prefService->GetSystemPreferences()->Node(sv4guiQmitkDataManagerView::VIEW_ID);
+  m_DataManagerPreferencesNode = prefService->GetSystemPreferences()->Node(sv4guiQmitkDataManagerView::VIEW_ID.toStdString());
+  //m_DataManagerPreferencesNode = prefService->GetSystemPreferences()->Node(sv4guiQmitkDataManagerView::VIEW_ID);
 
   m_MainControl = new QWidget(parent);
   m_EnableSingleEditing = new QCheckBox;

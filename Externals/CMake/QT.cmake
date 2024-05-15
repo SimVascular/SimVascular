@@ -28,6 +28,9 @@
 # QT
 set(proj QT)
 
+message(STATUS " ")
+message(STATUS "========== Externals/CMake QT ==========")
+
 # Dependencies
 set(${proj}_DEPENDENCIES "")
 
@@ -154,6 +157,7 @@ endif()
 
 # Add external project
 if(SV_EXTERNALS_USE_PREBUILT_${proj})
+  message(STATUS "[Externals/CMake QT] SV_EXTERNALS_USE_PREBUILT is true")
 
   # Find package
   find_package(Qt5 COMPONENTS ${SV_EXTERNALS_QT5_COMPONENTS} REQUIRED)
@@ -170,18 +174,21 @@ if(SV_EXTERNALS_USE_PREBUILT_${proj})
     INSTALL_COMMAND ""
     )
 elseif(SV_EXTERNALS_DOWNLOAD_${proj})
+  message(STATUS "[Externals/CMake QT] SV_EXTERNALS_DOWNLOAD is true")
   ExternalProject_Add(${proj}
     URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
     SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
+    DOWNLOAD_NO_PROGRESS ON
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
     UPDATE_COMMAND ""
     )
 else()
+  message(STATUS "[Externals/CMake QT] Source build dir: ${SV_EXTERNALS_${proj}_BLD_DIR}")
   #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR} We have to do an in source build so that qt cmake files populate the private headers
   ExternalProject_Add(${proj}
     URL ${SV_EXTERNALS_${proj}_SOURCE_URL}

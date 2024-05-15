@@ -32,7 +32,7 @@
 #ifndef SU_cvIOstream_H
 #define SU_cvIOstream_H
 
-#include "vtkConfigure.h"
+//dp #include "vtkConfigure.h"
 
 #include <iostream>
 #include <strstream>

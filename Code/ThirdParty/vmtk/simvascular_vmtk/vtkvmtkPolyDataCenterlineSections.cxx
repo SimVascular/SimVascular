@@ -467,7 +467,8 @@ int vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
     for (int i = 0; i < connect->GetNumberOfExtractedRegions(); i++)
     {
         // extract bifurcation
-        thresh->ThresholdBetween(i, i);
+        // [DaveP] need to replace this call.
+        //dp thresh->ThresholdBetween(i, i);
         thresh->Update();
 
         // not a real bifurcation if it contains only one BranchId
@@ -542,7 +543,7 @@ int vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
     // threshold points to keep
     thresh->SetInputData(map->GetOutput());
     thresh->SetInputArrayToProcess(0, 0, 0, 1, removeArrayName);
-    thresh->ThresholdBetween(0, 0);
+    //dp thresh->ThresholdBetween(0, 0);
     thresh->Update();
 
     // convert vtkUnstructerdGrid to vtkPolyData
@@ -712,7 +713,7 @@ int vtkvmtkPolyDataCenterlineSections::SplitCenterline(vtkPolyData* bifurcations
 
     for (int i=0; i < 2; i++)
     {
-        thresh->ThresholdBetween(i, i);
+        // dp thresh->ThresholdBetween(i, i);
         thresh->Update();
 
         // convert vtkUnstructerdGrid to vtkPolyData
@@ -767,7 +768,7 @@ int vtkvmtkPolyDataCenterlineSections::ConnectivityCenterline(vtkPolyData* geo, 
     for (int i = 0; i < connect->GetNumberOfExtractedRegions(); i++)
     {
         // extract segment
-        thresh->ThresholdBetween(i, i);
+        //dp thresh->ThresholdBetween(i, i);
         thresh->Update();
 
         // map thresh points to global id

@@ -114,9 +114,9 @@ void PyUtilGetPyErrorInfo(PyObject* item, std::string& errorMsg, std::string& it
   PyObject *ptype, *pvalue, *ptraceback;
   PyErr_Fetch(&ptype, &pvalue, &ptraceback);
   auto pystr = PyObject_Str(pvalue);
-  errorMsg = std::string(PyString_AsString(pystr));
+  errorMsg = std::string(PyUnicode_AsUTF8(pystr));
   auto itemRep = PyObject_Repr(item);
-  itemStr = std::string(PyString_AsString(itemRep));
+  itemStr = std::string(PyUnicode_AsUTF8(itemRep));
 }
 
 //--------------------------
@@ -424,7 +424,7 @@ PyUtilGetIntAttr(PyObject* obj, std::string name)
       std::string msg = "The '" + typeName + "' object has no attribute named '" + name + "'." ;
       throw std::runtime_error(msg);
   }
-  int value = PyInt_AsLong(attr);
+  int value = PyLong_AsLong(attr);
   if (PyErr_Occurred()) {
       std::string valErrorMsg;
       std::string itemStr;
@@ -450,7 +450,7 @@ PyUtilGetStringAttr(PyObject* obj, std::string name)
       throw std::runtime_error(msg);
   }
 
-  std::string value(PyString_AsString(attr));
+  std::string value(PyUnicode_AsUTF8(attr));
   if (PyErr_Occurred()) {
       std::string valErrorMsg;
       std::string itemStr;
@@ -500,14 +500,14 @@ PyUtilGetDictListAttr(PyObject* obj, std::string name)
       std::map<std::string,std::string> vmap;
 
       while (PyDict_Next(item, &pos, &key, &value)) {
-          std::string keyStr(PyString_AsString(key));
+          std::string keyStr(PyUnicode_AsUTF8(key));
           std::string sval; 
           if (PyFloat_Check(value)) {
               sval = std::to_string(PyFloat_AsDouble(value));
           } else if (PyLong_Check(value)) {
               sval = std::to_string(PyLong_AsLong(value));
           } else {
-              sval = PyString_AsString(value);
+              sval = PyUnicode_AsUTF8(value);
           }
           vmap[keyStr] = sval;
       }
@@ -546,7 +546,7 @@ PyUtilGetStringListAttr(PyObject* obj, std::string name)
   std::vector<std::string> values;
   for (int i = 0; i < listSize; i++) {
       auto data = PyList_GetItem(attr, i);
-      std::string value(PyString_AsString(data));
+      std::string value(PyUnicode_AsUTF8(data));
       values.push_back(value);
   }
 
@@ -743,7 +743,7 @@ void PyUtilSetLoftParams(PyUtilApiFunction& api, PyObject* loftOpts, svLoftingPa
 
     {"linear_multiplier", [](ParamType params, ValType value) -> void { params.linearMuliplier = PyLong_AsLong(value); }},
 
-    {"method", [](ParamType params, ValType value) -> void { params.method = PyString_AsString(value); }},
+    {"method", [](ParamType params, ValType value) -> void { params.method = PyUnicode_AsUTF8(value); }},
 
     {"num_modes", [](ParamType params, ValType value) -> void { params.numModes = PyLong_AsLong(value); }},
     {"num_out_pts_along_length", [](ParamType params, ValType value) -> void { params.numOutPtsAlongLength = PyLong_AsLong(value); }},
@@ -757,10 +757,10 @@ void PyUtilSetLoftParams(PyUtilApiFunction& api, PyObject* loftOpts, svLoftingPa
     {"u_degree", [](ParamType params, ValType value) -> void { params.uDegree = PyLong_AsLong(value); }},
     {"v_degree", [](ParamType params, ValType value) -> void { params.vDegree = PyLong_AsLong(value); }},
 
-    {"u_knot_span_type", [](ParamType params, ValType value) -> void { params.uKnotSpanType = PyString_AsString(value); }},
-    {"v_knot_span_type", [](ParamType params, ValType value) -> void { params.vKnotSpanType = PyString_AsString(value); }},
-    {"u_parametric_span_type", [](ParamType params, ValType value) -> void { params.uParametricSpanType = PyString_AsString(value); }},
-    {"v_parametric_span_type", [](ParamType params, ValType value) -> void { params.vParametricSpanType = PyString_AsString(value); }},
+    {"u_knot_span_type", [](ParamType params, ValType value) -> void { params.uKnotSpanType = PyUnicode_AsUTF8(value); }},
+    {"v_knot_span_type", [](ParamType params, ValType value) -> void { params.vKnotSpanType = PyUnicode_AsUTF8(value); }},
+    {"u_parametric_span_type", [](ParamType params, ValType value) -> void { params.uParametricSpanType = PyUnicode_AsUTF8(value); }},
+    {"v_parametric_span_type", [](ParamType params, ValType value) -> void { params.vParametricSpanType = PyUnicode_AsUTF8(value); }},
 
     {"use_linear_sample_along_length", [](ParamType params, ValType value) -> void { params.useLinearSampleAlongLength = PyLong_AsLong(value); }},
     {"use_fft", [](ParamType params, ValType value) -> void { params.useFFT = PyLong_AsLong(value); }},
@@ -773,7 +773,7 @@ void PyUtilSetLoftParams(PyUtilApiFunction& api, PyObject* loftOpts, svLoftingPa
   Py_ssize_t pos = 0;
 
   while (PyDict_Next(loftOpts, &pos, &key, &value)) {
-    auto name = std::string(PyString_AsString(key));
+    auto name = std::string(PyUnicode_AsUTF8(key));
     try {
       SetParamValue[name](params, value);
     } catch (const std::bad_function_call& except) {

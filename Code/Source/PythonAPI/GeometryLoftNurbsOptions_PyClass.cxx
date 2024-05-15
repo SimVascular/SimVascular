@@ -147,7 +147,8 @@ static int
 LoftNurbsOptionsGetInt(PyObject* loftOptions, std::string name)
 {
   auto obj = PyObject_GetAttrString(loftOptions, name.c_str());
-  auto value = PyInt_AsLong(obj);
+  auto value = PyLong_AsLong(obj);
+  //dp auto value = PyInt_AsLong(obj);
   Py_DECREF(obj);
   return value;
 }
@@ -170,7 +171,8 @@ const static char *
 LoftNurbsOptionsGetString(PyObject* loftOptions, std::string name)
 {
   auto obj = PyObject_GetAttrString(loftOptions, name.c_str());
-  auto value = PyString_AsString(obj);
+  auto value = PyUnicode_AsUTF8(obj);
+  //dp auto value = PyString_AsString(obj);
   Py_DECREF(obj);
   return value;
 }

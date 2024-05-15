@@ -794,7 +794,8 @@ Geom_local_sphere_smooth(PyObject* self, PyObject* args, PyObject* kwargs)
       api.error("The 'smooth_parameters' argument has no 'method' key.");
       return nullptr;
   }
-  std::string smoothingMethod(PyString_AsString(methodItem));
+  std::string smoothingMethod(PyUnicode_AsUTF8(methodItem));
+  //dp std::string smoothingMethod(PyString_AsString(methodItem));
 
   int numIters = 0;
   double constrainFactor = 0.0; 
@@ -824,7 +825,8 @@ Geom_local_sphere_smooth(PyObject* self, PyObject* args, PyObject* kwargs)
       Py_ssize_t pos = 0;
 
       while (PyDict_Next(smoothingParmaArg, &pos, &key, &value)) {
-          auto keyName = std::string(PyString_AsString(key));
+          auto keyName = std::string(PyUnicode_AsUTF8(key));
+          //dp auto keyName = std::string(PyString_AsString(key));
           if ((keyName == "method") || (keyName == "num_iterations")) {
               continue;
           }
@@ -858,7 +860,8 @@ Geom_local_sphere_smooth(PyObject* self, PyObject* args, PyObject* kwargs)
       Py_ssize_t pos = 0;
 
       while (PyDict_Next(smoothingParmaArg, &pos, &key, &value)) {
-          auto keyName = std::string(PyString_AsString(key));
+          auto keyName = std::string(PyUnicode_AsUTF8(key));
+          //dp auto keyName = std::string(PyString_AsString(key));
           if ((keyName == "method") || (keyName == "num_iterations")) {
               continue;
           }

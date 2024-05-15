@@ -34,7 +34,7 @@
 
 #include <sv4gui_ROMSimulationPreferences.h>
 
-#include <berryIPreferences.h>
+#include <mitkIPreferences.h>
 #include <berryIQtPreferencePage.h>
 
 namespace Ui {
@@ -46,7 +46,8 @@ class sv4guiROMSimulationPreferencePage;
 // The keys are used to store property values in a MITK database.
 //
 namespace sv4guiROMSimulationPreferenceDBKey {
-    const QString ONED_SOLVER_PATH = "oned solver path";
+    const std::string ONED_SOLVER_PATH = "oned solver path";
+    //const QString ONED_SOLVER_PATH = "oned solver path";
 };
 
 
@@ -71,7 +72,7 @@ private slots:
   void SetOneDSolverFile();
 
 private:
-  berry::IPreferences::Pointer m_Preferences;
+  mitk::IPreferences* m_Preferences;
   QScopedPointer<Ui::sv4guiROMSimulationPreferencePage> m_Ui;
   QWidget* m_Control;
   sv4guiROMSimulationPreferences m_DefaultPrefs;

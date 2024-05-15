@@ -524,7 +524,7 @@ int vtkSVGeneralUtils::ThresholdPd(vtkPolyData *pd, int minVal,
   thresholder->SetInputData(pd);
   //Set Input Array to 0 port,0 connection, dataType (0 - point, 1 - cell, and Regions is the type name
   thresholder->SetInputArrayToProcess(0, 0, 0, dataType, arrayName.c_str());
-  thresholder->ThresholdBetween(minVal, maxVal);
+  // dp thresholder->ThresholdBetween(minVal, maxVal);
   thresholder->Update();
 
   // Check to see if the result has points, don't run surface filter
@@ -568,7 +568,7 @@ int vtkSVGeneralUtils::ThresholdUg(vtkUnstructuredGrid *ug, int minVal,
   thresholder->SetInputData(ug);
   //Set Input Array to 0 port,0 connection, dataType (0 - point, 1 - cell, and Regions is the type name
   thresholder->SetInputArrayToProcess(0, 0, 0, dataType, arrayName.c_str());
-  thresholder->ThresholdBetween(minVal, maxVal);
+  // dp thresholder->ThresholdBetween(minVal, maxVal);
   thresholder->Update();
 
   // Check to see if the result has points, don't run surface filter

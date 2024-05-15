@@ -48,7 +48,8 @@
 #include "sv4gui_MachineLearningUtils.h"
 
 #include <QmitkSliceWidget.h>
-#include <QmitkSliderNavigatorWidget.h>
+#include <QmitkSliceNavigationWidget.h>
+//dp #include <QmitkSliderNavigatorWidget.h>
 #include <QmitkStepperAdapter.h>
 
 #include <mitkDataStorage.h>

@@ -64,7 +64,7 @@ class sv4guiQmitkInfoDialog : public QDialog
   Q_OBJECT
 
   public:
-    sv4guiQmitkInfoDialog(const QList<mitk::DataNode::Pointer>& _Nodes, QWidget * parent = nullptr, Qt::WindowFlags f = nullptr );
+    sv4guiQmitkInfoDialog(const QList<mitk::DataNode::Pointer>& _Nodes, QWidget * parent = nullptr, Qt::WindowFlags f = {} );
   public slots:
     void OnSelectionChanged(const mitk::DataNode*);
     void OnSearchButtonClicked ( bool checked = false );

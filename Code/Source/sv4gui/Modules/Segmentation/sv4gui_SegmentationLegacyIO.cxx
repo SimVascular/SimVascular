@@ -43,11 +43,15 @@
 #include <QTextStream>
 #include <QFileInfo>
 #include <QDir>
+#include <QRegularExpression>
 
 #include <vtkPolyData.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkErrorCode.h>
+
+// Fix deprecated endl;
+static QString qt_endl = "\n";
 
 //---------------------
 // CreateGroupFromFile
@@ -76,7 +80,7 @@ sv4guiSegmentationLegacyIO::CreateGroupFromFile(const std::string& fileName)
             continue;
         }
 
-        QStringList list = line.split("/",QString::SkipEmptyParts);
+        QStringList list = line.split("/",Qt::SkipEmptyParts);
         contourGroup->SetPathName(list[1].toStdString());
 
         sv4guiContour* contour = new sv4guiContour();
@@ -87,7 +91,7 @@ sv4guiSegmentationLegacyIO::CreateGroupFromFile(const std::string& fileName)
         pathPoint.id=line.toInt();
 
         line = in.readLine();
-        list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+        list = line.split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
 
         int index;
 
@@ -120,7 +124,7 @@ sv4guiSegmentationLegacyIO::CreateGroupFromFile(const std::string& fileName)
 
         std::vector<mitk::Point3D> contourPoints;
         while((line=in.readLine().trimmed())!=""){
-            list = line.split(QRegExp("\\s+"));
+            list = line.split(QRegularExpression("\\s+"));
             mitk::Point3D point;
             for(int i=0;i<3;i++) {
                 point[i]=list[i].toDouble();
@@ -171,7 +175,7 @@ std::vector<mitk::DataNode::Pointer> sv4guiSegmentationLegacyIO::ReadFiles(QStri
         while (!in.atEnd())
         {
             QString line = in.readLine();
-            QStringList list=line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            QStringList list=line.split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
             if(list.size()>1 && list[0]=="group_readProfiles")
                 groupList<<list[1];
 
@@ -246,21 +250,21 @@ void sv4guiSegmentationLegacyIO::WriteContourGroupFile(mitk::DataNode::Pointer n
 
             sv4guiPathElement::sv4guiPathPoint pathPoint=contour->GetPathPoint();
 
-            out<<"/group/"<<groupName.c_str()<<"/"<<pathPoint.id<<endl;
-            out<<pathPoint.id<<endl;
+            out<<"/group/"<<groupName.c_str()<<"/"<<pathPoint.id<<qt_endl;
+            out<<pathPoint.id<<qt_endl;
             out<<"pathId "<<pathID<<" posId "<<pathPoint.id
                 <<" pos {"<<pathPoint.pos[0]<<" "<<pathPoint.pos[1]<<" "<<pathPoint.pos[2]<<"}"
                 <<" nrm {"<<pathPoint.tangent[0]<<" "<<pathPoint.tangent[1]<<" "<<pathPoint.tangent[2]<<"}"
                 <<" xhat {"<<pathPoint.rotation[0]<<" "<<pathPoint.rotation[1]<<" "<<pathPoint.rotation[2]<<"}"
-                <<endl;
+                <<qt_endl;
 
             for(int j=0;j<contour->GetContourPointNumber();j++)
             {
                 mitk::Point3D point=contour->GetContourPoint(j);
-                out<<point[0]<<" "<<point[1]<<" "<<point[2]<<endl;
+                out<<point[0]<<" "<<point[1]<<" "<<point[2]<<qt_endl;
             }
 
-            out<<endl;
+            out<<qt_endl;
 
         }
 
@@ -287,10 +291,10 @@ void sv4guiSegmentationLegacyIO::WriteSeg3DFile(mitk::DataNode::Pointer node, QS
 
         std::string seg3DName=node->GetName();
 
-        out<<"name:"<<seg3DName.c_str()<<endl;
-        out<<"metadata:opacity .8 color steelblue"<<endl;
-        out<<"vtp_filename:"<<(seg3DName+".vtp").c_str()<<endl;
-        out<<"vtp_filename:476556BCC9C6082371E7EEF6A27F05BE"<<endl;//dummy entry
+        out<<"name:"<<seg3DName.c_str()<<qt_endl;
+        out<<"metadata:opacity .8 color steelblue"<<qt_endl;
+        out<<"vtp_filename:"<<(seg3DName+".vtp").c_str()<<qt_endl;
+        out<<"vtp_filename:476556BCC9C6082371E7EEF6A27F05BE"<<qt_endl;//dummy entry
 
         outputFile.close();
     }
@@ -316,31 +320,31 @@ void sv4guiSegmentationLegacyIO::WriteTclFile(mitk::DataStorage::SetOfObjects::C
     {
         QTextStream out(&outputFile);
 
-        out<<"# geodesic_groups_file 2.3"<<endl;
-        out<<endl;
-        out<<"#"<<endl;
+        out<<"# geodesic_groups_file 2.3"<<qt_endl;
+        out<<qt_endl;
+        out<<"#"<<qt_endl;
 
-        out<<"proc group_autoload {} {"<<endl;
-        out<<"  global gFilenames"<<endl;
-        out<<"  set grpdir $gFilenames(groups_dir)"<<endl;
-        out<<"  # Group Stuff"<<endl;
+        out<<"proc group_autoload {} {"<<qt_endl;
+        out<<"  global gFilenames"<<qt_endl;
+        out<<"  set grpdir $gFilenames(groups_dir)"<<qt_endl;
+        out<<"  # Group Stuff"<<qt_endl;
         for(int i=0;i<rsContourGroup->size();i++)
         {
             std::string name=rsContourGroup->GetElement(i)->GetName();
-            out<<"  group_readProfiles {"<<name.c_str()<<"} [file join $grpdir {"<<name.c_str()<<"}]"<<endl;
+            out<<"  group_readProfiles {"<<name.c_str()<<"} [file join $grpdir {"<<name.c_str()<<"}]"<<qt_endl;
         }
-        out<<"}"<<endl;
+        out<<"}"<<qt_endl;
 
-        out<<"proc seg3d_autoload {} {"<<endl;
-        out<<"  global gFilenames"<<endl;
-        out<<"  set grpdir $gFilenames(groups_dir)"<<endl;
-        out<<"  # Seg Stuff"<<endl;
+        out<<"proc seg3d_autoload {} {"<<qt_endl;
+        out<<"  global gFilenames"<<qt_endl;
+        out<<"  set grpdir $gFilenames(groups_dir)"<<qt_endl;
+        out<<"  # Seg Stuff"<<qt_endl;
         for(int i=0;i<rsSeg3D->size();i++)
         {
             std::string name=rsSeg3D->GetElement(i)->GetName();
-            out<<"  seg3d_readSurf {"<<name.c_str()<<"} [file join $grpdir {"<<name.c_str()<<".svsurf"<<"}]"<<endl;
+            out<<"  seg3d_readSurf {"<<name.c_str()<<"} [file join $grpdir {"<<name.c_str()<<".svsurf"<<"}]"<<qt_endl;
         }
-        out<<"}"<<endl;
+        out<<"}"<<qt_endl;
 
         outputFile.close();
     }

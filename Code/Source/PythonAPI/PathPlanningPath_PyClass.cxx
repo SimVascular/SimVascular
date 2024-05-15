@@ -790,7 +790,7 @@ Path_set_subdivision_method(PyPath* self, PyObject* args, PyObject* kwargs)
   PyObject* numTotalObj = nullptr;
   PyObject* spacingObj = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &methodName, &PyInt_Type, &numDivObj, &PyInt_Type, &numTotalObj,
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &methodName, &PyLong_Type, &numDivObj, &PyLong_Type, &numTotalObj,
         &PyFloat_Type, &spacingObj)) {
       return api.argsError();
   }
@@ -843,7 +843,7 @@ Path_set_subdivision_method(PyPath* self, PyObject* args, PyObject* kwargs)
           return nullptr;
       }
 
-      int numDiv = PyInt_AsLong(numDivObj);
+      int numDiv = PyLong_AsLong(numDivObj);
       if (PyErr_Occurred()) {
           return nullptr;
       }
@@ -864,7 +864,7 @@ Path_set_subdivision_method(PyPath* self, PyObject* args, PyObject* kwargs)
           return nullptr;
       }
 
-      int numTotal = PyInt_AsLong(numTotalObj);
+      int numTotal = PyLong_AsLong(numTotalObj);
       if (PyErr_Occurred()) {
           return nullptr;
       }

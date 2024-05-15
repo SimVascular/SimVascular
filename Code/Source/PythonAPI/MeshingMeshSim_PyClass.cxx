@@ -133,14 +133,14 @@ void MeshingMeshSimOptionsSetDictValues(PyObject* optionObj, const std::string& 
       if (PyFloat_Check(obj)) {
           auto value = PyFloat_AsDouble(obj);
           values.push_back(value);
-      } else if (PyInt_Check(obj)) {
+      } else if (PyLong_Check(obj)) {
           auto value = PyLong_AsDouble(obj);
           values.push_back(value);
 
       // A string type is used only for face names in 'face_id' for now.
-      } else if (PyString_Check(obj)) {
+      } else if (PyUnicode_Check(obj)) {
          if (elemName == "face_id") {
-             auto name = std::string(PyString_AsString(obj));
+             auto name = std::string(PyUnicode_AsUTF8(obj));
              if (nameIDMap.count(name) == 0) {
                  throw std::runtime_error("The face name '" + name + "' is not valid.");
              }
@@ -179,7 +179,7 @@ MeshingMeshSimOptionsGetValues(cvMeshObject* mesher, PyObject* meshingOptions, s
   if (PyFloat_Check(obj)) {
       auto value = PyFloat_AsDouble(obj);
       values.push_back(value);
-  } else if (PyInt_Check(obj)) {
+  } else if (PyLong_Check(obj)) {
       auto value = PyLong_AsDouble(obj);
       values.push_back(value);
   } else if (PyTuple_Check(obj)) {

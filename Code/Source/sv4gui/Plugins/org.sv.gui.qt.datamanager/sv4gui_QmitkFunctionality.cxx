@@ -31,8 +31,12 @@
 
 #include "sv4gui_QmitkFunctionality.h"
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+//dp #include <berryIPreferencesService.h>
+
+#include <mitkIPreferences.h>
+//dp #include <berryIPreferences.h>
+
 #include <berryPlatform.h>
 #include <berryIWorkbenchWindow.h>
 #include <berryISelectionService.h>
@@ -111,7 +115,9 @@ void sv4guiQmitkFunctionality::CreatePartControl(QWidget* parent)
   // add the scroll area to the real parent (the view tabbar)
   QWidget* parentQWidget = static_cast<QWidget*>(parent);
   QVBoxLayout* parentLayout = new QVBoxLayout(parentQWidget);
-  parentLayout->setMargin(0);
+
+  //dp not sure what to replace this with
+  //parentLayout->setMargin(0);
   parentLayout->setSpacing(0);
   parentLayout->addWidget(scrollArea);
 
@@ -162,11 +168,16 @@ void sv4guiQmitkFunctionality::AfterCreateQtPartControl()
     ( this, &sv4guiQmitkFunctionality::NodeRemoved ) );
 
   // REGISTER PREFERENCES LISTENER
-  berry::IBerryPreferences::Pointer prefs = this->GetPreferences().Cast<berry::IBerryPreferences>();
+
+  mitk::IPreferences* prefs = this->GetPreferences();
+  //berry::IBerryPreferences::Pointer prefs = this->GetPreferences().Cast<berry::IBerryPreferences>();
+
   // OnPreferencesChanged has become private in QmitkAbstractView
-  if(prefs.IsNotNull())
-    prefs->OnChanged.AddListener(berry::MessageDelegate1<sv4guiQmitkFunctionality
-    , const berry::IBerryPreferences*>(this, &sv4guiQmitkFunctionality::OnPreferencesChanged));
+  if(prefs != nullptr) {
+    prefs->OnChanged.AddListener(mitk::MessageDelegate1<sv4guiQmitkFunctionality, 
+       const mitk::IPreferences*>(this, &sv4guiQmitkFunctionality::OnPreferencesChanged));
+    //dp prefs->OnChanged.AddListener(berry::MessageDelegate1<sv4guiQmitkFunctionality, const berry::IBerryPreferences*>(this, &sv4guiQmitkFunctionality::OnPreferencesChanged));
+  }
 
   // REGISTER FOR WORKBENCH SELECTION EVENTS
   m_BlueBerrySelectionListener.reset(new berry::SelectionChangedAdapter<sv4guiQmitkFunctionality>(
@@ -182,10 +193,11 @@ void sv4guiQmitkFunctionality::AfterCreateQtPartControl()
   this->OnSelectionChanged(berry::IWorkbenchPart::Pointer(),this->GetDataManagerSelection());
 
   // send preferences changed event
-  this->OnPreferencesChanged(this->GetPreferences().Cast<berry::IBerryPreferences>().GetPointer());
+  this->OnPreferencesChanged(this->GetPreferences());
+  //dp this->OnPreferencesChanged(this->GetPreferences().Cast<berry::IBerryPreferences>().GetPointer());
 }
 
-void sv4guiQmitkFunctionality::OnPreferencesChanged( const berry::IBerryPreferences* )
+void sv4guiQmitkFunctionality::OnPreferencesChanged( const mitk::IPreferences* )
 {
 }
 
@@ -207,8 +219,14 @@ void sv4guiQmitkFunctionality::BlueBerrySelectionChanged(const berry::IWorkbench
 
 QList<mitk::DataNode::Pointer> sv4guiQmitkFunctionality::DataNodeSelectionToQList(mitk::DataNodeSelection::ConstPointer currentSelection) const
 {
-  if (currentSelection.IsNull()) return QList<mitk::DataNode::Pointer>();
-  return QList<mitk::DataNode::Pointer>::fromStdList(currentSelection->GetSelectedDataNodes());
+  if (currentSelection.IsNull()) {
+    return QList<mitk::DataNode::Pointer>();
+  }
+
+  auto data_nodes = currentSelection->GetSelectedDataNodes();
+
+  return QList<mitk::DataNode::Pointer>(data_nodes.begin(), data_nodes.end());
+  //dp return QList<mitk::DataNode::Pointer>::fromStdList(currentSelection->GetSelectedDataNodes());
 }
 
 void sv4guiQmitkFunctionality::ClosePartProxy()
@@ -220,11 +238,13 @@ void sv4guiQmitkFunctionality::ClosePartProxy()
   this->GetDataStorage()->ChangedNodeEvent.RemoveListener( mitk::MessageDelegate1<sv4guiQmitkFunctionality, const mitk::DataNode*>
     ( this, &sv4guiQmitkFunctionality::NodeChanged ) );
 
-  berry::IBerryPreferences::Pointer prefs = this->GetPreferences().Cast<berry::IBerryPreferences>();
-  if(prefs.IsNotNull())
+  mitk::IPreferences* prefs = this->GetPreferences();
+  //berry::IBerryPreferences::Pointer prefs = this->GetPreferences().Cast<berry::IBerryPreferences>();
+
+  if(prefs != nullptr)
   {
-    prefs->OnChanged.RemoveListener(berry::MessageDelegate1<sv4guiQmitkFunctionality
-    , const berry::IBerryPreferences*>(this, &sv4guiQmitkFunctionality::OnPreferencesChanged));
+    prefs->OnChanged.RemoveListener(mitk::MessageDelegate1<sv4guiQmitkFunctionality, 
+       const mitk::IPreferences*>(this, &sv4guiQmitkFunctionality::OnPreferencesChanged));
   }
 
   // // REMOVE SELECTION PROVIDER

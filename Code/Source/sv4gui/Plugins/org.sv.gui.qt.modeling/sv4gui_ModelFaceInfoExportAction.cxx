@@ -35,8 +35,8 @@
 #include "sv4gui_ModelLegacyIO.h"
 #include <mitkNodePredicateDataType.h>
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <QFileDialog>
@@ -65,21 +65,22 @@ void sv4guiModelFaceInfoExportAction::Run(const QList<mitk::DataNode::Pointer> &
 
     try
     {
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        // dp
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
         if (prefService)
         {
             prefs = prefService->GetSystemPreferences()->Node("/General");
         }
         else
         {
-            prefs = berry::IPreferences::Pointer(0);
+            prefs = nullptr; 
         }
 
         QString lastFileSavePath="";
-        if(prefs.IsNotNull())
+        if(prefs != nullptr) 
         {
-            lastFileSavePath = prefs->Get("LastFileSavePath", "");
+            lastFileSavePath = QString::fromStdString(prefs->Get("LastFileSavePath", ""));
         }
 
         if(lastFileSavePath=="")
@@ -114,9 +115,9 @@ void sv4guiModelFaceInfoExportAction::Run(const QList<mitk::DataNode::Pointer> &
             infoFile.close();
         }
 
-        if(prefs.IsNotNull())
+        if(prefs != nullptr) 
         {
-            prefs->Put("LastFileSavePath", fileName);
+            prefs->Put("LastFileSavePath", fileName.toStdString());
             prefs->Flush();
         }
     }

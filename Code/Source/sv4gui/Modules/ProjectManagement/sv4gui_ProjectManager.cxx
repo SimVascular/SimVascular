@@ -118,6 +118,9 @@
 #include <map>
 #include <regex>
 
+// Fix for deprecatd Qt endl;
+static QString qt_endl = "\n";
+
 // Define the name of the files used to identify the image data location.
 //
 // SVPROJ_CONFIG_FILE_NAME is deprecated.
@@ -622,7 +625,7 @@ void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString
 
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out(&file);
-        out << xml <<endl;
+        out << xml <<qt_endl;
     }
 }
 
@@ -702,7 +705,7 @@ void sv4guiProjectManager::WriteProjectFile(const QString& projPath)
 
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out(&file);
-        out << xml <<endl;
+        out << xml <<qt_endl;
     }
 }
 
@@ -928,7 +931,7 @@ void sv4guiProjectManager::writeTransformFile(mitk::Image* image, std::string im
 
   if (file.open(QFile::WriteOnly | QFile::Truncate)) {
       QTextStream out(&file);
-      out << xml <<endl;
+      out << xml <<qt_endl;
   }
 }
 
@@ -1084,7 +1087,7 @@ void sv4guiProjectManager::writeImageHeaderFile(mitk::Image* image,
 
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
       QTextStream out(&file);
-      out << xml <<endl;
+      out << xml <<qt_endl;
     }
 }
 

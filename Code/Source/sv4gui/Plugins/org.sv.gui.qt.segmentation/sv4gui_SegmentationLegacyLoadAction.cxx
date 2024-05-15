@@ -36,8 +36,11 @@
 
 #include <mitkNodePredicateDataType.h>
 #include <berryPlatform.h>
-#include <berryIPreferences.h>
-#include <berryIPreferencesService.h>
+#include <mitkIPreferences.h>
+//dp #include <berryIPreferences.h>
+
+#include <mitkIPreferencesService.h>
+//dp #include <berryIPreferencesService.h>
 
 #include <QFileDialog>
 
@@ -110,24 +113,29 @@ void sv4guiSegmentationLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer
 
     try
     {
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+
+        mitk::IPreferences* prefs;
+
         if (prefService)
         {
             prefs = prefService->GetSystemPreferences()->Node("/General");
         }
         else
         {
-            prefs = berry::IPreferences::Pointer(0);
+            prefs = nullptr;
         }
 
-        QString lastFilePath="";
-        if(prefs.IsNotNull())
+        QString lastFilePath = "";
+
+        if(prefs != nullptr)
         {
-            lastFilePath = prefs->Get("LastFileOpenPath", "");
+            lastFilePath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
         }
-        if(lastFilePath=="")
+
+        if(lastFilePath=="") {
             lastFilePath=QDir::homePath();
+        }
 
         QString segDir = QFileDialog::getExistingDirectory(nullptr, tr("Import Legacy Segmentations (Choose Directory)"),
                                                              lastFilePath);
@@ -137,9 +145,9 @@ void sv4guiSegmentationLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer
 
         std::vector<mitk::DataNode::Pointer> segNodes=sv4guiSegmentationLegacyIO::ReadFiles(segDir);
 
-        if(prefs.IsNotNull())
+        if(prefs != nullptr)
          {
-             prefs->Put("LastFileOpenPath", segDir);
+             prefs->Put("LastFileOpenPath", segDir.toStdString());
              prefs->Flush();
          }
 

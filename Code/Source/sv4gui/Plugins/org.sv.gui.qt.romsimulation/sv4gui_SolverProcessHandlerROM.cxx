@@ -45,8 +45,8 @@
 #include <mitkStatusBar.h>
 #include <mitkGenericProperty.h>
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <usModuleRegistry.h>

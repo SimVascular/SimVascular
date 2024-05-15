@@ -1516,7 +1516,7 @@ void vtkSVLoopBooleanPolyDataFilter::Impl::PerformBoolean(
 	  vtkSmartPointer<vtkPolyData>::New();
   thresholder->SetInputData(this->Mesh[0]);
   thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
-  thresholder->ThresholdBetween(-1,-1);
+  //dp thresholder->ThresholdBetween(-1,-1);
   thresholder->Update();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
@@ -1526,7 +1526,7 @@ void vtkSVLoopBooleanPolyDataFilter::Impl::PerformBoolean(
 	  vtkSmartPointer<vtkPolyData>::New();
   thresholder->SetInputData(this->Mesh[0]);
   thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
-  thresholder->ThresholdBetween(1,1);
+  //dp thresholder->ThresholdBetween(1,1);
   thresholder->Update();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
@@ -1536,7 +1536,7 @@ void vtkSVLoopBooleanPolyDataFilter::Impl::PerformBoolean(
 	  vtkSmartPointer<vtkPolyData>::New();
   thresholder->SetInputData(this->Mesh[1]);
   thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
-  thresholder->ThresholdBetween(1,1);
+  //dp thresholder->ThresholdBetween(1,1);
   thresholder->Update();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
@@ -1546,7 +1546,7 @@ void vtkSVLoopBooleanPolyDataFilter::Impl::PerformBoolean(
 	  vtkSmartPointer<vtkPolyData>::New();
   thresholder->SetInputData(this->Mesh[1]);
   thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
-  thresholder->ThresholdBetween(-1,-1);
+  //dp thresholder->ThresholdBetween(-1,-1);
   thresholder->Update();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();

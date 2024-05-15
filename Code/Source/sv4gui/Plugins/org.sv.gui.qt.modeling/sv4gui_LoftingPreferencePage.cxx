@@ -33,7 +33,7 @@
 #include "ui_sv4gui_LoftParamWidget.h"
 #include "sv4gui_LoftingUtils.h"
 
-#include <berryIPreferencesService.h>
+#include <mitkIPreferencesService.h>
 #include <berryPlatform.h>
 
 #include <mitkExceptionMacro.h>
@@ -71,7 +71,7 @@ void sv4guiLoftingPreferencePage::CreateQtControl(QWidget* parent)
 
     connect(m_Ui->comboBoxMethod,SIGNAL(currentTextChanged(const QString&)), this, SLOT(SelectionChanged(const QString&)));
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     Q_ASSERT(prefService);
 
     m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.lofting");
@@ -94,13 +94,13 @@ void sv4guiLoftingPreferencePage::PerformCancel()
 
 bool sv4guiLoftingPreferencePage::PerformOk()
 {
-    m_Preferences->Put("Lofting Method", m_Ui->comboBoxMethod->currentText());
+    m_Preferences->Put("Lofting Method", m_Ui->comboBoxMethod->currentText().toStdString());
 
-    m_Preferences->Put("NURBS Lofting U Knot Span Type", m_Ui->NURBSLoftingUKnotSpanType->currentText().trimmed());
-    m_Preferences->Put("NURBS Lofting V Knot Span Type", m_Ui->NURBSLoftingVKnotSpanType->currentText().trimmed());
+    m_Preferences->Put("NURBS Lofting U Knot Span Type", m_Ui->NURBSLoftingUKnotSpanType->currentText().trimmed().toStdString());
+    m_Preferences->Put("NURBS Lofting V Knot Span Type", m_Ui->NURBSLoftingVKnotSpanType->currentText().trimmed().toStdString());
 
-    m_Preferences->Put("NURBS Lofting U Parametric Span Type", m_Ui->NURBSLoftingUParametricSpanType->currentText().trimmed());
-    m_Preferences->Put("NURBS Lofting V Parametric Span Type", m_Ui->NURBSLoftingVParametricSpanType->currentText().trimmed());
+    m_Preferences->Put("NURBS Lofting U Parametric Span Type", m_Ui->NURBSLoftingUParametricSpanType->currentText().trimmed().toStdString());
+    m_Preferences->Put("NURBS Lofting V Parametric Span Type", m_Ui->NURBSLoftingVParametricSpanType->currentText().trimmed().toStdString());
 
     QString NURBSLoftingUDegree = m_Ui->NURBSLoftingUDegree->text().trimmed();
     bool ok;

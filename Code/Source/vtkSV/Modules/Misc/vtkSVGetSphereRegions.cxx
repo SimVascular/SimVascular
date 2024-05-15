@@ -385,7 +385,7 @@ int vtkSVGetSphereRegions::SetSphereRegions(vtkPolyData *pd, vtkPolyData *lines,
   for (int i=0;i<numLoops;i++)
   {
     // Threshold the loop
-    thresholder->ThresholdBetween(i,i);
+    //dp thresholder->ThresholdBetween(i,i);
     thresholder->Update();
 
     // Get surface

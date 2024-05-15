@@ -329,7 +329,7 @@ ROMSim_AddMaterialParameters(sv4guiROMSimulationPython& pythonInterface, PyObjec
   if (nameObj == nullptr) { 
       throw std::runtime_error("The material model has no 'name' attribute");
   }
-  std::string materialName(PyString_AsString(nameObj));
+  std::string materialName(PyUnicode_AsUTF8(nameObj));
 
   if (materialName == MATERIAL_OLUFSEN) {
       pythonInterface.AddParameter(params.MATERIAL_MODEL, materialName);
@@ -578,7 +578,7 @@ ROMSim_write_input_file(PySimulationROM* self, PyObject* args, PyObject* kwargs)
   PyObject* solutionParamsArg = nullptr;
   char* outputDirArg = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyInt_Type, &modelOrderArg, &modelParamsArg, &meshParamsArg, 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyLong_Type, &modelOrderArg, &modelParamsArg, &meshParamsArg, 
         &fluidPropsArg, &materialModelArg, &bcsParamsArg, &solutionParamsArg, &outputDirArg)) {
       return api.argsError();
   }
@@ -590,7 +590,7 @@ ROMSim_write_input_file(PySimulationROM* self, PyObject* args, PyObject* kwargs)
 
   // Set model order.
   //
-  int modelOrder = PyInt_AsLong(modelOrderArg);
+  int modelOrder = PyLong_AsLong(modelOrderArg);
   if (PyErr_Occurred()) {
       return nullptr;
   }

@@ -81,7 +81,9 @@ See LICENSE.txt or http://www.mitk.org for details.
 //## Berry
 #include <berryIEditorPart.h>
 #include <berryIWorkbenchPage.h>
-#include <berryIPreferencesService.h>
+
+#include <mitkIPreferencesService.h>
+//dp #include <berryIPreferencesService.h>
 #include <berryPlatform.h>
 #include <berryPlatformUI.h>
 #include <berryIEditorRegistry.h>
@@ -143,15 +145,14 @@ void sv4guiQmitkDataManagerView::CreateQtPartControl(QWidget* parent)
   m_CurrentRowCount = 0;
   m_Parent = parent;
   //# Preferences
-  berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  //dp berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
 
-  berry::IBerryPreferences::Pointer prefs
-      = (prefService->GetSystemPreferences()->Node(VIEW_ID))
-        .Cast<berry::IBerryPreferences>();
+  mitk::IPreferences* prefs = (prefService->GetSystemPreferences()->Node(VIEW_ID.toStdString()));
+  //dp berry::IBerryPreferences::Pointer prefs = (prefService->GetSystemPreferences()->Node(VIEW_ID)).Cast<berry::IBerryPreferences>();
   assert( prefs );
-  prefs->OnChanged.AddListener( berry::MessageDelegate1<sv4guiQmitkDataManagerView
-    , const berry::IBerryPreferences*>( this
-      , &sv4guiQmitkDataManagerView::OnPreferencesChanged ) );
+  prefs->OnChanged.AddListener( mitk::MessageDelegate1<sv4guiQmitkDataManagerView, const mitk::IPreferences*>( this, &sv4guiQmitkDataManagerView::OnPreferencesChanged ) );
+  //dp prefs->OnChanged.AddListener( berry::MessageDelegate1<sv4guiQmitkDataManagerView, const mitk::IPreferences*>( this, &sv4guiQmitkDataManagerView::OnPreferencesChanged ) );
 
   //# GUI
   m_NodeTreeModel = new QmitkDataStorageTreeModel(this->GetDataStorage());
@@ -300,7 +301,8 @@ void sv4guiQmitkDataManagerView::CreateQtPartControl(QWidget* parent)
       m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(tmpDescriptor,contextMenuAction));
       m_ConfElements[contextMenuAction] = *cmActionsIt;
 
-      cmActionDataIt.setValue<int>(i);
+      cmActionDataIt.setValue(i);
+      //dp cmActionDataIt.setValue<int>(i);
       contextMenuAction->setData( cmActionDataIt );
       connect( contextMenuAction, SIGNAL( triggered(bool) ) , this, SLOT( ContextMenuActionTriggered(bool) ) );
       ++i;
@@ -515,7 +517,8 @@ void sv4guiQmitkDataManagerView::ContextMenuActionTriggered( bool )
   contextMenuAction->Run( this->GetCurrentSelection() ); // run the action
 }
 
-void sv4guiQmitkDataManagerView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
+void sv4guiQmitkDataManagerView::OnPreferencesChanged(const mitk::IPreferences* prefs)
+//dp void sv4guiQmitkDataManagerView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
 {
   if( m_NodeTreeModel->GetPlaceNewNodesOnTopFlag() !=  prefs->GetBool("Place new nodes on top", false) )
     m_NodeTreeModel->SetPlaceNewNodesOnTop( !m_NodeTreeModel->GetPlaceNewNodesOnTopFlag() );

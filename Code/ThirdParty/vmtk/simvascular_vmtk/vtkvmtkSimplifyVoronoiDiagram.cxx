@@ -186,7 +186,8 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   
   // Previous version of VTK (8.1.1)
   // currentLinks->BuildLinks(input,currentPolys);
-  currentLinks->BuildLinks(input);
+  currentLinks->BuildLinks();
+  //currentLinks->BuildLinks(input);
 
   anyRemoved = true;
   while (anyRemoved)
@@ -277,7 +278,8 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
     currentLinks->Allocate(input->GetNumberOfPoints());
     // previous version of VTK (8.1.1)
     // currentLinks->BuildLinks(input,currentPolys);
-    currentLinks->BuildLinks(input);
+    currentLinks->BuildLinks();
+    //dp currentLinks->BuildLinks(input);
 
     newPolys->Delete();
     newCell->Delete();

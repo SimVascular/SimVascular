@@ -37,12 +37,20 @@
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.24.0)
+#cmake_minimum_required(VERSION 3.10.0)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 Project(SV_TOP)
 #-----------------------------------------------------------------------------
+
+message(STATUS "========== SimVascular/CMakeLists ==========")
+
+set(CMAKE_CXX_STANDARD 17)
+
+cmake_policy(SET CMP0135 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0135 NEW)
 
 #-----------------------------------------------------------------------------
 # CMake module path inside of true simvascular source
@@ -81,7 +89,8 @@ option(SV_USE_MITK_SEGMENTATION "Enable building the MITK segmentation plugin" O
 #-----------------------------------------------------------------------------
 # Externals!
 
-set(SV_EXTERNALS_VERSION_NUMBER "2022.10" CACHE STRING "SimVascular Externals Release Version")
+set(SV_EXTERNALS_VERSION_NUMBER "2024.05" CACHE STRING "SimVascular Externals Release Version")
+#set(SV_EXTERNALS_VERSION_NUMBER "2022.10" CACHE STRING "SimVascular Externals Release Version")
 mark_as_advanced(SV_EXTERNALS_VERSION_NUMBER)
 
 # Distribution
@@ -90,11 +99,16 @@ option(SV_ENABLE_DISTRIBUTION "Enable Installer Build for SimVascular" OFF)
 # sv4gui
 option(SV_USE_SV4_GUI "Enable SV MITK/Qt Based GUI" ON)
 
+# Set using pre-built Qt6 install.
+#
 if(APPLE)
-  option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt5" OFF)
-  set(SV_EXTERNALS_PREBUILT_QT_PATH "" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
+  option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt6" OFF)
+  set(SV_EXTERNALS_PREBUILT_QT_PATH "/usr/local/opt/qt/lib/cmake/Qt6" CACHE PATH "Qt6 Cmake Config File Path" FORCE)
+  #set(SV_EXTERNALS_PREBUILT_QT_PATH "" CACHE PATH "Qt6 Cmake Config File Path" FORCE)
+
 elseif(LINUX)
-  option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt5" OFF)
+  option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt6" OFF)
+
   if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
     set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
   elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
@@ -106,6 +120,7 @@ elseif(LINUX)
   else()
     set(SV_EXTERNALS_PREBUILT_QT_PATH "" FORCE)
   endif()
+
 elseif(WIN32)
   option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt5" OFF)
   if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
@@ -120,6 +135,9 @@ elseif(WIN32)
     set(SV_EXTERNALS_PREBUILT_QT_PATH "" FORCE)
   endif()
 endif()
+
+message(STATUS "[SimVascular/CMakeLists] SV_EXTERNALS_USE_PREBUILT_QT: ${SV_EXTERNALS_USE_PREBUILT_QT}")
+message(STATUS "[SimVascular/CMakeLists] SV_EXTERNALS_PREBUILT_QT_PATH: ${SV_EXTERNALS_PREBUILT_QT_PATH}")
 
 mark_as_advanced(SV_EXTERNALS_USE_PREBUILT_QT)
 mark_as_advanced(SV_EXTERNALS_PREBUILT_QT_PATH)
@@ -156,7 +174,7 @@ ExternalProject_Add(Externals
     -DSV_EXTERNALS_VERSION_NUMBER:STRING=${SV_EXTERNALS_VERSION_NUMBER}
     -DSV_EXTERNALS_USE_PREBUILT_QT:BOOL=${SV_EXTERNALS_USE_PREBUILT_QT}
     -DSV_EXTERNALS_PREBUILT_QT_PATH:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}
-    -DQt5_DIR:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}
+    -DQt6_DIR:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}
     -DSV_EXTERNALS_TOPLEVEL_BIN_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
     ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
     )
@@ -204,7 +222,7 @@ ExternalProject_Add(SimVascular
     -DSV_USE_MPICH2:BOOL=OFF
     -DSV_USE_OpenCASCADE:BOOL=ON
     -DSV_USE_PYTHON:BOOL=ON
-    -DSV_USE_Qt5:BOOL=ON
+    -DSV_USE_Qt6:BOOL=ON
     -DSV_USE_QT:BOOL=ON
     -DSV_USE_SV4_GUI:BOOL=${SV_USE_SV4_GUI}
     -DSV_USE_MITK_SEGMENTATION:BOOL=${SV_USE_MITK_SEGMENTATION}
@@ -217,7 +235,7 @@ ExternalProject_Add(SimVascular
     -DSV_EXTERNALS_USE_PREBUILT_QT:BOOL=${SV_EXTERNALS_USE_PREBUILT_QT}
     -DSV_EXTERNALS_PREBUILT_QT_PATH:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}
     -DSV_EXTERNALS_VERSION_NUMBER:STRING=${SV_EXTERNALS_VERSION_NUMBER}
-    -DQt5_DIR:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}
+    -DQt6_DIR:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}
     ${SV_ADDITIONAL_CMAKE_ARGS}
     )
 #-----------------------------------------------------------------------------

@@ -30,6 +30,8 @@
 
 project(org_sv_gui_qt_datamanager)
 
+set(CMAKE_CXX_STANDARD 17)
+
 set(lib org_sv_gui_qt_datamanager)
 
 if(SV_USE_TINYXML)

@@ -107,7 +107,8 @@ private:
 
     void OnNullSelection(berry::IWorkbenchPart::Pointer /*part*/) override;
 
-    void OnPreferencesChanged(const berry::IBerryPreferences* /*preferences*/) override;
+    void OnPreferencesChanged(const mitk::IPreferences* /*preferences*/) override;
+    //dp void OnPreferencesChanged(const berry::IBerryPreferences* /*preferences*/) override;
 
     void OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/,
                             const QList<mitk::DataNode::Pointer>& /*nodes*/) override;

@@ -161,8 +161,8 @@
 #include <mitkStatusBar.h>
 #include <mitkGenericProperty.h>
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <usModuleRegistry.h>
@@ -180,6 +180,7 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QApplication>
+#include <QRegularExpression>
 
 // Redefine MITK_INFO to deactivate all of the debugging statements.
 #define MITK_INFO MITK_DEBUG
@@ -558,8 +559,8 @@ void sv4guiROMSimulationView::CreateQtPartControl( QWidget *parent )
     connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()));
 
     //get paths for the external solvers
-    berry::IPreferences::Pointer prefs = this->GetPreferences();
-    berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
+    mitk::IPreferences* prefs = this->GetPreferences();
+    mitk::IPreferences* berryprefs = dynamic_cast<mitk::IPreferences*>(prefs);
     //    InitializePreferences(berryprefs);
     this->OnPreferencesChanged(berryprefs);
 
@@ -883,19 +884,19 @@ void sv4guiROMSimulationView::SelectModelFile()
     //MITK_INFO << msg << "---------- SelectModelFile ----------";
 
     try {
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
 
         if (prefService) {   
             prefs = prefService->GetSystemPreferences()->Node("/General");
         } else {
-            prefs = berry::IPreferences::Pointer(0);
+            prefs = nullptr; 
         }
 
         QString lastFilePath = "";
   
-        if (prefs.IsNotNull()) {
-            lastFilePath = prefs->Get("LastFileOpenPath", "");
+        if (prefs != nullptr) {
+            lastFilePath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
         }
   
         if (lastFilePath == "") {
@@ -1374,19 +1375,19 @@ void sv4guiROMSimulationView::SelectCenterlinesFile()
     //MITK_INFO << msg << "---------- SelectCenterlinesFile ----------";
 
     try {
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
 
         if (prefService) {   
             prefs = prefService->GetSystemPreferences()->Node("/General");
         } else {
-            prefs = berry::IPreferences::Pointer(0);
+            prefs = nullptr; 
         }
 
         QString lastFilePath = "";
   
-        if (prefs.IsNotNull()) {
-            lastFilePath = prefs->Get("LastFileOpenPath", "");
+        if (prefs != nullptr) { 
+            lastFilePath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
         }
   
         if (lastFilePath == "") {
@@ -1680,7 +1681,7 @@ void sv4guiROMSimulationView::ReadMesh()
 //----------------------
 // Get the path to the 1d solver executable.
 //
-void sv4guiROMSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
+void sv4guiROMSimulationView::OnPreferencesChanged(const mitk::IPreferences* prefs)
 {
     using namespace sv4guiROMSimulationPreferenceDBKey;
 
@@ -1693,7 +1694,7 @@ void sv4guiROMSimulationView::OnPreferencesChanged(const berry::IBerryPreference
     }
 
     // Set the 1D solver binary. 
-    m_SolverExecutable = prefs->Get(ONED_SOLVER_PATH, m_DefaultPrefs.GetOneDSolver());
+    m_SolverExecutable = QString::fromStdString(prefs->Get(ONED_SOLVER_PATH, m_DefaultPrefs.GetOneDSolver().toStdString()));
 }
 
 //--------------------
@@ -2140,22 +2141,23 @@ void sv4guiROMSimulationView::TableViewBasicDoubleClicked(const QModelIndex& ind
     QStandardItem* itemValue= m_TableModelBasic->item(row,1);
     QString lastFileOpenPath=itemValue->text().trimmed();
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
+
     if (prefService)
     {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     }
     else
     {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr;
     }
 
     if(lastFileOpenPath=="" || !QFile(lastFileOpenPath).exists())
     {
-        if(prefs.IsNotNull())
+        if(prefs != nullptr) 
         {
-            lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+            lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
         }
         if(lastFileOpenPath=="")
             lastFileOpenPath=QDir::homePath();
@@ -2169,9 +2171,9 @@ void sv4guiROMSimulationView::TableViewBasicDoubleClicked(const QModelIndex& ind
     if (icFilePath.isEmpty())
         return;
 
-    if(prefs.IsNotNull())
+    if(prefs != nullptr) 
      {
-         prefs->Put("LastFileOpenPath", icFilePath);
+         prefs->Put("LastFileOpenPath", icFilePath.toStdString());
          prefs->Flush();
      }
 
@@ -2561,7 +2563,7 @@ void  sv4guiROMSimulationView::SplitCapBC()
                 QString Rp=QString::number(murrayRatio*totalValue*percentage1);
                 QString CC="0";
                 QString Rd=QString::number(murrayRatio*totalValue*percentage2);
-                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
+                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
 
                 if(list.size()==1) {
                     CC=list[0];
@@ -2576,7 +2578,7 @@ void  sv4guiROMSimulationView::SplitCapBC()
                 QString Cim="0";
                 QString Rv=QString::number(murrayRatio*totalValue*percentage3);
 
-                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
+                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
                 if(list.size()==2) {
                     Ca=list[0];
                     Cim=list[1];
@@ -2592,7 +2594,7 @@ void  sv4guiROMSimulationView::SplitCapBC()
                 QString CC=QString::number(murrayRatio*totalValue);
                 QString Rd="0";
 
-                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
+                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
                 if(list.size()==2) {
                     Rp=list[0];
                     Rd=list[1];
@@ -2607,7 +2609,7 @@ void  sv4guiROMSimulationView::SplitCapBC()
                 QString Cim=QString::number(murrayRatio*totalValue*percentage2);
                 QString Rv="0";
 
-                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
+                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
                 if(list.size()==3) {
                     Ra=list[0];
                     Ram=list[1];
@@ -2724,7 +2726,7 @@ void sv4guiROMSimulationView::UpdateGUICap()
 
         QString RValues="";
         QString CValues="";
-        QStringList list =QString::fromStdString(job->GetCapProp(face->name,"Values")).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+        QStringList list =QString::fromStdString(job->GetCapProp(face->name,"Values")).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
         if(bcType=="RCR") {
             if(list.size()==3) {
                 RValues=list[0]+" "+list[2];
@@ -3959,21 +3961,22 @@ void sv4guiROMSimulationView::ImportFiles()
     if(jobPath=="")
         return;
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
+
     if (prefService)
     {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     }
     else
     {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr; 
     }
 
     QString lastFilePath="";
-    if(prefs.IsNotNull())
+    if(prefs != nullptr) 
     {
-        lastFilePath = prefs->Get("LastFileOpenPath", "");
+        lastFilePath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
     }
     if(lastFilePath=="")
         lastFilePath=QDir::homePath();
@@ -3981,9 +3984,9 @@ void sv4guiROMSimulationView::ImportFiles()
     QStringList filePaths = QFileDialog::getOpenFileNames(m_Parent, "Choose Files", lastFilePath, tr("All Files (*)"));
 
     if(filePaths.size()>0)
-        if(prefs.IsNotNull())
+        if(prefs != nullptr)
          {
-             prefs->Put("LastFileOpenPath", filePaths.first());
+             prefs->Put("LastFileOpenPath", filePaths.first().toStdString());
              prefs->Flush();
          }
 
@@ -4136,7 +4139,7 @@ bool sv4guiROMSimulationView::SetBasicParameters(sv4guiROMSimJob* job, std::stri
             }
         } else if(par=="Initial Velocities") {
             int count=0;
-            QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
             values=list.join(" ").toStdString();
 
             if(!AreDouble(values,&count) || count!=3) {
@@ -4228,7 +4231,7 @@ bool sv4guiROMSimulationView::SetCapBcs(sv4guiROMSimJob* job, std::string& msg, 
                     }
                 } else if (bcType == "RCR") {
                     int count = 0;
-                    QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                    QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
                     values=list.join(" ").toStdString();
 
                     if(!AreDouble(values,&count)||count!=3) {
@@ -4237,7 +4240,7 @@ bool sv4guiROMSimulationView::SetCapBcs(sv4guiROMSimJob* job, std::string& msg, 
                     }
                 } else if(bcType == "Coronary") {
                     int count=0;
-                    QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                    QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
                     values=list.join(" ").toStdString();
 
                     if(!AreDouble(values,&count)||count!=5) {
@@ -4447,7 +4450,7 @@ bool sv4guiROMSimulationView::CheckBCsInputState(bool validate)
             }
 
         } else if (bcType == sv4guiCapBCWidgetROM::BCType::RCR) {
-            QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
             values = list.join(" ").toStdString();
             int count = 0;
             if (!AreDouble(values,&count) || (count != 3)) {
@@ -4618,13 +4621,13 @@ void sv4guiROMSimulationView::SaveToManager()
 //
 void sv4guiROMSimulationView::SetResultDir()
 {
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
 
     if (prefService) {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     } else {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr; 
     }
 
     QString lastFileOpenPath = "";
@@ -4632,8 +4635,8 @@ void sv4guiROMSimulationView::SetResultDir()
 
     if (currentPath != "" && QDir(currentPath).exists()) {
         lastFileOpenPath=currentPath;
-    } else if(prefs.IsNotNull()) {
-        lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+    } else if(prefs != nullptr) { 
+        lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
     }
 
     if (lastFileOpenPath == "") {
@@ -4647,8 +4650,8 @@ void sv4guiROMSimulationView::SetResultDir()
         return;
     }
 
-    if (prefs.IsNotNull()) {
-        prefs->Put("LastFileOpenPath", dir);
+    if (prefs != nullptr) { 
+        prefs->Put("LastFileOpenPath", dir.toStdString());
         prefs->Flush();
     }
 
@@ -4671,13 +4674,13 @@ void sv4guiROMSimulationView::SetResultDir()
 // 
 void sv4guiROMSimulationView::SetConvertDir()
 {
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
 
     if (prefService) {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     } else {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr;
     }
 
     QString lastFileOpenPath = "";
@@ -4685,8 +4688,8 @@ void sv4guiROMSimulationView::SetConvertDir()
 
     if (currentPath != "" && QDir(currentPath).exists()) {
         lastFileOpenPath=currentPath;
-    } else if(prefs.IsNotNull()) {
-        lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+    } else if(prefs != nullptr) { 
+        lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
     }
 
     if (lastFileOpenPath == "") {
@@ -4701,8 +4704,8 @@ void sv4guiROMSimulationView::SetConvertDir()
         return;
     }
 
-    if(prefs.IsNotNull()) {
-        prefs->Put("LastFileOpenPath", dir);
+    if(prefs != nullptr) { 
+        prefs->Put("LastFileOpenPath", dir.toStdString());
         prefs->Flush();
     }
 
@@ -4916,18 +4919,18 @@ void sv4guiROMSimulationView::GetSimulationMeshPaths(const std::string& simName,
 //
 QString sv4guiROMSimulationView::GetExportResultsDir()
 {
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
 
     if (prefService) {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     } else {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr;
     }
 
     QString lastFileSavePath = "";
-    if (prefs.IsNotNull()) {
-        lastFileSavePath = prefs->Get("LastFileSavePath", "");
+    if (prefs != nullptr) { 
+        lastFileSavePath = QString::fromStdString(prefs->Get("LastFileSavePath", ""));
     }
 
     if (lastFileSavePath == "") {
@@ -4941,8 +4944,8 @@ QString sv4guiROMSimulationView::GetExportResultsDir()
         return exportDir;
     }
 
-    if (prefs.IsNotNull()) {
-         prefs->Put("LastFileSavePath", exportDir);
+    if (prefs != nullptr) { 
+         prefs->Put("LastFileSavePath", exportDir.toStdString());
          prefs->Flush();
      }
 
@@ -4965,7 +4968,7 @@ bool sv4guiROMSimulationView::IsDouble(std::string value)
 
 bool sv4guiROMSimulationView::AreDouble(std::string values, int* count)
 {
-    QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
+    QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
     bool ok;
     for(int i=0;i<list.size();i++)
     {

@@ -4129,7 +4129,7 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
     vtkNew(vtkThreshold,threshold1);
     threshold1->SetInputData(geom);
     threshold1->SetInputArrayToProcess(0,0,0,1,"ModelFaceID");
-    threshold1->ThresholdBetween(i+1,i+1);
+    //dp threshold1->ThresholdBetween(i+1,i+1);
     threshold1->Update();
 
     vtkNew(vtkDataSetSurfaceFilter,surfacer);

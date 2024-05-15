@@ -480,9 +480,15 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory
+#
+# [DaveP] change to find Qt6 package.
+#
 if(SV_USE_SV4_GUI)
+  #find_package(Qt6 COMPONENTS Core CoreTools Gui Widgets) 
+  #find_package(Qt6 COMPONENTS Core CoreTools Gui Widgets PATHS /Users/parkerda/software/qt/qt-6-install/lib/cmake NO_DEFAULT_PATH)
   include(SimVascularInstallQt)
 endif()
+
 include(SimVascularInstallLibs)
 add_subdirectory(Scripts)
 #-----------------------------------------------------------------------------

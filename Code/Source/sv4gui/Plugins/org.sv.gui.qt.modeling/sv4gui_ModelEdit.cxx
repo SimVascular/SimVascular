@@ -357,6 +357,7 @@ void sv4guiModelEdit::SetTimeModified()
 
 int sv4guiModelEdit::GetTimeStep()
 {
+/* [TODO:DaveP] i don't know how to convert this.
     mitk::SliceNavigationController* timeNavigationController = nullptr;
     if(m_renderWindow)
     {
@@ -367,6 +368,8 @@ int sv4guiModelEdit::GetTimeStep()
         return timeNavigationController->GetTime()->GetPos();
     else
         return 0;
+*/
+  return 0;
 }
 
 void sv4guiModelEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,

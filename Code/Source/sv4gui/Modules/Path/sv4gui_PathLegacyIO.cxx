@@ -39,6 +39,10 @@
 #include <QHash>
 #include <QFile>
 #include <QTextStream>
+#include <QRegularExpression>
+
+// [DaveP] fixes Qt endl deprication.
+static QString qt_endl = "\n";
 
 //------------------
 // ReadDataFromFile
@@ -64,14 +68,14 @@ static void ReadDataFromFile(QString filePath, QList<int>& IDList, QList<QHash<i
         if(line.contains("set",Qt::CaseInsensitive) && 
            line.contains("gPathPoints",Qt::CaseInsensitive) && 
            line.contains("name",Qt::CaseInsensitive)) {
-            QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            QStringList list = line.split(QRegularExpression("[(),{}\\s+]"),Qt::SkipEmptyParts);
             IDNames[list[2].toInt()]=list[4];
         }
 
         if(line.contains("set",Qt::CaseInsensitive) && 
            line.contains("gPathPoints",Qt::CaseInsensitive) && 
            line.contains("numSplinePts",Qt::CaseInsensitive)) {
-            QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            QStringList list = line.split(QRegularExpression("[(),{}\\s+]"),Qt::SkipEmptyParts);
             IDSplineNum[list[2].toInt()]=list[4].toInt();
         }
 
@@ -80,7 +84,7 @@ static void ReadDataFromFile(QString filePath, QList<int>& IDList, QList<QHash<i
            !line.contains("name",Qt::CaseInsensitive) && 
            !line.contains("numSplinePts",Qt::CaseInsensitive) && 
            !line.contains("splinePts",Qt::CaseInsensitive) ) {
-            QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            QStringList list = line.split(QRegularExpression("[(),{}\\s+]"),Qt::SkipEmptyParts);
             int id=list[2].toInt();
             int index=list[3].toInt();
             mitk::Point3D point;
@@ -103,7 +107,7 @@ static void ReadDataFromFile(QString filePath, QList<int>& IDList, QList<QHash<i
            line.contains("gPathPoints",Qt::CaseInsensitive) && 
            line.contains("splinePts",Qt::CaseInsensitive) && 
            line.contains("list",Qt::CaseInsensitive) ) {
-            QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            QStringList list = line.split(QRegularExpression("[(),{}\\s+]"),Qt::SkipEmptyParts);
             int id=list[2].toInt();
 
             std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints;
@@ -112,7 +116,7 @@ static void ReadDataFromFile(QString filePath, QList<int>& IDList, QList<QHash<i
             int posID=-1;
             while (!line.contains("]")) {
                 posID++;
-                QStringList listx = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                QStringList listx = line.split(QRegularExpression("[(),{}\\s+]"),Qt::SkipEmptyParts);
                 sv4guiPathElement::sv4guiPathPoint pathPoint;
                 pathPoint.id=posID;
                 pathPoint.pos[0]=listx[1].toDouble();
@@ -264,8 +268,8 @@ void sv4guiPathLegacyIO::WriteFile(mitk::DataStorage::SetOfObjects::ConstPointer
             QTextStream out(&outputFile);
             out.setRealNumberPrecision(17);
 
-            out<<"#  Geodesic path file version 2.0 (from guiPP)"<<endl;
-            out<<"global gPathPoints"<<endl;
+            out<<"#  Geodesic path file version 2.0 (from guiPP)"<<"\n";
+            out<<"global gPathPoints"<<"\n";
 
             for(int i=0;i<rs->size();i++){
 
@@ -274,7 +278,7 @@ void sv4guiPathLegacyIO::WriteFile(mitk::DataStorage::SetOfObjects::ConstPointer
 
                 if(path){
 
-                    out<<"set gPathPoints("<<path->GetPathID()<<",name) {"<<node->GetName().c_str()<<"}"<<endl;
+                    out<<"set gPathPoints("<<path->GetPathID()<<",name) {"<<node->GetName().c_str()<<"}"<<qt_endl;
 
                     sv4guiPathElement* pe=path->GetPathElement();
                     if(pe==nullptr) continue;
@@ -282,14 +286,14 @@ void sv4guiPathLegacyIO::WriteFile(mitk::DataStorage::SetOfObjects::ConstPointer
                     for(int i=0;i<pe->GetControlPointNumber();i++)
                     {
                         mitk::Point3D point=pe->GetControlPoint(i);
-                        out<<"set gPathPoints("<<path->GetPathID()<<","<<i<<") { "<<point[0]<<" "<<point[1]<<" "<<point[2]<<"}"<<endl;
+                        out<<"set gPathPoints("<<path->GetPathID()<<","<<i<<") { "<<point[0]<<" "<<point[1]<<" "<<point[2]<<"}"<<qt_endl;
                     }
 
-                    out<<"set gPathPoints("<<path->GetPathID()<<",numSplinePts) {"<<pe->GetPathPointNumber()<<"}"<<endl;
+                    out<<"set gPathPoints("<<path->GetPathID()<<",numSplinePts) {"<<pe->GetPathPointNumber()<<"}"<<qt_endl;
 
                     if(pe->GetPathPointNumber()>0)
                     {
-                        out<<"set gPathPoints("<<path->GetPathID()<<",splinePts) [list \\"<<endl;
+                        out<<"set gPathPoints("<<path->GetPathID()<<",splinePts) [list \\"<<qt_endl;
 
 
                         for(int i=0;i<pe->GetPathPointNumber();i++)
@@ -297,11 +301,11 @@ void sv4guiPathLegacyIO::WriteFile(mitk::DataStorage::SetOfObjects::ConstPointer
                             sv4guiPathElement::sv4guiPathPoint pathPoint=pe->GetPathPoint(i);
                             out<<"  {p ("<<pathPoint.pos[0]<<","<<pathPoint.pos[1]<<","<<pathPoint.pos[2]<<")"
                               <<" t ("<<pathPoint.tangent[0]<<","<<pathPoint.tangent[1] <<","<<pathPoint.tangent[2]<<")"
-                             <<" tx ("<<pathPoint.rotation[0]<<","<<pathPoint.rotation[1]<<","<<pathPoint.rotation[2]<<")} \\"<<endl;
+                             <<" tx ("<<pathPoint.rotation[0]<<","<<pathPoint.rotation[1]<<","<<pathPoint.rotation[2]<<")} \\"<<qt_endl;
 
                         }
 
-                        out<<"  ]"<<endl;
+                        out<<"  ]"<<qt_endl;
                     }
                 }
             }

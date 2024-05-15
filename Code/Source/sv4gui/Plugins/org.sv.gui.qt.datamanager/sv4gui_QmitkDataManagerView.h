@@ -49,7 +49,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 #define SV4GUI_QMITKDATAMANAGERVIEW_H_
 
 // BlueBerry includes
-#include <berryIBerryPreferences.h>
+#include <mitkIPreferences.h>
+//dp #include <berryIBerryPreferences.h>
 
 /// Qmitk
 #include <QmitkAbstractView.h>
@@ -186,7 +187,8 @@ public slots:
   ///
   /// Invoked when the preferences were changed
   ///
-  void OnPreferencesChanged(const berry::IBerryPreferences*) override;
+  void OnPreferencesChanged(const mitk::IPreferences*) override;
+  //dp void OnPreferencesChanged(const berry::IBerryPreferences*) override;
   ///
   /// \brief will be toggled when a extension point context menu action is toggled
   /// this is a proxy method which will load the corresponding extension class
@@ -246,7 +248,8 @@ protected:
   ///
   /// Holds the preferences for the datamanager.
   ///
-  berry::IBerryPreferences::Pointer m_DataManagerPreferencesNode;
+  mitk::IPreferences* m_DataManagerPreferencesNode;
+  //dp berry::IBerryPreferences::Pointer m_DataManagerPreferencesNode;
   ///
   /// saves the configuration elements for the context menu actions from extension points
   ///

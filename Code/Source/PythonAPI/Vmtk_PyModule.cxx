@@ -209,7 +209,7 @@ Vmtk_cap_with_ids(PyObject* self, PyObject* args, PyObject* kwargs)
   PyObject* fillIdArg = nullptr;
   PyObject* incIdArg = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyInt_Type, &fillIdArg,
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyLong_Type, &fillIdArg,
         &PyBool_Type, &incIdArg)) {
       return api.argsError();
   }
@@ -225,7 +225,7 @@ Vmtk_cap_with_ids(PyObject* self, PyObject* args, PyObject* kwargs)
   int fillType = 2;
 
   if (fillIdArg != nullptr) {
-      fillId = PyInt_AsLong(fillIdArg);
+      fillId = PyLong_AsLong(fillIdArg);
       if (fillId < 0) {
           api.error("Cap fill ID must be >= 0.");
           return nullptr;

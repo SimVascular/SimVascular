@@ -1615,7 +1615,7 @@ int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMes
   auto thresholder = vtkSmartPointer<vtkThreshold>::New();
   thresholder->SetInputData(boundaryMesh);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, "isSurface");
-  thresholder->ThresholdBetween(1, 1);
+  //dp thresholder->ThresholdBetween(1, 1);
   thresholder->Update();
 
   auto surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
@@ -1628,7 +1628,7 @@ int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMes
   //
   thresholder->SetInputData(boundaryMesh);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, "isSurface");
-  thresholder->ThresholdBetween(0, 0);
+  //dp thresholder->ThresholdBetween(0, 0);
   thresholder->Update();
 
   boundaryMeshVolume->DeepCopy(thresholder->GetOutput());
@@ -1637,7 +1637,7 @@ int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMes
   //
   thresholder->SetInputData(surfaceWithSize);
   thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
-  thresholder->ThresholdBetween(0,0);
+  //dp thresholder->ThresholdBetween(0,0);
   thresholder->Update();
 
   surfacer->SetInputData(thresholder->GetOutput());

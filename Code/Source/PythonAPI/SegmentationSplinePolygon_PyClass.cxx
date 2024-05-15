@@ -343,7 +343,9 @@ SplinePolygonSegmentation_set_subdivision_params(PySplinePolygonSegmentation* se
   PyObject* spacingArg = nullptr;
   PyObject* numberArg = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &typeName, &PyFloat_Type, &spacingArg, &PyInt_Type, &numberArg)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &typeName, 
+      &PyFloat_Type, &spacingArg, &PyLong_Type, &numberArg)) {
+  //dp if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &typeName, &PyFloat_Type, &spacingArg, &PyInt_Type, &numberArg)) 
       return nullptr;
   }
 
@@ -378,7 +380,8 @@ SplinePolygonSegmentation_set_subdivision_params(PySplinePolygonSegmentation* se
   // Set number.
   //
   if (numberArg != nullptr) {
-      auto number = PyInt_AsLong(numberArg);
+      auto number = PyLong_AsLong(numberArg);
+      //dp auto number = PyInt_AsLong(numberArg);
       // This regenerates the contour.
       contour->SetSubdivisionNumber(number);
   }

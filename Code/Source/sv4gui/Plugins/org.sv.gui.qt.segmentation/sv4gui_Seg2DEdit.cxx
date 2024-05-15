@@ -74,6 +74,7 @@
 #include <QFile>
 #include <QAbstractItemView>
 #include <QListWidgetItem>
+#include <QRegularExpression>
 
 #include <iostream>
 using namespace std;
@@ -260,17 +261,21 @@ void sv4guiSeg2DEdit::Hidden()
 
 int sv4guiSeg2DEdit::GetTimeStep()
 {
+/* [TODO:DaveP] i don't know how to convert this
     mitk::SliceNavigationController* timeNavigationController = nullptr;
 
-    if(m_renderWindow)
-    {
-        timeNavigationController=m_renderWindow->GetTimeNavigationController();
+    if(m_renderWindow) {
+        timeNavigationController = m_renderWindow->GetSliceNavigationController();
+        //dp timeNavigationController = m_renderWindow->GetTimeNavigationController();
     }
 
-    if(timeNavigationController)
+    if(timeNavigationController) {
         return timeNavigationController->GetTime()->GetPos();
-    else
+    } else {
         return 0;
+    }
+*/
+return 0;
 
 }
 
@@ -631,7 +636,7 @@ std::vector<int> sv4guiSeg2DEdit::GetBatchList()
     line=line.replace("begin",QString::number(0));
     line=line.replace("end",QString::number(maxID));
 
-    QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+    QStringList list = line.split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
 
     for(int i=0;i<list.size();i++)
     {
@@ -639,7 +644,7 @@ std::vector<int> sv4guiSeg2DEdit::GetBatchList()
 
         if(str.contains(":"))
         {
-            QStringList list2 = str.split(QRegExp(":"));
+            QStringList list2 = str.split(QRegularExpression(":"));
 
             if(list2.size()==0 ||list2.size()>3) continue;
 
@@ -1449,7 +1454,7 @@ void sv4guiSeg2DEdit::CreateManualCircle(bool)
     if (!ok || text.trimmed().isEmpty())
         return;
 
-    QStringList list = text.trimmed().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+    QStringList list = text.trimmed().split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
     if(list.size()!=1 && list.size()!=3)
     {
         QMessageBox::warning(m_Parent,"Input Invalid","Please provide valid input!");
@@ -1509,7 +1514,7 @@ void sv4guiSeg2DEdit::CreateManualEllipse(bool)
     if (!ok || text.trimmed().isEmpty())
         return;
 
-    QStringList list = text.trimmed().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+    QStringList list = text.trimmed().split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
     if(list.size()!=2 && list.size()!=3 && list.size()!=4 && list.size()!=5)
     {
         QMessageBox::warning(m_Parent,"Input Invalid","Please provide valid input!");
@@ -1607,7 +1612,7 @@ void sv4guiSeg2DEdit::CreateManualPolygonType(bool spline)
     if (!ok || text.trimmed().isEmpty())
         return;
 
-    QStringList list = text.trimmed().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+    QStringList list = text.trimmed().split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
     if(list.size()%2!=0)
     {
         QMessageBox::warning(m_Parent,"Input Invalid","Please provide valid input!");

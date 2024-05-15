@@ -1293,7 +1293,7 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::GetThresholdRegion(vtkSmartPointe
     vtkSmartPointer<vtkThreshold> thresholder=vtkSmartPointer<vtkThreshold>::New();
     thresholder->SetInputData(pd);
     thresholder->SetInputArrayToProcess(0, 0, 0, dataType, arrayName.c_str());
-    thresholder->ThresholdBetween(minValue, maxValue);
+    //dp thresholder->ThresholdBetween(minValue, maxValue);
     thresholder->Update();
 
     vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer=vtkSmartPointer<vtkDataSetSurfaceFilter>::New();

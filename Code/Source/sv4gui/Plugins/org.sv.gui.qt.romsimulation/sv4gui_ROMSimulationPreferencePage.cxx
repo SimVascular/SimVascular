@@ -32,7 +32,7 @@
 #include "sv4gui_ROMSimulationPreferencePage.h"
 #include "ui_sv4gui_ROMSimulationPreferencePage.h"
 
-#include <berryIPreferencesService.h>
+#include <mitkIPreferencesService.h>
 #include <berryPlatform.h>
 
 #include <mitkExceptionMacro.h>
@@ -67,7 +67,7 @@ void sv4guiROMSimulationPreferencePage::CreateQtControl(QWidget* parent)
 
     m_Ui->setupUi(m_Control);
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     Q_ASSERT(prefService);
 
     m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.romsimulation");
@@ -126,12 +126,12 @@ bool sv4guiROMSimulationPreferencePage::PerformOk()
 {
     using namespace sv4guiROMSimulationPreferenceDBKey;
     QString oneDSolverPath = m_Ui->SolverExecutablePath_LineEdit->text().trimmed();
-    m_Preferences->Put(ONED_SOLVER_PATH, oneDSolverPath);
+    m_Preferences->Put(ONED_SOLVER_PATH, oneDSolverPath.toStdString());
     return true;
 }
 
 void sv4guiROMSimulationPreferencePage::Update()
 {
-    m_Ui->SolverExecutablePath_LineEdit->setText(m_Preferences->Get("1d solver executable path",""));
+    m_Ui->SolverExecutablePath_LineEdit->setText(QString::fromStdString(m_Preferences->Get("1d solver executable path","")));
 }
 

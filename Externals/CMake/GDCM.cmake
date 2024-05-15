@@ -28,6 +28,11 @@
 # GDCM
 set(proj GDCM)
 
+message(STATUS " ") 
+message(STATUS "========== Externals/CMake GDCM ==========") 
+
+set(CMAKE_POLICY_DEFAULT_CMP0135 NEW)
+
 #if(NOT SV_EXTERNALS_DOWNLOAD_${proj})
 #  # Find SWIG!
 #  find_package(SWIG REQUIRED)
@@ -91,6 +96,7 @@ if(SV_EXTERNALS_DOWNLOAD_${proj})
     SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
+    DOWNLOAD_NO_PROGRESS ON
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
