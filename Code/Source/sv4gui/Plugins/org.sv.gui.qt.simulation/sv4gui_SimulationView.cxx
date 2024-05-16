@@ -52,8 +52,8 @@
 #include <mitkStatusBar.h>
 #include <mitkGenericProperty.h>
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <usModuleRegistry.h>
@@ -71,6 +71,7 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QApplication>
+#include <QRegularExpression>
 
 using namespace sv4guiSimulationPreferenceDBKey;
 
@@ -309,9 +310,8 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
     connect(ui->checkBoxCalculateFlows, SIGNAL(clicked(bool)), this, SLOT(ShowCalculateFowsWidget(bool)) );
 
     // Set paths for the external solvers.
-    berry::IPreferences::Pointer prefs = this->GetPreferences();
-    berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
-    this->OnPreferencesChanged(berryprefs);
+    mitk::IPreferences* prefs = this->GetPreferences();
+    this->OnPreferencesChanged(prefs);
 }
 
 //----------------------
@@ -342,22 +342,22 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 // The 'prefs' Get() argument names (e.g. "presolver path") are set by the 
 // sv4guiSimulationPreferencePage object.
 //
-void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
+void sv4guiSimulationView::OnPreferencesChanged(const mitk::IPreferences* prefs)
 {
     if (prefs == nullptr) {
         return;
     }
 
     // Set the solver binaries.
-    m_PresolverPath = prefs->Get(PRE_SOLVER_PATH, m_DefaultPrefs.GetPreSolver());
-    m_FlowsolverPath = prefs->Get(FLOW_SOLVER_PATH, m_DefaultPrefs.GetSolver());
-    m_FlowsolverNOMPIPath = prefs->Get(FLOW_SOLVER_NO_MPI_PATH, m_DefaultPrefs.GetSolverNOMPI());
-    m_PostsolverPath = prefs->Get(POST_SOLVER_PATH, m_DefaultPrefs.GetPostSolver());
+    m_PresolverPath = prefs->Get(PRE_SOLVER_PATH, m_DefaultPrefs.GetPreSolver().toStdString());
+    m_FlowsolverPath = prefs->Get(FLOW_SOLVER_PATH, m_DefaultPrefs.GetSolver().toStdString());
+    m_FlowsolverNOMPIPath = prefs->Get(FLOW_SOLVER_NO_MPI_PATH, m_DefaultPrefs.GetSolverNOMPI().toStdString());
+    m_PostsolverPath = prefs->Get(POST_SOLVER_PATH, m_DefaultPrefs.GetPostSolver().toStdString());
 
     // Set the mpiexec binary and mpi implementation.
-    m_MPIExecPath = prefs->Get(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, m_DefaultMPIPrefs.GetMpiExec()); 
-    auto mpiName = prefs->Get(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, m_DefaultMPIPrefs.GetMpiImplementationName());
-    m_MpiImplementation = m_DefaultMPIPrefs.GetMpiImplementation(mpiName);
+    m_MPIExecPath = prefs->Get(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, m_DefaultMPIPrefs.GetMpiExec().toStdString()); 
+    auto mpiName = prefs->Get(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, m_DefaultMPIPrefs.GetMpiImplementationName().toStdString());
+    m_MpiImplementation = m_DefaultMPIPrefs.GetMpiImplementation(QString::fromStdString(mpiName));
     // [DaveP] m_UseMPI = prefs->GetBool("use mpi",false);
 }
 
@@ -652,22 +652,23 @@ void sv4guiSimulationView::TableViewBasicDoubleClicked(const QModelIndex& index)
     QStandardItem* itemValue= m_TableModelBasic->item(row,1);
     QString lastFileOpenPath=itemValue->text().trimmed();
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
+
     if (prefService)
     {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     }
     else
     {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr;
     }
 
     if(lastFileOpenPath=="" || !QFile(lastFileOpenPath).exists())
     {
-        if(prefs.IsNotNull())
+        if(prefs != nullptr) 
         {
-            lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+            lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
         }
         if(lastFileOpenPath=="")
             lastFileOpenPath=QDir::homePath();
@@ -681,9 +682,9 @@ void sv4guiSimulationView::TableViewBasicDoubleClicked(const QModelIndex& index)
     if (icFilePath.isEmpty())
         return;
 
-    if(prefs.IsNotNull())
+    if(prefs != nullptr) 
      {
-         prefs->Put("LastFileOpenPath", icFilePath);
+         prefs->Put("LastFileOpenPath", icFilePath.toStdString());
          prefs->Flush();
      }
 
@@ -1021,7 +1022,7 @@ void  sv4guiSimulationView::SplitCapBC()
                 QString CC="0";
                 QString Rd=QString::number(murrayRatio*totalValue*percentage2);
 
-                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
+                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
                 if(list.size()==1)
                     CC=list[0];
 
@@ -1036,7 +1037,7 @@ void  sv4guiSimulationView::SplitCapBC()
                 QString Cim="0";
                 QString Rv=QString::number(murrayRatio*totalValue*percentage3);
 
-                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
+                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
                 if(list.size()==2)
                 {
                     Ca=list[0];
@@ -1056,7 +1057,7 @@ void  sv4guiSimulationView::SplitCapBC()
                 QString CC=QString::number(murrayRatio*totalValue);
                 QString Rd="0";
 
-                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
+                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
                 if(list.size()==2)
                 {
                     Rp=list[0];
@@ -1074,7 +1075,7 @@ void  sv4guiSimulationView::SplitCapBC()
                 QString Cim=QString::number(murrayRatio*totalValue*percentage2);
                 QString Rv="0";
 
-                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
+                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
                 if(list.size()==3)
                 {
                     Ra=list[0];
@@ -1180,7 +1181,9 @@ void sv4guiSimulationView::UpdateGUICap()
 
         QString RValues="";
         QString CValues="";
-        QStringList list =QString::fromStdString(job->GetCapProp(face->name,"Values")).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+        QStringList list =QString::fromStdString(job->GetCapProp(face->name,"Values")).split(QRegularExpression("[(),{}\\s+]"), 
+            Qt::SkipEmptyParts);
+
         if(bcType=="RCR")
         {
             if(list.size()==3)
@@ -1738,11 +1741,11 @@ void sv4guiSimulationView::RunJob()
 
         if (m_UseMPI) {
             QStringList arguments;
-            arguments << "-n" << QString::number(numProcs) << m_FlowsolverPath;
-            flowsolverProcess->setProgram(m_MPIExecPath);
+            arguments << "-n" << QString::number(numProcs) << QString::fromStdString(m_FlowsolverPath);
+            flowsolverProcess->setProgram(QString::fromStdString(m_MPIExecPath));
             flowsolverProcess->setArguments(arguments);
         } else {
-            flowsolverProcess->setProgram(m_FlowsolverNOMPIPath);
+            flowsolverProcess->setProgram(QString::fromStdString(m_FlowsolverNOMPIPath));
             flowsolverProcess->setArguments(QStringList());
         }
 
@@ -1854,9 +1857,9 @@ void sv4guiSimulationView::CheckSolver()
     // Set the name and path to check for the solver binaries.
     typedef std::tuple<QString,QString> binaryNamePath;
     std::vector<binaryNamePath> binariesToCheck = { 
-        std::make_tuple("FlowSolver", m_FlowsolverPath),
-        std::make_tuple("PreSolver", m_PresolverPath),
-        std::make_tuple("PostSolver", m_PostsolverPath)
+        std::make_tuple("FlowSolver", QString::fromStdString(m_FlowsolverPath)),
+        std::make_tuple("PreSolver", QString::fromStdString(m_PresolverPath)),
+        std::make_tuple("PostSolver", QString::fromStdString(m_PostsolverPath))
     };
 
     // Check the name and path for the solver binaries.
@@ -1901,9 +1904,9 @@ void sv4guiSimulationView::CheckSolverNOMPI()
     // Set the name and path to check for the solver binaries.
     typedef std::tuple<QString,QString> binaryNamePath;
     std::vector<binaryNamePath> binariesToCheck = { 
-        std::make_tuple("FlowSolverNOMPI", m_FlowsolverNOMPIPath),
-        std::make_tuple("PreSolver", m_PresolverPath),
-        std::make_tuple("PostSolver", m_PostsolverPath)
+        std::make_tuple("FlowSolverNOMPI", QString::fromStdString(m_FlowsolverNOMPIPath)),
+        std::make_tuple("PreSolver", QString::fromStdString(m_PresolverPath)),
+        std::make_tuple("PostSolver", QString::fromStdString(m_PostsolverPath))
     };
 
     // Check the name and path for the solver binaries.
@@ -1950,7 +1953,7 @@ void sv4guiSimulationView::CheckMpi()
     // Check for valid mpiexec.
     //
     QString name = "mpiexec";
-    QString path = m_MPIExecPath; 
+    QString path = QString::fromStdString(m_MPIExecPath); 
 
     if ((path == "") || (path == m_DefaultPrefs.UnknownBinary)) {
         auto msg1 = "The " + name + " executable cannot be found. \n\n";
@@ -2136,9 +2139,9 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
             return false;
         }
 
-        QString presolverPath=m_PresolverPath;
+        QString presolverPath = QString::fromStdString(m_PresolverPath);
         if(presolverPath=="")
-            presolverPath=m_PresolverPath;
+            presolverPath = QString::fromStdString(m_PresolverPath);
 
 //        if(presolverPath=="" || !QFile(presolverPath).exists())
         if(presolverPath=="")
@@ -2184,21 +2187,22 @@ void sv4guiSimulationView::ImportFiles()
     if(jobPath=="")
         return;
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
+
     if (prefService)
     {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     }
     else
     {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr;
     }
 
     QString lastFilePath="";
-    if(prefs.IsNotNull())
+    if(prefs != nullptr)
     {
-        lastFilePath = prefs->Get("LastFileOpenPath", "");
+        lastFilePath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
     }
     if(lastFilePath=="")
         lastFilePath=QDir::homePath();
@@ -2206,9 +2210,9 @@ void sv4guiSimulationView::ImportFiles()
     QStringList filePaths = QFileDialog::getOpenFileNames(m_Parent, "Choose Files", lastFilePath, tr("All Files (*)"));
 
     if(filePaths.size()>0)
-        if(prefs.IsNotNull())
+        if(prefs != nullptr) 
          {
-             prefs->Put("LastFileOpenPath", filePaths.first());
+             prefs->Put("LastFileOpenPath", filePaths.first().toStdString());
              prefs->Flush();
          }
 
@@ -2259,7 +2263,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
             {
                 int count=0;
 
-                QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
                 values=list.join(" ").toStdString();
 
                 if(!AreDouble(values,&count) || count!=3)
@@ -2343,7 +2347,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
                 {
                     int count=0;
 
-                    QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                    QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
                     values=list.join(" ").toStdString();
 
                     if(!AreDouble(values,&count)||count!=3)
@@ -2357,7 +2361,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
                 {
                     int count=0;
 
-                    QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                    QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
                     values=list.join(" ").toStdString();
 
                     if(!AreDouble(values,&count)||count!=5)
@@ -2638,24 +2642,25 @@ void sv4guiSimulationView::SaveToManager()
 
 void sv4guiSimulationView::SetResultDir()
 {
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
+
     if (prefService)
     {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     }
     else
     {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr; 
     }
 
     QString lastFileOpenPath="";
     QString currentPath=ui->lineEditResultDir->text().trimmed();
     if(currentPath!="" && QDir(currentPath).exists())
         lastFileOpenPath=currentPath;
-    else if(prefs.IsNotNull())
+    else if(prefs != nullptr) 
     {
-        lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+        lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
     }
     if(lastFileOpenPath=="")
         lastFileOpenPath=QDir::homePath();
@@ -2667,9 +2672,9 @@ void sv4guiSimulationView::SetResultDir()
     dir=dir.trimmed();
     if(dir.isEmpty()) return;
 
-    if(prefs.IsNotNull())
+    if(prefs != nullptr)
     {
-        prefs->Put("LastFileOpenPath", dir);
+        prefs->Put("LastFileOpenPath", dir.toStdString());
         prefs->Flush();
     }
 
@@ -2682,9 +2687,9 @@ void sv4guiSimulationView::SetResultDir()
 //
 void sv4guiSimulationView::ExportResults()
 {
-    QString postsolverPath=m_PostsolverPath;
+    QString postsolverPath = QString::fromStdString(m_PostsolverPath);
     if(postsolverPath=="")
-        postsolverPath=m_PostsolverPath;
+        postsolverPath = QString::fromStdString(m_PostsolverPath);
 
     if(postsolverPath=="" || !QFile(postsolverPath).exists())
     {
@@ -2692,21 +2697,22 @@ void sv4guiSimulationView::ExportResults()
         return;
     }
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
+
     if (prefService)
     {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     }
     else
     {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr;
     }
 
     QString lastFileSavePath="";
-    if(prefs.IsNotNull())
+    if(prefs != nullptr) 
     {
-        lastFileSavePath = prefs->Get("LastFileSavePath", "");
+        lastFileSavePath = QString::fromStdString(prefs->Get("LastFileSavePath", ""));
     }
     if(lastFileSavePath=="")
         lastFileSavePath=QDir::homePath();
@@ -2719,9 +2725,9 @@ void sv4guiSimulationView::ExportResults()
     if(exportDir.isEmpty())
         return;
 
-    if(prefs.IsNotNull())
+    if(prefs !=  nullptr) 
      {
-         prefs->Put("LastFileSavePath", exportDir);
+         prefs->Put("LastFileSavePath", exportDir.toStdString());
          prefs->Flush();
      }
 
@@ -2933,7 +2939,7 @@ bool sv4guiSimulationView::IsDouble(std::string value)
 
 bool sv4guiSimulationView::AreDouble(std::string values, int* count)
 {
-    QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
+    QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
     bool ok;
     for(int i=0;i<list.size();i++)
     {

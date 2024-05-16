@@ -35,8 +35,8 @@
 
 #include "sv4gui_SimulationView.h"
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <QFileDialog>
@@ -83,21 +83,22 @@ void sv4guiSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &selecte
 //            timeStep=timeNavigationController->GetTime()->GetPos();
 //        }
 
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
+
         if (prefService)
         {
             prefs = prefService->GetSystemPreferences()->Node("/General");
         }
         else
         {
-            prefs = berry::IPreferences::Pointer(0);
+            prefs = nullptr;
         }
 
         QString lastFileSavePath="";
-        if(prefs.IsNotNull())
+        if(prefs != nullptr)
         {
-            lastFileSavePath = prefs->Get("LastFileSavePath", "");
+            lastFileSavePath = QString::fromStdString(prefs->Get("LastFileSavePath", ""));
         }
         if(lastFileSavePath=="")
             lastFileSavePath=QDir::homePath();
@@ -108,9 +109,9 @@ void sv4guiSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &selecte
 
         dir=dir.trimmed();
         if(dir.isEmpty()) return;
-        if(prefs.IsNotNull())
+        if(prefs != nullptr) 
          {
-             prefs->Put("LastFileSavePath", dir);
+             prefs->Put("LastFileSavePath", dir.toStdString());
              prefs->Flush();
          }
 

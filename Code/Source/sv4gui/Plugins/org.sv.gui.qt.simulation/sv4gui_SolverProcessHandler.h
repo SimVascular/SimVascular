@@ -42,8 +42,6 @@
 
 #include "sv4gui_ModelDataInteractor.h"
 
-#include <berryIBerryPreferences.h>
-
 #include <QWidget>
 #include <QStandardItemModel>
 #include <QProcess>

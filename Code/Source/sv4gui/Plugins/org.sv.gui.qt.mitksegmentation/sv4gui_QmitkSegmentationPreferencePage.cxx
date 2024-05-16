@@ -55,7 +55,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <QMessageBox>
 #include <QDoubleSpinBox>
 
-#include <berryIPreferencesService.h>
+#include <mitkIPreferencesService.h>
 #include <berryPlatform.h>
 
 QmitkSegmentationPreferencePage::QmitkSegmentationPreferencePage()
@@ -78,7 +78,7 @@ void QmitkSegmentationPreferencePage::Init(berry::IWorkbench::Pointer )
 void QmitkSegmentationPreferencePage::CreateQtControl(QWidget* parent)
 {
   m_Initializing = true;
-  berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
 
   m_SegmentationPreferencesNode = prefService->GetSystemPreferences()->Node("/org.sv.views.mitksegmentation");
 

@@ -45,8 +45,8 @@
 #include <mitkStatusBar.h>
 #include <mitkGenericProperty.h>
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <usModuleRegistry.h>
@@ -65,6 +65,7 @@
 #include <QVBoxLayout>
 #include <QApplication>
 #include <QTimer>
+#include <QRegularExpression>
 
 sv4guiSolverProcessHandler::sv4guiSolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent)
     : m_Process(process)
@@ -237,10 +238,10 @@ void sv4guiSolverProcessHandler::UpdateStatus()
         QTextStream in(&historFile);
         QString content=in.readAll();
 
-        QStringList list=content.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+        QStringList list=content.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
         info=list.last();
 
-        list=info.split(QRegExp("\\s+"),QString::SkipEmptyParts);
+        list=info.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
         QString stepStr=list.first();
         bool ok;
         int step=stepStr.toInt(&ok);

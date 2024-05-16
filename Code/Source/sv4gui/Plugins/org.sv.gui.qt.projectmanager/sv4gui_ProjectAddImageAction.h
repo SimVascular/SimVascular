@@ -36,7 +36,7 @@
 
 #include <sv4gui_mitkIContextMenuAction.h>
 #include <mitkDataNode.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferences.h>
 
 #include <QObject>
 

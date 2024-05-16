@@ -45,7 +45,7 @@
 
 #include "sv4gui_ModelDataInteractor.h"
 
-#include <berryIBerryPreferences.h>
+#include <mitkIPreferences.h>
 
 #include <QWidget>
 #include <QStandardItemModel>
@@ -175,7 +175,7 @@ public:
 
     virtual void Hidden() override;
 
-    virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
+    virtual void OnPreferencesChanged(const mitk::IPreferences* prefs) override;
 
     sv4guiSimJob* CreateJob(std::string& msg, bool checkValidity = true);
 
@@ -234,12 +234,12 @@ private:
 
     sv4guiMPIPreferences::MpiImplementation m_MpiImplementation;
 
-    QString m_PresolverPath;
-    QString m_FlowsolverPath;
-    QString m_FlowsolverNOMPIPath;
-    QString m_PostsolverPath;
+    std::string m_PresolverPath;
+    std::string m_FlowsolverPath;
+    std::string m_FlowsolverNOMPIPath;
+    std::string m_PostsolverPath;
 
-    QString m_MPIExecPath;
+    std::string m_MPIExecPath;
     bool m_UseMPI;
     bool m_UseCustom;
     QString m_SolverTemplatePath;

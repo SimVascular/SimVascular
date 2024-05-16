@@ -39,7 +39,7 @@
 #include "sv4gui_svFSIUtil.h"
 
 #include <sv4gui_QmitkFunctionality.h>
-#include <berryIBerryPreferences.h>
+#include <mitkIPreferences.h>
 
 #include <QWidget>
 #include <QProcess>
@@ -161,7 +161,7 @@ public:
 
     virtual void Hidden() override;
 
-    virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
+    virtual void OnPreferencesChanged(const mitk::IPreferences* prefs) override;
 
     void DataChanged();
 

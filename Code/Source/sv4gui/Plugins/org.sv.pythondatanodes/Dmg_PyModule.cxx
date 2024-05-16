@@ -99,8 +99,8 @@
 #include <mitkIOUtil.h>
 
 #include <berryPlatform.h>
-#include <berryIPreferences.h>
-#include <berryIPreferencesService.h>
+#include <mitkIPreferences.h>
+#include <mitkIPreferencesService.h>
 
 #include <array>
 #include <vector>

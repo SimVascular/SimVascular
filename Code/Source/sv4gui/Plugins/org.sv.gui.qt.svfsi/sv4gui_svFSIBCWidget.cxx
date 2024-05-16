@@ -38,6 +38,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QPushButton>
+#include <QRegularExpression>
 
 sv4guisvFSIBCWidget::sv4guisvFSIBCWidget(QWidget *parent)
     : QDialog(parent)
@@ -518,11 +519,18 @@ void sv4guisvFSIBCWidget::SearchPatternChanged(const QString &arg1)
     QString searchPattern(arg1);
     searchPattern.append("*");
     searchPattern.prepend("*");
-    QRegExp rx(searchPattern);
-    rx.setPatternSyntax(QRegExp::Wildcard);
+    QRegularExpression rx(searchPattern);
+
+    // [TODO:DaveP] I'm not sure exactly how this matching should work
+    // so I'm not sure if this correctly replaces the QRegExp use. 
+    //
+    //QRegExp rx(searchPattern);
+    //rx.setPatternSyntax(QRegExp::Wildcard);
 
     for ( int i=0 ; i<m_AvailableFaceList.length() ; i++ ) {
-        if (rx.exactMatch(m_AvailableFaceList.at(i))) {
+        QRegularExpressionMatch match = rx.match(m_AvailableFaceList.at(i));
+
+        if (match.hasMatch()) {
             // This is the case that face was not displayed before and now it must be displayed
             if ( ui->faceList->isRowHidden(i) ) {
                 ui->faceList->setRowHidden(i,false);

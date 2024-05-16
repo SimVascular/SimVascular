@@ -55,6 +55,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QWheelEvent>
+#include <QRegularExpression>
 
 #include <iostream>
 using namespace std;
@@ -169,6 +170,7 @@ void sv4guiPathEdit::Hidden()
 
 int sv4guiPathEdit::GetTimeStep()
 {
+    /* [TODO:DaveP] i don't know how to convert this.
     mitk::SliceNavigationController* timeNavigationController = nullptr;
     if(m_renderWindow)
     {
@@ -179,6 +181,8 @@ int sv4guiPathEdit::GetTimeStep()
         return timeNavigationController->GetTime()->GetPos();
     else
         return 0;
+    */
+    return 0;
 }
 
 void sv4guiPathEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
@@ -616,7 +620,7 @@ void sv4guiPathEdit::ManuallyAdd()
     if (!ok || text.trimmed().isEmpty())
         return;
 
-    QStringList list = text.trimmed().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+    QStringList list = text.trimmed().split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
     if(list.size()!=3)
     {
         QMessageBox::warning(m_Parent,"Coordinates Missing","Please provide valid coordinates for the point!");

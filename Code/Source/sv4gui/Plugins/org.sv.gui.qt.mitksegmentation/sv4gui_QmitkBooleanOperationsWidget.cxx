@@ -147,6 +147,7 @@ void QmitkBooleanOperationsWidget::OnUnionButtonClicked()
 
 void QmitkBooleanOperationsWidget::DoBooleanOperation(mitk::BooleanOperation::Type type)
 {
+/* [TODO:DaveP] convert later
   auto timeNavigationController = this->GetTimeNavigationController();
   assert(timeNavigationController != nullptr);
 
@@ -174,4 +175,6 @@ void QmitkBooleanOperationsWidget::DoBooleanOperation(mitk::BooleanOperation::Ty
     MITK_ERROR << "Boolean operation failed: " << exception.GetDescription();
     QMessageBox::information(nullptr, "Boolean operation failed", exception.GetDescription());
   }
+*/
 }
+

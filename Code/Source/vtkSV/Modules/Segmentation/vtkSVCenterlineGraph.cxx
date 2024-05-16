@@ -400,7 +400,7 @@ int vtkSVCenterlineGraph::ComputeGlobalReferenceVectors(vtkSVCenterlineGCell *pa
   vtkNew(vtkThreshold, thresholder);
   thresholder->SetInputData(this->Lines);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, this->GroupIdsArrayName);
-  thresholder->ThresholdBetween(parent->GroupId, parent->GroupId);
+  //dp thresholder->ThresholdBetween(parent->GroupId, parent->GroupId);
   thresholder->Update();
   int numPts = thresholder->GetOutput()->GetNumberOfPoints();
 
@@ -427,7 +427,7 @@ int vtkSVCenterlineGraph::ComputeGlobalReferenceVectors(vtkSVCenterlineGCell *pa
     {
       thresholder->SetInputData(this->Lines);
       thresholder->SetInputArrayToProcess(0, 0, 0, 1, this->GroupIdsArrayName);
-      thresholder->ThresholdBetween(parent->Children[i]->GroupId, parent->Children[i]->GroupId);
+      //dp thresholder->ThresholdBetween(parent->Children[i]->GroupId, parent->Children[i]->GroupId);
       thresholder->Update();
 
       double startPt[3], secondPt[3];
@@ -510,7 +510,7 @@ int vtkSVCenterlineGraph::ComputeBranchReferenceVectors(vtkSVCenterlineGCell *pa
   vtkNew(vtkThreshold, thresholder);
   thresholder->SetInputData(this->Lines);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, this->GroupIdsArrayName);
-  thresholder->ThresholdBetween(parent->GroupId, parent->GroupId);
+  //dp thresholder->ThresholdBetween(parent->GroupId, parent->GroupId);
   thresholder->Update();
   int numPts = thresholder->GetOutput()->GetNumberOfPoints();
 
@@ -531,7 +531,7 @@ int vtkSVCenterlineGraph::ComputeBranchReferenceVectors(vtkSVCenterlineGCell *pa
   {
     thresholder->SetInputData(this->Lines);
     thresholder->SetInputArrayToProcess(0, 0, 0, 1, this->GroupIdsArrayName);
-    thresholder->ThresholdBetween(parent->Children[i]->GroupId, parent->Children[i]->GroupId);
+    //dp thresholder->ThresholdBetween(parent->Children[i]->GroupId, parent->Children[i]->GroupId);
     thresholder->Update();
 
     double startPt[3], secondPt[3];

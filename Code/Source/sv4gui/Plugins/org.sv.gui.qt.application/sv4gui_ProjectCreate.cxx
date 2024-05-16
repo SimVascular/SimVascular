@@ -35,8 +35,8 @@
 #include "sv4gui_ProjectManager.h"
 
 #include <berryPlatform.h>
-#include <berryIPreferences.h>
-#include <berryIPreferencesService.h>
+#include <mitkIPreferences.h>
+#include <mitkIPreferencesService.h>
 
 #include <QMessageBox>
 #include <QFile>
@@ -53,20 +53,21 @@ sv4guiProjectCreate::sv4guiProjectCreate(mitk::DataStorage::Pointer dataStorage)
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(Cancel()));
     connect(ui->btnBrowse, SIGNAL(clicked()), this, SLOT(ChoosePath()));
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
+
    if (prefService)
    {
        prefs = prefService->GetSystemPreferences()->Node("/General");
    }
    else
    {
-       prefs = berry::IPreferences::Pointer(0);
+       prefs = nullptr; 
    }
 
-   if(prefs.IsNotNull())
+   if(prefs != nullptr)
    {
-       m_LastPath = prefs->Get("LastSVProjCreatParentPath", "");
+       m_LastPath = QString::fromStdString(prefs->Get("LastSVProjCreatParentPath", ""));
    }
 
    if(m_LastPath=="")
@@ -74,8 +75,6 @@ sv4guiProjectCreate::sv4guiProjectCreate(mitk::DataStorage::Pointer dataStorage)
 
    ui->lineEditDir->setText(m_LastPath);
 }
-
-
 
 sv4guiProjectCreate::~sv4guiProjectCreate()
 {
@@ -117,19 +116,21 @@ void sv4guiProjectCreate::CreateNewProject()
     sv4guiProjectManager::AddProject(m_DataStorage, projName,projParentDir,true);
 
     m_LastPath=projParentDir;
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
+
     if (prefService)
     {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     }
     else
     {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr; 
     }
-    if(prefs.IsNotNull())
+
+    if(prefs != nullptr)
     {
-        prefs->Put("LastSVProjCreatParentPath", m_LastPath);
+        prefs->Put("LastSVProjCreatParentPath", m_LastPath.toStdString());
         prefs->Flush();
     }
 

@@ -70,6 +70,7 @@
 #include <QLabel>
 #include <QInputDialog>
 #include <QLineEdit>
+#include <QRegularExpression>
 
 #include <ctkPluginException.h>
 #include <service/event/ctkEventAdmin.h>
@@ -79,7 +80,7 @@
 #include <berryIActionBarConfigurer.h>
 #include <berryIWorkbenchWindow.h>
 #include <berryIWorkbenchPage.h>
-#include <berryIPreferencesService.h>
+#include <mitkIPreferencesService.h>
 #include <berryIPerspectiveRegistry.h>
 #include <berryIPerspectiveDescriptor.h>
 #include <berryIProduct.h>
@@ -108,7 +109,7 @@
 #include <QmitkStdMultiWidget.h>
 
 #include <itkConfigure.h>
-#include <vtkConfigure.h>
+//dp #include <vtkConfigure.h>
 #include <vtkVersionMacros.h>
 
 #include <mitkVersion.h>
@@ -256,8 +257,8 @@ void sv4guiWorkbenchWindowAdvisorHack::onIntro()
             berry::PlatformUI::GetWorkbench()->GetIntroManager()->HasIntro();
     if (!hasIntro)
     {
-        QRegExp reg("(.*)<title>(\\n)*");
-        QRegExp reg2("(\\n)*</title>(.*)");
+        QRegularExpression reg("(.*)<title>(\\n)*");
+        QRegularExpression reg2("(\\n)*</title>(.*)");
         QFile file(":/org.mitk.gui.qt.ext/index.html");
         file.open(QIODevice::ReadOnly | QIODevice::Text); //text file only for reading
 
@@ -337,6 +338,7 @@ void sv4guiWorkbenchWindowAdvisorHack::onHelpOpenHelpPerspective()
 
 void sv4guiWorkbenchWindowAdvisorHack::onAbout()
 {
-    auto   aboutDialog = new sv4guiAboutDialog(QApplication::activeWindow(),nullptr);
+    Qt::WindowFlags wflags = {};
+    auto   aboutDialog = new sv4guiAboutDialog(QApplication::activeWindow(), wflags);
     aboutDialog->open();
 }

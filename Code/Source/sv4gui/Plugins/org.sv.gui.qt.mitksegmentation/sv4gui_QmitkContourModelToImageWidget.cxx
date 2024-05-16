@@ -53,7 +53,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <mitkContourModelSetToImageFilter.h>
 #include <mitkSliceNavigationController.h>
 
-#include <QtConcurrentRun>
+//#include <QtConcurrentRun>
 #include <QFuture>
 #include <QFutureWatcher>
 #include <qmessagebox.h>
@@ -175,6 +175,8 @@ void QmitkContourModelToImageWidget::OnProcessingFinished()
 
 void QmitkContourModelToImageWidget::OnProcessPressed()
 {
+// [TODO:DaveP] convert later.
+#if use
   Q_D(QmitkContourModelToImageWidget);
 
   QmitkDataSelectionWidget* dataSelectionWidget = d->m_Controls.dataSelectionWidget;
@@ -202,7 +204,8 @@ void QmitkContourModelToImageWidget::OnProcessPressed()
     return;
   }
 
-  unsigned int timeStep = this->GetTimeNavigationController()->GetTime()->GetPos();
+  unsigned int timeStep = 0;
+  //dp unsigned int timeStep = this->GetTimeNavigationController()->GetTime()->GetPos();
 
   // Check if the selected contours are valid
   mitk::ContourModelSet::Pointer contourSet;
@@ -228,6 +231,8 @@ void QmitkContourModelToImageWidget::OnProcessPressed()
   // Start the computation in a background thread
   QFuture< mitk::Image::Pointer > future = QtConcurrent::run(d, &QmitkContourModelToImageWidgetPrivate::FillContourModelSetIntoImage, image, contourSet, timeStep);
   d->m_Watcher.setFuture(future);
+
+#endif
 }
 
 QmitkContourModelToImageWidget::QmitkContourModelToImageWidget(mitk::SliceNavigationController* timeNavigationController, QWidget* parent)

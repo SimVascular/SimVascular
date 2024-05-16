@@ -44,6 +44,9 @@
 #include <mitkStatusBar.h>
 #include <mitkIOUtil.h>
 
+#include <mitkIPreferences.h>
+#include <mitkIPreferencesService.h>
+
 #include <berryPlatform.h>
 
 #include <QFileDialog>
@@ -135,9 +138,10 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
     ui->btnSave->setEnabled(false);
 
     // Get paths for the external solvers
-    berry::IPreferences::Pointer prefs = this->GetPreferences();
-    berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
-    this->OnPreferencesChanged(berryprefs);
+    mitk::IPreferences* prefs = this->GetPreferences();
+    this->OnPreferencesChanged(prefs);
+    //dp mitk::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
+    //dp this->OnPreferencesChanged(berryprefs);
 
     ui->comboBoxRemesher->setEnabled(false);
 }
@@ -329,7 +333,8 @@ void sv4guisvFSIView::SetupPhysicsPanel()
 void sv4guisvFSIView::SetupDomainsPanel()
 {
     //connect(ui->comboBoxNsd, SIGNAL(currentTextChanged(const QString &)), this, SLOT(SetNsd(const QString &)));
-    SetNsd(QString(3));
+    SetNsd(QString("3"));
+
 //    connect(ui->btnAddMesh, SIGNAL(clicked()), this, SLOT(AddMesh()));
     connect(ui->btnAddMeshComplete, SIGNAL(clicked()), this, SLOT(AddMeshComplete()));
     connect(ui->comboBoxDomains, SIGNAL(currentTextChanged(const QString &)), this, SLOT(SelectDomain(const QString &)));
@@ -530,12 +535,12 @@ void sv4guisvFSIView::Hidden()
     m_isVisible = false;
 }
 
-void sv4guisvFSIView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
+void sv4guisvFSIView::OnPreferencesChanged(const mitk::IPreferences* prefs)
 {
     if(prefs==nullptr)
         return;
 
-    m_ExternalSolverPath=prefs->Get("svFSI solver path","");
+    m_ExternalSolverPath = QString::fromStdString(prefs->Get("svFSI solver path",""));
 }
 
 void sv4guisvFSIView::DataChanged()
@@ -639,12 +644,13 @@ void sv4guisvFSIView::AddMeshComplete()
         return;
     }
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
+
     if (prefService) {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     } else {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr;
     }
 
     // QString lastFileOpenPath=prefs->Get("LastFileOpenPath", "");
@@ -665,8 +671,8 @@ void sv4guisvFSIView::AddMeshComplete()
         return;
     }
 
-    if(prefs.IsNotNull()) {
-        prefs->Put("LastFileOpenPath", dirPath);
+    if(prefs != nullptr) { 
+        prefs->Put("LastFileOpenPath", dirPath.toStdString());
         prefs->Flush();
     }
 
@@ -1863,12 +1869,12 @@ void sv4guisvFSISolverProcessHandler::UpdateStatus()
         QTextStream in(&historFile);
         QString content=in.readAll();
 
-        QStringList list=content.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+        QStringList list=content.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
         info=list.last();
 
         std::cout<<info.toStdString()<<std::endl;
 
-        list=info.split(QRegExp("[(),{}-\\s+]"),QString::SkipEmptyParts);
+        list=info.split(QRegularExpression("[(),{}-\\s+]"), Qt::SkipEmptyParts);
 
         if(list.size()>1)
         {

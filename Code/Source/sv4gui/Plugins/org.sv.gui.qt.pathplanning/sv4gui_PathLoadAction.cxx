@@ -36,8 +36,8 @@
 
 #include <mitkNodePredicateDataType.h>
 #include <berryPlatform.h>
-#include <berryIPreferences.h>
-#include <berryIPreferencesService.h>
+#include <mitkIPreferences.h>
+#include <mitkIPreferencesService.h>
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -64,21 +64,22 @@ void sv4guiPathLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNod
 
     try
     {
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
+
         if (prefService)
         {
             prefs = prefService->GetSystemPreferences()->Node("/General");
         }
         else
         {
-            prefs = berry::IPreferences::Pointer(0);
+            prefs = nullptr; 
         }
 
         QString lastFilePath="";
-        if(prefs.IsNotNull())
+        if(prefs != nullptr) 
         {
-            lastFilePath = prefs->Get("LastFileOpenPath", "");
+            lastFilePath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
         }
         if(lastFilePath=="")
             lastFilePath=QDir::homePath();
@@ -141,9 +142,9 @@ void sv4guiPathLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNod
             }
         }
 
-        if(prefs.IsNotNull())
+        if(prefs != nullptr) 
          {
-             prefs->Put("LastFileOpenPath", fileName);
+             prefs->Put("LastFileOpenPath", fileName.toStdString());
              prefs->Flush();
          }
     }

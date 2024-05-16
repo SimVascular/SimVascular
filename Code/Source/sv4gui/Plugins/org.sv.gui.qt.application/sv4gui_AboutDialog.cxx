@@ -37,7 +37,7 @@
 #include <QmitkModulesDialog.h>
 #include <mitkVersion.h>
 #include <itkConfigure.h>
-#include <vtkConfigure.h>
+//dp #include <vtkConfigure.h>
 #include <QPushButton>
 #include <vtkVersionMacros.h>
 

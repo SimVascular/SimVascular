@@ -51,7 +51,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include "mitkSegTool2D.h"
 #include "mitkStatusBar.h"
 
-#include "QmitkNewSegmentationDialog.h"
+//#include "QmitkNewSegmentationDialog.h"
 #include <QmitkSegmentationOrganNamesHandling.cpp>
 
 #include <QMessageBox>
@@ -205,7 +205,8 @@ void QmitkSegmentationView::RenderWindowPartActivated(mitk::IRenderWindowPart* r
     controllers.push_back(renderWindowPart->GetQmitkRenderWindow("axial")->GetSliceNavigationController());
     controllers.push_back(renderWindowPart->GetQmitkRenderWindow("sagittal")->GetSliceNavigationController());
     controllers.push_back(renderWindowPart->GetQmitkRenderWindow("coronal")->GetSliceNavigationController());
-    m_Controls->m_SlicesInterpolator->Initialize(toolManager, controllers);
+    // [TODO:DaveP] not sure how to convert this.
+    //dp m_Controls->m_SlicesInterpolator->Initialize(toolManager, controllers);
   }
 }
 
@@ -218,7 +219,7 @@ void QmitkSegmentationView::RenderWindowPartDeactivated(mitk::IRenderWindowPart*
   }
 }
 
-void QmitkSegmentationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
+void QmitkSegmentationView::OnPreferencesChanged(const mitk::IPreferences* prefs)
 {
    if (m_Controls != nullptr)
    {
@@ -236,6 +237,8 @@ void QmitkSegmentationView::OnPreferencesChanged(const berry::IBerryPreferences*
 
 void QmitkSegmentationView::CreateNewSegmentation()
 {
+// [TODO:DaveP] convert this later.
+#ifdef use 
    mitk::DataNode::Pointer node = mitk::ToolManagerProvider::GetInstance()->GetToolManager()->GetReferenceData(0);
    if (node.IsNotNull())
    {
@@ -245,7 +248,7 @@ void QmitkSegmentationView::CreateNewSegmentation()
        if (image->GetDimension() > 1)
        {
          // ask about the name and organ type of the new segmentation
-         QmitkNewSegmentationDialog* dialog = new QmitkNewSegmentationDialog(m_Parent); // needs a QWidget as parent, "this" is not QWidget
+         //dp QmitkNewSegmentationDialog* dialog = new QmitkNewSegmentationDialog(m_Parent); // needs a QWidget as parent, "this" is not QWidget
          QStringList organColors = mitk::OrganNamesHandling::GetDefaultOrganColorString();;
 
          
@@ -321,6 +324,8 @@ void QmitkSegmentationView::CreateNewSegmentation()
    {
      MITK_ERROR << "'Create new segmentation' button should never be clickable unless a patient image is selected...";
    }
+
+#endif
 }
 
 void QmitkSegmentationView::OnVisiblePropertyChanged()
@@ -383,6 +388,8 @@ void QmitkSegmentationView::OnBinaryPropertyChanged()
 
 void QmitkSegmentationView::NodeAdded(const mitk::DataNode *node)
 {
+// [TODO:DaveP] convert this later.
+#ifdef use 
   if (!m_IsOfTypeImagePredicate->CheckNode(node))
   {
     return;
@@ -450,6 +457,7 @@ void QmitkSegmentationView::NodeRemoved(const mitk::DataNode* node)
     this->SetToolManagerSelection(nullptr, nullptr);
     this->SetToolSelectionBoxesEnabled(false);
   }
+#endif
 }
 
 void QmitkSegmentationView::OnPatientComboBoxSelectionChanged( const mitk::DataNode* node )

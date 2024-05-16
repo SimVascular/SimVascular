@@ -54,7 +54,7 @@
 #include "sv4gui_SimulationPreferencePage.h"
 #include "ui_sv4gui_SimulationPreferencePage.h"
 
-#include <berryIPreferencesService.h>
+#include <mitkIPreferencesService.h>
 #include <berryPlatform.h>
 
 #include <mitkExceptionMacro.h>
@@ -181,7 +181,7 @@ void sv4guiSimulationPreferencePage::CreateQtControl(QWidget* parent)
 
     m_Ui->setupUi(m_Control);
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     Q_ASSERT(prefService);
 
     m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.simulation");
@@ -302,14 +302,14 @@ bool sv4guiSimulationPreferencePage::PerformOk()
     QString postsolverPath = m_Ui->lineEditPostsolverPath->text().trimmed();
 
     // Set the values of the solver paths in the MITK database.
-    m_Preferences->Put(PRE_SOLVER_PATH, presolverPath);
-    m_Preferences->Put(FLOW_SOLVER_PATH, flowsolverPath);
-    m_Preferences->Put(FLOW_SOLVER_NO_MPI_PATH, flowsolverNOMPIPath);
+    m_Preferences->Put(PRE_SOLVER_PATH, presolverPath.toStdString());
+    m_Preferences->Put(FLOW_SOLVER_PATH, flowsolverPath.toStdString());
+    m_Preferences->Put(FLOW_SOLVER_NO_MPI_PATH, flowsolverNOMPIPath.toStdString());
     m_Preferences->PutBool(USE_CUSTOM, useCustom);
-    m_Preferences->Put(POST_SOLVER_PATH, postsolverPath);
+    m_Preferences->Put(POST_SOLVER_PATH, postsolverPath.toStdString());
 
     if (useCustom) {
-        m_Preferences->Put(SOLVER_TEMPLATE_PATH, customTemplatePath);
+        m_Preferences->Put(SOLVER_TEMPLATE_PATH, customTemplatePath.toStdString());
     }
 
     return true;
@@ -323,12 +323,18 @@ bool sv4guiSimulationPreferencePage::PerformOk()
 //
 void sv4guiSimulationPreferencePage::Update()
 {
-    m_Ui->lineEditPresolverPath->setText(m_Preferences->Get("presolver path",""));
-    m_Ui->lineEditFlowsolverPath->setText(m_Preferences->Get("flowsolver path",""));
-    m_Ui->lineEditFlowsolverNOMPIPath->setText(m_Preferences->Get("flowsolver nompi path",""));
+    m_Ui->lineEditPresolverPath->setText(QString::fromStdString(m_Preferences->Get("presolver path","")));
+
+    m_Ui->lineEditFlowsolverPath->setText(QString::fromStdString(m_Preferences->Get("flowsolver path","")));
+
+    m_Ui->lineEditFlowsolverNOMPIPath->setText(QString::fromStdString(m_Preferences->Get("flowsolver nompi path","")));
+
     //m_Ui->checkBoxUseMPI->setChecked(m_Preferences->GetBool("use mpi", true));
+
     m_Ui->checkBoxUseCustom->setChecked(m_Preferences->GetBool("use custom", false));
-    m_Ui->lineEditCustomTemplatePath->setText(m_Preferences->Get("solver template path",""));
-    m_Ui->lineEditPostsolverPath->setText(m_Preferences->Get("postsolver path",""));
+
+    m_Ui->lineEditCustomTemplatePath->setText(QString::fromStdString(m_Preferences->Get("solver template path","")));
+
+    m_Ui->lineEditPostsolverPath->setText(QString::fromStdString(m_Preferences->Get("postsolver path","")));
 }
 

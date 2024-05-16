@@ -457,7 +457,7 @@ int vtkSVCenterlines::RequestData(
   vtkNew(vtkThreshold, mAbsThresholder);
   mAbsThresholder->SetInputData(newEdgePd);
   mAbsThresholder->SetInputArrayToProcess(0, 0, 0, 1, "MAbs");
-  mAbsThresholder->ThresholdBetween(mAbsThr, mAbsRange[1]);
+  //dp mAbsThresholder->ThresholdBetween(mAbsThr, mAbsRange[1]);
   mAbsThresholder->Update();
   vtkDebugMacro("Thresholded MAbs: " << mAbsThresholder->GetOutput()->GetNumberOfCells());
   // ------------------------------------------------------------------------
@@ -470,7 +470,7 @@ int vtkSVCenterlines::RequestData(
   vtkNew(vtkThreshold, mRelThresholder);
   mRelThresholder->SetInputData(mAbsThresholder->GetOutput());
   mRelThresholder->SetInputArrayToProcess(0, 0, 0, 1, "MRel");
-  mRelThresholder->ThresholdBetween(mRelThr, mRelRange[1]);
+  //dp mRelThresholder->ThresholdBetween(mRelThr, mRelRange[1]);
   mRelThresholder->Update();
   vtkDebugMacro("Thresholded MRel: " << mRelThresholder->GetOutput()->GetNumberOfCells());
   // ------------------------------------------------------------------------
@@ -509,7 +509,7 @@ int vtkSVCenterlines::RequestData(
   // Loop through
   for (int i=0; i<connector->GetNumberOfExtractedRegions(); i++)
   {
-    regionThresholder->ThresholdBetween(i, i);
+    //dp regionThresholder->ThresholdBetween(i, i);
     regionThresholder->Update();
 
     vtkDebugMacro("Thresholded region " << i << " " << regionThresholder->GetOutput()->GetNumberOfCells());
@@ -566,7 +566,7 @@ int vtkSVCenterlines::RequestData(
   vtkNew(vtkThreshold, finalThreshold);
   finalThreshold->SetInputData(nextEdgePd);
   finalThreshold->SetInputArrayToProcess(0, 0, 0, 1, "RemovalIteration");
-  finalThreshold->ThresholdBetween(finalRange[1], finalRange[1]);
+  //dp finalThreshold->ThresholdBetween(finalRange[1], finalRange[1]);
   finalThreshold->Update();
 
   // Surface

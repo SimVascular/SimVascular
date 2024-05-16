@@ -66,6 +66,8 @@ QmitkSegmentationUtilitiesView::~QmitkSegmentationUtilitiesView()
 
 void QmitkSegmentationUtilitiesView::CreateQtPartControl(QWidget* parent)
 {
+// [TODO:DaveP] convert later
+#if use
   m_Controls.setupUi(parent);
 
   mitk::IRenderWindowPart* renderWindowPart = this->GetRenderWindowPart();
@@ -85,6 +87,8 @@ void QmitkSegmentationUtilitiesView::CreateQtPartControl(QWidget* parent)
   this->AddUtilityWidget(m_ImageMaskingWidget, QIcon(":/SegmentationUtilities/ImageMasking_48x48.png"), "Image Masking");
   this->AddUtilityWidget(m_MorphologicalOperationsWidget, QIcon(":/SegmentationUtilities/MorphologicalOperations_48x48.png"), "Morphological Operations");
   this->AddUtilityWidget(m_SurfaceToImageWidget, QIcon(":/SegmentationUtilities/SurfaceToImage_48x48.png"), "Surface To Image");
+
+#endif
 }
 
 void QmitkSegmentationUtilitiesView::AddUtilityWidget(QWidget* widget, const QIcon& icon, const QString& text)
@@ -99,6 +103,7 @@ void QmitkSegmentationUtilitiesView::SetFocus()
 
 void QmitkSegmentationUtilitiesView::RenderWindowPartActivated(mitk::IRenderWindowPart* renderWindowPart)
 {
+/* [TODO:DaveP] convert later
   mitk::SliceNavigationController* timeNavigationController = renderWindowPart->GetTimeNavigationController();
 
   m_BooleanOperationsWidget->SetTimeNavigationController(timeNavigationController);
@@ -106,6 +111,7 @@ void QmitkSegmentationUtilitiesView::RenderWindowPartActivated(mitk::IRenderWind
   m_ImageMaskingWidget->SetTimeNavigationController(timeNavigationController);
   m_MorphologicalOperationsWidget->SetTimeNavigationController(timeNavigationController);
   m_SurfaceToImageWidget->SetTimeNavigationController(timeNavigationController);
+*/
 }
 
 void QmitkSegmentationUtilitiesView::RenderWindowPartDeactivated(mitk::IRenderWindowPart*)

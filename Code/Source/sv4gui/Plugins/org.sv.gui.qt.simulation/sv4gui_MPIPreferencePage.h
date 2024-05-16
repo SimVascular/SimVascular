@@ -41,7 +41,7 @@
 
 #include <sv4gui_MPIPreferences.h>
 
-#include <berryIPreferences.h>
+#include <mitkIPreferences.h>
 #include <berryIQtPreferencePage.h>
 
 namespace Ui {
@@ -53,8 +53,8 @@ class sv4guiMPIPreferencePage;
 // The keys are used to store property values in a MITK database.
 //
 namespace sv4guiMPIPreferenceDBKey {
-    const QString MPI_EXEC_PATH = "mpiexec path";
-    const QString MPI_IMPLEMENTATION = "mpi implementation";
+    const std::string MPI_EXEC_PATH = "mpiexec path";
+    const std::string MPI_IMPLEMENTATION = "mpi implementation";
 };
 
 class sv4guiMPIPreferencePage : public QObject, public berry::IQtPreferencePage
@@ -81,7 +81,7 @@ private:
   void SetMpiExec();
   void SetMpiImplementation();
 
-  berry::IPreferences::Pointer m_Preferences;
+  mitk::IPreferences* m_Preferences;
   QScopedPointer<Ui::sv4guiMPIPreferencePage> m_Ui;
   QWidget* m_Control;
   sv4guiMPIPreferences m_DefaultPrefs;

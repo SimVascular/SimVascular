@@ -32,8 +32,8 @@
 #include "sv4gui_ProjectShowModelFullAction.h"
 #include "sv4gui_ProjectManager.h"
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <mitkNodePredicateDataType.h>

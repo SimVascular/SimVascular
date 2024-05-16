@@ -47,8 +47,8 @@
 
 #include "sv4gui_DataNodeOperation.h"
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <QmitkRenderWindow.h>
@@ -67,6 +67,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QFileDialog>
+#include <QRegularExpression>
 
 #include <iostream>
 using namespace std;
@@ -426,7 +427,7 @@ void sv4guiMeshEdit::TableRegionListSelectionChanged( const QItemSelection & /*s
     if(m_SphereWidget&&m_SphereWidget->GetEnabled())
     {
         m_SphereWidget->GetSphereProperty()->SetColor(1.0,0.0,0.0);
-        QStringList plist = params.split(QRegExp("\\s+"));
+        QStringList plist = params.split(QRegularExpression("\\s+"));
         m_SphereWidget->SetRadius(plist[0].toDouble());
         m_SphereWidget->SetCenter(plist[1].toDouble(),plist[2].toDouble(),plist[3].toDouble());
     }
@@ -470,7 +471,7 @@ void sv4guiMeshEdit::TableDomainsListSelectionChanged( const QItemSelection & /*
     QStandardItem* itemLocation= tableModel->item(row,2);
     QString location=itemLocation->text();
 
-    QStringList plist = location.split(QRegExp("\\s+"));
+    QStringList plist = location.split(QRegularExpression("\\s+"));
     if(plist.size()==3)
     {
         mitk::Point3D point;
@@ -887,7 +888,7 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsT()
 
         QStandardItem* itemParams= m_TableModelRegion->item(i,2);
         QString params=itemParams->text();
-        QStringList plist = params.split(QRegExp("\\s+"));
+        QStringList plist = params.split(QRegularExpression("\\s+"));
 
         if(!localSize.isEmpty())
             cmds.push_back("sphereRefinement " + localSize.toStdString() + " " + plist[0].toStdString()
@@ -935,7 +936,7 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsT()
 
         QStandardItem* itemLocation= m_TableModelDomains->item(i,2);
         QString location=itemLocation->text();
-        QStringList locationList = location.split(QRegExp("\\s+"));
+        QStringList locationList = location.split(QRegularExpression("\\s+"));
 
         if (type=="Hole")
         {
@@ -1122,7 +1123,7 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsM()
 
         QStandardItem* itemParams= m_TableModelRegion->item(i,2);
         QString params=itemParams->text();
-        QStringList plist = params.split(QRegExp("\\s+"));
+        QStringList plist = params.split(QRegularExpression("\\s+"));
 
         if(!localSize.isEmpty())
             cmds.push_back("sphereRefinement " + localSize.toStdString() + " " + plist[0].toStdString()
@@ -1167,6 +1168,7 @@ void sv4guiMeshEdit::Hidden()
 
 int sv4guiMeshEdit::GetTimeStep()
 {
+/* [TODO:DaveP] i don't know how to convert this.
     mitk::SliceNavigationController* timeNavigationController = nullptr;
     if(m_renderWindow)
     {
@@ -1177,6 +1179,8 @@ int sv4guiMeshEdit::GetTimeStep()
         return timeNavigationController->GetTime()->GetPos();
     else
         return 0;
+*/
+   return 0;
 }
 
 void sv4guiMeshEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
@@ -2269,24 +2273,25 @@ void sv4guiMeshEdit::SetResultFile()
 {
     QString lastFileOpenPath=ui->lineEditResultFile->text().trimmed();
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
+
     if (prefService)
     {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     }
     else
     {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr; 
     }
 
     if(lastFileOpenPath=="" || !QFile(lastFileOpenPath).exists())
     {
         lastFileOpenPath="";
 
-        if(prefs.IsNotNull())
+        if(prefs != nullptr)
         {
-            lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+            lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
         }
         if(lastFileOpenPath=="")
             lastFileOpenPath=QDir::homePath();
@@ -2299,9 +2304,9 @@ void sv4guiMeshEdit::SetResultFile()
     if(resultVtuFile.isEmpty())
         return;
 
-    if(prefs.IsNotNull())
+    if(prefs != nullptr)
      {
-         prefs->Put("LastFileOpenPath", resultVtuFile);
+         prefs->Put("LastFileOpenPath", resultVtuFile.toStdString());
          prefs->Flush();
      }
 

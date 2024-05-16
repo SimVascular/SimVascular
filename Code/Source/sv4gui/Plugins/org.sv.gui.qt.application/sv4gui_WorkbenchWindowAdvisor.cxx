@@ -77,7 +77,7 @@
 #include <berryIActionBarConfigurer.h>
 #include <berryIWorkbenchWindow.h>
 #include <berryIWorkbenchPage.h>
-#include <berryIPreferencesService.h>
+#include <mitkIPreferencesService.h>
 #include <berryIPerspectiveRegistry.h>
 #include <berryIPerspectiveDescriptor.h>
 #include <berryIProduct.h>
@@ -106,7 +106,7 @@
 #include <QmitkStdMultiWidget.h>
 
 #include <itkConfigure.h>
-#include <vtkConfigure.h>
+//dp #include <vtkConfigure.h>  what is this?
 #include <vtkVersionMacros.h>
 
 #include <mitkVersion.h>
@@ -581,15 +581,20 @@ void sv4guiWorkbenchWindowAdvisor::PostWindowCreate()
     searchPaths.push_front( QString(":/org_mitk_icons/icons/") );
     QIcon::setThemeSearchPaths( searchPaths );
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer stylePref = prefService->GetSystemPreferences()->Node(berry::QtPreferences::QT_STYLES_NODE);
-    //QString iconTheme = stylePref->Get(berry::QtPreferences::QT_ICON_THEME, "<<default>>");
-    QString iconTheme = stylePref->Get(berry::QtPreferences::QT_STYLES_NODE, "<<default>>");
-    if( iconTheme == QString( "<<default>>" ) )
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* stylePref = prefService->GetSystemPreferences()->Node(berry::QtPreferences::QT_STYLES_NODE);
+
+    auto iconTheme = stylePref->Get(berry::QtPreferences::QT_STYLES_NODE, "<<default>>");
+    //dp QString iconTheme = stylePref->Get(berry::QtPreferences::QT_STYLES_NODE, "<<default>>");
+
+    if( iconTheme == "<<default>>")
+    //dp if( iconTheme == QString( "<<default>>" ) )
     {
-        iconTheme = QString( "tango" );
+        iconTheme = "tango";
+        //dp iconTheme = QString( "tango" );
     }
-    QIcon::setThemeName( iconTheme );
+    QIcon::setThemeName( QString::fromStdString(iconTheme));
+    //dp QIcon::setThemeName( iconTheme );
 
     // ==== Application menu ============================
 
@@ -1174,7 +1179,8 @@ void sv4guiWorkbenchWindowAdvisor::ShowSVView()
     if(list.size()==0)
         return;
 
-    QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
+    auto nodes = QList<mitk::DataNode::Pointer>(list.begin(), list.end());
+    //dp QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
 
     if(nodes.size() < 1)
     {
@@ -1541,7 +1547,8 @@ void sv4guiWorkbenchWindowAdvisor::RemoveSelectedNodes( bool )
     if(list.size()==0)
         return;
 
-    QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
+    auto nodes = QList<mitk::DataNode::Pointer>(list.begin(), list.end());
+    //dp QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
 
     if(nodes.size() < 1)
     {
@@ -1639,7 +1646,8 @@ void sv4guiWorkbenchWindowAdvisor::RenameSelectedNode( bool )
     if(list.size()==0)
         return;
 
-    QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
+    auto nodes = QList<mitk::DataNode::Pointer>(list.begin(), list.end());
+    //dp QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
 
     if(nodes.size() < 1)
     {
@@ -1713,7 +1721,8 @@ void sv4guiWorkbenchWindowAdvisor::CopyDataNode( bool )
     if(list.size()==0)
         return;
 
-    QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
+    auto nodes = QList<mitk::DataNode::Pointer>(list.begin(), list.end());
+    //dp QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
 
     if(nodes.size() < 1)
     {
@@ -1738,7 +1747,8 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
     if(list.size()==0)
         return;
 
-    QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
+    auto nodes = QList<mitk::DataNode::Pointer>(list.begin(), list.end());
+    //dp QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
 
     if(nodes.size() < 1)
     {

@@ -35,8 +35,8 @@
 
 #include <mitkNodePredicateDataType.h>
 #include <berryPlatform.h>
-#include <berryIPreferences.h>
-#include <berryIPreferencesService.h>
+#include <mitkIPreferences.h>
+#include <mitkIPreferencesService.h>
 
 #include <QFileDialog>
 
@@ -51,7 +51,6 @@ sv4guiPathLegacySaveAction::~sv4guiPathLegacySaveAction()
 void sv4guiPathLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
-
     mitk::NodePredicateDataType::Pointer isPathFolder = mitk::NodePredicateDataType::New("sv4guiPathFolder");
 
     if(!isPathFolder->CheckNode(selectedNode))
@@ -61,21 +60,22 @@ void sv4guiPathLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selec
 
     try
     {
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
+
         if (prefService)
         {
             prefs = prefService->GetSystemPreferences()->Node("/General");
         }
         else
         {
-            prefs = berry::IPreferences::Pointer(0);
+            prefs = nullptr;
         }
 
         QString lastFilePath="";
-        if(prefs.IsNotNull())
+        if(prefs != nullptr) 
         {
-            lastFilePath = prefs->Get("LastFileSavePath", "");
+            lastFilePath = QString::fromStdString(prefs->Get("LastFileSavePath", ""));
         }
         if(lastFilePath=="")
             lastFilePath=QDir::homePath();
@@ -90,9 +90,9 @@ void sv4guiPathLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selec
             if ( fileName.right(6) != ".paths" ) fileName += ".paths";
 
             sv4guiPathLegacyIO::WriteFile(m_DataStorage->GetDerivations (selectedNode),fileName);
-            if(prefs.IsNotNull())
+            if(prefs != nullptr) 
              {
-                 prefs->Put("LastFileSavePath", fileName);
+                 prefs->Put("LastFileSavePath", fileName.toStdString());
                  prefs->Flush();
              }
         }

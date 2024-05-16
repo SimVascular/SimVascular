@@ -56,7 +56,7 @@
 #include "ui_sv4gui_MPIPreferencePage.h"
 #include "sv4gui_MPIPreferences.h"
 
-#include <berryIPreferencesService.h>
+#include <mitkIPreferencesService.h>
 #include <berryPlatform.h>
 
 #include <mitkExceptionMacro.h>
@@ -101,7 +101,7 @@ void sv4guiMPIPreferencePage::CreateQtControl(QWidget* parent)
 
     m_Ui->setupUi(m_Control);
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     Q_ASSERT(prefService);
 
     // Get the preference values from the MITK database.
@@ -130,10 +130,10 @@ void sv4guiMPIPreferencePage::CreateQtControl(QWidget* parent)
 void sv4guiMPIPreferencePage::Update()
 {
     auto mpiexcPath = m_Preferences->Get(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH,"");
-    m_Ui->lineEditMPIExecPath->setText(mpiexcPath);
+    m_Ui->lineEditMPIExecPath->setText(QString::fromStdString(mpiexcPath));
 
     auto mpiImpl = m_Preferences->Get(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, ""); 
-    m_Ui->MpiImplementationLineEdit->setText(mpiImpl);
+    m_Ui->MpiImplementationLineEdit->setText(QString::fromStdString(mpiImpl));
 }
 
 //-------------------
@@ -253,10 +253,10 @@ bool sv4guiMPIPreferencePage::PerformOk()
     auto mpiImpl = m_Ui->MpiImplementationLineEdit->text().trimmed();
 
     // Set MPI implementation.
-    m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, mpiImpl); 
+    m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, mpiImpl.toStdString()); 
 
     // Set mpiexec path.
-    m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, mpiExecPath);
+    m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, mpiExecPath.toStdString());
 
     return true;
 }

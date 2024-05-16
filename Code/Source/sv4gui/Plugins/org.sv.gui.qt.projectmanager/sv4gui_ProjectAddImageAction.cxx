@@ -34,8 +34,8 @@
 #include "sv4gui_ProjectManager.h"
 #include "sv4gui_DataNodeOperationInterface.h"
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <mitkNodePredicateDataType.h>
@@ -160,18 +160,18 @@ void sv4guiProjectAddImageAction::ReadImage(QString& imageFilePath, mitk::DataNo
 {
   std::cout << std::endl;
   std::cout << "========== sv4guiProjectAddImageAction::ReadImage ========== " << std::endl;
-  berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-  berry::IPreferences::Pointer prefs;
+  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  mitk::IPreferences* prefs;
 
   if (prefService) {
       prefs = prefService->GetSystemPreferences()->Node("/General");
   } else {
-      prefs = berry::IPreferences::Pointer(0);
+      prefs = nullptr; 
   }
 
   QString lastFileOpenPath = "";
-  if (prefs.IsNotNull()) {
-      lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+  if (prefs != nullptr) { 
+      lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
   }
 
   if (lastFileOpenPath == "") {
@@ -201,8 +201,8 @@ void sv4guiProjectAddImageAction::ReadImage(QString& imageFilePath, mitk::DataNo
       return;
   }
 
-  if (prefs.IsNotNull()) {
-    prefs->Put("LastFileOpenPath", imageFilePath);
+  if (prefs != nullptr) { 
+    prefs->Put("LastFileOpenPath", imageFilePath.toStdString());
     prefs->Flush();
   }
 

@@ -44,7 +44,7 @@
 
 #include "SimVascular_Init_py.h"
 
-#include "vtkToolkits.h"
+//dp #include "vtkToolkits.h"
 
 #include "Geometry_PyModule.h"
 #include "Imaging_PyModule.h"

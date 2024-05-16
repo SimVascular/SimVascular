@@ -533,7 +533,8 @@ void QmitkDeformableClippingPlaneView::OnCalculateClippingVolume()
 
       QListWidgetItem* item = new QListWidgetItem();
       item->setText(QString::fromStdString(stream.str()));
-      item->setBackgroundColor(qcolor);
+      item->setBackground(qcolor);
+      //dp item->setBackgroundColor(qcolor);
       m_Controls.volumeList->addItem(item);
     }
   }

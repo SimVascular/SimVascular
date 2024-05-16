@@ -41,8 +41,8 @@
 #include <berryPlatform.h>
 #include <berryPlatformUI.h>
 #include <berryISelectionService.h>
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 
 #include <mitkProgressBar.h>
 #include <mitkStatusBar.h>
@@ -128,8 +128,8 @@ void sv4guiFileSaveProjectAsAction::Run()
 
         std::list< mitk::DataNode::Pointer > selectedList = nodeSelection->GetSelectedDataNodes();
 
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
 
         if (prefService)
         {
@@ -137,7 +137,7 @@ void sv4guiFileSaveProjectAsAction::Run()
         }
         else
         {
-            prefs = berry::IPreferences::Pointer(0);
+            prefs = nullptr; 
         }
 
 
@@ -154,9 +154,9 @@ void sv4guiFileSaveProjectAsAction::Run()
           }
 
           QString lastSVProjPath="";
-          if(prefs.IsNotNull())
+          if(prefs != nullptr)
           {
-              lastSVProjPath = prefs->Get("LastSVProjPath", prefs->Get("LastSVProjCreatParentPath", ""));
+              lastSVProjPath = QString::fromStdString(prefs->Get("LastSVProjPath", prefs->Get("LastSVProjCreatParentPath", "")));
           }
 
           if(lastSVProjPath=="")
