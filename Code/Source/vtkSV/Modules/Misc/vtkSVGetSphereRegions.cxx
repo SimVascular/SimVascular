@@ -380,11 +380,15 @@ int vtkSVGetSphereRegions::SetSphereRegions(vtkPolyData *pd, vtkPolyData *lines,
   radius = new double[numLoops];
 
   // Set up loop thresholder
+
   thresholder->SetInputData(lines);
   thresholder->SetInputArrayToProcess(0,0,0,1,"LoopId");
+
   for (int i=0;i<numLoops;i++)
   {
     // Threshold the loop
+    thresholder->SetLowerThreshold(i);
+    thresholder->SetUpperThreshold(i);
     //dp thresholder->ThresholdBetween(i,i);
     thresholder->Update();
 

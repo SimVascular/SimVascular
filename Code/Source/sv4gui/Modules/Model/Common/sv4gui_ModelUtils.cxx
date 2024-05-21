@@ -42,6 +42,7 @@
 #include "sv_vmtk_utils.h"
 #include "sv_PolyData.h"
 #include "sv_polydatasolid_utils.h"
+#include "sv_vtk_utils.h"
 
 #include <vtkCellType.h>
 #include <vtkFillHolesFilter.h>
@@ -1288,12 +1289,14 @@ std::vector<sv4guiPathElement::sv4guiPathPoint> sv4guiModelUtils::ConvertToPathP
     return pathPoints;
 }
 
-vtkSmartPointer<vtkPolyData> sv4guiModelUtils::GetThresholdRegion(vtkSmartPointer<vtkPolyData> pd, vtkDataObject::FieldAssociations dataType, std::string arrayName, double minValue, double maxValue )
+vtkSmartPointer<vtkPolyData> sv4guiModelUtils::GetThresholdRegion(vtkSmartPointer<vtkPolyData> pd, 
+    vtkDataObject::FieldAssociations dataType, std::string arrayName, double minValue, double maxValue )
 {
-    vtkSmartPointer<vtkThreshold> thresholder=vtkSmartPointer<vtkThreshold>::New();
+    auto thresholder = vtkSmartPointer<vtkThreshold>::New();
     thresholder->SetInputData(pd);
     thresholder->SetInputArrayToProcess(0, 0, 0, dataType, arrayName.c_str());
-    //dp thresholder->ThresholdBetween(minValue, maxValue);
+    thresholder->SetLowerThreshold(minValue);
+    thresholder->SetUpperThreshold(maxValue);
     thresholder->Update();
 
     vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer=vtkSmartPointer<vtkDataSetSurfaceFilter>::New();

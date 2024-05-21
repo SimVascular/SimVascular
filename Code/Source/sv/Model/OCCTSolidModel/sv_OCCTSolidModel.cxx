@@ -1707,33 +1707,36 @@ int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd,double &max_dist) const
     cleaner->SetInputData(pd);
     cleaner->PointMergingOn();
     cleaner->Update();
+
+    auto threshold_surface = VtkUtils_ThresholdSurface(7.0, 7.0, "MESH_TYPES", cleaner->GetOutput());
+
+    #ifdef dp_old 
     vtkSmartPointer<vtkThreshold> thresholder =
       vtkSmartPointer<vtkThreshold>::New();
     thresholder->SetInputData(cleaner->GetOutput());
+
     //Set Input Array to 0 port,0 connection,1 for Cell Data, and MESh_TYPES is the type name
-    thresholder->SetInputArrayToProcess(0,0,0,1,"MESH_TYPES");
     //Source polydata is on MESH_TYPE 7
-    //dp thresholder->ThresholdBetween(7,7);
+    thresholder->SetInputArrayToProcess(0,0,0,1,"MESH_TYPES");
+    thresholder->ThresholdBetween(7,7);
     thresholder->Update();
     //Extract surface
     vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
       vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
     surfacer->SetInputData(thresholder->GetOutput());
     surfacer->Update();
-    //For polydata of just edges, MESH_TYPE is not 7
-    //Only want if not edges
-    //fprintf(stderr,"Num Points bef! %d\n",surfacer->GetOutput()->GetNumberOfPoints());
-    //  vtkSmartPointer<vtkQuadricDecimation> decimator =
-    //    vtkSmartPointer<vtkQuadricDecimation>::New();
-    //  decimator->SetInputData(surfacer->GetOutput());
-    //  decimator->SetTargetReduction(0.2);
-    //  decimator->GetOutput();
-    //  pd->DeepCopy(decimator->GetOutput());
+    #endif
+
+    if (threshold_surface->GetNumberOfPoints() != 0)
+    {
+      pd->DeepCopy(threshold_surface);
+    }
+    /* dp
     if (surfacer->GetOutput()->GetNumberOfPoints() != 0)
     {
       pd->DeepCopy(surfacer->GetOutput());
     }
-    //fprintf(stderr,"Num Points now! %d\n",pd->GetNumberOfPoints());
+    */
   }
 
   return SV_OK;

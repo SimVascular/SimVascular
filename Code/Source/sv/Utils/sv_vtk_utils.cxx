@@ -38,12 +38,15 @@
 #include "sv_misc_utils.h"
 #include "sv_cgeom.h"
 
+#include <vtkDataSetSurfaceFilter.h>
+#include <vtkSmartPointer.h>
+#include <vtkThreshold.h>
+#include <vtkUnstructuredGrid.h>
 
 #define START  -1
 #define INTERMED  0
 #define DEADEND   1
 #define CLOSED    2
-
 
 typedef struct {
   double x, y, z;
@@ -78,6 +81,47 @@ static int GetStartPt( int *state, int stateSz );
 static int UpdateCells( int *cells, int numCells,
 			vtkIdType **newCells, int *numNewCells );
 
+//-------------------------
+// VtkUtils_ThresholdUgrid
+//-------------------------
+// Create a vtkUnstructuredGrid object from a threshold of a cellular 
+// data array contained in a vtkDataObject object.
+//
+vtkSmartPointer<vtkUnstructuredGrid>
+VtkUtils_ThresholdUgrid(const double lower, const double upper, const std::string& data_name, 
+    vtkDataObject* vtk_data)
+{
+  int idx = 0;
+  int port = 0;
+  int connection = 0;
+  auto fieldAssociation = vtkDataObject::FieldAssociations::FIELD_ASSOCIATION_CELLS;
+
+  auto threshold = vtkSmartPointer<vtkThreshold>::New();
+  threshold->SetLowerThreshold(lower);
+  threshold->SetUpperThreshold(upper);
+  threshold->SetInputData(vtk_data);
+  threshold->SetInputArrayToProcess(idx, port, connection, fieldAssociation, data_name.c_str());
+  threshold->Update();
+  return threshold->GetOutput();
+}
+
+//---------------------------
+// VtkUtils_ThresholdSurface
+//---------------------------
+// Create a vtkPolyData object from a threshold of a cellular 
+// data array contained in a vtkDataObject object.
+//
+vtkSmartPointer<vtkPolyData>
+VtkUtils_ThresholdSurface(const double lower, const double upper, const std::string& data_name, 
+    vtkDataObject* vtk_data)
+{
+  auto threshold_ugrid = VtkUtils_ThresholdUgrid(lower, upper, data_name, vtk_data);
+
+  auto surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+  surfacer->SetInputData(vtk_data);
+  surfacer->Update();
+  return surfacer->GetOutput();
+}
 
 // -----------------------
 // VtkUtils_NewVtkPolyData

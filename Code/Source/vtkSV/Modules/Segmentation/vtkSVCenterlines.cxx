@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "sv_vtk_utils.h"
+
 #include "vtkSVCenterlines.h"
 
 #include "vtkArrayCalculator.h"
@@ -454,32 +456,40 @@ int vtkSVCenterlines::RequestData(
   int mAbsThr = this->AbsoluteThreshold; // TODO: FIGURE OUT GOOD VALUE FOR THIS!!!
   double mAbsRange[2];
   newEdgePd->GetCellData()->GetArray("MAbs")->GetRange(mAbsRange);
+  auto mAbs_threshold = VtkUtils_ThresholdUgrid(mAbsThr, mAbsRange[1], "MAbs", newEdgePd);
+  /*dp 
   vtkNew(vtkThreshold, mAbsThresholder);
   mAbsThresholder->SetInputData(newEdgePd);
   mAbsThresholder->SetInputArrayToProcess(0, 0, 0, 1, "MAbs");
-  //dp mAbsThresholder->ThresholdBetween(mAbsThr, mAbsRange[1]);
+  mAbsThresholder->ThresholdBetween(mAbsThr, mAbsRange[1]);
   mAbsThresholder->Update();
   vtkDebugMacro("Thresholded MAbs: " << mAbsThresholder->GetOutput()->GetNumberOfCells());
-  // ------------------------------------------------------------------------
+  */
 
   // ------------------------------------------------------------------------
   // Threshold based on relative retention
   double mRelThr = this->RelativeThreshold;
   double mRelRange[2];
   newEdgePd->GetCellData()->GetArray("MRel")->GetRange(mRelRange);
+
+  auto MRel_threshold = VtkUtils_ThresholdUgrid(mAbsThr, mAbsRange[1], "MRel", mAbs_threshold);
+  /*dp
   vtkNew(vtkThreshold, mRelThresholder);
-  mRelThresholder->SetInputData(mAbsThresholder->GetOutput());
+  mRelThresholder->SetInputData(mAbs_threshold);
   mRelThresholder->SetInputArrayToProcess(0, 0, 0, 1, "MRel");
-  //dp mRelThresholder->ThresholdBetween(mRelThr, mRelRange[1]);
+  mRelThresholder->ThresholdBetween(mRelThr, mRelRange[1]);
   mRelThresholder->Update();
   vtkDebugMacro("Thresholded MRel: " << mRelThresholder->GetOutput()->GetNumberOfCells());
+  */
+
   // ------------------------------------------------------------------------
 
   // ------------------------------------------------------------------------
   // Get the medial edges
   // Get all separated regions from the thresholded polydata
   vtkNew(vtkConnectivityFilter, connector);
-  connector->SetInputData(mRelThresholder->GetOutput());
+  connector->SetInputData(MRel_threshold);
+  //dp connector->SetInputData(mRelThresholder->GetOutput());
   connector->SetExtractionModeToAllRegions();
   connector->ColorRegionsOn();
   connector->Update();

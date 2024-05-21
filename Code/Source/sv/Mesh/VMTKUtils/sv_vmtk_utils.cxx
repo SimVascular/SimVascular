@@ -40,6 +40,7 @@
  */
 
 #include "sv_vmtk_utils.h"
+#include "sv_vtk_utils.h"
 
 #include "SimVascular.h"
 #include "sv_tetgenmesh_utils.h"
@@ -1612,10 +1613,11 @@ int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMes
 
   // Create boundary layer surface mesh from cells with 'isSurface' array value 1. 
   //
+  /* dp
   auto thresholder = vtkSmartPointer<vtkThreshold>::New();
   thresholder->SetInputData(boundaryMesh);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, "isSurface");
-  //dp thresholder->ThresholdBetween(1, 1);
+  thresholder->ThresholdBetween(1, 1);
   thresholder->Update();
 
   auto surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
@@ -1623,27 +1625,35 @@ int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMes
   surfacer->Update();
 
   boundaryMeshSurface->DeepCopy(surfacer->GetOutput());
+  */
+  auto threshold_surface = VtkUtils_ThresholdSurface(1.0, 1.0, "isSurface", boundaryMesh);
+  boundaryMeshSurface->DeepCopy(threshold_surface);
 
   // Create boundary layer volume mesh from cells with 'isSurface' array value 0. 
   //
+  /* dp
   thresholder->SetInputData(boundaryMesh);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, "isSurface");
-  //dp thresholder->ThresholdBetween(0, 0);
+  thresholder->ThresholdBetween(0, 0);
   thresholder->Update();
-
   boundaryMeshVolume->DeepCopy(thresholder->GetOutput());
+  */
+  auto threshold_volume = VtkUtils_ThresholdUgrid(0.0, 0.0, "isSurface", boundaryMesh);
+  boundaryMeshVolume->DeepCopy(threshold_volume);
 
   // Create boundary layer mesh caps from cells with 'WallID' array value 0. 
   //
+  /* dp
   thresholder->SetInputData(surfaceWithSize);
   thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
-  //dp thresholder->ThresholdBetween(0,0);
+  dp thresholder->ThresholdBetween(0,0);
   thresholder->Update();
-
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
-
   surfaceMeshCaps->DeepCopy(surfacer->GetOutput());
+  */
+  auto threshold_caps = VtkUtils_ThresholdSurface(0.0, 0.0, "WallID", surfaceWithSize);
+  surfaceMeshCaps->DeepCopy(threshold_caps);
 
   // Set the values of the 'ModelFaceID' array for the caps to 9999(?). 
   //

@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "sv_vtk_utils.h"
+
 #include "vtkSVCenterlineGraph.h"
 
 #include "vtkCellArray.h"
@@ -397,26 +399,31 @@ int vtkSVCenterlineGraph::GetConnectingLineGroups(const int groupId, std::vector
  */
 int vtkSVCenterlineGraph::ComputeGlobalReferenceVectors(vtkSVCenterlineGCell *parent)
 {
+  auto threshold = VtkUtils_ThresholdUgrid(parent->GroupId, parent->GroupId,  this->GroupIdsArrayName, this->Lines); 
+  /* dp
   vtkNew(vtkThreshold, thresholder);
   thresholder->SetInputData(this->Lines);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, this->GroupIdsArrayName);
   //dp thresholder->ThresholdBetween(parent->GroupId, parent->GroupId);
   thresholder->Update();
   int numPts = thresholder->GetOutput()->GetNumberOfPoints();
+  */
+  int numPts = threshold->GetNumberOfPoints();
 
   double endPt0[3], endPt1[3];
   if (parent->Parent == nullptr && parent->Children.size() == 0)
   {
-    thresholder->GetOutput()->GetPoint(1, endPt0);
-    thresholder->GetOutput()->GetPoint(0, endPt1);
+    threshold->GetPoint(1, endPt0);
+    threshold->GetPoint(0, endPt1);
   }
   else
   {
-    thresholder->GetOutput()->GetPoint(numPts-2, endPt0);
-    thresholder->GetOutput()->GetPoint(numPts-1, endPt1);
+    threshold->GetPoint(numPts-2, endPt0);
+    threshold->GetPoint(numPts-1, endPt1);
   }
-  fprintf(stdout,"End pt 0 is: %.4f %.4f %.4f\n", endPt0[0], endPt0[1], endPt0[2]);
-  fprintf(stdout,"End pt 1 is: %.4f %.4f %.4f\n", endPt1[0], endPt1[1], endPt1[2]);
+
+  //fprintf(stdout,"End pt 0 is: %.4f %.4f %.4f\n", endPt0[0], endPt0[1], endPt0[2]);
+  //fprintf(stdout,"End pt 1 is: %.4f %.4f %.4f\n", endPt1[0], endPt1[1], endPt1[2]);
   vtkMath::Subtract(endPt0, endPt1, this->ReferenceVecs[0]);
   vtkMath::Normalize(this->ReferenceVecs[0]);
 
@@ -425,14 +432,21 @@ int vtkSVCenterlineGraph::ComputeGlobalReferenceVectors(vtkSVCenterlineGCell *pa
   {
     for (int i=0; i<numChildren; i++)
     {
+      double lower = parent->Children[i]->GroupId; 
+      double upper = lower;
+      auto threshold = VtkUtils_ThresholdSurface(lower, upper, this->GroupIdsArrayName, this->Lines); 
+      /*dp
       thresholder->SetInputData(this->Lines);
       thresholder->SetInputArrayToProcess(0, 0, 0, 1, this->GroupIdsArrayName);
-      //dp thresholder->ThresholdBetween(parent->Children[i]->GroupId, parent->Children[i]->GroupId);
+      thresholder->ThresholdBetween(parent->Children[i]->GroupId, parent->Children[i]->GroupId);
       thresholder->Update();
+      */
 
       double startPt[3], secondPt[3];
-      thresholder->GetOutput()->GetPoint(0, startPt);
-      thresholder->GetOutput()->GetPoint(1, secondPt);
+      threshold->GetPoint(0, startPt);
+      threshold->GetPoint(1, secondPt);
+      //dp thresholder->GetOutput()->GetPoint(0, startPt);
+      //dp thresholder->GetOutput()->GetPoint(1, secondPt);
 
       vtkMath::Subtract(secondPt, startPt, parent->Children[i]->BranchVec);
       vtkMath::Normalize(parent->Children[i]->BranchVec);
@@ -507,16 +521,21 @@ int vtkSVCenterlineGraph::ComputeBranchReferenceVectors(vtkSVCenterlineGCell *pa
 {
   //fprintf(stdout,"Child %d of parent %d, dir: %d\n", parent->Children[0]->GroupId, parent->GroupId, parent->Children[0]->BranchDir);
   //fprintf(stdout,"Child %d of parent %d, dir: %d\n", parent->Children[1]->GroupId, parent->GroupId, parent->Children[1]->BranchDir);
+
+  auto threshold = VtkUtils_ThresholdSurface(parent->GroupId, parent->GroupId,  this->GroupIdsArrayName, this->Lines); 
+  /*dp
   vtkNew(vtkThreshold, thresholder);
   thresholder->SetInputData(this->Lines);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, this->GroupIdsArrayName);
-  //dp thresholder->ThresholdBetween(parent->GroupId, parent->GroupId);
+  thresholder->ThresholdBetween(parent->GroupId, parent->GroupId);
   thresholder->Update();
   int numPts = thresholder->GetOutput()->GetNumberOfPoints();
+  */
+  int numPts = threshold->GetNumberOfPoints();
 
   double endPt0[3], endPt1[3];
-  thresholder->GetOutput()->GetPoint(numPts-2, endPt0);
-  thresholder->GetOutput()->GetPoint(numPts-1, endPt1);
+  threshold->GetPoint(numPts-2, endPt0);
+  threshold->GetPoint(numPts-1, endPt1);
 
   double vec0[3];
   vtkMath::Subtract(endPt0, endPt1, vec0);
@@ -529,14 +548,19 @@ int vtkSVCenterlineGraph::ComputeBranchReferenceVectors(vtkSVCenterlineGCell *pa
   int numChildren = parent->Children.size();
   for (int i=0; i<numChildren; i++)
   {
+    double lower = parent->Children[i]->GroupId; 
+    double upper = lower;
+    auto threshold = VtkUtils_ThresholdSurface(lower, upper, this->GroupIdsArrayName, this->Lines); 
+    /* dp
     thresholder->SetInputData(this->Lines);
     thresholder->SetInputArrayToProcess(0, 0, 0, 1, this->GroupIdsArrayName);
-    //dp thresholder->ThresholdBetween(parent->Children[i]->GroupId, parent->Children[i]->GroupId);
+    thresholder->ThresholdBetween(parent->Children[i]->GroupId, parent->Children[i]->GroupId);
     thresholder->Update();
+    */
 
     double startPt[3], secondPt[3];
-    thresholder->GetOutput()->GetPoint(0, startPt);
-    thresholder->GetOutput()->GetPoint(1, secondPt);
+    threshold->GetPoint(0, startPt);
+    threshold->GetPoint(1, secondPt);
 
     vtkMath::Subtract(secondPt, startPt, parent->Children[i]->BranchVec);
     vtkMath::Normalize(parent->Children[i]->BranchVec);

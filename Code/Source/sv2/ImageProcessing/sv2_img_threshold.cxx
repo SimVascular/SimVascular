@@ -33,6 +33,8 @@
 #include "sv_VTK.h"
 #include "vtkThresholdPoints.h"
 
+// [TODO:DaveP] This does not seem to be used anywhere.
+//
 int img_threshold (vtkStructuredPoints *image, vtkFloatingPointType thrMin, vtkFloatingPointType thrMax,
                    int max_num_pts, cvPolyData **result) {
 
