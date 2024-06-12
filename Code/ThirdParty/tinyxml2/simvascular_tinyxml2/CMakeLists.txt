@@ -30,10 +30,10 @@
 
 # Set  the minimum  required version  of cmake  for a  project.
 cmake_minimum_required(VERSION 3.10)
-project(TINYXML)
+project(TINYXML2)
 
 # source files for tinyxml2
-SET(SRCS tinyxml2.cpp) 
+SET(SRCS tinyxml2.cxx) 
 SET(HDRS tinyxml2.h)
 
 set(lib ${SV_LIB_THIRDPARTY_TINYXML2_NAME})
