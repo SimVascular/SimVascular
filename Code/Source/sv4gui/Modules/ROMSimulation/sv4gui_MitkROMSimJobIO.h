@@ -36,7 +36,7 @@
 
 #include "mitkAbstractFileIO.h"
 
-#include <tinyxml.h>
+#include "simvascular_tinyxml.h"
 
 class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiMitkROMSimJobIO : public mitk::AbstractFileIO
 {

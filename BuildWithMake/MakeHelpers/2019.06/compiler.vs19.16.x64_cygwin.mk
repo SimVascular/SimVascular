@@ -1,3 +1,4 @@
+
 # Copyright (c) Stanford University, The Regents of the University of
 #               California, and others.
 #
@@ -55,7 +56,8 @@ endif
     # use VS edition name, i.e. "Community" or "Enterprise" in the link below instead.
     # The path with */BuildTools/* is used because the GitHub automatic build
     # uses the BuildTools stand-alone.
-    SHAR            = "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/link.exe"
+    SHAR            := "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/link.exe"
+    #SHAR            = "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/link.exe"
     SOEXT           = dll
     STATICEXT       = lib
     OBJECTEXT       = obj

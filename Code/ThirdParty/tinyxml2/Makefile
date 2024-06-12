@@ -34,31 +34,31 @@ TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-TINYXML_SUBDIRS = simvascular_tinyxml
+TINYXML2_SUBDIRS = simvascular_tinyxml2
 
 lib:	createHeaderFile libsubdirs
 
 shared:
 
 libsubdirs:
-	@for i in ${TINYXML_SUBDIRS}; do ( \
+	@for i in ${TINYXML2_SUBDIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE)) ; done
 
 clean:
-	for i in ${TINYXML_SUBDIRS}; do ( \
+	for i in ${TINYXML2_SUBDIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) clean ) ; done
 
 veryclean: clean
-	rm -f simvascular_tinyxml.h
-	for i in ${TINYXML_SUBDIRS}; do ( \
+	rm -f simvascular_tinyxml2.h
+	for i in ${TINYXML2_SUBDIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) veryclean ) ; done
 
 createHeaderFile:
-	rm -f simvascular_tinyxml.h
-	@echo "#ifndef __simvascular_tinyxml_h" > simvascular_tinyxml.h
-	@echo "#define __simvascular_tinyxml_h" >> simvascular_tinyxml.h
-	@echo "#include <simvascular_tinyxml/tinyxml.h>" >> simvascular_tinyxml.h
-	@echo "#endif" >> simvascular_tinyxml.h
+	rm -f simvascular_tinyxml2.h
+	@echo "#ifndef __simvascular_tinyxml2_h" > simvascular_tinyxml2.h
+	@echo "#define __simvascular_tinyxml2_h" >> simvascular_tinyxml2.h
+	@echo "#include <simvascular_tinyxml2/tinyxml2.h>" >> simvascular_tinyxml2.h
+	@echo "#endif" >> simvascular_tinyxml2.h

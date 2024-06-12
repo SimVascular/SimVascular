@@ -28,4 +28,4 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#simvascular_third_party(tinyxml)
+#simvascular_third_party(tinyxml2)

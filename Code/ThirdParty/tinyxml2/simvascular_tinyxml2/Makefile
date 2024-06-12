@@ -36,11 +36,11 @@ include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR)
 
-HDRS	= tinystr.h tinyxml.h
+HDRS	= tinyxml2.h
 
-CXXSRCS	= tinyxml.cxx tinyxmlparser.cxx tinyxmlerror.cxx tinystr.cxx
+CXXSRCS	= tinyxml2.cxx
 
-TARGET_LIB_NAME = $(SV_LIB_THIRDPARTY_TINYXML_NAME)
+TARGET_LIB_NAME = $(SV_LIB_THIRDPARTY_TINYXML2_NAME)
 
 include $(TOP)/targetlib.mk
 
