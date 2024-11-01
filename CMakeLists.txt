@@ -37,20 +37,12 @@
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.24.0)
-#cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.10.0)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 Project(SV_TOP)
 #-----------------------------------------------------------------------------
-
-message(STATUS "========== SimVascular/CMakeLists ==========")
-
-set(CMAKE_CXX_STANDARD 17)
-
-cmake_policy(SET CMP0135 NEW)
-set(CMAKE_POLICY_DEFAULT_CMP0135 NEW)
 
 #-----------------------------------------------------------------------------
 # CMake module path inside of true simvascular source
@@ -89,8 +81,19 @@ option(SV_USE_MITK_SEGMENTATION "Enable building the MITK segmentation plugin" O
 #-----------------------------------------------------------------------------
 # Externals!
 
-set(SV_EXTERNALS_VERSION_NUMBER "2024.05" CACHE STRING "SimVascular Externals Release Version")
-#set(SV_EXTERNALS_VERSION_NUMBER "2022.10" CACHE STRING "SimVascular Externals Release Version")
+set(SV_FREETYPE_DIR "" CACHE PATH "FREETYPE install directory containing a configuration file")
+set(SV_GDCM_DIR "" CACHE PATH "GDCM install directory containing a configuration file")
+set(SV_HDF5_DIR "" CACHE PATH "hdf5 install directory containing a configuration file")
+set(SV_ITK_DIR "" CACHE PATH "ITK install directory containing a configuration file")
+set(SV_ML_DIR "" CACHE PATH "ML install directory containing a configuration file")
+set(SV_MMG_DIR "" CACHE PATH "MMG install directory containing a configuration file")
+set(SV_OPEN_CASCADE_DIR "" CACHE PATH "OpenCASCADE install directory containing a configuration file")
+set(SV_PYTHON_DIR"" CACHE PATH "PYTHON install directory containing a configuration file")
+set(SV_QT_DIR "" CACHE PATH "Qt install directory containing a configuration file")
+set(SV_TINYXML2_DIR "" CACHE PATH "TINYXML2 install directory containing a configuration file")
+set(SV_VTK_DIR "" CACHE PATH "VTK install directory containing a configuration file")
+
+set(SV_EXTERNALS_VERSION_NUMBER "2022.10" CACHE STRING "SimVascular Externals Release Version")
 mark_as_advanced(SV_EXTERNALS_VERSION_NUMBER)
 
 # Distribution
@@ -99,30 +102,26 @@ option(SV_ENABLE_DISTRIBUTION "Enable Installer Build for SimVascular" OFF)
 # sv4gui
 option(SV_USE_SV4_GUI "Enable SV MITK/Qt Based GUI" ON)
 
-# Set using pre-built Qt6 install.
-#
 if(APPLE)
   option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt6" OFF)
-  set(SV_EXTERNALS_PREBUILT_QT_PATH "/usr/local/opt/qt/lib/cmake/Qt6" CACHE PATH "Qt6 Cmake Config File Path" FORCE)
   #set(SV_EXTERNALS_PREBUILT_QT_PATH "" CACHE PATH "Qt6 Cmake Config File Path" FORCE)
-
 elseif(LINUX)
   option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt6" OFF)
 
-  if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
-    set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
-  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
-    set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.6.3/5.6.3/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
-  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2019.02")
-    set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.6.3/5.6.3/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
-  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.06")
-    set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.11.3/5.11.3/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
-  else()
-    set(SV_EXTERNALS_PREBUILT_QT_PATH "" FORCE)
-  endif()
+  #if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
+    #set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
+  #elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
+    #set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.6.3/5.6.3/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
+  #elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2019.02")
+    #set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.6.3/5.6.3/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
+  #elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.06")
+    #set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.11.3/5.11.3/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
+  #else()
+    #set(SV_EXTERNALS_PREBUILT_QT_PATH "" FORCE)
+  #endif()
 
 elseif(WIN32)
-  option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt5" OFF)
+  option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt6" OFF)
   if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
     set(SV_EXTERNALS_PREBUILT_QT_PATH "C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path")
   elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
@@ -136,11 +135,8 @@ elseif(WIN32)
   endif()
 endif()
 
-message(STATUS "[SimVascular/CMakeLists] SV_EXTERNALS_USE_PREBUILT_QT: ${SV_EXTERNALS_USE_PREBUILT_QT}")
-message(STATUS "[SimVascular/CMakeLists] SV_EXTERNALS_PREBUILT_QT_PATH: ${SV_EXTERNALS_PREBUILT_QT_PATH}")
-
-mark_as_advanced(SV_EXTERNALS_USE_PREBUILT_QT)
-mark_as_advanced(SV_EXTERNALS_PREBUILT_QT_PATH)
+#mark_as_advanced(SV_EXTERNALS_USE_PREBUILT_QT)
+#mark_as_advanced(SV_EXTERNALS_PREBUILT_QT_PATH)
 
 set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/Externals-build/svExternals/bin")
 set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
@@ -153,6 +149,11 @@ if(DEFINED SV_USE_SV4_GUI)
     set(SV_CMAKE_DOWLOAD_MITK_EXTERNAL "OFF" CACHE BOOL "Force OFF" FORCE)
   endif()
 endif()
+
+message(STATUS "[root] ")
+message(STATUS "[root] ++++ ExternalProject_Add(Externals ... ")
+message(STATUS "[root] SV_QT_DIR: ${SV_QT_DIR}")
+message(STATUS "[root] SV_GDCM_DIR: ${SV_GDCM_DIR}")
 
 ExternalProject_Add(Externals
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Externals
@@ -172,12 +173,29 @@ ExternalProject_Add(Externals
     -DSV_USE_MITK:BOOL=${SV_CMAKE_DOWLOAD_MITK_EXTERNAL}
     -DSV_GIT_PULL_SUBMODULES:BOOL=${SV_GIT_PULL_SUBMODULES}
     -DSV_EXTERNALS_VERSION_NUMBER:STRING=${SV_EXTERNALS_VERSION_NUMBER}
+    # External packages directories
+    -DSV_FREETYPE_DIR:PATH=${SV_FREETYPE_DIR}
+    -DSV_GDCM_DIR:PATH=${SV_GDCM_DIR}
+    -DSV_HDF5_DIR:PATH=${SV_HDF5_DIR}
+    -DSV_ITK_DIR:PATH=${SV_ITK_DIR}
+    -DSV_MMG_DIR:PATH=${SV_MMG_DIR}
+    -DSV_MITK_DIR:PATH=${SV_MITK_DIR}
+    -DSV_ML_DIR:PATH=${SV_ML_DIR}
+    -DSV_OPEN_CASCADE_DIR:PATH=${SV_OPEN_CASCADE_DIR}
+    -DSV_PYTHON_DIR:PATH=${SV_PYTHON_DIR}
+    -DSV_TINYXML2_DIR:PATH=${SV_TINYXML2_DIR}
+    -DSV_QT_DIR:PATH=${SV_QT_DIR}
+    -DSV_VTK_DIR:PATH=${SV_VTK_DIR}
+    #
     -DSV_EXTERNALS_USE_PREBUILT_QT:BOOL=${SV_EXTERNALS_USE_PREBUILT_QT}
     -DSV_EXTERNALS_PREBUILT_QT_PATH:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}
     -DQt6_DIR:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}
     -DSV_EXTERNALS_TOPLEVEL_BIN_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
     ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
     )
+
+message(STATUS "[root] ---- Done ExternalProject_Add(Externals ")
+
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -192,6 +210,7 @@ endif()
 variable_watch(SV_USE_ZLIB)
 
 set(SV_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
+
 ExternalProject_Add(SimVascular
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/SimVascular-build
