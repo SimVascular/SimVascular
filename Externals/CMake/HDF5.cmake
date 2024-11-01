@@ -28,6 +28,13 @@
 # PYTHON
 set(proj HDF5)
 
+message(STATUS "[HDF5.cmake] ")
+message(STATUS "[HDF5.cmake] -------------------------------------------------------------------------------------")
+message(STATUS "[HDF5.cmake] +++++ HDF5.cmake +++++")
+message(STATUS "[HDF5.cmake] -------------------------------------------------------------------------------------")
+message(STATUS "[HDF5.cmake] proj: ${proj}")
+message(STATUS "[HDF5.cmake] SV_HDF5_DIR: ${SV_HDF5_DIR}")
+
 # Dependencies
 set(${proj}_DEPENDENCIES "")
 
@@ -43,41 +50,72 @@ endif()
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
 
 # Add external project
-if(SV_EXTERNALS_DOWNLOAD_${proj})
+
+if (SV_HDF5_DIR STREQUAL "system")
+#if(SV_EXTERNALS_DOWNLOAD_${proj})
+
+  message(STATUS "[HDF5.cmake] +++++ Use system HDF5")
+
+  find_package(HDF5 REQUIRED)
+
+  message(STATUS "[HDF5.cmake] HDF5_DIR: ${HDF5_DIR}")
+  message(STATUS "[HDF5.cmake] HDF5_INCLUDE_DIRS: ${HDF5_INCLUDE_DIRS}")
+
   ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}-empty
+    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}-empty
+    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}-empty
     DEPENDS ${${proj}_DEPENDENCIES}
+    DOWNLOAD_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
-    UPDATE_COMMAND ""
     )
+
+  #ExternalProject_Add(${proj}
+  #  URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
+  #  PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+  #  SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
+  #  BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+  #  DEPENDS ${${proj}_DEPENDENCIES}
+  #  CONFIGURE_COMMAND ""
+  #  BUILD_COMMAND ""
+  #  INSTALL_COMMAND ""
+  #  UPDATE_COMMAND ""
+  #  )
+
 else()
-  ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-    UPDATE_COMMAND ""
-    CMAKE_CACHE_ARGS
-      -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
-      -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
-      -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-      -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-      -DCMAKE_MACOSX_RPATH:BOOL=ON
-      -DBUILD_TESTING:BOOL=OFF
-      -DHDF5_BUILD_SHARED_LIBS:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
-      -DHDF5_BUILD_HI_LIB:BOOL=ON
-      -DHDF5_BUILD_CPP_LIB:BOOL=ON
-      -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
-      ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
-    )
+
+  message(STATUS "[HDF5.cmake] +++++ Use HDF5 from ${SV_HDF5_DIR}")
+
+  find_package(HDF5 REQUIRED PATHS ${SV_HDF5_DIR} NO_DEFAULT_PATH)
+
+  message(STATUS "[HDF5.cmake] HDF5_DIR: ${HDF5_DIR}")
+  message(STATUS "[HDF5.cmake] HDF5_INCLUDE_DIRS: ${HDF5_INCLUDE_DIRS}")
+
+  #ExternalProject_Add(${proj}
+    #URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+    #UPDATE_COMMAND ""
+    #CMAKE_CACHE_ARGS
+      #-DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+      #-DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+      #-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+      #-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+      #-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+      #-DCMAKE_MACOSX_RPATH:BOOL=ON
+      #-DBUILD_TESTING:BOOL=OFF
+      #-DHDF5_BUILD_SHARED_LIBS:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
+      #-DHDF5_BUILD_HI_LIB:BOOL=ON
+      #-DHDF5_BUILD_CPP_LIB:BOOL=ON
+      #-DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
+      #${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
+    #)
+
 endif()
 
 # HDF5 variables used later on
@@ -86,3 +124,7 @@ if(WIN32)
 else()
   set(SV_EXTERNALS_${proj}_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/share/cmake)
 endif()
+
+message(STATUS "[HDF5.cmake] ")
+message(STATUS "[HDF5.cmake] ----- Done HDF5.cmake -----")
+message(STATUS "[HDF5.cmake] ")

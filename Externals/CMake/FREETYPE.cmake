@@ -28,6 +28,11 @@
 # PYTHON
 set(proj FREETYPE)
 
+message(STATUS "[FREETYPE.cmake] ")
+message(STATUS "[FREETYPE.cmake] +++++ FREETYPE.cmake +++++")
+message(STATUS "[FREETYPE.cmake] proj: ${proj}")
+message(STATUS "[FREETYPE.cmake] SV_FREETYPE_DIR: ${SV_FREETYPE_DIR}")
+
 # Dependencies
 set(${proj}_DEPENDENCIES "")
 
@@ -41,20 +46,33 @@ else()
 endif()
 
 # Add external project
-if(SV_EXTERNALS_DOWNLOAD_${proj})
-  # Empty project
-  ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    DOWNLOAD_NO_PROGRESS ON
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    UPDATE_COMMAND ""
-    )
+
+if(SV_FREETYPE_DIR)
+  message(STATUS "[FREETYPE.cmake] +++++ Use prebuilt FREETYPE")
+
+  find_package(Freetype REQUIRED)
+  #find_package(FREETYPE REQUIRED)
+
+  if(FREETYPE_FOUND)
+    message(STATUS "[FREETYPE.cmake] FREETYPE found")
+  else()
+    message(FATAL_ERROR "[FREETYPE.cmake] FREETYPE not found")
+  endif()
+
+#if(SV_EXTERNALS_DOWNLOAD_${proj})
+  ## Empty project
+  #ExternalProject_Add(${proj}
+    #URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #CONFIGURE_COMMAND ""
+    #BUILD_COMMAND ""
+    #INSTALL_COMMAND ""
+    #UPDATE_COMMAND ""
+    #)
+
 else()
   ExternalProject_Add(${proj}
     URL ${SV_EXTERNALS_${proj}_SOURCE_URL}

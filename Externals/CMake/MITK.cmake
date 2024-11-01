@@ -28,11 +28,13 @@
 # MITK
 set(proj MITK)
 
-message(STATUS " ")
-message(STATUS "========== Externals/CMake MITK ==========")
+message(STATUS "[MITK.cmake] ")
+message(STATUS "[MITK.cmake] +++++ MITK.cmake +++++")
+message(STATUS "[MITK.cmake] proj: ${proj}")
+message(STATUS "[MITK.cmake] SV_MITK_DIR: ${SV_MITK_DIR}")
 
 # Dependencies
-#set(${proj}_DEPENDENCIES "QT")
+set(${proj}_DEPENDENCIES "QT")
 
 if(SV_EXTERNALS_ENABLE_PYTHON AND SV_EXTERNALS_BUILD_MITK_WITH_PYTHON)
   set(${proj}_DEPENDENCIES
@@ -89,12 +91,12 @@ endif()
 
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
 #Special for QT, make sure that MITK uses the same libs we are!
-foreach(comp ${SV_EXTERNALS_QT5_COMPONENTS})
-  #if(Qt5${comp}_LIBRARIES)
+foreach(comp ${SV_EXTERNALS_QT6_COMPONENTS})
+  #if(Qt6${comp}_LIBRARIES)
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-      -DQt5${comp}_DIR:PATH=${SV_EXTERNALS_QT_TOPLEVEL_CMAKE_DIR}/Qt5${comp}
+      -DQt6${comp}_DIR:PATH=${SV_EXTERNALS_QT_TOPLEVEL_CMAKE_DIR}/Qt6${comp}
       )
-      #-DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
+      #-DQt6${comp}_DIR:PATH=${Qt6${comp}_DIR}
   #endif()
 endforeach()
 
@@ -178,6 +180,7 @@ if(SV_EXTERNALS_ENABLE_HDF5)
     -DEXTERNAL_HDF5_DIR:PATH=${SV_EXTERNALS_HDF5_CMAKE_DIR}
     )
 endif()
+
 if(SV_EXTERNALS_DOWNLOAD_HDF5)
   list(APPEND CMAKE_PREFIX_PATH
     ${SV_EXTERNALS_HDF5_CMAKE_DIR}
@@ -215,20 +218,27 @@ elseif(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "2018.04.0")
 endif()
 
 # Add external project
-if(SV_EXTERNALS_DOWNLOAD_${proj})
-  ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    DOWNLOAD_NO_PROGRESS ON
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    UPDATE_COMMAND ""
-    )
+#
+if(SV_MITK_DIR)
+#if(SV_EXTERNALS_DOWNLOAD_${proj})
+
+  message(STATUS "[MITK.cmake] +++++ Use prebuilt MITK ")
+  find_package(MITK REQUIRED PATHS ${SV_MITK_DIR} NO_DEFAULT_PATH)
+
+  #ExternalProject_Add(${proj}
+    #URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #CONFIGURE_COMMAND ""
+    #BUILD_COMMAND ""
+    #INSTALL_COMMAND ""
+    #UPDATE_COMMAND ""
+    #)
+
 else()
+
   ExternalProject_Add(${proj}
     URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
@@ -248,7 +258,7 @@ else()
       -DMITK_BUILD_EXAMPLES:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
       -DBUILD_TESTING:BOOL=OFF
-      -DDESIRED_QT_VERSION:STRING=6
+      -DDESIRED_QT_VERSION:STRING=5
       -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
       -DMITK_USE_SUPERBUILD:BOOL=ON
       -DMITK_USE_SimpleITK:BOOL=OFF

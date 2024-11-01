@@ -30,6 +30,11 @@
 #
 set(proj ml)
 
+message(STATUS "[ML.cmake] ")
+message(STATUS "[ML.cmake] +++++ ML.cmake +++++")
+message(STATUS "[ML.cmake] proj: ${proj}")
+message(STATUS "[ML.cmake] SV_ML_DIR: ${SV_ML_DIR}")
+
 # Dependencies
 include(ExternalProject)
 
@@ -37,12 +42,17 @@ set(ML_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_SRC_DIR}/${proj}-${SV_EXTERNALS_ML_VERSIO
 set(ML_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_PFX_DIR}/${proj}-${SV_EXTERNALS_ML_VERSION})
 set(ML_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${proj}-${SV_EXTERNALS_ML_VERSION})
 
+message(STATUS "[ML.cmake] ")
+message(STATUS "[ML.cmake] ML_SRC_DIR: ${ML_SRC_DIR}")
+message(STATUS "[ML.cmake] ML_PFX_DIR: ${ML_PFX_DIR}")
+message(STATUS "[ML.cmake] ML_BIN_DIR: ${ML_BIN_DIR}")
+
 ExternalProject_Add("${proj}_networks"
-  URL               http://simvascular.stanford.edu/downloads/public/machine_learning/networks.tar
+  URL               
   PREFIX            ${ML_PFX_DIR}
-  DOWNLOAD_DIR      ${ML_SRC_DIR}
+  DOWNLOAD_DIR      ${SV_ML_DIR}
+  #DOWNLOAD_DIR      ${ML_SRC_DIR}
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/../Python/site-packages/sv_ml/results
-  DOWNLOAD_NO_PROGRESS ON
   UPDATE_COMMAND    ""
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""

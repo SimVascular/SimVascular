@@ -28,12 +28,18 @@
 # PYTHON
 set(proj MMG)
 
+message(STATUS "[MMG.cmake] ")
+message(STATUS "[MMG.cmake] +++++ MMG.cmake +++++")
+message(STATUS "[MMG.cmake] proj: ${proj}")
+message(STATUS "[MMG.cmake] SV_MMG_DIR: ${SV_MMG_DIR}")
+
 # Dependencies
 set(${proj}_DEPENDENCIES "")
 
 # Git info
 set(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL "" CACHE STRING "Manual specification of ${proj}, can be web address or local path to tar file")
 mark_as_advanced(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+
 if(NOT SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
   set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/mmg/mmg-${SV_EXTERNALS_${proj}_VERSION}.tar.gz")
 else()
@@ -41,39 +47,48 @@ else()
 endif()
 
 # Add external project
-if(SV_EXTERNALS_DOWNLOAD_${proj})
-  ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    DOWNLOAD_NO_PROGRESS ON
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    UPDATE_COMMAND ""
-    )
+
+# Note that MMG does not have a CMake config file.
+#
+# So we need to just set include directories.
+
+if(SV_MMG_DIR)
+#if(SV_EXTERNALS_DOWNLOAD_${proj})
+
+  #ExternalProject_Add(${proj}
+    #URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #CONFIGURE_COMMAND ""
+    #BUILD_COMMAND ""
+    #INSTALL_COMMAND ""
+    #UPDATE_COMMAND ""
+    #)
+
 else()
-  ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    UPDATE_COMMAND ""
-    CMAKE_CACHE_ARGS
-      -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
-      -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
-      -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-      -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-      -DCMAKE_MACOSX_RPATH:BOOL=ON
-      -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-      -DLIBMMG2D_SHARED:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
-      -DLIBMMG3D_SHARED:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
-      -DLIBMMGS_SHARED:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
-      -DLIBMMG_SHARED:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
-      -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
-    )
+
+  #ExternalProject_Add(${proj}
+    #URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #UPDATE_COMMAND ""
+    #CMAKE_CACHE_ARGS
+      #-DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+      #-DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+      #-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+      #-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+      #-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+      #-DCMAKE_MACOSX_RPATH:BOOL=ON
+      #-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
+      #-DLIBMMG2D_SHARED:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
+      #-DLIBMMG3D_SHARED:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
+      #-DLIBMMGS_SHARED:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
+      #-DLIBMMG_SHARED:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
+      #-DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
+    #)
+
 endif()

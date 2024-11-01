@@ -28,6 +28,9 @@
 # Toplevel directories for src, bin, build or externals
 set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/svExternals")
 
+message(STATUS "[SvExtOptions] ")
+message(STATUS "[SvExtOptions] --------- SvExtOptions ----------")
+
 set(SV_EXTERNALS_TOPLEVEL_SRC_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/src"
   CACHE PATH "Directory where source files for externals will be put")
 set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/bin/${SV_COMPILER_DIR}/${SV_COMPILER_VERSION_DIR}/${SV_ARCH_DIR}/${SV_BUILD_TYPE_DIR}"
@@ -71,26 +74,15 @@ endif()
 # Add externals with default values of version, build_with, shared, dirname,
 # and optional install dirname. Order matters; put independent packages first
 # Must have existing "EXTERNAL_NAME.cmake" file underneath CMake
-#
-# Arguments to sv_externals_add_new_external() 
-#  PROJECT_NAME 
-#  EXTERNAL_NAME 
-#  ENABLE_EXTERNAL 
-#  BUILD_SHARED 
-#  BUILD_DIR_NAME 
-#  INSTALL_DIR_NAME
-#
-# For example: 
-#
-#  sv_externals_add_new_external(QT ${SV_EXTERNALS_QT_VERSION} ON ON qt qt)
+# (i.e. QT.cmake for QT)
+# "EXTERNAL_NAME" "ENABLE_EXTERNAL" "BUILD_SHARED" "BUILD_DIR_NAME" "INSTALL_DIR_NAME"
 #-----------------------------------------------------------------------------
 # QT
-if(DEFINED ${SV_EXTERNALS_QT_VERSION})
-  option(SV_EXTERNALS_USE_PREBUILT_QT "Instead of downloading or building, use a specified QT" ON)
-  #option(SV_EXTERNALS_USE_PREBUILT_QT "Instead of downloading or building, use a specified QT" OFF)
-  sv_externals_add_new_external(QT ${SV_EXTERNALS_QT_VERSION} ON ON qt qt)
-endif()
+message(STATUS "[SvExtOptions] QT sv_externals_add_new_external ")
+#option(SV_QT_DIR "The location of the Qt package install directory" "")
+#option(SV_EXTERNALS_USE_PREBUILT_QT "Instead of downloading or building, use a specified QT" OFF)
 
+sv_externals_add_new_external(QT ${SV_EXTERNALS_QT_VERSION} ON ON qt qt)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -171,3 +163,6 @@ sv_externals_add_new_external(MITK ${SV_EXTERNALS_MITK_VERSION} ON ON mitk mitk)
 #-----------------------------------------------------------------------------
 #Download options for tcltk
 option(SV_EXTERNALS_DOWNLOAD_TCLTK "Download instead of build TCLTK" ON)
+
+message(STATUS "[SvExtOptions] ----- Done SvExtOptions -----")
+message(STATUS "[SvExtOptions] ")

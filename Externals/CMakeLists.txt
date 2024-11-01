@@ -46,8 +46,8 @@ cmake_minimum_required(VERSION 3.10.0)
 Project(SV_EXTERNALS)
 #-----------------------------------------------------------------------------
 
-message(STATUS " ")
-message(STATUS "========================== SimVascular/Externals/CMakeLists.txt ====================") 
+message(STATUS "[SimVascular/Externals] ")
+message(STATUS "[SimVascular/Externals] ++++++++++ SimVascular/Externals ++++++++++")
 
 #-----------------------------------------------------------------------------
 # CMake module path for both us and the real simvascular
@@ -57,7 +57,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../Code/CMake"
   "${CMAKE_MODULE_PATH}")
 set(SV_EXTERNALS_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 #-----------------------------------------------------------------------------
-message(STATUS "[SimVascular/Externals/CMakeLists.txt] SV_EXTERNALS_CMAKE_DIR: ${SV_EXTERNALS_CMAKE_DIR}") 
 
 #-----------------------------------------------------------------------------
 # CMake Includes
@@ -81,32 +80,30 @@ include(SimVascularFunctionCheckCompilerFlags)
 
 #-----------------------------------------------------------------------------
 # Initial options
-message(STATUS "[SimVascular/Externals/CMakeLists.txt] Add externals ... ") 
 set(SV_EXTERNALS_LIST "")
 include(SvExtVersions)
 include(SvExtOptions)
 #-----------------------------------------------------------------------------
 
-message(STATUS "[SimVascular/Externals/CMakeLists.txt] SV_EXTERNALS_LIST ... ") 
-foreach(proj ${SV_EXTERNALS_LIST})
-  message(STATUS "[SimVascular/Externals/CMakeLists.txt] proj: ${proj}") 
-endforeach()
-
 #-----------------------------------------------------------------------------
 # Add each external to be built. Full list and initial options are specified in SvExtOptions.cmake
+message(STATUS "[SimVascular/Externals] SV_EXTERNALS_LIST: ${SV_EXTERNALS_LIST}")
+
+message(STATUS "[SimVascular/Externals] Increment on SV_EXTERNALS_LIST ...")
 foreach(proj ${SV_EXTERNALS_LIST})
+  message(STATUS "[SimVascular/Externals] proj: ${proj} ")
   if(SV_EXTERNALS_ENABLE_${proj})
     if(EXISTS "${SV_EXTERNALS_CMAKE_DIR}/${proj}.cmake")
-      message(STATUS "[SimVascular/Externals/CMakeLists.txt] include: ${SV_EXTERNALS_CMAKE_DIR}/${proj}.cmake")
+      message(STATUS "[SimVascular/Externals] include ${proj}.cmake ")
       include("${SV_EXTERNALS_CMAKE_DIR}/${proj}.cmake")
     endif()
   endif()
 endforeach()
+message(STATUS "[SimVascular/Externals] Done Increment on SV_EXTERNALS_LIST ...")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Tar up everything
-message(STATUS "[SimVascular/Externals/CMakeLists.txt] Tar up everything ... ") 
 simvascular_today(YEAR MONTH DAY)
 string(TOLOWER "${SV_BUILD_TYPE_DIR}" SV_BUILD_TYPE_LOWER)
 set(SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME ${SV_PLATFORM_DIR}.${SV_PLATFORM_VERSION_DIR}.${SV_COMPILER_DIR}.${SV_COMPILER_VERSION_DIR}.${SV_ARCH_DIR}.${SV_BUILD_TYPE_LOWER}.${YEAR}.${MONTH}.${DAY}.everything)
@@ -114,6 +111,8 @@ if(EXISTS "${SV_EXTERNALS_TAR_INSTALL_DIR}")
   install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
     WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/../)")
 endif()
-message(STATUS "[SimVascular/Externals/CMakeLists.txt] #### Done #### ") 
-message(STATUS "[SimVascular/Externals/CMakeLists.txt] ") 
+
+message(STATUS "[SimVascular/Externals] ----- Done SimVascular/Externals -----")
+message(STATUS "[SimVascular/Externals] ")
+
 #-----------------------------------------------------------------------------

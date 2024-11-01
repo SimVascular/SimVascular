@@ -45,33 +45,35 @@ set(SV_EXTERNALS_${proj}_INSTALL_COMMANDS
   COMMAND ${SV_EXTERNALS_PYTHON_EXECUTABLE} -m pip install matplotlib
   )
 
+#find_package(pip REQUIRED)
+
 # Add external project
-if(SV_EXTERNALS_DOWNLOAD_PYTHON)
-  # Empty project
-  ExternalProject_Add(${proj}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    DOWNLOAD_COMMAND ""
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    UPDATE_COMMAND ""
-    )
-else()
-  ExternalProject_Add(${proj}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    DOWNLOAD_COMMAND wget ${SV_EXTERNALS_${proj}_SOURCE_URL} -P ${SV_EXTERNALS_${proj}_SRC_DIR}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ${SV_EXTERNALS_PYTHON_EXECUTABLE} "${SV_EXTERNALS_${proj}_SRC_DIR}/get-pip.py"
-    INSTALL_COMMAND ${SV_EXTERNALS_${proj}_INSTALL_COMMANDS}
-    UPDATE_COMMAND ""
-    )
-endif()
+#if(SV_EXTERNALS_DOWNLOAD_PYTHON)
+  ## Empty project
+  #ExternalProject_Add(${proj}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #DOWNLOAD_COMMAND ""
+    #CONFIGURE_COMMAND ""
+    #BUILD_COMMAND ""
+    #INSTALL_COMMAND ""
+    #UPDATE_COMMAND ""
+    #)
+#else()
+  #ExternalProject_Add(${proj}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #DOWNLOAD_COMMAND wget ${SV_EXTERNALS_${proj}_SOURCE_URL} -P ${SV_EXTERNALS_${proj}_SRC_DIR}
+    #CONFIGURE_COMMAND ""
+    #BUILD_COMMAND ${SV_EXTERNALS_PYTHON_EXECUTABLE} "${SV_EXTERNALS_${proj}_SRC_DIR}/get-pip.py"
+    #INSTALL_COMMAND ${SV_EXTERNALS_${proj}_INSTALL_COMMANDS}
+    #UPDATE_COMMAND ""
+    #)
+#endif()
 
 # PIP variables needed later on
 set(SV_EXTERNALS_${proj}_EXECUTABLE ${SV_EXTERNALS_PYTHON_BIN_DIR}/bin/pip)
