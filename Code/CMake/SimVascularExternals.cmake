@@ -28,18 +28,33 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#-----------------------------------------------------------------------------
+set(msg "[Code/CMake/SimVascularExternals.cmake] ") 
+message(STATUS "${msg} ")
+message(STATUS "${msg} ----------------------------------------------------------------------")
+message(STATUS "${msg} +++++                     SimVascularExternals.cmake                  ")
+message(STATUS "${msg} ----------------------------------------------------------------------")
+message(STATUS "${msg} SV_SOURCE_DIR: ${SV_SOURCE_DIR}")
+message(STATUS "${msg} SV_EXTERNALS_LIST: ${SV_EXTERNALS_LIST}")
+
 # Process each external in the order they were added to SV_EXTERNALS_LIST
 # using simvascular_add_new_external in SimVascularOptions.cmake
+#
+message(STATUS "${msg} Process externals ") 
+
 foreach(proj ${SV_EXTERNALS_LIST})
+  message(STATUS "${msg} ----- proj: ${proj} -----")
+
   if(SV_USE_${proj})
+
     if(EXISTS "${SV_SOURCE_DIR}/CMake/Externals/${proj}.cmake")
+      message(STATUS "${msg} Include ${SV_SOURCE_DIR}/CMake/Externals/${proj}.cmake") 
       include("${SV_SOURCE_DIR}/CMake/Externals/${proj}.cmake")
     endif()
+
     # Install
     if(SV_USE_${proj}_SHARED AND SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
-      simvascular_install_external(${proj})
+      #simvascular_install_external(${proj})
     endif()
   endif()
 endforeach()
-#-----------------------------------------------------------------------------
+

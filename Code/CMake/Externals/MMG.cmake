@@ -28,17 +28,28 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#-----------------------------------------------------------------------------
-# MMG
 set(proj MMG)
+
+set(msg "[Code/CMake/Externals/MMG.cmake]")
+message(STATUS "${msg} =============== Code/CMake/Externals    MMG.cmake ===============")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_USE_MMG: ${SV_USE_MMG}")
+message(STATUS "${msg} SV_MMG_DIR: ${SV_MMG_DIR}")
+message(STATUS "${msg} MMG_VERISON: ${${proj}_VERSION}")
+message(STATUS "${msg} SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR: ${SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR}")
+
 if(SV_USE_${proj})
+
   # If using toplevel dir, foce MMG_DIR to be the SV_MMG_DIR set by the
   # simvascular_add_new_external macro
+  #
   if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
     set(${proj}_DIR ${SV_${proj}_DIR} CACHE PATH "Force ${proj} dir to externals" FORCE)
   endif()
+
   simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})
+
   # Set SV_MMG_DIR to the directory that was found to contain MMG
-  set(SV_${proj}_DIR ${${proj}_DIR})
+  #set(SV_${proj}_DIR ${${proj}_DIR})
 endif()
 #-----------------------------------------------------------------------------

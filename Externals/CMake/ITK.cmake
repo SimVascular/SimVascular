@@ -28,12 +28,15 @@
 # ITK
 set(proj ITK)
 
-message(STATUS "[ITK.cmake] ")
-message(STATUS "[ITK.cmake] -------------------------------------------------------------------------------------")
-message(STATUS "[ITK.cmake] +++++                             ITK.cmake                                          ")
-message(STATUS "[ITK.cmake] -------------------------------------------------------------------------------------")
-message(STATUS "[ITK.cmake] proj: ${proj}")
-message(STATUS "[ITK.cmake] SV_ITK_DIR: ${SV_ITK_DIR}")
+set(SV_ITK_DIR /Users/parkerda/software/ktbolt/svExternals/install/itk)
+    
+set(msg "[Externals/CMake/ITK.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} +++++                                 ITK.cmake                                      ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_ITK_DIR: ${SV_ITK_DIR}")
 
 # Dependencies
 #
@@ -120,22 +123,23 @@ endif()
 
 # Add ITK as an external project
 #
-if (SV_ITK_DIR STREQUAL "system")
+if (SV_ITK_DIR)
 #if(SV_EXTERNALS_DOWNLOAD_${proj})
 
-  message(STATUS "[ITK.cmake] +++++ Use system ITK ")
+  message(STATUS "${msg} +++++ Use installed ITK ")
 
   if(SV_ITK_DIR STREQUAL "system")
-    message(STATUS "[ITK.cmake] Use system ITK")
+    message(STATUS "${msg} Use system ITK")
     find_package(ITK REQUIRED)
   else()
-    message(STATUS "[ITK.cmake] Use ITK from custom build ${SV_ITK_DIR}")
+    message(STATUS "${msg} Use ITK from custom build ${SV_ITK_DIR}")
     find_package(ITK REQUIRED PATHS ${SV_ITK_DIR} NO_DEFAULT_PATH)
   endif()
 
-  message(STATUS "[ITK.cmake] ITK_DIR: ${ITK_DIR}")
-  message(STATUS "[ITK.cmake] ITK_USE_FILE: ${ITK_USE_FILE}")
-  message(STATUS "[ITK.cmake] ITK_LIBRARIES: ${ITK_LIBRARIES}")
+  message(STATUS "${msg} ITK_PREFIX_PATH: ${ITK_PREFIX_PATH}")
+  message(STATUS "${msg} ITK_DIR: ${ITK_DIR}")
+  message(STATUS "${msg} ITK_USE_FILE: ${ITK_USE_FILE}")
+  message(STATUS "${msg} ITK_LIBRARIES: ${ITK_LIBRARIES}")
 
   find_package(EIGEN3 REQUIRED)
 

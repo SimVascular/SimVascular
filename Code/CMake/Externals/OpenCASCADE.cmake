@@ -28,9 +28,15 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#-----------------------------------------------------------------------------
-# OpenCASCADE
 set(proj OpenCASCADE)
+
+set(msg "[Code/CMake/Externals/OpenCASCADE.cmake] ")
+message(STATUS "${msg} =============== Code/CMake/Externals    OpenCASCADE.cmake ===============")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_OpenCASCADE_DIR: ${SV_OpenCASCADE_DIR}")
+message(STATUS "${msg} OpenCASCADE_DIR: ${OpenCASCADE_DIR}")
+message(STATUS "${msg} SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR: ${SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR}")
+
 if(SV_USE_${proj})
 
   # If using toplevel dir, foce OpenCASCADE_DIR to be the SV_OpenCASCADE_DIR set by the

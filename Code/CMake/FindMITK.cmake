@@ -38,6 +38,10 @@
 
 set(proj MITK)
 
+set(msg "[Code/CMake/FindMITK.cmake] ")
+message(STATUS "${msg} =============== Code/CMake  FindMITK.cmake ===============")
+message(STATUS "${msg} MITK_DIR: ${MITK_DIR}") 
+
 include(CMakeFindFrameworks)
 include(FindPackageHandleStandardArgs)
 include(GetPrerequisites)
@@ -122,8 +126,8 @@ set(${proj}_PLUGIN_LIBNAMES org_mitk_core_services
 # Add requestion components
 set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})
 
-#-----------------------------------------------------------------------------
-# Header
+# Set header file names. 
+#
 set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "ctkPluginFrameworkLauncher.h"                   #ctk/PluginFramework
                     "signature_of_eigen3_matrix_library"             #eigen3
@@ -192,6 +196,7 @@ elseif(${proj}_VERSION VERSION_GREATER "2018.01")
     "mitkLogoAnnotation.h"                           #mitk/Modules/Annotation
     )
 endif()
+
 if(SV_USE_MITK_SEGMENTATION)
     list(APPEND ${proj}_HEADERS
         "mitkLabelSetImage.h"                            #mitk/Modules/Multilabel
@@ -199,9 +204,10 @@ if(SV_USE_MITK_SEGMENTATION)
         "mitkMorphologicalOperations.h"                  #mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations
         )
 endif()
-#-----------------------------------------------------------------------------
+
 # Find Libraries
-#-----------------------------------------------------------------------------
+#
+message(STATUS "${msg} Find libraries ... ") 
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
 set(lib_sub_path "lib")
 set(lib64_sub_path "lib64")
@@ -268,9 +274,11 @@ if(${proj}_LIBRARIES)
         get_filename_component(${proj}_LIBRARY_DIR ${temp_path} PATH)
 endif()
 
-#-----------------------------------------------------------------------------
+message(STATUS "${msg} ----- Done find libraries ") 
+
 # Find Plugins
-#-----------------------------------------------------------------------------
+#
+message(STATUS "${msg} Find plugins ... ") 
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
 set(lib_sub_path "lib")
 
@@ -340,10 +348,10 @@ if(${proj}_PLUGIN_LIBRARIES)
         get_filename_component(${proj}_PLUGIN_LIBRARY_DIR ${temp_path} PATH)
 endif()
 
-#-----------------------------------------------------------------------------
-# Find Include Directory
-#-----------------------------------------------------------------------------
+message(STATUS "${msg} ----- Done find plugins ") 
 
+# Find Include Directory
+#
 set(${proj}_POSSIBLE_INCLUDE_PATHS
   "${${proj}_DIR}/*"
   "${${proj}_DIR}/include/*"
@@ -354,13 +362,19 @@ set(${proj}_POSSIBLE_INCLUDE_PATHS
   "${${proj}_DIR}/include/*/*/*/*/*/*"
   )
 
-#-----------------------------------------------------------------------------
 # Search for header
+#
+message(STATUS "${msg} Find headers ...") 
+message(STATUS "${msg} headers: ${${proj}_HEADERS}") 
+
 set(${proj}_HEADERS_MISSING ${${proj}_HEADERS})
 list(REMOVE_DUPLICATES ${proj}_HEADERS_MISSING)
 set(${proj}_HEADERS_WORK "")
+
 foreach(header ${${proj}_HEADERS})
   unset(${proj}_${header}_HEADER CACHE)
+  message(STATUS "${msg} header: ${header}") 
+
   find_path(${proj}_${header}_HEADER
     NAMES
     ${header}
@@ -380,8 +394,13 @@ endforeach()
 list(LENGTH ${proj}_HEADERS_WORK ${proj}_NUMHEADERS)
 list(LENGTH ${proj}_HEADERS ${proj}_NUMHEADERS_EXPECTED)
 #message("${${proj}_NUMHEADERS} ${${proj}_NUMHEADERS_EXPECTED}")
+
 if (NOT ${proj}_NUMHEADERS EQUAL ${proj}_NUMHEADERS_EXPECTED)
   set(${proj}_HEADERS_WORK "${proj}_HEADERS-NOTFOUND")
+
+  message("${msg} MITK_NUMHEADERS: ${MITK_NUMHEADERS}")
+  message("${msg} MITK_NUMHEADERS_EXPECTED: ${MITK_NUMHEADERS_EXPECTED}")
+
   message(FATAL_ERROR "${proj}_HEADERS_MISSING: ${${proj}_HEADERS_MISSING}")
 endif()
 
@@ -389,6 +408,8 @@ set(${proj}_HEADERS_WORK ${${proj}_DIR}/include ${${proj}_HEADERS_WORK})
 set(${proj}_INCLUDE_DIRS  ${${proj}_HEADERS_WORK} CACHE STRING
 	"${proj} include directories" FORCE)
 list(GET ${proj}_INCLUDE_DIRS 0 ${proj}_INCLUDE_DIR)
+
+message(STATUS "${msg} ----- Done find headers ") 
 
 #-----------------------------------------------------------------------------
 # Handle Standard Args

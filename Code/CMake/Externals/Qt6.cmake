@@ -28,25 +28,32 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#-----------------------------------------------------------------------------
-# Qt
+# Note that the project name must match the SV_*_DIR variables
+# names used to set the external package direcvtory.
+
 set(proj Qt6)
 
-message(STATUS "====================== Code/CMake/Externals/Qt6.cmake ==========")
-message(STATUS "[Code/CMake/Externals/Qt6.cmake] SV_USE_Qt6: ${SV_USE_Qt6}")
-message(STATUS "[Code/CMake/Externals/Qt6.cmake] SV_EXTERNALS_USE_PREBUILT_QT: ${SV_EXTERNALS_USE_PREBUILT_QT}") 
-message(STATUS "[Code/CMake/Externals/Qt6.cmake] SV_EXTERNALS_PREBUILT_QT_PATH: ${SV_EXTERNALS_PREBUILT_QT_PATH}") 
-message(STATUS "[Code/CMake/Externals/Qt6.cmake] SV_USE_MITK_CONFIG: ${SV_USE_MITK_CONFIG}") 
+set(msg, "[Code/CMake/Externals/Qt6.cmake] ")
+message(STATUS "=============== Code/CMake/Externals    Qt6.cmake ===============")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_USE_Qt6: ${SV_USE_Qt6}")
+message(STATUS "${msg} SV_Qt6_DIR: ${SV_Qt6_DIR}")
+message(STATUS "${msg} Qt6_DIR: ${Qt6_DIR}") 
+message(STATUS "${msg} SV_EXTERNALS_USE_PREBUILT_QT: ${SV_EXTERNALS_USE_PREBUILT_QT}") 
+message(STATUS "${msg} SV_EXTERNALS_PREBUILT_QT_PATH: ${SV_EXTERNALS_PREBUILT_QT_PATH}") 
+message(STATUS "${msg} SV_USE_MITK_CONFIG: ${SV_USE_MITK_CONFIG}") 
+#message(FATAL_ERROR "${msg} SV_USE_MITK_CONFIG: ${SV_USE_MITK_CONFIG}") 
 
 if(SV_USE_${proj})
-  message(STATUS "[Code/CMake/Externals/Qt6.cmake] SV_USE_${proj} true")
+  message(STATUS "${msg} SV_USE_${proj} true")
+
   if(SV_EXTERNALS_USE_PREBUILT_QT)
     set(Qt6_DIR ${SV_EXTERNALS_PREBUILT_QT_PATH} CACHE PATH "Force ${proj} dir to prebuilt Qt" FORCE)
     set(SV_Qt6_DIR ${SV_EXTERNALS_PREBUILT_QT_PATH} CACHE PATH "Force ${proj} dir to prebuilt Qt" FORCE)
   endif()
 
-  message(STATUS "[Code/CMake/Externals/Qt6.cmake] Qt6_DIR: ${Qt6_DIR}") 
-  message(STATUS "[Code/CMake/Externals/Qt6.cmake] SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR: ${SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR}") 
+  message(STATUS "${msg} Qt6_DIR: ${Qt6_DIR}") 
+  message(STATUS "${msg} SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR: ${SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR}") 
 
   # If using toplevel dir, foce Qt_DIR to be the SV_Qt_DIR set by the
   # simvascular_add_new_external macro
@@ -92,7 +99,8 @@ if(SV_USE_${proj})
           set(${proj}_DIR ${SV_${proj}_DIR}/${Qt6_VERSION}/clang_64/lib/cmake/Qt6 CACHE PATH "Force ${proj} dir to externals" FORCE)
       elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.06")
           set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/Qt6 CACHE PATH "Force ${proj} dir to externals" FORCE)
-          message(STATUS "[Code/CMake/Externals/Qt6.cmake] Set Qt6_DIR from ${SV_${proj}_DIR}/lib/cmake/Qt6") 
+          message(STATUS "${msg} >>> Set Qt6_DIR from ${SV_${proj}_DIR}/lib/cmake/Qt6") 
+          message(STATUS "${msg}     Qt6_DIR: ${Qt6_DIR}") 
       else()
 	   message(FATAL_ERROR "Invalid SV_EXTERNALS_VERSION_NUMBER ${SV_EXTERNALS_VERSION_NUMBER}")
       endif()
@@ -110,8 +118,8 @@ if(SV_USE_${proj})
       set(${proj}_DLL_PATH "${_win32_qt5_top_path}/bin" CACHE PATH "Force Qt DLL Path" FORCE)
     endif()
 
-    message(STATUS "[Code/CMake/Externals/Qt6.cmake] Qt6_DIR: ${Qt6_DIR}") 
-    message(STATUS "[Code/CMake/Externals/Qt6.cmake] Qt6 version: ${proj}_VERSION")
+    message(STATUS "${msg} Qt6_DIR: ${Qt6_DIR}") 
+    message(STATUS "${msg} Qt6 version: ${proj}_VERSION")
     
     set(SV_${proj}_COMPONENTS
       Concurrent
@@ -151,8 +159,10 @@ if(SV_USE_${proj})
     endif()
 
     # Find Qt
-    message(STATUS "[Code/CMake/Externals/Qt6.cmake] Find Qt6 using simvascular_external ...") 
-    message(STATUS "[Code/CMake/Externals/Qt6.cmake] Qt6 version: ${${proj}_VERSION}") 
+    #
+    message(STATUS "${msg} Find Qt6 using simvascular_external ...") 
+    message(STATUS "${msg} Qt6 version: ${${proj}_VERSION}") 
+
     simvascular_external(${proj}
       SHARED_LIB ${SV_USE_${proj}_SHARED}
       VERSION ${${proj}_VERSION}
@@ -160,24 +170,34 @@ if(SV_USE_${proj})
       REQUIRED
       )
 
+    message(STATUS "${msg} Qt6_DIR: ${Qt6_DIR}")
+    message(STATUS "${msg} QT_INCLUDE_DIRS: ${QT_INCLUDE_DIRS}")
+
     # Get toplevel Qt dir from location of config file
+    #
     if(Qt6_DIR)
       get_filename_component(_Qt6_DIR "${Qt6_DIR}/../../../" ABSOLUTE)
       list(FIND CMAKE_PREFIX_PATH "${_Qt6_DIR}" _result)
+
       if(_result LESS 0)
         set(CMAKE_PREFIX_PATH "${_Qt6_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
       endif()
+
       set(QT_PLUGIN_PATH "${_Qt6_DIR}/plugins")
+
       if(WIN32)
         set(${proj}_DLL_PATH "${_Qt6_DIR}/bin" CACHE PATH "Force Qt DLL Path" FORCE)
       endif()
     endif()
+
+    #target_link_libraries(SV Qt6::Core Qt6::Gui Qt6::Widgets )
 
     # Need to set include dirs and libraries of Qt from individual components
     #
     if(NOT SV_USE_MITK_CONFIG)
       set(QT_LIBRARIES "")
       set(QT_INCLUDE_DIRS "")
+
       foreach(comp ${SV_Qt6_COMPONENTS})
         if(Qt6${comp}_LIBRARIES)
           set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt6${comp}_LIBRARIES})
@@ -195,5 +215,8 @@ if(SV_USE_${proj})
   endif()
 
 endif()
+
+message(STATUS "----- Done Code/CMake/Externals Qt6.cmake")
+#message(FATAL_ERROR "----- Done Code/CMake/Externals Qt6.cmake")
 
 #-----------------------------------------------------------------------------

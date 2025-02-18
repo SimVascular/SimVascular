@@ -25,6 +25,13 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+set(msg "[Externals/CMake/SvExtVersions.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} ==================================================")
+message(STATUS "${msg} +++++ SvExtVersions.cmake                         ")
+message(STATUS "${msg} ==================================================")
+message(STATUS "${msg} SV_EXTERNALS_VERSION_NUMBER: ${SV_EXTERNALS_VERSION_NUMBER}")
+
 #-----------------------------------------------------------------------------
 # URLs for external downloads and git repositories
 set(SV_EXTERNALS_VERSION_NUMBER "2022.10" CACHE STRING "SimVascular Externals version")
@@ -139,6 +146,44 @@ elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2022.10")
   set(SV_EXTERNALS_ITK_VERSION "5.2.1")
   set(SV_EXTERNALS_OpenCASCADE_VERSION "7.6.0")
   set(SV_EXTERNALS_MITK_VERSION "2022.10")
+  set(SV_EXTERNALS_ML_VERSION "1.0.0")
+
+elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2024.05")
+
+  #set(Qt6_VERSION "6.6.2")
+  set(SV_EXTERNALS_QT_VERSION "6.6.2")
+
+  #set(HDF5_VERSION "1.14.3")
+  set(SV_EXTERNALS_HDF5_VERSION "1.14.3")
+
+  #set(TINYXML2_VERSION "6.2.0")
+  set(SV_EXTERNALS_TINYXML2_VERSION "6.2.0")
+
+  #set(PYTHON_VERSION "3.9.10")
+  set(SV_EXTERNALS_PYTHON_VERSION "3.9.10")
+
+  set(SV_EXTERNALS_PIP_VERSION "0.0.0")
+
+  set(SV_EXTERNALS_NUMPY_VERSION "1.14.3")
+
+  set(SV_EXTERNALS_FREETYPE_VERSION "2.13.0")
+
+  set(SV_EXTERNALS_SWIG_VERSION "3.0.12")
+
+  set(SV_EXTERNALS_MMG_VERSION "5.3.9")
+
+  set(SV_EXTERNALS_GDCM_VERSION "3.0.10")
+
+  #set(VTK_VERSION "9.3.0")
+  set(SV_EXTERNALS_VTK_VERSION "9.3.0")
+
+  #set(ITK_VERSION "5.4.0")
+  set(SV_EXTERNALS_ITK_VERSION "5.4.0")
+
+  set(SV_EXTERNALS_OpenCASCADE_VERSION "7.6.0")
+
+  set(SV_EXTERNALS_MITK_VERSION "2022.10")
+
   set(SV_EXTERNALS_ML_VERSION "1.0.0")
 
 else()

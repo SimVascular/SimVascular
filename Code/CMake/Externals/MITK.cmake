@@ -28,16 +28,25 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#-----------------------------------------------------------------------------
-# MITK
 set(proj MITK)
+
+set(msg "[Code/CMake/Externals/MITK.cmake] ")
+message(STATUS "${msg} =============== Code/CMake/Externals    MITK.cmake ===============")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_MITK_DIR: ${SV_MITK_DIR}")
+message(STATUS "${msg} MITK_DIR: ${MITK_DIR}")
+message(STATUS "${msg} SV_USE_MITK_CONFIG: ${SV_USE_MITK_CONFIG}")
+message(STATUS "${msg} SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR: ${SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR}")
+
 if(SV_USE_${proj})
 
   # If using toplevel dir, foce MITK_DIR to be the SV_MITK_DIR set by the
   # simvascular_add_new_external macro
+  #
   if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
     set(${proj}_DIR ${SV_${proj}_DIR} CACHE PATH "Force ${proj} dir to externals" FORCE)
   endif()
+  message(STATUS "${msg} MITK_DIR: ${MITK_DIR}")
 
   if(SV_USE_${proj}_CONFIG)
 
@@ -65,19 +74,27 @@ if(SV_USE_${proj})
 
   else()
 
+    message(STATUS "${msg} Don't use MITK config")
+
+    message(STATUS "${msg} Find MITK ... ")
+
     simvascular_external(${proj}
       SHARED_LIB ${SV_USE_${proj}_SHARED}
       VERSION ${${proj}_VERSION}
       REQUIRED
       )
 
+    message(STATUS "${msg} ----- Done find MITK ")
+
     # Copy of necessary resource files are in SV CMake dir. usResourceCompiler
     # is in mitk bin directory
     find_package(CppMicroServices)
+
     # Set SV_MITK_DIR to the toplevel MITK if it exists
     get_filename_component(SV_${proj}_DIR ${${proj}_INCLUDE_DIR} DIRECTORY)
 
   endif()
 
 endif()
-#-----------------------------------------------------------------------------
+
+message(STATUS "${msg} ----- Done Code/CMake/Externals    MITK.cmake ")

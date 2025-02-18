@@ -28,10 +28,15 @@
 # PYTHON
 set(proj PYTHON)
 
-message(STATUS "[PYTHON.cmake] ")
-message(STATUS "[PYTHON.cmake] +++++ PYTHON.cmake +++++")
-message(STATUS "[PYTHON.cmake] proj: ${proj}")
-message(STATUS "[PYTHON.cmake] SV_PYTHON_DIR: ${SV_PYTHON_DIR}")
+set(SV_PYTHON_DIR /Users/parkerda/software/ktbolt/svExternals/install/python)
+    
+set(msg "[Externals/CMake/PYTHON.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} +++++                               PYTHON.cmake                                      ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_PYTHON_DIR: ${SV_PYTHON_DIR}")
 
 # Dependencies
 set(${proj}_DEPENDENCIES "")
@@ -136,10 +141,19 @@ endif()
 
 # Add external project
 
-if(SV_PYTHON_DIR STREQUAL "system")
-  message(STATUS "[PYTHON.cmake] +++++ Use system PYTHON") 
+if(SV_PYTHON_DIR)
+  message(STATUS "${msg} +++++ Use installed PYTHON") 
 
-  find_package(Python REQUIRED)
+  #find_package(Python COMPONENTS Interpreter Development REQUIRED)
+
+  find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+
+  #find_package(Python REQUIRED PATHS ${SV_PYTHON_DIR} NO_DEFAULT_PATH)
+  #find_package(Python REQUIRED)
+
+  message(STATUS "${msg} PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}")
+  message(STATUS "${msg} PYTHON_INCLUDE_DIR: ${PYTHON_INCLUDE_DIR}")
+  message(STATUS "${msg} PYTHON_LIBRARY: ${PYTHON_LIBRARY}")
 
   #ExternalProject_Add(${proj}
     #URL ${SV_EXTERNALS_${proj}_BINARIES_URL}

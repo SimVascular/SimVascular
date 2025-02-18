@@ -28,72 +28,66 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#-----------------------------------------------------------------------------
-# Initial SV Options
-#-----------------------------------------------------------------------------
+set(msg "[Code/CMake/SimVascularOptions.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} ========================================")
+message(STATUS "${msg} +++++ SimVascularOptions.cmake          ")
+message(STATUS "${msg} ========================================")
+message(STATUS "${msg} SV_EXTERNALS_VERSION_NUMBER: ${SV_EXTERNALS_VERSION_NUMBER}")
+message(STATUS "${msg} HDF5_VERSION: ${HDF5_VERSION}")
+
 # Developer flag (Output extra info during configure)
 option(SV_DEVELOPER_OUTPUT "This is a developer mode to print extra messages during configure" OFF)
 
 # Setup components to pack
 set(SV_DISTRIBUTE_COMPONENTS OpenSource CACHE STRING "When distributing, specify which components to distribute.")
 set_property(CACHE SV_DISTRIBUTE_COMPONENTS PROPERTY STRINGS OpenSource Licensed All)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Distribution
 option(SV_ENABLE_DISTRIBUTION "Distribute" OFF)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Enable Testing
 option(BUILD_TESTING "Build ${PROJECT_NAME} testing" OFF)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Libs options
 option(BUILD_SHARED_LIBS "Build ${PROJECT_NAME} as shared libraries." OFF)
 
 set(SV_LIBRARY_TYPE "STATIC" CACHE STRING "Options are STATIC or SHARED" FORCE)
 set_property(CACHE SV_LIBRARY_TYPE PROPERTY STRINGS STATIC SHARED)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Compiler warning suppression
 option(SV_SUPPRESS_WARNINGS "Option to suppress all compiler warnings while compiling" ON)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# Solver stuff
+# Set svSolver options.
+#
 option(SV_USE_THREEDSOLVER "Option to build flowsolver modules (requires Fortran)" OFF)
-
 option(SV_USE_THREEDSOLVER_SHARED_LIBRARIES "Option to build flowsolver libs as shared" OFF)
-
 option(SV_USE_MPICH2 "Use MPICH2" ON)
-
 option(SV_USE_DUMMY_MPICH2 "Use Dummy MPICH2" OFF)
-
 option(SV_USE_MSMPI "Use MSMPI" OFF)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Externals
+#
 set(SV_EXTERNALS_INSTALL_PREFIX "svExternals" CACHE PATH "Externals toplevel directory")
-
 set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/svExternals/bin/${SV_COMPILER_DIR}/${SV_COMPILER_VERSION_DIR}/${SV_ARCH_DIR}/${SV_BUILD_TYPE_DIR}" CACHE PATH "Externals toplevel bin dir")
-
 option(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR "If ON, SV_EXTERNALS_TOPLEVEL_BIN_DIR will be used as location used to find external packages" OFF)
-
 option(SV_EXTERNALS_INSTALL_HEADERS "If ON, The externals headers will be included in the installation" OFF)
 
+# Add exernal packages.
+#
 # Qt
+message(STATUS "${msg} Add Qt external ...") 
+message(STATUS "${msg} Qt6_VERSION: ${Qt6_VERSION}") 
 simvascular_add_new_external(Qt6 ${Qt6_VERSION} ON ON qt)
 
 # ML
+message(STATUS "${msg} Add ML external ...") 
 if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.02")
   simvascular_add_new_external(ml ${ML_VERSION} ON ON ml)
 endif()
 
 # HDF5
+message(STATUS "${msg} Add HDF5 external ...") 
 if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
   simvascular_add_new_external(HDF5 ${HDF5_VERSION} ON ON hdf5 hdf5)
 endif()
@@ -103,65 +97,58 @@ if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
   simvascular_add_new_external(TINYXML2 ${TINYXML2_VERSION} ON ON tinyxml2 tinyxml2)
 endif()
 
-#PYTHON
+# PYTHON
+message(STATUS "${msg} Add PYTHON external ...") 
 simvascular_add_new_external(PYTHON ${PYTHON_VERSION} ON ON python)
 
-#FREETYPE
+# FREETYPE
+message(STATUS "${msg} Add FREETYPE external ...") 
 simvascular_add_new_external(FREETYPE ${FREETYPE_VERSION} ON ON freetype)
 
 # MMG
+message(STATUS "${msg} Add MMG external ...") 
 simvascular_add_new_external(MMG ${MMG_VERSION} ON OFF mmg)
 
 # VTK
+message(STATUS "${msg} Add VTK external ...") 
 simvascular_add_new_external(VTK ${VTK_VERSION} ON ON vtk)
 
 # GDCM
+message(STATUS "${msg} Add GDCM external ...") 
 simvascular_add_new_external(GDCM ${GDCM_VERSION} ON ON gdcm)
 
 # ITK
+message(STATUS "${msg} Add ITK external ...") 
 simvascular_add_new_external(ITK ${ITK_VERSION} ON ON itk)
 
 # OpenCASCADE
+message(STATUS "${msg} Add OpenCASCADE external ...") 
 simvascular_add_new_external(OpenCASCADE ${OpenCASCADE_VERSION} ON ON opencascade)
 
 # MITK
+message(STATUS "${msg} Add MITK external ...") 
 simvascular_add_new_external(MITK ${MITK_VERSION} ON ON mitk)
 
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
 # ThirdParty
+#
 option(SV_USE_THIRDPARTY_SHARED_LIBRARIES "Option to build the thirdparty libs as shared" OFF)
-
 option(SV_USE_ZLIB "Use ZLib" ON)
-
 option(SV_USE_VMTK "Enable VMTK Plugin" ON)
-
 option(SV_USE_TETGEN "Enable Tetgen Meshing Plugin" ON)
-
 option(SV_USE_TETGEN_ADAPTOR "Option to use open source mesh adaption" ON)
-
 option(SV_USE_TINYXML "Use TinyXML" ON)
-
 option(SV_USE_PYTHON "Use Python" ON)
-
 option(SV_USE_TCL "Use Tcl" OFF)
-
 option(SV_USE_SOLVERIO "Use SolverIO" OFF)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Commercial Software Options: Solid Models - Parasolid
+#
 option(SV_USE_PARASOLID "Parasolid" OFF)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # MeshSim
 option(SV_USE_MESHSIM "Use MeshSim commercial libraries.  Requires licenese" OFF)
 option(SV_USE_MESHSIM_ADAPTOR "Build the adapter (Requires Fortran and MeshSim)" OFF)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Modules Shared
 option(SV_USE_MODULES_SHARED_LIBRARIES "Option to build the thirdparty libs as shared" ON)
 
@@ -179,10 +166,8 @@ option(SV_USE_MITK_SEGMENTATION "Option to add the mitk segmentation plugin" OFF
 
 option(SV_GIT_PULL_SUBMODULES "Option to build and pull in submodules" ON)
 
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
 # vtkSVOptions
+#
 # Build regular libraries instead of typical build system
 option(VTKSV_BUILD_LIBS_AS_VTK_MODULES "Option to build the vtkSV libs as vtk modules" OFF)
 
@@ -212,4 +197,3 @@ set(VTKSV_INSTALL_RUNTIME_DIR ${SV_INSTALL_RUNTIME_DIR})
 set(VTKSV_INSTALL_LIBRARY_DIR ${SV_INSTALL_LIBRARY_DIR})
 set(VTKSV_INSTALL_ARCHIVE_DIR ${SV_INSTALL_ARCHIVE_DIR})
 set(VTKSV_INSTALL_INCLUDE_DIR ${SV_INSTALL_INCLUDE_DIR})
-#-----------------------------------------------------------------------------

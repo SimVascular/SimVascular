@@ -28,10 +28,19 @@
 # MITK
 set(proj MITK)
 
-message(STATUS "[MITK.cmake] ")
-message(STATUS "[MITK.cmake] +++++ MITK.cmake +++++")
-message(STATUS "[MITK.cmake] proj: ${proj}")
-message(STATUS "[MITK.cmake] SV_MITK_DIR: ${SV_MITK_DIR}")
+set(SV_MITK_DIR /Users/parkerda/software/ktbolt/svExternals/install/mitk)
+
+set(SV_EXTERNALS_MITK_PFX_DIR ${SV_MITK_DIR})
+set(SV_EXTERNALS_MITK_BIN_DIR ${SV_MITK_DIR})
+set(SV_EXTERNALS_MITK_BLD_DIR ${SV_MITK_DIR})
+
+set(msg "[Externals/CMake/MITK.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} +++++                                 MITK.cmake                                     ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_MITK_DIR: ${SV_ITK_DIR}")
 
 # Dependencies
 set(${proj}_DEPENDENCIES "QT")
@@ -220,22 +229,38 @@ endif()
 # Add external project
 #
 if(SV_MITK_DIR)
-#if(SV_EXTERNALS_DOWNLOAD_${proj})
 
-  message(STATUS "[MITK.cmake] +++++ Use prebuilt MITK ")
-  find_package(MITK REQUIRED PATHS ${SV_MITK_DIR} NO_DEFAULT_PATH)
+  message(STATUS "${msg} +++++ Use installed MITK ")
 
-  #ExternalProject_Add(${proj}
+  # find_package does not work because MITK install does 
+  # not provide a MITKConfig.cmake file.
+  #find_package(MITK REQUIRED PATHS ${SV_MITK_DIR} NO_DEFAULT_PATH)
+
+  message(STATUS "${msg} MITK_DIR: ${MITK_DIR}")
+  message(STATUS "${msg} MITK_LIBRARY_DIRS: ${MITK_LIBRARY_DIRS}")
+  message(STATUS "${msg} MITK_LIBRARIES: ${MITK_LIBRARIES}")
+  message(STATUS "${msg} MITK_INCLUDE_DIR: ${MITK_INCLUDE_DIR}")
+  message(STATUS "${msg} Qt6_DIR: ${Qt6_DIR}")
+
+  message(STATUS "${msg} ")
+  message(STATUS "${msg} +++ Create external project ... ")
+  message(STATUS "${msg} PREFIX: ${${proj}_PREFIX}")
+  message(STATUS "${msg} SOURCE_DIR: ${SV_EXTERNALS_${proj}_BIN_DIR}") 
+  message(STATUS "${msg} DEPENDS: ${${proj}_DEPENDENCIES}")
+
+  ExternalProject_Add(${proj}
     #URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
-    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    #SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
-    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    #DEPENDS ${${proj}_DEPENDENCIES}
-    #CONFIGURE_COMMAND ""
-    #BUILD_COMMAND ""
-    #INSTALL_COMMAND ""
-    #UPDATE_COMMAND ""
-    #)
+    PREFIX ${SV_MITK_DIR}
+    SOURCE_DIR ${SV_MITK_DIR}
+    BINARY_DIR ${SV_MITK_DIR}
+    DEPENDS ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
+    )
+
+  message(STATUS "${msg} --- Done Create external project ")
 
 else()
 

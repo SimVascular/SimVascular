@@ -24,16 +24,17 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-#-----------------------------------------------------------------------------
-# PYTHON
 set(proj HDF5)
 
-message(STATUS "[HDF5.cmake] ")
-message(STATUS "[HDF5.cmake] -------------------------------------------------------------------------------------")
-message(STATUS "[HDF5.cmake] +++++ HDF5.cmake +++++")
-message(STATUS "[HDF5.cmake] -------------------------------------------------------------------------------------")
-message(STATUS "[HDF5.cmake] proj: ${proj}")
-message(STATUS "[HDF5.cmake] SV_HDF5_DIR: ${SV_HDF5_DIR}")
+set(SV_HDF5_DIR /Users/parkerda/software/ktbolt/svExternals/install/hdf5)
+
+set(msg "[Externals/CMake/HDF5.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} +++++                               HDF5.cmake                                         ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_HDF5_DIR: ${SV_HDF5_DIR}")
 
 # Dependencies
 set(${proj}_DEPENDENCIES "")
@@ -51,27 +52,28 @@ set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
 
 # Add external project
 
-if (SV_HDF5_DIR STREQUAL "system")
+if (SV_HDF5_DIR)
 #if(SV_EXTERNALS_DOWNLOAD_${proj})
 
-  message(STATUS "[HDF5.cmake] +++++ Use system HDF5")
+  message(STATUS "${msg} +++++ Use instlled HDF5")
 
-  find_package(HDF5 REQUIRED)
+  find_package(HDF5 REQUIRED PATHS ${SV_HDF5_DIR} NO_DEFAULT_PATH)
+  #find_package(HDF5 REQUIRED)
 
-  message(STATUS "[HDF5.cmake] HDF5_DIR: ${HDF5_DIR}")
-  message(STATUS "[HDF5.cmake] HDF5_INCLUDE_DIRS: ${HDF5_INCLUDE_DIRS}")
+  message(STATUS "${msg} HDF5_DIR: ${HDF5_DIR}")
+  message(STATUS "${msg} HDF5_INCLUDE_DIRS: ${HDF5_INCLUDE_DIRS}")
 
-  ExternalProject_Add(${proj}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}-empty
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}-empty
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}-empty
-    DEPENDS ${${proj}_DEPENDENCIES}
-    DOWNLOAD_COMMAND ""
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    )
-
+  #ExternalProject_Add(${proj}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}-empty
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}-empty
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}-empty
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #DOWNLOAD_COMMAND ""
+    #CONFIGURE_COMMAND ""
+    #BUILD_COMMAND ""
+    #INSTALL_COMMAND ""
+    #)
+#
   #ExternalProject_Add(${proj}
   #  URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
   #  PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}

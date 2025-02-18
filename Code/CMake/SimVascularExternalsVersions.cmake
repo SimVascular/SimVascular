@@ -25,6 +25,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+# Note: these are duplicated in SimVascular/Externals/CMake/SvExtVersions.cmake
+
 #-----------------------------------------------------------------------------
 # URLs for external downloads and git repositories
 set(SV_EXTERNALS_VERSION_NUMBER  "2024.05" CACHE STRING "SimVascular Externals version")
@@ -82,7 +84,6 @@ elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2022.10")
 elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2024.05")
 
   set(Qt6_VERSION "6.6.2")
-
   set(HDF5_VERSION "1.14.3")
   #set(HDF5_VERSION "1.12.2")
 

@@ -25,13 +25,17 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 #-----------------------------------------------------------------------------
-# PYTHON
 set(proj FREETYPE)
 
-message(STATUS "[FREETYPE.cmake] ")
-message(STATUS "[FREETYPE.cmake] +++++ FREETYPE.cmake +++++")
-message(STATUS "[FREETYPE.cmake] proj: ${proj}")
-message(STATUS "[FREETYPE.cmake] SV_FREETYPE_DIR: ${SV_FREETYPE_DIR}")
+set(SV_FREETYPE_DIR /Users/parkerda/software/ktbolt/svExternals/install/freetype)
+
+set(msg "[Externals/CMake/FREETYPE.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} +++++                                 FREETYPE.cmake                                 ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_FREETYPE_DIR: ${SV_FREETYPE_DIR}")
 
 # Dependencies
 set(${proj}_DEPENDENCIES "")
@@ -48,15 +52,14 @@ endif()
 # Add external project
 
 if(SV_FREETYPE_DIR)
-  message(STATUS "[FREETYPE.cmake] +++++ Use prebuilt FREETYPE")
+  message(STATUS "${msg} +++++ Use installed FREETYPE")
 
-  find_package(Freetype REQUIRED)
-  #find_package(FREETYPE REQUIRED)
+  find_package(Freetype REQUIRED PATHS ${SV_FREETYPE_DIR} )
 
-  if(FREETYPE_FOUND)
-    message(STATUS "[FREETYPE.cmake] FREETYPE found")
+  if(Freetype_FOUND)
+    message(STATUS "${msg} FREETYPE found")
   else()
-    message(FATAL_ERROR "[FREETYPE.cmake] FREETYPE not found")
+    message(FATAL_ERROR "${msg} FREETYPE not found")
   endif()
 
 #if(SV_EXTERNALS_DOWNLOAD_${proj})

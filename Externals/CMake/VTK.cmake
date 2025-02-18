@@ -28,12 +28,15 @@
 # VTK
 set(proj VTK)
 
-message(STATUS "[VTK.cmake] ")
-message(STATUS "[VTK.cmake] -------------------------------------------------------------------------------------")
-message(STATUS "[VTK.cmake] +++++                                 VTK.cmake                                      ")
-message(STATUS "[VTK.cmake] -------------------------------------------------------------------------------------")
-message(STATUS "[VTK.cmake] proj: ${proj}")
-message(STATUS "[VTK.cmake] SV_VTK_DIR: ${SV_VTK_DIR}")
+set(SV_VTK_DIR /Users/parkerda/software/ktbolt/svExternals/install/vtk)
+    
+set(msg "[Externals/CMake/VTK.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} +++++                                 VTK.cmake                                      ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_VTK_DIR: ${SV_VTK_DIR}")
 
 # Dependencies
 #
@@ -207,14 +210,13 @@ endif()
 
 # Add VTK as an external project
 #
-if (SV_VTK_DIR STREQUAL "system")
-  message(STATUS "[VTK.cmake] +++++ Use system VTK ")
+if (SV_VTK_DIR)
+  message(STATUS "${msg} +++++ Use installed VTK ")
 
-  find_package(VTK REQUIRED)
-
-  message(STATUS "[VTK.cmake] VTK_DIR: ${VTK_DIR}")
-  message(STATUS "[VTK.cmake] VTK_USE_FILE: ${VTK_USE_FILE}")
-  message(STATUS "[VTK.cmake] VTK_LIBRARIES: ${VTK_LIBRARIES}")
+  find_package(VTK REQUIRED PATHS ${SV_VTK_DIR} NO_DEFAULT_PATH)
+  message(STATUS "${msg} VTK_DIR: ${VTK_DIR}")
+  message(STATUS "${msg} VTK_USE_FILE: ${VTK_USE_FILE}")
+  message(STATUS "${msg} VTK_LIBRARIES: ${VTK_LIBRARIES}")
 
   #ExternalProject_Add(${proj}
     #URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
@@ -229,14 +231,6 @@ if (SV_VTK_DIR STREQUAL "system")
     #)
 
 else()
-
-  message(STATUS "[VTK.cmake] +++++ Use install from ${SV_VTK_DIR}")
-
-  find_package(VTK REQUIRED PATHS ${SV_VTK_DIR} NO_DEFAULT_PATH)
-
-  message(STATUS "[VTK.cmake] VTK_DIR: ${VTK_DIR}")
-  message(STATUS "[VTK.cmake] VTK_USE_FILE: ${VTK_USE_FILE}")
-  message(STATUS "[VTK.cmake] VTK_LIBRARIES: ${VTK_LIBRARIES}")
 
   #ExternalProject_Add(${proj}
     #URL ${SV_EXTERNALS_${proj}_SOURCE_URL}

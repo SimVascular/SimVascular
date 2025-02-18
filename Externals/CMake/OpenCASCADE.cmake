@@ -28,10 +28,15 @@
 # OpenCASCADE
 set(proj OpenCASCADE)
 
-message(STATUS "[OpenCASCADE.cmake] ")
-message(STATUS "[OpenCASCADE.cmake] +++++ OpenCASCADE.cmake +++++")
-message(STATUS "[OpenCASCADE.cmake] proj: ${proj}")
-message(STATUS "[OpenCASCADE.cmake] SV_OPEN_CASCADE_DIR: ${SV_OPEN_CASCADE_DIR}")
+set(SV_OPEN_CASCADE_DIR /Users/parkerda/software/ktbolt/svExternals/install/opencascade)
+      
+set(msg "[Externals/CMake/OpenCASCADE.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} +++++                              OpenCASCADE.cmake                                 ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_OPEN_CASCADE_DIR: ${SV_OPEN_CASCADE_DIR}")
 
 # Dependencies
 set(${proj}_DEPENDENCIES "VTK")
@@ -93,7 +98,7 @@ endif()
 if(SV_OPEN_CASCADE_DIR)
 #if(SV_EXTERNALS_DOWNLOAD_${proj})
 
-  message(STATUS "[OpenCASCADE.cmake] +++++ Use prebuilt OpenCASCADE")
+  message(STATUS "${msg} +++++ Use installed OpenCASCADE")
   find_package(OpenCASCADE REQUIRED PATHS ${SV_OPEN_CASCADE_DIR} NO_DEFAULT_PATH)
 
   #ExternalProject_Add(${proj}
@@ -108,8 +113,8 @@ if(SV_OPEN_CASCADE_DIR)
     #UPDATE_COMMAND ""
     #)
 
-  message(STATUS "[OpenCASCADE.cmake] OpenCASCADE_INCLUDE_DIR: ${OpenCASCADE_INCLUDE_DIR}") 
-  message(STATUS "[OpenCASCADE.cmake] OpenCASCADE_LIBRARY_DIR: ${OpenCASCADE_LIBRARY_DIR}") 
+  message(STATUS "${msg} OpenCASCADE_INCLUDE_DIR: ${OpenCASCADE_INCLUDE_DIR}") 
+  message(STATUS "${msg} OpenCASCADE_LIBRARY_DIR: ${OpenCASCADE_LIBRARY_DIR}") 
 
 else()
   ExternalProject_Add(${proj}

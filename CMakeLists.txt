@@ -36,34 +36,23 @@
 # 2. ExternalProject_Add(SimVascular ---> Builds SimVascular
 #-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 3.10.0)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 Project(SV_TOP)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # CMake module path inside of true simvascular source
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Code/CMake"
-	"${CMAKE_MODULE_PATH}")
-#-----------------------------------------------------------------------------
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Code/CMake" "${CMAKE_MODULE_PATH}")
 
-#-----------------------------------------------------------------------------
 # CMake Includes
 include(CheckLibraryExists)
 include(GetPrerequisites)
 include(GenerateExportHeader)
 include(ExternalProject)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # SimVascular Includes
 include(SimVascularMacros)
 include(SimVascularSystemSetup)
 include(SimVascularFunctionCheckCompilerFlags)
-#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # RPATH handling
@@ -78,8 +67,15 @@ option(SV_USE_ONEDSOLVER "Enable building the 1D solver plugin" ON)
 
 # Optionally build the MITK segmentation plugin
 option(SV_USE_MITK_SEGMENTATION "Enable building the MITK segmentation plugin" ON)
-#-----------------------------------------------------------------------------
-# Externals!
+
+# Define varaibles storing external paths.
+#
+# These will be set manually during the build.
+#
+# Note that these names must match those given in Code/CMake/Externals/*.cmake files.
+#
+set(SV_EXTERNALS_DIR "" CACHE STRING "SimVascular externals directory")
+mark_as_advanced(SV_EXTERNALS_DIR)
 
 set(SV_FREETYPE_DIR "" CACHE PATH "FREETYPE install directory containing a configuration file")
 set(SV_GDCM_DIR "" CACHE PATH "GDCM install directory containing a configuration file")
@@ -87,13 +83,13 @@ set(SV_HDF5_DIR "" CACHE PATH "hdf5 install directory containing a configuration
 set(SV_ITK_DIR "" CACHE PATH "ITK install directory containing a configuration file")
 set(SV_ML_DIR "" CACHE PATH "ML install directory containing a configuration file")
 set(SV_MMG_DIR "" CACHE PATH "MMG install directory containing a configuration file")
-set(SV_OPEN_CASCADE_DIR "" CACHE PATH "OpenCASCADE install directory containing a configuration file")
+set(SV_OpenCASCADE_DIR "" CACHE PATH "OpenCASCADE install directory containing a configuration file")
 set(SV_PYTHON_DIR"" CACHE PATH "PYTHON install directory containing a configuration file")
-set(SV_QT_DIR "" CACHE PATH "Qt install directory containing a configuration file")
+set(SV_Qt6_DIR "" CACHE PATH "Qt6 install directory containing a configuration file")
 set(SV_TINYXML2_DIR "" CACHE PATH "TINYXML2 install directory containing a configuration file")
 set(SV_VTK_DIR "" CACHE PATH "VTK install directory containing a configuration file")
 
-set(SV_EXTERNALS_VERSION_NUMBER "2022.10" CACHE STRING "SimVascular Externals Release Version")
+set(SV_EXTERNALS_VERSION_NUMBER "2024.05" CACHE STRING "SimVascular Externals Release Version")
 mark_as_advanced(SV_EXTERNALS_VERSION_NUMBER)
 
 # Distribution
@@ -138,11 +134,12 @@ endif()
 #mark_as_advanced(SV_EXTERNALS_USE_PREBUILT_QT)
 #mark_as_advanced(SV_EXTERNALS_PREBUILT_QT_PATH)
 
-set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/Externals-build/svExternals/bin")
-set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
+#set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/Externals-build/svExternals/bin")
+#set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
 
 # Note: only download mitk if needed, but need to download Qt
 # because of VTK dependence regardless
+#
 set(SV_CMAKE_DOWLOAD_MITK_EXTERNAL "ON" CACHE BOOL "Force ON" FORCE)
 if(DEFINED SV_USE_SV4_GUI)
   if(NOT SV_USE_SV4_GUI)
@@ -151,9 +148,13 @@ if(DEFINED SV_USE_SV4_GUI)
 endif()
 
 message(STATUS "[root] ")
-message(STATUS "[root] ++++ ExternalProject_Add(Externals ... ")
-message(STATUS "[root] SV_QT_DIR: ${SV_QT_DIR}")
+message(STATUS "[root] ++++ Add Externals project ... ")
+message(STATUS "[root] SV_EXTERNALS_DIR: ${SV_EXTERNALS_DIR}")
+message(STATUS "[root] SV_EXTERNALS_VERSION_NUMBER: ${SV_EXTERNALS_VERSION_NUMBER}")
+message(STATUS "[root] DSV_FREETYPE_DIR: ${DSV_FREETYPE_DIR}")
 message(STATUS "[root] SV_GDCM_DIR: ${SV_GDCM_DIR}")
+message(STATUS "[root] SV_PYTHON_DIR: ${SV_PYTHON_DIR}")
+message(STATUS "[root] SV_Qt6_DIR: ${SV_Qt6_DIR}")
 
 ExternalProject_Add(Externals
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Externals
@@ -181,10 +182,10 @@ ExternalProject_Add(Externals
     -DSV_MMG_DIR:PATH=${SV_MMG_DIR}
     -DSV_MITK_DIR:PATH=${SV_MITK_DIR}
     -DSV_ML_DIR:PATH=${SV_ML_DIR}
-    -DSV_OPEN_CASCADE_DIR:PATH=${SV_OPEN_CASCADE_DIR}
+    -DSV_OpenCASCADE_DIR:PATH=${SV_OpenCASCADE_DIR}
     -DSV_PYTHON_DIR:PATH=${SV_PYTHON_DIR}
     -DSV_TINYXML2_DIR:PATH=${SV_TINYXML2_DIR}
-    -DSV_QT_DIR:PATH=${SV_QT_DIR}
+    -DSV_Qt6_DIR:PATH=${SV_Qt6_DIR}
     -DSV_VTK_DIR:PATH=${SV_VTK_DIR}
     #
     -DSV_EXTERNALS_USE_PREBUILT_QT:BOOL=${SV_EXTERNALS_USE_PREBUILT_QT}
@@ -194,12 +195,13 @@ ExternalProject_Add(Externals
     ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
     )
 
-message(STATUS "[root] ---- Done ExternalProject_Add(Externals ")
+message(STATUS "[root] ---- Done add Externals project ... ")
 
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# SimVascular!
+# Create SimVascular external project ?
+#
+message(STATUS "[root] ")
+message(STATUS "[root] ++++ Add SimVascular external project ... ")
+message(STATUS "[root] SV_EXTERNALS_DIR: ${SV_EXTERNALS_DIR}")
 
 if(WIN32)
   set(freetype_shared_option "-DSV_USE_FREETYPE_SHARED:BOOL=OFF")
@@ -232,17 +234,27 @@ ExternalProject_Add(SimVascular
     -DSV_EXTERNALS_VERSION_NUMBER:STRING=${SV_EXTERNALS_VERSION_NUMBER}
     -DSV_ENABLE_DISTRIBUTION:BOOL=${SV_ENABLE_DISTRIBUTION}
     -DSV_USE_FREETYPE:BOOL=ON
+    -DSV_FREETYPE_DIR:PATH=${SV_FREETYPE_DIR}
     ${freetype_shared_option}
     -DSV_USE_GDCM:BOOL=ON
+    -DSV_GDCM_DIR:PATH=${SV_GDCM_DIR}
+    -DSV_HDF5_DIR:PATH=${SV_HDF5_DIR}
     -DSV_USE_ITK:BOOL=ON
+    -DSV_ITK_DIR:PATH=${SV_ITK_DIR}
     -DSV_USE_MITK:BOOL=ON
     -DSV_USE_MITK_CONFIG:BOOL=OFF
+    -DSV_MITK_DIR:PATH=${SV_MITK_DIR}
     -DSV_USE_MMG:BOOL=ON
+    -DSV_MMG_DIR:PATH=${SV_MMG_DIR}
     -DSV_USE_MPICH2:BOOL=OFF
     -DSV_USE_OpenCASCADE:BOOL=ON
+    -DSV_OpenCASCADE_DIR:PATH=${SV_OpenCASCADE_DIR}
     -DSV_USE_PYTHON:BOOL=ON
     -DSV_USE_Qt6:BOOL=ON
     -DSV_USE_QT:BOOL=ON
+    -DSV_PYTHON_DIR:PATH=${SV_PYTHON_DIR}
+    -DSV_Qt6_DIR:PATH=${SV_Qt6_DIR}
+    -DSV_VTK_DIR:PATH=${SV_VTK_DIR}
     -DSV_USE_SV4_GUI:BOOL=${SV_USE_SV4_GUI}
     -DSV_USE_MITK_SEGMENTATION:BOOL=${SV_USE_MITK_SEGMENTATION}
     -DSV_USE_SOLVERIO:BOOL=ON
@@ -257,4 +269,6 @@ ExternalProject_Add(SimVascular
     -DQt6_DIR:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}
     ${SV_ADDITIONAL_CMAKE_ARGS}
     )
-#-----------------------------------------------------------------------------
+
+message(STATUS "[root] ---- Done add SimVascular external project ... ")
+

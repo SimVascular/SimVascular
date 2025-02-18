@@ -84,21 +84,30 @@ macro(simvascular_combine_files output_file)
 	set(${output_file} ${ACCUM_SCRIPT_STRING})
 endmacro()
 
-#-----------------------------------------------------------------------------
-# simvascular_external - Macro to find libraries needed by simvascular
-# and create the necessary variables to load and link them.
+#----------------------
+# simvascular_external 
+#----------------------
+# Find libraries needed by simvascular and create the necessary variables to load and link them.
 #
 macro(simvascular_external _pkg)
-	string(TOLOWER "${_pkg}" _lower)
+  string(TOLOWER "${_pkg}" _lower)
+  dev_message("Configuring ${_pkg}")
 
-	dev_message("Configuring ${_pkg}")
+  set(msg "[simvascular_external.${_pkg}]")
+  
+  message(STATUS "${msg} ")
+  message(STATUS "${msg} ========== simvascular_external  ${_pkg} ==========")
+  message(STATUS "${msg} _pkg: ${_pkg} ")
 
   # Function options
   set(arg_options NO_MODULE REQUIRED NO_DEFAULT_PATH)
+
   # Multiple value args
   set(arg_single VERSION SHARED_LIB)
+
   # Multiple value args
   set(arg_multiple PATHS HINTS COMPONENTS)
+  message(STATUS "${msg} PATHS: ${PATHS} ")
 
   cmake_parse_arguments("simvascular_external"
    "${arg_options}"
@@ -112,7 +121,7 @@ macro(simvascular_external _pkg)
 
   # No modules
   if(simvascular_external_NO_MODULE)
-  	set(EXTRA_ARGS ${EXTRA_ARGS} NO_MODULE)
+    set(EXTRA_ARGS ${EXTRA_ARGS} NO_MODULE)
   endif()
 
   # Required
@@ -132,16 +141,19 @@ macro(simvascular_external _pkg)
   # Default PATHS
   unset(ARG_STRING)
   set(_paths "${simvascular_external_PATHS}")
-  message(STATUS "${simvascular_external_PATHS}")
+  message(STATUS "${msg} ${simvascular_external_PATHS}")
+  message(STATUS "${msg} simvascular_external_PATHS: ${simvascular_external_PATHS} ")
+
   if(NOT simvascular_external_PATHS)
     set(_paths "${CMAKE_MODULE_PATH}")
   endif()
 
-  message(STATUS "Search paths for ${_pkg}Config.cmake: ${_paths}")
-  message(STATUS "${_pkg}")
-  message(STATUS "${EXTRA_ARGS}")
+  message(STATUS "${msg} Search paths for ${_pkg}Config.cmake: ${_paths}")
+
   # Find Package
+  message(STATUS "${msg} Find package ... ") 
   find_package(${_pkg} ${EXTRA_ARGS})
+  message(STATUS "${msg} --- Done find package ") 
 
   # Add to shared libs
   if(simvascular_external_SHARED_LIB)
@@ -150,28 +162,35 @@ macro(simvascular_external _pkg)
   endif()
 
   # Include include directories
+  #
   if(${_pkg}_FOUND)
-    message(STATUS "PKG ${_pkg} found!")
+    message(STATUS "${msg} Package ${_pkg} found!")
+
     if( ${_pkg}_INCLUDE_DIR )
-    	dev_message("Including dir: ${${_pkg}_INCLUDE_DIR}")
-    	# This get many of them
-    	include_directories(${${_pkg}_INCLUDE_DIR})
-      message(STATUS ${${_pkg}_INCLUDE_DIR})
+      dev_message("Including dir: ${${_pkg}_INCLUDE_DIR}")
+      include_directories(${${_pkg}_INCLUDE_DIR})
+      message(STATUS "${msg} Include dir ${${_pkg}_INCLUDE_DIR}")
     endif()
+
     if( ${_pkg}_INCLUDE_DIRS )
       dev_message("Including dir: ${${_pkg}_INCLUDE_DIRS}")
     	# This get many of them
       include_directories(${${_pkg}_INCLUDE_DIRS})
-      message(STATUS ${${_pkg}_INCLUDE_DIRS})
+      message(STATUS "${msg} ${${_pkg}_INCLUDE_DIRS}")
     endif()
+  else()
+    message(STATUS "${msg} ****** PKG ${_pkg} not found!")
   endif()
 
   # Developer help
   if(SV_DEVELOPER_OUTPUT)
-    message(STATUS "Finished Configuring ${_pkg}")
-    message(STATUS "")
+    message(STATUS "${msg} Finished Configuring ${_pkg}")
   endif()
+
+  message(STATUS "${msg} ----- Done finding ${_pkg} ")
+  message(STATUS "${msg}")
 endmacro()
+
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -834,6 +853,11 @@ if(SV_USE_MITK)
 #-----------------------------------------------------------------------------
 function(simvascular_create_module)
 
+  set(msg "[simvascular_create_module] ")
+  message(STATUS "${msg} ")
+  message(STATUS "${msg} ---------- simvascular_create_module ----------")
+  message(STATUS "${msg} CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
+
   set(arg_single
     TARGET
     EXPORT_DIRECTIVE
@@ -848,21 +872,31 @@ function(simvascular_create_module)
 
   cmake_parse_arguments(_MODULE "${arg_options}" "${arg_single}" "${arg_multiple}" ${ARGN})
 
+  message(STATUS "${msg} _MODULE_TARGET: ${_MODULE_TARGET} ")
+
   if(NOT _MODULE_TARGET)
     message(FATAL_ERROR "Must provide target for module creation")
   endif()
+
   if(NOT _MODULE_EXPORT_DIRECTIVE)
     message(FATAL_ERROR "Must provide name for header export")
   endif()
+
   set(MODULE_LIB_TYPE "SHARED")
+
   if(DEFINED _MODULE_SHARED_LIB AND NOT _MODULE_SHARED_LIB)
     set(MODULE_LIB_TYPE "STATIC")
   endif()
 
   include(${CMAKE_CURRENT_SOURCE_DIR}/files.cmake)
-  qt6_wrap_ui(UISrcs ${UI_FILES})
-  qt6_add_resources(QRCSrcs ${QRC_FILES})
-  qt6_wrap_cpp(MOCSrcs ${MOC_H_FILES})
+
+  message(STATUS "${msg} UI_FILES: ${UI_FILES} ")
+  message(STATUS "${msg} QRC_FILES: ${QRC_FILES} ")
+  message(STATUS "${msg} MOC_H_FILES: ${MOC_H_FILES} ")
+
+  #qt_wrap_ui(UISrcs ${UI_FILES})
+  qt_add_resources(QRCSrcs ${QRC_FILES})
+  qt_wrap_cpp(MOCSrcs ${MOC_H_FILES})
   #qt5_wrap_ui(UISrcs ${UI_FILES})
   #qt5_add_resources(QRCSrcs ${QRC_FILES})
   #qt5_wrap_cpp(MOCSrcs ${MOC_H_FILES})
@@ -1146,22 +1180,38 @@ function(simvascular_install_external project_name)
   endif()
 
 endfunction()
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
+# ----------------------------
 # simvascular_add_new_external
+# ----------------------------
+# Adds external package to SV_EXTERNALS_LIST
+#
+# Sets
+#   SV_${proj}_DIR
+#   SV_EXT_${proj}_BIN_DIR
+#
 macro(simvascular_add_new_external proj version use shared dirname)
+
+  set(msg "[simvascular_add_new_external] ")
+  message(STATUS "${msg} ")
+  message(STATUS "${msg} ---------- simvascular_add_new_external  ${proj} ----------")
+  message(STATUS "${msg} proj: ${proj}")
+  message(STATUS "${msg} version: ${version}")
+  message(STATUS "${msg} SV_${proj}_DIR: ${SV_${proj}_DIR}")
+
   option(SV_USE_${proj} "Enable ${proj} Plugin" ${use})
   option(SV_USE_${proj}_SHARED "Build ${proj} libraries as shared libs" ${shared})
 
-  set(${proj}_VERSION "${version}" CACHE TYPE STRING)
+  set(${proj}_VERSION "${version}" CACHE STRING "version")
+  #set(${proj}_VERSION "${version}" CACHE TYPE STRING)
+
   simvascular_get_major_minor_patch_version(${${proj}_VERSION} ${proj}_MAJOR_VERSION ${proj}_MINOR_VERSION ${proj}_PATCH_VERSION)
   set(SV_EXT_${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${dirname}-${${proj}_VERSION})
 
-  message(STATUS ${proj})
-
-  # Install rules
+  # Set install rules.
+  #
   set(SV_EXTERNALS_${proj}_INSTALL_PREFIX ${SV_EXTERNALS_INSTALL_PREFIX}/${dirname}-${${proj}_VERSION})
+
   if(${CMAKE_PROJECT_NAME}_ENABLE_DISTRIBUTION)
     set(LIB_DESTINATION "${SV_EXTERNALS_INSTALL_PREFIX}")
   else()
@@ -1186,17 +1236,24 @@ macro(simvascular_add_new_external proj version use shared dirname)
 
   if(SV_USE_${proj})
     list(APPEND SV_EXTERNALS_LIST ${proj})
-    set(SV_${proj}_DIR ${SV_EXT_${proj}_BIN_DIR})
+    # [davep] this is set manually when building.
+    # set(SV_${proj}_DIR ${SV_EXT_${proj}_BIN_DIR})
+
     if("${proj}" STREQUAL "MITK")
       if(SV_USE_MITK_CONFIG)
         set(SV_${proj}_DIR ${SV_EXT_${proj}_BLD_DIR}/MITK-build)
       endif()
     endif()
   endif()
+
   if(SV_EXTERNALS_LIST)
     list(REMOVE_DUPLICATES SV_EXTERNALS_LIST)
   endif()
+
+  message(STATUS "${msg} SV_${proj}_DIR: ${SV_${proj}_DIR}")
+  message(STATUS "${msg} ----- Done simvascular_add_new_external  ${proj} ")
 endmacro()
+
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -1316,15 +1373,24 @@ macro(simvascular_today YEAR MONTH DAY)
   list(GET RESULT 1 MONTH)
   list(GET RESULT 2 DAY)
 endmacro()
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
+#-------------------------------
 # sv_externals_add_new_external
-# \brief Create new external and set variables with default values based on inputs
+#-------------------------------
+# Create new external and set variables with default values based on inputs
 #
 # Sets
 #
+#  SV_EXTERNALS_ENABLE_${proj}
+#  SV_EXTERNALS_${proj}_VERSION
+#
 #  SV_EXTERNALS_${proj}_BINARIES_URL - location of tar file on /downloads/public/simvascular/externals
+#  SV_EXTERNALS_${proj}_SRC_DIR
+#  SV_EXTERNALS_${proj}_BLD_DIR
+#
+#  SV_EXTERNALS_DOWNLOAD_${proj}
+#
+# Adds external package name to SV_EXTERNALS_LIST 
 #
 macro(sv_externals_add_new_external proj version use shared dirname install_dirname)
 
@@ -1342,12 +1408,14 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
   option(SV_EXTERNALS_DOWNLOAD_${proj} "Download instead of build ${proj}; Unused for tcl, tk, tcllib, tklib, numpy, pip" ON)
   #mark_as_advanced(SV_EXTERNALS_DOWNLOAD_${proj})
 
-  # Version
+  # Set external version
+  #
   set(SV_EXTERNALS_${proj}_VERSION "${version}")
   simvascular_get_major_minor_patch_version(${SV_EXTERNALS_${proj}_VERSION} SV_EXTERNALS_${proj}_MAJOR_VERSION SV_EXTERNALS_${proj}_MINOR_VERSION SV_EXTERNALS_${proj}_PATCH_VERSION)
   message(STATUS "[sv_externals_add_new_external] SV_EXTERNALS_${proj}_VERSION ${version}")
 
-  # Src, bin, build, prefic dirs
+  # Set Src, bin, build, prefic dirs
+  #
   set(${proj}_VERSION_DIR ${dirname}-${SV_EXTERNALS_${proj}_VERSION})
   set(SV_EXTERNALS_${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_SRC_DIR}/${${proj}_VERSION_DIR})
   if(NOT "${install_dirname}" STREQUAL "none")
@@ -1355,10 +1423,12 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
   else()
     set(SV_EXTERNALS_${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${${proj}_VERSION_DIR})
   endif()
+
   set(SV_EXTERNALS_${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_BLD_DIR}/${${proj}_VERSION_DIR})
   set(SV_EXTERNALS_${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_PFX_DIR}/${${proj}_VERSION_DIR})
 
   # Install dirs
+  #
   if(NOT SV_EXTERNALS_INSTALL_${proj}_RUNTIME_DIR)
     set(SV_EXTERNALS_INSTALL_${proj}_RUNTIME_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/bin)
   endif()
@@ -1377,14 +1447,17 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
   endif()
 
   # Add to externals list
+  #
   if(SV_EXTERNALS_ENABLE_${proj})
     list(APPEND SV_EXTERNALS_LIST ${proj})
   endif()
+
   if(SV_EXTERNALS_LIST)
     list(REMOVE_DUPLICATES SV_EXTERNALS_LIST)
   endif()
 
   # Add install step for each external
+  #
   if(NOT "${install_dirname}" STREQUAL "none")
     string(TOLOWER "${SV_BUILD_TYPE_DIR}" SV_BUILD_TYPE_LOWER)
     simvascular_today(YEAR MONTH DAY)
@@ -1400,8 +1473,12 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
 
   # Set up file download. 
   #
+  # [davep] disable downloads.
+  #
+  set(SV_EXTERNALS_DOWNLOAD_${proj} FALSE)
 
   if(NOT "${install_dirname}" STREQUAL "none")
+
     if(SV_EXTERNALS_DOWNLOAD_${proj})
       message(STATUS "[sv_externals_add_new_external] SV_EXTERNALS_DOWNLOAD_${proj} true") 
       set(${proj}_TEST_FILE "${SV_EXTERNALS_URL}/${SV_EXTERNALS_VERSION_NUMBER}/${SV_KERNEL_DIR}/${SV_PLATFORM_DIR}/externals_compiler_info.txt")
@@ -1409,6 +1486,7 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
       file(DOWNLOAD "${${proj}_TEST_FILE}" "${SV_EXTERNALS_${proj}_PFX_DIR}/externals_compiler_info.txt" STATUS _status LOG _log INACTIVITY_TIMEOUT 5 TIMEOUT 5)
       list(GET _status 0 err)
       list(GET _status 1 msg)
+
       if(err)
         message(FATAL_ERROR "The operating system does not have any available pre-built binaries. See the build documentation to build your own.")
       else()
@@ -1418,9 +1496,17 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
         set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_URL}/${SV_EXTERNALS_VERSION_NUMBER}/${SV_KERNEL_DIR}/${SV_PLATFORM_DIR}/${SV_DOWNLOAD_DIR}/${SV_PLATFORM_DIR}.${SV_TAR_PREFIX}.${install_dirname}.${SV_EXTERNALS_${proj}_VERSION}.tar.gz")
         message(STATUS "[sv_externals_add_new_external] SV_EXTERNALS_${proj}_BINARIES_URL: ${SV_EXTERNALS_${proj}_BINARIES_URL}") 
       endif()
+
+    else()
+      message(STATUS "[sv_externals_add_new_external] ####################### ")
+      message(STATUS "[sv_externals_add_new_external] Don't download external ")
+      message(STATUS "[sv_externals_add_new_external] ####################### ")
+
     endif()
+
   endif()
 endmacro()
+
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
