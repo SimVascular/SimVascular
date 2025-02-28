@@ -39,7 +39,10 @@
 set(proj MITK)
 
 set(msg "[Code/CMake/FindMITK.cmake] ")
+message(STATUS "${msg} ") 
+message(STATUS "${msg} ==========================================================")
 message(STATUS "${msg} =============== Code/CMake  FindMITK.cmake ===============")
+message(STATUS "${msg} ==========================================================")
 message(STATUS "${msg} MITK_DIR: ${MITK_DIR}") 
 
 include(CMakeFindFrameworks)
@@ -128,9 +131,11 @@ set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})
 
 # Set header file names. 
 #
+# [davep] not found
+#                    "signature_of_eigen3_matrix_library"             #eigen3
+#
 set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "ctkPluginFrameworkLauncher.h"                   #ctk/PluginFramework
-                    "signature_of_eigen3_matrix_library"             #eigen3
                     "mitkVersion.h"                                  #mitk
                     "usGlobalConfig.h"                               #mitk/configs
                     "MitkAlgorithmsExtExports.h"                     #mitk/exports
@@ -365,7 +370,7 @@ set(${proj}_POSSIBLE_INCLUDE_PATHS
 # Search for header
 #
 message(STATUS "${msg} Find headers ...") 
-message(STATUS "${msg} headers: ${${proj}_HEADERS}") 
+#message(STATUS "${msg} headers: ${${proj}_HEADERS}") 
 
 set(${proj}_HEADERS_MISSING ${${proj}_HEADERS})
 list(REMOVE_DUPLICATES ${proj}_HEADERS_MISSING)
@@ -373,7 +378,8 @@ set(${proj}_HEADERS_WORK "")
 
 foreach(header ${${proj}_HEADERS})
   unset(${proj}_${header}_HEADER CACHE)
-  message(STATUS "${msg} header: ${header}") 
+  #message(STATUS "${msg} ------------------------") 
+  #message(STATUS "${msg} header: ${header}") 
 
   find_path(${proj}_${header}_HEADER
     NAMES
@@ -385,10 +391,17 @@ foreach(header ${${proj}_HEADERS})
 
   mark_as_advanced(${proj}_${header}_HEADER)
   set(${proj}_HEADER_FULLNAMES ${${proj}_HEADER_FULLNAMES} ${proj}_${header}_HEADER)
+
   if(${proj}_${header}_HEADER)
     set(${proj}_HEADERS_WORK ${${proj}_HEADERS_WORK} "${${proj}_${header}_HEADER}")
     list(REMOVE_ITEM ${proj}_HEADERS_MISSING ${header})
+    #message(STATUS "${msg} Found ${header}") 
+  else()
+    message(STATUS "${msg} ---------------------------------") 
+    message(STATUS "${msg} header: ${header}") 
+    message(FATAL_ERROR "${msg} *** Not found ${header}") 
   endif()
+
 endforeach()
 
 list(LENGTH ${proj}_HEADERS_WORK ${proj}_NUMHEADERS)
@@ -397,10 +410,8 @@ list(LENGTH ${proj}_HEADERS ${proj}_NUMHEADERS_EXPECTED)
 
 if (NOT ${proj}_NUMHEADERS EQUAL ${proj}_NUMHEADERS_EXPECTED)
   set(${proj}_HEADERS_WORK "${proj}_HEADERS-NOTFOUND")
-
   message("${msg} MITK_NUMHEADERS: ${MITK_NUMHEADERS}")
   message("${msg} MITK_NUMHEADERS_EXPECTED: ${MITK_NUMHEADERS_EXPECTED}")
-
   message(FATAL_ERROR "${proj}_HEADERS_MISSING: ${${proj}_HEADERS_MISSING}")
 endif()
 

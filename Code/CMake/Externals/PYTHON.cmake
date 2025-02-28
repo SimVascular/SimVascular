@@ -28,6 +28,8 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# Find the installed Python package and set the include directories.
+#
 set(proj PYTHON)
 
 set(msg "[Code/CMake/Externals/PYTHON.cmake]")
@@ -35,6 +37,8 @@ message(STATUS "${msg} =============== Code/CMake/Externals    PYTHON.cmake ====
 message(STATUS "${msg} proj: ${proj}")
 message(STATUS "${msg} SV_USE_PYTHON: ${SV_USE_PYTHON}")
 message(STATUS "${msg} SV_PYTHON_DIR: ${SV_PYTHON_DIR}")
+message(STATUS "${msg} Python_DIR: ${Python_DIR}")
+message(STATUS "${msg} PYTHON_DIR: ${PYTHON_DIR}")
 message(STATUS "${msg} PYTHON_VERISON: ${${proj}_VERSION}") 
 message(STATUS "${msg} SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR: ${SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR}")
 
@@ -52,18 +56,32 @@ if(SV_USE_${proj})
   if(NOT WIN32)
     set(CMAKE_PREFIX_PATH "${PYTHON_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
 
-    find_package(Python3 COMPONENTS Interpreter Development)
+    # [NOTE] On MacOS the system CMake FindPython.cmake does not work in the SV CMake. 
+    # A small test does work by setting PYTHON_EXECUTABLE.
+    #
+    #find_package(Python COMPONENTS Interpreter Development REQUIRED)
+    #find_package(Python3 COMPONENTS Interpreter Development)
+    #find_package(Python COMPONENTS Interpreter Development NO_MODULE) 
   
-    #simvascular_external(${proj}
-    #  SHARED_LIB ${SV_USE_${proj}_SHARED}
-    #  VERSION ${${proj}_VERSION}
-    #  PATHS /Users/parkerda/software/ktbolt/svExternals/install/python/bin/python3
-    #  REQUIRED
-    #  )
+    # This will call the SV FindPython.cmake and correctly set PYTHON_INCLUDE_DIR, etc..
+    #
+    simvascular_external(${proj}
+      SHARED_LIB ${SV_USE_${proj}_SHARED}
+      VERSION ${${proj}_VERSION}
+      PATHS /Users/parkerda/software/ktbolt/svExternals/install/python
+      REQUIRED
+      )
 
+    message(STATUS "${msg} Python_FOUND: ${Python_FOUND}") 
+    message(STATUS "${msg} Python3_FOUND: ${Python3_FOUND}") 
     message(STATUS "${msg} PYTHON_INCLUDE_DIR: ${PYTHON_INCLUDE_DIR}") 
+    message(STATUS "${msg} PYTHON_INCLUDE_DIRS: ${PYTHON_INCLUDE_DIRS}") 
     message(STATUS "${msg} PYTHON_LIBRARY: ${PYTHON_LIBRARY}") 
     message(STATUS "${msg} PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}") 
+    #message(FATAL_ERROR "${msg} PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}") 
+
+    set(PYTHON_INCLUDE_DIRS /Users/parkerda/software/ktbolt/svExternals/install/python/include)
+    set(PYTHON_EXECUTABLE /Users/parkerda/software/ktbolt/svExternals/install/python/bin/python3)
 
     # Set SV_PYTHON_DIR to the directory that was found to contain PYTHON
     #set(SV_${proj}_DIR ${${proj}_DIR})

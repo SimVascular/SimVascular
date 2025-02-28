@@ -32,6 +32,13 @@
 # TINYXML2
 set(proj TINYXML2)
 
+set(msg "[Code/CMake/Externals/TINYXML2.cmake] ")
+message(STATUS "${msg} =============== Code/CMake/Externals    TINYXML2.cmake ===============")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_TINYXML2_DIR: ${SV_TINYXML2_DIR}")
+message(STATUS "${msg} TINYXML2_DIR: ${TINYXML2_DIR}")
+message(STATUS "${msg} SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR: ${SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR}")
+
 if(SV_USE_${proj})
   # If using toplevel dir, TINYXML2_DIR to be the SV_TINYXML2_DIR set by the
   # simvascular_add_new_external macro

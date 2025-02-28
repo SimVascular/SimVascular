@@ -149,6 +149,7 @@ macro(simvascular_external _pkg)
   endif()
 
   message(STATUS "${msg} Search paths for ${_pkg}Config.cmake: ${_paths}")
+  message(STATUS "${msg} EXTRA_ARGS: ${EXTRA_ARGS}")
 
   # Find Package
   message(STATUS "${msg} Find package ... ") 
@@ -176,7 +177,7 @@ macro(simvascular_external _pkg)
       dev_message("Including dir: ${${_pkg}_INCLUDE_DIRS}")
     	# This get many of them
       include_directories(${${_pkg}_INCLUDE_DIRS})
-      message(STATUS "${msg} ${${_pkg}_INCLUDE_DIRS}")
+      message(STATUS "${msg} Include dirs: ${${_pkg}_INCLUDE_DIRS}")
     endif()
   else()
     message(STATUS "${msg} ****** PKG ${_pkg} not found!")
