@@ -46,7 +46,7 @@ message(STATUS "${msg} SV_Qt6_DIR: ${SV_Qt6_DIR}")
 #message(FATAL_ERROR "${msg} SV_Qt6_DIR: ${SV_Qt6_DIR}")
 
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.18.0)
 #-----------------------------------------------------------------------------
 
 Project(SV)
@@ -454,14 +454,18 @@ if(SV_USE_MITK_CONFIG)
   endif()
 endif()
 
-message(STATUS "Executables")
+message(STATUS "${msg} Executables ...")
 foreach(dir ${SV_CORE_EXECUTABLE_DIRS})
-        message(STATUS "	${dir}")
+        message(STATUS "${msg}  ${dir}")
         add_subdirectory("${dir}")
 endforeach()
 #-----------------------------------------------------------------------------
 
 # add git submodules
+message(STATUS "${msg} Add git submodules ...")
+message(STATUS "${msg} +++++ Don't update git submodules ")
+
+#[[
 if(SV_GIT_PULL_SUBMODULES)
   #message(STATUS "inside of SV_GIT_PULL_SUBMODULES")
   find_package(Git)
@@ -477,6 +481,7 @@ if(SV_GIT_PULL_SUBMODULES)
     endif()
   endif()
 endif()
+#]]
 
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory
@@ -498,5 +503,5 @@ add_subdirectory(Scripts)
 include(SimVascularConfigSetup)
 #-----------------------------------------------------------------------------
 
-target_link_libraries(SV Qt6::Core Qt6::Gui Qt6::Widgets )
+#target_link_libraries(SV Qt6::Core Qt6::Gui Qt6::Widgets )
 
