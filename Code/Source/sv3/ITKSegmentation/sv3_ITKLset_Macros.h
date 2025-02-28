@@ -34,7 +34,7 @@
 
 #define cvGetRepoObjMacro(name,type)																\
 		virtual inline int Get##name(type **value){ 											\
-			if(m_cv##name == nullptr){ 															\
+			if(m_cv##name == NULL){ 															\
                                 return SV_ERROR; 																		\
 			} else { 																			\
 				*value = m_cv##name;															\
@@ -44,9 +44,9 @@
 
 #define cvSetRepoObjMacro(name,cvtype,baseType)													\
 		virtual inline int Set##name(cvtype *value){ 											\
-			if ( m_cv##name != nullptr ) { 														\
+			if ( m_cv##name != NULL ) { 														\
 				delete m_cv##name;																\
-				m_cv##name = nullptr;																\
+				m_cv##name = NULL;																\
 			}																					\
 			m_cv##name = new cvtype ( (baseType*)value->GetVtkPtr() );							\
 			m_cv##name->SetName( value->GetName() ); 											\

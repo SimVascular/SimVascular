@@ -32,129 +32,126 @@
 #ifndef __itkVascularPhaseOneLevelSetImageFilter_h
 #define __itkVascularPhaseOneLevelSetImageFilter_h
 
-// This files uses classes that are no longer available in ITK. Commenting 
-// everyting, since it's only used in the TCL Api.
-
-// #include "sv3_VascularLevelSetImageFilter.h"
-// #include "sv3_VascularPhaseOneLevelSetFunction.h"
+#include "sv3_VascularLevelSetImageFilter.h"
+#include "sv3_VascularPhaseOneLevelSetFunction.h"
 
 
-// namespace itk
-// {
-// template<	typename TInputImage,
-// typename TFeatureImage,
-// typename TOutputPixelType = float >
-// class ITK_EXPORT VascularPhaseOneLevelSetImageFilter:
-// public VascularLevelSetImageFilter< TInputImage, TFeatureImage,
-// TOutputPixelType >
-// {
-// public:
-// 	/* Standard */
-// 	typedef VascularPhaseOneLevelSetImageFilter Self;
-// 	typedef VascularLevelSetImageFilter< TInputImage, TFeatureImage,
-// 			TOutputPixelType > Superclass;
+namespace itk
+{
+template<	typename TInputImage,
+typename TFeatureImage,
+typename TOutputPixelType = float >
+class ITK_EXPORT VascularPhaseOneLevelSetImageFilter:
+public VascularLevelSetImageFilter< TInputImage, TFeatureImage,
+TOutputPixelType >
+{
+public:
+	/* Standard */
+	typedef VascularPhaseOneLevelSetImageFilter Self;
+	typedef VascularLevelSetImageFilter< TInputImage, TFeatureImage,
+			TOutputPixelType > Superclass;
 
-// 	typedef SmartPointer< Self >       Pointer;
-// 	typedef SmartPointer< const Self > ConstPointer;
+	typedef SmartPointer< Self >       Pointer;
+	typedef SmartPointer< const Self > ConstPointer;
 
-// 	/** Inherited typedef from the superclass. */
-// 	typedef typename Superclass::ValueType        ValueType;
-// 	typedef typename Superclass::OutputImageType  OutputImageType;
-// 	typedef typename Superclass::FeatureImageType FeatureImageType;
-// 	typedef typename Superclass::CurrentImageType CurrentImageType;
+	/** Inherited typedef from the superclass. */
+	typedef typename Superclass::ValueType        ValueType;
+	typedef typename Superclass::OutputImageType  OutputImageType;
+	typedef typename Superclass::FeatureImageType FeatureImageType;
+	typedef typename Superclass::CurrentImageType CurrentImageType;
 
-// 	/** Type of the segmentation function */
-// 	typedef VascularPhaseOneLevelSetFunction< OutputImageType,
-// 			FeatureImageType > VascularPhaseOneLevelSetFunctionType;
-// 	typedef VascularPhaseOneLevelSetFunction< OutputImageType,
-// 			FeatureImageType > LevelSetFunctionType;
-// 	typedef typename VascularPhaseOneLevelSetFunctionType::Pointer
-// 			VascularPhaseOneLevelSetFunctionPointer;
+	/** Type of the segmentation function */
+	typedef VascularPhaseOneLevelSetFunction< OutputImageType,
+			FeatureImageType > VascularPhaseOneLevelSetFunctionType;
+	typedef VascularPhaseOneLevelSetFunction< OutputImageType,
+			FeatureImageType > LevelSetFunctionType;
+	typedef typename VascularPhaseOneLevelSetFunctionType::Pointer
+			VascularPhaseOneLevelSetFunctionPointer;
 
-// 	/** Run-time type information (and related methods). */
-// 	itkTypeMacro(VascularPhaseOneLevelSetImageFilter,
-// 			VascularLevelSetImageFilter);
+	/** Run-time type information (and related methods). */
+	itkTypeMacro(VascularPhaseOneLevelSetImageFilter,
+			VascularLevelSetImageFilter);
 
-// 	/** Method for creation through the object factory */
-// 	itkNewMacro(Self);
-
-
-// 	void SetAdvectionDerivativeSigma(float value)
-// 	{if ( value != m_VascularPhaseOneLevelSetFunction->GetAdvectionDerivativeSigma() )
-// 	{m_VascularPhaseOneLevelSetFunction->SetAdvectionDerivativeSigma(value);
-// 	this->Modified();}}
-
-// 	/** Get the value of sigma used to compute the edge potential map derivatives.
-// 	 */
-// 	float SetAdvectionDerivativeSigma() const
-// 	{ return m_VascularPhaseOneLevelSetFunction->GetAdvectionDerivativeSigma(); }
+	/** Method for creation through the object factory */
+	itkNewMacro(Self);
 
 
-// 	void SetSpeedDerivativeSigma(float value)
-// 	{if ( value != m_VascularPhaseOneLevelSetFunction->GetSpeedDerivativeSigma() )
-// 	{m_VascularPhaseOneLevelSetFunction->SetSpeedDerivativeSigma(value);
-// 	this->Modified();}}
+	void SetAdvectionDerivativeSigma(float value)
+	{if ( value != m_VascularPhaseOneLevelSetFunction->GetAdvectionDerivativeSigma() )
+	{m_VascularPhaseOneLevelSetFunction->SetAdvectionDerivativeSigma(value);
+	this->Modified();}}
 
-// 	/** Get the value of the rising
-// 	 */
-// 	float GetSpeedDerivativeSigma() const
-// 	{ return m_VascularPhaseOneLevelSetFunction->GetSpeedDerivativeSigma(); }
-
-
-// 	void SetRisingVelocityDecayModifier(float value)
-// 	{if ( value != m_VascularPhaseOneLevelSetFunction->GetRisingVelocityDecayModifier() )
-// 	{m_VascularPhaseOneLevelSetFunction->SetRisingVelocityDecayModifier(value);
-// 	this->Modified();}}
-
-// 	/** Get the value of the value Falling Modifier
-// 	 */
-// 	float GetRisingVelocityDecayModifier() const
-// 	{ return m_VascularPhaseOneLevelSetFunction->GetRisingVelocityDecayModifier(); }
+	/** Get the value of sigma used to compute the edge potential map derivatives.
+	 */
+	float SetAdvectionDerivativeSigma() const
+	{ return m_VascularPhaseOneLevelSetFunction->GetAdvectionDerivativeSigma(); }
 
 
-// 	void SetFallingVelocityDecayModifier(float value)
-// 	{if ( value != m_VascularPhaseOneLevelSetFunction->GetFallingVelocityDecayModifier() )
-// 	{m_VascularPhaseOneLevelSetFunction->SetFallingVelocityDecayModifier(value);
-// 	this->Modified();}}
-// 	float GetFallingVelocityDecayModifier() const
-// 	{ return m_VascularPhaseOneLevelSetFunction->GetFallingVelocityDecayModifier(); }
+	void SetSpeedDerivativeSigma(float value)
+	{if ( value != m_VascularPhaseOneLevelSetFunction->GetSpeedDerivativeSigma() )
+	{m_VascularPhaseOneLevelSetFunction->SetSpeedDerivativeSigma(value);
+	this->Modified();}}
 
-// 	float GetDecayModiferRatio()
-// 	{return this->m_VascularPhaseOneLevelSetFunction->GetDecayModiferRatio();}
-
-// 	void SetEquilibriumCurvature(float value)
-// 	{if ( value != m_VascularPhaseOneLevelSetFunction->GetEquilibriumCurvature() )
-// 	{m_VascularPhaseOneLevelSetFunction->SetEquilibriumCurvature(value);
-// 	this->Modified();}}
-// 	float GetEquilibriumCurvature() const
-// 	{ return m_VascularPhaseOneLevelSetFunction->GetEquilibriumCurvature(); }
+	/** Get the value of the rising
+	 */
+	float GetSpeedDerivativeSigma() const
+	{ return m_VascularPhaseOneLevelSetFunction->GetSpeedDerivativeSigma(); }
 
 
-// 	void PrintShort(std::ostream & os) const
-// 	{
-// 		m_VascularPhaseOneLevelSetFunction->PrintShort(os);
-// 	}
+	void SetRisingVelocityDecayModifier(float value)
+	{if ( value != m_VascularPhaseOneLevelSetFunction->GetRisingVelocityDecayModifier() )
+	{m_VascularPhaseOneLevelSetFunction->SetRisingVelocityDecayModifier(value);
+	this->Modified();}}
+
+	/** Get the value of the value Falling Modifier
+	 */
+	float GetRisingVelocityDecayModifier() const
+	{ return m_VascularPhaseOneLevelSetFunction->GetRisingVelocityDecayModifier(); }
 
 
-// protected:
-// 	~VascularPhaseOneLevelSetImageFilter() {}
-// 	VascularPhaseOneLevelSetImageFilter();
+	void SetFallingVelocityDecayModifier(float value)
+	{if ( value != m_VascularPhaseOneLevelSetFunction->GetFallingVelocityDecayModifier() )
+	{m_VascularPhaseOneLevelSetFunction->SetFallingVelocityDecayModifier(value);
+	this->Modified();}}
+	float GetFallingVelocityDecayModifier() const
+	{ return m_VascularPhaseOneLevelSetFunction->GetFallingVelocityDecayModifier(); }
 
-// 	virtual void PrintSelf(std::ostream & os, Indent indent) const;
+	float GetDecayModiferRatio()
+	{return this->m_VascularPhaseOneLevelSetFunction->GetDecayModiferRatio();}
 
-// 	VascularPhaseOneLevelSetImageFilter(const Self &); // purposely not
-// 	// implemented
-// 	void operator=(const Self &);
+	void SetEquilibriumCurvature(float value)
+	{if ( value != m_VascularPhaseOneLevelSetFunction->GetEquilibriumCurvature() )
+	{m_VascularPhaseOneLevelSetFunction->SetEquilibriumCurvature(value);
+	this->Modified();}}
+	float GetEquilibriumCurvature() const
+	{ return m_VascularPhaseOneLevelSetFunction->GetEquilibriumCurvature(); }
 
-// 	void GenerateData();
-// private:
-// 	VascularPhaseOneLevelSetFunctionPointer m_VascularPhaseOneLevelSetFunction;
-// };
 
-// }
+	void PrintShort(std::ostream & os) const
+	{
+		m_VascularPhaseOneLevelSetFunction->PrintShort(os);
+	}
 
-// #ifndef ITK_MANUAL_INSTANTIATION
-// #include "sv3_VascularPhaseOneLevelSetImageFilter.hxx"
-// #endif
+
+protected:
+	~VascularPhaseOneLevelSetImageFilter() {}
+	VascularPhaseOneLevelSetImageFilter();
+
+	virtual void PrintSelf(std::ostream & os, Indent indent) const;
+
+	VascularPhaseOneLevelSetImageFilter(const Self &); // purposely not
+	// implemented
+	void operator=(const Self &);
+
+	void GenerateData();
+private:
+	VascularPhaseOneLevelSetFunctionPointer m_VascularPhaseOneLevelSetFunction;
+};
+
+}
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#include "sv3_VascularPhaseOneLevelSetImageFilter.hxx"
+#endif
 
 #endif /* ITKVASCULARPHASEONELEVELSETIMAGEFILTER_H_ */
