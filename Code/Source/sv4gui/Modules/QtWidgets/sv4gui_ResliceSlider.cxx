@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The MITK classes referenced here is in MITK-2024.06/Plugins/org.mitk.gui.qt.common/src
+//
 #include "sv4gui_ResliceSlider.h"
 #include "sv4gui_SegmentationUtils.h"
 
@@ -67,39 +69,54 @@ sv4guiResliceSlider::sv4guiResliceSlider(QWidget *parent)
 void sv4guiResliceSlider::SetRenderWindow(mitk::IRenderWindowPart* renderWindow)
 {
     std::string msg = "[sv4guiResliceSlider::SetRenderWindow] ";
+    std::cout << msg << std::endl;
     std::cout << msg << "========== sv4guiResliceSlider::SetRenderWindow ========== " << std::endl;
 
     m_renderWindow = renderWindow;
     currentSlicedGeometry = nullptr;
     stepperSynchronized = false;
 
+    // Construct vertical box layout objects.
     QVBoxLayout* vlayout = new QVBoxLayout(this);
     vlayout->setContentsMargins(0,0,0,0);
     vlayout->setSpacing(0);
 
-    sliderContainer=new QWidget(this);
+    sliderContainer = new QWidget(this);
     QHBoxLayout* hlayout = new QHBoxLayout(sliderContainer);
     hlayout->setContentsMargins(4,0,0,0);
     sliderContainer->setLayout(hlayout);
 
-    setLayout(vlayout);
+    // Set the layout manager for this widget.
+    this->setLayout(vlayout);
 
     resliceCheckBox = new QCheckBox("Turn on Reslicing");
     resliceCheckBox->setChecked(false);
     resliceCheckBox->setToolTip("Show image reslice perpendicular to the path.");
 
     // Setup axial slice window?
+    //
     intensityWindow = m_renderWindow->GetQmitkRenderWindow("axial");
     QmitkSliceNavigationWidget* intensitySlider = new QmitkSliceNavigationWidget;
+
+    // [DaveP] 
+    //
+    // Connect Qt-based navigators to instances of Stepper.
+    //
     intensityStepper = new QmitkStepperAdapter(intensitySlider, intensityWindow->GetSliceNavigationController()->GetStepper());
-    //dp intensityStepper = new QmitkStepperAdapter(intensitySlider, intensityWindow->GetSliceNavigationController()->GetSlice(), "IntensityStepper");
+    // intensityStepper = new QmitkStepperAdapter(intensitySlider, 
+    //     intensityWindow->GetSliceNavigationController()->GetSlice(), "IntensityStepper");
 
     // Setup sagittal slice window?
+    //
     potentialWindow = m_renderWindow->GetQmitkRenderWindow("sagittal");
     QmitkSliceNavigationWidget* potentialSlider = new QmitkSliceNavigationWidget;
     potentialSlider->hide();
+
+    // [DaveP] 
+    //
     potentialStepper = new QmitkStepperAdapter(potentialSlider, potentialWindow->GetSliceNavigationController()->GetStepper());
-    //dp potentialStepper = new QmitkStepperAdapter(potentialSlider, potentialWindow->GetSliceNavigationController()->GetSlice(), "PotentialStepper");
+    // potentialStepper = new QmitkStepperAdapter(potentialSlider, potentialWindow->GetSliceNavigationController()->GetSlice(), 
+    //     "PotentialStepper");
 
     btnResliceSize = new QPushButton("Size");
     btnResliceSize->setToolTip("Change reslice size");
@@ -113,6 +130,7 @@ void sv4guiResliceSlider::SetRenderWindow(mitk::IRenderWindowPart* renderWindow)
     vlayout->addWidget(sliderContainer);
 
     QHashIterator<QString, QmitkRenderWindow *> renderIter(m_renderWindow->GetQmitkRenderWindows());
+
     while (renderIter.hasNext()) {
       renderIter.next();
       std::cout << msg << "renderIter.key(): " << renderIter.key() << std::endl;
@@ -124,7 +142,7 @@ void sv4guiResliceSlider::SetRenderWindow(mitk::IRenderWindowPart* renderWindow)
     //threeDWindow = m_renderWindow->GetQmitkRenderWindow("3d");
     //QmitkSliceNavigationWidget* threeDSlider = new QmitkSliceNavigationWidget;
     //ThreeDStepper = new QmitkStepperAdapter(threeDSlider,
-        //threeDWindow->GetSliceNavigationController()->GetSlice(), "ThreeDStepper");
+    //    threeDWindow->GetSliceNavigationController()->GetSlice(), "ThreeDStepper");
 
     coronalWindow = m_renderWindow->GetQmitkRenderWindow("coronal");
 
@@ -152,21 +170,54 @@ void sv4guiResliceSlider::setDataNode(mitk::DataNode::Pointer dataNode)
     currentDataNode=dataNode;
 }
 
+//---------------
+// setPathPoints
+//---------------
+//
 void sv4guiResliceSlider::setPathPoints(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints)
 {
-    m_PathPoints=pathPoints;
+  //std::string msg("[sv4guiResliceSlider::setPathPoints] ");
+  //std::cout << msg << "========== setPathPoints ==========" << std::endl;
+  //std::cout << msg << "pathPoints.size(): " << pathPoints.size() << std::endl;
+
+  m_PathPoints = pathPoints;
+
+  /*
+  std::cout << msg << "pathPoints: " << std::endl;
+  for(int i = 0; i < m_PathPoints.size();i++) {
+    auto point = m_PathPoints[i].pos;
+    std::cout << msg << i << " " << point[0] << " " << point[1] << " " << point[2] << std::endl;
+  }
+  */
 }
 
+//--------------
+// getPathPoint
+//--------------
+//
 sv4guiPathElement::sv4guiPathPoint sv4guiResliceSlider::getPathPoint(int index)
 {
-    sv4guiPathElement::sv4guiPathPoint pathPoint;
-    if(index==-1) index=m_PathPoints.size()-1;
-    if(index>-1&&index<m_PathPoints.size())
-        pathPoint=m_PathPoints[index];
+  std::string msg("[sv4guiResliceSlider::getPathPoint] ");
+  std::cout << msg << "========== getPathPoint ==========" << std::endl;
+  std::cout << msg << "index: " << index << std::endl;
 
-    return pathPoint;
+  sv4guiPathElement::sv4guiPathPoint pathPoint;
+
+  if (index == -1) {
+    index = m_PathPoints.size() - 1;
+  }
+
+  if ((index > -1) && (index < m_PathPoints.size())) {
+    pathPoint = m_PathPoints[index];
+  }
+
+  return pathPoint;
 }
 
+//---------------------
+// getCurrentPathPoint
+//---------------------
+//
 sv4guiPathElement::sv4guiPathPoint sv4guiResliceSlider::getCurrentPathPoint()
 {
     return getPathPoint(getCurrentSliceIndex());
@@ -185,6 +236,8 @@ double sv4guiResliceSlider::getResliceSize()
 //---------------
 // updateReslice
 //---------------
+//
+// [DaveP] The `threeDWindow` object is something I as testing, was not in the original SV code.
 //
 void sv4guiResliceSlider::updateReslice()
 {
@@ -236,21 +289,25 @@ void sv4guiResliceSlider::updateReslice()
     //threeDController->Update();
 
     // This is displayed in the axial window.
+    //
     auto intensityController = intensityWindow->GetSliceNavigationController();
     intensityController->SetInputWorldTimeGeometry(currentSlicedGeometry);
     //intensityController->SetInputWorldGeometry3D(currentSlicedGeometry);
 
+    // [DaveP] Change for SliceNavigationController is no
     intensityController->SetViewDirection(mitk::AnatomicalPlane::Original);
-    //dp intensityController->SetViewDirection(mitk::SliceNavigationController::Original);
+    //intensityController->SetViewDirection(mitk::SliceNavigationController::Original);
     intensityController->Update();
 
     // This is displayed in the sagittal window.
+    // [DaveP]
     auto potentialController = potentialWindow->GetSliceNavigationController();
     potentialController->SetInputWorldTimeGeometry(currentSlicedGeometry);
     //potentialController->SetInputWorldGeometry3D(currentSlicedGeometry);
 
+    // [DaveP]
     potentialController->SetViewDirection(mitk::AnatomicalPlane::Original);
-    //dp potentialController->SetViewDirection(mitk::SliceNavigationController::Original);
+    // potentialController->SetViewDirection(mitk::SliceNavigationController::Original);
     potentialController->Update();
 
     if (image) {
@@ -268,7 +325,10 @@ void sv4guiResliceSlider::updateReslice()
         mitkLutProp->SetLookupTable(mitkLut);
 
         currentDataNode->SetProperty("LookupTable", mitkLutProp, potentialWindow->GetRenderer());
+
+        // [DaveP] The "show gradient" propertey  requires code changes in MITK.
         currentDataNode->SetBoolProperty("show gradient", true, potentialWindow->GetRenderer());
+
         //currentDataNode->SetBoolProperty("texture interpolation", true, potentialWindow->GetRenderer());
         //currentDataNode->SetBoolProperty("visible", false, potentialWindow->GetRenderer());
         //float rgb[3]={1.0f, 0.0f, 0.0f};
@@ -284,14 +344,19 @@ void sv4guiResliceSlider::updateReslice()
         auto bool_prop = mitk::BoolProperty::New(true);
 
         if (m_UseGeometrySpacing) {
-            currentDataNode->SetBoolProperty("in plane resample extent by geometry", mitk::BoolProperty::New(true),intensityWindow->GetRenderer());
-            currentDataNode->SetBoolProperty("in plane resample extent by geometry", mitk::BoolProperty::New(true),potentialWindow->GetRenderer());
+            currentDataNode->SetBoolProperty("in plane resample extent by geometry", 
+                mitk::BoolProperty::New(true),intensityWindow->GetRenderer());
+            currentDataNode->SetBoolProperty("in plane resample extent by geometry", 
+                mitk::BoolProperty::New(true),potentialWindow->GetRenderer());
         }
 
         if (m_UseGeometrySize) {
-            //currentDataNode->SetBoolProperty("in plane resample size by geometry", mitk::BoolProperty::New(true), threeDWindow->GetRenderer());
-            currentDataNode->SetBoolProperty("in plane resample size by geometry", mitk::BoolProperty::New(true), intensityWindow->GetRenderer());
-            currentDataNode->SetBoolProperty("in plane resample size by geometry", mitk::BoolProperty::New(true), potentialWindow->GetRenderer());
+            //currentDataNode->SetBoolProperty("in plane resample size by geometry", 
+            //    mitk::BoolProperty::New(true), threeDWindow->GetRenderer());
+            currentDataNode->SetBoolProperty("in plane resample size by geometry", 
+                mitk::BoolProperty::New(true), intensityWindow->GetRenderer());
+            currentDataNode->SetBoolProperty("in plane resample size by geometry", 
+                mitk::BoolProperty::New(true), potentialWindow->GetRenderer());
         }
 
         if (m_UseMinimumSpacing) {
@@ -387,7 +452,7 @@ void sv4guiResliceSlider::updateReslice()
 //
 int sv4guiResliceSlider::getCurrentSliceIndex(){
     return intensityWindow->GetSliceNavigationController()->GetStepper()->GetPos();
-    //dp return intensityWindow->GetSliceNavigationController()->GetSlice()->GetPos();
+    // [DaveP] return intensityWindow->GetSliceNavigationController()->GetSlice()->GetPos();
 }
 
 void sv4guiResliceSlider::intensityOnRefetch()
@@ -395,20 +460,16 @@ void sv4guiResliceSlider::intensityOnRefetch()
     int pos1=intensityWindow->GetSliceNavigationController()->GetStepper()->GetPos();
     int pos2=potentialWindow->GetSliceNavigationController()->GetStepper()->GetPos();
 
-    //dp int pos1=intensityWindow->GetSliceNavigationController()->GetSlice()->GetPos();
-    //dp int pos2=potentialWindow->GetSliceNavigationController()->GetSlice()->GetPos();
+    // [DaveP] int pos1=intensityWindow->GetSliceNavigationController()->GetSlice()->GetPos();
+    // [DaveP] int pos2=potentialWindow->GetSliceNavigationController()->GetSlice()->GetPos();
 
     if(pos1!=pos2)
     {
+        // [DaveP] 
         potentialWindow->GetSliceNavigationController()->GetStepper()->SetPos(pos1);
-        //dp potentialWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos1);
-        //        intensityWindow->GetRenderer()->GetDisplayGeometry()->Fit();
-        //        intensityWindow->GetRenderer()->GetVtkRenderer()->ResetCamera();
-        //        potentialWindow->GetRenderer()->GetDisplayGeometry()->Fit();
-        //        potentialWindow->GetRenderer()->GetVtkRenderer()->ResetCamera();
-        //            mitk::RenderingManager::GetInstance()->ForceImmediateUpdateAll();
-        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+        // potentialWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos1);
 
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
 
     emit reslicePositionChanged(pos1);
@@ -417,37 +478,32 @@ void sv4guiResliceSlider::intensityOnRefetch()
 
 void sv4guiResliceSlider::potentialOnRefetch()
 {
-    int pos1=intensityWindow->GetSliceNavigationController()->GetStepper()->GetPos();
-    int pos2=potentialWindow->GetSliceNavigationController()->GetStepper()->GetPos();
-
-    //dp int pos1=intensityWindow->GetSliceNavigationController()->GetSlice()->GetPos();
-    //dp int pos2=potentialWindow->GetSliceNavigationController()->GetSlice()->GetPos();
+    int pos1 = intensityWindow->GetSliceNavigationController()->GetStepper()->GetPos();
+    int pos2 = potentialWindow->GetSliceNavigationController()->GetStepper()->GetPos();
+    // [DaveP] int pos1=intensityWindow->GetSliceNavigationController()->GetSlice()->GetPos();
+    // [DaveP] int pos2=potentialWindow->GetSliceNavigationController()->GetSlice()->GetPos();
 
     if(pos1!=pos2)
     {
-        intensityWindow->GetSliceNavigationController()->GetStepper()->SetPos(pos2);
-        //dp intensityWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos2);
-        //        intensityWindow->GetRenderer()->GetDisplayGeometry()->Fit();
-        //        intensityWindow->GetRenderer()->GetVtkRenderer()->ResetCamera();
-        //        potentialWindow->GetRenderer()->GetDisplayGeometry()->Fit();
-        //        potentialWindow->GetRenderer()->GetVtkRenderer()->ResetCamera();
-        //            mitk::RenderingManager::GetInstance()->ForceImmediateUpdateAll();
-        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
-
+       // [DaveP] 
+       intensityWindow->GetSliceNavigationController()->GetStepper()->SetPos(pos2);
+       //intensityWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos2);
+       mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
 }
 
 //-----------------------
 // restoreDisplayWidget
 //-----------------------
-// [Note] This is not used.
 //
 void sv4guiResliceSlider::restoreDisplayWidget()
 {
-//    if(currentDataNode.IsNull())
-//        return;
+   std::cout << "[sv4guiResliceSlider::restoreDisplayWidget] " << std::endl;
+   std::cout << "[sv4guiResliceSlider::restoreDisplayWidget] ========== restoreDisplayWidget ==========" << std::endl;
 
-#if 0
+   if(currentDataNode.IsNull()) {
+      return;
+   }
 
     if(stepperSynchronized){
         disconnect(intensityStepper, SIGNAL(Refetch()), this, SLOT(intensityOnRefetch()));
@@ -479,19 +535,12 @@ void sv4guiResliceSlider::restoreDisplayWidget()
         currentDataNode->GetPropertyList(intensityWindow->GetRenderer())->DeleteProperty("reslice interpolation");
     }
 
-    intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->GetPropertyList(m_renderWindow->GetQmitkRenderWindow("3D")->GetRenderer())->DeleteProperty("in plane resample size by geometry");
+    intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->GetPropertyList(m_renderWindow->
+        GetQmitkRenderWindow("3D")->GetRenderer())->DeleteProperty("in plane resample size by geometry");
     intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(true);
     potentialWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(true);
     coronalWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(true);
 
-    //    if(currentSlicedGeometry)
-    //    {
-    //        currentSlicedGeometry->Delete();
-    //        currentSlicedGeometry=nullptr;
-    //    }
-
-    std::cout << "changeLayoutToDefault This method doesn't exist anymore" << std::endl << std::flush;
-    exit(1);
     // displayWidget->changeLayoutToDefault();
 
     if ( baseData && baseData->GetTimeGeometry()->IsValid() )
@@ -501,9 +550,7 @@ void sv4guiResliceSlider::restoreDisplayWidget()
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
 
-
     sliderContainer->hide();
-#endif
 }
 
 void sv4guiResliceSlider::changeDisplayWidget(bool checked)
@@ -529,13 +576,12 @@ void sv4guiResliceSlider::setCheckBoxVisible(bool visible)
 
 void sv4guiResliceSlider::setSlicePos(int pos)
 {
-    //threeDWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos);
-
+    // [DaveP] 
     intensityWindow->GetSliceNavigationController()->GetStepper()->SetPos(pos);
     potentialWindow->GetSliceNavigationController()->GetStepper()->SetPos(pos);
+    //intensityWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos);
+    //potentialWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos);
 
-    //dp intensityWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos);
-    //dp potentialWindow->GetSliceNavigationController()->GetSlice()->SetPos(pos);
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
@@ -544,50 +590,49 @@ int sv4guiResliceSlider::GetSliceNumber()
     if (currentSlicedGeometry.IsNull()) {
         return 0;
     } else {
-        // [davep] change method name.
+        // [DaveP] change method name.
         return currentSlicedGeometry->CountTimeSteps();
         //return currentSlicedGeometry->GetSlices();
     }
 }
 
-void sv4guiResliceSlider::moveToPathPosPoint(mitk::Point3D posPoint){
-
-    for(int i=0;i<m_PathPoints.size();i++)
-    {
-        if(posPoint==m_PathPoints[i].pos)
-        {
-            setSlicePos(i);
-            break;
-        }
+void sv4guiResliceSlider::moveToPathPosPoint(mitk::Point3D posPoint)
+{
+  for(int i=0;i<m_PathPoints.size();i++) {
+    if (posPoint == m_PathPoints[i].pos) {
+      setSlicePos(i);
+      break;
     }
+  }
 }
 
 void sv4guiResliceSlider::moveToClosestPathPosPoint(mitk::Point3D posPoint)
 {
-    int index=0;
-    double dis,minDis;
+  std::string msg("[sv4guiResliceSlider::moveToClosestPathPosPoint] ");
+  std::cout << msg << "========== moveToClosestPathPosPoint ==========" << std::endl;
 
-    for(int i=0;i<m_PathPoints.size();i++)
-    {
-        dis=m_PathPoints[i].pos.EuclideanDistanceTo(posPoint);
-        if(dis==0)
-        {
-            index=i;
-            break;
-        }
+  int index=0;
+  double dis,minDis;
 
-        if(i==0)
-        {
-            minDis=dis;
-        }
-        else if(dis<minDis)
-        {
-            minDis=dis;
-            index=i;
-        }
+  for(int i=0;i<m_PathPoints.size();i++) {
+    dis = m_PathPoints[i].pos.EuclideanDistanceTo(posPoint);
+
+    if (dis == 0.0) {
+      index=i;
+      break;
     }
 
-    setSlicePos(index);
+    if (i == 0) {
+      minDis = dis;
+
+    } else if (dis < minDis) {
+      minDis = dis;
+      index = i;
+    }
+  }
+
+  std::cout << msg << "index: " << index << std::endl;
+  setSlicePos(index);
 }
 
 //-------------------

@@ -130,7 +130,7 @@ protected:
 
     double resliceSize;
 
-    // [davep] change type.
+    // [DaveP] change type.
     mitk::ProportionalTimeGeometry::Pointer currentSlicedGeometry;
     //mitk::SlicedGeometry3D::Pointer currentSlicedGeometry;
 
