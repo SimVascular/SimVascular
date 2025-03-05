@@ -160,7 +160,9 @@ protected:
 
     mitk::DataNode::Pointer m_ImageNode;
 
-    mitk::IRenderWindowPart* m_renderWindow;
+    // [DaveP] added to replace m_DisplayWidget.
+    mitk::IRenderWindowPart* m_RenderWindow;
+    //QmitkStdMultiWidget* m_DisplayWidget;
 
     bool m_UpdatingGUI;
 };
