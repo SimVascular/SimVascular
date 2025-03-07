@@ -224,7 +224,7 @@ protected:
 
     bool m_LocalOperationforBlendRegion;
 
-    mitk::IRenderWindowPart* m_renderWindow;
+    mitk::IRenderWindowPart* m_RenderWindow;
 
 private:
     void SetTimeModified();

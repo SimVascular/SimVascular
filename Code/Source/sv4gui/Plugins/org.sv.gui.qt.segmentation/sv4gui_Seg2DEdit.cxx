@@ -139,6 +139,9 @@ sv4guiSeg2DEdit::~sv4guiSeg2DEdit()
 //
 void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
 {
+    std::string msg("[sv4guiSeg2DEdit::CreateQtPartControl] ");
+    std::cout << msg << "========== CreateQtPartControl ==========" << std::endl;
+
     m_Parent=parent;
     ui->setupUi(parent);
 
@@ -291,6 +294,10 @@ return 0;
 void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
                                          const QList<mitk::DataNode::Pointer>& nodes)
 {
+    std::string msg("[sv4guiSeg2DEdit::OnSelectionChanged] ");
+    std::cout << msg << "========== OnSelectionChanged ==========" << std::endl;
+    std::cout << msg << "nodes.size(): " << nodes.size() << std::endl;
+
     if (!m_isVisible) return;
 
     if(nodes.size()==0)
@@ -315,7 +322,7 @@ void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
     m_ContourGroup=dynamic_cast<sv4guiContourGroup*>(groupNode->GetData());
     if(!m_ContourGroup)
     {
-        std::cout << "no contour group selected\n";
+        std::cout << msg << "No contour group selected." << std::endl;
         ui->resliceSlider->turnOnReslice(false);
         ClearAll();
         ui->SinglePathTab->setEnabled(false);
@@ -470,7 +477,11 @@ void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
         resliceSize=5.0;
         m_ContourGroup->SetResliceSize(resliceSize);
     }
+
+    std::cout << msg << "resliceSize: " << resliceSize << std::endl;
     ui->resliceSlider->setResliceSize(resliceSize);
+
+    std::cout << msg << "resliceSlider->updateReslic ... " << std::endl;
     ui->resliceSlider->updateReslice();
 
     m_DataInteractor = sv4guiContourGroupDataInteractor::New();

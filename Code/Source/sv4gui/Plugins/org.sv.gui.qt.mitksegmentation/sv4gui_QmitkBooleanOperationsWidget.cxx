@@ -55,6 +55,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 static const char* const HelpText = "Select two different segmentations above";
 
+/*
 static std::string GetPrefix(mitk::BooleanOperation::Type type)
 {
   switch (type)
@@ -73,6 +74,7 @@ static std::string GetPrefix(mitk::BooleanOperation::Type type)
       return "UNKNOWN_BOOLEAN_OPERATION_WITH_";
   }
 }
+*/
 
 static void AddToDataStorage(mitk::DataStorage::Pointer dataStorage, mitk::Image::Pointer segmentation, const std::string& name, mitk::DataNode::Pointer parent = nullptr)
 {
@@ -132,19 +134,20 @@ void QmitkBooleanOperationsWidget::EnableButtons(bool enable)
 
 void QmitkBooleanOperationsWidget::OnDifferenceButtonClicked()
 {
-  this->DoBooleanOperation(mitk::BooleanOperation::Difference);
+  //this->DoBooleanOperation(mitk::BooleanOperation::Difference);
 }
 
 void QmitkBooleanOperationsWidget::OnIntersectionButtonClicked()
 {
-  this->DoBooleanOperation(mitk::BooleanOperation::Intersection);
+  //this->DoBooleanOperation(mitk::BooleanOperation::Intersection);
 }
 
 void QmitkBooleanOperationsWidget::OnUnionButtonClicked()
 {
-  this->DoBooleanOperation(mitk::BooleanOperation::Union);
+  //this->DoBooleanOperation(mitk::BooleanOperation::Union);
 }
 
+#ifdef use_this
 void QmitkBooleanOperationsWidget::DoBooleanOperation(mitk::BooleanOperation::Type type)
 {
 /* [TODO:DaveP] convert later
@@ -177,4 +180,5 @@ void QmitkBooleanOperationsWidget::DoBooleanOperation(mitk::BooleanOperation::Ty
   }
 */
 }
+#endif
 

@@ -86,7 +86,10 @@ sv4gui_MachineLearningUtils::sv4gui_MachineLearningUtils(std::string network_typ
     std::cout << "error SVWrapper args not loaded\n";
   }
 
-  py_wrapper_inst  = PyEval_CallObject(py_wrapper_class, pargs);
+  // [DaveP] PyEval_CallObject has been removed from Python.
+  py_wrapper_inst  = PyObject_CallOneArg(py_wrapper_class, pargs);
+  //py_wrapper_inst  = PyEval_CallObject(py_wrapper_class, pargs);
+
   if (py_wrapper_inst == nullptr){
     std::cout << "error SVWrapper instance not loaded\n";
   }

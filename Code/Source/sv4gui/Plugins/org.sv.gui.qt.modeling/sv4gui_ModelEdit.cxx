@@ -71,8 +71,11 @@ using namespace std;
 
 const QString sv4guiModelEdit::EXTENSION_ID = "org.sv.views.modeling";
 
-sv4guiModelEdit::sv4guiModelEdit() :
-    ui(new Ui::sv4guiModelEdit)
+//------------------
+// sv4guiModelEdit
+//------------------
+//
+sv4guiModelEdit::sv4guiModelEdit() : ui(new Ui::sv4guiModelEdit)
 {
     m_Model=nullptr;
     m_ModelNode=nullptr;
@@ -106,72 +109,68 @@ sv4guiModelEdit::~sv4guiModelEdit()
     if(m_CapSelectionWidget) delete m_CapSelectionWidget;
 }
 
+//----------------------
+// CreateQtPartControl
+//----------------------
+//
 void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
 {
-    if (!m_isVisible) return;
+    //std::string msg("[sv4guiModelEdit::CreateQtPartControl] ");
+    //std::cout << msg << "========== CreateQtPartControl ==========" << std::endl;
+    //std::cout << msg << "parent: " << parent << std::endl;
 
-    m_Parent=parent;
+    m_Parent = parent;
     ui->setupUi(parent);
 
-    QSignalMapper* signalMapper = new QSignalMapper(this);
 
-    //    parent->setMaximumWidth(450);
+    m_RenderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
+    //std::cout << msg << "parent: " << parent << std::endl;
 
-    m_renderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
-
-    if(m_renderWindow==nullptr)
-    {
+    if (m_RenderWindow==nullptr) {
         parent->setEnabled(false);
         MITK_ERROR << "Plugin ModelEdit Init Error: No M_renderWindow!";
         return;
     }
 
-    //for top part
-    //=================================================================
+    // Widget for selecting segmentations used to construct the model.
+    //
     connect(ui->btnUpdateModel, SIGNAL(clicked()), this, SLOT(ShowSegSelectionWidget()) );
-
-    m_SegSelectionWidget=new sv4guiSegSelectionWidget();
+    m_SegSelectionWidget = new sv4guiSegSelectionWidget();
     m_SegSelectionWidget->move(400,400);
     m_SegSelectionWidget->hide();
     m_SegSelectionWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
 
     connect(m_SegSelectionWidget,SIGNAL(accepted()), this, SLOT(CreateModel()));
-
     connect(ui->btnChangeFacet, SIGNAL(clicked()), this, SLOT(ChangeFacetSize()) );
     connect(ui->btnConvert, SIGNAL(clicked()), this, SLOT(ConvertToPolyDataModel()) );
 
-    //for tab Face List
-    //=================================================================
-    sv4guiFaceListDelegate* itemDelegate=new sv4guiFaceListDelegate(this);
+    // Face table events. 
+    //
+    sv4guiFaceListDelegate* itemDelegate = new sv4guiFaceListDelegate(this);
     m_FaceListTableModel = new QStandardItemModel(this);
     ui->tableViewFaceList->setModel(m_FaceListTableModel);
     ui->tableViewFaceList->setItemDelegateForColumn(2,itemDelegate);
     ui->tableViewFaceList->setItemDelegateForColumn(5,itemDelegate);
 
-    connect( m_FaceListTableModel, SIGNAL(itemChanged(QStandardItem*))
-             , this, SLOT(UpdateFaceData(QStandardItem*)) );
+    connect( m_FaceListTableModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateFaceData(QStandardItem*)) );
 
-    connect( ui->tableViewFaceList->selectionModel()
-             , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
-             , this
-             , SLOT( TableFaceListSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
+    connect( ui->tableViewFaceList->selectionModel() , SIGNAL( selectionChanged(const QItemSelection&, const QItemSelection&)), this, 
+        SLOT( TableFaceListSelectionChanged(const QItemSelection&, const QItemSelection&)));
 
-    connect( ui->tableViewFaceList
-             , SIGNAL( doubleClicked( const QModelIndex & ) )
-             , this
-             , SLOT( ToggleVisibility ( const QModelIndex & ) ) );
+    connect( ui->tableViewFaceList, SIGNAL( doubleClicked( const QModelIndex & ) ), this, 
+        SLOT( ToggleVisibility ( const QModelIndex & ) ) );
 
-    connect( ui->tableViewFaceList
-             , SIGNAL( doubleClicked( const QModelIndex & ) )
-             , this
-             , SLOT( ChangeColor ( const QModelIndex & ) ) );
+    connect( ui->tableViewFaceList, SIGNAL( doubleClicked( const QModelIndex & ) ), this, 
+        SLOT( ChangeColor ( const QModelIndex & ) ) );
 
-    m_FaceListTableMenu=new QMenu(ui->tableViewFaceList);
-    QAction* showAction=m_FaceListTableMenu->addAction("Show");
-    QAction* hideAction=m_FaceListTableMenu->addAction("Hide");
-    QAction* changeTypeAction=m_FaceListTableMenu->addAction("Change Type");
-    QAction* changeColorAction=m_FaceListTableMenu->addAction("Change Color");
-    QAction* changeOpacityAction=m_FaceListTableMenu->addAction("Change Opacity");
+    // Face popup menu used to set various dislpay attributes.
+    //
+    m_FaceListTableMenu = new QMenu(ui->tableViewFaceList);
+    QAction* showAction = m_FaceListTableMenu->addAction("Show");
+    QAction* hideAction = m_FaceListTableMenu->addAction("Hide");
+    QAction* changeTypeAction = m_FaceListTableMenu->addAction("Change Type");
+    QAction* changeColorAction = m_FaceListTableMenu->addAction("Change Color");
+    QAction* changeOpacityAction = m_FaceListTableMenu->addAction("Change Opacity");
 
     connect( showAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowSelected(bool) ) );
     connect( hideAction, SIGNAL( triggered(bool) ) , this, SLOT( HideSelected(bool) ) );
@@ -179,25 +178,27 @@ void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
     connect( changeColorAction, SIGNAL( triggered(bool) ) , this, SLOT( ChangeColorSelected(bool) ) );
     connect( changeOpacityAction, SIGNAL( triggered(bool) ) , this, SLOT( ChangeOpacitySelected(bool) ) );
 
-    connect( ui->tableViewFaceList, SIGNAL(customContextMenuRequested(const QPoint&))
-             , this, SLOT(TableViewFaceListContextMenuRequested(const QPoint&)) );
+    connect( ui->tableViewFaceList, SIGNAL(customContextMenuRequested(const QPoint&)), this, 
+        SLOT(TableViewFaceListContextMenuRequested(const QPoint&)) );
 
-    //various ops
-    //-----------------------------------------------------------------
     ui->toolBoxPolyData->setCurrentIndex(0);
 
+    // Buttons for delete, fill, etc.
+    //
+    QSignalMapper* signalMapper = new QSignalMapper(this);
+
     signalMapper->setMapping(ui->btnDeleteFaces, DELETE_FACES);
-    connect(ui->btnDeleteFaces, SIGNAL(clicked()),signalMapper, SLOT(map()));
+    connect(ui->btnDeleteFaces, SIGNAL(clicked()), signalMapper, SLOT(map()));
 
     signalMapper->setMapping(ui->btnFillHoleIDs, FILL_HOLES_WITH_IDS);
-    connect(ui->btnFillHoleIDs, SIGNAL(clicked()),signalMapper, SLOT(map()));
+    connect(ui->btnFillHoleIDs, SIGNAL(clicked()), signalMapper, SLOT(map()));
 
     signalMapper->setMapping(ui->btnCombineFaces, COMBINE_FACES);
-    connect(ui->btnCombineFaces, SIGNAL(clicked()),signalMapper, SLOT(map()));
+    connect(ui->btnCombineFaces, SIGNAL(clicked()), signalMapper, SLOT(map()));
 
     signalMapper->setMapping(ui->btnRemeshFaces, REMESH_FACES);
     connect(ui->btnEstimateEdgeSize0, SIGNAL(clicked()), this, SLOT(SetEstimatedEdgeSize()) );
-    connect(ui->btnRemeshFaces, SIGNAL(clicked()),signalMapper, SLOT(map()));
+    connect(ui->btnRemeshFaces, SIGNAL(clicked()), signalMapper, SLOT(map()));
 
     signalMapper->setMapping(ui->btnExtractFaces, EXTRACT_FACES);
     connect(ui->btnExtractFaces, SIGNAL(clicked()),signalMapper, SLOT(map()));
@@ -253,11 +254,14 @@ void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
     signalMapper->setMapping(ui->btnCutBox, CUT_BOX);
     connect(ui->btnCutBox, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
-    connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(ModelOperate(int)));
+    // [DaveP] mapped(int) is obsolete.
+    connect(signalMapper, SIGNAL(mappedInt(int)), this, SLOT(ModelOperate(int)));
+    //connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(ModelOperate(int)));
 
     connect(ui->checkBoxSphere, SIGNAL(toggled(bool)), this, SLOT(ShowSphereInteractor(bool)));
 
-    //for trim
+    // Trim sub-panel. 
+    //
     connect(ui->checkBoxShowPlane, SIGNAL(toggled(bool)), this, SLOT(ShowPlaneInteractor(bool)));
     connect(ui->comboBoxPathPlane, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupSliderPathPlane(int )));
     connect(ui->sliderPathPlane, SIGNAL(valueChanged(double)), this, SLOT(UpdatePlaneWidget(double )));
@@ -266,8 +270,8 @@ void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->comboBoxPathBox, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupSliderPathBox(int )));
     connect(ui->sliderPathBox, SIGNAL(valueChanged(double)), this, SLOT(UpdateBoxWidget(double )));
 
-    //for tab Blend
-    //=====================================================================
+    // Blend sub-panel. 
+    //
     m_BlendTableModel = new QStandardItemModel(this);
     ui->tableViewBlend->setModel(m_BlendTableModel);
     m_BlendTableMenu=new QMenu(ui->tableViewBlend);
@@ -295,8 +299,8 @@ void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
     //    connect(ui->tabWidget,SIGNAL(currentChanged(int)), this, SLOT(UpdateBlendTable(int)) );
     //
 
-    //for mmg remesh
-    //=====================================================================
+    // Remsh using mmg. 
+    //
     int idx=0;
     QWidget* widgetGRemesh=ui->toolBoxGlobalOps->widget(idx);
     QString title=ui->toolBoxGlobalOps->itemText(idx);
@@ -307,24 +311,29 @@ void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
     widgetGRemesh->show();
 #endif
 
-    //for extracting centerlines
-    //=================================================================
+    // Extract Centerlines sub-panel 
+    //
     m_CapSelectionWidget=new sv4guiCapSelectionWidget();
     m_CapSelectionWidget->move(400,400);
     m_CapSelectionWidget->hide();
     m_CapSelectionWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
 
     connect(ui->btnExtractCenterlines, SIGNAL(clicked()), this, SLOT(ShowCapSelectionWidget()) );
-
     connect(m_CapSelectionWidget,SIGNAL(accepted()), this, SLOT(ExtractCenterlines()));
+
 }
 
+//---------
+// Visible
+//---------
+//
 void sv4guiModelEdit::Visible()
 {
-    m_isVisible = true;
-    ui->tabWidget->setCurrentIndex(0);
-    OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
-                       GetDataManagerSelection());
+  //std::string msg("[sv4guiModelEdit::Visible] ");
+  //std::cout << msg << "========== Visible ==========" << std::endl;
+  m_isVisible = true;
+  ui->tabWidget->setCurrentIndex(0);
+  OnSelectionChanged(berry::IWorkbenchPart::Pointer(), GetDataManagerSelection());
 }
 
 void sv4guiModelEdit::Hidden()
@@ -355,73 +364,92 @@ void sv4guiModelEdit::SetTimeModified()
     }
 }
 
+//-------------
+// GetTimeStep
+//-------------
+//
 int sv4guiModelEdit::GetTimeStep()
 {
-/* [TODO:DaveP] i don't know how to convert this.
-    mitk::SliceNavigationController* timeNavigationController = nullptr;
-    if(m_renderWindow)
-    {
-        timeNavigationController=m_renderWindow->GetTimeNavigationController();
-    }
+  //std::string msg("[sv4guiModelEdit::GetTimeStep] ");
+  //std::cout << msg << "========== GetTimeStep ==========" << std::endl;
 
-    if(timeNavigationController)
-        return timeNavigationController->GetTime()->GetPos();
-    else
-        return 0;
-*/
-  return 0;
+   mitk::TimeNavigationController* timeNavigationController = nullptr;
+
+   if (m_RenderWindow) {
+      timeNavigationController = m_RenderWindow->GetTimeNavigationController();
+   }
+
+   if (timeNavigationController) {
+      // [DaveP] not sure which one to use, GetSelectedTimeStep() or
+      // GetStepper()->GetPos(), maybe they do the same thing.
+      return timeNavigationController->GetSelectedTimeStep();
+      //return timeNavigationController->GetStepper()->GetPos();
+      //return timeNavigationController->GetTime()->GetPos();
+   } else {
+      return 0;
+   }
 }
 
-void sv4guiModelEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
-                                         const QList<mitk::DataNode::Pointer>& nodes)
+//--------------------
+// OnSelectionChanged
+//--------------------
+//
+void sv4guiModelEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part, const QList<mitk::DataNode::Pointer>& nodes)
 {
-    if (!m_isVisible) return;
+  //std::string msg("[sv4guiModelEdit::OnSelectionChanged] ");
+  //std::cout << msg << "========== OnSelectionChanged ==========" << std::endl;
+  //std::cout << msg << "m_isVisible: " << m_isVisible << std::endl;
 
-    m_LocalOperationforBlendRegion=false;
+  if (!m_isVisible) {
+    return;
+  }
 
-    if(nodes.size()==0)
-    {
-        RemoveObservers();
-        m_Parent->setEnabled(false);
-        return;
-    }
+  m_LocalOperationforBlendRegion = false;
 
-    mitk::DataNode::Pointer selectedNode=nodes.front();
-    sv4guiModel* model=dynamic_cast<sv4guiModel*>(selectedNode->GetData());
+  if (nodes.size() == 0) {
+    RemoveObservers();
+    m_Parent->setEnabled(false);
+    return;
+  }
 
-    if(!model)
-    {
-        RemoveObservers();
-        m_Parent->setEnabled(false);
-        return;
-    }
+  mitk::DataNode::Pointer selectedNode=nodes.front();
+  sv4guiModel* model=dynamic_cast<sv4guiModel*>(selectedNode->GetData());
 
-    if(m_ModelNode==selectedNode)
-    {
-        AddObservers();
-        m_Parent->setEnabled(true);
-        return;
-    }
+  if (!model) {
+    RemoveObservers();
+    m_Parent->setEnabled(false);
+    return;
+  }
 
-    if(m_ModelNode.IsNotNull())
-        RemoveObservers();
-
-    m_ModelNode=selectedNode;
-    m_Model=model;
-    m_ModelType=m_Model->GetType();
-
-    m_Parent->setEnabled(true);
+  if (m_ModelNode == selectedNode) {
     AddObservers();
+    m_Parent->setEnabled(true);
+    return;
+  }
 
-    ui->tabWidget->setCurrentIndex(0);
+  if (m_ModelNode.IsNotNull()) {
+    RemoveObservers();
+  }
 
-    UpdateGUI();
+  m_ModelNode = selectedNode;
+  m_Model = model;
+  m_ModelType = m_Model->GetType();
 
-    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+  m_Parent->setEnabled(true);
+  AddObservers();
+
+  ui->tabWidget->setCurrentIndex(0);
+
+  UpdateGUI();
+
+  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 void sv4guiModelEdit::UpdateGUI()
 {
+    //std::string msg("[sv4guiModelEdit::UpdateGUI] ");
+    //std::cout << msg << "========== UpdateGUI ==========" << std::endl;
+
     //update top part
     //------------------------------------------------------------------------
     ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
@@ -475,6 +503,9 @@ void sv4guiModelEdit::UpdateGUI()
 
 void sv4guiModelEdit::UpdatePathListForTrim()
 {
+    //std::string msg("[sv4guiModelEdit::UpdatePathListForTrim] ");
+    //std::cout << msg << "========== UpdatePathListForTrim ==========" << std::endl;
+
     ui->comboBoxPathPlane->clear();
     ui->comboBoxPathPlane->setEnabled(false);
     ui->sliderPathPlane->setEnabled(false);
@@ -816,45 +847,58 @@ void sv4guiModelEdit::UpdateFaceData(QStandardItem* item)
 
 }
 
+//-------------------------------
+// TableFaceListSelectionChanged
+//-------------------------------
+//
 void sv4guiModelEdit::TableFaceListSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
 {
-    mitk::StatusBar::GetInstance()->DisplayText("");
+  //std::string msg("[sv4guiModelEdit::TableFaceListSelectionChanged] ");
+  //std::cout << msg << "========== TableFaceListSelectionChanged ==========" << std::endl;
 
-    if(!m_Model)
-        return;
+  mitk::StatusBar::GetInstance()->DisplayText("");
 
-    int timeStep=GetTimeStep();
-    sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==nullptr) return;
+  if (!m_Model) {
+    return;
+  }
 
-    if(m_FaceListTableModel==nullptr)
-        return;
+  int timeStep = GetTimeStep();
+  sv4guiModelElement* modelElement = m_Model->GetModelElement(timeStep);
 
-    QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
+  //std::cout << msg << "timeStep: " << timeStep << std::endl;
+  //std::cout << msg << "modelElement: " << modelElement << std::endl;
 
-    modelElement->ClearFaceSelection();
+  if (modelElement == nullptr) {
+    return;
+  }
 
-    bool useFirst=true;
-    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-         ; it != indexesOfSelectedRows.end(); it++)
-    {
-        int row=(*it).row();
+  if (m_FaceListTableModel == nullptr) {
+    return;
+  }
 
-        QStandardItem* itemID= m_FaceListTableModel->item(row,0);
-        int id=itemID->text().toInt();
+  //std::cout << msg << "Search for face ... " << std::endl;
+  QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
+  modelElement->ClearFaceSelection();
+  bool useFirst = true;
 
-        modelElement->SelectFace(id);
+  for (QModelIndexList::iterator it = indexesOfSelectedRows.begin() ; it != indexesOfSelectedRows.end(); it++) {
+    int row = (*it).row();
+    //std::cout << msg << "  row: " << row << std::endl;
+    QStandardItem* itemID = m_FaceListTableModel->item(row,0);
+    int id = itemID->text().toInt();
+    //std::cout << msg << "  id: " << id << std::endl;
 
-        if(useFirst)
-        {
-            double faceArea=modelElement->GetFaceArea(id);
-            QString info="Face "+QString::fromStdString(modelElement->GetFaceName(id))+": Area="+QString::number(faceArea);
-            mitk::StatusBar::GetInstance()->DisplayText(info.toStdString().c_str());
-            useFirst=false;
-        }
+    modelElement->SelectFace(id);
+
+    if (useFirst) {
+      double faceArea = modelElement->GetFaceArea(id);
+      QString info = "Face "+QString::fromStdString(modelElement->GetFaceName(id))+": Area="+QString::number(faceArea);
+      mitk::StatusBar::GetInstance()->DisplayText(info.toStdString().c_str());
+      useFirst = false;
     }
+  }
 
-    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 
@@ -1294,6 +1338,10 @@ void sv4guiModelEdit::UpdatePolyDataBlendParam()
     ui->sbSubdivisionIters->setValue(param->numsubdivisioniters);
 }
 
+//----------------------------
+// TableBlendSelectionChanged
+//----------------------------
+//
 void sv4guiModelEdit::TableBlendSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
 {
     if(!m_Model)
@@ -1822,6 +1870,10 @@ void sv4guiModelEdit::CreateModel()
     }
 }
 
+//--------------------
+// ExtractCenterlines
+//--------------------
+//
 void sv4guiModelEdit::ExtractCenterlines()
 {
     if (m_ModelType != "PolyData")
@@ -1830,13 +1882,34 @@ void sv4guiModelEdit::ExtractCenterlines()
       return;
     }
 
-    int timeStep=GetTimeStep();
-    sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-
+    int timeStep = GetTimeStep();
+    sv4guiModelElement* modelElement = m_Model->GetModelElement(timeStep);
     std::vector<std::string> capNames = m_CapSelectionWidget->GetUsedCapNames();
+
+    // Count the number of caps.
+    //
+    std::vector<sv4guiModelElement::svFace*> faces = modelElement->GetFaces();
+    int num_caps = 0;
+
+    for(int i = 0; i < faces.size(); i++) {
+      if(faces[i] == nullptr) {
+        continue;
+      }
+
+      if (faces[i]->type == "cap") {
+        num_caps += 1;
+      }
+    }
+
+    if (num_caps == capNames.size()) {
+      QMessageBox::warning(m_Parent,"Error","Cannot use all of the caps to extract centerlines.");
+      return;
+    }
+
     std::vector<int> capIds;
-    for (int i=0; i<capNames.size(); i++)
+    for (int i=0; i<capNames.size(); i++) {
       capIds.push_back(modelElement->GetFaceID(capNames[i]));
+    }
 
     sv4guiModelExtractPathsAction *extractPathsAction = new sv4guiModelExtractPathsAction();
     extractPathsAction->SetDataStorage(this->GetDataStorage());
@@ -2046,11 +2119,17 @@ bool sv4guiModelEdit::MarkCells(sv4guiModelElementPolyData* modelElement)
         return false;
     else
         return true;
-
 }
 
+//--------------
+// ModelOperate
+//--------------
+//
 void sv4guiModelEdit::ModelOperate(int operationType)
 {
+    //std::string msg("[sv4guiModelEdit::ModelOperate] ");
+    //std::cout << msg << "========== ModelOperate ==========" << std::endl;
+
     if(m_Model==nullptr) return;
 
     int timeStep=GetTimeStep();
@@ -2240,7 +2319,7 @@ void sv4guiModelEdit::ShowSphereInteractor(bool checked)
     {
         m_SphereWidget = vtkSmartPointer<vtkSphereWidget>::New();
         // m_SphereWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
-        m_SphereWidget->SetInteractor(m_renderWindow->GetQmitkRenderWindow("3d")->GetVtkRenderWindow()->GetInteractor());
+        m_SphereWidget->SetInteractor(m_RenderWindow->GetQmitkRenderWindow("3d")->GetVtkRenderWindow()->GetInteractor());
         //    m_SphereWidget->SetRepresentationToSurface();
     }
 
@@ -2274,7 +2353,7 @@ void sv4guiModelEdit::ShowPlaneInteractor(bool checked)
     {
         m_PlaneWidget = vtkSmartPointer<vtkPlaneWidget>::New();
         // m_PlaneWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
-        m_PlaneWidget->SetInteractor(m_renderWindow->GetQmitkRenderWindow("3d")->GetVtkRenderWindow()->GetInteractor());
+        m_PlaneWidget->SetInteractor(m_RenderWindow->GetQmitkRenderWindow("3d")->GetVtkRenderWindow()->GetInteractor());
         m_PlaneWidget->GetHandleProperty()->SetOpacity(0.8);
         m_PlaneWidget->GetPlaneProperty()->SetLineWidth(1);
         //    m_PlaneWidget->SetRepresentationToSurface();
@@ -2310,7 +2389,7 @@ void sv4guiModelEdit::ShowBoxInteractor(bool checked)
     {
         m_BoxWidget = vtkSmartPointer<vtkBoxWidget>::New();
         // m_BoxWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
-        m_BoxWidget->SetInteractor(m_renderWindow->GetQmitkRenderWindow("3d")->GetVtkRenderWindow()->GetInteractor());
+        m_BoxWidget->SetInteractor(m_RenderWindow->GetQmitkRenderWindow("3d")->GetVtkRenderWindow()->GetInteractor());
         m_BoxWidget->OutlineCursorWiresOff();
         m_BoxWidget->RotationEnabledOn();
         m_BoxWidget->TranslationEnabledOn();

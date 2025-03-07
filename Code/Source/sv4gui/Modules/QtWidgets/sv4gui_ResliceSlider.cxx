@@ -68,9 +68,11 @@ sv4guiResliceSlider::sv4guiResliceSlider(QWidget *parent)
 //
 void sv4guiResliceSlider::SetRenderWindow(mitk::IRenderWindowPart* renderWindow)
 {
+    #ifdef debug_SetRenderWindow
     std::string msg = "[sv4guiResliceSlider::SetRenderWindow] ";
     std::cout << msg << std::endl;
     std::cout << msg << "========== sv4guiResliceSlider::SetRenderWindow ========== " << std::endl;
+    #endif
 
     m_renderWindow = renderWindow;
     currentSlicedGeometry = nullptr;
@@ -133,7 +135,7 @@ void sv4guiResliceSlider::SetRenderWindow(mitk::IRenderWindowPart* renderWindow)
 
     while (renderIter.hasNext()) {
       renderIter.next();
-      std::cout << msg << "renderIter.key(): " << renderIter.key() << std::endl;
+      //std::cout << msg << "renderIter.key(): " << renderIter.key() << std::endl;
       //m_Controls->renderWindowComboBox->addItem(renderIter.key());
     }
 
@@ -241,13 +243,14 @@ double sv4guiResliceSlider::getResliceSize()
 //
 void sv4guiResliceSlider::updateReslice()
 {
+    #ifdef debug_updateReslice
     std::string msg("[sv4guiResliceSlider::updateReslice] ");
     std::cout << msg << "========== updateReslice ==========" << std::endl;
     std::cout << msg << "isResliceOn(): " << isResliceOn() << std::endl;
     std::cout << msg << "m_PathPoints.size(): " << m_PathPoints.size() << std::endl;
+    #endif
 
     if (!isResliceOn()) {
-        std::cout << msg << "return " << std::endl;
         return;
     }
 
@@ -257,7 +260,6 @@ void sv4guiResliceSlider::updateReslice()
 
     mitk::Image* image = nullptr;
     mitk::BaseData* baseData = nullptr;
-    std::cout << msg << "currentDataNode.IsNotNull(): " << currentDataNode.IsNotNull() << std::endl;
 
     if (currentDataNode.IsNotNull()) {
         image = dynamic_cast<mitk::Image*>(currentDataNode->GetData());
@@ -267,7 +269,9 @@ void sv4guiResliceSlider::updateReslice()
     // Create a ProportionalTimeGeometry object that will contain 
     // all of the 2D image slices for the current time (always 1 for SV).
     //
+    #ifdef debug_updateReslice
     std::cout << msg << "resliceSize: " << resliceSize << std::endl;
+    #endif
     currentSlicedGeometry = sv4guiSegmentationUtils::CreateSlicedGeometry(m_PathPoints, baseData, resliceSize);
 
     // Change graphics window layout.
@@ -311,8 +315,6 @@ void sv4guiResliceSlider::updateReslice()
     potentialController->Update();
 
     if (image) {
-        std::cout << msg << "Have image " << std::endl;
-
         // create vtk lookup table
         //vtkLookupTable* vtkLut = vtkLookupTable::New();
         //vtkLut->SetTableRange(0.0,10.0);
@@ -335,12 +337,13 @@ void sv4guiResliceSlider::updateReslice()
         //currentDataNode->SetColor(rgb, potentialWindow->GetRenderer());
 
         auto prop = currentDataNode->GetProperty("in plane resample extent by geometry");
-        std::cout << msg << "prop: " << prop << std::endl;
 
+        #ifdef debug_updateReslice
         std::cout << msg << "m_UseGeometrySpacing: " << m_UseGeometrySpacing << std::endl;
         std::cout << msg << "m_UseGeometrySize: " << m_UseGeometrySize << std::endl;
         std::cout << msg << "m_UseMinimumSpacing: " << m_UseMinimumSpacing << std::endl;
         std::cout << msg << "m_ResliceMode: " << m_ResliceMode << std::endl;
+        #endif
         auto bool_prop = mitk::BoolProperty::New(true);
 
         if (m_UseGeometrySpacing) {
@@ -371,17 +374,14 @@ void sv4guiResliceSlider::updateReslice()
         switch(m_ResliceMode) {
             case mitk::ExtractSliceFilter::RESLICE_NEAREST:
               interProp->SetInterpolationToNearest();
-              std::cout << msg << "m_ResliceMode: RESLICE_NEAREST " << std::endl;
             break;
 
             case mitk::ExtractSliceFilter::RESLICE_LINEAR:
               interProp->SetInterpolationToLinear();
-              std::cout << msg << "m_ResliceMode: RESLICE_LINEAR" << std::endl;
             break;
 
             case mitk::ExtractSliceFilter::RESLICE_CUBIC:
               interProp->SetInterpolationToCubic();
-              std::cout << msg << "m_ResliceMode: RESLICE_CUBIC" << std::endl;
             break;
 
             default:
@@ -394,11 +394,13 @@ void sv4guiResliceSlider::updateReslice()
         currentDataNode->Update();
     }
 
-    std::cout << msg << "PropertyListKeyNames: " << std::endl;
     mitk::DataNode::PropertyListKeyNames refListNames = currentDataNode->GetPropertyListNames();
+    #ifdef debug_updateReslice
+    std::cout << msg << "PropertyListKeyNames: " << std::endl;
     for (const auto &name : refListNames) {
         std::cout << msg << "  property name: " << name << std::endl;
     }
+    #endif
 
     // These seem to be the renderers used with the different slice planes.
     //
@@ -608,8 +610,8 @@ void sv4guiResliceSlider::moveToPathPosPoint(mitk::Point3D posPoint)
 
 void sv4guiResliceSlider::moveToClosestPathPosPoint(mitk::Point3D posPoint)
 {
-  std::string msg("[sv4guiResliceSlider::moveToClosestPathPosPoint] ");
-  std::cout << msg << "========== moveToClosestPathPosPoint ==========" << std::endl;
+  //std::string msg("[sv4guiResliceSlider::moveToClosestPathPosPoint] ");
+  //std::cout << msg << "========== moveToClosestPathPosPoint ==========" << std::endl;
 
   int index=0;
   double dis,minDis;
@@ -631,7 +633,7 @@ void sv4guiResliceSlider::moveToClosestPathPosPoint(mitk::Point3D posPoint)
     }
   }
 
-  std::cout << msg << "index: " << index << std::endl;
+  //std::cout << msg << "index: " << index << std::endl;
   setSlicePos(index);
 }
 

@@ -152,13 +152,19 @@ void sv4guiModelElement::SetFaces(std::vector<sv4guiModelElement::svFace*> faces
     m_Faces=faces;
 }
 
+//---------
+// GetFace
+//---------
+//
 sv4guiModelElement::svFace* sv4guiModelElement::GetFace(int id) const
 {
-    int idx=GetFaceIndex(id);
-    if(idx<0)
-        return nullptr;
-    else
-        return m_Faces[idx];
+  int idx = GetFaceIndex(id);
+
+  if(idx<0) {
+    return nullptr;
+  } else {
+    return m_Faces[idx];
+  }
 }
 
 sv4guiModelElement::svFace* sv4guiModelElement::GetFace(std::string name) const
@@ -235,11 +241,24 @@ void sv4guiModelElement::ClearFaceSelection()
 
 }
 
+//------------
+// SelectFace
+//------------
+// Select a face using an int id.
+//
 void sv4guiModelElement::SelectFace(int id)
 {
-    svFace* face=GetFace(id);
-    if(face)
-        face->selected=true;
+  #ifdef debug_SelectFace
+  std::string msg("[sv4guiModelElement::SelectFace] ");
+  std::cout << msg << "========== SelectFace ==========" << std::endl;
+  std::cout << msg << "id: " << id << std::endl;
+  #endif
+
+  svFace* face = GetFace(id);
+
+  if (face) {
+    face->selected = true;
+  }
 }
 
 void sv4guiModelElement::SelectFace(std::string name)

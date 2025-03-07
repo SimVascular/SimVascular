@@ -237,7 +237,8 @@ void QmitkSegmentationView::OnPreferencesChanged(const mitk::IPreferences* prefs
 
 void QmitkSegmentationView::CreateNewSegmentation()
 {
-// [TODO:DaveP] convert this later.
+// [TODO] [DaveP] convert this later.
+//
 #ifdef use 
    mitk::DataNode::Pointer node = mitk::ToolManagerProvider::GetInstance()->GetToolManager()->GetReferenceData(0);
    if (node.IsNotNull())
@@ -404,6 +405,7 @@ void QmitkSegmentationView::NodeAdded(const mitk::DataNode *node)
   m_BinaryPropertyObserverTags.insert(std::pair<mitk::DataNode*, unsigned long>(const_cast<mitk::DataNode*>(node), node->GetProperty("binary")->AddObserver(itk::ModifiedEvent(), command2)));
 
   ApplyDisplayOptions(const_cast<mitk::DataNode*>(node));
+#endif
 }
 
 void QmitkSegmentationView::NodeRemoved(const mitk::DataNode* node)
@@ -438,7 +440,8 @@ void QmitkSegmentationView::NodeRemoved(const mitk::DataNode* node)
     }
 
     mitk::Image* image = dynamic_cast<mitk::Image*>(node->GetData());
-    mitk::SurfaceInterpolationController::GetInstance()->RemoveInterpolationSession(image);
+    // [TODO] [DaveP] Could not find this symbol so I commented this out.
+    // mitk::SurfaceInterpolationController::GetInstance()->RemoveInterpolationSession(image);
   }
   mitk::DataNode* tempNode = const_cast<mitk::DataNode*>(node);
   //Since the binary property could be changed during runtime by the user
@@ -457,7 +460,6 @@ void QmitkSegmentationView::NodeRemoved(const mitk::DataNode* node)
     this->SetToolManagerSelection(nullptr, nullptr);
     this->SetToolSelectionBoxesEnabled(false);
   }
-#endif
 }
 
 void QmitkSegmentationView::OnPatientComboBoxSelectionChanged( const mitk::DataNode* node )

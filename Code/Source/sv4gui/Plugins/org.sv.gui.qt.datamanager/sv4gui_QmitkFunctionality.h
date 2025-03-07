@@ -43,9 +43,9 @@
 #include <QStandardItemModel>
 #include <QItemDelegate>
 
-// This class previously inherited from QmitkFunctionality. We transition to
-// QmitkAbstractView following 
-// https://www.mitk.org/wiki/Views_Without_Multi_Widget
+// [DaveP] This class previously inherited from QmitkFunctionality. 
+// We transition to QmitkAbstractView following 
+// https://www.mitk.org/wiki/Views_Without_Multi_Widget.
 
 class SV_QT_DATAMANAGER sv4guiQmitkFunctionality : public QmitkAbstractView, public mitk::ILifecycleAwarePart
 {
@@ -61,24 +61,25 @@ public:
 
 public:
 
-    //{
-    // FUNCTIONS THAT NEED TO BE HIDDEN FROM QmitkFunctionality SO THAT
-    // WE CAN USE org.sv.views.datamanager INSTEAD OF org.mitk.views.datamanager
-    // HIDING Function from mitk data manager
+    // Some function need to be hidden so we can use org.sv.views.datamanager 
+    // instead of org.mitk.views.datamanager.
     QList<mitk::DataNode::Pointer> GetDataManagerSelection() const;
+
     /// Called immediately after CreateQtPartControl().
     /// Here standard event listeners for a QmitkFunctionality are registered
     void AfterCreateQtPartControl();
+
     /// reactions to selection events from data manager (and potential other senders)
     void BlueBerrySelectionChanged(const berry::IWorkbenchPart::Pointer& sourcepart, const berry::ISelection::ConstPointer& selection);
+
     /// Called, when the WorkbenchPart gets closed for removing event listeners
     /// Internally this method calls ClosePart after it removed the listeners registered
     /// by QmitkFunctionality. By having this proxy method the user does not have to
     /// call QmitkFunctionality::ClosePart() when overwriting ClosePart()
     void ClosePartProxy();
+
     /// Creates a scroll area for this view and calls CreateQtPartControl then
     void CreatePartControl(QWidget* parent) override;
-    //}
 
      void SetFocus() {
         // Fore more info, see https://www.mitk.org/wiki/Views_Without_Multi_Widget
@@ -88,16 +89,17 @@ public:
     QList<mitk::DataNode::Pointer> DataNodeSelectionToQList(mitk::DataNodeSelection::ConstPointer currentSelection) const;
 
 protected:
-    // originally this was included in QmitkFunctionality. Adding it now for
-    // compatibility during transition to QmitkAbstractView
+
+    // [DaveP] This was originally included in QmitkFunctionality. 
+    // Adding it now for compatibility during transition to QmitkAbstractView
     QWidget* m_Parent;
 
     bool m_isVisible;
 
 private:
 
-    // we need to reimplement these functions from QmitkAbstractView because
-    // they became private
+    // [DaveP] We need to reimplement these functions from QmitkAbstractView 
+    // because they became private
 
     void NodeAdded( const mitk::DataNode*  /*node*/ ) override;
 
@@ -107,20 +109,16 @@ private:
 
     void OnNullSelection(berry::IWorkbenchPart::Pointer /*part*/) override;
 
+    // [DaveP] 
     void OnPreferencesChanged(const mitk::IPreferences* /*preferences*/) override;
-    //dp void OnPreferencesChanged(const berry::IBerryPreferences* /*preferences*/) override;
+    // void OnPreferencesChanged(const berry::IBerryPreferences* /*preferences*/) override;
 
     void OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/,
                             const QList<mitk::DataNode::Pointer>& /*nodes*/) override;
 
-    //{
-    /// PRIVATE OBJECTS FROM QmitkFunctionality
-    /// object to observe BlueBerry selections
     QmitkAbstractViewSelectionProvider* m_SelectionProvider;
+
     QScopedPointer<berry::ISelectionListener> m_BlueBerrySelectionListener;
-
-    //}
-
 
 };
 

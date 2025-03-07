@@ -81,6 +81,9 @@ sv4guiSeg3DEdit::~sv4guiSeg3DEdit()
 
 void sv4guiSeg3DEdit::CreateQtPartControl( QWidget *parent )
 {
+    //std::string msg("[sv4guiSeg3DEdit::CreateQtPartControl] ");
+    //std::cout << msg << "================================= sv4guiSeg3DEdit::CreateQtPartControl ===================" << std::endl;
+
     m_Parent=parent;
     ui->setupUi(parent);
 

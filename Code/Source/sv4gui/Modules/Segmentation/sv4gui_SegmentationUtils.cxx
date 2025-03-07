@@ -353,22 +353,22 @@ mitk::ProportionalTimeGeometry::Pointer
 sv4guiSegmentationUtils::CreateSlicedGeometry(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints, 
     mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing)
 {
-    //std::string msg = "[CreateSlicedGeometry] ";
-    //std::cout << msg << "========== CreateSlicedGeometry ========== " << std::endl;
-    //std::cout << msg << "pathPoints.size(): " << pathPoints.size() << std::endl;
-    //std::cout << msg << "size: " << size << std::endl;
+    std::string msg = "[CreateSlicedGeometry] ";
+    std::cout << msg << "========== CreateSlicedGeometry ========== " << std::endl;
+    std::cout << msg << "pathPoints.size(): " << pathPoints.size() << std::endl;
+    std::cout << msg << "size: " << size << std::endl;
 
     // Create a ProportionalTimeGeometry object to store a slicedGeo3D object. 
-    //std::cout << msg << "Create prop_time_geom ... " << std::endl;
+    std::cout << msg << "Create prop_time_geom ... " << std::endl;
     auto prop_time_geom = mitk::ProportionalTimeGeometry::New();
 
-    //std::cout << msg << "Create slicedGeo3D ... " << std::endl;
+    std::cout << msg << "Create slicedGeo3D ... " << std::endl;
     mitk::SlicedGeometry3D::Pointer slicedGeo3D = mitk::SlicedGeometry3D::New();
     slicedGeo3D->SetEvenlySpaced(false);
     slicedGeo3D->InitializeSlicedGeometry(pathPoints.size());
     mitk::Image* image = dynamic_cast<mitk::Image*>(baseData);
 
-    //std::cout << msg << "Add planegeometry ... " << std::endl;
+    std::cout << msg << "Add planegeometry ... " << std::endl;
 
     for (int i = 0; i < pathPoints.size(); i++) {
         //std::cout << msg << "----- i " << i << " -----" << std::endl;
@@ -383,28 +383,22 @@ sv4guiSegmentationUtils::CreateSlicedGeometry(std::vector<sv4guiPathElement::sv4
     }
 
     if (baseData) {
-        //std::cout << msg << "Have baseData " << baseData << std::endl;
-        //std::cout << msg << "Set reference geometry ... " << std::endl;
+        std::cout << msg << "Have baseData " << baseData << std::endl;
+        std::cout << msg << "Set reference geometry ... " << std::endl;
         auto geometry = baseData->GetTimeGeometry()->GetGeometryForTimeStep(0);
         slicedGeo3D->SetReferenceGeometry(geometry);
         slicedGeo3D->SetBounds(geometry->GetBounds());
         slicedGeo3D->SetOrigin(geometry->GetOrigin());
         slicedGeo3D->SetIndexToWorldTransform(geometry->GetIndexToWorldTransform());
         auto origin = geometry->GetOrigin();
-        //std::cout << msg << "reference geometry origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
+        std::cout << msg << "reference geometry origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
     }
 
-    //std::cout << msg << "prop_time_geom->Initialize ... " << std::endl;
+    std::cout << msg << "prop_time_geom->Initialize ... " << std::endl;
     prop_time_geom->Initialize(slicedGeo3D, 1);
 
-    // This causes a segfault using the new extrnals.
-    //std::cout << msg << "########### clone ... " << std::endl;
-    //auto cgeom = slicedGeo3D->Clone();
-    //mitk::BaseGeometry::Pointer cgeom = slicedGeo3D->Clone();
-
-    //std::cout << msg << "return ... " << std::endl;
+    std::cout << msg << "return ... " << std::endl;
     return prop_time_geom;
-    //return slicedGeo3D;
 }
 
 //---------------
@@ -722,11 +716,17 @@ sv4guiContour*
 sv4guiSegmentationUtils::CreateLSContour(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeImage, 
     svLSParam* param, double size, vtkTransform* imageTransform, bool forceClosed)
 {
+    std::string msg("[sv4guiSegmentationUtils::CreateLSContour] ");
+    std::cout << msg << "========== CreateLSContour ==========" << std::endl;
+
     ////////////////////////////
     //  Stage 1 computation  //
     ///////////////////////////
 
+    std::cout << msg << "+++++ Stage 1 computation ... " << std::endl;
+
     // Create level set object set some parameters. 
+    std::cout << msg << "    Create level set object " << std::endl;
     cvITKLevelSet *ls;
     ls = new cvITKLevelSet;
     ls->SetDebug(false);
@@ -744,6 +744,7 @@ sv4guiSegmentationUtils::CreateLSContour(sv4guiPathElement::sv4guiPathPoint path
     }
 
     // Create seed curve.
+    std::cout << msg << "    Create seed curve " << std::endl;
     cvPolyData *seedPd = NULL;
     double center[3];
     center[0] = param->ctrx;
@@ -752,19 +753,26 @@ sv4guiSegmentationUtils::CreateLSContour(sv4guiPathElement::sv4guiPathPoint path
     cvITKLSUtil::vtkGenerateCircle(param->radius, center, 50, &seedPd);
 
     // Extract a 2D slice from the image volume.
+    std::cout << msg << "    Extract a 2D slice from the image volume " << std::endl;
     cvStrPts* strPts = GetSlicevtkImage(pathPoint, volumeImage, size, imageTransform);
     ls->SetInputImage(strPts);
     ls->SetSeed(seedPd);
 
     // Phase 1 (whatever that is ...)
+    std::cout << msg << "    Call ComputePhaseOneLevelSet " << std::endl;
     ls->ComputePhaseOneLevelSet(param->kc, param->expFactorRising, param->expFactorFalling);
 
+    std::cout << msg << "    Get front " << std::endl;
     cvPolyData *front1;
     front1 = ls->GetFront();
+
+    std::cout << msg << "----- Done Stage 1 computation " << std::endl;
 
     ////////////////////////////
     //  Stage 2 computation  //
     ///////////////////////////
+
+    std::cout << msg << "+++++ Stage 2 computation ... " << std::endl;
 
     cvITKLevelSet *ls2;
     ls2 = new cvITKLevelSet;
@@ -792,6 +800,8 @@ sv4guiSegmentationUtils::CreateLSContour(sv4guiPathElement::sv4guiPathPoint path
 
     cvPolyData *front2;
     front2=ls2->GetFront();
+
+    std::cout << msg << "----- Done Stage 2 computation " << std::endl;
 
     cvPolyData *dst;
     double tol=0.001;
