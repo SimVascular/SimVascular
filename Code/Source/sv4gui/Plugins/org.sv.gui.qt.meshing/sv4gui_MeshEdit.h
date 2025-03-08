@@ -217,7 +217,7 @@ protected:
 
     QItemDelegate* m_DefaultDelegate;
     
-    mitk::IRenderWindowPart* m_renderWindow;
+    mitk::IRenderWindowPart* m_RenderWindow;
 };
 
 #endif // SV4GUI_MESHEDIT_H

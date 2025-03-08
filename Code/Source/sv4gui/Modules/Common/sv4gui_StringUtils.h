@@ -60,42 +60,22 @@ static std::vector<std::string> sv4guiStringUtils_split(const std::string &s, ch
     return elems;
 }
 
-//dp
-static inline std::string &sv4guiStringUtils_ltrim(std::string &s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) {return !std::isspace(c);}));
-    return s;
+static void sv4guiStringUtils_ltrim(std::string &s)
+{
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) {return !std::isspace(c);}));
 }
 
-static inline std::string &sv4guiStringUtils_rtrim(std::string &s) {
-    typedef std::string::iterator iter_type;
-    iter_type from (s.begin());                    
-    iter_type until (s.end());                      
-    std::reverse_iterator<iter_type> rev_until(from);     
-    s.erase(std::find_if(from, until, [](int c) {return !std::isspace(c);}));
-    return s;
+static void sv4guiStringUtils_rtrim(std::string &s)
+{
+  s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
+    return !std::isspace(ch); }).base(), s.end());
 }
 
-static inline std::string sv4guiStringUtils_trim(std::string s) {
-    return sv4guiStringUtils_ltrim(sv4guiStringUtils_rtrim(s));
+static void sv4guiStringUtils_trim(std::string &s)
+{
+  sv4guiStringUtils_rtrim(s);
+  sv4guiStringUtils_ltrim(s);
 }
-
-/*dp
-static std::string sv4guiStringUtils_ltrim(std::string s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
-            std::not1(std::ptr_fun<int, int>(std::isspace))));
-    return s;
-}
-
-static std::string sv4guiStringUtils_rtrim(std::string s) {
-    s.erase(std::find_if(s.rbegin(), s.rend(),
-            std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
-    return s;
-}
-
-static std::string sv4guiStringUtils_trim(std::string s) {
-    return sv4guiStringUtils_ltrim(sv4guiStringUtils_rtrim(s));
-}
-*/
 
 static std::string sv4guiStringUtils_lower(std::string s) {
     std::transform(s.begin(), s.end(), s.begin(), ::tolower);

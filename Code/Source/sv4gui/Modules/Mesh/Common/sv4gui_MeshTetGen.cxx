@@ -296,7 +296,7 @@ bool sv4guiMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double v
 {
     option=false;
     std::string originalCmd=cmd;
-    cmd=sv4guiStringUtils_trim(cmd);
+    sv4guiStringUtils_trim(cmd);
 
     if(cmd=="")
     {
