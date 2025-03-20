@@ -1,0 +1,49 @@
+vtkPolyData* sv4guiModelUtils::CreateCenterlineSections(vtkPolyData* inpd,
+                                                        vtkIdList *sourcePtIds,
+                                                        vtkIdList *targetPtIds)
+{
+    if(inpd==nullptr)
+        return nullptr;
+
+    cvPolyData *src = new cvPolyData(inpd);
+    cvPolyData *tempCenterlines = nullptr;
+    cvPolyData *voronoi = nullptr;
+
+    int numSourcePts = sourcePtIds->GetNumberOfIds();
+    int *sources=new int[numSourcePts];
+    for (int i=0; i<numSourcePts; i++)
+      sources[i]=sourcePtIds->GetId(i);
+
+    int numTargetPts = targetPtIds->GetNumberOfIds();
+    int *targets=new int[numTargetPts];
+    for (int i=0; i<numTargetPts; i++)
+      targets[i]=targetPtIds->GetId(i);
+
+    if ( sys_geom_centerlines(src, sources, numSourcePts, targets, numTargetPts, &tempCenterlines, &voronoi) != SV_OK )
+    {
+        delete src;
+        delete [] sources;
+        delete [] targets;
+        return nullptr;
+    }
+    delete voronoi;
+    delete [] sources;
+    delete [] targets;
+
+    cvPolyData *centerlines=nullptr;
+    cvPolyData *surf_grouped=nullptr;
+    cvPolyData *sections=nullptr;
+    if ( sys_geom_centerlinesections(tempCenterlines, src, &centerlines, &surf_grouped, &sections) != SV_OK )
+    {
+        delete src;
+        delete centerlines;
+        delete surf_grouped;
+        delete sections;
+        return nullptr;
+    }
+    delete src;
+    delete surf_grouped;
+    delete sections;
+
+    return centerlines->GetVtkPolyData();
+}

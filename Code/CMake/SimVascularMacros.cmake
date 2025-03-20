@@ -1252,6 +1252,7 @@ macro(simvascular_add_new_external proj version use shared dirname)
   endif()
 
   message(STATUS "${msg} SV_${proj}_DIR: ${SV_${proj}_DIR}")
+  message(STATUS "${msg} # SV_EXTERNALS_LIST: ${SV_EXTERNALS_LIST}")
   message(STATUS "${msg} ----- Done simvascular_add_new_external  ${proj} ")
 endmacro()
 

@@ -110,9 +110,8 @@
  *  @return SV_OK if the VTMK function executes properly
  */
 
-int sys_geom_centerlines( cvPolyData *polydata,int *sources,int nsources,
-		int *targets,int ntargets,
-		cvPolyData **lines, cvPolyData **voronoi)
+int sys_geom_centerlines( cvPolyData *polydata, int *sources, int nsources, int *targets, int ntargets,
+    cvPolyData **lines, cvPolyData **voronoi)
 {
   vtkPolyData *geom = polydata->GetVtkPolyData();
   cvPolyData *result1 = nullptr;
@@ -515,6 +514,11 @@ int sys_geom_cap_for_centerlines(cvPolyData* polydata, cvPolyData** cappedpolyda
 
   *numcenterids = numids;
   *centerids = allids;
+
+  vtkXMLPolyDataWriter *writer = vtkXMLPolyDataWriter::New();
+  writer->SetInputData((*cappedpolydata)->GetVtkPolyData());
+  writer->SetFileName("cappedpolydata.vtp");
+  writer->Write();
 
   return SV_OK;
 }

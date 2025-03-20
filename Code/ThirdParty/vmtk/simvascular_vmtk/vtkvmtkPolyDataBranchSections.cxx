@@ -51,6 +51,8 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkCenterlineUtilities.h"
 #include "vtkvmtkPolyDataBranchUtilities.h"
 
+#include "vtkXMLPolyDataWriter.h"
+
 #define vtkNew(type,name) vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 
@@ -513,12 +515,24 @@ void vtkvmtkPolyDataBranchSections::ComputeBranchSections(vtkPolyData* input, in
     }  
 }
 
-void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder, double origin[3], double normal[3], vtkPolyData* section, bool & closed)
+//------------------------
+// ExtractCylinderSection
+//------------------------
+//
+void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder, double origin[3], double normal[3], 
+    vtkPolyData* section, bool& closed)
 {
+  std::string msg("[vtkvmtkPolyDataBranchSections::ExtractCylinderSection] ");
+  std::cout << msg << "========== ExtractCylinderSection ==========" << std::endl;
+  std::cout << msg << "cylinder: " << cylinder << std::endl;
+  std::cout << msg << "origin: " << origin[0] << " " << origin[1] << " "<< origin[2] << " "  << std::endl;
+  std::cout << msg << "normal: " << normal[0] << " " << normal[1] << " "<< normal[2] << " "  << std::endl;
+
   vtkNew(vtkPlane, plane);
   plane->SetOrigin(origin);
   plane->SetNormal(normal);
 
+  std::cout << msg << "Cut cylinder ... " << std::endl;
   vtkNew(vtkCutter, cutter);
 #if (VTK_MAJOR_VERSION <= 5)
   cutter->SetInput(cylinder);
@@ -530,6 +544,7 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
   cutter->SetValue(0,0.0);
   cutter->Update();
 
+  std::cout << msg << "Clean polydata ... " << std::endl;
   vtkNew(vtkCleanPolyData, cleaner);
 #if (VTK_MAJOR_VERSION <= 5)
   cleaner->SetInput(cutter->GetOutput());
@@ -538,10 +553,10 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
 #endif
   cleaner->Update();
 
-  if (cleaner->GetOutput()->GetNumberOfPoints() == 0)
-    {
+  if (cleaner->GetOutput()->GetNumberOfPoints() == 0) {
+    std::cout << msg << "Zero points for cleaner " << std::endl;
     return;
-    }
+  }
 
   vtkNew(vtkPolyDataConnectivityFilter, connectivityFilter);
 #if (VTK_MAJOR_VERSION <= 5)
@@ -560,17 +575,22 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
 
   // TODO: manually reconstruct single cell line from connectivity output
 
-  if (section->GetNumberOfCells() == 0)
-    {
+  if (section->GetNumberOfCells() == 0) {
+    std::cout << msg << "Zero points for section " << std::endl;
     return;
-    }
-
+  }
+  
+  std::cout << msg << "section->BuildCells() ... " << std::endl;
   section->BuildCells();
+
+  std::cout << msg << "section->BuildLinks() ... " << std::endl;
   section->BuildLinks();
+  std::cout << msg << "section->GetNumberOfCells(): " << section->GetNumberOfCells() << std::endl;
 
   // find first point
-
+  //
   int numberOfLinePoints = section->GetNumberOfPoints();
+  std::cout << msg << "numberOfLinePoints: " << numberOfLinePoints << std::endl;
 
   vtkIdType ncells;
   vtkIdType* cells;
@@ -580,85 +600,86 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
   int numberOfSingleCellPoints = 0;
   vtkIdType firstPointId = -1;
 
-  for (int i=0; i<numberOfLinePoints; i++)
-    {
-    section->GetPointCells(i,ncells,cells);
-    if (ncells == 1)
-      {
-      ++numberOfSingleCellPoints;
+  std::cout << msg << "Loop on numberOfLinePoints ... " << std::endl;
+  for (int i = 0; i < numberOfLinePoints; i++) {
+    section->GetPointCells(i, ncells, cells);
+    //std::cout << msg << "  ncells: " << ncells << std::endl;
+    if (ncells == 1) {
+      numberOfSingleCellPoints += 1;
       firstPointId = i;
-      }
     }
+  }
+  std::cout << msg << "numberOfSingleCellPoints: " << numberOfSingleCellPoints << std::endl;
 
-  if (numberOfSingleCellPoints == 0)
-    {
+  if (numberOfSingleCellPoints == 0) {
     firstPointId = section->GetCell(0)->GetPointId(0);
-    }
+  }
+  std::cout << msg << "firstPointId: " << firstPointId << std::endl;
 
   vtkNew(vtkIdList, polygonPointIds);
   polygonPointIds->InsertNextId(firstPointId);
 
   bool done = false;
   vtkIdType pointId = firstPointId;
-
   closed = false;
-
   vtkIdType cellId = -1;
-  while (!done)
-    {
-    section->GetPointCells(pointId,ncells,cells);
-    if (ncells == 1)
-      {
-      if (pointId == firstPointId)
-        {
+
+  std::cout << msg << "While loop ... " << std::endl;
+
+  while (!done) {
+    section->GetPointCells(pointId, ncells, cells);
+    //std::cout << msg << "  ncells: " << ncells << std::endl;
+
+    if (ncells == 1) {
+      if (pointId == firstPointId) {
         cellId = cells[0];
-        }
-      else
-        {
+      } else {
         done = true;
         break;
-        }
       }
-    else if (ncells == 2)
-      {
-      if (cells[0] == cellId)
-        {
+    } else if (ncells == 2) {
+      if (cells[0] == cellId) {
         cellId = cells[1];
-        }
-      else
-        {
+      } else {
         cellId = cells[0];
-        }
       }
+    }
 
-    section->GetCellPoints(cellId,npts,pts);
+    //std::cout << msg << "  cellId: " << cellId << std::endl;
+    section->GetCellPoints(cellId, npts, pts);
+    //std::cout << msg << "  npts: " << npts << std::endl;
 
-    if (pts[0] == pointId)
-      {
+    if (pts[0] == pointId) {
       pointId = pts[1];
-      }
-    else
-      {
+    } else {
       pointId = pts[0];
-      }
+    }
 
-    if (pointId == firstPointId)
-      {
+    if (pointId == firstPointId) {
       closed = true;
       done = true;
       break;
-      }
-
-    polygonPointIds->InsertNextId(pointId);
     }
+
+    //std::cout << msg << "  Insert pointId: " << pointId << std::endl;
+    polygonPointIds->InsertNextId(pointId);
+  }
+  std::cout << msg << "Closed:  " << closed << std::endl;
 
   section->GetLines()->Reset();
   section->GetPolys()->Reset();
 
+  std::cout << msg << "  Insert next cell ... " << std::endl;
+  std::cout << msg << "  polygonPointIds->GetNumberOfIds(): " << polygonPointIds->GetNumberOfIds() << std::endl;
   section->GetPolys()->InsertNextCell(polygonPointIds);
-#if (VTK_MAJOR_VERSION <= 5)
-  section->Update();
-#endif
+
+/*
+  vtkXMLPolyDataWriter *writer = vtkXMLPolyDataWriter::New();
+  writer->SetInputData(cylinder);
+  writer->SetFileName("bob.vtp");
+  writer->Write();
+*/
+
 }
 
 double vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(vtkPolygon* sectionPolygon)

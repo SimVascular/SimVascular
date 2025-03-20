@@ -28,39 +28,40 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(msg "[Code/CMake/SimVascularExternals.cmake] ") 
-message(STATUS "${msg} ")
-message(STATUS "${msg} ----------------------------------------------------------------------")
-message(STATUS "${msg} +++++                     SimVascularExternals.cmake                  ")
-message(STATUS "${msg} ----------------------------------------------------------------------")
-message(STATUS "${msg} SV_SOURCE_DIR: ${SV_SOURCE_DIR}")
-message(STATUS "${msg} SV_EXTERNALS_LIST: ${SV_EXTERNALS_LIST}")
+# This is used to copy the machine learning weights to the 
+# SimVascular/Python/site-packages/sv_ml/results directory.
 
-# Process each external in the order they were added to SV_EXTERNALS_LIST
-# using simvascular_add_new_external in SimVascularOptions.cmake
-#
-message(STATUS "${msg} Process externals ") 
-message(STATUS "${msg} SV_EXTERNALS_LIST: ${SV_EXTERNALS_LIST}")
+set(proj ML)
 
-foreach(proj ${SV_EXTERNALS_LIST})
-  set(msg "[Code/CMake/SimVascularExternals.cmake] ") 
-  message(STATUS "${msg} -------------------------------------------------------- ")
-  message(STATUS "${msg} foreach proj : ${proj} ")
-  message(STATUS "${msg} Use proj: ${SV_USE_${proj}} ")
+set(SV_ML_FILE_NAME "networks.tar")
 
-  if(SV_USE_${proj})
+set(msg "[Code/CMake/Externals/ML.cmake]")
+message(STATUS "${msg} =============== Code/CMake/Externals    ML.cmake ===============")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_USE_DIR: ${SV_USE_DIR}")
+message(STATUS "${msg} SV_ML_DIR: ${SV_ML_DIR}")
+message(STATUS "${msg} SV_ML_FILE_NAME: ${SV_ML_FILE_NAME}")
 
-    if(EXISTS "${SV_SOURCE_DIR}/CMake/Externals/${proj}.cmake")
-      message(STATUS "${msg} Include ${SV_SOURCE_DIR}/CMake/Externals/${proj}.cmake") 
-      include("${SV_SOURCE_DIR}/CMake/Externals/${proj}.cmake")
-    else()
-      message(STATUS "${msg} **** There is no file ${SV_SOURCE_DIR}/CMake/Externals/${proj}.cmake") 
-    endif()
+set(SOURCE_FILE "${SV_ML_DIR}/${SV_ML_FILE_NAME}")
+set(DESTINATION_DIR "${CMAKE_SOURCE_DIR}/../Python/site-packages/sv_ml/")
+message(STATUS "${msg} SOURCE_FILE: ${SOURCE_FILE}")
+message(STATUS "${msg} DESTINATION_DIR: ${DESTINATION_DIR}")
 
-    # Install
-    if(SV_USE_${proj}_SHARED AND SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
-      #simvascular_install_external(${proj})
-    endif()
-  endif()
-endforeach()
+file(COPY "${SOURCE_FILE}" DESTINATION "${DESTINATION_DIR}")
+
+execute_process(
+    COMMAND tar -xzf "${DESTINATION_DIR}/${SV_ML_FILE_NAME}" -C "${DESTINATION_DIR}"
+    RESULT_VARIABLE TAR_RESULT
+    OUTPUT_VARIABLE TAR_OUTPUT
+    ERROR_VARIABLE TAR_ERROR
+)
+
+if(NOT ${TAR_RESULT} EQUAL 0)
+    message(STATUS "Tar extraction failed with error code: ${TAR_RESULT}")
+    message(STATUS "Tar output: ${TAR_OUTPUT}")
+    message(STATUS "Tar error: ${TAR_ERROR}")
+else()
+    message(STATUS "Successfully extracted to ${DESTINATION_DIR}")
+endif()
+
 

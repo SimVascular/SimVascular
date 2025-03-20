@@ -83,7 +83,7 @@ simvascular_add_new_external(Qt6 ${Qt6_VERSION} ON ON qt)
 # ML
 message(STATUS "${msg} Add ML external ...") 
 if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.02")
-  simvascular_add_new_external(ml ${ML_VERSION} ON ON ml)
+  simvascular_add_new_external(ML ${ML_VERSION} ON ON ml)
 endif()
 
 # HDF5

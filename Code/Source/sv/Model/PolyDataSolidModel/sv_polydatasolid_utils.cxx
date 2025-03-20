@@ -208,7 +208,6 @@ int PlyDtaUtils_GetBoundaryFaces( vtkPolyData *geom,double angle,int *numRegions
 
 int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *facepd)
 {
-
   vtkSmartPointer<vtkThreshold> idThreshold = vtkSmartPointer<vtkThreshold>::New();
   vtkSmartPointer<vtkUnstructuredGrid> tempGrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
   vtkSmartPointer<vtkDataSetSurfaceFilter> getPoly = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
@@ -216,13 +215,15 @@ int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *fac
   double facenum;
 
   facenum = (double) *faceid;
-  idThreshold->SetInputData(geom);
-  //Set Input Array to 0 port,0 connection,1 for Cell Data, and Regions is the type name
-  idThreshold->SetInputArrayToProcess(0,0,0,1,"ModelFaceID");
-  //dp idThreshold->ThresholdBetween(facenum,facenum);
-  idThreshold->Update();
 
-  tempGrid = idThreshold->GetOutput();
+  // [DaveP] idThreshold->ThresholdBetween(facenum,facenum) is no longer supported.
+  //
+  tempGrid = VtkUtils_ThresholdUgrid(facenum, facenum, "ModelFaceID", geom); 
+  //idThreshold->SetInputData(geom);
+  //idThreshold->SetInputArrayToProcess(0,0,0,1,"ModelFaceID");
+  //idThreshold->ThresholdBetween(facenum,facenum);
+  //idThreshold->Update();
+  //tempGrid = idThreshold->GetOutput();
 
   getPoly->SetInputData(tempGrid);
   getPoly->Update();

@@ -467,8 +467,8 @@ int vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
     for (int i = 0; i < connect->GetNumberOfExtractedRegions(); i++)
     {
         // extract bifurcation
-        // [DaveP] need to replace this call.
-        //dp thresh->ThresholdBetween(i, i);
+        thresh->SetLowerThreshold(i);
+        thresh->SetUpperThreshold(i);
         thresh->Update();
 
         // not a real bifurcation if it contains only one BranchId
@@ -543,7 +543,8 @@ int vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
     // threshold points to keep
     thresh->SetInputData(map->GetOutput());
     thresh->SetInputArrayToProcess(0, 0, 0, 1, removeArrayName);
-    //dp thresh->ThresholdBetween(0, 0);
+    thresh->SetLowerThreshold(0);
+    thresh->SetUpperThreshold(0);
     thresh->Update();
 
     // convert vtkUnstructerdGrid to vtkPolyData
@@ -713,7 +714,8 @@ int vtkvmtkPolyDataCenterlineSections::SplitCenterline(vtkPolyData* bifurcations
 
     for (int i=0; i < 2; i++)
     {
-        // dp thresh->ThresholdBetween(i, i);
+        thresh->SetLowerThreshold(i);
+        thresh->SetUpperThreshold(i);
         thresh->Update();
 
         // convert vtkUnstructerdGrid to vtkPolyData
@@ -768,7 +770,8 @@ int vtkvmtkPolyDataCenterlineSections::ConnectivityCenterline(vtkPolyData* geo, 
     for (int i = 0; i < connect->GetNumberOfExtractedRegions(); i++)
     {
         // extract segment
-        //dp thresh->ThresholdBetween(i, i);
+        thresh->SetLowerThreshold(i);
+        thresh->SetUpperThreshold(i);
         thresh->Update();
 
         // map thresh points to global id
@@ -828,40 +831,65 @@ int vtkvmtkPolyDataCenterlineSections::ConnectivityCenterline(vtkPolyData* geo, 
     return SV_OK;
 }
 
+//---------------------------
+// ComputeCenterlineSections
+//---------------------------
+//
 int vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* output)
 {
+    std::string msg("[vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections] ");
+    std::cout << msg << "========== ComputeCenterlineSections ==========" << std::endl;
+
+    vtkXMLPolyDataWriter *writer = vtkXMLPolyDataWriter::New();
+    writer->SetInputData(this->Surface);
+    writer->SetFileName("surface.vtp");
+    writer->Write();
+
     vtkPoints* centerlineSectionPoints = output->GetPoints();
     vtkCellArray* centerlineSectionPolys = output->GetPolys();
 
     // arrays for section geometry
-    vtkDoubleArray* centerlineSectionAreaArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionAreaArrayName));
-    vtkDoubleArray* centerlineSectionMinSizeArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionMinSizeArrayName));
-    vtkDoubleArray* centerlineSectionMaxSizeArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionMaxSizeArrayName));
-    vtkDoubleArray* centerlineSectionShapeArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionShapeArrayName));
-    vtkIntArray* centerlineSectionClosedArray = vtkIntArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionClosedArrayName));
-    vtkIntArray* centerlineSectionBifurcationArray = vtkIntArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionBifurcationArrayName));
-    vtkIntArray* centerlineSectionGlobalNodeIdArray = vtkIntArray::SafeDownCast(output->GetCellData()->GetArray(this->GlobalNodeIdArrayName));
+    auto centerlineSectionAreaArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionAreaArrayName));
+    auto centerlineSectionMinSizeArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionMinSizeArrayName));
+    auto centerlineSectionMaxSizeArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionMaxSizeArrayName));
+    auto centerlineSectionShapeArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionShapeArrayName));
+    auto centerlineSectionClosedArray = vtkIntArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionClosedArrayName));
+    auto centerlineSectionBifurcationArray = 
+        vtkIntArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionBifurcationArrayName));
+    auto centerlineSectionGlobalNodeIdArray = vtkIntArray::SafeDownCast(output->GetCellData()->GetArray(this->GlobalNodeIdArrayName));
 
     // arrays for centerline
-    vtkDoubleArray* centerlineAreaArray = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionAreaArrayName));
-    vtkDoubleArray* centerlineMinSizeArray = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionMinSizeArrayName));
-    vtkDoubleArray* centerlineMaxSizeArray = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionMaxSizeArrayName));
-    vtkDoubleArray* centerlineShapeArray = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionShapeArrayName));
-    vtkDoubleArray* centerlineNormalArray = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionNormalArrayName));
-    vtkIntArray* centerlineClosedArray = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionClosedArrayName));
-    vtkIntArray* centerlineBifurcationArray = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionBifurcationArrayName));
+    auto centerlineAreaArray = 
+        vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionAreaArrayName));
+    auto centerlineMinSizeArray = 
+        vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionMinSizeArrayName));
+    auto centerlineMaxSizeArray = 
+        vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionMaxSizeArrayName));
+    auto centerlineShapeArray = 
+        vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionShapeArrayName));
+    auto centerlineNormalArray = 
+        vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionNormalArrayName));
+    auto centerlineClosedArray = 
+        vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionClosedArrayName));
+    auto centerlineBifurcationArray = 
+        vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionBifurcationArrayName));
 
     vtkNew(vtkIdList, cellIds);
     double point[3], tangent[3];
     const int n_point = this->Centerlines->GetNumberOfPoints();
+    std::cout << msg << "n_point: " << n_point << std::endl;
 
-    // loop all centerline points
+    // loop over all centerline points
+    //
     const int n_out = (int) (n_point / 10);
-    for (int p = 0; p < n_point; p++)
-    {
+    std::cout << msg << "n_out: " << n_out << std::endl;
+
+    for (int p = 0; p < n_point; p++) {
         // progress report
-        if (p % n_out == 0)
-            std::cout<<"    "<<p / n_out * 10<<"%"<<endl;
+        //if (p % n_out == 0) {
+            //std::cout<<"    "<<p / n_out * 10<<"%"<<endl;
+        //}
+        std::cout << msg << "----- p: " << p << std::endl;
 
         // get centerline point and tangent (= section normal)
         this->Centerlines->GetPoint(p, point);
@@ -869,10 +897,10 @@ int vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* ou
 
         // get number of cells connected to this point
         this->Centerlines->GetPointCells(p, cellIds);
+        std::cout << msg << "  cellIds->GetNumberOfIds(): " << cellIds->GetNumberOfIds() << std::endl;
 
         // at caps, move point eps_norm inward to nicely cut the geometry
-        if (cellIds->GetNumberOfIds() == 1)
-        {
+        if (cellIds->GetNumberOfIds() == 1) {
             double eps_norm = 1.0e-3;
             if (p == 0)
                 eps_norm *= -1.0;
@@ -883,20 +911,22 @@ int vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* ou
         // slice surface geometry
         vtkNew(vtkPolyData, section);
         bool closed = false;
-        vtkvmtkPolyDataBranchSections::ExtractCylinderSection(this->Surface,point,tangent,section,closed);
+        vtkvmtkPolyDataBranchSections::ExtractCylinderSection(this->Surface, point, tangent, section, closed);
+        std::cout << msg << "  section: " << section << std::endl;
+        std::cout << msg << "  section->GetNumberOfPoints(): " << section->GetNumberOfPoints() << std::endl;
+        //continue;
 
         // skip malformed sections
-        if (section->GetNumberOfPoints() < 4)
-        {
-            std::cout<<"    Skipping point "<<p<<" (less than 4 section points)"<<endl;
+        if (section->GetNumberOfPoints() < 4) {
+            std::cout << msg << "  Skipping point because it has less than 4 section points " << std::endl;
             continue;
         }
 
         // build slice geometry
         section->BuildCells();
-        if (section->GetNumberOfCells() == 0)
-        {
-            std::cout<<"    Skipping point "<<p<<" (empty section)"<<endl;
+        std::cout << msg << "  section->GetNumberOfCells(): " << section->GetNumberOfCells() << std::endl;
+        if (section->GetNumberOfCells() == 0) {
+            std::cout << msg << "  Skipping point because it has zero cells " << std::endl;
             continue;
         }
         vtkPolygon* sectionPolygon = vtkPolygon::SafeDownCast(section->GetCell(0));
