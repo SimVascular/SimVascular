@@ -1148,7 +1148,6 @@ sv4guiModelUtils::CreateCenterlines(sv4guiModelElement* modelElement, vtkIdList 
   delete [] capCenterIds;
 
   vtkPolyData* centerlines;
-  getSections = false;
 
   if (getSections) {
     centerlines = CreateCenterlineSections(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
@@ -1203,15 +1202,17 @@ vtkPolyData* sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd)
 
 }
 
-
-vtkPolyData* sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd,
-                                             vtkIdList *sourcePtIds,
-                                             vtkIdList *targetPtIds)
+//-------------------
+// CreateCenterlines
+//-------------------
+// Compute the centerlines for the input surface model. 
+//
+vtkPolyData* 
+sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd, vtkIdList *sourcePtIds, vtkIdList *targetPtIds)
 {
-    std::cout << "################## CreateCenterlines #################" << std::endl;
-
-    if(inpd==nullptr)
+    if (inpd == nullptr) {
         return nullptr;
+    }
 
     cvPolyData *src = new cvPolyData(inpd);
     cvPolyData *tempCenterlines = nullptr;
@@ -1257,13 +1258,17 @@ vtkPolyData* sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd,
 //--------------------------
 // CreateCenterlineSections
 //--------------------------
+// Compute the centerlines for a closed surface using cross-sectional
+// planar slices to better identify branches and bifurcations.
 //
-vtkPolyData* sv4guiModelUtils::CreateCenterlineSections(vtkPolyData* inpd,
-                                                        vtkIdList *sourcePtIds,
-                                                        vtkIdList *targetPtIds)
+// This is used by the ROM Simulation Tool.
+//
+vtkPolyData* 
+sv4guiModelUtils::CreateCenterlineSections(vtkPolyData* inpd, vtkIdList *sourcePtIds, vtkIdList *targetPtIds)
 {
-    if(inpd==nullptr)
+    if (inpd==nullptr) {
         return nullptr;
+    }
 
     cvPolyData *src = new cvPolyData(inpd);
     cvPolyData *tempCenterlines = nullptr;
@@ -1293,7 +1298,8 @@ vtkPolyData* sv4guiModelUtils::CreateCenterlineSections(vtkPolyData* inpd,
     cvPolyData *centerlines=nullptr;
     cvPolyData *surf_grouped=nullptr;
     cvPolyData *sections=nullptr;
-    if ( sys_geom_centerlinesections(tempCenterlines, src, &centerlines, &surf_grouped, &sections) != SV_OK )
+
+    if ( sys_geom_centerline_sections(tempCenterlines, src, &centerlines, &surf_grouped, &sections) != SV_OK )
     {
         delete src;
         delete centerlines;

@@ -163,6 +163,10 @@ if(SV_USE_${proj})
     message(STATUS "${msg} Find Qt6 using simvascular_external ...") 
     message(STATUS "${msg} Qt6 version: ${${proj}_VERSION}") 
 
+    # This is needed to find WebEngine (?).
+    set(QT_HOST_PATH "${SV_Qt6_DIR}")
+    message(STATUS "${msg} QT_HOST_PATH: ${QT_HOST_PATH}")
+
     simvascular_external(${proj}
       SHARED_LIB ${SV_USE_${proj}_SHARED}
       VERSION ${${proj}_VERSION}
@@ -184,6 +188,7 @@ if(SV_USE_${proj})
       endif()
 
       set(QT_PLUGIN_PATH "${_Qt6_DIR}/plugins")
+  
 
       if(WIN32)
         set(${proj}_DLL_PATH "${_Qt6_DIR}/bin" CACHE PATH "Force Qt DLL Path" FORCE)

@@ -403,7 +403,7 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
       cvPolyData* splitCenterlines = nullptr;
       cvPolyData* surfGrouped = nullptr;
       cvPolyData* sections = nullptr;
-      if (sys_geom_centerlinesections(linesDst, &cvSurfPolydata, &splitCenterlines, &surfGrouped, &sections) != SV_OK) {
+      if (sys_geom_centerline_sections(linesDst, &cvSurfPolydata, &splitCenterlines, &surfGrouped, &sections) != SV_OK) {
           api.error("Error splitting centerlines.");
           delete linesDst;
           delete surfGrouped;

@@ -36,7 +36,7 @@
 # 2. ExternalProject_Add(SimVascular ---> Builds SimVascular
 #-----------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.18.0)
 
 Project(SV_TOP)
 
@@ -81,7 +81,7 @@ set(SV_FREETYPE_DIR "" CACHE PATH "FREETYPE install directory containing a confi
 set(SV_GDCM_DIR "" CACHE PATH "GDCM install directory containing a configuration file")
 set(SV_HDF5_DIR "" CACHE PATH "hdf5 install directory containing a configuration file")
 set(SV_ITK_DIR "" CACHE PATH "ITK install directory containing a configuration file")
-set(SV_ML_DIR "" CACHE PATH "ML install directory containing a configuration file")
+set(SV_ML_DIR "" CACHE PATH "ML install directory containing machine learning weights")
 set(SV_MMG_DIR "" CACHE PATH "MMG install directory containing a configuration file")
 set(SV_OpenCASCADE_DIR "" CACHE PATH "OpenCASCADE install directory containing a configuration file")
 set(SV_PYTHON_DIR"" CACHE PATH "PYTHON install directory containing a configuration file")
@@ -155,6 +155,8 @@ message(STATUS "[root] DSV_FREETYPE_DIR: ${DSV_FREETYPE_DIR}")
 message(STATUS "[root] SV_GDCM_DIR: ${SV_GDCM_DIR}")
 message(STATUS "[root] SV_PYTHON_DIR: ${SV_PYTHON_DIR}")
 message(STATUS "[root] SV_Qt6_DIR: ${SV_Qt6_DIR}")
+message(STATUS "[root] PYTHON_DIR: ${PYTHON_DIR}")
+#message(FATAL_ERROR "[root] PYTHON_DIR: ${PYTHON_DIR}")
 
 ExternalProject_Add(Externals
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Externals
@@ -244,6 +246,7 @@ ExternalProject_Add(SimVascular
     -DSV_USE_MITK:BOOL=ON
     -DSV_USE_MITK_CONFIG:BOOL=OFF
     -DSV_MITK_DIR:PATH=${SV_MITK_DIR}
+    -DSV_ML_DIR:PATH=${SV_ML_DIR}
     -DSV_USE_MMG:BOOL=ON
     -DSV_MMG_DIR:PATH=${SV_MMG_DIR}
     -DSV_USE_MPICH2:BOOL=OFF
@@ -252,9 +255,12 @@ ExternalProject_Add(SimVascular
     -DSV_USE_PYTHON:BOOL=ON
     -DSV_USE_Qt6:BOOL=ON
     -DSV_USE_QT:BOOL=ON
+    -DPython_DIR:PATH=${SV_PYTHON_DIR}
+    -DPYTHON_DIR:PATH=${SV_PYTHON_DIR}
     -DSV_PYTHON_DIR:PATH=${SV_PYTHON_DIR}
     -DSV_Qt6_DIR:PATH=${SV_Qt6_DIR}
     -DSV_VTK_DIR:PATH=${SV_VTK_DIR}
+    -DSV_TINYXML2_DIR:PATH=${SV_TINYXML2_DIR}
     -DSV_USE_SV4_GUI:BOOL=${SV_USE_SV4_GUI}
     -DSV_USE_MITK_SEGMENTATION:BOOL=${SV_USE_MITK_SEGMENTATION}
     -DSV_USE_SOLVERIO:BOOL=ON
