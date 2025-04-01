@@ -30,7 +30,7 @@
 #
 set(proj ml)
 
-set(SV_ML_DIR /Users/parkerda/tmp/ml-1.0.0)
+#set(SV_ML_DIR /Users/parkerda/tmp/ml-1.0.0)
 
 set(msg "[Externals/CMake/ML.cmake] ")
 message(STATUS "${msg} ")
@@ -52,15 +52,17 @@ message(STATUS "${msg} ML_SRC_DIR: ${ML_SRC_DIR}")
 message(STATUS "${msg} ML_PFX_DIR: ${ML_PFX_DIR}")
 message(STATUS "${msg} ML_BIN_DIR: ${ML_BIN_DIR}")
 
-#ExternalProject_Add("${proj}_networks"
-  #URL               
-  #PREFIX            ${ML_PFX_DIR}
-  #DOWNLOAD_DIR      ${SV_ML_DIR}
-  ##DOWNLOAD_DIR      ${ML_SRC_DIR}
-  #SOURCE_DIR        ${CMAKE_SOURCE_DIR}/../Python/site-packages/sv_ml/results
-  #UPDATE_COMMAND    ""
-  #CONFIGURE_COMMAND ""
-  #BUILD_COMMAND     ""
-  #INSTALL_COMMAND   ""
-#)
+#file(COPY ${SV_ML_DIR}${CMAKE_SOURCE_DIR}/../Python/site-packages/sv_ml/results
+
+ExternalProject_Add("${proj}_networks"
+  URL               
+  PREFIX            ${ML_PFX_DIR}
+  DOWNLOAD_DIR      ${SV_ML_DIR}
+  #DOWNLOAD_DIR      ${ML_SRC_DIR}
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/../Python/site-packages/sv_ml/results
+  UPDATE_COMMAND    ""
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+)
 

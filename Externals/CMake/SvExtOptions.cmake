@@ -90,6 +90,7 @@ sv_externals_add_new_external(QT ${SV_EXTERNALS_QT_VERSION} ON ON qt qt)
 if (SV_EXTERNALS_VERSION_NUMBER GREATER_EQUAL "2019.02")
   sv_externals_add_new_external(ML ${SV_EXTERNALS_ML_VERSION} ON ON ml ml)
 endif()
+
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -163,6 +164,8 @@ sv_externals_add_new_external(MITK ${SV_EXTERNALS_MITK_VERSION} ON ON mitk mitk)
 #-----------------------------------------------------------------------------
 #Download options for tcltk
 option(SV_EXTERNALS_DOWNLOAD_TCLTK "Download instead of build TCLTK" ON)
+
+#message(FATAL_ERROR "[SvExtOptions] SV_EXTERNALS_LIST: ${SV_EXTERNALS_LIST}")
 
 message(STATUS "[SvExtOptions] ----- Done SvExtOptions -----")
 message(STATUS "[SvExtOptions] ")
