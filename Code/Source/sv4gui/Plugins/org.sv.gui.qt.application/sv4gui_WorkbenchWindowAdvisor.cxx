@@ -1993,17 +1993,20 @@ void sv4guiWorkbenchWindowAdvisor::ToggleSlicePlane(QString name)
 
 void sv4guiWorkbenchWindowAdvisor::ToggleAxialPlane(bool )
 {
-    ToggleSlicePlane("stdmulti.widget1.plane");
+    ToggleSlicePlane("stdmulti.widget0.plane");
+    // [DaveP] ToggleSlicePlane("stdmulti.widget1.plane");
 }
 
 void sv4guiWorkbenchWindowAdvisor::ToggleSagittalPlane(bool )
 {
-    ToggleSlicePlane("stdmulti.widget2.plane");
+    ToggleSlicePlane("stdmulti.widget1.plane");
+    // [DaveP] ToggleSlicePlane("stdmulti.widget2.plane");
 }
 
 void sv4guiWorkbenchWindowAdvisor::ToggleCoronalPlane(bool )
 {
-    ToggleSlicePlane("stdmulti.widget3.plane");
+    ToggleSlicePlane("stdmulti.widget2.plane");
+    // [DaveP] ToggleSlicePlane("stdmulti.widget3.plane");
 }
 
 void sv4guiWorkbenchWindowAdvisor::SetCrosshairGapZero()
