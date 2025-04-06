@@ -52,7 +52,7 @@ if(SV_USE_${proj})
           set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/tinyxml2 CACHE PATH "Force ${proj} dir to externals" FORCE)
 	elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2019.06")
           set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/tinyxml2 CACHE PATH "Force ${proj} dir to externals" FORCE)
-  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2022.10")
+        elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2022.10")
           set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/tinyxml2 CACHE PATH "Force ${proj} dir to externals" FORCE)
         else()
 	  message(FATAL_ERROR "Invalid SV_EXTERNALS_VERSION_NUMBER ${SV_EXTERNALS_VERSION_NUMBER}")
@@ -93,6 +93,9 @@ if(SV_USE_${proj})
     set(TINYXML2_LIBRARY "${SV_${proj}_DIR}/lib/libtinyxml2.dylib")
   endif()
 
-  set(SV_${proj}_DIR ${${proj}_DIR})
+  # [DaveP] i don't know what this is about but 
+  # it messes up locating the library to install.
+  #set(SV_${proj}_DIR ${${proj}_DIR})
 endif()
+
 #-----------------------------------------------------------------------------

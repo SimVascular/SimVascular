@@ -365,6 +365,7 @@ macro(simvascular_add_executable TARGET_NAME)
     if(simvascular_add_executable_INSTALL_COMPONENT)
         set(_COMPARGS COMPONENT ${simvascular_add_executable_INSTALL_COMPONENT})
     endif()
+
     if(APPLE)
       set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_NAME "${TARGET_NAME}")
       set(icon_name "icon.icns")
@@ -1152,17 +1153,39 @@ endmacro()
 
 function(simvascular_install_external project_name)
 
+   set(msg "[simvascular_install_external] ")
+   message(STATUS "${msg} ")
+   message(STATUS "${msg} ######################################################################")
+   message(STATUS "${msg} ----------------------------------------------------------------------")
+   message(STATUS "${msg} +++++                     simvascular_install_external                ")
+   message(STATUS "${msg} ----------------------------------------------------------------------")
+   message(STATUS "${msg} ######################################################################")
+   message(STATUS "${msg} project_name: ${project_name}")
+   message(STATUS "${msg} SV_${proj}_DIR: ${SV_${proj}_DIR}")
+   message(STATUS "${msg} ENABLE_DISTRIBUTION: ${CMAKE_PROJECT_NAME}_ENABLE_DISTRIBUTION") 
+
   if(${CMAKE_PROJECT_NAME}_ENABLE_DISTRIBUTION)
+    message(STATUS "${msg} DISTRIBUTION is enabled") 
     set(INSTALL_DESTINATION "${SV_EXTERNALS_INSTALL_PREFIX}")
   else()
     set(INSTALL_DESTINATION "${SV_EXTERNALS_${proj}_INSTALL_PREFIX}")
+    message(STATUS "${msg} DISTRIBUTION is NOT enabled") 
   endif()
+
   if(EXISTS ${SV_${proj}_DIR})
     if(EXISTS ${SV_${proj}_DIR}/lib)
+      message(STATUS "${msg} EXISTS ${SV_${proj}_DIR}/lib") 
       install(DIRECTORY ${SV_${proj}_DIR}/lib DESTINATION ${INSTALL_DESTINATION}
         USE_SOURCE_PERMISSIONS
         COMPONENT ExternalLibraries)
+    else()
+      message(STATUS "${msg} **** Does not EXISTS ${SV_${proj}_DIR}/lib") 
     endif()
+
+    #if("${project_name}" STREQUAL "TINYXML2")
+      #message(FATAL_ERROR "${msg} **** Does not EXISTS ${SV_${proj}_DIR}/lib") 
+    #endif()
+
     if(EXISTS ${SV_${proj}_DIR}/bin)
       install(DIRECTORY ${SV_${proj}_DIR}/bin DESTINATION ${INSTALL_DESTINATION}
         USE_SOURCE_PERMISSIONS
@@ -1170,6 +1193,7 @@ function(simvascular_install_external project_name)
         PATTERN "designer" EXCLUDE
         )
     endif()
+
     if(SV_EXTERNALS_INSTALL_HEADERS)
       if(EXISTS ${SV_${proj}_DIR}/include)
         install(DIRECTORY ${SV_${proj}_DIR}/include DESTINATION ${INSTALL_DESTINATION}

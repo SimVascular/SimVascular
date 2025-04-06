@@ -156,8 +156,14 @@ message(STATUS "[root] SV_GDCM_DIR: ${SV_GDCM_DIR}")
 message(STATUS "[root] SV_PYTHON_DIR: ${SV_PYTHON_DIR}")
 message(STATUS "[root] SV_Qt6_DIR: ${SV_Qt6_DIR}")
 message(STATUS "[root] PYTHON_DIR: ${PYTHON_DIR}")
+message(STATUS "[root] SV_TINYXML2_DIR: ${SV_TINYXML2_DIR}")
 #message(FATAL_ERROR "[root] PYTHON_DIR: ${PYTHON_DIR}")
 
+# [DaveP] I commented this out and SV build fine, does not seem 
+# to affect installer build.
+#
+#[[
+#
 ExternalProject_Add(Externals
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Externals
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Externals-build
@@ -196,6 +202,7 @@ ExternalProject_Add(Externals
     -DSV_EXTERNALS_TOPLEVEL_BIN_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
     ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
     )
+#]]
 
 message(STATUS "[root] ---- Done add Externals project ... ")
 
@@ -218,7 +225,7 @@ set(SV_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provide
 ExternalProject_Add(SimVascular
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/SimVascular-build
-  DEPENDS Externals
+  # Davep DEPENDS Externals
   DOWNLOAD_COMMAND ""
   UPDATE_COMMAND ""
   INSTALL_COMMAND ""

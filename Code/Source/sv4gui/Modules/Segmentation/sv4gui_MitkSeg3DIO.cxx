@@ -31,16 +31,19 @@
 
 #include "sv4gui_MitkSeg3DIO.h"
 #include "sv4gui_MitkSeg3D.h"
+#include "sv4gui_ContourGroupIO.h"
 
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
 
-#include <simvascular_tinyxml.h>
+#include <tinyxml2.h>
 
 #include <vtkPolyData.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkErrorCode.h>
+
+auto set_string_from_attribute = &sv4guiContourGroupIO::set_string_from_attribute;
 
 static mitk::CustomMimeType Createsv4guiSeg3DMimeType()
 {
@@ -69,9 +72,9 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSeg3DIO::ReadFile(std::string fil
 {
     std::vector<mitk::BaseData::Pointer> result;
 
-    TiXmlDocument document;
+    tinyxml2::XMLDocument document;
 
-    if (!document.LoadFile(fileName))
+    if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
         //        return result;
@@ -79,7 +82,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSeg3DIO::ReadFile(std::string fil
 
     //    TiXmlElement* version = document.FirstChildElement("format");
 
-    TiXmlElement* segElement = document.FirstChildElement("seg3d");
+    auto segElement = document.FirstChildElement("seg3d");
 
     if(!segElement){
         mitkThrow() << "No 3D seg data in "<< fileName;
@@ -91,20 +94,22 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSeg3DIO::ReadFile(std::string fil
     sv4guiSeg3DParam param;
 
     //read parameters
-    TiXmlElement* paramElement = segElement->FirstChildElement("param");
+    auto paramElement = segElement->FirstChildElement("param");
     if(paramElement)
     {
-        paramElement->QueryStringAttribute("method",&param.method);
+         set_string_from_attribute(paramElement, "method", param.method);
+        // davep paramElement->QueryStringAttribute("method",&param.method);
+
         if(param.method!="")
         {
             paramElement->QueryDoubleAttribute("lower_threshold",&param.lowerThreshold);
             paramElement->QueryDoubleAttribute("upper_threshold",&param.upperThreshold);
 
             //read seeds
-            TiXmlElement* seedsElement = paramElement->FirstChildElement("seeds");
+            auto seedsElement = paramElement->FirstChildElement("seeds");
             if(seedsElement)
             {
-                for( TiXmlElement* seedElement = seedsElement->FirstChildElement("seed");
+                for( auto seedElement = seedsElement->FirstChildElement("seed");
                      seedElement != nullptr;
                      seedElement = seedElement->NextSiblingElement("seed") )
                 {
@@ -114,7 +119,8 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSeg3DIO::ReadFile(std::string fil
                     svSeed seed;
 
                     seedElement->QueryIntAttribute("id", &seed.id);
-                    seedElement->QueryStringAttribute("type", &seed.type);
+                    set_string_from_attribute(seedElement, "type", seed.type);
+                    //davep seedElement->QueryStringAttribute("type", &seed.type);
                     seedElement->QueryDoubleAttribute("x", &seed.x);
                     seedElement->QueryDoubleAttribute("y", &seed.y);
                     seedElement->QueryDoubleAttribute("z", &seed.z);
@@ -163,8 +169,8 @@ void sv4guiMitkSeg3DIO::Write()
     const sv4guiMitkSeg3D* mitkSeg3D = dynamic_cast<const sv4guiMitkSeg3D*>(this->GetInput());
     if(!mitkSeg3D) return;
 
-    TiXmlDocument document;
-    auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
+    tinyxml2::XMLDocument document;
+    auto  decl = document.NewDeclaration();
     document.LinkEndChild( decl );
 
     sv4guiSeg3D* seg3D=mitkSeg3D->GetSeg3D();
@@ -172,36 +178,35 @@ void sv4guiMitkSeg3DIO::Write()
     {
         sv4guiSeg3DParam& param=seg3D->GetParam();
 
-        auto  segElement = new TiXmlElement("seg3d");
+        auto segElement = document.NewElement("seg3d");
         segElement->SetAttribute("version",  "1.0" );
         document.LinkEndChild(segElement);
 
-        auto  paramElement = new TiXmlElement("param");
+        auto paramElement = document.NewElement("param");
         segElement->LinkEndChild(paramElement);
 
         if(param.method!="")
         {
-            paramElement->SetAttribute("method", param.method);
+            paramElement->SetAttribute("method", param.method.c_str());
 
-            paramElement->SetDoubleAttribute("lower_threshold", param.lowerThreshold);
-            paramElement->SetDoubleAttribute("upper_threshold", param.upperThreshold);
+            paramElement->SetAttribute("lower_threshold", param.lowerThreshold);
+            paramElement->SetAttribute("upper_threshold", param.upperThreshold);
 
-
-            auto  seedsElement = new TiXmlElement("seeds");
+            auto seedsElement = document.NewElement("seeds");
             paramElement->LinkEndChild(seedsElement);
 
             std::map<int, svSeed>& seedMap=param.GetSeedMap();
             for(auto s:seedMap)
             {
-                auto  seedElement = new TiXmlElement("seed");
+                auto seedElement = document.NewElement("seed");
                 svSeed seed=s.second;
                 seedsElement->LinkEndChild(seedElement);
                 seedElement->SetAttribute("id",seed.id);
-                seedElement->SetAttribute("type", seed.type);
-                seedElement->SetDoubleAttribute("x", seed.x);
-                seedElement->SetDoubleAttribute("y", seed.y);
-                seedElement->SetDoubleAttribute("z", seed.z);
-                seedElement->SetDoubleAttribute("radius", seed.radius);
+                seedElement->SetAttribute("type", seed.type.c_str());
+                seedElement->SetAttribute("x", seed.x);
+                seedElement->SetAttribute("y", seed.y);
+                seedElement->SetAttribute("z", seed.z);
+                seedElement->SetAttribute("radius", seed.radius);
             }
         }
 
@@ -220,7 +225,7 @@ void sv4guiMitkSeg3DIO::Write()
         }
     }
 
-    if (document.SaveFile(fileName) == false)
+    if (document.SaveFile(fileName.c_str()) == false)
     {
         mitkThrow() << "Could not write model to " << fileName;
 

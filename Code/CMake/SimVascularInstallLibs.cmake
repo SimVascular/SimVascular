@@ -43,27 +43,47 @@ macro(simvascular_install_prereqs tar location)
   endforeach()
 endmacro()
 
+  set(msg "[SimVascularInstallLibs] ")
+  
+  message(STATUS "${msg} ")
+  message(STATUS "${msg} ========== SimVascularInstallLibs.cmake ==========")
+  message(STATUS "${msg} SV_ENABLE_DISTRIBUTION: ${SV_ENABLE_DISTRIBUTION} ")
+  message(STATUS "${msg} SV_EXTERNAL_SHARED_LIBS: ${SV_EXTERNAL_SHARED_LIBS} ")
+
+message(STATUS "${msg} ------ for SV_EXTERNAL_SHARED_LIBS ...") 
+
 foreach(var ${SV_EXTERNAL_SHARED_LIBS})
+  message(STATUS "${msg} ----- var: ${var} ----- ")
+
   if(NOT ${var}_DLL_LIBRARIES)
       set(${var}_DLL_LIBRARIES ${${var}_LIBRARY} ${${var}_LIBRARIES} ${${var}_DLL_LIBRARY})
   endif()
+
   if(${var}_DLL_LIBRARIES)
     list(REMOVE_DUPLICATES ${var}_DLL_LIBRARIES)
   endif()
+
   if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_${var} )
+
     # We only want to install libraries they are not system libraries.
     # we want to install them regardles if this is a distribution.
+
     dev_message("[${var}]  This is either not a system library, or this is a distribution install.")
+
     if(NOT SV_INSTALL_${var}_RUNTIME_DIR)
-      dev_message("[${var}]  SV_INSTALL_${var}_RUNTIME_DIR does not exist, ${lib_name} installing into externals")
+      message("${msg} [${var}]  SV_INSTALL_${var}_RUNTIME_DIR does not exist, ${lib_name} installing into externals")
+
       # Variables with a install directory are handled differently
       # if the directory doesn't exist, install in in the catch all
+
       foreach(lib ${${var}_DLL_LIBRARIES})
+        message(STATUS "${msg} lib: ${lib} ")
         dev_message("[${var}]  Do we install ${lib}")
         get_filename_component(lib_name ${lib} NAME)
         get_filename_component(_EXT ${lib_name} EXT)
         get_filename_component(lib_name_we ${lib} NAME_WE)
         get_filename_component(lib_path ${lib} PATH)
+
         if(_EXT MATCHES "${CMAKE_SHARED_LIBRARY_SUFFIX}$")
           dev_message("[${var}] ${lib_name} marked for install into ${SV_INSTALL_EXTERNALS_RUNTIME_DIR}")
           if(IS_SYMLINK ${lib})
@@ -90,9 +110,13 @@ foreach(var ${SV_EXTERNAL_SHARED_LIBS})
 endforeach()
 
 
+
 #-----------------------------------------------------------------------------
 # Copy External Libs
 #-----------------------------------------------------------------------------
+
+#message("${msg} ") 
+#message("${msg} ----- Copy External Libs -----") 
 
 #-----------------------------------------------------------------------------
 # MPI

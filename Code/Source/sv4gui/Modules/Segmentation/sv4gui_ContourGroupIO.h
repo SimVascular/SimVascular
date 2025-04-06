@@ -37,6 +37,7 @@
 #include <sv4guiModuleSegmentationExports.h>
 
 #include "mitkAbstractFileIO.h"
+#include "tinyxml2.h"
 
 class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourGroupIO : public mitk::AbstractFileIO
 {
@@ -55,6 +56,8 @@ public:
     static void WriteToFile(const sv4guiContourGroup* group, const std::string& fileName);
     void Write() override;
     mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
+
+    static void set_string_from_attribute(tinyxml2::XMLElement* element, const char* attr_name, std::string& value);
 
 private:
     sv4guiContourGroupIO* IOClone() const override;

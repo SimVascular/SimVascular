@@ -35,6 +35,12 @@
 set(SV_CONF_USED_LIBS )
 set(SV_CONF_USED_PLUGINS )
 set(SV_TARGETS )
+
+  set(msg "[SimVascularConfigSetup] ")
+  message(STATUS "${msg} ")
+  message(STATUS "${msg} ========== SimVascularConfigSetup.cmake ==========")
+  message(STATUS "${msg} SV_LIB_NAMES: ${SV_LIB_NAMES} ")
+
 foreach(lib ${SV_LIB_NAMES})
   if(TARGET ${lib})
     get_target_property(${lib}_TYPE ${lib} "TYPE")
@@ -47,6 +53,7 @@ foreach(lib ${SV_LIB_NAMES})
     endif()
   endif()
 endforeach()
+
 foreach(lib ${SV_PLUGIN_NAMES})
   if(TARGET ${lib})
     get_target_property(${lib}_TYPE ${lib} "TYPE")

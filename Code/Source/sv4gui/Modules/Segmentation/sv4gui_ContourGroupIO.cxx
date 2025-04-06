@@ -51,6 +51,19 @@ static mitk::CustomMimeType Createsv4guiContourGroupMimeType()
     return mimeType;
 }
 
+//---------------------------
+// set_string_from_attribute
+//---------------------------
+// Get a string attribute from an XMLElement object.
+//
+void sv4guiContourGroupIO::set_string_from_attribute(tinyxml2::XMLElement* element, const char* attr_name, 
+  std::string& value)
+{
+  const char* qvalue = "";
+  element->QueryStringAttribute(attr_name, &qvalue);
+  value = std::string(qvalue);
+}
+
 sv4guiContourGroupIO::sv4guiContourGroupIO()
     : mitk::AbstractFileIO(sv4guiContourGroup::GetStaticNameOfClass(), Createsv4guiContourGroupMimeType(), "SimVascular ContourGroup")
 {
@@ -78,10 +91,10 @@ std::vector<mitk::BaseData::Pointer> sv4guiContourGroupIO::ReadFile(std::string 
 sv4guiContourGroup::Pointer
 sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
 {
-    TiXmlDocument document;
+    tinyxml2::XMLDocument document;
     sv4guiContourGroup::Pointer group = sv4guiContourGroup::New();
 
-    if (!document.LoadFile(fileName))
+    if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
         //        MITK_ERROR << "Could not open/read/parse " << fileName;
@@ -91,7 +104,7 @@ sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
 
     //    TiXmlElement* version = document.FirstChildElement("format");
 
-    TiXmlElement* groupElement = document.FirstChildElement("contourgroup");
+    auto groupElement = document.FirstChildElement("contourgroup");
 
     if(!groupElement){
 //        MITK_ERROR << "No ContourGroup data in "<< fileName;
@@ -107,15 +120,15 @@ sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
     groupElement->QueryDoubleAttribute("reslice_size", &resliceSize);
     group->SetResliceSize(resliceSize);
 
-    std::string point2dsize="",point3dsize="";
+    const char* point2dsize="";
+    const char* point3dsize="";
     groupElement->QueryStringAttribute("point_2D_display_size", &point2dsize);
     groupElement->QueryStringAttribute("point_size", &point3dsize);
     group->SetProp("point 2D display size",point2dsize);
     group->SetProp("point size",point3dsize);
 
     int timestep=-1;
-    for( TiXmlElement* timestepElement = groupElement->FirstChildElement("timestep");
-         timestepElement != nullptr;
+    for( auto timestepElement = groupElement->FirstChildElement("timestep"); timestepElement != nullptr;
          timestepElement = timestepElement->NextSiblingElement("timestep") )
     {
         if (timestepElement == nullptr)
@@ -128,12 +141,13 @@ sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
         //lofting parameters
         if(timestep==0)
         {
-            TiXmlElement* loftParamElement = timestepElement->FirstChildElement("lofting_parameters");
+            auto loftParamElement = timestepElement->FirstChildElement("lofting_parameters");
             if(loftParamElement!=nullptr)
             {
                 svLoftingParam* param=group->GetLoftingParam();
 
-                loftParamElement->QueryStringAttribute("method", &param->method);
+                set_string_from_attribute(loftParamElement, "method", param->method);
+                // davep loftParamElement->QueryStringAttribute("method", &param->method);
 
                 loftParamElement->QueryIntAttribute("sampling", &param->numOutPtsInSegs);
                 loftParamElement->QueryIntAttribute("sample_per_seg",&param->samplePerSegment);
@@ -144,14 +158,22 @@ sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
 
                 loftParamElement->QueryIntAttribute("u_degree",&param->uDegree);
                 loftParamElement->QueryIntAttribute("v_degree",&param->vDegree);
-                loftParamElement->QueryStringAttribute("u_knot_type",&param->uKnotSpanType);
-                loftParamElement->QueryStringAttribute("v_knot_type",&param->vKnotSpanType);
-                loftParamElement->QueryStringAttribute("u_parametric_type",&param->uParametricSpanType);
-                loftParamElement->QueryStringAttribute("v_parametric_type",&param->vParametricSpanType);
+
+                set_string_from_attribute(loftParamElement, "u_knot_type", param->uKnotSpanType);
+                // davep loftParamElement->QueryStringAttribute("u_knot_type",&param->uKnotSpanType);
+
+                set_string_from_attribute(loftParamElement, "v_knot_type", param->vKnotSpanType);
+                // davep loftParamElement->QueryStringAttribute("v_knot_type",&param->vKnotSpanType);
+
+                set_string_from_attribute(loftParamElement, "u_parametric_type", param->uParametricSpanType);
+                // davep loftParamElement->QueryStringAttribute("u_parametric_type",&param->uParametricSpanType);
+
+                set_string_from_attribute(loftParamElement, "v_parametric_type", param->vParametricSpanType);
+                // davep loftParamElement->QueryStringAttribute("v_parametric_type",&param->vParametricSpanType);
             }
         }
 
-        for( TiXmlElement* contourElement = timestepElement->FirstChildElement("contour");
+        for( auto contourElement = timestepElement->FirstChildElement("contour");
              contourElement != nullptr;
              contourElement = contourElement->NextSiblingElement("contour") )
         {
@@ -159,7 +181,8 @@ sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
                 continue;
 
             std::string type;
-            contourElement->QueryStringAttribute("type", &type);
+            set_string_from_attribute(contourElement, "type", type);
+            // davep contourElement->QueryStringAttribute("type", &type);
 
             sv4guiContour* contour;
 
@@ -192,7 +215,8 @@ sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
             if(ce)
             {
                 std::string asCircle;
-                contourElement->QueryStringAttribute("as_circle", &asCircle);
+                set_string_from_attribute(contourElement, "as_circle", asCircle);
+                // davep contourElement->QueryStringAttribute("as_circle", &asCircle);
                 ce->SetAsCircle(asCircle=="true"?true:false);
             }
 
@@ -212,10 +236,13 @@ sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
             contour->SetContourID(contourID);
 
             std::string method;
-            contourElement->QueryStringAttribute("method", &method);
+            set_string_from_attribute(contourElement, "method", method);
+            //contourElement->QueryStringAttribute("method", &method);
+
             contour->SetMethod(method);
             std::string closed;
-            contourElement->QueryStringAttribute("closed", &closed);
+            set_string_from_attribute(contourElement, "closed", closed);
+            // davep contourElement->QueryStringAttribute("closed", &closed);
             contour->SetClosed(closed=="false"?false:true);
             int minControlNumber,maxControlNumber;
             contourElement->QueryIntAttribute("min_control_number", &minControlNumber);
@@ -234,51 +261,53 @@ sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
 
             contour->SetPlaced();
 
+            auto xml_io = sv4guiXmlIOUtil(document);
+
             //path point
-            TiXmlElement* pathpointElement = contourElement->FirstChildElement("path_point");
+            auto pathpointElement = contourElement->FirstChildElement("path_point");
             if(pathpointElement!=nullptr)
             {
                 sv4guiPathElement::sv4guiPathPoint pathPoint;
                 int id=0;
                 pathpointElement->QueryIntAttribute("id", &id);
                 pathPoint.id=id;
-                pathPoint.pos=sv4guiXmlIOUtil::GetPoint(pathpointElement->FirstChildElement("pos"));
-                pathPoint.tangent=sv4guiXmlIOUtil::GetVector(pathpointElement->FirstChildElement("tangent"));
-                pathPoint.rotation=sv4guiXmlIOUtil::GetVector(pathpointElement->FirstChildElement("rotation"));
+                pathPoint.pos = xml_io.GetPoint(pathpointElement->FirstChildElement("pos"));
+                pathPoint.tangent = xml_io.GetVector(pathpointElement->FirstChildElement("tangent"));
+                pathPoint.rotation = xml_io.GetVector(pathpointElement->FirstChildElement("rotation"));
 
                 contour->SetPathPoint(pathPoint);
             }
 
             //control points without updating contour points
-            TiXmlElement* controlpointsElement = contourElement->FirstChildElement("control_points");
+            auto controlpointsElement = contourElement->FirstChildElement("control_points");
             if(controlpointsElement!=nullptr)
             {
                 std::vector<mitk::Point3D> controlPoints;
-                for( TiXmlElement* pointElement = controlpointsElement->FirstChildElement("point");
+                for( auto pointElement = controlpointsElement->FirstChildElement("point");
                      pointElement != nullptr;
                      pointElement = pointElement->NextSiblingElement("point") )
                 {
                     if (pointElement == nullptr)
                         continue;
 
-                    controlPoints.push_back(sv4guiXmlIOUtil::GetPoint(pointElement));
+                    controlPoints.push_back(xml_io.GetPoint(pointElement));
                 }
                 contour->SetControlPoints(controlPoints,false);
             }
 
             //contour points
-            TiXmlElement* contourpointsElement = contourElement->FirstChildElement("contour_points");
+            auto contourpointsElement = contourElement->FirstChildElement("contour_points");
             if(contourpointsElement!=nullptr)
             {
                 std::vector<mitk::Point3D> contourPoints;
-                for( TiXmlElement* pointElement = contourpointsElement->FirstChildElement("point");
+                for( auto pointElement = contourpointsElement->FirstChildElement("point");
                      pointElement != nullptr;
                      pointElement = pointElement->NextSiblingElement("point") )
                 {
                     if (pointElement == nullptr)
                         continue;
 
-                    contourPoints.push_back(sv4guiXmlIOUtil::GetPoint(pointElement));
+                    contourPoints.push_back(xml_io.GetPoint(pointElement));
                 }
                 contour->SetContourPoints(contourPoints,false);
                 contour->ContourPointsChanged(); // Calculate contour center.
@@ -308,29 +337,29 @@ mitk::IFileIO::ConfidenceLevel sv4guiContourGroupIO::GetReaderConfidenceLevel() 
 //
 void sv4guiContourGroupIO::WriteToFile(const sv4guiContourGroup* group, const std::string& fileName)
 {
-    TiXmlDocument document;
-    auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
+    tinyxml2::XMLDocument document;
+    auto decl = document.NewDeclaration();
     document.LinkEndChild( decl );
 
-    auto  groupElement = new TiXmlElement("contourgroup");
-    groupElement->SetAttribute("path_name", group->GetPathName());
+    auto groupElement = document.NewElement("contourgroup");
+    groupElement->SetAttribute("path_name", group->GetPathName().c_str());
     groupElement->SetAttribute("path_id", group->GetPathID());
-    groupElement->SetDoubleAttribute("reslice_size", group->GetResliceSize());
-    groupElement->SetAttribute("point_2D_display_size",group->GetProp("point 2D display size"));
-    groupElement->SetAttribute("point_size",group->GetProp("point size"));
+    groupElement->SetAttribute("reslice_size", group->GetResliceSize());
+    groupElement->SetAttribute("point_2D_display_size",group->GetProp("point 2D display size").c_str());
+    groupElement->SetAttribute("point_size",group->GetProp("point size").c_str());
     groupElement->SetAttribute("version",  "1.0" );
     document.LinkEndChild(groupElement);
 
     for(int t=0;t<group->GetTimeSize();t++) {
-        auto  timestepElement = new TiXmlElement("timestep");
+        auto timestepElement = document.NewElement("timestep");
         timestepElement->SetAttribute("id",t);
         groupElement->LinkEndChild(timestepElement);
 
         if (t==0) {
-            auto loftParamElement = new TiXmlElement("lofting_parameters");
+            auto loftParamElement = document.NewElement("lofting_parameters");
             timestepElement->LinkEndChild(loftParamElement);
             svLoftingParam* param=group->GetLoftingParam();
-            loftParamElement->SetAttribute("method",param->method);
+            loftParamElement->SetAttribute("method",param->method.c_str());
 
             loftParamElement->SetAttribute("sampling",param->numOutPtsInSegs);
             loftParamElement->SetAttribute("sample_per_seg",param->samplePerSegment);
@@ -341,11 +370,13 @@ void sv4guiContourGroupIO::WriteToFile(const sv4guiContourGroup* group, const st
 
             loftParamElement->SetAttribute("u_degree",param->uDegree);
             loftParamElement->SetAttribute("v_degree",param->vDegree);
-            loftParamElement->SetAttribute("u_knot_type",param->uKnotSpanType);
-            loftParamElement->SetAttribute("v_knot_type",param->vKnotSpanType);
-            loftParamElement->SetAttribute("u_parametric_type",param->uParametricSpanType);
-            loftParamElement->SetAttribute("v_parametric_type",param->vParametricSpanType);
+            loftParamElement->SetAttribute("u_knot_type",param->uKnotSpanType.c_str());
+            loftParamElement->SetAttribute("v_knot_type",param->vKnotSpanType.c_str());
+            loftParamElement->SetAttribute("u_parametric_type",param->uParametricSpanType.c_str());
+            loftParamElement->SetAttribute("v_parametric_type",param->vParametricSpanType.c_str());
         }
+
+        auto xml_io = sv4guiXmlIOUtil(document);
 
         for(int i=0;i<group->GetSize(t);i++) {
             auto contour = group->GetContour(i,t);
@@ -353,18 +384,18 @@ void sv4guiContourGroupIO::WriteToFile(const sv4guiContourGroup* group, const st
                 continue;
             }
 
-            auto contourElement = new TiXmlElement("contour");
+            auto contourElement = document.NewElement("contour");
             timestepElement->LinkEndChild(contourElement);
             std::string type=contour->GetType();
             contourElement->SetAttribute("id",i);
-            contourElement->SetAttribute("type",type);
-            contourElement->SetAttribute("method",contour->GetMethod());
+            contourElement->SetAttribute("type",type.c_str());
+            contourElement->SetAttribute("method",contour->GetMethod().c_str());
             contourElement->SetAttribute("closed",contour->IsClosed()?"true":"false");
             contourElement->SetAttribute("min_control_number",contour->GetMinControlPointNumber());
             contourElement->SetAttribute("max_control_number",contour->GetMaxControlPointNumber());
             contourElement->SetAttribute("subdivision_type",contour->GetSubdivisionType());
             contourElement->SetAttribute("subdivision_number",contour->GetSubdivisionNumber());
-            contourElement->SetDoubleAttribute("subdivision_spacing",contour->GetSubdivisionSpacing());
+            contourElement->SetAttribute("subdivision_spacing",contour->GetSubdivisionSpacing());
 
             auto ce = dynamic_cast<sv4guiContourEllipse*>(contour);
             if(ce) {
@@ -374,36 +405,42 @@ void sv4guiContourGroupIO::WriteToFile(const sv4guiContourGroup* group, const st
             auto ct = dynamic_cast<sv4guiContourTensionPolygon*>(contour);
             if(ct) {
                 contourElement->SetAttribute("subdivision_rounds",ct->GetSubdivisionRounds());
-                contourElement->SetDoubleAttribute("tension_param",ct->GetTensionParameter());
+                contourElement->SetAttribute("tension_param",ct->GetTensionParameter());
             }
 
             //path point
-            auto  pathpointElement = new TiXmlElement("path_point");
+            auto pathpointElement = document.NewElement("path_point");
             contourElement->LinkEndChild(pathpointElement);
             pathpointElement->SetAttribute("id",contour->GetPathPoint().id);
 
-            pathpointElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLPointElement("pos",contour->GetPathPoint().pos));
-            pathpointElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLVectorElement("tangent",contour->GetPathPoint().tangent));
-            pathpointElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLVectorElement("rotation",contour->GetPathPoint().rotation));
+            // [DaveP] careful with these calls, have CreateXMLPointElement() in sv3_XmlIOUtil.h and sv4gui_XmlIOUtil.h.
+            pathpointElement->LinkEndChild(xml_io.CreateXMLPointElement("pos",contour->GetPathPoint().pos));
+            pathpointElement->LinkEndChild(xml_io.CreateXMLVectorElement("tangent",contour->GetPathPoint().tangent));
+            pathpointElement->LinkEndChild(xml_io.CreateXMLVectorElement("rotation",contour->GetPathPoint().rotation));
+            //pathpointElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLPointElement("pos",contour->GetPathPoint().pos));
+            //pathpointElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLVectorElement("tangent",contour->GetPathPoint().tangent));
+            //pathpointElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLVectorElement("rotation",contour->GetPathPoint().rotation));
 
             //control points
-            auto  controlpointsElement = new TiXmlElement("control_points");
+            auto controlpointsElement = document.NewElement("control_points");
             contourElement->LinkEndChild(controlpointsElement);
             for(int j=0;j<contour->GetControlPointNumber();j++) {
-                controlpointsElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLPointElement("point",j,contour->GetControlPoint(j)));
+                controlpointsElement->LinkEndChild(xml_io.CreateXMLPointElement("point",j,contour->GetControlPoint(j)));
+                //controlpointsElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLPointElement("point",j,contour->GetControlPoint(j)));
             }
 
             //contour points
-            auto  contourpointsElement = new TiXmlElement("contour_points");
+            auto  contourpointsElement = document.NewElement("contour_points");
             contourElement->LinkEndChild(contourpointsElement);
             for(int j=0;j<contour->GetContourPointNumber();j++) {
-                contourpointsElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLPointElement("point",j,contour->GetContourPoint(j)));
+                contourpointsElement->LinkEndChild(xml_io.CreateXMLPointElement("point",j,contour->GetContourPoint(j)));
+                // davep contourpointsElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLPointElement("point",j,contour->GetContourPoint(j)));
             }
 
         }
     }
 
-    if (document.SaveFile(fileName) == false) {
+    if (document.SaveFile(fileName.c_str()) == false) {
         mitkThrow() << "Could not write contourgroup to " << fileName;
     }
 }

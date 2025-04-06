@@ -36,7 +36,10 @@
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
 
-#include <simvascular_tinyxml.h>
+#include <tinyxml2.h>
+
+#include "sv4gui_ContourGroupIO.h"
+auto set_string_from_attribute = &sv4guiContourGroupIO::set_string_from_attribute;
 
 #include <fstream>
 
@@ -60,11 +63,11 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
 {
     std::vector<mitk::BaseData::Pointer> result;
 
-    TiXmlDocument document;
+    tinyxml2::XMLDocument document;
 
     std::string fileName=GetInputLocation();
 
-    if (!document.LoadFile(fileName))
+    if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
         //        MITK_ERROR << "Could not open/read/parse " << fileName;
@@ -73,7 +76,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
 
     //    TiXmlElement* version = document.FirstChildElement("format");
 
-    TiXmlElement* mjElement = document.FirstChildElement("mitk_job");
+    auto mjElement = document.FirstChildElement("mitk_job");
 
     if(!mjElement){
         //        MITK_ERROR << "No job data in "<< fileName;
@@ -85,23 +88,23 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
     std::string modelName="";
     std::string meshName="";
     std::string status="";
-    mjElement->QueryStringAttribute("model_name",&modelName);
-    mjElement->QueryStringAttribute("mesh_name",&meshName);
-    mjElement->QueryStringAttribute("status",&status);
+    set_string_from_attribute(mjElement,"model_name",modelName);
+    set_string_from_attribute(mjElement,"mesh_name",meshName);
+    set_string_from_attribute(mjElement,"status",status);
     mitkSimJob->SetModelName(modelName);
     mitkSimJob->SetMeshName(meshName);
     mitkSimJob->SetStatus(status);
 
-    TiXmlElement* jobElement = mjElement->FirstChildElement("job");
+    auto jobElement = mjElement->FirstChildElement("job");
     if(jobElement != nullptr)
     {
         sv4guiSimJob* job=new sv4guiSimJob();
 
-        TiXmlElement* bpElement = jobElement->FirstChildElement("basic_props");
+        auto bpElement = jobElement->FirstChildElement("basic_props");
         if(bpElement != nullptr)
         {
             std::map<std::string,std::string> basicProps;
-            for( TiXmlElement* element = bpElement->FirstChildElement("prop");
+            for( auto element = bpElement->FirstChildElement("prop");
                  element != nullptr;
                  element =element->NextSiblingElement("prop") )
             {
@@ -110,19 +113,19 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
 
                 std::string key="";
                 std::string value="";
-                element->QueryStringAttribute("key", &key);
-                element->QueryStringAttribute("value", &value);
+                set_string_from_attribute(element, "key", key);
+                set_string_from_attribute(element, "value", value);
 
                 basicProps[key]=value;
             }
             job->SetBasicProps(basicProps);
         }
 
-        TiXmlElement* cpElement = jobElement->FirstChildElement("cap_props");
+        auto cpElement = jobElement->FirstChildElement("cap_props");
         if(cpElement != nullptr)
         {
             std::map<std::string,std::map<std::string,std::string> > capProps;
-            for( TiXmlElement* celement = cpElement->FirstChildElement("cap");
+            for( auto celement = cpElement->FirstChildElement("cap");
                  celement != nullptr;
                  celement =celement->NextSiblingElement("cap") )
             {
@@ -130,9 +133,9 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
                     continue;
 
                 std::string name="";
-                celement->QueryStringAttribute("name", &name);
+                set_string_from_attribute(celement, "name", name);
 
-                for( TiXmlElement* element = celement->FirstChildElement("prop");
+                for( auto element = celement->FirstChildElement("prop");
                      element != nullptr;
                      element =element->NextSiblingElement("prop") )
                 {
@@ -141,8 +144,8 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
 
                     std::string key="";
                     std::string value="";
-                    element->QueryStringAttribute("key", &key);
-                    element->QueryStringAttribute("value", &value);
+                    set_string_from_attribute(element, "key", key);
+                    set_string_from_attribute(element, "value", value);
 
                     capProps[name][key]=value;
                 }
@@ -151,11 +154,11 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
             job->SetCapProps(capProps);
         }
 
-        TiXmlElement* wpElement = jobElement->FirstChildElement("wall_props");
+        auto wpElement = jobElement->FirstChildElement("wall_props");
         if(wpElement != nullptr)
         {
             std::map<std::string,std::string> wallProps;
-            for( TiXmlElement* element = wpElement->FirstChildElement("prop");
+            for( auto element = wpElement->FirstChildElement("prop");
                  element != nullptr;
                  element =element->NextSiblingElement("prop") )
             {
@@ -164,19 +167,19 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
 
                 std::string key="";
                 std::string value="";
-                element->QueryStringAttribute("key", &key);
-                element->QueryStringAttribute("value", &value);
+                set_string_from_attribute(element, "key", key);
+                set_string_from_attribute(element, "value", value);
 
                 wallProps[key]=value;
             }
             job->SetWallProps(wallProps);
         }
 
-        TiXmlElement* vpElement = jobElement->FirstChildElement("var_props");
+        auto vpElement = jobElement->FirstChildElement("var_props");
         if(vpElement != nullptr)
         {
             std::map<std::string,std::map<std::string,std::string> > varProps;
-            for( TiXmlElement* felement = vpElement->FirstChildElement("face");
+            for( auto felement = vpElement->FirstChildElement("face");
                  felement != nullptr;
                  felement =felement->NextSiblingElement("face") )
             {
@@ -184,9 +187,9 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
                     continue;
 
                 std::string name="";
-                felement->QueryStringAttribute("name", &name);
+                set_string_from_attribute(felement, "name", name);
 
-                for( TiXmlElement* element = felement->FirstChildElement("prop");
+                for( auto element = felement->FirstChildElement("prop");
                      element != nullptr;
                      element =element->NextSiblingElement("prop") )
                 {
@@ -195,8 +198,8 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
 
                     std::string key="";
                     std::string value="";
-                    element->QueryStringAttribute("key", &key);
-                    element->QueryStringAttribute("value", &value);
+                    set_string_from_attribute(element, "key", key);
+                    set_string_from_attribute(element, "value", value);
 
                     varProps[name][key]=value;
                 }
@@ -205,11 +208,11 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
             job->SetVarProps(varProps);
         }
 
-        TiXmlElement* spElement = jobElement->FirstChildElement("solver_props");
+        auto spElement = jobElement->FirstChildElement("solver_props");
         if(spElement != nullptr)
         {
             std::map<std::string,std::string> solverProps;
-            for( TiXmlElement* element = spElement->FirstChildElement("prop");
+            for( auto element = spElement->FirstChildElement("prop");
                  element != nullptr;
                  element =element->NextSiblingElement("prop") )
             {
@@ -218,19 +221,19 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
 
                 std::string key="";
                 std::string value="";
-                element->QueryStringAttribute("key", &key);
-                element->QueryStringAttribute("value", &value);
+                set_string_from_attribute(element, "key", key);
+                set_string_from_attribute(element, "value", value);
 
                 solverProps[key]=value;
             }
             job->SetSolverProps(solverProps);
         }
 
-        TiXmlElement* rpElement = jobElement->FirstChildElement("run_props");
+        auto rpElement = jobElement->FirstChildElement("run_props");
         if(rpElement != nullptr)
         {
             std::map<std::string,std::string> runProps;
-            for( TiXmlElement* element = rpElement->FirstChildElement("prop");
+            for( auto element = rpElement->FirstChildElement("prop");
                  element != nullptr;
                  element =element->NextSiblingElement("prop") )
             {
@@ -239,8 +242,8 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
 
                 std::string key="";
                 std::string value="";
-                element->QueryStringAttribute("key", &key);
-                element->QueryStringAttribute("value", &value);
+                set_string_from_attribute(element, "key", key);
+                set_string_from_attribute(element, "value", value);
 
                 runProps[key]=value;
             }
@@ -272,14 +275,14 @@ void sv4guiMitkSimJobIO::Write()
     const sv4guiMitkSimJob* mitkSimJob = dynamic_cast<const sv4guiMitkSimJob*>(this->GetInput());
     if(!mitkSimJob) return;
 
-    TiXmlDocument document;
-    auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
+    tinyxml2::XMLDocument document;
+    auto  decl = document.NewDeclaration();
     document.LinkEndChild( decl );
 
-    auto  mjElement = new TiXmlElement("mitk_job");
-    mjElement->SetAttribute("model_name", mitkSimJob->GetModelName());
-    mjElement->SetAttribute("mesh_name", mitkSimJob->GetMeshName());
-    mjElement->SetAttribute("status", mitkSimJob->GetStatus());
+    auto mjElement = document.NewElement("mitk_job");
+    mjElement->SetAttribute("model_name", mitkSimJob->GetModelName().c_str());
+    mjElement->SetAttribute("mesh_name", mitkSimJob->GetMeshName().c_str());
+    mjElement->SetAttribute("status", mitkSimJob->GetStatus().c_str());
     mjElement->SetAttribute("version",  "1.0" );
     document.LinkEndChild(mjElement);
 
@@ -287,116 +290,115 @@ void sv4guiMitkSimJobIO::Write()
 
     if(job)
     {
-        auto jobElement = new TiXmlElement("job");
+        auto jobElement = document.NewElement("job");
         mjElement->LinkEndChild(jobElement);
 
-        auto bpElement = new TiXmlElement("basic_props");
+        auto bpElement = document.NewElement("basic_props");
         jobElement->LinkEndChild(bpElement);
         std::map<std::string,std::string> basicProps=job->GetBasicProps();
         std::map<std::string, std::string>::iterator it = basicProps.begin();
         while(it != basicProps.end())
         {
-            auto element = new TiXmlElement("prop");
+            auto element = document.NewElement("prop");
             bpElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first);
-            element->SetAttribute("value", it->second);
+            element->SetAttribute("key", it->first.c_str());
+            element->SetAttribute("value", it->second.c_str());
             it++;
         }
 
-        auto cpElement = new TiXmlElement("cap_props");
+        auto cpElement = document.NewElement("cap_props");
         jobElement->LinkEndChild(cpElement);
         std::map<std::string, std::map<std::string, std::string> > capProps=job->GetCapProps();
         auto itit = capProps.begin();
         while(itit != capProps.end())
         {
-            auto celement = new TiXmlElement("cap");
+            auto celement = document.NewElement("cap");
             cpElement->LinkEndChild(celement);
 
-            celement->SetAttribute("name", itit->first);
-
+            celement->SetAttribute("name", itit->first.c_str());
             std::map<std::string, std::string> props=itit->second;
 
             it = props.begin();
             while(it != props.end())
             {
-                auto element = new TiXmlElement("prop");
+                auto element = document.NewElement("prop");
                 celement->LinkEndChild(element);
-                element->SetAttribute("key", it->first);
-                element->SetAttribute("value", it->second);
+                element->SetAttribute("key", it->first.c_str());
+                element->SetAttribute("value", it->second.c_str());
                 it++;
             }
 
             itit++;
         }
 
-        auto wpElement = new TiXmlElement("wall_props");
+        auto wpElement = document.NewElement("wall_props");
         jobElement->LinkEndChild(wpElement);
         std::map<std::string,std::string> wallProps=job->GetWallProps();
         it = wallProps.begin();
         while(it != wallProps.end())
         {
-            auto element = new TiXmlElement("prop");
+            auto element = document.NewElement("prop");
             wpElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first);
-            element->SetAttribute("value", it->second);
+            element->SetAttribute("key", it->first.c_str());
+            element->SetAttribute("value", it->second.c_str());
             it++;
         }
 
-        auto vpElement = new TiXmlElement("var_props");
+        auto vpElement = document.NewElement("var_props");
         jobElement->LinkEndChild(vpElement);
         std::map<std::string, std::map<std::string, std::string> > varProps=job->GetVarProps();
         itit = varProps.begin();
         while(itit != varProps.end())
         {
-            auto felement = new TiXmlElement("face");
+            auto felement = document.NewElement("face");
             vpElement->LinkEndChild(felement);
 
-            felement->SetAttribute("name", itit->first);
+            felement->SetAttribute("name", itit->first.c_str());
 
             std::map<std::string, std::string> props=itit->second;
 
             it = props.begin();
             while(it != props.end())
             {
-                auto element = new TiXmlElement("prop");
+                auto element = document.NewElement("prop");
                 felement->LinkEndChild(element);
-                element->SetAttribute("key", it->first);
-                element->SetAttribute("value", it->second);
+                element->SetAttribute("key", it->first.c_str());
+                element->SetAttribute("value", it->second.c_str());
                 it++;
             }
 
             itit++;
         }
 
-        auto spElement = new TiXmlElement("solver_props");
+        auto spElement = document.NewElement("solver_props");
         jobElement->LinkEndChild(spElement);
         std::map<std::string,std::string> solverProps=job->GetSolverProps();
         it = solverProps.begin();
         while(it != solverProps.end())
         {
-            auto element = new TiXmlElement("prop");
+            auto element = document.NewElement("prop");
             spElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first);
-            element->SetAttribute("value", it->second);
+            element->SetAttribute("key", it->first.c_str());
+            element->SetAttribute("value", it->second.c_str());
             it++;
         }
 
-        auto rpElement = new TiXmlElement("run_props");
+        auto rpElement = document.NewElement("run_props");
         jobElement->LinkEndChild(rpElement);
         std::map<std::string,std::string> runProps=job->GetRunProps();
         it = runProps.begin();
         while(it != runProps.end())
         {
-            auto element = new TiXmlElement("prop");
+            auto element = document.NewElement("prop");
             rpElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first);
-            element->SetAttribute("value", it->second);
+            element->SetAttribute("key", it->first.c_str());
+            element->SetAttribute("value", it->second.c_str());
             it++;
         }
 
     }
 
-    if (document.SaveFile(fileName) == false)
+    if (document.SaveFile(fileName.c_str()) == false)
     {
         mitkThrow() << "Could not write model to " << fileName;
     }

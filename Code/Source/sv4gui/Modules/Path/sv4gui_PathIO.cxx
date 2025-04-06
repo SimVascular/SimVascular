@@ -59,18 +59,26 @@ std::vector<mitk::BaseData::Pointer> sv4guiPathIO::Read()
     return ReadFile(fileName);
 }
 
-std::vector<mitk::BaseData::Pointer> sv4guiPathIO::ReadFile(std::string fileName)
+//----------
+// ReadFile
+//----------
+//
+std::vector<mitk::BaseData::Pointer> 
+sv4guiPathIO::ReadFile(std::string fileName)
 {
-    TiXmlDocument document;
+    std::string msg("sv4guiPathIO::ReadFile");
+    std::cout << msg << "=================== sv4guiPathIO::ReadFile =========" << std::endl;
+    std::cout << msg << "fileName: " << fileName << std::endl;
 
-    if (!document.LoadFile(fileName))
-    {
+    tinyxml2::XMLDocument document;
+
+    if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS) {
         mitkThrow() << "Could not open/read/parse " << fileName;
         std::vector<mitk::BaseData::Pointer> empty;
         return empty;
     }
 
-    TiXmlElement* pathElement = document.FirstChildElement("path");
+    auto pathElement = document.FirstChildElement("path");
 
     if(!pathElement){
         mitkThrow() << "No path data in "<< fileName;
@@ -94,7 +102,11 @@ std::vector<mitk::BaseData::Pointer> sv4guiPathIO::ReadFile(std::string fileName
     pathElement->QueryDoubleAttribute("reslice_size", &resliceSize);
     path->SetResliceSize(resliceSize);
 
-    std::string point2dsize="",point3dsize="";
+    //std::string point2dsize="",point3dsize="";
+
+    const char* point2dsize = "";
+    const char* point3dsize = "";
+
     pathElement->QueryStringAttribute("point_2D_display_size", &point2dsize);
     pathElement->QueryStringAttribute("point_size", &point3dsize);
     path->SetProp("point 2D display size",point2dsize);
@@ -122,26 +134,26 @@ void sv4guiPathIO::Write()
     const sv4guiPath* path = dynamic_cast<const sv4guiPath*>(this->GetInput());
     if(!path) return;
     
-    TiXmlDocument document;
-    auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
+    tinyxml2::XMLDocument document;
+    auto  decl = document.NewDeclaration(); 
     document.LinkEndChild( decl );
 
-    auto  pathElement = new TiXmlElement("path");
+    auto pathElement = document.NewElement("path");
     pathElement->SetAttribute("id", path->GetPathID());
     pathElement->SetAttribute("method", path->GetMethod());
     pathElement->SetAttribute("calculation_number", path->GetCalculationNumber());
-    pathElement->SetDoubleAttribute("spacing", path->GetSpacing());
+    pathElement->SetAttribute("spacing", path->GetSpacing());
     pathElement->SetAttribute("version",  "1.0" );
     
     //only for GUI
-    pathElement->SetDoubleAttribute("reslice_size", path->GetResliceSize());
-    pathElement->SetAttribute("point_2D_display_size",path->GetProp("point 2D display size"));
-    pathElement->SetAttribute("point_size",path->GetProp("point size"));
+    pathElement->SetAttribute("reslice_size", path->GetResliceSize());
+    pathElement->SetAttribute("point_2D_display_size", path->GetProp("point 2D display size").c_str());
+    pathElement->SetAttribute("point_size",path->GetProp("point size").c_str());
     document.LinkEndChild(pathElement);
 
     for(int t=0;t<path->GetTimeSize();t++)
     {
-        auto  timestepElement = new TiXmlElement("timestep");
+        auto timestepElement = document.NewElement("timestep");
         timestepElement->SetAttribute("id",t);
         pathElement->LinkEndChild(timestepElement);
 
@@ -150,11 +162,11 @@ void sv4guiPathIO::Write()
 
         sv3::PathElement* svPe=static_cast<sv3::PathElement*>(pe);
 
-        this->sv3::PathIO::WritePath(svPe,timestepElement); 
+        this->sv3::PathIO::WritePath(document, svPe,timestepElement); 
     }
 
     std::string fileName=GetOutputLocation();
-    if (document.SaveFile(fileName) == false)
+    if (document.SaveFile(fileName.c_str()) == false)
     {
         mitkThrow() << "Could not write path to " << fileName;
 

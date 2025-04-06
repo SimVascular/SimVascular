@@ -47,7 +47,7 @@
 #include "mitkSlicedGeometry3D.h"
 #include <mitkVtkResliceInterpolationProperty.h>
 
-#include <simvascular_tinyxml.h>
+#include <tinyxml2.h>
 
 #include <vtkDoubleArray.h>
 #include <vtkImageData.h>
@@ -250,8 +250,8 @@ ReadFile(const std::string& fileName)
 //
 void ReadImageTransform(PyImage* self, const std::string& fileName)
 {
-  TiXmlDocument document;
-  if (!document.LoadFile(fileName)) {
+  tinyxml2::XMLDocument document;
+  if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS) {
       throw std::runtime_error("Unable to load the file named '" + fileName + "'.");
   }
 
@@ -263,7 +263,7 @@ void ReadImageTransform(PyImage* self, const std::string& fileName)
     for (int i = 0; i < 3; i++){
       auto label = "t" + std::to_string(i) + std::to_string(j);
       float value;
-      if (xformElement->QueryFloatAttribute(label.c_str(), &value) != TIXML_SUCCESS) {
+      if (xformElement->QueryFloatAttribute(label.c_str(), &value) != tinyxml2::XML_SUCCESS) {
         throw std::runtime_error("No '" + label + "' element found.");
       }
       transform->SetElement(i,j,value);
@@ -365,14 +365,13 @@ void WriteImage(PyImage* self, const std::string& fileName)
 bool WriteImageTransform(PyImage* self, const std::string& fileName)
 {
   //std::cout << "========== WriteImageTransform ==========" << std::endl;
-  TiXmlDocument document;
-  auto decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
+  tinyxml2::XMLDocument document;
+  auto decl = document.NewDeclaration();
   document.LinkEndChild( decl );
-
-  auto  root = new TiXmlElement("Transform");
+  auto  root = document.NewElement("Transform");
   document.LinkEndChild(root);
 
-  auto xformElement = new TiXmlElement("transform");
+  auto xformElement = document.NewElement("transform");
   auto transform = self->image_data->GetGeometry()->GetVtkMatrix();
 
   for (int j = 0; j < 3; j++){
@@ -380,13 +379,13 @@ bool WriteImageTransform(PyImage* self, const std::string& fileName)
           auto value = transform->GetElement(i,j);
           auto label = "t" + std::to_string(i) + std::to_string(j);
           //std::cout << "[WriteImageTransform] label: " << label << "  value: " << value << std::endl;
-          xformElement->SetDoubleAttribute(label, value);
+          xformElement->SetAttribute(label.c_str(), value);
       }
   }
 
   root->LinkEndChild(xformElement);
 
-  return document.SaveFile(fileName);
+  return document.SaveFile(fileName.c_str());
 }
 
 //----------------

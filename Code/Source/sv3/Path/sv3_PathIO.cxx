@@ -39,16 +39,21 @@ using sv3::PathIO;
 using sv3::PathElement;
 using sv3::PathGroup;
 using sv3::XmlIOUtil;
+
 PathGroup* PathIO::ReadFile(std::string fileName)
 {
-    TiXmlDocument document;
+    std::string msg("PathIO::ReadFile");
+    std::cout << msg << "=================== PathIO::ReadFile =========" << std::endl;
+    std::cout << msg << "fileName: " << fileName << std::endl;
+    tinyxml2::XMLDocument document;
 
-    if (!document.LoadFile(fileName))
+    if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
     {
         std::cout<<"Could not open/read/parse " << fileName<<std::endl;
         return nullptr;
     }
-    TiXmlElement* path = document.FirstChildElement("path");
+
+    auto path = document.FirstChildElement("path");
 
     if(!path){
         std::cout<< "No path data in "<< fileName <<std::endl;
@@ -71,8 +76,7 @@ PathGroup* PathIO::ReadFile(std::string fileName)
    
         
     int timestep=-1;
-    for( TiXmlElement* timestepElement = path->FirstChildElement("timestep");
-         timestepElement != nullptr;
+    for( auto timestepElement = path->FirstChildElement("timestep"); timestepElement != nullptr;
          timestepElement = timestepElement->NextSiblingElement("timestep") )
     {
         if (timestepElement == nullptr)
@@ -81,13 +85,13 @@ PathGroup* PathIO::ReadFile(std::string fileName)
         timestep++;
         pathGrp->Expand(timestep+1);
 
-        TiXmlElement* peElement=timestepElement->FirstChildElement("path_element");
+        auto peElement = timestepElement->FirstChildElement("path_element");
 
         if (peElement == nullptr)
             continue;
 
         PathElement* pe = new PathElement();
-        if(ReadPath(pe, peElement)==SV_ERROR)
+        if(ReadPath(document, pe, peElement)==SV_ERROR)
             return nullptr;
         
         pathGrp->SetPathElement(pe,timestep);
@@ -97,7 +101,7 @@ PathGroup* PathIO::ReadFile(std::string fileName)
     return pathGrp;
 }
 
-int PathIO::ReadPath(PathElement* path, TiXmlElement* pathXml)
+int PathIO::ReadPath(tinyxml2::XMLDocument& document, PathElement* path, tinyxml2::XMLElement* pathXml)
 {
         
     if(!pathXml){
@@ -116,25 +120,27 @@ int PathIO::ReadPath(PathElement* path, TiXmlElement* pathXml)
     path->SetSpacing(spacing);
 
     //control points without updating contour points
-    TiXmlElement* controlpointsElement = pathXml->FirstChildElement("control_points");
+    auto controlpointsElement = pathXml->FirstChildElement("control_points");
     std::vector<std::array<double, 3> > controlPoints;
-    for( TiXmlElement* pointElement = controlpointsElement->FirstChildElement("point");
-            pointElement != nullptr;
-            pointElement = pointElement->NextSiblingElement("point") )
+
+    XmlIOUtil xml_io(document);
+
+    for( auto pointElement = controlpointsElement->FirstChildElement("point"); pointElement != nullptr;
+        pointElement = pointElement->NextSiblingElement("point") )
     {
         if (pointElement == nullptr)
             continue;
 
-        controlPoints.push_back(XmlIOUtil::GetPoint(pointElement));
+        controlPoints.push_back(xml_io.GetPoint(pointElement));
     }
     path->SetControlPoints(controlPoints,false);
 
     //path points
-    TiXmlElement* pathpointsElement = pathXml->FirstChildElement("path_points");
+    auto pathpointsElement = pathXml->FirstChildElement("path_points");
     std::vector<PathElement::PathPoint> pathPoints;
-    for( TiXmlElement* pointElement = pathpointsElement->FirstChildElement("path_point");
-            pointElement != nullptr;
-            pointElement = pointElement->NextSiblingElement("path_point") )
+
+    for( auto pointElement = pathpointsElement->FirstChildElement("path_point"); pointElement != nullptr;
+        pointElement = pointElement->NextSiblingElement("path_point") )
     {
         if (pointElement == nullptr)
             continue;
@@ -143,9 +149,9 @@ int PathIO::ReadPath(PathElement* path, TiXmlElement* pathXml)
         int id=0;
         pointElement->QueryIntAttribute("id", &id);
         pathPoint.id=id;
-        pathPoint.pos=XmlIOUtil::GetPoint(pointElement->FirstChildElement("pos"));
-        pathPoint.tangent=XmlIOUtil::GetVector(pointElement->FirstChildElement("tangent"));
-        pathPoint.rotation=XmlIOUtil::GetVector(pointElement->FirstChildElement("rotation"));
+        pathPoint.pos = xml_io.GetPoint(pointElement->FirstChildElement("pos"));
+        pathPoint.tangent = xml_io.GetVector(pointElement->FirstChildElement("tangent"));
+        pathPoint.rotation = xml_io.GetVector(pointElement->FirstChildElement("rotation"));
 
         pathPoints.push_back(pathPoint);
     }
@@ -163,26 +169,26 @@ int PathIO::Write(std::string fileName, PathGroup* pathGrp)
 {
     if(!pathGrp) return SV_ERROR;
 
-    TiXmlDocument document;
-    auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
+    tinyxml2::XMLDocument document;
+    auto decl = document.NewDeclaration();
     document.LinkEndChild( decl );
 
-    auto  version = new TiXmlElement("format");
+    auto version = document.NewElement("format");
     version->SetAttribute("version",  "1.0" );
     document.LinkEndChild(version);
     
-    auto pathElem = new TiXmlElement("path");
+    auto pathElem = document.NewElement("path");
     //the sv3::PathElement class does not have a GetResliceSize function, temporarily ignoring here.
     pathElem->SetAttribute("id", pathGrp->GetPathID());
     pathElem->SetAttribute("method", pathGrp->GetMethod());
     pathElem->SetAttribute("calculation_number", pathGrp->GetCalculationNumber());
-    pathElem->SetDoubleAttribute("spacing", pathGrp->GetSpacing());
+    pathElem->SetAttribute("spacing", pathGrp->GetSpacing());
     
     document.LinkEndChild(pathElem);
     
     for(int t=0;t<pathGrp->GetTimeSize();t++)
     {
-        auto  timeStepElem = new TiXmlElement("timestep");
+        auto  timeStepElem = document.NewElement("timestep");
         timeStepElem->SetAttribute("id",t);
         pathElem->LinkEndChild(timeStepElem);
                 
@@ -193,9 +199,10 @@ int PathIO::Write(std::string fileName, PathGroup* pathGrp)
             continue;
         }
         
-        WritePath(pe, timeStepElem);
+        WritePath(document, pe, timeStepElem);
     }
-    if (document.SaveFile(fileName) == false)
+
+    if (document.SaveFile(fileName.c_str()) == false)
     {
         std::cout<< "Could not write path to " << fileName<<std::endl;
         return SV_ERROR;
@@ -203,34 +210,36 @@ int PathIO::Write(std::string fileName, PathGroup* pathGrp)
     
     return SV_OK;
 }
-void PathIO::WritePath(PathElement* path, TiXmlElement* timeStepElem)
+void PathIO::WritePath(tinyxml2::XMLDocument& document, PathElement* path, tinyxml2::XMLElement* timeStepElem)
 {
-
-    auto  pathXml = new TiXmlElement("path_element");
+    auto pathXml = document.NewElement("path_element");
     timeStepElem->LinkEndChild(pathXml);
     pathXml->SetAttribute("method", path->GetMethod());
     pathXml->SetAttribute("calculation_number", path->GetCalculationNumber());
-    pathXml->SetDoubleAttribute("spacing", path->GetSpacing());
+    pathXml->SetAttribute("spacing", path->GetSpacing());
 
-    auto  controlpointsElement = new TiXmlElement("control_points");
+    auto  controlpointsElement = document.NewElement("control_points");
     pathXml->LinkEndChild(controlpointsElement);
+    XmlIOUtil xml_io(document);
+
     for(int i=0;i<path->GetControlPointNumber();i++)
     {
-        controlpointsElement->LinkEndChild(XmlIOUtil::CreateXMLPointElement("point",i,path->GetControlPoint(i)));
+        controlpointsElement->LinkEndChild(xml_io.CreateXMLPointElement("point",i,path->GetControlPoint(i)));
     }
 
-    auto  pathpointsElement = new TiXmlElement("path_points");
+    auto  pathpointsElement = document.NewElement("path_points");
     pathXml->LinkEndChild(pathpointsElement);
+
     for(int i=0;i<path->GetPathPointNumber();i++)
     {
-        auto  pathpointElement = new TiXmlElement("path_point");
+        auto  pathpointElement = document.NewElement("path_point");
         pathpointsElement->LinkEndChild(pathpointElement);
 
         PathElement::PathPoint pathPoint=path->GetPathPoint(i);
         pathpointElement->SetAttribute("id",pathPoint.id);
-        pathpointElement->LinkEndChild(XmlIOUtil::CreateXMLPointElement("pos", pathPoint.pos));
-        pathpointElement->LinkEndChild(XmlIOUtil::CreateXMLVectorElement("tangent", pathPoint.tangent));
-        pathpointElement->LinkEndChild(XmlIOUtil::CreateXMLVectorElement("rotation", pathPoint.rotation));
+        pathpointElement->LinkEndChild(xml_io.CreateXMLPointElement("pos", pathPoint.pos));
+        pathpointElement->LinkEndChild(xml_io.CreateXMLVectorElement("tangent", pathPoint.tangent));
+        pathpointElement->LinkEndChild(xml_io.CreateXMLVectorElement("rotation", pathPoint.rotation));
     }
 
 }

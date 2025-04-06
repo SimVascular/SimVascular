@@ -39,27 +39,27 @@
 #include "mitkPoint.h"
 #include "mitkVector.h"
 
-#include <simvascular_tinyxml.h>
+#include <tinyxml2.h>
 
 #include <list>
 
 class SV4GUIMODULECOMMON_EXPORT sv4guiXmlIOUtil
 {
 public:
+    sv4guiXmlIOUtil(tinyxml2::XMLDocument& doc) : document(doc) { }
+    sv4guiXmlIOUtil() = delete;
 
-    static TiXmlElement* CreateXMLxyzElement(const char* name, double v[3]);
-    static TiXmlElement* CreateXMLPointElement(const char* name, int id, mitk::Point3D point);
-    static TiXmlElement* CreateXMLPointElement(const char* name, mitk::Point3D point);
-    static TiXmlElement* CreateXMLVectorElement(const char* name, mitk::Vector3D vec);
+    tinyxml2::XMLElement* CreateXMLxyzElement(const char* name, double v[3]);
+    tinyxml2::XMLElement* CreateXMLPointElement(const char* name, int id, mitk::Point3D point);
+    tinyxml2::XMLElement* CreateXMLPointElement(const char* name, mitk::Point3D point);
+    tinyxml2::XMLElement* CreateXMLVectorElement(const char* name, mitk::Vector3D vec);
 
-    static void Getxyz(TiXmlElement* element, double xyz[3]);
+    void Getxyz(tinyxml2::XMLElement* element, double xyz[3]);
+    mitk::Point3D GetPoint(tinyxml2::XMLElement* element);
+    mitk::Vector3D GetVector(tinyxml2::XMLElement* element);
+    std::list< double > GetDoubleAttributeListFromXMLNode(tinyxml2::XMLElement* e, const char *attributeNameBase, unsigned int count);
 
-    static mitk::Point3D GetPoint(TiXmlElement* element);
-
-    static mitk::Vector3D GetVector(TiXmlElement* element);
-
-    static std::list< double > GetDoubleAttributeListFromXMLNode(TiXmlElement* e, const char *attributeNameBase, unsigned int count);
-
+    tinyxml2::XMLDocument& document;
 };
 
 #endif // SV4GUI_XMLIOUTIL_H

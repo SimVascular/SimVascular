@@ -59,7 +59,7 @@ foreach(proj ${SV_EXTERNALS_LIST})
 
     # Install
     if(SV_USE_${proj}_SHARED AND SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
-      #simvascular_install_external(${proj})
+      simvascular_install_external(${proj})
     endif()
   endif()
 endforeach()

@@ -66,7 +66,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::DoRead()
 
     std::string fileName = GetInputLocation();
 
-    if (!document.LoadFile(fileName.c_str()))
+    if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
         //        MITK_ERROR << "Could not open/read/parse " << fileName;
