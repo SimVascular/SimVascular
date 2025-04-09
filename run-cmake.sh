@@ -2,6 +2,7 @@
 
 export LC_TYPE=C
 export LANG=C
+export CXX=/usr/bin/g++
 
 ROOT=/Users/parkerda/software/ktbolt/svExternals
 
@@ -18,27 +19,34 @@ HDF5_LIB_DIR=$HDF5_INSTALL_DIR/lib
 
 export Python_ROOT_DIR=${ROOT}/install/python/
 
+SV_ML_DIR=/Users/parkerda/tmp/ml-1.0.0
+
 cmake \
+  -DSV_ENABLE_DISTRIBUTION:BOOL=ON \
   -DSV_EXTERNALS_DIR:PATH=${ROOT}/install \
   -DSV_FREETYPE_DIR:PATH=${ROOT}/install/freetype \
   -DSV_GDCM_DIR:PATH=${ROOT}/install/gdcm \
   -DSV_HDF5_DIR:PATH=${ROOT}/install/hdf5 \
   -DSV_ITK_DIR:PATH=${ROOT}/install/itk \
   -DSV_MITK_DIR:PATH=${ROOT}/install/mitk \
+  -DSV_ML_DIR:PATH=${SV_ML_DIR} \
   -DSV_MMG_DIR:PATH=${ROOT}/install/mmg \
   -DSV_OpenCASCADE_DIR:PATH=${ROOT}/install/opencascade \
   -DSV_Qt6_DIR:PATH=${ROOT}/install/qt6 \
   -DSV_PYTHON_DIR:PATH=${ROOT}/install/python \
+  -DSV_TINYXML2_DIR:PATH=${ROOT}/install/tinyxml2 \
   -DSV_VTK_DIR:PATH=${ROOT}/install/vtk \
   -DPython_INCLUDE_DIRS:PATH=${ROOT}/install/python/include/python3.13 \
   -DPython_LIBRARY_DIRS:PATH=${ROOT}/install/python/lib/ \
-  -DCMAKE_PREFIX_PATH:PATH=${ROOT}/install/python \
   -DPython_ROOT_DIR:PATH=${ROOT}/install/python \
   -DPython_DIR:PATH=${ROOT}/install/python \
+  -DPYTHON_DIR:PATH=${ROOT}/install/python \
   -DPYTHON_EXECUTABLE:PATH=${ROOT}/install/python/bin/python3 \
+  -DPython3_EXECUTABLE:PATH=${ROOT}/install/python/bin/python3 \
+  -DCMAKE_PREFIX_PATH:PATH=${ROOT}/install/python \
   ..
 
-make
+make -j6
 
 echo "----------------------------------------------------"
 echo "-------------------- make finished -----------------"
