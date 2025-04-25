@@ -47,6 +47,11 @@ set(DESTINATION_DIR "${CMAKE_SOURCE_DIR}/../Python/site-packages/sv_ml/")
 message(STATUS "${msg} SOURCE_FILE: ${SOURCE_FILE}")
 message(STATUS "${msg} DESTINATION_DIR: ${DESTINATION_DIR}")
 
+if(NOT EXISTS "${SOURCE_FILE}")
+  message(WARNING "The machine learning network file ${SOURCE_FILE} can't be found.")
+  return()
+endif()
+
 file(COPY "${SOURCE_FILE}" DESTINATION "${DESTINATION_DIR}")
 
 execute_process(

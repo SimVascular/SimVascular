@@ -68,7 +68,7 @@ if(SV_USE_${proj})
     simvascular_external(${proj}
       SHARED_LIB ${SV_USE_${proj}_SHARED}
       VERSION ${${proj}_VERSION}
-      PATHS /Users/parkerda/software/ktbolt/svExternals/install/python
+      PATHS ${SV_PYTHON_DIR} 
       REQUIRED
       )
 
@@ -80,8 +80,8 @@ if(SV_USE_${proj})
     message(STATUS "${msg} PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}") 
     #message(FATAL_ERROR "${msg} PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}") 
 
-    set(PYTHON_INCLUDE_DIRS /Users/parkerda/software/ktbolt/svExternals/install/python/include)
-    set(PYTHON_EXECUTABLE /Users/parkerda/software/ktbolt/svExternals/install/python/bin/python3)
+    set(PYTHON_INCLUDE_DIRS ${SV_PYTHON_DIR}/include)
+    set(PYTHON_EXECUTABLE ${SV_PYTHON_DIR}/bin/python3)
 
     # Set SV_PYTHON_DIR to the directory that was found to contain PYTHON
     #set(SV_${proj}_DIR ${${proj}_DIR})
