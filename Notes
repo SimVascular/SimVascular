@@ -1,0 +1,5 @@
+
+../run-cmake.sh \
+  --externals-path=/Users/parkerda/software/ktbolt/svExternals \
+  --ml-data-path=/Users/parkerda/tmp/ml-1.0.0
+
