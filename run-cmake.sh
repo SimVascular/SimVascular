@@ -36,8 +36,8 @@ cmake \
   -DSV_PYTHON_DIR:PATH=${ROOT}/install/python \
   -DSV_TINYXML2_DIR:PATH=${ROOT}/install/tinyxml2 \
   -DSV_VTK_DIR:PATH=${ROOT}/install/vtk \
-  -DPython_INCLUDE_DIRS:PATH=${ROOT}/install/python/include/python3.13 \
-  -DPython_LIBRARY_DIRS:PATH=${ROOT}/install/python/lib/ \
+  -DPython3_INCLUDE_DIRS:PATH=${ROOT}/install/python/include/python3.11 \
+  -DPython3_LIBRARY_DIRS:PATH=${ROOT}/install/python/lib/ \
   -DPython_ROOT_DIR:PATH=${ROOT}/install/python \
   -DPython_DIR:PATH=${ROOT}/install/python \
   -DPYTHON_DIR:PATH=${ROOT}/install/python \
