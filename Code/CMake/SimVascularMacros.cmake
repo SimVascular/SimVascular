@@ -410,7 +410,7 @@ macro(simvascular_add_executable TARGET_NAME)
     endif()
   endif()
 
-  message(FATAL_ERROR "${msg_exec} Terminate for testing")
+  #message(FATAL_ERROR "${msg_exec} Terminate for testing")
 endmacro()
 
 #---------------
