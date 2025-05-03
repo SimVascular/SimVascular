@@ -57,29 +57,33 @@ if(Qt6_DIR)
       install(DIRECTORY ${_Qt6_DIR}/bin DESTINATION ${LIB_DESTINATION} COMPONENT ExternalExecutables)
     endif()
 
-    # Copty the QtWebEngineProcess executable to the installer libexec directory.
+    # For Ubuntu we need to manually set several files to install.
     #
-    if(EXISTS ${_Qt6_DIR}/libexec)
-      install(PROGRAMS ${_Qt6_DIR}/libexec/QtWebEngineProcess
-        DESTINATION ${LIB_DESTINATION}/bin 
-       COMPONENT ExternalExecutables)
-      message(STATUS "${qt_install_msg} qt libexec exists")
-    endif()
+    if (LINUX) 
+      # Copty the QtWebEngineProcess executable to the installer libexec directory.
+      #
+      if(EXISTS ${_Qt6_DIR}/libexec)
+        install(PROGRAMS ${_Qt6_DIR}/libexec/QtWebEngineProcess
+          DESTINATION ${LIB_DESTINATION}/bin 
+         COMPONENT ExternalExecutables)
+        message(STATUS "${qt_install_msg} qt libexec exists")
+      endif()
 
-    # Create the svExternals/resources installer directory 
-    # needed by QtWebEngine.
-    #
-    if(EXISTS ${_Qt6_DIR}/resources)
-      install(DIRECTORY ${_Qt6_DIR}/resources
-          DESTINATION ${LIB_DESTINATION}/bin COMPONENT ExternalExecutables)
-    endif()
+      # Create the svExternals/resources installer directory 
+      # needed by QtWebEngine.
+      #
+      if(EXISTS ${_Qt6_DIR}/resources)
+        install(DIRECTORY ${_Qt6_DIR}/resources
+            DESTINATION ${LIB_DESTINATION}/bin COMPONENT ExternalExecutables)
+      endif()
  
-    # Create the svExternals/translations installer directory 
-    # needed by QtWebEngine.
-    #
-    if(EXISTS ${_Qt6_DIR}/translations)
-      install(DIRECTORY ${_Qt6_DIR}/translations
-          DESTINATION ${LIB_DESTINATION}/bin COMPONENT ExternalExecutables)
+      # Create the svExternals/translations installer directory 
+      # needed by QtWebEngine.
+      #
+      if(EXISTS ${_Qt6_DIR}/translations)
+        install(DIRECTORY ${_Qt6_DIR}/translations
+            DESTINATION ${LIB_DESTINATION}/bin COMPONENT ExternalExecutables)
+      endif()
     endif()
 
     if(EXISTS ${_Qt6_DIR}/plugins)
