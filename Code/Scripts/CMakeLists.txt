@@ -300,8 +300,11 @@ if (SV_USE_MITK)
   endif()
 endif()
 
+# Add some paths to svExternals libraies to the library search path environment variable.
+#
 if(SV_ENABLE_DISTRIBUTION)
   append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib" install_script_string)
+  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/bin" install_script_string)
   append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib/plugins" install_script_string)
 endif()
 

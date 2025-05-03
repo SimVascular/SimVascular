@@ -28,27 +28,68 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# [DaveP] disable this for now, using installed Qt6.
+# SimVascularInstallQt.cmake
+#
+# Add Qt directories and files that will be included
+# in an installer using the CMake 'install' command.
+#
+# Much of the complexity of here is caused by adding
+# files needed by QtWebEngineProcess.
 #
 if(Qt6_DIR)
   get_filename_component(_Qt6_DIR "${Qt6_DIR}/../../../" ABSOLUTE)
+
   if(${CMAKE_PROJECT_NAME}_ENABLE_DISTRIBUTION)
     set(LIB_DESTINATION "${SV_EXTERNALS_INSTALL_PREFIX}")
   else()
     set(LIB_DESTINATION "${SV_EXTERNALS_INSTALL_PREFIX}/Qt6")
   endif()
+
+  # If we are creating an installer using the CMake cpack command.
+  #
   if(${CMAKE_PROJECT_NAME}_ENABLE_DISTRIBUTION)
+
     if(EXISTS ${_Qt6_DIR}/lib)
       install(DIRECTORY ${_Qt6_DIR}/lib DESTINATION ${LIB_DESTINATION} COMPONENT ExternalLibraries)
     endif()
+
     if(EXISTS ${_Qt6_DIR}/bin)
       install(DIRECTORY ${_Qt6_DIR}/bin DESTINATION ${LIB_DESTINATION} COMPONENT ExternalExecutables)
     endif()
+
+    # Copty the QtWebEngineProcess executable to the installer libexec directory.
+    #
+    if(EXISTS ${_Qt6_DIR}/libexec)
+      install(PROGRAMS ${_Qt6_DIR}/libexec/QtWebEngineProcess
+        DESTINATION ${LIB_DESTINATION}/bin 
+       COMPONENT ExternalExecutables)
+      message(STATUS "${qt_install_msg} qt libexec exists")
+    endif()
+
+    # Create the svExternals/resources installer directory 
+    # needed by QtWebEngine.
+    #
+    if(EXISTS ${_Qt6_DIR}/resources)
+      install(DIRECTORY ${_Qt6_DIR}/resources
+          DESTINATION ${LIB_DESTINATION}/bin COMPONENT ExternalExecutables)
+    endif()
+ 
+    # Create the svExternals/translations installer directory 
+    # needed by QtWebEngine.
+    #
+    if(EXISTS ${_Qt6_DIR}/translations)
+      install(DIRECTORY ${_Qt6_DIR}/translations
+          DESTINATION ${LIB_DESTINATION}/bin COMPONENT ExternalExecutables)
+    endif()
+
     if(EXISTS ${_Qt6_DIR}/plugins)
       simvascular_get_subdirs(_Qt6_SUBDIRS "${_Qt6_DIR}/plugins")
+
       foreach(subdir ${_Qt6_SUBDIRS})
         install(DIRECTORY "${_Qt6_DIR}/plugins/${subdir}" DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ExternalLibraries)
       endforeach()
     endif()
+
   endif()
 endif()
+

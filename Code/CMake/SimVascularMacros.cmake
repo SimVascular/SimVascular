@@ -301,25 +301,33 @@ macro(check_library_exists_concat LIBRARY SYMBOL VARIABLE)
 		set(LINK_LIBS ${LINK_LIBS} ${LIBRARY})
 	endif(${VARIABLE})
 endmacro()
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# simvascular_add_executable -
+#----------------------------
+# simvascular_add_executable 
+#----------------------------
+# Install the simvascular executable into the build bin
+# directory.
+#
+# This is called from SimVascular/Code/Source/Application/CMakeLists.txt
 #
 macro(simvascular_add_executable TARGET_NAME)
-	set(options NO_SCRIPT)
-	set(oneValueArgs DEV_SCRIPT_NAME INSTALL_SCRIPT_NAME INSTALL_COMPONENT INSTALL_DESTINATION)
-	set(multiValueArgs SRCS)
 
-	unset(simvascular_add_executable_INSTALL_SCRIPT_NAME)
-	unset(simvascular_add_executable_DEV_SCRIPT_NAME)
-	unset(simvascular_add_executable_NO_SCRIPT)
+  set(msg_exec "[simvascular_add_executable] ")
+  message(STATUS "${msg_exec} ========== simvascular_add_executable ==========")
+  message(STATUS "${msg_exec} TARGET_NAME: ${TARGET_NAME}") 
+  
+  set(options NO_SCRIPT)
+  set(oneValueArgs DEV_SCRIPT_NAME INSTALL_SCRIPT_NAME INSTALL_COMPONENT INSTALL_DESTINATION)
+  set(multiValueArgs SRCS)
 
-	cmake_parse_arguments("simvascular_add_executable"
-		"${options}"
-		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+  unset(simvascular_add_executable_INSTALL_SCRIPT_NAME)
+  unset(simvascular_add_executable_DEV_SCRIPT_NAME)
+  unset(simvascular_add_executable_NO_SCRIPT)
+
+  cmake_parse_arguments("simvascular_add_executable" "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
   set(WINDOWS_ICON_RESOURCE_FILE "")
+
   if(WIN32)
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
       set(WINDOWS_ICON_RESOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
@@ -327,6 +335,7 @@ macro(simvascular_add_executable TARGET_NAME)
   endif()
 
   set(_app_compile_flags )
+
   if(WIN32)
     set(_app_compile_flags "${_app_compile_flags} -DPOCO_NO_UNWINDOWS -DWIN32_LEAN_AND_MEAN")
   endif()
@@ -337,62 +346,77 @@ macro(simvascular_add_executable TARGET_NAME)
     add_executable(${TARGET_NAME} ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
   endif()
 
-  set_target_properties(${TARGET_NAME} PROPERTIES
-    COMPILE_FLAGS "${_app_compile_flags}")
+  set_target_properties(${TARGET_NAME} PROPERTIES COMPILE_FLAGS "${_app_compile_flags}")
 
-	if(simvascular_add_executable_NO_SCRIPT)
-		if(	simvascular_add_executable_DEV_SCRIPT_NAME OR simvascular_add_executable_INSTALL_SCRIPT_NAME )
-			message(ERROR "Cannot specify no script and specify script names!")
-		endif()
-		set(${TARGET_NAME}_EXECUTABLE_NAME ${TARGET_NAME} CACHE INTERNAL "" FORCE)
-	endif()
+  message(STATUS "${msg_exec} simvascular_add_executable_NO_SCRIPT: ${simvascular_add_executable_NO_SCRIPT}") 
 
-	if(NOT simvascular_add_executable_NO_SCRIPT)
-		if(simvascular_add_executable_DEV_SCRIPT_NAME)
-			set(SV_SCRIPT_TARGETS_WORK ${SV_SCRIPT_TARGETS})
-			list(APPEND SV_SCRIPT_TARGETS_WORK "${TARGET_NAME}")
-			list(REMOVE_DUPLICATES SV_SCRIPT_TARGETS_WORK)
-			set(SV_SCRIPT_TARGETS ${SV_SCRIPT_TARGETS_WORK} CACHE INTERNAL "" FORCE)
-			set(${TARGET_NAME}_DEVELOPER_SCRIPT_NAME ${simvascular_add_executable_DEV_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
-			set(${TARGET_NAME}_EXECUTABLE_NAME ${${TARGET_NAME}_DEVELOPER_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
-		endif()
-		if(simvascular_add_executable_INSTALL_SCRIPT_NAME)
-			set(${TARGET_NAME}_INSTALL_SCRIPT_NAME ${simvascular_add_executable_INSTALL_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
-		endif()
-	endif()
-	# CHANGE FOR EXECUTABLE RENAME REMOVE (re enable if statement)
-	if(simvascular_add_executable_INSTALL_DESTINATION)
+  if(simvascular_add_executable_NO_SCRIPT)
+    if(simvascular_add_executable_DEV_SCRIPT_NAME OR simvascular_add_executable_INSTALL_SCRIPT_NAME )
+      message(ERROR "Cannot specify no script and specify script names!")
+    endif()
+
+    set(${TARGET_NAME}_EXECUTABLE_NAME ${TARGET_NAME} CACHE INTERNAL "" FORCE)
+  endif()
+
+  if(NOT simvascular_add_executable_NO_SCRIPT)
+
+    if(simvascular_add_executable_DEV_SCRIPT_NAME)
+      set(SV_SCRIPT_TARGETS_WORK ${SV_SCRIPT_TARGETS})
+      list(APPEND SV_SCRIPT_TARGETS_WORK "${TARGET_NAME}")
+      list(REMOVE_DUPLICATES SV_SCRIPT_TARGETS_WORK)
+      set(SV_SCRIPT_TARGETS ${SV_SCRIPT_TARGETS_WORK} CACHE INTERNAL "" FORCE)
+      set(${TARGET_NAME}_DEVELOPER_SCRIPT_NAME ${simvascular_add_executable_DEV_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
+      set(${TARGET_NAME}_EXECUTABLE_NAME ${${TARGET_NAME}_DEVELOPER_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
+    endif()
+
+    if(simvascular_add_executable_INSTALL_SCRIPT_NAME)
+      set(${TARGET_NAME}_INSTALL_SCRIPT_NAME ${simvascular_add_executable_INSTALL_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
+    endif()
+  endif()
+
+  # CHANGE FOR EXECUTABLE RENAME REMOVE (re enable if statement)
+  #
+  message(STATUS "${msg_exec} simvascular_add_executable_INSTALL_DESTINATION: ${simvascular_add_executable_INSTALL_DESTINATION}") 
+  message(STATUS "${msg_exec} simvascular_add_executable_INSTALL_COMPONENT: ${simvascular_add_executable_INSTALL_COMPONENT}") 
+  message(STATUS "${msg_exec} _COMPARGS: ${_COMPARGS}") 
+
+  if(simvascular_add_executable_INSTALL_DESTINATION)
     if(simvascular_add_executable_INSTALL_COMPONENT)
-        set(_COMPARGS COMPONENT ${simvascular_add_executable_INSTALL_COMPONENT})
+      set(_COMPARGS COMPONENT ${simvascular_add_executable_INSTALL_COMPONENT})
     endif()
 
     if(APPLE)
       set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_NAME "${TARGET_NAME}")
       set(icon_name "icon.icns")
       set(icon_full_path "${CMAKE_CURRENT_SOURCE_DIR}/icons/${icon_name}")
+
       if(EXISTS "${icon_full_path}")
         set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE "${icon_name}")
         install(TARGETS ${TARGET_NAME}
-          RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
-          ${_COMPARGS})
+                RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}" ${_COMPARGS})
       else()
-        install(TARGETS ${TARGET_NAME}
-          RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
-          ${_COMPARGS})
+        install(TARGETS ${TARGET_NAME} RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}" 
+            ${_COMPARGS})
       endif()
+
     else()
+      message(STATUS "${msg_exec} Install Linux") 
       # if(simvascular_add_executable_INSTALL_COMPONENT)
       #   set(_COMPARGS "COMPONENT ${simvascular_add_executable_INSTALL_COMPONENT}")
       # endif()
-      install(TARGETS ${TARGET_NAME}
-        RUNTIME DESTINATION ${simvascular_add_executable_INSTALL_DESTINATION}
-        ${_COMPARGS})
-    endif()
-	endif()
-endmacro()
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
+      install(TARGETS ${TARGET_NAME} RUNTIME 
+              DESTINATION ${simvascular_add_executable_INSTALL_DESTINATION} ${_COMPARGS})
+    endif()
+  endif()
+
+  message(FATAL_ERROR "${msg_exec} Terminate for testing")
+endmacro()
+
+#---------------
+# sv_list_match
+#---------------
+#
 function(sv_list_match resultVar str)
   set(result)
   foreach(ITR ${ARGN})

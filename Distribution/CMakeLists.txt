@@ -28,8 +28,20 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# SimVascular/Distribution/CMakeLists.txt
+#
 # Set the options and files used to create an installer using CMake cpack.
 #
+set(dist_msg "[Distribution] ") 
+message(STATUS "${dist_msg} ========== Distribution/CMakeLists.txt ==========") 
+message(STATUS "${dist_msg} CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
+message(STATUS "${dist_msg} CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
+message(STATUS "${dist_msg} CMAKE_CURRENT_LIST_DIR: ${CMAKE_CURRENT_LIST_DIR}")
+message(STATUS "${dist_msg} SV_INSTALL_VERSION_DIR: ${SV_INSTALL_VERSION_DIR}")
+message(STATUS "${dist_msg} SV_INSTALL_RUNTIME_DIR: ${SV_INSTALL_RUNTIME_DIR}")
+message(STATUS "${dist_msg} Qt6_DIR: ${Qt6_DIR}")
+#message(FATAL_ERROR "${dist_msg} ##### test ##### ")
+
 if(WIN32)
   find_path(INTEL_REDIST_DIR names fmpich2.dll PATHS $ENV{PATH})
   file(GLOB INTEL_REDIST_DLLS "${INTEL_REDIST_DIR}/*.dll")
