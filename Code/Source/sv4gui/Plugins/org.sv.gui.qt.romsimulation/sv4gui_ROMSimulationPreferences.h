@@ -65,12 +65,15 @@ public:
 
   void InitializeSolverLocations();
   QString GetOneDSolver();
+  QString GetZeroDSolver();
   static const QString UnknownBinary;
 
 private:
   QString m_svOneDSolver;
+  QString m_svZeroDSolver;
 
   void SetOneDSolver(const QString& solverInstallPath, const QString& applicationPath);
+  void SetZeroDSolver(const QString& solverInstallPath, const QString& applicationPath);
 };
 
 #endif // SV4GUI_SIMULATIONPREFERENCES_H

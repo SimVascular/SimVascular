@@ -208,7 +208,7 @@ SV_IGNORE_PROVISIONING_FILE = 1
 # -----------------------------------------------------
 
 SV_USE_TINYXML  = 1
-SV_USE_TINYXML2 = 0
+SV_USE_TINYXML2 = 1
 
 # -----------------------------------------------------
 # Compile with Optimization
@@ -828,6 +828,18 @@ ifeq ($(SV_USE_TINYXML),1)
 endif
 
 # --------
+# tinyxml2
+# --------
+
+ifeq ($(SV_USE_TINYXML2),1)
+  SV_LIB_THIRDPARTY_TINYXML2_NAME=_simvascular_thirdparty_tinyxml2
+  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/tinyxml2
+  SV_TINYXML2_TOP = $(TOP)/../Code/ThirdParty/tinyxml2
+  SV_TINYXML2_INCDIR  = -I $(SV_TINYXML2_TOP)
+  SV_TINYXML2_LIBS    = $(SVLIBFLAG)$(SV_LIB_THIRDPARTY_TINYXML2_NAME)$(LIBLINKEXT)
+endif
+
+# --------
 # SolverIO
 # --------
 
@@ -914,7 +926,7 @@ endif
 # TINYXML2
 # --------
 
-ifeq ($(SV_USE_TINYXML2),1)
+ifeq ($(SV_USE_TINYXML2_IN_EXTERNALS),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tinyxml2.x64_cygwin.mk

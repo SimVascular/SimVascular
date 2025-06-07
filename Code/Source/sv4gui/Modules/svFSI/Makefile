@@ -55,7 +55,8 @@ HDRS	= \
     sv4gui_svFSIJob.h \
     sv4gui_MitksvFSIJob.h \
     sv4gui_MitksvFSIJobIO.h \
-    sv4gui_MitksvFSIObjectFactory.h
+    sv4gui_MitksvFSIObjectFactory.h \
+    sv4gui_XmlWriter.h
 
 CXXSRCS	= \
     sv4gui_svFSIbcClass.cxx \
@@ -63,7 +64,8 @@ CXXSRCS	= \
     sv4gui_svFSIJob.cxx \
     sv4gui_MitksvFSIJob.cxx \
     sv4gui_MitksvFSIJobIO.cxx \
-    sv4gui_MitksvFSIObjectFactory.cxx
+    sv4gui_MitksvFSIObjectFactory.cxx \
+    sv4gui_XmlWriter.cxx
 
 CXXSRCS += us_init.cxx
 

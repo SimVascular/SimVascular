@@ -46,6 +46,7 @@ simvascular_create_module(
 #-----------------------------------------------------------------------------
 
 include_directories(${TINYXML_INCLUDE_DIR})
+include_directories(${SV_SOURCE_DIR}/ThirdParty/tinyxml2/simvascular_tinyxml2)
 
 if(SV_INSTALL_LIBS)
   install(TARGETS ${lib}

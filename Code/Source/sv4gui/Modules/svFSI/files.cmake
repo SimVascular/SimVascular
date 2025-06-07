@@ -36,6 +36,7 @@ set(H_FILES
     sv4gui_MitksvFSIJob.h
     sv4gui_MitksvFSIJobIO.h
     sv4gui_MitksvFSIObjectFactory.h
+    sv4gui_XmlWriter.h
 )
 
 set(CPP_FILES
@@ -46,6 +47,7 @@ set(CPP_FILES
     sv4gui_MitksvFSIJob.cxx
     sv4gui_MitksvFSIJobIO.cxx
     sv4gui_MitksvFSIObjectFactory.cxx
+    sv4gui_XmlWriter.cxx
 )
 
 set(RESOURCE_FILES

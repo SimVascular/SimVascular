@@ -219,6 +219,9 @@ public:
 
     virtual void Hidden() override;
 
+    void EnableGuiControls(bool enable);
+    void ShowNoImageDataWarning();
+
     void PreparePreviewInteraction(QString method);
 
     void QuitPreviewInteraction();
