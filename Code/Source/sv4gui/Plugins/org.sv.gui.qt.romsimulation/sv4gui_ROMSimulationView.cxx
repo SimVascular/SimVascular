@@ -1695,8 +1695,10 @@ void sv4guiROMSimulationView::OnPreferencesChanged(const mitk::IPreferences* pre
     }
 
     // Set the 1D solver binary. 
-    m_SolverExecutable = prefs->Get(ONED_SOLVER_PATH, m_DefaultPrefs.GetOneDSolver());
-    m_ZeroDSolverExecutable = prefs->Get(ZEROD_SOLVER_PATH, m_DefaultPrefs.GetZeroDSolver());
+    m_SolverExecutable = QString::fromStdString(prefs->Get(ONED_SOLVER_PATH, m_DefaultPrefs.GetOneDSolver().toStdString()));
+    m_ZeroDSolverExecutable = QString::fromStdString(prefs->Get(ZEROD_SOLVER_PATH, m_DefaultPrefs.GetOneDSolver().toStdString()));
+    // davep m_SolverExecutable = prefs->Get(ONED_SOLVER_PATH, m_DefaultPrefs.GetOneDSolver());
+    // davep m_ZeroDSolverExecutable = prefs->Get(ZEROD_SOLVER_PATH, m_DefaultPrefs.GetZeroDSolver());
 }
 
 //--------------------

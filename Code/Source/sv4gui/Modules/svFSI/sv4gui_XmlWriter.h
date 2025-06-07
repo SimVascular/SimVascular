@@ -38,7 +38,7 @@
 #include <string>
 #include <vector>
 
-#include "simvascular_tinyxml2.h"
+#include "tinyxml2.h"
 
 //-----------------
 // Sv4GuiXmlWriter

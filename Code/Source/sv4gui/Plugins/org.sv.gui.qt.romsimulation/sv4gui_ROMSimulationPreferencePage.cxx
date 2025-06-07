@@ -169,17 +169,21 @@ bool sv4guiROMSimulationPreferencePage::PerformOk()
     using namespace sv4guiROMSimulationPreferenceDBKey;
 
     QString oneDSolverPath = m_Ui->SolverExecutablePath_LineEdit->text().trimmed();
-    m_Preferences->Put(ONED_SOLVER_PATH, oneDSolverPath);
+    m_Preferences->Put(ONED_SOLVER_PATH, oneDSolverPath.toStdString());
+    // davep m_Preferences->Put(ONED_SOLVER_PATH, oneDSolverPath);
 
     QString zeroDSolverPath = m_Ui->ZeroDSolverExecutablePath_LineEdit->text().trimmed();
-    m_Preferences->Put(ZEROD_SOLVER_PATH, zeroDSolverPath);
+    m_Preferences->Put(ZEROD_SOLVER_PATH, oneDSolverPath.toStdString());
+    // davep m_Preferences->Put(ZEROD_SOLVER_PATH, zeroDSolverPath);
 
     return true;
 }
 
 void sv4guiROMSimulationPreferencePage::Update()
 {
-    m_Ui->SolverExecutablePath_LineEdit->setText(m_Preferences->Get("1d solver executable path",""));
-    m_Ui->ZeroDSolverExecutablePath_LineEdit->setText(m_Preferences->Get("0d solver executable path",""));
+    m_Ui->SolverExecutablePath_LineEdit->setText(QString::fromStdString(m_Preferences->Get("1d solver executable path","")));
+    m_Ui->ZeroDSolverExecutablePath_LineEdit->setText(QString::fromStdString(m_Preferences->Get("0d solver executable path","")));
+    // davep m_Ui->SolverExecutablePath_LineEdit->setText(m_Preferences->Get("1d solver executable path",""));
+    // davep m_Ui->ZeroDSolverExecutablePath_LineEdit->setText(m_Preferences->Get("0d solver executable path",""));
 }
 
