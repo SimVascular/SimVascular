@@ -46,8 +46,10 @@ class sv4guiROMSimulationPreferencePage;
 // The keys are used to store property values in a MITK database.
 //
 namespace sv4guiROMSimulationPreferenceDBKey {
-    const QString ONED_SOLVER_PATH = "oned solver path";
-    const QString ZEROD_SOLVER_PATH = "zerod solver path";
+    const std::string ONED_SOLVER_PATH = "oned solver path";
+    const std::string ZEROD_SOLVER_PATH = "zerod solver path";
+    // davep const QString ONED_SOLVER_PATH = "oned solver path";
+    // davep const QString ZEROD_SOLVER_PATH = "zerod solver path";
 };
 
 

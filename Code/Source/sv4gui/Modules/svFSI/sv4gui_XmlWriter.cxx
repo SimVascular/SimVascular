@@ -34,6 +34,9 @@
 #include <fstream>
 #include <type_traits>
 
+#include <QString>
+#include <QRegularExpression>
+
 //-----------------
 // Sv4GuiXmlWriter
 //-----------------
@@ -141,7 +144,8 @@ void Sv4GuiXmlWriter::add_equation_bcs(const sv4guisvFSIeqClass& eq, tinyxml2::X
     }
 
     if (iBc.effectiveDirection.trimmed() != "") {
-      auto list = iBc.effectiveDirection.trimmed().split(QRegExp("[(),{}-\\s+]"),QString::SkipEmptyParts);
+      QStringList list = iBc.effectiveDirection.trimmed().split(QRegularExpression("[(),{}-\\s+]"),Qt::SkipEmptyParts);
+      // [DaveP] auto list = iBc.effectiveDirection.trimmed().split(QRegExp("[(),{}-\\s+]"),QString::SkipEmptyParts);
       auto dir = "(" + list[0].toStdString() + ", " + list[1].toStdString() + ", " + list[2].toStdString() + ")";
       add_child(boundary_condition, "Effective_direction", dir);
     }
