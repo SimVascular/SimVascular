@@ -74,10 +74,10 @@ cvPolyDataSolid::cvPolyDataSolid()
   : cvSolidModel( SM_KT_POLYDATA)
 {
 /**
- * @brief Data Member is a vtkPolyData. It is initiated as NULL. When a
+ * @brief Data Member is a vtkPolyData. It is initiated as nullptr. When a
  * solid is loaded, a new PolyData is created
  */
-  geom_ = NULL;
+  geom_ = nullptr;
   numBoundaryRegions = 0;
 }
 
@@ -90,7 +90,7 @@ cvPolyDataSolid::cvPolyDataSolid()
 
 cvPolyDataSolid::~cvPolyDataSolid()
 {
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
   {
     geom_->Delete();
   }
@@ -105,7 +105,7 @@ cvPolyDataSolid::~cvPolyDataSolid()
 cvPolyDataSolid::cvPolyDataSolid( const cvPolyDataSolid& sm)
 	: cvSolidModel( SM_KT_POLYDATA)
 {
-  geom_ = NULL;
+  geom_ = nullptr;
   numBoundaryRegions=0;
   Copy( sm );
 }
@@ -121,7 +121,7 @@ int cvPolyDataSolid::Copy(const cvSolidModel& src )
 {
   cvPolyDataSolid *solidPtr;
 
-  if (geom_ != NULL) {
+  if (geom_ != nullptr) {
     return SV_ERROR;
   }
   if (src.GetKernelT() != SM_KT_POLYDATA) {
@@ -129,7 +129,7 @@ int cvPolyDataSolid::Copy(const cvSolidModel& src )
   }
 
   solidPtr = (cvPolyDataSolid *)( &src );
-  if ( solidPtr->geom_ == NULL ) {
+  if ( solidPtr->geom_ == nullptr ) {
     return SV_OK;
   }
 
@@ -152,7 +152,7 @@ int cvPolyDataSolid::Copy(const cvSolidModel& src )
 
 int cvPolyDataSolid::SetVtkPolyDataObject(vtkPolyData *newPolyData)
 {
-  if (geom_ != NULL) {
+  if (geom_ != nullptr) {
     geom_->Delete();
   }
 
@@ -190,7 +190,7 @@ cvSolidModel *cvPolyDataSolid::Copy() const
 /**
  * @brief Function to load in a solid file
  * @param *filename Pointer to a char filename of the file to read in
- * @return SV_OK if executed correctly, SV_ERROR if the geometry is not NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is not nullptr
  * or the read function does not return properly.
  * @note Current accepted filetypes include:
  * @note STL
@@ -201,7 +201,7 @@ cvSolidModel *cvPolyDataSolid::Copy() const
 
 int cvPolyDataSolid::ReadNative( char *filename )
 {
-  if ( geom_ != NULL ) {
+  if ( geom_ != nullptr ) {
     return SV_ERROR;
   }
   geom_ = vtkPolyData::New();
@@ -230,14 +230,14 @@ int cvPolyDataSolid::ReadNative( char *filename )
  * @brief Function to write the polydata
  * @param file_version int for filetype (UNUSED CURRENTLY)
  * @param *filename Pointer to a char filename of the file to write
- * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the write function does not return properly.
  */
 
 int cvPolyDataSolid::WriteNative( int file_version, char *filename ) const
 {
   //Procdure calls PolyData Utils to write the file using vtkWriters
-  if ( geom_ == NULL ) {
+  if ( geom_ == nullptr ) {
     return SV_ERROR;
   }
 
@@ -285,8 +285,8 @@ cvPolyData *cvPolyDataSolid::GetFacePolyData(int faceid, int useMaxDist, double 
   vtkPolyData *facepd = vtkPolyData::New();
   cvPolyData *result;
 
-  if (geom_ == NULL ) {
-    return NULL;
+  if (geom_ == nullptr ) {
+    return nullptr;
   }
 
   if (PlyDtaUtils_GetFacePolyData(geom_, &faceid, facepd) != SV_OK)
@@ -323,7 +323,7 @@ cvPolyData *cvPolyDataSolid::GetFacePolyData(int faceid, int useMaxDist, double 
 
 int cvPolyDataSolid::GetBoundaryFaces(double angle)
 {
-  if (geom_ == NULL ) {
+  if (geom_ == nullptr ) {
     return SV_ERROR;
   }
 
@@ -348,9 +348,9 @@ int cvPolyDataSolid::GetBoundaryFaces(double angle)
 int cvPolyDataSolid::GetFaceIds(int *numFaces,int **faceIds)
 {
   //Procedure calls PolyDataUtils to get the different faceId numbers extracted from GetBoundaryFaces
-  if ( geom_ == NULL ) {
+  if ( geom_ == nullptr ) {
       *numFaces = 0;
-      faceIds = NULL;
+      faceIds = nullptr;
       return SV_OK;
   }
 
@@ -367,12 +367,12 @@ int cvPolyDataSolid::GetFaceIds(int *numFaces,int **faceIds)
 int cvPolyDataSolid::GetFaceAttribute(char *attr,int faceid, char **value)
 {
   //Not sure if this procedure is needed currently
-  if ( geom_ == NULL ) {
-      *value = NULL;
+  if ( geom_ == nullptr ) {
+      *value = nullptr;
       return SV_ERROR;
   }
 
-  *value = NULL;
+  *value = nullptr;
   return SV_ERROR;
 }
 
@@ -400,14 +400,14 @@ int cvPolyDataSolid::SetFaceAttribute(char *attr,int faceid, char *value)
 /**
  * @brief Function to delete a region in the polydata
  * @param regionid this is the region id to delete all of the cells in
- * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the function does not return properly.
  */
 
 int cvPolyDataSolid::DeleteRegion(int regionid)
 {
 
-  if ( geom_ == NULL ) {
+  if ( geom_ == nullptr ) {
       fprintf(stderr,"Solid must exist in order to delete regions\n");
       return SV_ERROR;
   }
@@ -444,20 +444,20 @@ int cvPolyDataSolid::Intersect( cvSolidModel *a, cvSolidModel *b,
        		 SolidModel_SimplifyT st )
 {
   //Geometry should be empty prior to boolean
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
   {
     return SV_ERROR;
   }
 
   //Need both objects to create an intersection
-  if (a == NULL)
+  if (a == nullptr)
     return SV_ERROR;
   if (a->GetKernelT() != SM_KT_POLYDATA ) {
     fprintf(stderr,"Model not of type POLYDATA\n");
     return SV_ERROR;
   }
 
-  if (b == NULL)
+  if (b == nullptr)
     return SV_ERROR;
   if (b->GetKernelT() != SM_KT_POLYDATA ) {
     fprintf(stderr,"Model not of type POLYDATA\n");
@@ -507,19 +507,19 @@ int cvPolyDataSolid::Union( cvSolidModel *a, cvSolidModel *b,
        		 SolidModel_SimplifyT st )
 {
   //Geometry should be empty prior to boolean
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
   {
     return SV_ERROR;
   }
 
   //Need both objects to create a union
-  if (a == NULL)
+  if (a == nullptr)
     return SV_ERROR;
   if (a->GetKernelT() != SM_KT_POLYDATA ) {
     fprintf(stderr,"Model not of type POLYDATA\n");
     return SV_ERROR;
   }
-  if (b == NULL)
+  if (b == nullptr)
     return SV_ERROR;
   if (b->GetKernelT() != SM_KT_POLYDATA ) {
     fprintf(stderr,"Model not of type POLYDATA\n");
@@ -569,20 +569,20 @@ int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
        		SolidModel_SimplifyT st )
 {
   //Geometry should be empty prior to boolean
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
   {
     return SV_ERROR;
   }
 
   //Need both objects to create a subtraction
-  if (a == NULL)
+  if (a == nullptr)
     return SV_ERROR;
   if (a->GetKernelT() != SM_KT_POLYDATA ) {
     fprintf(stderr,"Model not of type POLYDATA\n");
     return SV_ERROR;
   }
 
-  if (b == NULL)
+  if (b == nullptr)
     return SV_ERROR;
   if (b->GetKernelT() != SM_KT_POLYDATA ) {
     fprintf(stderr,"Model not of type POLYDATA\n");
@@ -623,12 +623,12 @@ int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
  * @brief Function to delete the cells in the polydata
  * @param numfaces this is the number of cells to delete from the polydata
  * @param faces this is an array containing the ids of the cells to delete
- * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the function does not return properly.
  */
 int cvPolyDataSolid::DeleteFaces( int numfaces, int *faces)
 {
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
   {
     fprintf(stderr,"Need PolyData to perform operation\n");
     return SV_ERROR;
@@ -652,12 +652,12 @@ int cvPolyDataSolid::DeleteFaces( int numfaces, int *faces)
  * @brief Function to combine the ids of two faces in the polydata
  * @param targetface id of the face to set the two faces to have new id of
  * @param loseface id of the second face, id will be lost
- * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the function does not return properly.
  */
 int cvPolyDataSolid::CombineFaces( int targetface, int loseface)
 {
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
   {
     fprintf(stderr,"Need PolyData to perform operation\n");
     return SV_ERROR;
@@ -678,7 +678,7 @@ int cvPolyDataSolid::CombineFaces( int targetface, int loseface)
 int cvPolyDataSolid::RemeshFace(int numfaces,int *excludedFaces,double size)
 {
 #ifdef SV_USE_VMTK
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
   {
     fprintf(stderr,"Need PolyData to perform operation\n");
     return SV_ERROR;
@@ -703,7 +703,7 @@ int cvPolyDataSolid::RemeshFace(int numfaces,int *excludedFaces,double size)
 
   if (VMTKUtils_SurfaceRemeshing(geom_,size,meshcaps,preserveedges,
 	trianglesplitfactor,collapseanglethreshold,excluded,
-	markerListName,useSizeFunction,NULL) != SV_OK)
+	markerListName,useSizeFunction,nullptr) != SV_OK)
   {
     fprintf(stderr,"Issue while remeshing surface\n");
     return SV_ERROR;
@@ -729,7 +729,7 @@ int cvPolyDataSolid::RemeshFace(int numfaces,int *excludedFaces,double size)
 
 int cvPolyDataSolid::MakeBox3d(double dims[], double ctr[])
 {
-  if ( geom_ != NULL ) {
+  if ( geom_ != nullptr ) {
     return SV_ERROR;
   }
   geom_ = vtkPolyData::New();
@@ -763,7 +763,7 @@ int cvPolyDataSolid::MakeBox3d(double dims[], double ctr[])
 
 int cvPolyDataSolid::MakeSphere(double r, double ctr[])
 {
-  if ( geom_ != NULL ) {
+  if ( geom_ != nullptr ) {
     return SV_ERROR;
   }
   geom_ = vtkPolyData::New();
@@ -804,7 +804,7 @@ int cvPolyDataSolid::MakeSphere(double r, double ctr[])
 //
 int cvPolyDataSolid::MakeCylinder(double r, double length, double center[3], double axis[3] )
 {
-  if ( geom_ != NULL ) {
+  if ( geom_ != nullptr ) {
     return SV_ERROR;
   }
   geom_ = vtkPolyData::New();

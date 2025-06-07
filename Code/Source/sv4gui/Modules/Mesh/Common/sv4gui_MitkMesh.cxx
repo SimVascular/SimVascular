@@ -53,7 +53,7 @@ sv4guiMitkMesh::sv4guiMitkMesh(const sv4guiMitkMesh &other)
         if(other.m_MeshSet[t])
             m_MeshSet[t]=other.m_MeshSet[t]->Clone();
 //        else
-//            m_MeshSet.push_back(NULL);
+//            m_MeshSet.push_back(nullptr);
     }
 }
 
@@ -85,12 +85,12 @@ void sv4guiMitkMesh::InitializeEmpty()
 
 bool sv4guiMitkMesh::IsEmptyTimeStep(unsigned int t) const
 {
-//    return IsInitialized() && (GetMesh(t) == NULL);
+//    return IsInitialized() && (GetMesh(t) == nullptr);
 
 //    if(!IsInitialized())
 //        return false;
 
-//    return GetMesh(t) == NULL || GetMesh(t)->GetSurfaceMesh() == NULL || (
+//    return GetMesh(t) == nullptr || GetMesh(t)->GetSurfaceMesh() == nullptr || (
 //                GetMesh(t)->GetSurfaceMesh()->GetNumberOfLines() == 0 &&
 //                GetMesh(t)->GetSurfaceMesh()->GetNumberOfPolys() == 0 &&
 //                GetMesh(t)->GetSurfaceMesh()->GetNumberOfStrips() == 0 &&
@@ -102,6 +102,7 @@ bool sv4guiMitkMesh::IsEmptyTimeStep(unsigned int t) const
 
 void sv4guiMitkMesh::Expand(unsigned int timeSteps)
 {
+    std::cout << "Expand" << std::endl << std::flush;
     unsigned int oldSize = m_MeshSet.size();
 
     if ( timeSteps > oldSize )
@@ -130,7 +131,7 @@ sv4guiMesh* sv4guiMitkMesh::GetMesh(unsigned int t) const
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -183,7 +184,7 @@ void sv4guiMitkMesh::ExecuteOperation( mitk::Operation* operation )
         break;
 
     default:
-        itkWarningMacro("sv4guiMitkMesh could not understrand the operation. Please check!");
+        itkWarningMacro("sv4guiMitkMesh could not understand the operation. Please check!");
         break;
     }
 

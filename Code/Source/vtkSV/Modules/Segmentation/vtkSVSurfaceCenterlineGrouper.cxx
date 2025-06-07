@@ -78,18 +78,18 @@ vtkStandardNewMacro(vtkSVSurfaceCenterlineGrouper);
 vtkSVSurfaceCenterlineGrouper::vtkSVSurfaceCenterlineGrouper()
 {
   this->WorkPd = vtkPolyData::New();
-  this->MergedCenterlines = NULL;
-  this->PolycubePd = NULL;
+  this->MergedCenterlines = nullptr;
+  this->PolycubePd = nullptr;
 
-  this->CenterlineGroupIdsArrayName = NULL;
-  this->CenterlineRadiusArrayName = NULL;
-  this->CenterlineIdsArrayName = NULL;
-  this->GroupIdsArrayName = NULL;
-  this->BlankingArrayName = NULL;
-  this->TractIdsArrayName = NULL;
+  this->CenterlineGroupIdsArrayName = nullptr;
+  this->CenterlineRadiusArrayName = nullptr;
+  this->CenterlineIdsArrayName = nullptr;
+  this->GroupIdsArrayName = nullptr;
+  this->BlankingArrayName = nullptr;
+  this->TractIdsArrayName = nullptr;
 
-  this->PatchIdsArrayName = NULL;
-  this->SlicePointsArrayName = NULL;
+  this->PatchIdsArrayName = nullptr;
+  this->SlicePointsArrayName = nullptr;
 
   this->UseRadiusInformation = 1;
   this->EnforcePolycubeConnectivity = 0;
@@ -102,68 +102,68 @@ vtkSVSurfaceCenterlineGrouper::vtkSVSurfaceCenterlineGrouper()
 // ----------------------
 vtkSVSurfaceCenterlineGrouper::~vtkSVSurfaceCenterlineGrouper()
 {
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
-  if (this->MergedCenterlines != NULL)
+  if (this->MergedCenterlines != nullptr)
   {
     this->MergedCenterlines->Delete();
-    this->MergedCenterlines = NULL;
+    this->MergedCenterlines = nullptr;
   }
-  if (this->PolycubePd != NULL)
+  if (this->PolycubePd != nullptr)
   {
     this->PolycubePd->Delete();
-    this->PolycubePd = NULL;
+    this->PolycubePd = nullptr;
   }
 
-  if (this->CenterlineGroupIdsArrayName != NULL)
+  if (this->CenterlineGroupIdsArrayName != nullptr)
   {
     delete [] this->CenterlineGroupIdsArrayName;
-    this->CenterlineGroupIdsArrayName = NULL;
+    this->CenterlineGroupIdsArrayName = nullptr;
   }
 
-  if (this->CenterlineRadiusArrayName != NULL)
+  if (this->CenterlineRadiusArrayName != nullptr)
   {
     delete [] this->CenterlineRadiusArrayName;
-    this->CenterlineRadiusArrayName = NULL;
+    this->CenterlineRadiusArrayName = nullptr;
   }
 
-  if (this->CenterlineIdsArrayName != NULL)
+  if (this->CenterlineIdsArrayName != nullptr)
   {
     delete [] this->CenterlineIdsArrayName;
-    this->CenterlineIdsArrayName = NULL;
+    this->CenterlineIdsArrayName = nullptr;
   }
 
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
   {
     delete [] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
   }
 
-  if (this->BlankingArrayName != NULL)
+  if (this->BlankingArrayName != nullptr)
   {
     delete [] this->BlankingArrayName;
-    this->BlankingArrayName = NULL;
+    this->BlankingArrayName = nullptr;
   }
 
-  if (this->TractIdsArrayName != NULL)
+  if (this->TractIdsArrayName != nullptr)
   {
     delete [] this->TractIdsArrayName;
-    this->TractIdsArrayName = NULL;
+    this->TractIdsArrayName = nullptr;
   }
 
-  if (this->PatchIdsArrayName != NULL)
+  if (this->PatchIdsArrayName != nullptr)
   {
     delete [] this->PatchIdsArrayName;
-    this->PatchIdsArrayName = NULL;
+    this->PatchIdsArrayName = nullptr;
   }
 
-  if (this->SlicePointsArrayName != NULL)
+  if (this->SlicePointsArrayName != nullptr)
   {
     delete [] this->SlicePointsArrayName;
-    this->SlicePointsArrayName = NULL;
+    this->SlicePointsArrayName = nullptr;
   }
 }
 
@@ -317,7 +317,7 @@ int vtkSVSurfaceCenterlineGrouper::PrepFilter()
       this->SetErrorCode(vtkErrorCode::UserError + 2);
       return SV_ERROR;
     }
-    if (this->PolycubePd == NULL)
+    if (this->PolycubePd == nullptr)
     {
       vtkDebugMacro("Polycube not provided, generating from centerlines");
 
@@ -550,17 +550,17 @@ void vtkSVSurfaceCenterlineGrouper::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
   os << indent << "Use radius information: " << this->UseRadiusInformation << "\n";
-  if (this->CenterlineGroupIdsArrayName != NULL)
+  if (this->CenterlineGroupIdsArrayName != nullptr)
     os << indent << "Centerline group ids name: " << this->CenterlineGroupIdsArrayName << "\n";
-  if (this->CenterlineRadiusArrayName != NULL)
+  if (this->CenterlineRadiusArrayName != nullptr)
     os << indent << "Centerline radius array name: " << this->CenterlineRadiusArrayName << "\n";
-  if (this->CenterlineIdsArrayName != NULL)
+  if (this->CenterlineIdsArrayName != nullptr)
     os << indent << "Centerline ids array name: " << this->CenterlineIdsArrayName << "\n";
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
     os << indent << "Group ids array name: " << this->GroupIdsArrayName << "\n";
-  if (this->BlankingArrayName != NULL)
+  if (this->BlankingArrayName != nullptr)
     os << indent << "Blanking array name: " << this->BlankingArrayName << "\n";
-  if (this->TractIdsArrayName != NULL)
+  if (this->TractIdsArrayName != nullptr)
     os << indent << "Tract ids array name: " << this->TractIdsArrayName << "\n";
 }
 
@@ -798,7 +798,8 @@ int vtkSVSurfaceCenterlineGrouper::FixRegions(vtkPolyData *pd, std::string array
       for (int j=0; j<allRegions[badRegion].Elements.size(); j++)
       {
         int cellId = allRegions[badRegion].Elements[j];
-        vtkIdType npts, *pts;
+        vtkIdType npts;
+        const vtkIdType *pts;
         pd->GetCellPoints(cellId, npts, pts);
         for (int k=0; k<npts; k++)
         {
@@ -911,14 +912,16 @@ int vtkSVSurfaceCenterlineGrouper::FixGroupsWithCenterlines(int fixIters)
   int ptId, ptId0, ptId1, ptIdN, centerPtId;
   int edgeCellId0, edgeCellId1, edgeCellValue0, edgeCellValue1;
   double pt[3], newCenterPt[3];
-  vtkIdType npts, *pts;
-  vtkIdType nlinepts, *linepts;
+  vtkIdType npts;
+  const vtkIdType *pts;
+  vtkIdType nlinepts;
+  const vtkIdType *linepts;
   vtkNew(vtkIdList, edgeCellIds);
   vtkNew(vtkIdList, frontNeighbors);
   vtkNew(vtkIdList, backNeighbors);
   vtkNew(vtkIdList, point0GroupIds);
   vtkNew(vtkIdList, pointNGroupIds);
-  vtkPolyData *newCenterlinesPd = NULL;
+  vtkPolyData *newCenterlinesPd = nullptr;
 
   int allGood = 0;
   int maxIters = fixIters;
@@ -1108,7 +1111,7 @@ int vtkSVSurfaceCenterlineGrouper::FixGroupsWithCenterlines(int fixIters)
       {
         allGood = 0;
 
-        if (newCenterlinesPd == NULL)
+        if (newCenterlinesPd == nullptr)
         {
           newCenterlinesPd = vtkPolyData::New();
           newCenterlinesPd->DeepCopy(this->MergedCenterlines);
@@ -1400,7 +1403,7 @@ int vtkSVSurfaceCenterlineGrouper::FixGroupsWithCenterlines(int fixIters)
     iter++;
   }
 
-  if (newCenterlinesPd != NULL)
+  if (newCenterlinesPd != nullptr)
   {
     newCenterlinesPd->Delete();
   }
@@ -1435,7 +1438,8 @@ int vtkSVSurfaceCenterlineGrouper::FixGroupsWithPolycube()
   for (int i=0; i<polycubePd->GetNumberOfCells(); i++)
   {
     // Check for non-manifold cell, if found, delete (just the one).
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     polycubePd->GetCellPoints(i, npts, pts);
 
     for (int j=0; j<npts; j++)
@@ -1451,7 +1455,8 @@ int vtkSVSurfaceCenterlineGrouper::FixGroupsWithPolycube()
         // Mark for deletion! but not the current cell
         for (int k=0; k<cellIds->GetNumberOfIds(); k++)
         {
-          vtkIdType npts_new, *pts_new;
+          vtkIdType npts_new;
+          const vtkIdType *pts_new;
           polycubePd->GetCellPoints(cellIds->GetId(k), npts_new, pts_new);
 
           int ptFound = 0;
@@ -3182,7 +3187,8 @@ int vtkSVSurfaceCenterlineGrouper::FixEdges(vtkPolyData *pd, vtkPolyData *origPd
             pd->GetCellData()->GetArray(arrayName.c_str())->SetTuple1(realCellId, newCellValue);
 
 
-            vtkIdType npts, *pts;
+            vtkIdType npts;
+            const vtkIdType *pts;
             branchPd->GetCellPoints(tmpCellId, npts, pts);
             for (int l=0; l<npts; l++)
             {
@@ -3631,7 +3637,8 @@ int vtkSVSurfaceCenterlineGrouper::CheckSlicePoints()
 // ----------------------
 int vtkSVSurfaceCenterlineGrouper::CheckPolycubeEnforcePossible()
 {
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
 
   double avgRadius = 0.0;
   std::vector<double> avgRadiusValues;

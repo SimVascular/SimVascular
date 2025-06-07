@@ -53,8 +53,8 @@ sv4guisvFSIJobCreate::sv4guisvFSIJobCreate(mitk::DataStorage::Pointer dataStorag
     , m_DataStorage(dataStorage)
     , m_SelecteNode(selectedNode)
     , m_TimeStep(timeStep)
-    , m_SimulationFolderNode(NULL)
-    , m_ModelFolderNode(NULL)
+    , m_SimulationFolderNode(nullptr)
+    , m_ModelFolderNode(nullptr)
 {
     m_Interface=new sv4guiDataNodeOperationInterface;
 
@@ -76,8 +76,8 @@ void sv4guisvFSIJobCreate::Activated()
 {
     ui->comboBox->clear();
 
-    m_ModelFolderNode=NULL;
-    m_SimulationFolderNode=NULL;
+    m_ModelFolderNode=nullptr;
+    m_SimulationFolderNode=nullptr;
 
     if(m_SelecteNode.IsNull())
         return;
@@ -131,7 +131,7 @@ void sv4guisvFSIJobCreate::CreateJob()
     QString selectedModelName=ui->comboBox->currentText();
     if(selectedModelName=="")
     {
-        QMessageBox::warning(NULL,"No Model Selected","Please select a model!");
+        QMessageBox::warning(nullptr,"No Model Selected","Please select a model!");
         return;
     }
 
@@ -139,21 +139,21 @@ void sv4guisvFSIJobCreate::CreateJob()
 
     if(selectedModelNode.IsNull())
     {
-        QMessageBox::warning(NULL,"No Model Found!","Please select a existing model!");
+        QMessageBox::warning(nullptr,"No Model Found!","Please select a existing model!");
         return;
     }
 
     sv4guiModel* model=dynamic_cast<sv4guiModel*>(selectedModelNode->GetData());
-    if(model==NULL || model->GetModelElement()==NULL)
+    if(model==nullptr || model->GetModelElement()==nullptr)
     {
-        QMessageBox::warning(NULL,"Model is invalid or empty!","Please make sure the model has valid data!");
+        QMessageBox::warning(nullptr,"Model is invalid or empty!","Please make sure the model has valid data!");
         return;
     }
 
     std::string jobName=ui->lineEditJobName->text().trimmed().toStdString();
 
     if(jobName==""){
-        QMessageBox::warning(NULL,"No name for job!","Please give a name for the job!");
+        QMessageBox::warning(nullptr,"No name for job!","Please give a name for the job!");
         return;
     }
 
@@ -162,14 +162,14 @@ void sv4guisvFSIJobCreate::CreateJob()
         auto jobName = ui->lineEditJobName->text().trimmed();
         QString msg = "The name '" + jobName + "' is not valid.\n" +
                       "Job names " + validName + ".\n";
-        QMessageBox::warning(NULL, "svFSI", msg);
+        QMessageBox::warning(nullptr, "svFSI", msg);
         return;
     }
 
 
     mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(jobName.c_str(),m_SimulationFolderNode);
     if(exitingNode){
-        QMessageBox::warning(NULL,"Job Already Created","Please use a different job name!");
+        QMessageBox::warning(nullptr,"Job Already Created","Please use a different job name!");
         return;
     }
 

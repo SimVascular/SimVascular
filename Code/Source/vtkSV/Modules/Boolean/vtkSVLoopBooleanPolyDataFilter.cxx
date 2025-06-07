@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "sv_vtk_utils.h"
+
 #include "vtkSVLoopBooleanPolyDataFilter.h"
 
 #include "vtkAppendPolyData.h"
@@ -159,10 +161,10 @@ vtkSVLoopBooleanPolyDataFilter::Impl::Impl() :
     this->BoundaryCellArray[i] = vtkIntArray::New();
     this->NewCellIds[i] = vtkIntArray::New();
 
-    this->Checked[i] = NULL;
-    this->CheckedCarefully[i] = NULL;
-    this->PointMapper[i] = NULL;
-    this->ReversePointMapper[i] = NULL;
+    this->Checked[i] = nullptr;
+    this->CheckedCarefully[i] = nullptr;
+    this->PointMapper[i] = nullptr;
+    this->ReversePointMapper[i] = nullptr;
     }
   this->IntersectionLines = vtkPolyData::New();
   this->CheckCells = vtkIdList::New();
@@ -190,19 +192,19 @@ vtkSVLoopBooleanPolyDataFilter::Impl::~Impl()
     this->BoundaryCellArray[i]->Delete();
     this->NewCellIds[i]->Delete();
 
-    if (this->Checked[i] != NULL)
+    if (this->Checked[i] != nullptr)
       {
       delete [] this->Checked[i];
       }
-    if (this->CheckedCarefully[i] != NULL)
+    if (this->CheckedCarefully[i] != nullptr)
       {
       delete [] this->CheckedCarefully[i];
       }
-    if (this->PointMapper[i] != NULL)
+    if (this->PointMapper[i] != nullptr)
       {
       delete [] this->PointMapper[i];
       }
-    if (this->ReversePointMapper[i] != NULL)
+    if (this->ReversePointMapper[i] != nullptr)
       {
       delete [] this->ReversePointMapper[i];
       }
@@ -237,7 +239,7 @@ int vtkSVLoopBooleanPolyDataFilter::Impl::FindRegion(int inputIndex,
       {
       vtkIdType cellId = this->CheckCells->GetId(c);
       //Get the three points of the cell
-      vtkIdType *pts = 0;
+      const vtkIdType *pts;
       vtkIdType npts = 0;
       this->Mesh[inputIndex]->GetCellPoints(cellId, npts, pts);
       if (this->Checked[inputIndex][cellId] == 0)
@@ -338,7 +340,7 @@ int vtkSVLoopBooleanPolyDataFilter::Impl::FindRegionTipToe(
       neighborIds->Reset();
       vtkIdType cellId = this->CheckCellsCareful->GetId(c);
       //Get the three points of the cell
-      vtkIdType *pts = 0;
+      const vtkIdType *pts;
       vtkIdType npts = 0;
       this->Mesh[inputIndex]->GetCellPoints(cellId, npts, pts);
       //Update this cell to have been checked carefully and assign it
@@ -613,7 +615,7 @@ int vtkSVLoopBooleanPolyDataFilter::Impl::GetCellOrientation(
 
   // Get cell points
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts;
   pd->BuildLinks();
   pd->GetCellPoints(cellId,npts,pts);
 
@@ -1507,53 +1509,59 @@ void vtkSVLoopBooleanPolyDataFilter::Impl::PerformBoolean(
   //  {
   //  surfaces[i]->Delete();
   //  }
-  vtkSmartPointer<vtkThreshold> thresholder =
-    vtkSmartPointer<vtkThreshold>::New();
-  vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
-    vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
 
-  vtkSmartPointer<vtkPolyData> surface1_A =
-	  vtkSmartPointer<vtkPolyData>::New();
+  auto threshold_surface_a = VtkUtils_ThresholdSurface(-1.0, -1.0, "BooleanRegion", this->Mesh[0]); 
+  vtkSmartPointer<vtkPolyData> surface1_A = vtkSmartPointer<vtkPolyData>::New();
+  surface1_A->DeepCopy(threshold_surface_a);
+  /* dp
+  vtkSmartPointer<vtkThreshold> thresholder = vtkSmartPointer<vtkThreshold>::New();
   thresholder->SetInputData(this->Mesh[0]);
   thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
   thresholder->ThresholdBetween(-1,-1);
   thresholder->Update();
+
+  vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
-  surface1_A->DeepCopy(surfacer->GetOutput());
+  */
 
-  vtkSmartPointer<vtkPolyData> surface1_B =
-	  vtkSmartPointer<vtkPolyData>::New();
+  auto threshold_surface_b = VtkUtils_ThresholdSurface(1.0, 1.0, "BooleanRegion", this->Mesh[0]); 
+  auto surface1_B = vtkSmartPointer<vtkPolyData>::New();
+  surface1_B->DeepCopy(threshold_surface_b);
+   /* dp
   thresholder->SetInputData(this->Mesh[0]);
   thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
   thresholder->ThresholdBetween(1,1);
   thresholder->Update();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
-  surface1_B->DeepCopy(surfacer->GetOutput());
+  */
 
-  vtkSmartPointer<vtkPolyData> surface2_A =
-	  vtkSmartPointer<vtkPolyData>::New();
+  auto threshold_surface2_a = VtkUtils_ThresholdSurface(1.0, 1.0, "BooleanRegion", this->Mesh[1]); 
+  auto surface2_A = vtkSmartPointer<vtkPolyData>::New();
+  surface2_A->DeepCopy(threshold_surface2_a);
+  /* dp
   thresholder->SetInputData(this->Mesh[1]);
   thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
   thresholder->ThresholdBetween(1,1);
   thresholder->Update();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
-  surface2_A->DeepCopy(surfacer->GetOutput());
+  */
 
-  vtkSmartPointer<vtkPolyData> surface2_B =
-	  vtkSmartPointer<vtkPolyData>::New();
+  auto threshold_surface2_b = VtkUtils_ThresholdSurface(-1.0, -1.0, "BooleanRegion", this->Mesh[1]); 
+  auto surface2_B = vtkSmartPointer<vtkPolyData>::New();
+  surface2_B->DeepCopy(threshold_surface2_b);
+  /* dp
   thresholder->SetInputData(this->Mesh[1]);
   thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
   thresholder->ThresholdBetween(-1,-1);
   thresholder->Update();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
-  surface2_B->DeepCopy(surfacer->GetOutput());
+  */
 
-  vtkSmartPointer<vtkAppendPolyData> appender =
-    vtkSmartPointer<vtkAppendPolyData>::New();
+  auto appender = vtkSmartPointer<vtkAppendPolyData>::New();
 
   if (booleanOperation == 0)
   {
@@ -1601,7 +1609,8 @@ void vtkSVLoopBooleanPolyDataFilter::Impl::ThresholdRegions(vtkPolyData **surfac
     for (int j=0; j<numCells; j++)
       {
       int value = this->BooleanArray[i]->GetValue(j);
-      vtkIdType npts, *pts;
+      vtkIdType npts;
+      const vtkIdType *pts;
       this->Mesh[i]->GetCellPoints(j, npts, pts);
       if (value < 0)
         {

@@ -61,13 +61,13 @@ const sv4guiPath* sv4guiPathVtkMapper3D::GetInput()
 }
 
 sv4guiPathVtkMapper3D::sv4guiPathVtkMapper3D()
-    : m_vtkSelectedPoints(NULL),
-      m_vtkUnselectedPoints(NULL),
-      m_vtkSplinePoints(NULL),
-      m_VtkSelectedPolyDataMapper(NULL),
-      m_VtkUnselectedPolyDataMapper(NULL),
-      m_VtkSplinePointsPolyDataMapper(NULL),
-      m_VtkSplinePolyDataMapper(NULL),
+    : m_vtkSelectedPoints(nullptr),
+      m_vtkUnselectedPoints(nullptr),
+      m_vtkSplinePoints(nullptr),
+      m_VtkSelectedPolyDataMapper(nullptr),
+      m_VtkUnselectedPolyDataMapper(nullptr),
+      m_VtkSplinePointsPolyDataMapper(nullptr),
+      m_VtkSplinePolyDataMapper(nullptr),
       m_PointSize(2.0),
       m_SplinePointSize(1.0),
       m_SplineRadius(1)
@@ -136,7 +136,7 @@ void sv4guiPathVtkMapper3D::CreateVTKRenderObjects()
 
     sv4guiPathElement* pathElement=input->GetPathElement(timestep);
 
-    if (pathElement==NULL||(pathElement->GetControlPointNumber()==0 && pathElement->GetPathPointNumber()<2))
+    if (pathElement==nullptr||(pathElement->GetControlPointNumber()==0 && pathElement->GetPathPointNumber()<2))
     {
         m_PropAssembly->VisibilityOff();
         return;
@@ -285,20 +285,6 @@ void sv4guiPathVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *rendere
         return;
     }
 
-    // create new vtk render objects (e.g. sphere for a point)
-
-#if MITK_MAJOR_VERSION == 2018 && MITK_MINOR_VERSION == 04
-    m_VtkSelectedPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
-    m_VtkUnselectedPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
-    m_VtkSplinePointsPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
-    m_VtkSplinePolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
-#else
-    SetVtkMapperImmediateModeRendering(m_VtkSelectedPolyDataMapper);
-    SetVtkMapperImmediateModeRendering(m_VtkUnselectedPolyDataMapper);
-    SetVtkMapperImmediateModeRendering(m_VtkSplinePointsPolyDataMapper);
-    SetVtkMapperImmediateModeRendering(m_VtkSplinePolyDataMapper);
-#endif
-
     mitk::Mapper::BaseLocalStorage *ls = m_LSH.GetLocalStorage(renderer);
     bool needGenerateData = ls->IsGenerateDataRequired( renderer, this, GetDataNode() );
 
@@ -307,7 +293,6 @@ void sv4guiPathVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *rendere
         mitk::FloatProperty * pointSizeProp = dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("point size"));
         mitk::FloatProperty * splinePointSizeProp = dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("spline point size"));
         mitk::FloatProperty * splineSizeProp = dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("spline size"));
-
         // only create new vtk render objects if property values were changed
         if(pointSizeProp && m_PointSize!=pointSizeProp->GetValue() )
             needGenerateData = true;
@@ -339,7 +324,7 @@ void sv4guiPathVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *rendere
         m_SelectedActor->VisibilityOff();
     }
 
-    if(dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("opacity")) != NULL)
+    if(dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("opacity")) != nullptr)
     {
         mitk::FloatProperty::Pointer pointOpacity =dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("opacity"));
         float opacity = pointOpacity->GetValue();
@@ -370,7 +355,6 @@ void sv4guiPathVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *rendere
     {
         m_SplinePointsActor->VisibilityOff();
     }
-
 }
 
 void sv4guiPathVtkMapper3D::ResetMapper( mitk::BaseRenderer* /*renderer*/ )
@@ -407,7 +391,7 @@ void sv4guiPathVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer)
     mitk::Color tmpColor;
     double opacity = 1.0;
 
-    if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("unselected color")) != NULL)
+    if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("unselected color")) != nullptr)
     {
         tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("unselected color"))->GetValue();
         unselectedColor[0] = tmpColor[0];
@@ -415,16 +399,16 @@ void sv4guiPathVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer)
         unselectedColor[2] = tmpColor[2];
 //        unselectedColor[3] = 1.0f; // alpha value
     }
-    else if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("unselected color")) != NULL)
+    else if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("unselected color")) != nullptr)
     {
-        tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("unselected color"))->GetValue();
+        tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("unselected color"))->GetValue();
         unselectedColor[0] = tmpColor[0];
         unselectedColor[1] = tmpColor[1];
         unselectedColor[2] = tmpColor[2];
 //        unselectedColor[3] = 1.0f; // alpha value
     }
 
-    if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("selected color")) != NULL)
+    if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("selected color")) != nullptr)
     {
         tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("selected color"))->GetValue();
         selectedColor[0] = tmpColor[0];
@@ -432,16 +416,16 @@ void sv4guiPathVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer)
         selectedColor[2] = tmpColor[2];
 //        selectedColor[3] = 1.0f;
     }
-    else if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("selected color")) != NULL)
+    else if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("selected color")) != nullptr)
     {
-        tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("selected color"))->GetValue();
+        tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("selected color"))->GetValue();
         selectedColor[0] = tmpColor[0];
         selectedColor[1] = tmpColor[1];
         selectedColor[2] = tmpColor[2];
 //        selectedColor[3] = 1.0f;
     }
 
-    if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("spline point color")) != NULL)
+    if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("spline point color")) != nullptr)
     {
         tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("spline point color"))->GetValue();
         splinePointsColor[0] = tmpColor[0];
@@ -449,9 +433,9 @@ void sv4guiPathVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer)
         splinePointsColor[2] = tmpColor[2];
 //        splinePointsColor[3] = 1.0f;
     }
-    else if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("spline point color")) != NULL)
+    else if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("spline point color")) != nullptr)
     {
-        tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("spline point color"))->GetValue();
+        tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("spline point color"))->GetValue();
         splinePointsColor[0] = tmpColor[0];
         splinePointsColor[1] = tmpColor[1];
         splinePointsColor[2] = tmpColor[2];
@@ -460,19 +444,19 @@ void sv4guiPathVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer)
 
     //check if the node has a color
     float splineColorTMP[4]={1.0f,1.0f,0.0f,1.0f};//yellow
-    this->GetDataNode()->GetColor(splineColorTMP, NULL);
+    this->GetDataNode()->GetColor(splineColorTMP, nullptr);
     splineColor[0] = splineColorTMP[0];
     splineColor[1] = splineColorTMP[1];
     splineColor[2] = splineColorTMP[2];
 
-    if(dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("opacity")) != NULL)
+    if(dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("opacity")) != nullptr)
     {
         mitk::FloatProperty::Pointer pointOpacity =dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("opacity"));
         opacity = pointOpacity->GetValue();
     }
-    else if(dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("opacity")) != NULL)
+    else if(dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("opacity")) != nullptr)
     {
-        mitk::FloatProperty::Pointer pointOpacity =dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("opacity"));
+        mitk::FloatProperty::Pointer pointOpacity =dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("opacity"));
         opacity = pointOpacity->GetValue();
     }
 
@@ -484,7 +468,7 @@ void sv4guiPathVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer)
 
     bool makeSplinePoints = false;
     this->GetDataNode()->GetBoolProperty("show spline 3D points", makeSplinePoints, renderer);
-    if(makeSplinePoints && (m_SplinePointsActor != NULL) )
+    if(makeSplinePoints && (m_SplinePointsActor != nullptr) )
     {
         m_SplinePointsActor->GetProperty()->SetColor(splinePointsColor);
         m_SplinePointsActor->GetProperty()->SetOpacity(opacity);
@@ -492,7 +476,7 @@ void sv4guiPathVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer)
 
     bool makeSpline = true;
     this->GetDataNode()->GetBoolProperty("show spline", makeSpline, renderer);
-    if(makeSpline && (m_SplineActor != NULL) )
+    if(makeSpline && (m_SplineActor != nullptr) )
     {
         this->CreateSpline();
         m_SplineActor->GetProperty()->SetColor(splineColor);
@@ -530,23 +514,6 @@ void sv4guiPathVtkMapper3D::CreateSpline()
         spline->SetPoints(points);
         spline->SetLines(lines);
 
-//        vtkSmartPointer<vtkTubeFilter> tubeFilter = vtkSmartPointer<vtkTubeFilter>::New();
-//        tubeFilter->SetNumberOfSides( 12 );
-//        tubeFilter->SetInputData(spline);
-
-//        //check for property contoursize.
-//        m_SplineRadius = 1;
-//        mitk::FloatProperty::Pointer splineSizeProp = dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("spline size") );
-
-//        if (splineSizeProp.IsNotNull())
-//            m_SplineRadius = splineSizeProp->GetValue();
-
-//        tubeFilter->SetRadius( m_SplineRadius );
-//        tubeFilter->Update();
-
-//        //add to pipeline
-//        vtkSplinePolyData->AddInputConnection(tubeFilter->GetOutputPort());
-//        m_VtkSplinePolyDataMapper->SetInputConnection(vtkSplinePolyData->GetOutputPort());
         m_VtkSplinePolyDataMapper->SetInputData(spline);
 
         int lineWidth=1;
@@ -557,15 +524,11 @@ void sv4guiPathVtkMapper3D::CreateSpline()
         m_SplineActor->SetMapper(m_VtkSplinePolyDataMapper);
         m_SplineActor->GetProperty()->SetLineWidth(lineWidth);
         m_PropAssembly->AddPart(m_SplineActor);
-
     }
-
 }
 
 void sv4guiPathVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
 {
-//    Superclass::SetDefaultProperties(node, renderer, overwrite);
-
     node->AddProperty( "show points", mitk::BoolProperty::New(true), renderer, overwrite );
     node->AddProperty( "show spline 3D points", mitk::BoolProperty::New(false), renderer, overwrite );
     node->AddProperty( "point size", mitk::FloatProperty::New(1.0), renderer, overwrite);
@@ -575,14 +538,9 @@ void sv4guiPathVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::Bas
     node->AddProperty( "spline point color",mitk::ColorProperty::New(0,1,0),renderer, overwrite );
 
     node->AddProperty( "show spline", mitk::BoolProperty::New(true), renderer, overwrite );
-    node->AddProperty( "line width", mitk::IntProperty::New(1), renderer, overwrite );
-
-//    node->AddProperty( "layer", mitk::IntProperty::New(1), renderer, overwrite );
+    node->AddProperty( "line width", mitk::IntProperty::New(3), renderer, overwrite );
     node->AddProperty( "color", mitk::ColorProperty::New(1.0f, 1.0f, 0.2f), renderer, overwrite);
     node->AddProperty( "opacity", mitk::FloatProperty::New(1.0f), renderer, overwrite );
-//    node->AddProperty( "updateDataOnRender", mitk::BoolProperty::New(true), renderer, overwrite );
 
     Superclass::SetDefaultProperties(node, renderer, overwrite);
-
-
 }

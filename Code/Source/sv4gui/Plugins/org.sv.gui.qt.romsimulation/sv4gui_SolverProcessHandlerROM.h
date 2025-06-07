@@ -42,7 +42,7 @@
 
 #include "sv4gui_ModelDataInteractor.h"
 
-#include <berryIBerryPreferences.h>
+//dp #include <berryIBerryPreferences.h>
 
 #include <QWidget>
 #include <QStandardItemModel>
@@ -54,7 +54,7 @@ class sv4guiSolverProcessHandlerROM : public QObject
     Q_OBJECT
 
 public:
-    sv4guiSolverProcessHandlerROM(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent=NULL);
+    sv4guiSolverProcessHandlerROM(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent=nullptr);
     virtual ~sv4guiSolverProcessHandlerROM();
 
     void Start();

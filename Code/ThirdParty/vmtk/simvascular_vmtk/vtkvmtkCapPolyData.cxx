@@ -40,11 +40,11 @@ vtkStandardNewMacro(vtkvmtkCapPolyData);
 
 vtkvmtkCapPolyData::vtkvmtkCapPolyData()
 {
-  this->BoundaryIds = NULL;
+  this->BoundaryIds = nullptr;
   this->Displacement = 1E-1;
   this->InPlaneDisplacement = 1E-1;
-  this->CapCenterIds = NULL;
-  this->CellEntityIdsArrayName = NULL;
+  this->CapCenterIds = nullptr;
+  this->CellEntityIdsArrayName = nullptr;
   this->CellEntityIdOffset = 1;
 }
 
@@ -53,17 +53,17 @@ vtkvmtkCapPolyData::~vtkvmtkCapPolyData()
   if (this->BoundaryIds)
     {
     this->BoundaryIds->Delete();
-    this->BoundaryIds = NULL;
+    this->BoundaryIds = nullptr;
     }
   if (this->CapCenterIds)
     {
     this->CapCenterIds->Delete();
-    this->CapCenterIds = NULL;
+    this->CapCenterIds = nullptr;
     }
   if (this->CellEntityIdsArrayName)
     {
     delete[] this->CellEntityIdsArrayName;
-    this->CellEntityIdsArrayName = NULL;
+    this->CellEntityIdsArrayName = nullptr;
     }
 }
 
@@ -105,7 +105,7 @@ int vtkvmtkCapPolyData::RequestData(
   boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
 
   // Copy cell entitiy ids array
-  vtkIdTypeArray* cellEntityIdsArray = NULL;
+  vtkIdTypeArray* cellEntityIdsArray = nullptr;
   bool markCells = this->CellEntityIdsArrayName && this->CellEntityIdsArrayName[0];
   if (markCells)
     {
@@ -132,7 +132,7 @@ int vtkvmtkCapPolyData::RequestData(
   if (this->CapCenterIds)
     {
     this->CapCenterIds->Delete();
-    this->CapCenterIds = NULL;
+    this->CapCenterIds = nullptr;
     }
 
   this->CapCenterIds = vtkIdList::New();

@@ -64,6 +64,7 @@
 #include <vtkDataSetMapper.h>
 #include <vtkIdTypeArray.h>
 #include <vtkExtractGeometry.h>
+#include <vtkTexture.h>
 
 const sv4guiMitkMesh* sv4guiMitkMeshMapper3D::GetInput()
 {
@@ -81,7 +82,7 @@ sv4guiMitkMeshMapper3D::~sv4guiMitkMeshMapper3D()
 void sv4guiMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 {
     mitk::DataNode* node = GetDataNode();
-    if(node==NULL)
+    if(node==nullptr)
         return;
 
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
@@ -94,7 +95,7 @@ void sv4guiMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
     }
 
     sv4guiMitkMesh* mitkMesh  = const_cast< sv4guiMitkMesh* >( this->GetInput() );
-    if(mitkMesh==NULL)
+    if(mitkMesh==nullptr)
     {
         ls->m_PropAssembly->VisibilityOff();
         return;
@@ -103,14 +104,14 @@ void sv4guiMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
     int timestep=this->GetTimestep();
 
     sv4guiMesh* mesh=mitkMesh->GetMesh(timestep);
-    if(mesh==NULL)
+    if(mesh==nullptr)
     {
         ls->m_PropAssembly->VisibilityOff();
         return;
     }
 
     vtkSmartPointer<vtkPolyData> surfaceMesh=mesh->GetSurfaceMesh();
-    if (surfaceMesh == NULL)
+    if (surfaceMesh == nullptr)
     {
         ls->m_PropAssembly->VisibilityOff();
         return;
@@ -154,6 +155,7 @@ void sv4guiMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
 
 void sv4guiMitkMeshMapper3D::ResetMapper( mitk::BaseRenderer* renderer )
 {
+    std::cout << "ResetMapper" << std::endl << std::flush;
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
     ls->m_PropAssembly->VisibilityOff();
 }
@@ -385,7 +387,7 @@ void sv4guiMitkMeshMapper3D::ApplyAllProperties(mitk::DataNode *node, mitk::Base
         }
         //pass the texture to the actor
         actor->SetTexture(vtkTxture);
-        if(mapper->GetInput()->GetPointData()->GetTCoords() == NULL)
+        if(mapper->GetInput()->GetPointData()->GetTCoords() == nullptr)
         {
             MITK_ERROR << "Surface.Texture property was set, but there are no texture coordinates. Please provide texture coordinates for the vtkPolyData via vtkPolyData->GetPointData()->SetTCoords().";
         }
@@ -415,11 +417,11 @@ void sv4guiMitkMeshMapper3D::ApplyAllProperties(mitk::DataNode *node, mitk::Base
     else if (deprecatedUsePointData)
     {
         float scalarsMin = 0;
-        if (dynamic_cast<mitk::FloatProperty *>(node->GetProperty("ScalarsRangeMinimum")) != NULL)
+        if (dynamic_cast<mitk::FloatProperty *>(node->GetProperty("ScalarsRangeMinimum")) != nullptr)
             scalarsMin = dynamic_cast<mitk::FloatProperty*>(node->GetProperty("ScalarsRangeMinimum"))->GetValue();
 
         float scalarsMax = 0.1;
-        if (dynamic_cast<mitk::FloatProperty *>(node->GetProperty("ScalarsRangeMaximum")) != NULL)
+        if (dynamic_cast<mitk::FloatProperty *>(node->GetProperty("ScalarsRangeMaximum")) != nullptr)
             scalarsMax = dynamic_cast<mitk::FloatProperty*>(node->GetProperty("ScalarsRangeMaximum"))->GetValue();
 
         mapper->SetScalarRange(scalarsMin,scalarsMax);
@@ -443,7 +445,7 @@ void sv4guiMitkMeshMapper3D::ApplyAllProperties(mitk::DataNode *node, mitk::Base
     // this node. Check both renderer specific and global property lists, since
     // properties in both should be considered.
     const mitk::PropertyList::PropertyMap *rendererProperties = node->GetPropertyList( renderer )->GetMap();
-    const mitk::PropertyList::PropertyMap *globalProperties = node->GetPropertyList( NULL )->GetMap();
+    const mitk::PropertyList::PropertyMap *globalProperties = node->GetPropertyList( nullptr )->GetMap();
 
    if(clipping)
    {
@@ -485,7 +487,7 @@ void sv4guiMitkMeshMapper3D::CheckForClippingProperty( mitk::BaseRenderer* rende
 
     mitk::ClippingProperty *clippingProperty = dynamic_cast< mitk::ClippingProperty * >( property );
 
-    if ( (clippingProperty != NULL)
+    if ( (clippingProperty != nullptr)
          && (clippingProperty->GetClippingEnabled()) )
     {
         const mitk::Point3D &origin = clippingProperty->GetOrigin();
@@ -545,7 +547,7 @@ void sv4guiMitkMeshMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::Ba
 //    {
 //        sv4guiMesh* mesh=mitkMesh->GetMesh();
 
-//        if(mesh && (mesh->GetSurfaceMesh() != 0) && (mesh->GetSurfaceMesh()->GetPointData() != NULL) && (mesh->GetSurfaceMesh()->GetPointData()->GetScalars() != 0))
+//        if(mesh && (mesh->GetSurfaceMesh() != 0) && (mesh->GetSurfaceMesh()->GetPointData() != nullptr) && (mesh->GetSurfaceMesh()->GetPointData()->GetScalars() != 0))
 //        {
             node->AddProperty( "scalar visibility", mitk::BoolProperty::New(true), renderer, overwrite );
             node->AddProperty( "color mode", mitk::BoolProperty::New(true), renderer, overwrite );

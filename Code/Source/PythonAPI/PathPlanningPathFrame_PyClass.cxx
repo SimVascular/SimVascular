@@ -103,7 +103,7 @@ PyDoc_STRVAR(PathPathFrame_doc,
 //--------------------
 //
 static PyMethodDef PyPathFrameMethods[] = {
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 
@@ -116,7 +116,7 @@ static PyMemberDef PyPathFrameMembers[] = {
   {"normal", T_OBJECT_EX, offsetof(PyPathFrame, normal), 0, "Path frame normal."},
   {"position", T_OBJECT_EX, offsetof(PyPathFrame, position), 0, "Path frame position."},
   {"tangent", T_OBJECT_EX, offsetof(PyPathFrame, tangent), 0, "Path frame tangent."},
-  {NULL}
+  {nullptr}
 };
 
 //------------------------
@@ -130,7 +130,7 @@ PyPathFrameSetDefaults(PyPathFrame* self)
   self->normal = Py_BuildValue("[d,d,d]", 1.0, 0.0, 0.0);
   self->position = Py_BuildValue("[d,d,d]", 0.0, 0.0, 0.0);
   self->tangent = Py_BuildValue("[d,d,d]", 0.0, 1.0, 0.0);
-  return NULL;
+  return nullptr;
 }
 
 //----------------
@@ -141,7 +141,7 @@ static int
 PyPathFrameInit(PyPathFrame* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("|iO!O!O!", PyRunTimeErr, __func__);
-  static char *keywords[] = { "id", "position", "normal", "tangent", NULL};
+  static char *keywords[] = { "id", "position", "normal", "tangent", nullptr};
   int id = 0;
   PyObject* positionArg = nullptr;
   PyObject* normalArg = nullptr;
@@ -181,7 +181,7 @@ static PyObject *
 PyPathFrameNew(PyTypeObject* type, PyObject* args, PyObject* kwargs)
 {
   auto self = (PyPathFrame*)type->tp_alloc(type, 0);
-  if (self == NULL) {
+  if (self == nullptr) {
       std::cout << "[PyPathFrameNew] ERROR: Can't allocate type." << std::endl;
       return nullptr;
   }
@@ -199,7 +199,7 @@ PyPathFrameDealloc(PyPathFrame* self)
 // Define the Python type object that stores path.CalculationMethod types.
 //
 PyTypeObject PyPathFrameType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   PATH_FRAME_MODULE_CLASS,
   sizeof(PyPathFrame)
 };
@@ -229,7 +229,7 @@ PyObject *
 CreatePyPathFrame(sv3::PathElement::PathPoint& pathPoint)
 {
   //std::cout << "[CreatePyPathFrame] Create PathFrame object ... " << std::endl;
-  auto pathFrameObj = PyObject_CallObject((PyObject*)&PyPathFrameType, NULL);
+  auto pathFrameObj = PyObject_CallObject((PyObject*)&PyPathFrameType, nullptr);
   auto pyPathFrame = (PyPathFrame*)pathFrameObj;
 
   pyPathFrame->id = pathPoint.id;

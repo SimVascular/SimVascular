@@ -54,6 +54,10 @@ namespace berry {
 struct IPreferencesService;
 }
 
+namespace mitk {
+struct IPreferencesService;
+}
+
 ///
 /// A small class which "eats" all Del-Key-pressed events on the node table.
 /// When the Del Key is pressed selected nodes should be removed.
@@ -69,7 +73,8 @@ protected:
   ///
   /// The Preferences Service to retrieve and store preferences.
   ///
-  berry::IPreferencesService* m_PreferencesService;
+  mitk::IPreferencesService* m_PreferencesService;
+  //dp berry::IPreferencesService* m_PreferencesService;
 };
 
 #endif // SV4GUI_QMITKNODETABLEVIEWKEYFILTER_H_

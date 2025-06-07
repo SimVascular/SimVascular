@@ -182,7 +182,7 @@ bool ROMSim_WriteRCRFile(sv4guiROMSimulationPython& pythonInterface, std::vector
 
   // Write the rcr values to a file.
   std::string fileName = outputDir + "/" + std::string(BOUNDARY_CONDITION_RCR_FILE_NAME);
-  ofstream outs;
+  std::ofstream outs;
   outs.open(fileName, std::ofstream::out);
   if (outs.fail()) {
       throw std::runtime_error("Unable to open the file '" + fileName + "' for writing.");
@@ -232,7 +232,7 @@ bool ROMSim_WriteResistanceFile(sv4guiROMSimulationPython& pythonInterface, std:
 
   // Write the resistance values to a file.
   std::string fileName = outputDir + "/" + std::string(BOUNDARY_CONDITION_RESISTANCE_FILE_NAME);
-  ofstream outs;
+  std::ofstream outs;
   outs.open(fileName, std::ofstream::out);
   if (outs.fail()) {
       throw std::runtime_error("Unable to open the file '" + fileName + "' for writing.");
@@ -329,7 +329,7 @@ ROMSim_AddMaterialParameters(sv4guiROMSimulationPython& pythonInterface, PyObjec
   if (nameObj == nullptr) { 
       throw std::runtime_error("The material model has no 'name' attribute");
   }
-  std::string materialName(PyString_AsString(nameObj));
+  std::string materialName(PyUnicode_AsUTF8(nameObj));
 
   if (materialName == MATERIAL_OLUFSEN) {
       pythonInterface.AddParameter(params.MATERIAL_MODEL, materialName);
@@ -402,7 +402,7 @@ ROMSim_AddModelParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* 
   //
   auto outletFaceNames = PyUtilGetStringListAttr(modelObj, MODEL_OUTLET_FACE_NAMES);
   std::string fileName = outputDir + "/" + std::string(MODEL_OUTLET_FACE_FILE_NAME);
-  ofstream outs;
+  std::ofstream outs;
   outs.open(fileName, std::ofstream::out);
   if (outs.fail()) {
       throw std::runtime_error("Unable to open the file '" + fileName + "' for writing.");
@@ -568,7 +568,7 @@ static PyObject *
 ROMSim_write_input_file(PySimulationROM* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O!OOOOOOs", PyRunTimeErr, __func__);
-  static char *keywords[] = {"model_order", "model", "mesh", "fluid", "material", "boundary_conditions", "solution", "directory", NULL};
+  static char *keywords[] = {"model_order", "model", "mesh", "fluid", "material", "boundary_conditions", "solution", "directory", nullptr};
   PyObject* modelOrderArg = 0;
   PyObject* modelParamsArg = nullptr;
   PyObject* meshParamsArg = nullptr;
@@ -578,7 +578,7 @@ ROMSim_write_input_file(PySimulationROM* self, PyObject* args, PyObject* kwargs)
   PyObject* solutionParamsArg = nullptr;
   char* outputDirArg = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyInt_Type, &modelOrderArg, &modelParamsArg, &meshParamsArg, 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyLong_Type, &modelOrderArg, &modelParamsArg, &meshParamsArg, 
         &fluidPropsArg, &materialModelArg, &bcsParamsArg, &solutionParamsArg, &outputDirArg)) {
       return api.argsError();
   }
@@ -590,7 +590,7 @@ ROMSim_write_input_file(PySimulationROM* self, PyObject* args, PyObject* kwargs)
 
   // Set model order.
   //
-  int modelOrder = PyInt_AsLong(modelOrderArg);
+  int modelOrder = PyLong_AsLong(modelOrderArg);
   if (PyErr_Occurred()) {
       return nullptr;
   }
@@ -656,12 +656,12 @@ static PyMethodDef PyROMSimMethods[] = {
 
   {"write_input_file", (PyCFunction)ROMSim_write_input_file, METH_VARARGS|METH_KEYWORDS, ROMSim_write_input_file_doc},
 
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 static PyMemberDef PyROMSimMembers[] = {
-    {"parameters", T_OBJECT_EX, offsetof(PySimulationROM, parameters), 0, NULL},
-    {NULL}
+    {"parameters", T_OBJECT_EX, offsetof(PySimulationROM, parameters), 0, nullptr},
+    {nullptr}
 };
 
 //----------------
@@ -673,7 +673,7 @@ static PyMemberDef PyROMSimMembers[] = {
 // designated initializers. 
 //
 PyTypeObject PySimulationROMType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and 
   // the name of the type within the module.
   SIMULATION_ROM_MODULE_CLASS, 
@@ -701,7 +701,7 @@ PyROMSimInit(PySimulationROM* self, PyObject* args, PyObject *kwds)
       initParams = false;
   }
 
-  self->parameters = PyObject_CallObject((PyObject*)&PySimulationROMParametersType, NULL);
+  self->parameters = PyObject_CallObject((PyObject*)&PySimulationROMParametersType, nullptr);
 
   return 0;
 }
@@ -716,7 +716,7 @@ static PyObject *
 PyROMSimNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   auto self = (PySimulationROM*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
   }
 
   return (PyObject *) self;

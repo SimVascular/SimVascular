@@ -136,7 +136,7 @@ static PyObject *
 ModelingModel_get_face_polydata(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("i|d", PyRunTimeErr, __func__);
-  static char *keywords[] = {"face_id", "max_dist", NULL};
+  static char *keywords[] = {"face_id", "max_dist", nullptr};
   int faceID;
   double max_dist = -1.0;
 
@@ -171,13 +171,13 @@ ModelingModel_get_face_polydata(PyModelingModel* self, PyObject* args, PyObject*
   //
   auto model = self->solidModel;
   auto cvPolydata = model->GetFacePolyData(faceID, useMaxDist, max_dist);
-  if (cvPolydata == NULL) {
+  if (cvPolydata == nullptr) {
       api.error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
       return nullptr;
   }
   vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
   polydata = cvPolydata->GetVtkPolyData();
-  if (polydata == NULL) {
+  if (polydata == nullptr) {
       api.error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
       return nullptr;
   }
@@ -219,7 +219,7 @@ ModelingModel_get_polydata(PyModelingModel *self, PyObject* args)
   auto cvPolydata = model->GetPolyData(useMaxDist, max_dist);
   vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
   polydata->DeepCopy(cvPolydata->GetVtkPolyData());
-  if (polydata == NULL) {
+  if (polydata == nullptr) {
       api.error("Could not get polydata for the solid model.");
       return nullptr;
   }
@@ -253,7 +253,7 @@ static PyObject *
 ModelingModel_write(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("ss|i", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", "format", "version", NULL};
+  static char *keywords[] = {"file_name", "format", "version", nullptr};
   char* fileName;
   char* fileFormat;
   int fileVersion = 0;
@@ -332,7 +332,7 @@ static PyMethodDef PyModelingModelMethods[] = {
 
   { "write", (PyCFunction)ModelingModel_write, METH_VARARGS|METH_KEYWORDS, ModelingModel_write_doc },
 
-  {NULL,NULL}
+  {nullptr,nullptr}
 
 };
 
@@ -378,7 +378,7 @@ PyModelingModelInit(PyModelingModel* self, PyObject* args, PyObject *kwds)
 // each of which implements a small part of the type’s functionality.
 //
 PyTypeObject PyModelingModelType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   MODELING_MODEL_MODULE_CLASS,
   sizeof(PyModelingModel)
 };
@@ -409,7 +409,7 @@ PyModelingModelNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   }
 
   auto self = (PyModelingModel*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->id = 1;
   }
 

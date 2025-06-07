@@ -68,20 +68,20 @@ vtkSVSeedSelector::vtkSVSeedSelector()
 
 vtkSVSeedSelector::~vtkSVSeedSelector()
 {
-  if (this->SurfacePd != NULL)
+  if (this->SurfacePd != nullptr)
   {
     this->SurfacePd->Delete();
-    this->SurfacePd = NULL;
+    this->SurfacePd = nullptr;
   }
-  if (this->SourceSeedIds != NULL)
+  if (this->SourceSeedIds != nullptr)
   {
     this->SourceSeedIds->Delete();
-    this->SourceSeedIds = NULL;
+    this->SourceSeedIds = nullptr;
   }
-  if (this->TargetSeedIds != NULL)
+  if (this->TargetSeedIds != nullptr)
   {
     this->TargetSeedIds->Delete();
-    this->TargetSeedIds = NULL;
+    this->TargetSeedIds = nullptr;
   }
 }
 

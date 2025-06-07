@@ -69,7 +69,7 @@ CheckAdaptMesh(PyUtilApiFunction& api, PyMeshingAdaptive* self)
 {
   auto name = self->name;
   auto adapt = self->adaptive_mesher;
-  if (adapt == NULL) {
+  if (adapt == nullptr) {
       api.error("An adapt mesh object has not been created for '" + std::string(name) + "'.");
       return nullptr;
   }
@@ -129,10 +129,10 @@ Adapt_create_internal_mesh(PyMeshingAdaptive* self, PyObject* args, PyObject* kw
 {
   std::cout << "[Adapt_create_internal_mesh] ========== Adapt_create_internal_mesh ==========" << std::endl;
   auto api = PyUtilApiFunction("ss", PyRunTimeErr, __func__);
-  static char *keywords[] = {"results_file", "model_file", NULL};
+  static char *keywords[] = {"results_file", "model_file", nullptr};
 
-  char *meshFileName = NULL;
-  char *solidFileName = NULL;
+  char *meshFileName = nullptr;
+  char *solidFileName = nullptr;
 
   if (!(PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &meshFileName, &solidFileName))) {
       return api.argsError();
@@ -143,12 +143,6 @@ Adapt_create_internal_mesh(PyMeshingAdaptive* self, PyObject* args, PyObject* kw
   std::cout << "[Adapt_create_internal_mesh] meshKernel: " << self->meshKernel << std::endl;
   //cvAdaptObject::gCurrentKernel = self->kernel;
   cvMeshSystem::SetCurrentKernel(self->meshKernel);
-  auto mesher = self->adaptive_mesher;
-
-  if (mesher->CreateInternalMeshObject(meshFileName, solidFileName) != SV_OK) {
-      api.error("Error creating the internal mesh.");
-      return nullptr;
-  }
 
   Py_RETURN_NONE;
 }
@@ -208,8 +202,8 @@ static PyObject *
 Adapt_load_model(PyMeshingAdaptive* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", NULL};
-  char *fileName = NULL;
+  static char *keywords[] = {"file_name", nullptr};
+  char *fileName = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
     return api.argsError();
@@ -242,7 +236,7 @@ static PyObject *
 Adapt_set_adapt_options(PyMeshingAdaptive* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sd", PyRunTimeErr, __func__);
-  char *flag = NULL;
+  char *flag = nullptr;
   double value=0;
 
   if(!(PyArg_ParseTuple(args, api.format,&flag,&value))) {
@@ -285,7 +279,7 @@ static PyObject *
 Adapt_load_mesh(PyMeshingAdaptive* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  char *meshFileName = NULL;
+  char *meshFileName = nullptr;
 
   if(!(PyArg_ParseTuple(args,"s",&meshFileName))) {
       return api.argsError();
@@ -321,7 +315,7 @@ static PyObject *
 Adapt_load_solution_from_file(PyMeshingAdaptive* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   if(!(PyArg_ParseTuple(args,"s",&fileName))) {
       return api.argsError();
@@ -357,7 +351,7 @@ static PyObject *
 Adapt_load_ybar_from_file(PyMeshingAdaptive* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   if(!(PyArg_ParseTuple(args,"s",&fileName))) {
       return api.argsError();
@@ -393,7 +387,7 @@ static PyObject *
 Adapt_load_avg_speed_from_file(PyMeshingAdaptive* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   if(!(PyArg_ParseTuple(args,"s",&fileName))) {
       return api.argsError();
@@ -429,7 +423,7 @@ static PyObject *
 Adapt_load_hessian_from_file(PyMeshingAdaptive* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   if(!(PyArg_ParseTuple(args,"s",&fileName))) {
       return api.argsError();
@@ -557,7 +551,7 @@ static PyObject *
 Adapt_set_metric(PyMeshingAdaptive* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s|ii", PyRunTimeErr, __func__);
-  char *fileName = NULL;
+  char *fileName = nullptr;
   int option = -1;
   int strategy = -1;
 
@@ -781,7 +775,7 @@ static PyObject *
 Adapt_write_adapted_model(PyMeshingAdaptive* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   if(!PyArg_ParseTuple(args,api.format,&fileName)) {
       return api.argsError();
@@ -817,7 +811,7 @@ static PyObject *
 Adapt_write_adapted_mesh(PyMeshingAdaptive* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   if(!PyArg_ParseTuple(args,api.format,&fileName)) {
       return api.argsError();
@@ -853,7 +847,7 @@ static PyObject *
 Adapt_write_adapted_solution(PyMeshingAdaptive* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  char *fileName = NULL;
+  char *fileName = nullptr;
 
   if(!PyArg_ParseTuple(args, api.format, &fileName)) {
       return api.argsError();
@@ -949,7 +943,7 @@ static PyMethodDef PyMeshingAdaptMethods[] = {
 
 #endif
 
-  {NULL, NULL}
+  {nullptr, nullptr}
 
 };
 
@@ -962,7 +956,7 @@ static PyMethodDef PyMeshingAdaptMethods[] = {
 // each of which implements a small part of the type’s functionality.
 //
 static PyTypeObject PyMeshingAdaptiveType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   MESHING_ADAPTIVE_MODULE_CLASS,
   sizeof(PyMeshingAdaptive)
 };
@@ -980,7 +974,7 @@ static PyTypeObject PyMeshingAdaptiveType = {
 //
 using PyAdaptCtorMapType = std::map<KernelType, std::function<PyObject*()>>;
 PyAdaptCtorMapType PyAdaptCtorMap = {
-  {KernelType::KERNEL_TETGEN, []()->PyObject* {return PyObject_CallObject((PyObject*)&PyTetGenAdaptType, NULL);}},
+  {KernelType::KERNEL_TETGEN, []()->PyObject* {return PyObject_CallObject((PyObject*)&PyTetGenAdaptType, nullptr);}},
 };
 
 //---------------------
@@ -1040,7 +1034,7 @@ PyMeshingAdaptNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   std::cout << "[PyMeshingAdaptNew] New Python Adaptive object." << std::endl;
 
   auto self = (PyMeshingAdaptive*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->id = 1;
   }
 

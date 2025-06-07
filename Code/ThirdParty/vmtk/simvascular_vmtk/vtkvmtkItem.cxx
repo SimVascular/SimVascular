@@ -26,7 +26,7 @@
 
 void vtkvmtkItem::DeepCopy(vtkvmtkItem *src)
   {
-  if (src==NULL)
+  if (src==nullptr)
     {
     vtkErrorMacro(<<"Cannot copy null item");
     return;

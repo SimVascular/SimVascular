@@ -35,14 +35,14 @@
 #include "SimVascular.h"
 #include "sv3_PathElement.h"
 #include "sv3_PathGroup.h"
-#include "simvascular_tinyxml.h"
+#include "tinyxml2.h"
 
 #include <sv3PathExports.h>
 
 namespace sv3{
 class SV_EXPORT_PATH PathIO
 {
-public:
+  public:
 
     PathIO(){};
 
@@ -50,12 +50,12 @@ public:
     
     PathGroup* ReadFile(std::string fileName);
     
-    int ReadPath(PathElement* path, TiXmlElement* pathXml );
+    int ReadPath(tinyxml2::XMLDocument& doc, PathElement* path, tinyxml2::XMLElement* pathXml );
     
     int Write(std::string fileName, PathGroup* pathGrp);
     
-    void WritePath(PathElement* path, TiXmlElement* timeStepElem);
-            
+    void WritePath(tinyxml2::XMLDocument& doc, PathElement* path, tinyxml2::XMLElement* timeStepElem);
+
 };
 }
 #endif // SV4GUI_PATHIO_H

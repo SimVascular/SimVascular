@@ -36,7 +36,6 @@
 #include <sv3SegmentationExports.h>
 
 #include "sv3_Contour.h"
-#include "sv_RepositoryData.h"
 #include "sv3_PathElement.h"
 
 #include "vtkPolyData.h"
@@ -72,7 +71,7 @@ public:
     
     void SetLevelSetParas(svLSParam* paras){return;};
     
-    svLSParam* GetLevelSetParas(){return NULL;};
+    svLSParam* GetLevelSetParas(){return nullptr;};
     
     virtual void SetThresholdValue(double thresholdValue) override;
     

@@ -38,14 +38,13 @@ SET(CXXSRCS sv_AdaptObject.cxx sv_adapt_utils.cxx sv_eispack.cxx)
 set(HDRS sv_AdaptObject.h sv_adapt_utils.h sv_eispack.h)
 
 if(SV_USE_MESHSIM_SHARED_LIBRARIES)
-  	add_library(${lib} SHARED ${CXXSRCS} sv_adapt_init.cxx)
+  	add_library(${lib} SHARED ${CXXSRCS} )
 else()
-  	add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_adapt_init.cxx)
+  	add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 endif()
 
 target_link_libraries(${lib}
 	${ZLIB_LIBRARY} ${VTK_LIBRARIES}
-	${TCL_LIBRARY} ${TK_LIBRARY}
 	${INTELRUNTIME_LIBRARIES}
 	${SV_LIB_MESH_NAME}
   ${SV_LIB_THIRDPARTY_SOLVERIO_NAME}

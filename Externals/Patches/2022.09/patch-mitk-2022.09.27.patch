@@ -1,0 +1,123 @@
+diff -Naur '--exclude=.git' mitk-2022.09.27/Modules/Annotation/src/mitkLogoAnnotation.cpp mitk-2022.09.27-modified/Modules/Annotation/src/mitkLogoAnnotation.cpp
+--- mitk-2022.09.27/Modules/Annotation/src/mitkLogoAnnotation.cpp      2022-09-27 23:54:19.000000000 -0700
++++ mitk-2022.09.27-modified/Modules/Annotation/src/mitkLogoAnnotation.cpp      2022-10-04 10:35:14.569835986 -0700
+@@ -12,7 +12,7 @@
+ 
+ #include "mitkLogoAnnotation.h"
+ #include <mitkIOUtil.h>
+-#include "vtkUnicodeString.h"
++// #include "vtkUnicodeString.h"
+ #include <vtkImageData.h>
+ #include <vtkImageData.h>
+ #include <vtkImageMapper.h>
+diff -Naur '--exclude=.git' mitk-2022.09.27/Modules/Annotation/src/mitkTextAnnotation2D.cpp mitk-2022.09.27-modified/Modules/Annotation/src/mitkTextAnnotation2D.cpp
+--- mitk-2022.09.27/Modules/Annotation/src/mitkTextAnnotation2D.cpp    2022-09-27 23:54:19.000000000 -0700
++++ mitk-2022.09.27-modified/Modules/Annotation/src/mitkTextAnnotation2D.cpp    2022-10-04 10:38:02.335745038 -0700
+@@ -11,7 +11,7 @@
+ ============================================================================*/
+ 
+ #include "mitkTextAnnotation2D.h"
+-#include "vtkUnicodeString.h"
++// #include "vtkUnicodeString.h"
+ #include <vtkPropAssembly.h>
+ #include <vtkTextActor.h>
+ #include <vtkTextProperty.h>
+diff -Naur '--exclude=.git' mitk-2022.09.27/Modules/Core/include/itkVtkAbstractTransform.h mitk-2022.09.27-modified/Modules/Core/include/itkVtkAbstractTransform.h
+--- mitk-2022.09.27/Modules/Core/include/itkVtkAbstractTransform.h     2022-09-27 23:54:19.000000000 -0700
++++ mitk-2022.09.27-modified/Modules/Core/include/itkVtkAbstractTransform.h     2022-10-04 00:38:37.830109943 -0700
+@@ -70,11 +70,15 @@
+     virtual InputVectorType BackTransform(const OutputVectorType &vector) const;
+     virtual InputVnlVectorType BackTransform(const OutputVnlVectorType &vector) const;
+     virtual InputCovariantVectorType BackTransform(const OutputCovariantVectorType &vector) const;
+-
+-    void SetParameters(const ParametersType &) override;
+-    void SetFixedParameters(const ParametersType &) override;
+-    void ComputeJacobianWithRespectToParameters(const InputPointType &, JacobianType &) const override;
+-    void ComputeJacobianWithRespectToPosition(const InputPointType &, JacobianPositionType &) const override;
++    
++    using itk::Transform<TScalarType, 3, 3>::SetParameters;
++    using itk::Transform<TScalarType, 3, 3>::SetFixedParameters;
++    using itk::Transform<TScalarType, 3, 3>::ComputeJacobianWithRespectToParameters;
++    using itk::Transform<TScalarType, 3, 3>::ComputeJacobianWithRespectToPosition;
++    void SetParameters(const ParametersType &) override {};
++    void SetFixedParameters(const ParametersType &) override {};
++    void ComputeJacobianWithRespectToParameters(const InputPointType &, JacobianType &) const override {};
++    void ComputeJacobianWithRespectToPosition(const InputPointType &, JacobianPositionType &) const override {};
+ 
+     itk::ModifiedTimeType GetMTime() const override;
+ 
+diff -Naur '--exclude=.git' mitk-2022.09.27/Modules/Core/include/itkVtkAbstractTransform.txx mitk-2022.09.27-modified/Modules/Core/include/itkVtkAbstractTransform.txx
+--- mitk-2022.09.27/Modules/Core/include/itkVtkAbstractTransform.txx   2022-09-27 23:54:19.000000000 -0700
++++ mitk-2022.09.27-modified/Modules/Core/include/itkVtkAbstractTransform.txx   2022-10-03 23:48:07.795502227 -0700
+@@ -207,30 +207,30 @@
+     return Superclass::GetMTime();
+   }
+ 
+-  template <class TScalarType>
+-  void itk::VtkAbstractTransform<TScalarType>::SetParameters(const ParametersType &)
+-  {
++//  template <class TScalarType>
++//  void itk::VtkAbstractTransform<TScalarType>::SetParameters(const ParametersType &)
++//  {
+     // TODO
+-  }
++//  }
+ 
+-  template <class TScalarType>
+-  void itk::VtkAbstractTransform<TScalarType>::SetFixedParameters(const ParametersType &)
+-  {
++//  template <class TScalarType>
++//  void itk::VtkAbstractTransform<TScalarType>::SetFixedParameters(const ParametersType &)
++//  {
+     // TODO
+-  }
++//  }
+ 
+-  template <class TScalarType>
+-  void itk::VtkAbstractTransform<TScalarType>::ComputeJacobianWithRespectToParameters(const InputPointType &,
+-                                                                                      JacobianType &) const
+-  {
+-    // TODO
+-  }
++//  template <class TScalarType>
++//  void itk::VtkAbstractTransform<TScalarType>::ComputeJacobianWithRespectToParameters(const InputPointType &,
++//                                                                                      JacobianType &) const
++//  {
++    // TODO  
++//  }
+ 
+-  template <class TScalarType>
+-  void itk::VtkAbstractTransform<TScalarType>::ComputeJacobianWithRespectToPosition(const InputPointType &,
+-                                                                                    JacobianPositionType &) const
+-  {
++ //  template <class TScalarType>
++ //  void itk::VtkAbstractTransform<TScalarType>::ComputeJacobianWithRespectToPosition(const InputPointType &,
++ //                                                                                     JacobianPositionType &) const
++ //  {
+     // TODO
+-  }
++ //  }
+ 
+ } // namespace itk
+diff -Naur '--exclude=.git' mitk-2022.09.27/Modules/QtWidgets/src/QmitkMxNMultiWidget.cpp mitk-2022.09.27-modified/Modules/QtWidgets/src/QmitkMxNMultiWidget.cpp
+--- mitk-2022.09.27/Modules/QtWidgets/src/QmitkMxNMultiWidget.cpp      2022-09-27 23:54:19.000000000 -0700
++++ mitk-2022.09.27-modified/Modules/QtWidgets/src/QmitkMxNMultiWidget.cpp      2022-10-04 12:27:04.409954182 -0700
+@@ -167,7 +167,7 @@
+     return;
+   }
+ 
+-  mitk::RenderingManager::GetInstance()->InitializeViewByBoundingObjects(renderwindow->GetRenderWindow(), dataStorage);
++  mitk::RenderingManager::GetInstance()->InitializeViewByBoundingObjects(renderwindow->GetVtkRenderWindow(), dataStorage);
+ 
+   SetWidgetPlaneMode(mitk::InteractionSchemeSwitcher::MITKStandard);
+ }
+
+diff -Naur mitk-2022.09.27/CMake/PackageDepends/MITK_tinyxml2_Config.cmake mitk-2022.09.27-modified/CMake/PackageDepends/MITK_tinyxml2_Config.cmake
+--- mitk-2022.09.27/CMake/PackageDepends/MITK_tinyxml2_Config.cmake	2022-10-13 13:30:06.001969699 -0700
++++ mitk-2022.09.27-modified/CMake/PackageDepends/MITK_tinyxml2_Config.cmake	2022-10-13 13:29:07.169304440 -0700
+@@ -1 +1 @@
+-set(ALL_LIBRARIES "tinyxml2::tinyxml2")
++set(ALL_LIBRARIES "tinyxml2")
+
+
+ 

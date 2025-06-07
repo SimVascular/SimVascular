@@ -40,8 +40,12 @@
 #include <mitkNodePredicateDataType.h>
 #include <mitkStatusBar.h>
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
+
+//dp #include <berryIPreferencesService.h>
+//dp #include <berryIPreferences.h>
+
 #include <berryPlatform.h>
 
 #include <QFileDialog>
@@ -73,21 +77,23 @@ void sv4guiModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNo
 
     try
     {
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        // dp
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
+
         if (prefService)
         {
             prefs = prefService->GetSystemPreferences()->Node("/General");
         }
         else
         {
-            prefs = berry::IPreferences::Pointer(0);
+            prefs = nullptr;
         }
 
         QString lastFileOpenPath="";
-        if(prefs.IsNotNull())
+        if(prefs != nullptr)
         {
-            lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+            lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
         }
 
         if(lastFileOpenPath=="")
@@ -109,7 +115,7 @@ void sv4guiModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNo
             }
         }
 
-        QString modelFilePath = QFileDialog::getOpenFileName(NULL, tr("Load Solid Model")
+        QString modelFilePath = QFileDialog::getOpenFileName(nullptr, tr("Load Solid Model")
                                                              , lastFileOpenPath
                                                              , tr(filter.toStdString().c_str()));
 
@@ -147,7 +153,7 @@ void sv4guiModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNo
 //                items << tr("PolyData") << tr("OpenCASCADE");
 
 //                bool ok;
-//                QString item = QInputDialog::getItem(NULL, tr("Convert To"),
+//                QString item = QInputDialog::getItem(nullptr, tr("Convert To"),
 //                                                     tr("Model Type:"), items, 0, false, &ok);
 //                if (ok && !item.isEmpty())
 //                    preferredType=item;
@@ -162,19 +168,19 @@ void sv4guiModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNo
                 {
                     bool addNode=true;
                     bool ok;
-                    QString text = QInputDialog::getText(NULL, tr("Model Name"),
+                    QString text = QInputDialog::getText(nullptr, tr("Model Name"),
                                                     tr("Please give a model name:"), QLineEdit::Normal,
                                                     "", &ok);
                     std::string nodeName=text.trimmed().toStdString();
                     
                     if(nodeName==""){
-                        QMessageBox::warning(NULL,"Model Empty","Please give a model name!");
+                        QMessageBox::warning(nullptr,"Model Empty","Please give a model name!");
                         return;
                     }
                 
                     mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(nodeName.c_str(),selectedNode);
                     if(exitingNode){
-                        QMessageBox::warning(NULL,"Model Already Created","Please use a different model name!");
+                        QMessageBox::warning(nullptr,"Model Already Created","Please use a different model name!");
                         return;
                     }
                     
@@ -191,11 +197,11 @@ void sv4guiModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNo
                             bool valid = sv4guiModelUtils::CheckPolyDataSurface (modelElement->GetWholeVtkPolyData(), msg);
                             if(!valid)
                             {
-                                if (QMessageBox::question(NULL, "Triangulate Surface?", "Surface contains non-triangular elements. SimVascular does not support non-triangulated surfaces. Would you like the surface to be triangulated?",
+                                if (QMessageBox::question(nullptr, "Triangulate Surface?", "Surface contains non-triangular elements. SimVascular does not support non-triangulated surfaces. Would you like the surface to be triangulated?",
                                                           QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
                                 {
 
-                                    QMessageBox::warning(NULL, "Loaded non-triangular surface", msg.c_str());
+                                    QMessageBox::warning(nullptr, "Loaded non-triangular surface", msg.c_str());
                                 }
                                 else
                                 {
@@ -209,11 +215,11 @@ void sv4guiModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNo
                                 sv4guiModelElementPolyData* mepd=dynamic_cast<sv4guiModelElementPolyData*>(modelElement);
                                 if(mepd)
                                 {
-                                    if (QMessageBox::question(NULL, "No Face Info", "No face info found. Would you like to extract faces for the model?",
+                                    if (QMessageBox::question(nullptr, "No Face Info", "No face info found. Would you like to extract faces for the model?",
                                                               QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
                                     {
                                         bool ok;
-                                        double angle = QInputDialog::getDouble(NULL, tr("Extract Faces"),
+                                        double angle = QInputDialog::getDouble(nullptr, tr("Extract Faces"),
                                                                            tr("Separation Angle:"), 50, 0, 90, 0, &ok);
                                         if(ok)
                                         {
@@ -241,9 +247,9 @@ void sv4guiModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNo
             }
         }
 
-        if(prefs.IsNotNull())
+        if(prefs != nullptr) 
         {
-            prefs->Put("LastFileOpenPath", modelFilePath);
+            prefs->Put("LastFileOpenPath", modelFilePath.toStdString());
             prefs->Flush();
         }
 

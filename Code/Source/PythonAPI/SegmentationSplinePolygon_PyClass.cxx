@@ -48,17 +48,13 @@
 #include "sv3_Contour.h"
 #include "Segmentation_PyModule.h"
 #include "sv3_SplinePolygonContour.h"
-#include "sv_arg.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "sv_Repository.h"
-#include "sv_arg.h"
 #include "sv_misc_utils.h"
 
 #include "Python.h"
 #include "PyUtils.h"
-#include "sv2_globals.h"
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -294,7 +290,7 @@ static PyObject*
 SplinePolygonSegmentation_set_control_points(PySplinePolygonSegmentation* self, PyObject* args, PyObject *kwargs)
 {
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"control_points", NULL};
+  static char *keywords[] = {"control_points", nullptr};
   PyObject* pointsArg= nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &pointsArg)) {
@@ -342,12 +338,14 @@ static PyObject*
 SplinePolygonSegmentation_set_subdivision_params(PySplinePolygonSegmentation* self, PyObject* args, PyObject *kwargs)
 {
   auto api = PyUtilApiFunction("|sO!O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"type", "spacing", "number", NULL};
+  static char *keywords[] = {"type", "spacing", "number", nullptr};
   char* typeName = nullptr;
   PyObject* spacingArg = nullptr;
   PyObject* numberArg = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &typeName, &PyFloat_Type, &spacingArg, &PyInt_Type, &numberArg)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &typeName, 
+      &PyFloat_Type, &spacingArg, &PyLong_Type, &numberArg)) {
+  //dp if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &typeName, &PyFloat_Type, &spacingArg, &PyInt_Type, &numberArg)) 
       return nullptr;
   }
 
@@ -382,7 +380,8 @@ SplinePolygonSegmentation_set_subdivision_params(PySplinePolygonSegmentation* se
   // Set number.
   //
   if (numberArg != nullptr) {
-      auto number = PyInt_AsLong(numberArg);
+      auto number = PyLong_AsLong(numberArg);
+      //dp auto number = PyInt_AsLong(numberArg);
       // This regenerates the contour.
       contour->SetSubdivisionNumber(number);
   }
@@ -409,7 +408,7 @@ static PyObject*
 SplinePolygonSegmentation_set_subdivision_type(PySplinePolygonSegmentation* self, PyObject* args, PyObject *kwargs)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"type", NULL};
+  static char *keywords[] = {"type", nullptr};
   char* typeName = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &typeName)) {
@@ -485,7 +484,7 @@ PyMethodDef PySplinePolygonSegmentationMethods[] = {
 
  {"set_subdivision_params", (PyCFunction)SplinePolygonSegmentation_set_subdivision_params, METH_VARARGS|METH_KEYWORDS, SplinePolygonSegmentation_set_subdivision_params_doc},
 
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //---------------------------------
@@ -499,7 +498,7 @@ static int
 PySplinePolygonSegmentationInit(PySplinePolygonSegmentation* self, PyObject* args, PyObject *kwargs)
 {
   auto api = PyUtilApiFunction("|O!", PyRunTimeErr, "SplinePolygonSegmentation");
-  static char *keywords[] = {"control_points", NULL};
+  static char *keywords[] = {"control_points", nullptr};
   PyObject* pointsArg = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &pointsArg)) {
@@ -549,7 +548,7 @@ PySplinePolygonSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwd
 {
   //std::cout << "[PySplinePolygonSegmentationNew] PySplinePolygonSegmentationNew " << std::endl;
   auto self = (PySplinePolygonSegmentation*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->super.id = 2;
   }
   return (PyObject *) self;
@@ -576,7 +575,7 @@ PySplinePolygonSegmentationDealloc(PySplinePolygonSegmentation* self)
 // designated initializers.
 //
 static PyTypeObject PySplinePolygonSegmentationType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   SEGMENTATION_SPLINE_POLYGON_MODULE_CLASS,

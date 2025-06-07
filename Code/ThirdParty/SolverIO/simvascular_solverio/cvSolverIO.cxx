@@ -55,7 +55,7 @@
 
 #define FLOWSOLVER_MAGIC_NUMBER 362436
 
-cvsolverIO** cvsolverIOfp = NULL;
+cvsolverIO** cvsolverIOfp = nullptr;
 
 cvsolverIO::cvsolverIO () {
     //byte_order_;
@@ -64,13 +64,13 @@ cvsolverIO::cvsolverIO () {
     LastHeaderNotFound_ = false;
     Wrong_Endian_ = false ;
     binary_format_ = true;
-    char *mode_ = NULL;
-    char *fname_ = NULL;
+    char *mode_ = nullptr;
+    char *fname_ = nullptr;
 }
 
 cvsolverIO::~cvsolverIO () {
-    if (mode_ != NULL) delete [] mode_;
-    if (fname_ != NULL) delete [] fname_;
+    if (mode_ != nullptr) delete [] mode_;
+    if (fname_ != nullptr) delete [] fname_;
 }
 
 //
@@ -79,7 +79,7 @@ cvsolverIO::~cvsolverIO () {
 
 int cvsolverIO::openFile (const char *filename, const char *mode) {
 
-    filePointer_=Z_NULL ;
+    filePointer_=Z_nullptr ;
 
     fname_ = StringStripper( filename );
     mode_ = StringStripper( mode );
@@ -98,7 +98,7 @@ int cvsolverIO::openFile (const char *filename, const char *mode) {
     //delete [] fname;
     //delete [] imode;
 
-    if (filePointer_ == Z_NULL) {
+    if (filePointer_ == Z_nullptr) {
 
     	//temporary way to avoid print out ERROR when trying to open restart.latest.*
     	std::string nametemp(fname_);
@@ -148,7 +148,7 @@ int cvsolverIO::readHeader (const char* keyphrase,int* valueArray,
    LastHeaderKey_[0] = '\0';
 
    while (rewinded < 2) {
-     while (gzgets(filePointer_, Line_, 1024) != Z_NULL) {
+     while (gzgets(filePointer_, Line_, 1024) != Z_nullptr) {
 
          // ignore comment lines
          if (Line_[0] == '#') {
@@ -170,10 +170,10 @@ int cvsolverIO::readHeader (const char* keyphrase,int* valueArray,
          if( cscompare( keyphrase , token ) ) {
             LastHeaderKey_[0] = '\0';
             sprintf(LastHeaderKey_,"%s",keyphrase);
-            token = strtok( NULL, " ,;<>" );
+            token = strtok( nullptr, " ,;<>" );
             skip_size = 0;
             skip_size = atoi( token );
-            for( i=0;i < nItems && ( token = strtok( NULL," ,;<>") );i++) {
+            for( i=0;i < nItems && ( token = strtok( nullptr," ,;<>") );i++) {
                 valueArray[i] = atoi(token);
                 //fprintf(stdout,"integer (%i): %i\n",i,atoi(token));
             }
@@ -203,7 +203,7 @@ int cvsolverIO::readHeader (const char* keyphrase,int* valueArray,
          }
 
          // skip to next header
-         token = strtok( NULL, " ,;<>" );
+         token = strtok( nullptr, " ,;<>" );
          skip_size = atoi( token );
          if ( binary_format_ ) {
              gzseek(filePointer_,skip_size,SEEK_CUR);
@@ -239,7 +239,7 @@ int cvsolverIO::readDataBlock ( const char* keyphrase,
     char junk;
 
     // check that the file has been opened
-    if (filePointer_ == Z_NULL) {
+    if (filePointer_ == Z_nullptr) {
         fprintf(stderr,"No file associated with Descriptor \n");
         fprintf(stderr,"openfile_ function has to be called before \n");
         fprintf(stderr,"acessing the file\n");
@@ -329,7 +329,7 @@ int cvsolverIO::readDataBlock ( const char* keyphrase,
 }
 
 int cvsolverIO::readString(char* line) {
-  while (gzgets(filePointer_, line, 1024) != Z_NULL) {
+  while (gzgets(filePointer_, line, 1024) != Z_nullptr) {
         return CVSOLVER_IO_OK;
     }
     return CVSOLVER_IO_ERROR;
@@ -354,7 +354,7 @@ int cvsolverIO::writeHeader (const char* keyphrase,
     int* valueListInt;
 
     // check that the file has been opened
-    if (filePointer_ == Z_NULL) {
+    if (filePointer_ == Z_nullptr) {
         fprintf(stderr,"No file associated with Descriptor \n");
         fprintf(stderr,"openfile_ function has to be called before \n");
         fprintf(stderr,"acessing the file\n");
@@ -402,7 +402,7 @@ int cvsolverIO::writeDataBlock (const char* keyphrase,
     int n;
 
     // check that the file has been opened
-    if (filePointer_ == Z_NULL) {
+    if (filePointer_ == Z_nullptr) {
         fprintf(stderr,"No file associated with Descriptor \n");
         fprintf(stderr,"openfile_ function has to be called before \n");
         fprintf(stderr,"acessing the file\n");
@@ -571,19 +571,19 @@ int openfile_( const char* filename,
     int i;
 
     // hard code allowable number of open files to 2048
-    if (cvsolverIOfp == NULL) {
+    if (cvsolverIOfp == nullptr) {
         cvsolverIOfp = new cvsolverIO* [2048];
         for (i = 0; i < 2048; i++) {
-            cvsolverIOfp[i] = NULL;
+            cvsolverIOfp[i] = nullptr;
         }
     }
     // skip 0 so it can be returned as an error code
     for (i = 1; i < 2048; i++) {
-      if (cvsolverIOfp[i] == NULL) {
+      if (cvsolverIOfp[i] == nullptr) {
         cvsolverIOfp[i] = new cvsolverIO();
         if (cvsolverIOfp[i]->openFile(filename, mode) == CVSOLVER_IO_ERROR) {
             delete cvsolverIOfp[i];
-            cvsolverIOfp[i] = NULL;
+            cvsolverIOfp[i] = nullptr;
             *fileDescriptor = 0;
             return CVSOLVER_IO_ERROR;
         }
@@ -604,7 +604,7 @@ void closefile_( int* fileDescriptor,
                  const char* mode ) {
     cvsolverIOfp[(*fileDescriptor)]->closeFile();
     delete cvsolverIOfp[(*fileDescriptor)];
-    cvsolverIOfp[(*fileDescriptor)] = NULL;
+    cvsolverIOfp[(*fileDescriptor)] = nullptr;
     //fprintf(stdout,"file pointer (%i) closed\n",(*fileDescriptor));
     return;
 }

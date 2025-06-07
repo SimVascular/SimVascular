@@ -88,8 +88,8 @@ cvPolyData *sys_geom_DeepCopy( cvPolyData *src )
   vtkCellArray *verts, *lines, *polys, *strips;
 
   pts = VtkUtils_DeepCopyPoints( srcPd->GetPoints() );
-  if ( pts == NULL ) {
-    return NULL;
+  if ( pts == nullptr ) {
+    return nullptr;
   }
 
   verts = VtkUtils_DeepCopyCells( srcPd->GetVerts() );
@@ -166,7 +166,7 @@ int sys_geom_NumClosedLineRegions( cvPolyData *src, int *num )
   int numRegions;
 
   merged_pd = sys_geom_MergePts( src );
-  if ( merged_pd == NULL ) {
+  if ( merged_pd == nullptr ) {
     return SV_ERROR;
   }
   pd = merged_pd->GetVtkPolyData();
@@ -209,7 +209,7 @@ int sys_geom_GetClosedLineRegion( cvPolyData *src, int id, cvPolyData **dst )
 {
   cvPolyData *merged_pd;
   vtkPolyData *pd;
-  vtkPolyData *tmp = NULL;
+  vtkPolyData *tmp = nullptr;
   int numPts;
   double *pts;
   vtkIdType *lines;
@@ -221,7 +221,7 @@ int sys_geom_GetClosedLineRegion( cvPolyData *src, int id, cvPolyData **dst )
   int status = SV_ERROR;
 
   merged_pd = sys_geom_MergePts( src );
-  if ( merged_pd == NULL ) {
+  if ( merged_pd == nullptr ) {
     return SV_ERROR;
   }
   pd = merged_pd->GetVtkPolyData();
@@ -282,131 +282,6 @@ int sys_geom_GetClosedLineRegion( cvPolyData *src, int id, cvPolyData **dst )
   return SV_OK;
 }
 
-
-/* ------------- */
-/* sys_geom_Pick */
-/* ------------- */
-
-int sys_geom_Pick( cvPolyData *src, double pos[], cvPolyData **dst )
-{
-  cvPolyData *merged_pd = NULL;
-  vtkPolyData *pd = NULL;
-  vtkPolyData *tmp = NULL;
-  cvPolyData *tmpPd = NULL;
-  int numPts;
-  double *pts = NULL;
-  vtkIdType *lines = NULL;
-  int numLines;
-  int *startIxs = NULL;
-  int numRegions;
-  int *regionLines = NULL;
-  int numRegionLines;
-  int i, classification;
-  int status = SV_ERROR;
-  cvSolidModel *solid = NULL;
-  int foundOne = 0;
-
-  solid = cvSolidModel::DefaultInstantiateSolidModel();
-  if ( solid == NULL ) {
-    printf("ERR: default instantiate solid model failed\n");
-    return SV_ERROR;
-  }
-
-  merged_pd = sys_geom_MergePts( src );
-  if ( merged_pd == NULL ) {
-    printf("ERR: merge points failed failed\n");
-    return SV_ERROR;
-  }
-  pd = merged_pd->GetVtkPolyData();
-
-  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != SV_OK ) {
-    printf("ERR: VtkUtils_GetPoints failed\n");
-    return SV_ERROR;
-  }
-
-  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != SV_OK ) {
-    printf("ERR: VtkUtils_GetLines failed\n");
-    delete [] pts;
-    return SV_ERROR;
-  }
-
-  if ( VtkUtils_FindClosedLineRegions( lines, numLines, numPts,
-				       &startIxs, &numRegions ) != SV_OK ) {
-    printf("ERR: VtkUtils_FindClosedLineRegions failed\n");
-    delete [] pts;
-    delete [] lines;
-    return SV_ERROR;
-  }
-
-  // Now, foreach closed region, get an ordered list of segments,
-  // create the corresponding solid, and check for point
-  // classification of the given pos.
-
-  printf("  ------  sys_geom_Pick  ------\n");
-  printf("  >>>>>>  num closed regions [%d]\n", numRegions);
-
-  for (i = 0; i < numRegions; i++) {
-
-    if ( VtkUtils_GetClosedLineRegion( lines, numLines, startIxs[i],
-				       &regionLines, &numRegionLines )
-	 != SV_OK ) {
-      printf("ERR: VtkUtils_GetClosedLineRegion failed\n");
-      delete [] pts;
-      delete [] lines;
-      delete [] startIxs;
-      return SV_ERROR;
-    }
-
-    if ( tmp != NULL ) {
-      tmp->Delete();
-      tmp = NULL;
-    }
-
-    if ( VtkUtils_MakePolyDataFromLineIds( pts, numPts, lines, regionLines,
-					   numRegionLines, &tmp ) != SV_OK ) {
-      printf("ERR: VtkUtils_MakePolyDataFromLineIds failed\n");
-      delete [] pts;
-      delete [] lines;
-      delete [] startIxs;
-      delete [] regionLines;
-      return SV_ERROR;
-    } else {
-      solid->Clear();
-      tmpPd = new cvPolyData( tmp );
-      if ( solid->MakePoly2d( tmpPd ) == SV_OK ) {
-	if ( solid->ClassifyPt( pos[0], pos[1], 0, &classification )
-	     == SV_OK ) {
-	  if ( classification >= 0 ) {
-	    *dst = tmpPd;
-	    status = SV_OK;
-	    printf("  >>>>>>  picked region lines [%d]\n", numRegionLines);
-	    foundOne = 1;
-	    break;
-	  }
-	} else {
-	  printf("ERR: cvSolidModel::ClassifyPt failed\n");
-	}
-      } else {
-	printf("ERR: cvSolidModel::MakePoly2d failed\n");
-      }
-      delete tmpPd;
-    }
-  }
-
-  if ( ! foundOne ) {
-    printf("  >>>>>>  no closed region selected\n");
-  }
-
-  delete [] pts;
-  delete [] lines;
-  delete [] startIxs;
-  // be careful here since these objects will not exist if numRegions == 0
-  if (numRegions != NULL) delete [] regionLines;
-  if ( tmp != NULL ) tmp->Delete();
-  return status;
-}
-
-
 /* --------------- */
 /* sys_geom_Reduce */
 /* --------------- */
@@ -419,7 +294,7 @@ int sys_geom_Reduce( cvPolyData *src, double tol, cvPolyData **dst )
   int status;
 
   merged_pd = sys_geom_MergePts( src );
-  if ( merged_pd == NULL ) {
+  if ( merged_pd == nullptr ) {
     return SV_ERROR;
   }
   pd = merged_pd->GetVtkPolyData();
@@ -476,8 +351,8 @@ int sys_geom_union( cvPolyData *srcA, cvPolyData *srcB, double tolerance, cvPoly
 {
   vtkPolyData *a = srcA->GetVtkPolyData();
   vtkPolyData *b = srcB->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *dst = NULL;
+  cvPolyData *result = nullptr;
+  *dst = nullptr;
 
   try {
     vtkNew(vtkSVLoopBooleanPolyDataFilter,booleanOperator);
@@ -504,8 +379,8 @@ int sys_geom_union( cvPolyData *srcA, cvPolyData *srcB, double tolerance, cvPoly
 
 int sys_geom_all_union( cvPolyData **srcs,int numSrcs,int nointerbool,double tolerance,cvPolyData **dst )
 {
-  cvPolyData *result = NULL;
-  *dst = NULL;
+  cvPolyData *result = nullptr;
+  *dst = nullptr;
 
   vtkNew(vtkSVMultiplePolyDataIntersectionFilter,vesselInter);
   for (int i=0;i<numSrcs;i++)
@@ -540,12 +415,12 @@ int sys_geom_all_union( cvPolyData **srcs,int numSrcs,int nointerbool,double tol
 
 int sys_geom_assign_ids_based_on_faces( cvPolyData *model, cvPolyData **faces,int numFaces,int *ids,cvPolyData **dst )
 {
-  cvPolyData *result = NULL;
-  *dst = NULL;
+  cvPolyData *result = nullptr;
+  *dst = nullptr;
   vtkIdType cellId = 0;
   vtkIdType closestCell;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts;
   int subId = 0;
   double distance;
   double centroid[3];
@@ -610,8 +485,8 @@ int sys_geom_intersect( cvPolyData *srcA, cvPolyData *srcB,double tolerance, cvP
 {
   vtkPolyData *a = srcA->GetVtkPolyData();
   vtkPolyData *b = srcB->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *dst = NULL;
+  cvPolyData *result = nullptr;
+  *dst = nullptr;
 
   try {
     vtkNew(vtkSVLoopBooleanPolyDataFilter,booleanOperator);
@@ -640,8 +515,8 @@ int sys_geom_subtract( cvPolyData *srcA, cvPolyData *srcB, double tolerance,cvPo
 {
   vtkPolyData *a = srcA->GetVtkPolyData();
   vtkPolyData *b = srcB->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *dst = NULL;
+  cvPolyData *result = nullptr;
+  *dst = nullptr;
 
   try {
     vtkNew(vtkSVLoopBooleanPolyDataFilter,booleanOperator);
@@ -779,7 +654,7 @@ int sys_geom_GetOrderedPts( cvPolyData *src, double **ord_pts, int *num )
   int startIx;
 
   merged_pd = sys_geom_MergePts( src );
-  if ( merged_pd == NULL ) {
+  if ( merged_pd == nullptr ) {
     return SV_ERROR;
   }
   pd = merged_pd->GetVtkPolyData();
@@ -939,7 +814,7 @@ int sys_geom_Get2DPgon( cvPolyData *src, double **pgon, int *num )
   double bbox[6];
   double tol = 1e10 * FindMachineEpsilon();  // looser than in other places
   double *ord_pts;
-  double *rev_pts = NULL;
+  double *rev_pts = nullptr;
   double *pts;
   int i;
   int wnum;
@@ -971,7 +846,7 @@ int sys_geom_Get2DPgon( cvPolyData *src, double **pgon, int *num )
 
   // Clean up stuff:
   delete [] ord_pts;
-  if ( rev_pts != NULL ) {
+  if ( rev_pts != nullptr ) {
     delete [] rev_pts;
   }
 
@@ -1015,7 +890,7 @@ int sys_geom_WriteOrderedPts( cvPolyData *src, char *fn )
     return SV_ERROR;
   }
   fp = fopen( fn, "w" );
-  if ( fp == NULL ) {
+  if ( fp == nullptr ) {
     delete [] pts;
     return SV_ERROR;
   }
@@ -1044,7 +919,7 @@ int sys_geom_WriteOrderedPts( cvPolyData *src, char *fn )
 
   pd = src->GetVtkPolyData();
   fp = fopen( fn, "w" );
-  if ( fp == NULL ) {
+  if ( fp == nullptr ) {
     return SV_ERROR;
   }
 
@@ -1146,7 +1021,7 @@ int sys_geom_WriteLines( cvPolyData *src, char *fn )
 
   pd = src->GetVtkPolyData();
   fp = fopen( fn, "w" );
-  if ( fp == NULL ) {
+  if ( fp == nullptr ) {
     return SV_ERROR;
   }
 
@@ -1670,7 +1545,7 @@ int sys_geom_DisorientProfile( cvPolyData *src, double ppt[], double ptan[],
     printf("ERR: singular disorientation matrix\n");
     pts->Delete();
     pd->Delete();
-    *dst = NULL;
+    *dst = nullptr;
     return SV_ERROR;
   }
   coeff = 1.0 / ( a*d - b*c );
@@ -1799,12 +1674,12 @@ cvPolyData *sys_geom_Align( cvPolyData *ref, cvPolyData *src )
 
   if ( sys_geom_PolygonNormal( ref, refNrm ) != SV_OK ) {
     printf( "ERR: normal calculation for reference polygon failed\n" );
-    return NULL;
+    return nullptr;
   }
 
   if ( sys_geom_GetOrderedPts( ref, &refPts, &numRefPts ) != SV_OK ) {
     printf( "ERR: get ref ordered points failed\n" );
-    return NULL;
+    return nullptr;
   }
   refStart[0] = refPts[0];
   refStart[1] = refPts[1];
@@ -1824,7 +1699,7 @@ cvPolyData *sys_geom_Align( cvPolyData *ref, cvPolyData *src )
 
   if ( sys_geom_PolygonNormal( src, srcNrm ) != SV_OK ) {
     printf( "ERR: normal calculation for source polygon failed\n" );
-    return NULL;
+    return nullptr;
   }
 
   // If src normal opposes ref normal, then invert src.  This is
@@ -1837,7 +1712,7 @@ cvPolyData *sys_geom_Align( cvPolyData *ref, cvPolyData *src )
 
   if ( sys_geom_GetOrderedPts( src, &srcPts, &numSrcPts ) != SV_OK ) {
     printf( "ERR: get src ordered points failed\n" );
-    return NULL;
+    return nullptr;
   }
   sys_geom_AvgPt( src, srcAvg );
 
@@ -1902,13 +1777,13 @@ cvPolyData *sys_geom_ReorderPolygon( cvPolyData *src, int startIx )
 
   if ( sys_geom_GetOrderedPts( src, &srcPts, &numSrcPts ) != SV_OK ) {
     printf( "ERR: get src ordered points failed\n" );
-    return NULL;
+    return nullptr;
   }
 
   if ( ( startIx < 0 ) || ( startIx >= numSrcPts ) ) {
     printf("ERR: index %d out of range\n", startIx);
     delete [] srcPts;
-    return NULL;
+    return nullptr;
   }
 
   alignedPts = new vtkFloatingPointType [3 * numSrcPts];
@@ -1930,7 +1805,7 @@ cvPolyData *sys_geom_ReorderPolygon( cvPolyData *src, int startIx )
     printf( "ERR: poly data creation failed\n" );
     delete [] alignedPts;
     delete [] cells;
-    return NULL;
+    return nullptr;
   }
   dst = new cvPolyData( pd );
   pd->Delete();
@@ -1959,11 +1834,11 @@ cvPolyData *sys_geom_AlignByDist( cvPolyData *ref, cvPolyData *src )
   // not sure this normal stuff makes sense? nw.
   if ( sys_geom_PolygonNormal( ref, refNrm ) != SV_OK ) {
     printf( "ERR: normal calculation for reference polygon failed\n" );
-    return NULL;
+    return nullptr;
   }
   if ( sys_geom_PolygonNormal( src, srcNrm ) != SV_OK ) {
     printf( "ERR: normal calculation for source polygon failed\n" );
-    return NULL;
+    return nullptr;
   }
 
   // printf( "Aligning profile [%s]\n", src->GetName() );
@@ -1980,12 +1855,12 @@ cvPolyData *sys_geom_AlignByDist( cvPolyData *ref, cvPolyData *src )
   // Get ref and src points:
   if ( sys_geom_GetOrderedPts( ref, &refPts, &numRefPts ) != SV_OK ) {
     printf( "ERROR: get ref ordered points failed\n" );
-    return NULL;
+    return nullptr;
   }
   if ( sys_geom_GetOrderedPts( src, &srcPts, &numSrcPts ) != SV_OK ) {
     delete [] refPts;
     printf( "ERROR: get src ordered points failed\n" );
-    return NULL;
+    return nullptr;
   }
 
   // find the closest two points in 3-space between the two
@@ -2075,7 +1950,7 @@ int sys_geom_Classify( cvPolyData *obj, double pt[], int *result )
   vtkCellArray *polys;
   int numPolys;
   vtkFloatingPointType tmp[3];
-  vtkIdType *ptIds;
+  const vtkIdType *ptIds;
   vtkIdType npts;
 
   ggemsGeoPoint *verts;
@@ -2089,7 +1964,7 @@ int sys_geom_Classify( cvPolyData *obj, double pt[], int *result )
   maxVerts = polys->GetMaxCellSize();
 
   verts = new ggemsGeoPoint [maxVerts];
-  if ( verts == NULL ) {
+  if ( verts == nullptr ) {
     return SV_ERROR;
   }
 
@@ -2135,7 +2010,7 @@ int sys_geom_Classify( cvPolyData *obj, double pt[], int *result )
  * returned for points in the polygon, -1 for points outside.
  */
 
-static double *g_sys_geom_PtInPoly_pgon = NULL;
+static double *g_sys_geom_PtInPoly_pgon = nullptr;
 static int g_sys_geom_PtInPoly_num = 0;
 
 int sys_geom_PtInPoly( cvPolyData *obj, double pt[], int usePrevPoly, int *result )
@@ -2155,12 +2030,12 @@ int sys_geom_PtInPoly( cvPolyData *obj, double pt[], int usePrevPoly, int *resul
   }
 
   // lazy free of the previous polygon
-  if (g_sys_geom_PtInPoly_pgon != NULL) {
+  if (g_sys_geom_PtInPoly_pgon != nullptr) {
       delete [] g_sys_geom_PtInPoly_pgon;
-      g_sys_geom_PtInPoly_pgon = NULL;
+      g_sys_geom_PtInPoly_pgon = nullptr;
   }
 
-  double *pgon = NULL;
+  double *pgon = nullptr;
   int num = 0;
 
   int havePolygon = 0;
@@ -2197,7 +2072,7 @@ int sys_geom_PtInPoly( cvPolyData *obj, double pt[], int usePrevPoly, int *resul
 
   }
 
-  if (num == 0 || pgon == NULL) {
+  if (num == 0 || pgon == nullptr) {
       return SV_ERROR;
   }
 
@@ -2239,11 +2114,11 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts )
 
   if ( targetNumPts < 3 ) {
     printf("ERR: target # pts must be >= 3\n");
-    return NULL;
+    return nullptr;
   }
 
   merged_pd = sys_geom_MergePts( src );
-  if ( merged_pd == NULL ) {
+  if ( merged_pd == nullptr ) {
     return SV_ERROR;
   }
   pd = merged_pd->GetVtkPolyData();
@@ -2251,13 +2126,13 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts )
   // First, we just want to count the number of closed loops:
   if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != SV_OK ) {
     delete merged_pd;
-    return NULL;
+    return nullptr;
   }
 
   if ( VtkUtils_GetLines( pd, &lines, &numLines ) != SV_OK ) {
     delete merged_pd;
     delete [] pts;
-    return NULL;
+    return nullptr;
   }
   delete merged_pd;
 
@@ -2265,7 +2140,7 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts )
 				       &startIxs, &numRegions ) != SV_OK ) {
     delete [] pts;
     delete [] lines;
-    return NULL;
+    return nullptr;
   }
   delete [] startIxs;
   delete [] pts;
@@ -2273,12 +2148,12 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts )
   if ( numRegions != 1 ) {
     printf("ERR: sys_geom_sampleLoop requires input to contain exactly "
 	   "1 closed loop\n");
-    return NULL;
+    return nullptr;
   }
 
   // Now get an ordered point list:
   if ( sys_geom_GetOrderedPts( src, &pts, &numPts ) != SV_OK ) {
-    return NULL;
+    return nullptr;
   }
 
   ptsOut = new vtkFloatingPointType [3*targetNumPts];
@@ -2294,7 +2169,7 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts )
       nwpts[i][2]=pts[3*i+2];
   }
 
-  double **outPts = NULL;
+  double **outPts = nullptr;
   int closed = 1;
   if ((mathobj->linearInterpolateCurve(nwpts, numPts, closed, targetNumPts, &outPts)) == SV_ERROR) {
       mathobj->deleteArray(nwpts,numPts,3);
@@ -2302,7 +2177,7 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts )
       fprintf(stderr,"ERROR:  problems sampling curve.\n");
       delete [] ptsOut;
       delete [] linesOut;
-      return NULL;
+      return nullptr;
   }
 
   for (i = 0; i < targetNumPts; i++) {
@@ -2330,7 +2205,7 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts )
 				     targetNumPts, linesOut ) != SV_OK ) {
     delete [] ptsOut;
     delete [] linesOut;
-    return NULL;
+    return nullptr;
   }
 
   result = new cvPolyData( pdOut );
@@ -2349,8 +2224,8 @@ int sys_geom_loft_solid( cvPolyData **srcs,int numSrcs,int useLinearSampleAlongL
 		int useFFT,int numOutPtsAlongLength, int numOutPtsInSegs,
 		int numLinearPtsAlongLength,int numModes,int splineType,double bias, double tension,double continuity, cvPolyData **dst )
 {
-  cvPolyData *result = NULL;
-  *dst = NULL;
+  cvPolyData *result = nullptr;
+  *dst = nullptr;
 
   vtkNew(vtkSVLoftSplineSurface,lofter);
   for (int i=0;i<numSrcs;i++)
@@ -2394,8 +2269,8 @@ int sys_geom_loft_solid_with_nurbs(cvPolyData **srcs, int numSrcs, int uDegree,
                                    vtkSVNURBSSurface *surface,
                                    cvPolyData **dst )
 {
-  cvPolyData *result = NULL;
-  *dst = NULL;
+  cvPolyData *result = nullptr;
+  *dst = nullptr;
 
   vtkNew(vtkSVLoftNURBSSurface,lofter);
 
@@ -2443,7 +2318,7 @@ int sys_geom_loft_solid_with_nurbs(cvPolyData **srcs, int numSrcs, int uDegree,
   lofter->SetVParametricSpanType(vParametricSpanType);
   try {
     lofter->Update();
-    if (lofter->GetOutput() == NULL)
+    if (lofter->GetOutput() == nullptr)
       return SV_ERROR;
     if (lofter->GetOutput()->GetNumberOfPoints() == 0)
       return SV_ERROR;
@@ -2867,7 +2742,7 @@ int sys_geom_IntersectWithLine( cvPolyData *src, double p0[], double p1[], doubl
   vtkSmartPointer<vtkPoints> intersectionPoints =
     vtkSmartPointer<vtkPoints>::New();
   x[0]=0;x[1]=0;x[2]=0;
-  locator->IntersectWithLine(a0, a1, intersectionPoints,NULL);
+  locator->IntersectWithLine(a0, a1, intersectionPoints,nullptr);
   if (intersectionPoints->GetNumberOfPoints() == 0) {
   //if (locator->IntersectWithLine(a0,a1,tol,t,x,pcoords,subId,cellId,cell) == 0) {
       fprintf(stderr,"ERROR:  Line does not intersect vtkPolyData!\n");
@@ -2960,8 +2835,8 @@ int sys_geom_mathPointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math_sc
     vtkFloatingPointType s=0;
     vtkFloatingPointType tmpvec[3];
     vtkFloatingPointType tmps=0;
-    vtkFloatingPointArrayType *scalar = NULL;
-    vtkFloatingPointArrayType *vec = NULL;
+    vtkFloatingPointArrayType *scalar = nullptr;
+    vtkFloatingPointArrayType *vec = nullptr;
 
     // all of the pds must have the same num pts
     int numPtsA = srcA->GetVtkPolyData()->GetNumberOfPoints();
@@ -3068,8 +2943,8 @@ int sys_geom_Project( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math_scalar s
     int j = 0;
 
     vtkFloatingPointType s=0;
-    vtkFloatingPointArrayType *scalar = NULL;
-    vtkFloatingPointArrayType *vec = NULL;
+    vtkFloatingPointArrayType *scalar = nullptr;
+    vtkFloatingPointArrayType *vec = nullptr;
 
     double vx = 0.0;
     double vy = 0.0;
@@ -3150,10 +3025,10 @@ int sys_geom_Project( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math_scalar s
         ids->Delete();
         locator->Delete();
         cell->Delete();
-        if (scalar != NULL) {
+        if (scalar != nullptr) {
           scalar->Delete();
         }
-        if (vec != NULL) {
+        if (vec != nullptr) {
           vec->Delete();
         }
         return SV_ERROR;
@@ -3198,8 +3073,8 @@ int sys_geom_Project( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math_scalar s
     ids->Delete();
     locator->Delete();
     cell->Delete();
-    if (scalar != NULL) scalar->Delete();
-    if (vec != NULL) vec->Delete();
+    if (scalar != nullptr) scalar->Delete();
+    if (vec != nullptr) vec->Delete();
 
     return SV_OK;
 }
@@ -3217,8 +3092,8 @@ int sys_geom_ReplacePointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math
     int j = 0;
 
     vtkFloatingPointType s=0;
-    vtkFloatingPointArrayType *scalar = NULL;
-    vtkFloatingPointArrayType *vec = NULL;
+    vtkFloatingPointArrayType *scalar = nullptr;
+    vtkFloatingPointArrayType *vec = nullptr;
 
     double vx = 0.0;
     double vy = 0.0;
@@ -3236,9 +3111,9 @@ int sys_geom_ReplacePointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math
     }
 
     // must have scalars on srcB
-    vtkDataArray *scalarsB = NULL;
+    vtkDataArray *scalarsB = nullptr;
     scalarsB=srcB->GetVtkPolyData()->GetPointData()->GetScalars();
-    if (scalarsB == NULL) {
+    if (scalarsB == nullptr) {
         fprintf(stderr,"ERROR:  no scalars on srcB!\n");
         return SV_ERROR;
     }
@@ -3310,8 +3185,8 @@ int sys_geom_ReplacePointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math
     pd->Delete();
 
     // clean up
-    if (scalar != NULL) scalar->Delete();
-    if (vec != NULL) vec->Delete();
+    if (scalar != nullptr) scalar->Delete();
+    if (vec != nullptr) vec->Delete();
 
     return SV_OK;
 }
@@ -3341,7 +3216,7 @@ int sys_geom_ReplacePointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math
 int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,double radius,double *center,char *outarrayname,int datatype)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
-  cvPolyData *result = NULL;
+  cvPolyData *result = nullptr;
 
   /*
   fprintf(stdout,"Adding array in sphere\n");
@@ -3384,7 +3259,8 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
   else
   {
     double centroid[3];
-    vtkIdType npts,*pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     int numCells = tmp->GetNumberOfCells();
     if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) != SV_OK)
     {
@@ -3447,7 +3323,7 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
 int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char *inarrayname,int *vals,int nvals,char *outarrayname,int datatype)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
-  cvPolyData *result = NULL;
+  cvPolyData *result = nullptr;
 
   /*
   fprintf(stdout,"Adding array on face\n");
@@ -3567,7 +3443,7 @@ int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char
 int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int *vals,int nvals,char *outarrayname,int datatype)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
-  cvPolyData *result = NULL;
+  cvPolyData *result = nullptr;
 
   fprintf(stdout,"Adding array on cells\n");
   fprintf(stdout,"Target Array Name: %s\n",outarrayname);
@@ -3665,7 +3541,7 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
 int sys_geom_set_array_for_local_op_face_blend( cvPolyData *pd,cvPolyData **outpd,char *inarrayname,int *vals,int nvals,double radius,char *outarrayname,int datatype)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
-  cvPolyData *result = NULL;
+  cvPolyData *result = nullptr;
 
   /*
   fprintf(stdout,"Adding face blend\n");
@@ -3744,7 +3620,7 @@ int sys_geom_local_quadric_decimation( cvPolyData *pd,cvPolyData **outpd, double
 		char *pointarrayname, char *cellarrayname)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
-  cvPolyData *result = NULL;
+  cvPolyData *result = nullptr;
 
   /*
   fprintf(stdout,"Running local decimation\n");
@@ -3807,7 +3683,7 @@ int sys_geom_local_laplacian_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
 		double relax,char *pointarrayname, char *cellarrayname)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
-  cvPolyData *result = NULL;
+  cvPolyData *result = nullptr;
 
   /*
   fprintf(stdout,"Running local smoothing\n");
@@ -3881,7 +3757,7 @@ int sys_geom_local_constrain_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
 		double constrainfactor,int numcgsolves, char *pointarrayname, char *cellarrayname)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
-  cvPolyData *result = NULL;
+  cvPolyData *result = nullptr;
 
   /*
   fprintf(stdout,"Running local smoothing\n");
@@ -3953,7 +3829,7 @@ int sys_geom_local_linear_subdivision( cvPolyData *pd,cvPolyData **outpd, int nu
 		char *pointarrayname, char *cellarrayname)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
-  cvPolyData *result = NULL;
+  cvPolyData *result = nullptr;
 
   /*
   fprintf(stdout,"Running local subdivision\n");
@@ -4015,7 +3891,7 @@ int sys_geom_local_butterfly_subdivision( cvPolyData *pd,cvPolyData **outpd, int
 		char *pointarrayname, char *cellarrayname)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
-  cvPolyData *result = NULL;
+  cvPolyData *result = nullptr;
 
   /*
   fprintf(stdout,"Running local subdivision\n");
@@ -4077,7 +3953,7 @@ int sys_geom_local_loop_subdivision( cvPolyData *pd,cvPolyData **outpd, int numi
 		char *pointarrayname, char *cellarrayname)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
-  cvPolyData *result = NULL;
+  cvPolyData *result = nullptr;
 
   /*
   fprintf(stdout,"Running local subdivision\n");
@@ -4142,7 +4018,7 @@ int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numblenditers,
 		char *pointarrayname, char *cellarrayname)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
-  cvPolyData *result = NULL;
+  cvPolyData *result = nullptr;
 
   /*
   fprintf(stdout,"Running local subdivision\n");
@@ -4211,8 +4087,8 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
 		int *numfaces)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *outpd = NULL;
+  cvPolyData *result = nullptr;
+  *outpd = nullptr;
 
   int *capone;
   int *captwo;
@@ -4250,7 +4126,9 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
   for (int i = 0; i < facemax; i++)
   {
     double facecaprange[2];
-    vtkNew(vtkThreshold,threshold1);
+    auto threshold_surface = VtkUtils_ThresholdSurface(i+1.0, i+1.0, "ModelFaceID", geom);
+    /* dp
+    vtkNew(vtkThreshold, threshold1);
     threshold1->SetInputData(geom);
     threshold1->SetInputArrayToProcess(0,0,0,1,"ModelFaceID");
     threshold1->ThresholdBetween(i+1,i+1);
@@ -4259,10 +4137,12 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
     vtkNew(vtkDataSetSurfaceFilter,surfacer);
     surfacer->SetInputData(threshold1->GetOutput());
     surfacer->Update();
+    */
 
-    vtkNew(vtkIntArray,modelfacecaps);
+    vtkNew(vtkIntArray, modelfacecaps);
 
-    if (VtkUtils_PDCheckArrayName(surfacer->GetOutput(),1,"CapID") != SV_OK)
+    if (VtkUtils_PDCheckArrayName(threshold_surface, 1, "CapID") != SV_OK)
+    //dp if (VtkUtils_PDCheckArrayName(surfacer->GetOutput(),1,"CapID") != SV_OK)
     {
       fprintf(stderr,"Second\n");
       fprintf(stderr,"CapID Array is not on the surface\n");
@@ -4270,12 +4150,16 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
       delete [] captwo;
       return SV_ERROR;
     }
-    modelfacecaps = vtkIntArray::SafeDownCast(surfacer->GetOutput()->
-	GetCellData()->GetArray("CapID"));
+
+    modelfacecaps = vtkIntArray::SafeDownCast(threshold_surface->GetCellData()->GetArray("CapID"));
+    //dp modelfacecaps = vtkIntArray::SafeDownCast(surfacer->GetOutput()->GetCellData()->GetArray("CapID"));
+
     capone[i] = 0;
     captwo[i] = 0;
     (*doublecaps)[i] = 0;
-    for (int j = 0; j < surfacer->GetOutput()->GetNumberOfCells();j++)
+
+    for (int j = 0; j < threshold_surface->GetNumberOfCells();j++)
+    //dp for (int j = 0; j < surfacer->GetOutput()->GetNumberOfCells();j++)
     {
       if (modelfacecaps->GetValue(j) == 1)
         capone[i] = 1;

@@ -54,7 +54,7 @@ sv4guiPathCreate::sv4guiPathCreate(mitk::DataStorage::Pointer dataStorage, mitk:
     , m_SelecteNode(selectedNode)
     , m_TimeStep(timeStep)
     , m_CreatePath(true)
-    , m_PathFolderNode(NULL)
+    , m_PathFolderNode(nullptr)
     , m_UpdateNumberSpacing(true)
 {
     m_Interface=new sv4guiDataNodeOperationInterface;
@@ -69,7 +69,7 @@ sv4guiPathCreate::sv4guiPathCreate(mitk::DataStorage::Pointer dataStorage, mitk:
 
     mitk::NodePredicateDataType::Pointer isPathFolder = mitk::NodePredicateDataType::New("sv4guiPathFolder");
     mitk::NodePredicateDataType::Pointer isPathNode = mitk::NodePredicateDataType::New("sv4guiPath");
-    mitk::DataNode::Pointer pathNode=NULL;
+    mitk::DataNode::Pointer pathNode=nullptr;
 
     if(m_SelecteNode.IsNull())
     {
@@ -89,7 +89,8 @@ sv4guiPathCreate::sv4guiPathCreate(mitk::DataStorage::Pointer dataStorage, mitk:
         }
     }
 
-    move(400,400);
+    std::cout << "for some reason the move method makes the object disappear" << std::endl << std::flush;
+    // move(400,400);
 }
 
 sv4guiPathCreate::~sv4guiPathCreate()
@@ -165,24 +166,24 @@ void sv4guiPathCreate::CreatePath()
         auto pname = ui->lineEditPathName->text().trimmed();
         QString msg = "The name '" + pname + "' is not valid.\n" + 
                       "Path names " + validName + ".\n"; 
-        QMessageBox::warning(NULL, "Path", msg); 
+        QMessageBox::warning(nullptr, "Path", msg); 
         return;
     }
 
     if(m_CreatePath) {
         if(pathName==""){
-            QMessageBox::warning(NULL,"Path Empty","Please give a path name!");
+            QMessageBox::warning(nullptr,"Path Empty","Please give a path name!");
             return;
         }
 
-        mitk::DataNode::Pointer exitingNode=NULL;
+        mitk::DataNode::Pointer exitingNode=nullptr;
         if(m_PathFolderNode.IsNull())
             exitingNode=m_DataStorage->GetNamedNode(pathName);
         else
             exitingNode=m_DataStorage->GetNamedDerivedNode(pathName.c_str(),m_PathFolderNode);
 
         if(exitingNode){
-            QMessageBox::warning(NULL,"Path Already Created","Please use a different path name!");
+            QMessageBox::warning(nullptr,"Path Already Created","Please use a different path name!");
             return;
         }
     }
@@ -193,18 +194,18 @@ void sv4guiPathCreate::CreatePath()
 
     int subdivisionNum=ui->lineEditNumber->text().trimmed().toInt(&ok);
     if(currentIndex==0 && (!ok || subdivisionNum<2)){
-        QMessageBox::warning(NULL,"Total Point Number Not Valid","Please give a valid number >= 2!");
+        QMessageBox::warning(nullptr,"Total Point Number Not Valid","Please give a valid number >= 2!");
         return;
     }
     if(currentIndex==1 && (!ok || subdivisionNum<1)){
-        QMessageBox::warning(NULL,"Subdivision Number Not Valid","Please give a valid number >= 1!");
+        QMessageBox::warning(nullptr,"Subdivision Number Not Valid","Please give a valid number >= 1!");
         return;
     }
 
     ok=false;
     double spacing=ui->lineEditNumber->text().trimmed().toDouble(&ok);
     if(currentIndex==2 && (!ok || spacing<=0)){
-        QMessageBox::warning(NULL,"Spacing Not Valid","Please give a valid value > 0!");
+        QMessageBox::warning(nullptr,"Spacing Not Valid","Please give a valid value > 0!");
         return;
     }
 

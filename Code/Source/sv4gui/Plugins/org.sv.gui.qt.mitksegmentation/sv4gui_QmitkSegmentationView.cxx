@@ -51,7 +51,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include "mitkSegTool2D.h"
 #include "mitkStatusBar.h"
 
-#include "QmitkNewSegmentationDialog.h"
+//#include "QmitkNewSegmentationDialog.h"
 #include <QmitkSegmentationOrganNamesHandling.cpp>
 
 #include <QMessageBox>
@@ -205,7 +205,8 @@ void QmitkSegmentationView::RenderWindowPartActivated(mitk::IRenderWindowPart* r
     controllers.push_back(renderWindowPart->GetQmitkRenderWindow("axial")->GetSliceNavigationController());
     controllers.push_back(renderWindowPart->GetQmitkRenderWindow("sagittal")->GetSliceNavigationController());
     controllers.push_back(renderWindowPart->GetQmitkRenderWindow("coronal")->GetSliceNavigationController());
-    m_Controls->m_SlicesInterpolator->Initialize(toolManager, controllers);
+    // [TODO:DaveP] not sure how to convert this.
+    //dp m_Controls->m_SlicesInterpolator->Initialize(toolManager, controllers);
   }
 }
 
@@ -218,7 +219,7 @@ void QmitkSegmentationView::RenderWindowPartDeactivated(mitk::IRenderWindowPart*
   }
 }
 
-void QmitkSegmentationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
+void QmitkSegmentationView::OnPreferencesChanged(const mitk::IPreferences* prefs)
 {
    if (m_Controls != nullptr)
    {
@@ -236,6 +237,9 @@ void QmitkSegmentationView::OnPreferencesChanged(const berry::IBerryPreferences*
 
 void QmitkSegmentationView::CreateNewSegmentation()
 {
+// [TODO] [DaveP] convert this later.
+//
+#ifdef use 
    mitk::DataNode::Pointer node = mitk::ToolManagerProvider::GetInstance()->GetToolManager()->GetReferenceData(0);
    if (node.IsNotNull())
    {
@@ -245,10 +249,13 @@ void QmitkSegmentationView::CreateNewSegmentation()
        if (image->GetDimension() > 1)
        {
          // ask about the name and organ type of the new segmentation
-         QmitkNewSegmentationDialog* dialog = new QmitkNewSegmentationDialog(m_Parent); // needs a QWidget as parent, "this" is not QWidget
+         //dp QmitkNewSegmentationDialog* dialog = new QmitkNewSegmentationDialog(m_Parent); // needs a QWidget as parent, "this" is not QWidget
          QStringList organColors = mitk::OrganNamesHandling::GetDefaultOrganColorString();;
 
-         dialog->SetSuggestionList(organColors);
+         
+         std::cout << "organColors does not exist anymore" << std::endl << std::flush;
+         exit(1);
+        //  dialog->SetSuggestionList(organColors);
 
          int dialogReturnValue = dialog->exec();
          if (dialogReturnValue == QDialog::Rejected)
@@ -265,40 +272,42 @@ void QmitkSegmentationView::CreateNewSegmentation()
          {
            try
            {
-             std::string newNodeName = dialog->GetSegmentationName().toStdString();
-             if (newNodeName.empty())
-             {
-               newNodeName = "no_name";
-             }
+             std::cout << "GetSegmentationName doesn't exist anymore" << std::endl << std::flush;
+             exit(1);
+            //  std::string newNodeName = dialog->GetSegmentationName().toStdString();
+            //  if (newNodeName.empty())
+            //  {
+            //    newNodeName = "no_name";
+            //  }
 
-             mitk::DataNode::Pointer emptySegmentation = firstTool->CreateEmptySegmentationNode(image, newNodeName, dialog->GetColor());
-             // initialize showVolume to false to prevent recalculating the volume while working on the segmentation
-             emptySegmentation->SetProperty("showVolume", mitk::BoolProperty::New(false));
-             if (!emptySegmentation)
-             {
-               return; // could be aborted by user
-             }
+            //  mitk::DataNode::Pointer emptySegmentation = firstTool->CreateEmptySegmentationNode(image, newNodeName, dialog->GetColor());
+            //  // initialize showVolume to false to prevent recalculating the volume while working on the segmentation
+            //  emptySegmentation->SetProperty("showVolume", mitk::BoolProperty::New(false));
+            //  if (!emptySegmentation)
+            //  {
+            //    return; // could be aborted by user
+            //  }
 
-             mitk::OrganNamesHandling::UpdateOrganList(organColors, dialog->GetSegmentationName(), dialog->GetColor());
+            //  mitk::OrganNamesHandling::UpdateOrganList(organColors, dialog->GetSegmentationName(), dialog->GetColor());
 
-             // escape ';' here (replace by '\;'), see longer comment above
-             QString stringForStorage = organColors.replaceInStrings(";", "\\;").join(";");
-             MITK_DEBUG << "Will store: " << stringForStorage;
-             this->GetPreferences()->Put("Organ-Color-List", stringForStorage);
-             this->GetPreferences()->Flush();
+            //  // escape ';' here (replace by '\;'), see longer comment above
+            //  QString stringForStorage = organColors.replaceInStrings(";", "\\;").join(";");
+            //  MITK_DEBUG << "Will store: " << stringForStorage;
+            //  this->GetPreferences()->Put("Organ-Color-List", stringForStorage);
+            //  this->GetPreferences()->Flush();
 
-             if (mitk::ToolManagerProvider::GetInstance()->GetToolManager()->GetWorkingData(0))
-             {
-               mitk::ToolManagerProvider::GetInstance()->GetToolManager()->GetWorkingData(0)->SetSelected(false);
-             }
-             emptySegmentation->SetSelected(true);
-             this->GetDataStorage()->Add(emptySegmentation, node); // add as a child, because the segmentation "derives" from the original
+            //  if (mitk::ToolManagerProvider::GetInstance()->GetToolManager()->GetWorkingData(0))
+            //  {
+            //    mitk::ToolManagerProvider::GetInstance()->GetToolManager()->GetWorkingData(0)->SetSelected(false);
+            //  }
+            //  emptySegmentation->SetSelected(true);
+            //  this->GetDataStorage()->Add(emptySegmentation, node); // add as a child, because the segmentation "derives" from the original
 
-             this->FireNodeSelected(emptySegmentation);
-             this->OnSelectionChanged(emptySegmentation);
+            //  this->FireNodeSelected(emptySegmentation);
+            //  this->OnSelectionChanged(emptySegmentation);
 
-             m_Controls->segImageSelector->SetSelectedNode(emptySegmentation);
-             mitk::RenderingManager::GetInstance()->InitializeViews(emptySegmentation->GetData()->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true);
+            //  m_Controls->segImageSelector->SetSelectedNode(emptySegmentation);
+            //  mitk::RenderingManager::GetInstance()->InitializeViews(emptySegmentation->GetData()->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true);
            }
            catch (const std::bad_alloc&)
            {
@@ -316,6 +325,8 @@ void QmitkSegmentationView::CreateNewSegmentation()
    {
      MITK_ERROR << "'Create new segmentation' button should never be clickable unless a patient image is selected...";
    }
+
+#endif
 }
 
 void QmitkSegmentationView::OnVisiblePropertyChanged()
@@ -378,6 +389,8 @@ void QmitkSegmentationView::OnBinaryPropertyChanged()
 
 void QmitkSegmentationView::NodeAdded(const mitk::DataNode *node)
 {
+// [TODO:DaveP] convert this later.
+#ifdef use 
   if (!m_IsOfTypeImagePredicate->CheckNode(node))
   {
     return;
@@ -392,6 +405,7 @@ void QmitkSegmentationView::NodeAdded(const mitk::DataNode *node)
   m_BinaryPropertyObserverTags.insert(std::pair<mitk::DataNode*, unsigned long>(const_cast<mitk::DataNode*>(node), node->GetProperty("binary")->AddObserver(itk::ModifiedEvent(), command2)));
 
   ApplyDisplayOptions(const_cast<mitk::DataNode*>(node));
+#endif
 }
 
 void QmitkSegmentationView::NodeRemoved(const mitk::DataNode* node)
@@ -426,7 +440,8 @@ void QmitkSegmentationView::NodeRemoved(const mitk::DataNode* node)
     }
 
     mitk::Image* image = dynamic_cast<mitk::Image*>(node->GetData());
-    mitk::SurfaceInterpolationController::GetInstance()->RemoveInterpolationSession(image);
+    // [TODO] [DaveP] Could not find this symbol so I commented this out.
+    // mitk::SurfaceInterpolationController::GetInstance()->RemoveInterpolationSession(image);
   }
   mitk::DataNode* tempNode = const_cast<mitk::DataNode*>(node);
   //Since the binary property could be changed during runtime by the user
@@ -712,55 +727,57 @@ void QmitkSegmentationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*
 void QmitkSegmentationView::OnContourMarkerSelected(const mitk::DataNode *node)
 {
    QmitkRenderWindow* selectedRenderWindow = 0;
-   QmitkRenderWindow* axialRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("axial");
-   QmitkRenderWindow* sagittalRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("sagittal");
-   QmitkRenderWindow* coronalRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("coronal");
-   QmitkRenderWindow* _3DRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("3d");
-   bool PlanarFigureInitializedWindow = false;
+   std::cout << "OPEN does not exist anymore" << std::endl << std::flush;
+   exit(1);
+  //  QmitkRenderWindow* axialRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("axial");
+  //  QmitkRenderWindow* sagittalRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("sagittal");
+  //  QmitkRenderWindow* coronalRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("coronal");
+  //  QmitkRenderWindow* _3DRenderWindow = GetRenderWindowPart(OPEN)->GetQmitkRenderWindow("3d");
+  //  bool PlanarFigureInitializedWindow = false;
 
-   // find initialized renderwindow
-   if (node->GetBoolProperty("PlanarFigureInitializedWindow",
-      PlanarFigureInitializedWindow, axialRenderWindow->GetRenderer()))
-   {
-      selectedRenderWindow = axialRenderWindow;
-   }
-   if (!selectedRenderWindow && node->GetBoolProperty(
-      "PlanarFigureInitializedWindow", PlanarFigureInitializedWindow,
-      sagittalRenderWindow->GetRenderer()))
-   {
-      selectedRenderWindow = sagittalRenderWindow;
-   }
-   if (!selectedRenderWindow && node->GetBoolProperty(
-      "PlanarFigureInitializedWindow", PlanarFigureInitializedWindow,
-      coronalRenderWindow->GetRenderer()))
-   {
-      selectedRenderWindow = coronalRenderWindow;
-   }
-   if (!selectedRenderWindow && node->GetBoolProperty(
-      "PlanarFigureInitializedWindow", PlanarFigureInitializedWindow,
-      _3DRenderWindow->GetRenderer()))
-   {
-      selectedRenderWindow = _3DRenderWindow;
-   }
+  //  // find initialized renderwindow
+  //  if (node->GetBoolProperty("PlanarFigureInitializedWindow",
+  //     PlanarFigureInitializedWindow, axialRenderWindow->GetRenderer()))
+  //  {
+  //     selectedRenderWindow = axialRenderWindow;
+  //  }
+  //  if (!selectedRenderWindow && node->GetBoolProperty(
+  //     "PlanarFigureInitializedWindow", PlanarFigureInitializedWindow,
+  //     sagittalRenderWindow->GetRenderer()))
+  //  {
+  //     selectedRenderWindow = sagittalRenderWindow;
+  //  }
+  //  if (!selectedRenderWindow && node->GetBoolProperty(
+  //     "PlanarFigureInitializedWindow", PlanarFigureInitializedWindow,
+  //     coronalRenderWindow->GetRenderer()))
+  //  {
+  //     selectedRenderWindow = coronalRenderWindow;
+  //  }
+  //  if (!selectedRenderWindow && node->GetBoolProperty(
+  //     "PlanarFigureInitializedWindow", PlanarFigureInitializedWindow,
+  //     _3DRenderWindow->GetRenderer()))
+  //  {
+  //     selectedRenderWindow = _3DRenderWindow;
+  //  }
 
-   // make node visible
-   if (selectedRenderWindow)
-   {
-      std::string nodeName = node->GetName();
-      unsigned int t = nodeName.find_last_of(" ");
-      unsigned int id = atof(nodeName.substr(t+1).c_str())-1;
+  //  // make node visible
+  //  if (selectedRenderWindow)
+  //  {
+  //     std::string nodeName = node->GetName();
+  //     unsigned int t = nodeName.find_last_of(" ");
+  //     unsigned int id = atof(nodeName.substr(t+1).c_str())-1;
 
-      {
-         ctkPluginContext* context = mitk::PluginActivator::getContext();
-         ctkServiceReference ppmRef = context->getServiceReference<mitk::PlanePositionManagerService>();
-         mitk::PlanePositionManagerService* service = context->getService<mitk::PlanePositionManagerService>(ppmRef);
-         selectedRenderWindow->GetSliceNavigationController()->ExecuteOperation(service->GetPlanePosition(id));
-         context->ungetService(ppmRef);
-      }
+  //     {
+  //        ctkPluginContext* context = mitk::PluginActivator::getContext();
+  //        ctkServiceReference ppmRef = context->getServiceReference<mitk::PlanePositionManagerService>();
+  //        mitk::PlanePositionManagerService* service = context->getService<mitk::PlanePositionManagerService>(ppmRef);
+  //        selectedRenderWindow->GetSliceNavigationController()->ExecuteOperation(service->GetPlanePosition(id));
+  //        context->ungetService(ppmRef);
+  //     }
 
-      selectedRenderWindow->GetRenderer()->GetCameraController()->Fit();
-      mitk::RenderingManager::GetInstance()->RequestUpdateAll();
-   }
+  //     selectedRenderWindow->GetRenderer()->GetCameraController()->Fit();
+  //     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+  //  }
 }
 
 void QmitkSegmentationView::OnTabWidgetChanged(int id)
@@ -1035,7 +1052,7 @@ void QmitkSegmentationView::CreateQtPartControl(QWidget* parent)
    m_Controls->m_ManualToolSelectionBox2D->SetToolGUIArea( m_Controls->m_ManualToolGUIContainer2D );
    m_Controls->m_ManualToolSelectionBox2D->SetDisplayedToolGroups(tr("Add Subtract Correction Paint Wipe 'Region Growing' Fill Erase 'Live Wire' '2D Fast Marching'").toStdString());
    m_Controls->m_ManualToolSelectionBox2D->SetLayoutColumns(3);
-   m_Controls->m_ManualToolSelectionBox2D->SetEnabledMode( QmitkToolSelectionBox::EnabledWithReferenceAndWorkingDataVisible );
+  
    connect( m_Controls->m_ManualToolSelectionBox2D, SIGNAL(ToolSelected(int)), this, SLOT(OnManualTool2DSelected(int)) );
 
    //setup 3D Tools
@@ -1045,7 +1062,6 @@ void QmitkSegmentationView::CreateQtPartControl(QWidget* parent)
    //specify tools to be added to 3D Tool area
    m_Controls->m_ManualToolSelectionBox3D->SetDisplayedToolGroups(tr("Threshold 'UL Threshold' Otsu 'Fast Marching 3D' 'Region Growing 3D' Watershed Picking").toStdString());
    m_Controls->m_ManualToolSelectionBox3D->SetLayoutColumns(3);
-   m_Controls->m_ManualToolSelectionBox3D->SetEnabledMode( QmitkToolSelectionBox::EnabledWithReferenceAndWorkingDataVisible );
 
    //Hide 3D selection box, show 2D selection box
    m_Controls->m_ManualToolSelectionBox3D->hide();

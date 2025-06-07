@@ -111,7 +111,7 @@ static PyObject *
 SegmentationSeries_get_num_segmentations(PySegmentationSeries* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("|i", PyRunTimeErr, __func__);
-  static char *keywords[] = {"time", NULL};
+  static char *keywords[] = {"time", nullptr};
   int time = 0;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &time)) {
@@ -177,7 +177,7 @@ static PyObject *
 SegmentationSeries_get_segmentation(PySegmentationSeries* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("i|i", PyRunTimeErr, __func__);
-  static char *keywords[] = {"id", "time", NULL};
+  static char *keywords[] = {"id", "time", nullptr};
   int id = 0;
   int time = 0;
 
@@ -288,7 +288,7 @@ static PyObject *
 SegmentationSeries_write(PySegmentationSeries* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  char* fileName = NULL;
+  char* fileName = nullptr;
 
   if (!PyArg_ParseTuple(args, api.format, &fileName)) {
       return api.argsError();
@@ -333,7 +333,7 @@ static PyMethodDef PySegmentationSeriesMethods[] = {
 
   {"write", (PyCFunction)SegmentationSeries_write, METH_VARARGS, SegmentationSeries_write_doc},
 
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //--------------------------
@@ -345,7 +345,7 @@ static PyMethodDef PySegmentationSeriesMethods[] = {
 // designated initializers.
 //
 static PyTypeObject PySegmentationSeriesType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   SEGMENTATION_SERIES_MODULE_CLASS,
   sizeof(PySegmentationSeries)
 };
@@ -419,7 +419,7 @@ static PyObject *
 PySegmentationSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   auto self = (PySegmentation*)type->tp_alloc(type, 0);
-  if (self == NULL) {
+  if (self == nullptr) {
       std::cout << "[PySegmentationSeriesNew] ERROR: Can't allocate type." << std::endl;
       return nullptr;
   }
@@ -477,7 +477,7 @@ SV_EXPORT_PYTHON_API PyObject *
 CreatePySegmentationSeries(sv4guiContourGroup::Pointer contourGroup)
 {
   //std::cout << "[CreatePySegmentationSeries] Create ContourGroup object ... " << std::endl;
-  auto contourGroupObj = PyObject_CallObject((PyObject*)&PySegmentationSeriesType, NULL);
+  auto contourGroupObj = PyObject_CallObject((PyObject*)&PySegmentationSeriesType, nullptr);
   auto pyContourGroup = (PySegmentationSeries*)contourGroupObj;
 
   if (contourGroup != nullptr) {

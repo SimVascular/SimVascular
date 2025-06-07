@@ -50,6 +50,7 @@ std::vector<std::string> sv4guiStringUtils::split(const std::string &s, char del
     return elems;
 }
 
+/*dp 
 std::string sv4guiStringUtils::ltrim(std::string s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(),
             std::not1(std::ptr_fun<int, int>(std::isspace))));
@@ -70,3 +71,4 @@ std::string sv4guiStringUtils::lower(std::string s) {
     std::transform(s.begin(), s.end(), s.begin(), ::tolower);
     return s;
 }
+*/

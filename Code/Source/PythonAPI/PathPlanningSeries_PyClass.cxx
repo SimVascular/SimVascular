@@ -186,7 +186,7 @@ PathSeries_get_path(PyPathSeries* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("|i", PyRunTimeErr, __func__);
   int index = 0;
-  char* pathName = NULL;
+  char* pathName = nullptr;
 
   if (!PyArg_ParseTuple(args, api.format, &index)) {
      return api.argsError();
@@ -366,7 +366,7 @@ static PyObject *
 PathSeries_set_path(PyPathSeries* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O!I", PyRunTimeErr, __func__);
-  static char *keywords[] = {"path", "time", NULL};
+  static char *keywords[] = {"path", "time", nullptr};
   PyObject* pathArg;
   int timeStep = -2;
 
@@ -620,7 +620,7 @@ static PyObject *
 PathSeries_write(PyPathSeries* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  char* fileName = NULL;
+  char* fileName = nullptr;
 
   if (!PyArg_ParseTuple(args, api.format, &fileName)) {
       return api.argsError();
@@ -710,7 +710,7 @@ static PyMethodDef PyPathSeriesMethods[] = {
 
   {"write", (PyCFunction)PathSeries_write, METH_VARARGS, PathSeries_write_doc},
 
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //------------------
@@ -722,7 +722,7 @@ static PyMethodDef PyPathSeriesMethods[] = {
 // designated initializers.
 //
 static PyTypeObject PyPathSeriesType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   PATHPLANNINNG_SERIES_MODULE_CLASS,
@@ -786,7 +786,7 @@ PyPathSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyPathSeriesNew] PyPathSeriesNew " << std::endl;
   auto self = (PyPath*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       self->id = 1;
   }
   return (PyObject*)self;
@@ -838,7 +838,7 @@ PyObject *
 CreatePyPathSeries(PathGroup* pathGroup)
 {
   //std::cout << "[CreatePyPathSeries] Create PathSeries object ... " << std::endl;
-  auto pathPathsObj = PyObject_CallObject((PyObject*)&PyPathSeriesType, NULL);
+  auto pathPathsObj = PyObject_CallObject((PyObject*)&PyPathSeriesType, nullptr);
   auto pyPathSeries = (PyPathSeries*)pathPathsObj;
 
   if (pathGroup != nullptr) {

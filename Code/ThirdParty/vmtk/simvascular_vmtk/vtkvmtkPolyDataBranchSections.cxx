@@ -20,6 +20,7 @@ Version:   $Revision: 1.1 $
 =========================================================================*/
 
 #include "vtkvmtkPolyDataBranchSections.h"
+#include "vtkDelaunay2D.h"
 #include "vtkPolyData.h"
 #include "vtkPolyLine.h"
 #include "vtkPolygon.h"
@@ -477,26 +478,27 @@ void vtkvmtkPolyDataBranchSections::ComputeBranchSections(vtkPolyData* input, in
 
     vtkPolyData* section = vtkPolyData::New();
     bool closed = false;
-    this->ExtractCylinderSection(cylinder,averagePoint,averageTangent,section,closed);
+    this->ExtractSurfaceSection(cylinder, averagePoint, averageTangent, section, closed);
 
     section->BuildCells();
-    if (section->GetNumberOfCells() == 0)
+    if (section->GetNumberOfCells() == 0) {
     	continue;
-    vtkPolygon* sectionPolygon = vtkPolygon::SafeDownCast(section->GetCell(0));
+    }
     
     vtkPoints* sectionCellPoints = section->GetCell(0)->GetPoints();
     int numberOfSectionCellPoints = sectionCellPoints->GetNumberOfPoints();
     branchSectionPolys->InsertNextCell(numberOfSectionCellPoints);
     int k;
+
     for (k=0; k<numberOfSectionCellPoints; k++)
     {
       vtkIdType branchPointId = branchSectionPoints->InsertNextPoint(sectionCellPoints->GetPoint(k));
       branchSectionPolys->InsertCellPoint(branchPointId);
     }
     
-    double area = this->ComputeBranchSectionArea(sectionPolygon);
+    double area = this->ComputeBranchSectionArea(section);
     double sizeRange[2];
-    double shape = this->ComputeBranchSectionShape(sectionPolygon,averagePoint,sizeRange);
+    double shape = this->ComputeBranchSectionShape(section,averagePoint,sizeRange);
 
     branchSectionGroupIdsArray->InsertNextValue(groupId);
     branchSectionAreaArray->InsertNextValue(area);
@@ -509,185 +511,104 @@ void vtkvmtkPolyDataBranchSections::ComputeBranchSections(vtkPolyData* input, in
     groupCellIds->Delete();
     cylinder->Delete();
     section->Delete();
-    sectionPolygon->Delete();
+    section->Delete();
     }  
 }
 
-void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder, double origin[3], double normal[3], vtkPolyData* section, bool & closed)
+//-----------------------
+// ExtractSurfaceSection
+//-----------------------
+// Extract a cross section of the model surface at centerline point.
+//
+// The cross section is returned as a vtkPolyData object with lines.
+//
+void vtkvmtkPolyDataBranchSections::ExtractSurfaceSection(vtkPolyData* cylinder, double origin[3], double normal[3], vtkPolyData* section, bool & closed)
 {
+  #define n_debug_ExtractSurfaceSection
+  #ifdef debug_ExtractSurfaceSection
+  std::string msg("[vtkvmtkPolyDataBranchSections::ExtractSurfaceSection] ");
+  std::cout << msg << "========== ExtractSurfaceSection ==========" << std::endl;
+  std::cout << msg << "cylinder: " << cylinder << std::endl;
+  std::cout << msg << "origin: " << origin[0] << " " << origin[1] << " "<< origin[2] << " "  << std::endl;
+  std::cout << msg << "normal: " << normal[0] << " " << normal[1] << " "<< normal[2] << " "  << std::endl;
+  #endif
+
   vtkNew(vtkPlane, plane);
   plane->SetOrigin(origin);
   plane->SetNormal(normal);
 
   vtkNew(vtkCutter, cutter);
-#if (VTK_MAJOR_VERSION <= 5)
-  cutter->SetInput(cylinder);
-#else
   cutter->SetInputData(cylinder);
-#endif
   cutter->SetCutFunction(plane);
   cutter->GenerateCutScalarsOn();
   cutter->SetValue(0,0.0);
   cutter->Update();
 
   vtkNew(vtkCleanPolyData, cleaner);
-#if (VTK_MAJOR_VERSION <= 5)
-  cleaner->SetInput(cutter->GetOutput());
-#else
   cleaner->SetInputConnection(cutter->GetOutputPort());
-#endif
   cleaner->Update();
 
-  if (cleaner->GetOutput()->GetNumberOfPoints() == 0)
-    {
+  if (cleaner->GetOutput()->GetNumberOfPoints() == 0) {
     return;
-    }
+  }
 
   vtkNew(vtkPolyDataConnectivityFilter, connectivityFilter);
-#if (VTK_MAJOR_VERSION <= 5)
-  connectivityFilter->SetInput(cleaner->GetOutput());
-#else
   connectivityFilter->SetInputConnection(cleaner->GetOutputPort());
-#endif
   connectivityFilter->SetExtractionModeToClosestPointRegion();
   connectivityFilter->SetClosestPoint(origin);
   connectivityFilter->Update();
 
   section->DeepCopy(connectivityFilter->GetOutput());
-#if (VTK_MAJOR_VERSION <= 5)
-  section->Update();
-#endif
-
-  // TODO: manually reconstruct single cell line from connectivity output
-
-  if (section->GetNumberOfCells() == 0)
-    {
-    return;
-    }
-
   section->BuildCells();
   section->BuildLinks();
+  #ifdef debug_ExtractSurfaceSection
+  std::cout << msg << "section->GetNumberOfCells(): " << section->GetNumberOfCells() << std::endl;
+  #endif
 
-  // find first point
+  if (section->GetNumberOfCells() == 0) {
+    return;
+  }
 
-  int numberOfLinePoints = section->GetNumberOfPoints();
-
-  unsigned short ncells;
-  vtkIdType* cells;
-  vtkIdType npts, *pts;
-
-  int numberOfSingleCellPoints = 0;
-  vtkIdType firstPointId = -1;
-
-  for (int i=0; i<numberOfLinePoints; i++)
-    {
-    section->GetPointCells(i,ncells,cells);
-    if (ncells == 1)
-      {
-      ++numberOfSingleCellPoints;
-      firstPointId = i;
-      }
-    }
-
-  if (numberOfSingleCellPoints == 0)
-    {
-    firstPointId = section->GetCell(0)->GetPointId(0);
-    }
-
-  vtkNew(vtkIdList, polygonPointIds);
-  polygonPointIds->InsertNextId(firstPointId);
-
-  bool done = false;
-  vtkIdType pointId = firstPointId;
-
-  closed = false;
-
-  vtkIdType cellId = -1;
-  while (!done)
-    {
-    section->GetPointCells(pointId,ncells,cells);
-    if (ncells == 1)
-      {
-      if (pointId == firstPointId)
-        {
-        cellId = cells[0];
-        }
-      else
-        {
-        done = true;
-        break;
-        }
-      }
-    else if (ncells == 2)
-      {
-      if (cells[0] == cellId)
-        {
-        cellId = cells[1];
-        }
-      else
-        {
-        cellId = cells[0];
-        }
-      }
-
-    section->GetCellPoints(cellId,npts,pts);
-
-    if (pts[0] == pointId)
-      {
-      pointId = pts[1];
-      }
-    else
-      {
-      pointId = pts[0];
-      }
-
-    if (pointId == firstPointId)
-      {
-      closed = true;
-      done = true;
-      break;
-      }
-
-    polygonPointIds->InsertNextId(pointId);
-    }
-
-  section->GetLines()->Reset();
-  section->GetPolys()->Reset();
-
-  section->GetPolys()->InsertNextCell(polygonPointIds);
-#if (VTK_MAJOR_VERSION <= 5)
-  section->Update();
-#endif
+  vtkNew<vtkStripper> stripper;
+  stripper->SetInputData(section);
+  stripper->JoinContiguousSegmentsOn();
+  stripper->Update();
+  auto output = stripper->GetOutput();
+  section->DeepCopy(output);
 }
 
-double vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(vtkPolygon* sectionPolygon)
+//--------------------------
+// ComputeBranchSectionArea
+//--------------------------
+// Compute the area of a section slice.
+//
+double vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(vtkPolyData* section)
 {
-  vtkNew(vtkIdList, trianglePointIds);
+  // Mesh the section.
+  auto delaunay = vtkSmartPointer<vtkDelaunay2D>::New();
+  delaunay->SetInputData(section);
+  delaunay->Update();
+  auto mesh = delaunay->GetOutput();
+  //std::cout << msg << "mesh->GetNumberOfCells(): " << mesh->GetNumberOfCells() << std::endl;
 
-  sectionPolygon->Triangulate(trianglePointIds);
+  // Sum up the areas of each triangle in the Delaunay mesh.
+  //
+  auto cells = mesh->GetPolys();
+  int npts;
+  vtkIdList* pts;
+  double sectionArea = 0.0;
 
-  int numberOfTriangles = trianglePointIds->GetNumberOfIds() / 3;
+  for (int i = 0; i < mesh->GetNumberOfCells(); i++) {
+    vtkTriangle* triangle = vtkTriangle::SafeDownCast(mesh->GetCell(i));
+    double point1[3], point2[3], point3[3];
+    triangle->GetPoints()->GetPoint(0,point1);
+    triangle->GetPoints()->GetPoint(1,point2);
+    triangle->GetPoints()->GetPoint(2,point3);
+    double triangleArea = vtkTriangle::TriangleArea(point1,point2,point3);
+    sectionArea += triangleArea;
+  }
 
-  double polygonArea = 0.0;
-
-  for (int i=0; i<numberOfTriangles; i++)
-    {
-    vtkIdType pointId0 = trianglePointIds->GetId(3*i);
-    vtkIdType pointId1 = trianglePointIds->GetId(3*i+1);
-    vtkIdType pointId2 = trianglePointIds->GetId(3*i+2);
-
-    double point0[3], point1[3], point2[3];
-
-    sectionPolygon->GetPoints()->GetPoint(pointId0,point0);
-    sectionPolygon->GetPoints()->GetPoint(pointId1,point1);
-    sectionPolygon->GetPoints()->GetPoint(pointId2,point2);
-
-    double triangleArea = vtkTriangle::TriangleArea(point0,point1,point2);
-
-    polygonArea += triangleArea;
-    }
-
-  return polygonArea;
+  return sectionArea;
 }
 
 #ifdef VMTK_ONE_SIDED_SECTION_SHAPE
@@ -733,41 +654,51 @@ double vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolyData* bra
   return sectionShape;
 }
 #else
-double vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolygon* sectionPolygon, double center[3], double sizeRange[2])
+
+//---------------------------
+// ComputeBranchSectionShape
+//---------------------------
+// [DaveP] I don't know what this does.
+//
+double 
+vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolyData* section, 
+    double center[3], double sizeRange[2])
 {
-  int numberOfSectionPolygonPoints = sectionPolygon->GetNumberOfPoints();
+  //std::string msg("[vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape] ");
+  //std::cout << msg << "========== ComputeBranchSectionShape ==========" << std::endl;
+  //std::cout << msg << "section: " << section << std::endl;
+  int numberOfSectionPolygonPoints = section->GetNumberOfPoints();
+  //std::cout << msg << "numberOfSectionPolygonPoints: " << numberOfSectionPolygonPoints << std::endl;
 
   double minDistance = VTK_VMTK_LARGE_DOUBLE;
   double maxDistance = 0.0;
 
   vtkIdType minDistanceId = -1;
   vtkIdType maxDistanceId = -1;
-  double point[3];
 
-  for (int i=0; i<numberOfSectionPolygonPoints; i++)
-    {
-    sectionPolygon->GetPoints()->GetPoint(i,point);
+  double point[3];
+  double sectionShape = 0.0;
+
+  for (int i = 0; i < numberOfSectionPolygonPoints; i++) {
+    section->GetPoints()->GetPoint(i, point);
     double distance = sqrt(vtkMath::Distance2BetweenPoints(point,center));
 
-    if (distance > maxDistance)
-      {
+    if (distance > maxDistance) {
       maxDistance = distance;
       maxDistanceId = i;
-      }
-
-    if (distance < minDistance)
-      {
-      minDistance = distance;
-      minDistanceId = i;
-      }
     }
 
-  if (minDistance == -1 || maxDistance == -1)
-    {
+    if (distance < minDistance) {
+      minDistance = distance;
+      minDistanceId = i;
+    }
+  }
+
+  if (minDistance == -1 || maxDistance == -1) {
     sizeRange[0] = 0.0;
     sizeRange[1] = 0.0;
     return 0.0;
-    }
+  }
 
   double point0[3];
   double point1[3];
@@ -781,10 +712,9 @@ double vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolygon* sect
   planeNormal[1] = 0.0;
   planeNormal[2] = 0.0;
 
-  for (int i=0; i<numberOfSectionPolygonPoints; i++)
-    {
-    sectionPolygon->GetPoints()->GetPoint(i,point0);
-    sectionPolygon->GetPoints()->GetPoint((i+numberOfSectionPolygonPoints/4)%numberOfSectionPolygonPoints,point1);
+  for (int i=0; i<numberOfSectionPolygonPoints; i++) {
+    section->GetPoints()->GetPoint(i,point0);
+    section->GetPoints()->GetPoint((i+numberOfSectionPolygonPoints/4)%numberOfSectionPolygonPoints,point1);
 
     radialVector0[0] = point0[0] - center[0];
     radialVector0[1] = point0[1] - center[1];
@@ -799,15 +729,15 @@ double vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolygon* sect
     planeNormal[0] += cross[0];
     planeNormal[1] += cross[1];
     planeNormal[2] += cross[2];
-    }
+  }
 
   vtkMath::Normalize(planeNormal);
 
   double minDistancePoint[3];
-  sectionPolygon->GetPoints()->GetPoint(minDistanceId,minDistancePoint);
+  section->GetPoints()->GetPoint(minDistanceId,minDistancePoint);
 
   double maxDistancePoint[3];
-  sectionPolygon->GetPoints()->GetPoint(maxDistanceId,maxDistancePoint);
+  section->GetPoints()->GetPoint(maxDistanceId,maxDistancePoint);
 
   double minDistanceNormal[3];
   double maxDistanceNormal[3];
@@ -840,45 +770,39 @@ double vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolygon* sect
 
   int intersection;
   double u,v;
-  for (int i=0; i<numberOfSectionPolygonPoints; i++)
-    {
-    sectionPolygon->GetPoints()->GetPoint(i,point0);
-    sectionPolygon->GetPoints()->GetPoint((i+1)%numberOfSectionPolygonPoints,point1);
+
+  for (int i=0; i<numberOfSectionPolygonPoints; i++) {
+    section->GetPoints()->GetPoint(i,point0);
+    section->GetPoints()->GetPoint((i+1)%numberOfSectionPolygonPoints,point1);
 
     intersection = vtkLine::Intersection(minDistanceOppositePoint,center,point0,point1,u,v);
 
-    if (intersection == 0)
-      {
+    if (intersection == 0) {
       continue;
-      }
+    }
 
     intersectionPoint[0] = (1.0 - u) * minDistanceOppositePoint[0] + u * center[0];
     intersectionPoint[1] = (1.0 - u) * minDistanceOppositePoint[1] + u * center[1];
     intersectionPoint[2] = (1.0 - u) * minDistanceOppositePoint[2] + u * center[2];
-
     double intersectionDistance = sqrt(vtkMath::Distance2BetweenPoints(intersectionPoint,center));
 
-    if (intersectionDistance > maxIntersectionDistance)
-      {
+    if (intersectionDistance > maxIntersectionDistance) {
       maxIntersectionDistance = intersectionDistance;
-      }
     }
+  }
 
   minDistance += maxIntersectionDistance;
-
   maxIntersectionDistance = 0.0;
 
-  for (int i=0; i<numberOfSectionPolygonPoints; i++)
-    {
-    sectionPolygon->GetPoints()->GetPoint(i,point0);
-    sectionPolygon->GetPoints()->GetPoint((i+1)%numberOfSectionPolygonPoints,point1);
+  for (int i=0; i<numberOfSectionPolygonPoints; i++) {
+    section->GetPoints()->GetPoint(i,point0);
+    section->GetPoints()->GetPoint((i+1)%numberOfSectionPolygonPoints,point1);
 
     intersection = vtkLine::Intersection(maxDistanceOppositePoint,center,point0,point1,u,v);
 
-    if (intersection == 0)
-      {
+    if (intersection == 0) {
       continue;
-      }
+    }
 
     intersectionPoint[0] = (1.0 - u) * maxDistanceOppositePoint[0] + u * center[0];
     intersectionPoint[1] = (1.0 - u) * maxDistanceOppositePoint[1] + u * center[1];
@@ -886,113 +810,155 @@ double vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolygon* sect
 
     double intersectionDistance = sqrt(vtkMath::Distance2BetweenPoints(intersectionPoint,center));
 
-    if (intersectionDistance > maxIntersectionDistance)
-      {
+    if (intersectionDistance > maxIntersectionDistance) {
       maxIntersectionDistance = intersectionDistance;
-      }
     }
+  }
 
   maxDistance += maxIntersectionDistance;
 
   sizeRange[0] = minDistance;
   sizeRange[1] = maxDistance;
-
-  double sectionShape = minDistance / maxDistance;
+  sectionShape = minDistance / maxDistance;
 
   return sectionShape;
 }
 #endif
 
-int vtkvmtkPolyDataBranchSections::ComputeBranchCenterlineIntersections(vtkPolyData* section, vtkPolyData* centerline, double origin[3], double normal[3])
+//--------------------------------------
+// ComputeBranchCenterlineIntersections
+//--------------------------------------
+//
+int vtkvmtkPolyDataBranchSections::ComputeBranchCenterlineIntersections(vtkPolyData* section, 
+    vtkPolyData* centerline, double origin[3], double normal[3])
 {
-	// define cutting plane
-	vtkNew(vtkPlane, plane);
-	plane->SetOrigin(origin);
-	plane->SetNormal(normal);
+  //std::string msg("[vtkvmtkPolyDataBranchSections::ComputeBranchCenterlineIntersections] ");
+  //std::cout << msg << "========== ComputeBranchCenterlineIntersections ==========" << std::endl;
+  //std::cout << msg << "section: " << section << std::endl;
+  //std::cout << msg << "section->GetNumberOfCells(): " << section->GetNumberOfCells() << std::endl;
 
-	// cut centerlines
-	vtkNew(vtkCutter, cutter);
-	cutter->SetInputData(centerline);
-	cutter->SetCutFunction(plane);
-	cutter->GenerateCutScalarsOn();
-	cutter->SetValue(0,0.0);
-	cutter->Update();
+  // define cutting plane
+  //std::cout << msg << "define cutting plane ... " << std::endl;
+  vtkNew(vtkPlane, plane);
+  plane->SetOrigin(origin);
+  plane->SetNormal(normal);
 
-	// define rotation to align normal vector with z-axis (= normal to xy-plane)
-	// todo: use SimVascular function
-	double vec_a[3] = {0.0f, 0.0f, 1.0f};
-	double v[3] = {0.0f, 0.0f, 0.0f};
-	vtkMath::Cross(vec_a, normal, v);
-	double s = vtkMath::Norm(v);
-	double c = vtkMath::Dot(vec_a, normal);
-	double add = vtkMath::Dot(vec_a, normal);
-	double v_x[3][3];
-	double v_dot[3][3];
-	double rot[3][3];
+  // cut centerlines
+  //std::cout << msg << "cut centerlines ... " << std::endl;
+  vtkNew(vtkCutter, cutter);
+  cutter->SetInputData(centerline);
+  cutter->SetCutFunction(plane);
+  cutter->GenerateCutScalarsOn();
+  cutter->SetValue(0,0.0);
+  cutter->Update();
 
-	v_x[0][0] = 0;
-	v_x[0][1] = -v[2];
-	v_x[0][2] = v[1];
-	v_x[1][0] = v[2];
-	v_x[1][1] = 0;
-	v_x[1][2] = -v[0];
-	v_x[2][0] = -v[1];
-	v_x[2][1] = v[0];
-	v_x[2][2] = 0;
+  // define rotation to align normal vector with z-axis (= normal to xy-plane)
+  // todo: use SimVascular function
+  //std::cout << msg << "define rotation to align normal vector ... " << std::endl;
+  double vec_a[3] = {0.0f, 0.0f, 1.0f};
+  double v[3] = {0.0f, 0.0f, 0.0f};
+  vtkMath::Cross(vec_a, normal, v);
+  double s = vtkMath::Norm(v);
+  double c = vtkMath::Dot(vec_a, normal);
+  double add = vtkMath::Dot(vec_a, normal);
+  double v_x[3][3];
+  double v_dot[3][3];
+  double rot[3][3];
 
-	vtkMath::Multiply3x3(v_x, v_x, v_dot);
+  v_x[0][0] = 0.0;
+  v_x[0][1] = -v[2];
+  v_x[0][2] = v[1];
+  v_x[1][0] = v[2];
+  v_x[1][1] = 0.0;
+  v_x[1][2] = -v[0];
+  v_x[2][0] = -v[1];
+  v_x[2][1] = v[0];
+  v_x[2][2] = 0.0;
 
-	for (int i=0; i<3; i++)
-		for (int j=0; j<3; j++)
-		{
-			rot[i][j] = v_x[i][j] + v_dot[i][j] * (1.0 - c) / s / s;
-			if (i==j)
-				rot[i][j] = rot[i][j] + 1.0;
-		}
+  vtkMath::Multiply3x3(v_x, v_x, v_dot);
 
-	// convert to vtkMatrix4x4
-	vtkNew(vtkMatrix4x4, mat);
-	for (int i=0; i<3; i++)
-		for (int j=0; j<3; j++)
-			mat->SetElement(i, j, rot[i][j]);
-	mat->SetElement(3, 3, 1.0);
+  for (int i=0; i<3; i++) {
+    for (int j=0; j<3; j++) {
+      rot[i][j] = v_x[i][j] + v_dot[i][j] * (1.0 - c) / s / s;
+      if (i==j) {
+        rot[i][j] = rot[i][j] + 1.0;
+      }
+    }
+  }
 
-	// define transformation from cut-plane onto xy-plane
-	vtkNew(vtkTransform, trans);
-    trans->SetMatrix(mat);
-    trans->PostMultiply();
-    trans->Scale(1.0, 1.0, 0.0);
-    trans->Update();
+  // convert to vtkMatrix4x4
+  vtkNew(vtkMatrix4x4, mat);
+  for (int i=0; i<3; i++) {
+    for (int j=0; j<3; j++) {
+      mat->SetElement(i, j, rot[i][j]);
+    }
+    mat->SetElement(3, 3, 1.0);
+  }
 
-    // transform section
-	vtkNew(vtkTransformPolyDataFilter, trans_section);
-    trans_section->SetInputData(section);
-    trans_section->SetTransform(trans);
-    trans_section->Update();
+  // define transformation from cut-plane onto xy-plane
+  //std::cout << msg << "define transformation from cut-plane onto xy-plane ... " << std::endl;
+  vtkNew(vtkTransform, trans);
+  trans->SetMatrix(mat);
+  trans->PostMultiply();
+  trans->Scale(1.0, 1.0, 0.0);
+  trans->Update();
 
-    // transform centerline cut
-	vtkNew(vtkTransformPolyDataFilter, trans_center);
-    trans_center->SetInputData(cutter->GetOutput());
-    trans_center->SetTransform(trans);
-    trans_center->Update();
+  // transform section
+  vtkNew(vtkTransformPolyDataFilter, trans_section);
+  trans_section->SetInputData(section);
+  trans_section->SetTransform(trans);
+  trans_section->Update();
 
-    // sort section points to form closed polygon
-    vtkPoints* points = trans_center->GetOutput()->GetPoints();
-    vtkNew(vtkPoints, polygon);
-    vtkNew(vtkIdList, poly);
-    trans_section->GetOutput()->GetPolys()->GetCell(0, poly);
-    for (int i = 0; i < poly->GetNumberOfIds(); i++)
-        polygon->InsertNextPoint(trans_section->GetOutput()->GetPoint(poly->GetId(i)));
+  // transform centerline cut
+  vtkNew(vtkTransformPolyDataFilter, trans_center);
+  trans_center->SetInputData(cutter->GetOutput());
+  trans_center->SetTransform(trans);
+  trans_center->Update();
 
-    // count centerlines inside section
-    int n_intersect = 0;
-    for (int i=0; i<points->GetNumberOfPoints(); i++)
-        if (InsidePolygon(polygon, points->GetPoint(i)))
-            n_intersect++;
+  //vtkXMLPolyDataWriter *writer = vtkXMLPolyDataWriter::New();
+  //writer->SetInputData(trans_center->GetOutput());
+  //writer->SetFileName("trans_center.vtp");
+  //writer->Write();
 
-	return n_intersect;
+  // sort section points to form closed polygon
+  //
+  //std::cout << msg << "sort section points to form closed polygon ... " << std::endl;
+  vtkPoints* points = trans_center->GetOutput()->GetPoints();
+  //std::cout << msg << "  points: " << points << std::endl;
+  //std::cout << msg << "  points->GetNumberOfPoints(): " << points->GetNumberOfPoints() << std::endl;
+
+  vtkNew(vtkPoints, polygon_points);
+  vtkNew(vtkIdList, poly);
+
+  auto xform_section = trans_section->GetOutput();
+  vtkIdType npts;
+  vtkIdType const *pts;
+  xform_section->GetCellPoints(0, npts, pts);
+  auto xform_section_points = xform_section->GetPoints();
+
+  for (int i = 0; i < npts; i++) {
+    auto pt = xform_section_points->GetPoint(pts[i]);
+    //std::cout << msg << "---- i " << i << std::endl;
+    //std::cout << msg << "pts[i]: " << pts[i] << std::endl;
+    //std::cout << msg << "pt: " << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+    polygon_points->InsertNextPoint(pt);
+  }
+
+  // Count centerlines inside section.
+  //std::cout << msg << "count centerlines inside section ... " << std::endl;
+  int n_intersect = 0;
+
+  for (int i = 0; i < points->GetNumberOfPoints(); i++) {
+    auto pt = points->GetPoint(i);
+    if (InsidePolygon(polygon_points, points->GetPoint(i))) {
+      n_intersect += 1;
+    }
+  }
+
+  //std::cout << msg << "Done " << std::endl;
+
+  return n_intersect;
 }
-
 bool vtkvmtkPolyDataBranchSections::InsidePolygon(vtkPoints* polygon, double* point)
 {
     // source: http://www.eecs.umich.edu/courses/eecs380/HANDOUTS/PROJ2/InsidePoly.html

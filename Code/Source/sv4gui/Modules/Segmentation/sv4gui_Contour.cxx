@@ -160,11 +160,11 @@ void sv4guiContour::SetExtendable(bool extendable)
 void sv4guiContour::SetPlaneGeometry(mitk::PlaneGeometry* planeGeometry)
 {
 
-    if(planeGeometry!=NULL)
+    if(planeGeometry!=nullptr)
     {
         m_PlaneGeometry = planeGeometry->Clone();
     }else{
-        m_PlaneGeometry = NULL;
+        m_PlaneGeometry = nullptr;
     }
 
 }
@@ -360,7 +360,7 @@ void sv4guiContour::Scale(mitk::Point3D referencePoint, mitk::Point3D oldPoint, 
 
 bool sv4guiContour::IsOnPlane(const mitk::PlaneGeometry* planeGeometry, double precisionFactor)
 {
-    if(m_PlaneGeometry.IsNull() || planeGeometry==NULL) return false;
+    if(m_PlaneGeometry.IsNull() || planeGeometry==nullptr) return false;
 
     double contourThickness = planeGeometry->GetExtentInMM( 2 )*precisionFactor;
 

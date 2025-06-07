@@ -56,7 +56,7 @@ using namespace std;
 
 sv4guiModelDataInteractor::sv4guiModelDataInteractor()
     : mitk::DataInteractor()
-    , m_Model(NULL)
+    , m_Model(nullptr)
     , m_FaceSelectionOnly(false)
 {
     m_CurrentPickedDisplayPoint[0]=0;
@@ -95,17 +95,17 @@ void sv4guiModelDataInteractor::DataNodeChanged()
     {
         m_Model = dynamic_cast<sv4guiModel*>(this->GetDataNode()->GetData());
 
-        if (m_Model == NULL)
+        if (m_Model == nullptr)
             MITK_ERROR << "sv4guiModelDataInteractor::DataNodeChanged(): DataNode has to contain a model.";
     }
     else
-        m_Model = NULL;
+        m_Model = nullptr;
 }
 
 void sv4guiModelDataInteractor::GetPosition(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if(positionEvent == NULL)
+    if(positionEvent == nullptr)
         return;
 
     m_CurrentPickedDisplayPoint = positionEvent->GetPointerPositionOnScreen();
@@ -129,7 +129,7 @@ void sv4guiModelDataInteractor::DeselectFace(mitk::StateMachineAction*, mitk::In
 
 void sv4guiModelDataInteractor::SelectFace(mitk::InteractionEvent* interactionEvent, bool selecting, bool single)
 {
-    if(m_Model==NULL)
+    if(m_Model==nullptr)
         return;
 
     mitk::VtkPropRenderer *renderer = (mitk::VtkPropRenderer*)interactionEvent->GetSender();
@@ -137,10 +137,10 @@ void sv4guiModelDataInteractor::SelectFace(mitk::InteractionEvent* interactionEv
     int timeStep= renderer->GetTimeStep();
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL)
+    if(modelElement==nullptr)
         return;
 
-    if(modelElement->GetWholeVtkPolyData()==NULL)
+    if(modelElement->GetWholeVtkPolyData()==nullptr)
         return;
 
     sv4guiModelVtkMapper3D* mapper=dynamic_cast<sv4guiModelVtkMapper3D*>(GetDataNode()->GetMapper(renderer->GetMapperID()));
@@ -169,7 +169,7 @@ void sv4guiModelDataInteractor::SelectFace(mitk::InteractionEvent* interactionEv
 
     std::vector<sv4guiModelElement::svFace*> faces=modelElement->GetFaces();
     int selectedFaceIndex=-1;
-    if(selectedFacePolyData!=NULL)
+    if(selectedFacePolyData!=nullptr)
     {
         for(int i=0;i<faces.size();i++)
         {
@@ -222,7 +222,7 @@ void sv4guiModelDataInteractor::SelectCell(mitk::InteractionEvent* interactionEv
     if(m_FaceSelectionOnly)
         return;
 
-    if(m_Model==NULL)
+    if(m_Model==nullptr)
         return;
 
     mitk::VtkPropRenderer *renderer = (mitk::VtkPropRenderer*)interactionEvent->GetSender();
@@ -230,10 +230,10 @@ void sv4guiModelDataInteractor::SelectCell(mitk::InteractionEvent* interactionEv
     int timeStep= renderer->GetTimeStep();
 
     sv4guiModelElementPolyData* modelElement=dynamic_cast<sv4guiModelElementPolyData*>(m_Model->GetModelElement(timeStep));
-    if(modelElement==NULL)
+    if(modelElement==nullptr)
         return;
 
-    if(modelElement->GetWholeVtkPolyData()==NULL)
+    if(modelElement->GetWholeVtkPolyData()==nullptr)
         return;
 
     sv4guiModelVtkMapper3D* mapper=dynamic_cast<sv4guiModelVtkMapper3D*>(GetDataNode()->GetMapper(renderer->GetMapperID()));
@@ -242,7 +242,7 @@ void sv4guiModelDataInteractor::SelectCell(mitk::InteractionEvent* interactionEv
         return;
 
     vtkSmartPointer<vtkActor> wholeSurfaceActor=mapper->GetWholeSurfaceActor(renderer);
-    if(wholeSurfaceActor==NULL)
+    if(wholeSurfaceActor==nullptr)
         return;
 
     if(selecting && single)
@@ -304,7 +304,7 @@ void sv4guiModelDataInteractor::DeleteSelectedFacesCells(mitk::StateMachineActio
     if(m_FaceSelectionOnly)
         return;
 
-    if(m_Model==NULL)
+    if(m_Model==nullptr)
         return;
 
     mitk::VtkPropRenderer *renderer = (mitk::VtkPropRenderer*)interactionEvent->GetSender();
@@ -312,10 +312,10 @@ void sv4guiModelDataInteractor::DeleteSelectedFacesCells(mitk::StateMachineActio
     int timeStep= renderer->GetTimeStep();
 
     sv4guiModelElementPolyData* modelElement=dynamic_cast<sv4guiModelElementPolyData*>(m_Model->GetModelElement(timeStep));
-    if(modelElement==NULL)
+    if(modelElement==nullptr)
         return;
 
-    if(modelElement->GetWholeVtkPolyData()==NULL)
+    if(modelElement->GetWholeVtkPolyData()==nullptr)
         return;
 
     sv4guiModelElementPolyData* newModelElement=modelElement->Clone();

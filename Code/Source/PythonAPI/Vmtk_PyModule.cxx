@@ -43,10 +43,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "sv_Repository.h"
 #include "sv_RepositoryData.h"
 #include "sv_PolyData.h"
-#include "sv_vmtk_utils_init.h"
 #include "sv_vmtk_utils.h"
 #include "sv_SolidModel.h"
 #include "sv_vtk_utils.h"
@@ -58,8 +56,6 @@
 #ifdef GetObject
 #undef GetObject
 #endif
-
-#include "sv2_globals.h"
 
 // Exception type used by PyErr_SetString() to set the for the error indicator.
 static PyObject * PyRunTimeErr;
@@ -118,7 +114,7 @@ static PyObject *
 Vmtk_cap(PyObject* self, PyObject* args,  PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O|O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", "use_center", NULL};
+  static char *keywords[] = {"surface", "use_center", nullptr};
   PyObject* surfaceArg;
   PyObject* useCenterArg = nullptr;
 
@@ -148,7 +144,7 @@ Vmtk_cap(PyObject* self, PyObject* args,  PyObject* kwargs)
   // Perform cap operation.
   //
   std::vector<int> centerIDs;
-  cvPolyData *cappedSurface = NULL;
+  cvPolyData *cappedSurface = nullptr;
   int numIds, *ids;
   if (sys_geom_cap(&cvSurfPolydata, radialFill, centerIDs, &cappedSurface) != SV_OK) {
     api.error("Error capping model.");
@@ -207,13 +203,13 @@ Vmtk_cap_with_ids(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   //std::cout << "========== Vmtk_cap_with_ids ==========" << std::endl;
   auto api = PyUtilApiFunction("O|O!O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", "fill_id", "increment_id", NULL};
-  //static char *keywords[] = {"surface", "fill_id", "fill_type", NULL};
+  static char *keywords[] = {"surface", "fill_id", "increment_id", nullptr};
+  //static char *keywords[] = {"surface", "fill_id", "fill_type", nullptr};
   PyObject* surfaceArg;
   PyObject* fillIdArg = nullptr;
   PyObject* incIdArg = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyInt_Type, &fillIdArg,
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyLong_Type, &fillIdArg,
         &PyBool_Type, &incIdArg)) {
       return api.argsError();
   }
@@ -229,7 +225,7 @@ Vmtk_cap_with_ids(PyObject* self, PyObject* args, PyObject* kwargs)
   int fillType = 2;
 
   if (fillIdArg != nullptr) {
-      fillId = PyInt_AsLong(fillIdArg);
+      fillId = PyLong_AsLong(fillIdArg);
       if (fillId < 0) {
           api.error("Cap fill ID must be >= 0.");
           return nullptr;
@@ -299,7 +295,7 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   //std::cout << "========== Vmtk_centerlines ==========" << std::endl;
   auto api = PyUtilApiFunction("OO!O!|O!O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", "inlet_ids", "outlet_ids", "split", "use_face_ids", NULL};
+  static char *keywords[] = {"surface", "inlet_ids", "outlet_ids", "split", "use_face_ids", nullptr};
   PyObject* surfaceArg;
   PyObject* inletIdsArg;
   PyObject* outletIdsArg;
@@ -407,7 +403,7 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
       cvPolyData* splitCenterlines = nullptr;
       cvPolyData* surfGrouped = nullptr;
       cvPolyData* sections = nullptr;
-      if (sys_geom_centerlinesections(linesDst, &cvSurfPolydata, &splitCenterlines, &surfGrouped, &sections) != SV_OK) {
+      if (sys_geom_centerline_sections(linesDst, &cvSurfPolydata, &splitCenterlines, &surfGrouped, &sections) != SV_OK) {
           api.error("Error splitting centerlines.");
           delete linesDst;
           delete surfGrouped;
@@ -447,7 +443,7 @@ static PyObject *
 Vmtk_distance_to_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("OO", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", "line", NULL};
+  static char *keywords[] = {"surface", "line", nullptr};
   PyObject* surfaceArg;
   PyObject* linesArg;
 
@@ -510,8 +506,8 @@ Geom_centerlines(PyObject* self, PyObject* args)
   char *voronoiName;
 
   char *usage;
-  cvRepositoryData *linesDst = NULL;
-  cvRepositoryData *voronoiDst = NULL;
+  cvRepositoryData *linesDst = nullptr;
+  cvRepositoryData *voronoiDst = nullptr;
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args, api.format, &geomName,&sourceList,&targetList, &linesName, &voronoiName)) {
@@ -619,13 +615,13 @@ Geom_group_polydata(PyObject* self, PyObject* args)
   }
 
   auto linesSrc = GetRepositoryData(api, linesName, POLY_DATA_T);
-  if (linesSrc == NULL) {
+  if (linesSrc == nullptr) {
       return nullptr;
   }
 
   // Perform group polydata operation.
   //
-  cvRepositoryData *groupedDst = NULL;
+  cvRepositoryData *groupedDst = nullptr;
   if (sys_geom_grouppolydata((cvPolyData*)geomSrc, (cvPolyData*)linesSrc, (cvPolyData**)&groupedDst) != SV_OK) {
       api.error("Error grouping polydata.");
       return nullptr;
@@ -666,13 +662,13 @@ Geom_separate_centerlines(PyObject* self, PyObject* args)
   }
 
   auto linesSrc = GetRepositoryData(api, linesName, POLY_DATA_T);
-  if (linesSrc == NULL) {
+  if (linesSrc == nullptr) {
       return nullptr;
   }
 
   // Perform separate centerlines operation.
   //
-  cvRepositoryData *separateDst = NULL;
+  cvRepositoryData *separateDst = nullptr;
   if (sys_geom_separatecenterlines((cvPolyData*)linesSrc, (cvPolyData**)&separateDst) != SV_OK) {
       api.error("Error creating separate centerlines.");
       return nullptr;
@@ -714,13 +710,13 @@ Geom_merge_centerlines(PyObject* self, PyObject* args)
 
   // Get repository data.
   auto linesSrc = GetRepositoryData(api, linesName, POLY_DATA_T);
-  if (linesSrc == NULL) {
+  if (linesSrc == nullptr) {
       return nullptr;
   }
 
   // Perform merge centerline operation.
   //
-  cvRepositoryData *mergeDst = NULL;
+  cvRepositoryData *mergeDst = nullptr;
   if (sys_geom_mergecenterlines((cvPolyData*)linesSrc, mergeblanked, (cvPolyData**)&mergeDst) != SV_OK) {
       api.error("Error merging centerlines.");
       return nullptr;
@@ -774,7 +770,7 @@ Geom_cap(PyObject* self, PyObject* args)
 
   // Perform cap operation.
   //
-  cvRepositoryData *cappedDst = NULL;
+  cvRepositoryData *cappedDst = nullptr;
   int numIds, *ids;
   if (sys_geom_cap((cvPolyData*)geomSrc, (cvPolyData**)(&cappedDst), &numIds, &ids, captype) != SV_OK) {
     api.error("Error capping model.");
@@ -852,7 +848,7 @@ Geom_map_and_correct_ids(PyObject* self, PyObject* args)
 
   // Perform map and correct IDs operation.
   //
-  cvRepositoryData *geomDst = NULL;
+  cvRepositoryData *geomDst = nullptr;
   if (sys_geom_mapandcorrectids((cvPolyData*)geomSrc, (cvPolyData*)geomNew, (cvPolyData**)(&geomDst), originalArray, newArray) != SV_OK) {
     api.error("Error mapping and correcing ids.");
     return nullptr;
@@ -925,7 +921,7 @@ PyMethodDef PyVmtkMethods[] =
 
 #endif
 
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 //-----------------------
@@ -970,13 +966,13 @@ PyInit_PyVmtk()
 
   // Create the vmtk module.
   auto module = PyModule_Create(&PyVmtkModule);
-  if (module == NULL) {
+  if (module == nullptr) {
     fprintf(stdout,"Error initializing the SimVascular vmtk module. \n");
     return SV_PYTHON_ERROR;
   }
 
   // Add the vmtk exception.
-  PyRunTimeErr = PyErr_NewException(VMTK_EXCEPTION, NULL, NULL);
+  PyRunTimeErr = PyErr_NewException(VMTK_EXCEPTION, nullptr, nullptr);
   PyModule_AddObject(module, VMTK_EXCEPTION_OBJECT, PyRunTimeErr);
 
   return module;
@@ -998,12 +994,12 @@ PyMODINIT_FUNC initpyVMTKUtils()
   PyObject* pythonC;
   pythonC=Py_InitModule("pyVMTKUtils",VMTKUtils_methods);
 
-  if (pythonC==NULL) {
+  if (pythonC==nullptr) {
     fprintf(stdout,"Error initializing pyVMTKUtils.\n");
     return;
   }
 
-  PyRunTimeErr = PyErr_NewException("pyVMTKUtils.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyVMTKUtils.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   return;
 }

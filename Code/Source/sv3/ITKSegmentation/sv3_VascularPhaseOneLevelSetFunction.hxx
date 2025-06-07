@@ -41,7 +41,9 @@
 #include "itkGradientMagnitudeRecursiveGaussianImageFilter.h"
 #include "itkGradientImageFilter.h"
 #include "itkGradientMagnitudeImageFilter.h"
-#include "itkVectorCastImageFilter.h"
+
+#include "itkCastImageFilter.h"
+// davep #include "itkVectorCastImageFilter.h"
 #include "itkImageAlgorithm.h"
 
 namespace itk
@@ -120,7 +122,9 @@ void VascularPhaseOneLevelSetFunction< TImageType, TFeatureImageType >
 		derivative->Update();
 
 		typedef typename DerivativeFilterType::OutputImageType                      DerivativeOutputImageType;
-		typedef VectorCastImageFilter< DerivativeOutputImageType, VectorImageType > GradientCasterType;
+
+		typedef CastImageFilter< DerivativeOutputImageType, VectorImageType > GradientCasterType;
+		// davep typedef VectorCastImageFilter< DerivativeOutputImageType, VectorImageType > GradientCasterType;
 
 		typename GradientCasterType::Pointer caster = GradientCasterType::New();
 		caster->SetInput( derivative->GetOutput() );
@@ -182,7 +186,8 @@ void VascularPhaseOneLevelSetFunction< TImageType, TFeatureImageType >
 		derivative->Update();
 
 		typedef typename DerivativeFilterType::OutputImageType                      DerivativeOutputImageType;
-		typedef VectorCastImageFilter< DerivativeOutputImageType, VectorImageType > GradientCasterType;
+		typedef CastImageFilter< DerivativeOutputImageType, VectorImageType > GradientCasterType;
+		// davep typedef VectorCastImageFilter< DerivativeOutputImageType, VectorImageType > GradientCasterType;
 
 		typename GradientCasterType::Pointer caster = GradientCasterType::New();
 		caster->SetInput( derivative->GetOutput() );
@@ -253,7 +258,7 @@ VascularPhaseOneLevelSetFunction< TImageType, TFeatureImageType >
 	//				- it.GetPixel(positionB) ) * neighborhoodScales[i];
 	//		gd->m_dxy[i][i] = ( it.GetPixel(positionA)
 	//				+ it.GetPixel(positionB) - 2.0 * center_value )
-	//				* vnl_math_sqr(neighborhoodScales[i]);
+	//				* vnl_math::sqr(neighborhoodScales[i]);
 	//
 	//		gd->m_dx_forward[i]  = ( it.GetPixel(positionA) - center_value ) * neighborhoodScales[i];
 	//
@@ -295,8 +300,8 @@ VascularPhaseOneLevelSetFunction< TImageType, TFeatureImageType >
 		curvature_term *= curvature_term*tmp*-1;
 
 
-		//gd->m_MaxCurvatureChange = vnl_math_max( gd->m_MaxCurvatureChange,
-		//		vnl_math_abs(curvature_term) );
+		//gd->m_MaxCurvatureChange = vnl_math::max( gd->m_MaxCurvatureChange,
+		//		vnl_math::abs(curvature_term) );
 
 
 		phi_gradient = ZERO;
@@ -305,16 +310,16 @@ VascularPhaseOneLevelSetFunction< TImageType, TFeatureImageType >
 		{
 			for ( i = 0; i < ImageDimension; i++ )
 			{
-				phi_gradient += vnl_math_sqr( vnl_math_max(gd->m_dx_backward[i], ZERO) )
-		                                		+ vnl_math_sqr( vnl_math_min(gd->m_dx_forward[i],  ZERO) );
+				phi_gradient += vnl_math::sqr( vnl_math::max(gd->m_dx_backward[i], ZERO) )
+		                                		+ vnl_math::sqr( vnl_math::min(gd->m_dx_forward[i],  ZERO) );
 			}
 		}
 		else
 		{
 			for ( i = 0; i < ImageDimension; i++ )
 			{
-				phi_gradient += vnl_math_sqr( vnl_math_min(gd->m_dx_backward[i], ZERO) )
-		                                		+ vnl_math_sqr( vnl_math_max(gd->m_dx_forward[i],  ZERO) );
+				phi_gradient += vnl_math::sqr( vnl_math::min(gd->m_dx_backward[i], ZERO) )
+		                                		+ vnl_math::sqr( vnl_math::max(gd->m_dx_forward[i],  ZERO) );
 			}
 		}
 
@@ -322,10 +327,10 @@ VascularPhaseOneLevelSetFunction< TImageType, TFeatureImageType >
 		// Collect energy change from propagation term.  This will be used in
 		// calculating the maximum time step that can be taken for this iteration.
 		gd->m_MaxCurvatureChange =
-				vnl_math_max( gd->m_MaxCurvatureChange,
-						vnl_math_abs(curvature_term) );
+				vnl_math::max( gd->m_MaxCurvatureChange,
+						vnl_math::abs(curvature_term) );
 
-		curvature_term *= vcl_sqrt(phi_gradient);
+		curvature_term *= std::sqrt(phi_gradient);
 
 
 
@@ -361,7 +366,7 @@ VascularPhaseOneLevelSetFunction< TImageType, TFeatureImageType >
 			}
 
 			gd->m_MaxAdvectionChange =
-					vnl_math_max( gd->m_MaxAdvectionChange, vnl_math_abs(x_energy) );
+					vnl_math::max( gd->m_MaxAdvectionChange, vnl_math::abs(x_energy) );
 		}
 		advection_term *= this->GetAdvectionWeight();
 	}
@@ -469,7 +474,8 @@ VascularPhaseOneLevelSetFunction< TImageType, TFeatureImageType >
 	}
 	if ( m_VectorGradientInterpolator->IsInsideBuffer(cdx) )
 	{
-		return ( this->m_VectorCast( m_VectorGradientInterpolator->EvaluateAtContinuousIndex(cdx) ) );
+		return ( static_cast<VectorType>( m_VectorGradientInterpolator->EvaluateAtContinuousIndex(cdx) ) );
+		// davep return ( this->m_VectorCast( m_VectorGradientInterpolator->EvaluateAtContinuousIndex(cdx) ) );
 	}
 	//Just return the default else
 	return ( m_GradientImage->GetPixel(idx) );

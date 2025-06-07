@@ -38,12 +38,15 @@
 #include "sv_misc_utils.h"
 #include "sv_cgeom.h"
 
+#include <vtkDataSetSurfaceFilter.h>
+#include <vtkSmartPointer.h>
+#include <vtkThreshold.h>
+#include <vtkUnstructuredGrid.h>
 
 #define START  -1
 #define INTERMED  0
 #define DEADEND   1
 #define CLOSED    2
-
 
 typedef struct {
   double x, y, z;
@@ -78,6 +81,47 @@ static int GetStartPt( int *state, int stateSz );
 static int UpdateCells( int *cells, int numCells,
 			vtkIdType **newCells, int *numNewCells );
 
+//-------------------------
+// VtkUtils_ThresholdUgrid
+//-------------------------
+// Create a vtkUnstructuredGrid object from a threshold of a cellular 
+// data array contained in a vtkDataObject object.
+//
+vtkSmartPointer<vtkUnstructuredGrid>
+VtkUtils_ThresholdUgrid(const double lower, const double upper, const std::string& data_name, 
+    vtkDataObject* vtk_data)
+{
+  int idx = 0;
+  int port = 0;
+  int connection = 0;
+  auto fieldAssociation = vtkDataObject::FieldAssociations::FIELD_ASSOCIATION_CELLS;
+
+  auto threshold = vtkSmartPointer<vtkThreshold>::New();
+  threshold->SetLowerThreshold(lower);
+  threshold->SetUpperThreshold(upper);
+  threshold->SetInputData(vtk_data);
+  threshold->SetInputArrayToProcess(idx, port, connection, fieldAssociation, data_name.c_str());
+  threshold->Update();
+  return threshold->GetOutput();
+}
+
+//---------------------------
+// VtkUtils_ThresholdSurface
+//---------------------------
+// Create a vtkPolyData object from a threshold of a cellular 
+// data array contained in a vtkDataObject object.
+//
+vtkSmartPointer<vtkPolyData>
+VtkUtils_ThresholdSurface(const double lower, const double upper, const std::string& data_name, 
+    vtkDataObject* vtk_data)
+{
+  auto threshold_ugrid = VtkUtils_ThresholdUgrid(lower, upper, data_name, vtk_data);
+
+  auto surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+  surfacer->SetInputData(vtk_data);
+  surfacer->Update();
+  return surfacer->GetOutput();
+}
 
 // -----------------------
 // VtkUtils_NewVtkPolyData
@@ -267,11 +311,11 @@ int VtkUtils_FixTopology( vtkPolyData *pd, double tol )
   int numNewCells, newCellIter;
   vtkIdType *newCells;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts;
   int oldId, mappedId;
   vtkPoints *compressedPts;
 
-  if ( pd == NULL ) return SV_ERROR;
+  if ( pd == nullptr ) return SV_ERROR;
 
   preNumPts = pd->GetNumberOfPoints();
   preNumElems = pd->GetNumberOfLines() + pd->GetNumberOfPolys();
@@ -534,7 +578,8 @@ int VtkUtils_GetAllLines( vtkPolyData *pd, int *numLines, vtkIdType **lines )
 {
   vtkCellArray *pdLines;
   int size, i;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   int pos = 0;
 
   (*numLines) = pd->GetNumberOfLines();
@@ -577,7 +622,8 @@ int VtkUtils_GetAllPolys( vtkPolyData *pd, int *numPgns, vtkIdType **pgns )
 {
   vtkCellArray *pdPgns;
   int size, i;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   int pos = 0;
 
   (*numPgns) = pd->GetNumberOfPolys();
@@ -614,7 +660,8 @@ int VtkUtils_GetAllPolys( vtkPolyData *pd, int *numPgns, vtkIdType **pgns )
 int VtkUtils_GetLines( vtkPolyData *pd, vtkIdType **lines, int *numLines )
 {
   vtkCellArray *pdLines;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   int size;
   int pos = 0;
 
@@ -745,7 +792,7 @@ static void MarkDeadEnd( int *state, int stateSz )
 static int GetNextPt( int prev, int curr, int *state, int stateSz,
 		      vtkIdType *lines, int numLines )
 {
-  int *linkedLineIxs = NULL;
+  int *linkedLineIxs = nullptr;
   int numLinkedLineIxs;
   int next;
   int a1, a2, b1, b2;
@@ -754,7 +801,7 @@ static int GetNextPt( int prev, int curr, int *state, int stateSz,
 			   &numLinkedLineIxs );
 
   if ( numLinkedLineIxs != 2 ) {
-    if ( linkedLineIxs != NULL ) delete [] linkedLineIxs;
+    if ( linkedLineIxs != nullptr ) delete [] linkedLineIxs;
     return -1;
   }
 
@@ -1124,7 +1171,7 @@ int VtkUtils_MakeShortArray( vtkDataArray *s, int *num, short **dataOut )
 
   sz = s->GetNumberOfTuples();
   *dataOut = new short [sz];
-  if ( *dataOut == NULL ) {
+  if ( *dataOut == nullptr ) {
     return SV_ERROR;
   }
 
@@ -1154,7 +1201,7 @@ int VtkUtils_MakeFloatArray( vtkDataArray *s, int *num, float **dataOut )
 
   sz = s->GetNumberOfTuples();
   *dataOut = new float [sz];
-  if ( *dataOut == NULL ) {
+  if ( *dataOut == nullptr ) {
     return SV_ERROR;
   }
 
@@ -1178,8 +1225,8 @@ vtkPoints *VtkUtils_DeepCopyPoints( vtkPoints *ptsIn )
   vtkFloatingPointType pt[3];
   int i;
 
-  if ( ptsIn == NULL ) {
-    return NULL;
+  if ( ptsIn == nullptr ) {
+    return nullptr;
   }
 
   numPts = ptsIn->GetNumberOfPoints();
@@ -1203,10 +1250,10 @@ vtkCellArray *VtkUtils_DeepCopyCells( vtkCellArray *cellsIn )
 {
   vtkCellArray *cellsOut;
   vtkIdType npts;
-  vtkIdType *idlist;
+  const vtkIdType *idlist;
 
-  if ( cellsIn == NULL ) {
-    return NULL;
+  if ( cellsIn == nullptr ) {
+    return nullptr;
   }
 
   cellsOut = vtkCellArray::New();

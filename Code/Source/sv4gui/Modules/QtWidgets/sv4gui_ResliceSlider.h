@@ -39,7 +39,7 @@
 #include <mitkDataNode.h>
 #include <mitkSlicedGeometry3D.h>
 #include <mitkExtractSliceFilter.h>
-
+#include <mitkIRenderWindowPart.h>
 #include <QWidget>
 #include <QCheckBox>
 
@@ -64,8 +64,6 @@ public slots:
     bool isResliceOn();
 
     bool isStepperSynchronized();
-
-    void SetDisplayWidget(QmitkStdMultiWidget* widget);
 
     void setDataNode(mitk::DataNode::Pointer imageNode);
 
@@ -115,6 +113,8 @@ public slots:
 
     void SetStartingSlicePos(int pos);
 
+    void SetRenderWindow(mitk::IRenderWindowPart* renderWindow);
+
 signals:
     void resliceSizeChanged(double newSize);
 
@@ -130,19 +130,23 @@ protected:
 
     double resliceSize;
 
-    QmitkStdMultiWidget* displayWidget=NULL;
-
-    mitk::SlicedGeometry3D::Pointer currentSlicedGeometry;
+    // [DaveP] change type.
+    mitk::ProportionalTimeGeometry::Pointer currentSlicedGeometry;
+    //mitk::SlicedGeometry3D::Pointer currentSlicedGeometry;
 
     QCheckBox* resliceCheckBox;
+
+    QmitkRenderWindow* threeDWindow;
     QmitkRenderWindow* intensityWindow;
     QmitkRenderWindow* potentialWindow;
     QmitkRenderWindow* coronalWindow;
+
     QWidget* sliderContainer;
 //    QmitkSliderNavigatorWidget* intensitySlider;
 //    QmitkSliderNavigatorWidget* potentialSlider;
     QmitkStepperAdapter* intensityStepper;
     QmitkStepperAdapter* potentialStepper;
+    QmitkStepperAdapter* threeDStepper;
 
     QPushButton* btnResliceSize;
 
@@ -155,6 +159,8 @@ protected:
     mitk::ExtractSliceFilter::ResliceInterpolation m_ResliceMode;
 
     int m_StartingSlicePos;
+
+    mitk::IRenderWindowPart* m_renderWindow;
 
 };
 

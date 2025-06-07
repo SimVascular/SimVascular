@@ -81,7 +81,7 @@ sv4guiModelElementPolyData* sv4guiModelElementPolyData::Clone()
 
 vtkSmartPointer<vtkPolyData> sv4guiModelElementPolyData::CreateFaceVtkPolyData(int id)
 {
-    vtkPolyData* facepd=NULL;
+    vtkPolyData* facepd=nullptr;
 
     if(m_WholeVtkPolyData)
     {
@@ -109,7 +109,7 @@ std::vector<int> sv4guiModelElementPolyData::GetFaceIDsFromInnerSolid()
     {
         if (VtkUtils_PDCheckArrayName(m_WholeVtkPolyData,1,"ModelFaceID") == SV_OK)
         {
-            int *faceIds=NULL;
+            int *faceIds=nullptr;
             int numBoundaryRegions=0;
             int result = PlyDtaUtils_GetFaceIds( m_WholeVtkPolyData, &numBoundaryRegions, &faceIds);
             if(result==SV_OK)
@@ -143,7 +143,7 @@ bool sv4guiModelElementPolyData::DeleteFaces(std::vector<int> faceIDs)
 
 bool sv4guiModelElementPolyData::CombineFaces(std::vector<int> faceIDs)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     std::string arrayname="ModelFaceID";
@@ -202,7 +202,7 @@ bool sv4guiModelElementPolyData::CombineFaces(std::vector<int> faceIDs)
 
 bool sv4guiModelElementPolyData::RemeshFaces(std::vector<int> faceIDs, double size)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkIdList> excluded = vtkSmartPointer<vtkIdList>::New();
@@ -230,7 +230,7 @@ bool sv4guiModelElementPolyData::RemeshFaces(std::vector<int> faceIDs, double si
       double hausd = 0.01;
       double angle = 45.0;
       double hgrad = 1.1;
-      vtkDoubleArray *meshSizingFunction = NULL;
+      vtkDoubleArray *meshSizingFunction = nullptr;
       int useSizingFunction = 0;
       int numAddedRefines = 0;
 
@@ -254,7 +254,7 @@ bool sv4guiModelElementPolyData::RemeshFaces(std::vector<int> faceIDs, double si
 
       if (VMTKUtils_SurfaceRemeshing(m_WholeVtkPolyData,size,meshcaps,preserveedges,
                                      trianglesplitfactor,collapseanglethreshold,excluded,
-                                     markerListName,useSizeFunction,NULL) != SV_OK)
+                                     markerListName,useSizeFunction,nullptr) != SV_OK)
       {
           fprintf(stderr,"Issue while remeshing surface\n");
           return false;
@@ -277,12 +277,12 @@ bool sv4guiModelElementPolyData::RemeshFaces(std::vector<int> faceIDs, double si
 
 bool sv4guiModelElementPolyData::FillHolesWithIDs()
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     int maxFaceID=GetMaxFaceID();
     vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::FillHolesWithIDs(m_WholeVtkPolyData, maxFaceID, 2);
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     int *newFaceIDs;
@@ -316,7 +316,7 @@ bool sv4guiModelElementPolyData::FillHolesWithIDs()
 
 bool sv4guiModelElementPolyData::ExtractFaces(double angle)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     int numFaces = 0;
@@ -353,7 +353,7 @@ bool sv4guiModelElementPolyData::ExtractFaces(double angle)
 
 bool sv4guiModelElementPolyData::FillHoles()
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkFillHolesFilter> filler=vtkSmartPointer<vtkFillHolesFilter>::New();
@@ -362,7 +362,7 @@ bool sv4guiModelElementPolyData::FillHoles()
     filler->Update();
 
     vtkSmartPointer<vtkPolyData> newvpd=filler->GetOutput();
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     if(newvpd->GetNumberOfCells()==0)
@@ -381,7 +381,7 @@ bool sv4guiModelElementPolyData::FillHoles()
 
 bool sv4guiModelElementPolyData::SelectLargestConnectedRegion()
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkCleanPolyData> merge = vtkSmartPointer<vtkCleanPolyData>::New();
@@ -397,7 +397,7 @@ bool sv4guiModelElementPolyData::SelectLargestConnectedRegion()
     connfilt->Update();
 
     vtkSmartPointer<vtkPolyData> newvpd=connfilt->GetOutput();
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -414,7 +414,7 @@ bool sv4guiModelElementPolyData::SelectLargestConnectedRegion()
 bool sv4guiModelElementPolyData::RemeshG(double hmax, double hmin)
 {
 #ifdef SV_USE_MMG
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
     {
       return false;
     }
@@ -422,7 +422,7 @@ bool sv4guiModelElementPolyData::RemeshG(double hmax, double hmin)
     double hausd = 0.01;
     double angle = 45.0;
     double hgrad = 1.1;
-    vtkDoubleArray *meshSizingFunction = NULL;
+    vtkDoubleArray *meshSizingFunction = nullptr;
     int useSizingFunction = 0;
     int numAddedRefines = 0;
 
@@ -450,7 +450,7 @@ bool sv4guiModelElementPolyData::RemeshG(double hmax, double hmin)
 
 bool sv4guiModelElementPolyData::Decimate(double targetRate)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkQuadricDecimation> decimator=vtkSmartPointer<vtkQuadricDecimation>::New();
@@ -459,7 +459,7 @@ bool sv4guiModelElementPolyData::Decimate(double targetRate)
     decimator->Update();
 
     vtkSmartPointer<vtkPolyData> newvpd=decimator->GetOutput();
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -475,7 +475,7 @@ bool sv4guiModelElementPolyData::Decimate(double targetRate)
 
 bool sv4guiModelElementPolyData::LaplacianSmooth(int numIters, double relaxFactor)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkSmoothPolyDataFilter> smoother=vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
@@ -488,7 +488,7 @@ bool sv4guiModelElementPolyData::LaplacianSmooth(int numIters, double relaxFacto
     smoother->Update();
 
     vtkSmartPointer<vtkPolyData> newvpd=smoother->GetOutput();
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -505,7 +505,7 @@ bool sv4guiModelElementPolyData::LaplacianSmooth(int numIters, double relaxFacto
 
 bool sv4guiModelElementPolyData::ButterflySubdivide(int numDivs)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkButterflySubdivisionFilter> butt=vtkSmartPointer<vtkButterflySubdivisionFilter>::New();
@@ -514,7 +514,7 @@ bool sv4guiModelElementPolyData::ButterflySubdivide(int numDivs)
     butt->Update();
 
     vtkSmartPointer<vtkPolyData> newvpd=butt->GetOutput();
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -531,7 +531,7 @@ bool sv4guiModelElementPolyData::ButterflySubdivide(int numDivs)
 
 bool sv4guiModelElementPolyData::WindowSincSmooth(int numIters, double band)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother=vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
@@ -544,7 +544,7 @@ bool sv4guiModelElementPolyData::WindowSincSmooth(int numIters, double band)
     smoother->Update();
 
     vtkSmartPointer<vtkPolyData> newvpd=smoother->GetOutput();
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -561,7 +561,7 @@ bool sv4guiModelElementPolyData::WindowSincSmooth(int numIters, double band)
 
 bool sv4guiModelElementPolyData::Densify(int numDivs)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkDensifyPolyData> densy=vtkSmartPointer<vtkDensifyPolyData>::New();
@@ -570,7 +570,7 @@ bool sv4guiModelElementPolyData::Densify(int numDivs)
     densy->Update();
 
     vtkSmartPointer<vtkPolyData> newvpd=densy->GetOutput();
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -634,7 +634,7 @@ bool sv4guiModelElementPolyData::SelectCell(int cellID, bool select)
 
 bool sv4guiModelElementPolyData::DeleteCells(std::vector<int> cellIDs)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     m_WholeVtkPolyData->BuildLinks();
@@ -658,12 +658,12 @@ bool sv4guiModelElementPolyData::DeleteCells(std::vector<int> cellIDs)
 
 bool sv4guiModelElementPolyData::MarkCells(std::vector<int> cellIDs)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::MarkCells(m_WholeVtkPolyData, cellIDs);
 
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -673,12 +673,12 @@ bool sv4guiModelElementPolyData::MarkCells(std::vector<int> cellIDs)
 
 bool sv4guiModelElementPolyData::MarkCellsBySphere(double radius, double center[3])
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::MarkCellsBySphere(m_WholeVtkPolyData, radius, center);
 
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -688,12 +688,12 @@ bool sv4guiModelElementPolyData::MarkCellsBySphere(double radius, double center[
 
 bool sv4guiModelElementPolyData::MarkCellsByFaces(std::vector<int> faceIDs)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::MarkCellsByFaces(m_WholeVtkPolyData, faceIDs);
 
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -703,12 +703,12 @@ bool sv4guiModelElementPolyData::MarkCellsByFaces(std::vector<int> faceIDs)
 
 bool sv4guiModelElementPolyData::MarkCellsByFaceJunctions(std::vector<int> faceIDs, double radius)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::MarkCellsByFaceJunctions(m_WholeVtkPolyData, faceIDs, radius);
 
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -718,11 +718,11 @@ bool sv4guiModelElementPolyData::MarkCellsByFaceJunctions(std::vector<int> faceI
 
 bool sv4guiModelElementPolyData::DecimateLocal(double targetRate)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::DecimateLocal(m_WholeVtkPolyData, targetRate);
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -739,11 +739,11 @@ bool sv4guiModelElementPolyData::DecimateLocal(double targetRate)
 
 bool sv4guiModelElementPolyData::LaplacianSmoothLocal(int numIters, double relaxFactor)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::LaplacianSmoothLocal(m_WholeVtkPolyData, numIters, relaxFactor);
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -760,11 +760,11 @@ bool sv4guiModelElementPolyData::LaplacianSmoothLocal(int numIters, double relax
 
 bool sv4guiModelElementPolyData::ConstrainSmoothLocal(int numIters, double constrainFactor, int numCGSolves)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::ConstrainSmoothLocal(m_WholeVtkPolyData, numIters, constrainFactor, numCGSolves);
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -781,11 +781,11 @@ bool sv4guiModelElementPolyData::ConstrainSmoothLocal(int numIters, double const
 
 bool sv4guiModelElementPolyData::LinearSubdivideLocal(int numDivs)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::LinearSubdivideLocal(m_WholeVtkPolyData, numDivs);
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -802,11 +802,11 @@ bool sv4guiModelElementPolyData::LinearSubdivideLocal(int numDivs)
 
 bool sv4guiModelElementPolyData::LoopSubdivideLocal(int numDivs)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::LoopSubdivideLocal(m_WholeVtkPolyData, numDivs);
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -823,11 +823,11 @@ bool sv4guiModelElementPolyData::LoopSubdivideLocal(int numDivs)
 
 bool sv4guiModelElementPolyData::CutByPlane(double origin[3], double point1[3], double point2[3], bool above )
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::CutByPlane(m_WholeVtkPolyData, origin, point1, point2, above);
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -843,11 +843,11 @@ bool sv4guiModelElementPolyData::CutByPlane(double origin[3], double point1[3], 
 
 bool sv4guiModelElementPolyData::CutByBox(vtkSmartPointer<vtkPlanes> boxPlanes, bool inside)
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return false;
 
     vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::CutByBox(m_WholeVtkPolyData, boxPlanes, inside);
-    if(newvpd==NULL)
+    if(newvpd==nullptr)
         return false;
 
     m_WholeVtkPolyData=newvpd;
@@ -864,7 +864,7 @@ bool sv4guiModelElementPolyData::CutByBox(vtkSmartPointer<vtkPlanes> boxPlanes, 
 
 void sv4guiModelElementPolyData::RemoveActiveCells()
 {
-    if(m_WholeVtkPolyData==NULL)
+    if(m_WholeVtkPolyData==nullptr)
         return;
 
     m_WholeVtkPolyData->GetCellData()->RemoveArray("ActiveCells");

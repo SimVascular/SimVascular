@@ -35,8 +35,11 @@
 #include <mitkNodePredicateDataType.h>
 
 #include <berryPlatform.h>
-#include <berryIPreferences.h>
-#include <berryIPreferencesService.h>
+#include <mitkIPreferences.h>
+#include <mitkIPreferencesService.h>
+
+//dp #include <berryIPreferences.h>
+//dp #include <berryIPreferencesService.h>
 
 #include <QFileDialog>
 
@@ -61,27 +64,30 @@ void sv4guiSegmentationLegacySaveAction::Run(const QList<mitk::DataNode::Pointer
 
     try
     {
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
+
         if (prefService)
         {
             prefs = prefService->GetSystemPreferences()->Node("/General");
         }
         else
         {
-            prefs = berry::IPreferences::Pointer(0);
+            prefs = nullptr;
         }
 
         QString lastFilePath="";
-        if(prefs.IsNotNull())
+
+        if(prefs != nullptr)
         {
-            lastFilePath = prefs->Get("LastFileSavePath", "");
+            lastFilePath = QString::fromStdString(prefs->Get("LastFileSavePath", ""));
         }
+
         if(lastFilePath=="")
             lastFilePath=QDir::homePath();
 
 
-        QString segDir = QFileDialog::getExistingDirectory(NULL, tr("Export as Legacy Segmentations (Choose Directory)"),
+        QString segDir = QFileDialog::getExistingDirectory(nullptr, tr("Export as Legacy Segmentations (Choose Directory)"),
                                                              lastFilePath);
 
         segDir=segDir.trimmed();
@@ -93,9 +99,9 @@ void sv4guiSegmentationLegacySaveAction::Run(const QList<mitk::DataNode::Pointer
 
         sv4guiSegmentationLegacyIO::WriteFiles(rsContourGroup, rsSeg3D, segDir);
 
-        if(prefs.IsNotNull())
+        if(prefs != nullptr) 
          {
-             prefs->Put("LastFileSavePath", segDir);
+             prefs->Put("LastFileSavePath", segDir.toStdString());
              prefs->Flush();
          }
     }

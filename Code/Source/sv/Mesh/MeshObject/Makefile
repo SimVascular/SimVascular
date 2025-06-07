@@ -52,18 +52,11 @@ endif
 
 CXXFLAGS += $(LOCAL_INCDIR) \
 	    $(VTK_INCDIRS) \
-	    $(TCLTK_INCDIR) \
 	    $(PYTHON_INCDIR)
 
 HDRS	= sv_MeshObject.h sv_MeshSystem.h
 
 CXXSRCS	= sv_MeshObject.cxx sv_MeshSystem.cxx
-
-DLLHDRS = sv_mesh_init.h
-DLLSRCS = sv_mesh_init.cxx
-
-SVPYHDRS = sv_mesh_init_py.h
-SVPYSRCS = sv_mesh_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \

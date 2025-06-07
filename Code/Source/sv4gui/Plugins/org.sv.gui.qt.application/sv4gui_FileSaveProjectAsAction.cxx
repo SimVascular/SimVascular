@@ -41,8 +41,8 @@
 #include <berryPlatform.h>
 #include <berryPlatformUI.h>
 #include <berryISelectionService.h>
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 
 #include <mitkProgressBar.h>
 #include <mitkStatusBar.h>
@@ -119,7 +119,7 @@ void sv4guiFileSaveProjectAsAction::Run()
             return;
 
         berry::ISelectionService* selectionService =window->GetSelectionService();
-        if(selectionService==NULL)
+        if(selectionService==nullptr)
             return;
 
         mitk::DataNodeSelection::ConstPointer nodeSelection = selectionService->GetSelection().Cast<const mitk::DataNodeSelection>();
@@ -128,8 +128,8 @@ void sv4guiFileSaveProjectAsAction::Run()
 
         std::list< mitk::DataNode::Pointer > selectedList = nodeSelection->GetSelectedDataNodes();
 
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
 
         if (prefService)
         {
@@ -137,7 +137,7 @@ void sv4guiFileSaveProjectAsAction::Run()
         }
         else
         {
-            prefs = berry::IPreferences::Pointer(0);
+            prefs = nullptr; 
         }
 
 
@@ -154,15 +154,15 @@ void sv4guiFileSaveProjectAsAction::Run()
           }
 
           QString lastSVProjPath="";
-          if(prefs.IsNotNull())
+          if(prefs != nullptr)
           {
-              lastSVProjPath = prefs->Get("LastSVProjPath", prefs->Get("LastSVProjCreatParentPath", ""));
+              lastSVProjPath = QString::fromStdString(prefs->Get("LastSVProjPath", prefs->Get("LastSVProjCreatParentPath", "")));
           }
 
           if(lastSVProjPath=="")
              lastSVProjPath=QDir::homePath();
 
-           QString projPath = QFileDialog::getExistingDirectory(NULL, tr("Choose folder for project"),
+           QString projPath = QFileDialog::getExistingDirectory(nullptr, tr("Choose folder for project"),
                                                             lastSVProjPath);
 
           if(projPath.trimmed().isEmpty()) return;
@@ -173,7 +173,7 @@ void sv4guiFileSaveProjectAsAction::Run()
           if(dir.exists(".svproj"))
           {
             QString msg = "An SV project named "+projPath+" already exists; saving will overwrite the project. Continue?";
-            if (QMessageBox::question(NULL, "Save Project As", msg,
+            if (QMessageBox::question(nullptr, "Save Project As", msg,
                                       QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
             {
                 mitk::StatusBar::GetInstance()->DisplayText("Project not saved.");

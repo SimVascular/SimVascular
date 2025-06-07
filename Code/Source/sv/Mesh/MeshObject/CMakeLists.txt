@@ -41,10 +41,10 @@ LIST(APPEND CORELIBS ${lib})
 SET(CXXSRCS sv_MeshObject.cxx sv_MeshSystem.cxx)
 SET(HDRS sv_MeshObject.h sv_MeshSystem.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_mesh_init.cxx )
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
-	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+	${VTK_LIBRARIES} 
 	${ZLIB_LIBRARY}
 	${SV_LIB_GLOBALS_NAME} ${SV_LIB_REPOSITORY_NAME}
 	${SV_LIB_SOLID_NAME}

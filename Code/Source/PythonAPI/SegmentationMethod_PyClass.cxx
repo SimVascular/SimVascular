@@ -107,7 +107,7 @@ SegmentationMethod_get_names()
 //
 static PyMethodDef SegmentationMethodMethods[] = {
   { "get_names", (PyCFunction)SegmentationMethod_get_names, METH_NOARGS, SegmentationMethod_get_names_doc},
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -145,7 +145,7 @@ PyDoc_STRVAR(SegmentationMethodClass_doc,
 // Define the Python type object that stores segmentation.Method types.
 //
 static PyTypeObject PySegmentationMethodType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   SEGMENTATION_METHOD_MODULE_CLASS,
   sizeof(SegmentationMethodObject)
 };

@@ -42,10 +42,8 @@
 #include <stdio.h>
 #include <string.h>
 
-//#include "sv_Repository.h"
 #include "Modeling_PyModule.h"
 #include "sv_SolidModel.h"
-#include "sv_arg.h"
 #include "sv_misc_utils.h"
 #include "sv_vtk_utils.h"
 #include "sv_PolyData.h"
@@ -61,7 +59,6 @@
 #undef GetObject
 #endif
 
-#include "sv2_globals.h"
 #include "Python.h"
 #include <structmember.h>
 #include "vtkPythonUtil.h"
@@ -137,9 +134,9 @@ std::map<SolidModel_KernelT, std::string> modelingValidFileFormats = {
 //
 using PyModelingModelCtorMapType = std::map<SolidModel_KernelT, std::function<PyObject*()>>;
 PyModelingModelCtorMapType PyModelingModelCtorMap = {
-  {SolidModel_KernelT::SM_KT_OCCT, []()->PyObject* {return PyObject_CallObject((PyObject*)&PyOcctSolidType, NULL);}},
-  {SolidModel_KernelT::SM_KT_PARASOLID, []()->PyObject* {return PyObject_CallObject((PyObject*)&PyParasolidSolidType, NULL);}},
-  {SolidModel_KernelT::SM_KT_POLYDATA, []()->PyObject* {return PyObject_CallObject((PyObject*)&PyPolyDataSolidType, NULL);}},
+  {SolidModel_KernelT::SM_KT_OCCT, []()->PyObject* {return PyObject_CallObject((PyObject*)&PyOcctSolidType, nullptr);}},
+  {SolidModel_KernelT::SM_KT_PARASOLID, []()->PyObject* {return PyObject_CallObject((PyObject*)&PyParasolidSolidType, nullptr);}},
+  {SolidModel_KernelT::SM_KT_POLYDATA, []()->PyObject* {return PyObject_CallObject((PyObject*)&PyPolyDataSolidType, nullptr);}},
 };
 
 //////////////////////////////////////////////////////
@@ -281,7 +278,7 @@ PyDoc_STRVAR(Solid_module_doc,
 // Methods for the 'solid' module.
 //
 static PyMethodDef PyModelingModuleMethods[] = {
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //-----------------------
@@ -424,13 +421,13 @@ PyInit_PyModeling(void)
 
   // Create the 'solid' module.
   auto module = PyModule_Create(&PyModelingModule);
-  if (module == NULL) {
+  if (module == nullptr) {
     fprintf(stdout,"Error in initializing pySolid");
     return SV_PYTHON_ERROR;
   }
 
   // Add solid.ModelingModelError exception.
-  PyRunTimeErr = PyErr_NewException(MODELING_MODULE_EXCEPTION, NULL, NULL);
+  PyRunTimeErr = PyErr_NewException(MODELING_MODULE_EXCEPTION, nullptr, nullptr);
   PyModule_AddObject(module, MODELING_MODULE_EXCEPTION_OBJECT, PyRunTimeErr);
 
   // Add the 'ModelingModeler' class.

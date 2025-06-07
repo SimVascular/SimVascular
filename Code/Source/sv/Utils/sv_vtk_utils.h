@@ -59,6 +59,14 @@ int SV_EXPORT_UTILS VtkUtils_NewVtkPolyDataLines( vtkPolyData **pd, int numPts, 
 // same (potentially redundant) point set, and just change the id's
 // that get used by Lines and Polys.
 
+vtkSmartPointer<vtkUnstructuredGrid>
+VtkUtils_ThresholdUgrid(const double lower, const double upper, const std::string& data_name, 
+    vtkDataObject* vtk_data);
+
+vtkSmartPointer<vtkPolyData>
+VtkUtils_ThresholdSurface(const double lower, const double upper, const std::string& data_name, 
+    vtkDataObject* vtk_data);
+
 int SV_EXPORT_UTILS VtkUtils_FixTopology( vtkPolyData *pd, double tol );
 
 int SV_EXPORT_UTILS VtkUtils_GetPoints( vtkPolyData *pd, double **pts, int *numPts );

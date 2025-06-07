@@ -47,9 +47,9 @@
 // -----------------
 
 cvCalculateWallShearStress::cvCalculateWallShearStress() {
-    wallshear_ = NULL;
-    surfaceMesh_ = NULL;
-    tensors_ = NULL;
+    wallshear_ = nullptr;
+    surfaceMesh_ = nullptr;
+    tensors_ = nullptr;
 
 }
 
@@ -59,7 +59,7 @@ cvCalculateWallShearStress::cvCalculateWallShearStress() {
 // --------------------
 
 cvCalculateWallShearStress::~cvCalculateWallShearStress() {
-    if (wallshear_ != NULL) {
+    if (wallshear_ != nullptr) {
         wallshear_->Delete();
     }
 }
@@ -70,7 +70,7 @@ cvCalculateWallShearStress::~cvCalculateWallShearStress() {
 // ------------------
 
 int cvCalculateWallShearStress::SetSurfaceMesh(cvPolyData* surfaceMesh) {
-    surfaceMesh_ = NULL;
+    surfaceMesh_ = nullptr;
     surfaceMesh_ = surfaceMesh->GetVtkPolyData();
     return SV_OK;
 }
@@ -80,7 +80,7 @@ int cvCalculateWallShearStress::SetSurfaceMesh(cvPolyData* surfaceMesh) {
 // --------------
 
 int cvCalculateWallShearStress::SetTensors(cvPolyData* tensors) {
-    tensors_ = NULL;
+    tensors_ = nullptr;
     tensors_ = tensors->GetVtkPolyData();
     return SV_OK;
 }
@@ -90,7 +90,7 @@ int cvCalculateWallShearStress::SetTensors(cvPolyData* tensors) {
 // ---------------
 
 int cvCalculateWallShearStress::SetTractions(cvPolyData* tractions) {
-    tractions_ = NULL;
+    tractions_ = nullptr;
     tractions_ = tractions->GetVtkPolyData();
     return SV_OK;
 }
@@ -123,7 +123,7 @@ int cvCalculateWallShearStress::CalcWallShearFromStresses() {
 
     polys->InitTraversal();
     vtkIdType celltype = 0;
-    vtkIdType *ids;
+    const vtkIdType *ids;
     for (i = 0; i < numCells; i++) {
         polys->GetNextCell(celltype,ids);
         //fprintf(stdout,"checking cell: %i type: %i\n",i,celltype);
@@ -211,7 +211,7 @@ int cvCalculateWallShearStress::CalcWallShearFromTractions() {
 
     polys->InitTraversal();
     vtkIdType celltype = 0;
-    vtkIdType *ids;
+    const vtkIdType *ids;
     for (i = 0; i < numCells; i++) {
         polys->GetNextCell(celltype,ids);
         //fprintf(stdout,"checking cell: %i type: %i\n",i,celltype);
@@ -315,7 +315,7 @@ cvPolyData* cvCalculateWallShearStress::CalcWallShearMean(int numPds, cvPolyData
 
     // create cvPolyData object to return
     vtkPolyData* pd = vtkPolyData::New();
-    if (surfaceMesh_ == NULL) {
+    if (surfaceMesh_ == nullptr) {
       pd->SetPoints(shearPds[0]->GetVtkPolyData()->GetPoints());
     } else {
       pd->CopyStructure(surfaceMesh_);
@@ -362,7 +362,7 @@ cvPolyData* cvCalculateWallShearStress::CalcWallShearPulse(int numPds, cvPolyDat
 
     // create cvPolyData object to return
     vtkPolyData* pd = vtkPolyData::New();
-    if (surfaceMesh_ == NULL) {
+    if (surfaceMesh_ == nullptr) {
       pd->SetPoints(shearPds[0]->GetVtkPolyData()->GetPoints());
     } else {
       pd->CopyStructure(surfaceMesh_);
@@ -410,7 +410,7 @@ cvPolyData* cvCalculateWallShearStress::CalcOSI(cvPolyData *shearMean, cvPolyDat
 
     // create cvPolyData object to return
     vtkPolyData* pd = vtkPolyData::New();
-    if (surfaceMesh_ == NULL) {
+    if (surfaceMesh_ == nullptr) {
       pd->SetPoints(shearMean->GetVtkPolyData()->GetPoints());
     } else {
       pd->CopyStructure(surfaceMesh_);
@@ -478,7 +478,7 @@ cvPolyData* cvCalculateWallShearStress::CalcAvgPointData(int numPds, cvPolyData 
 
     // create cvPolyData object to return
     vtkPolyData* pd = vtkPolyData::New();
-    if (surfaceMesh_ == NULL) {
+    if (surfaceMesh_ == nullptr) {
       pd->SetPoints(inputPds[0]->GetVtkPolyData()->GetPoints());
     } else {
       pd->CopyStructure(surfaceMesh_);

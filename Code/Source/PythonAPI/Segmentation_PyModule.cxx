@@ -86,7 +86,6 @@
 #include <map>
 #include <functional>
 #include <iostream>
-#include "sv_Repository.h"
 #include "sv_RepositoryData.h"
 #include "sv_PolyData.h"
 #include "vtkSmartPointer.h"
@@ -95,8 +94,6 @@
 #ifdef GetObject
 #undef GetObject
 #endif
-
-#include "sv2_globals.h"
 
 // Exception type used by PyErr_SetString() to set the for the error indicator.
 static PyObject * PyRunTimeErr;
@@ -220,7 +217,7 @@ static PyMethodDef PySegmentationModuleMethods[] =
 {
     {"create", (PyCFunction)Segmentation_create, METH_VARARGS, "Create a segmentation object."},
 
-    {NULL,NULL}
+    {nullptr,nullptr}
 };
 
 // Include derived Segmentation classes.
@@ -241,13 +238,13 @@ static PyMethodDef PySegmentationModuleMethods[] =
 //
 using PySegmentationCtorMapType = std::map<cKernelType, std::function<PyObject*()>>;
 PySegmentationCtorMapType PySegmentationCtorMap = {
-  {cKernelType::cKERNEL_CIRCLE,        []()->PyObject* {return PyObject_CallObject((PyObject*)&PyCircleSegmentationType, NULL);}},
-  {cKernelType::cKERNEL_CONTOUR,       []()->PyObject* {return PyObject_CallObject((PyObject*)&PyContourSegmentationType, NULL);}},
-  {cKernelType::cKERNEL_ELLIPSE,       []()->PyObject* {return PyObject_CallObject((PyObject*)&PyCircleSegmentationType, NULL);}},
-  {cKernelType::cKERNEL_LEVELSET,      []()->PyObject* {return PyObject_CallObject((PyObject*)&PyLevelSetSegmentationType, NULL);}},
-  {cKernelType::cKERNEL_POLYGON,       []()->PyObject* {return PyObject_CallObject((PyObject*)&PyPolygonSegmentationType, NULL);}},
-  {cKernelType::cKERNEL_SPLINEPOLYGON, []()->PyObject* {return PyObject_CallObject((PyObject*)&PySplinePolygonSegmentationType, NULL);}},
-  {cKernelType::cKERNEL_THRESHOLD,     []()->PyObject* {return PyObject_CallObject((PyObject*)&PyThresholdSegmentationType, NULL);}},
+  {cKernelType::cKERNEL_CIRCLE,        []()->PyObject* {return PyObject_CallObject((PyObject*)&PyCircleSegmentationType, nullptr);}},
+  {cKernelType::cKERNEL_CONTOUR,       []()->PyObject* {return PyObject_CallObject((PyObject*)&PyContourSegmentationType, nullptr);}},
+  {cKernelType::cKERNEL_ELLIPSE,       []()->PyObject* {return PyObject_CallObject((PyObject*)&PyCircleSegmentationType, nullptr);}},
+  {cKernelType::cKERNEL_LEVELSET,      []()->PyObject* {return PyObject_CallObject((PyObject*)&PyLevelSetSegmentationType, nullptr);}},
+  {cKernelType::cKERNEL_POLYGON,       []()->PyObject* {return PyObject_CallObject((PyObject*)&PyPolygonSegmentationType, nullptr);}},
+  {cKernelType::cKERNEL_SPLINEPOLYGON, []()->PyObject* {return PyObject_CallObject((PyObject*)&PySplinePolygonSegmentationType, nullptr);}},
+  {cKernelType::cKERNEL_THRESHOLD,     []()->PyObject* {return PyObject_CallObject((PyObject*)&PyThresholdSegmentationType, nullptr);}},
 };
 
 //----------------------
@@ -422,13 +419,13 @@ PyInit_PySegmentation()
 
   // Create the contour module.
   auto module = PyModule_Create(&PySegmentationModule);
-  if (module == NULL) {
+  if (module == nullptr) {
     fprintf(stdout,"Error in initializing PySegmentation\n");
     return SV_PYTHON_ERROR;
   }
 
   // Add contour.SegmentationError exception.
-  PyRunTimeErr = PyErr_NewException(SEGMENTATION_MODULE_EXCEPTION, NULL, NULL);
+  PyRunTimeErr = PyErr_NewException(SEGMENTATION_MODULE_EXCEPTION, nullptr, nullptr);
   PyModule_AddObject(module, SEGMENTATION_MODULE_EXCEPTION_OBJECT, PyRunTimeErr);
 
   // Add the 'Segmentation' object.
@@ -493,7 +490,7 @@ PyMODINIT_FUNC initPySegmentation()
 {
   // Associate the mesh registrar with the python interpreter so it can be
   // retrieved by the DLLs.
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository = new cvRepository();
     fprintf(stdout,"New gRepository created from sv3_Segmentation_init\n");
@@ -513,11 +510,11 @@ PyMODINIT_FUNC initPySegmentation()
   }
 
   auto module = Py_InitModule(SEGMENTATION_MODULE, PySegmentationModule_methods);
-  if(module == NULL) {
+  if(module == nullptr) {
     fprintf(stdout,"Error in initializing PySegmentation\n");
     return;
   }
-  PyRunTimeErr = PyErr_NewException("PySegmentation.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("PySegmentation.error",nullptr,nullptr);
   PyModule_AddObject(module,"error",PyRunTimeErr);
 
   Py_INCREF(&PySegmentationType);

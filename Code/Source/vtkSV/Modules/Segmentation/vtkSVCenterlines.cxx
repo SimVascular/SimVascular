@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "sv_vtk_utils.h"
+
 #include "vtkSVCenterlines.h"
 
 #include "vtkArrayCalculator.h"
@@ -87,11 +89,11 @@ vtkCxxSetObjectMacro(vtkSVCenterlines,CapCenterIds,vtkIdList);
 // ----------------------
 vtkSVCenterlines::vtkSVCenterlines()
 {
-  this->SourceSeedIds = NULL;
-  this->TargetSeedIds = NULL;
-  this->CapCenterIds = NULL;
+  this->SourceSeedIds = nullptr;
+  this->TargetSeedIds = nullptr;
+  this->CapCenterIds = nullptr;
 
-  this->RadiusArrayName = NULL;
+  this->RadiusArrayName = nullptr;
   this->CostFunction = new char[16];
   strcpy(this->CostFunction,"1/R");
 
@@ -121,7 +123,7 @@ vtkSVCenterlines::vtkSVCenterlines()
   this->RelativeThreshold = 0.5;
   this->MedialEdgeThreshold = 5;
 
-  this->DelaunayTessellation = NULL;
+  this->DelaunayTessellation = nullptr;
   this->DelaunayTolerance = 1E-3;
 
   this->VoronoiDiagram = vtkPolyData::New();
@@ -137,79 +139,79 @@ vtkSVCenterlines::~vtkSVCenterlines()
   if (this->SourceSeedIds)
   {
     this->SourceSeedIds->Delete();
-    this->SourceSeedIds = NULL;
+    this->SourceSeedIds = nullptr;
   }
 
   if (this->TargetSeedIds)
   {
     this->TargetSeedIds->Delete();
-    this->TargetSeedIds = NULL;
+    this->TargetSeedIds = nullptr;
   }
 
   if (this->CapCenterIds)
   {
     this->CapCenterIds->Delete();
-    this->CapCenterIds = NULL;
+    this->CapCenterIds = nullptr;
   }
 
   if (this->CostFunction)
   {
     delete[] this->CostFunction;
-    this->CostFunction = NULL;
+    this->CostFunction = nullptr;
   }
 
   if (this->CostFunctionArrayName)
   {
     delete[] this->CostFunctionArrayName;
-    this->CostFunctionArrayName = NULL;
+    this->CostFunctionArrayName = nullptr;
   }
 
   if (this->EikonalSolutionArrayName)
   {
     delete[] this->EikonalSolutionArrayName;
-    this->EikonalSolutionArrayName = NULL;
+    this->EikonalSolutionArrayName = nullptr;
   }
 
   if (this->EdgeArrayName)
   {
     delete[] this->EdgeArrayName;
-    this->EdgeArrayName = NULL;
+    this->EdgeArrayName = nullptr;
   }
 
   if (this->EdgePCoordArrayName)
   {
     delete[] this->EdgePCoordArrayName;
-    this->EdgePCoordArrayName = NULL;
+    this->EdgePCoordArrayName = nullptr;
   }
 
   if (this->RadiusArrayName)
   {
     delete[] this->RadiusArrayName;
-    this->RadiusArrayName = NULL;
+    this->RadiusArrayName = nullptr;
   }
 
   if (this->DelaunayTessellation)
   {
     this->DelaunayTessellation->Delete();
-    this->DelaunayTessellation = NULL;
+    this->DelaunayTessellation = nullptr;
   }
 
-  if (this->RawCenterlines != NULL)
+  if (this->RawCenterlines != nullptr)
   {
     this->RawCenterlines->Delete();
-    this->RawCenterlines = NULL;
+    this->RawCenterlines = nullptr;
   }
 
-  if (this->VoronoiDiagram != NULL)
+  if (this->VoronoiDiagram != nullptr)
   {
     this->VoronoiDiagram->Delete();
-    this->VoronoiDiagram = NULL;
+    this->VoronoiDiagram = nullptr;
   }
 
-  if (this->PoleIds != NULL)
+  if (this->PoleIds != nullptr)
   {
     this->PoleIds->Delete();
-    this->PoleIds = NULL;
+    this->PoleIds = nullptr;
   }
 }
 
@@ -319,7 +321,7 @@ int vtkSVCenterlines::RequestData(
   surfaceNormals->ConsistencyOn();
   surfaceNormals->Update();
   // ------------------------------------------------------------------------
-  if (this->SourceSeedIds != NULL)
+  if (this->SourceSeedIds != nullptr)
   {
     vtkDebugMacro("SOURCE POINTS");
     for (int i=0; i<this->SourceSeedIds->GetNumberOfIds(); i++)
@@ -328,7 +330,7 @@ int vtkSVCenterlines::RequestData(
     }
   }
 
-  if (this->TargetSeedIds != NULL)
+  if (this->TargetSeedIds != nullptr)
   {
     vtkDebugMacro("TARGET POINTS");
     for (int i=0; i<this->TargetSeedIds->GetNumberOfIds(); i++)
@@ -337,7 +339,7 @@ int vtkSVCenterlines::RequestData(
     }
   }
 
-  if (this->CapCenterIds != NULL)
+  if (this->CapCenterIds != nullptr)
   {
     vtkDebugMacro("CAP CENTER POINTS");
     for (int i=0; i<this->CapCenterIds->GetNumberOfIds(); i++)
@@ -454,32 +456,40 @@ int vtkSVCenterlines::RequestData(
   int mAbsThr = this->AbsoluteThreshold; // TODO: FIGURE OUT GOOD VALUE FOR THIS!!!
   double mAbsRange[2];
   newEdgePd->GetCellData()->GetArray("MAbs")->GetRange(mAbsRange);
+  auto mAbs_threshold = VtkUtils_ThresholdUgrid(mAbsThr, mAbsRange[1], "MAbs", newEdgePd);
+  /*dp 
   vtkNew(vtkThreshold, mAbsThresholder);
   mAbsThresholder->SetInputData(newEdgePd);
   mAbsThresholder->SetInputArrayToProcess(0, 0, 0, 1, "MAbs");
   mAbsThresholder->ThresholdBetween(mAbsThr, mAbsRange[1]);
   mAbsThresholder->Update();
   vtkDebugMacro("Thresholded MAbs: " << mAbsThresholder->GetOutput()->GetNumberOfCells());
-  // ------------------------------------------------------------------------
+  */
 
   // ------------------------------------------------------------------------
   // Threshold based on relative retention
   double mRelThr = this->RelativeThreshold;
   double mRelRange[2];
   newEdgePd->GetCellData()->GetArray("MRel")->GetRange(mRelRange);
+
+  auto MRel_threshold = VtkUtils_ThresholdUgrid(mAbsThr, mAbsRange[1], "MRel", mAbs_threshold);
+  /*dp
   vtkNew(vtkThreshold, mRelThresholder);
-  mRelThresholder->SetInputData(mAbsThresholder->GetOutput());
+  mRelThresholder->SetInputData(mAbs_threshold);
   mRelThresholder->SetInputArrayToProcess(0, 0, 0, 1, "MRel");
   mRelThresholder->ThresholdBetween(mRelThr, mRelRange[1]);
   mRelThresholder->Update();
   vtkDebugMacro("Thresholded MRel: " << mRelThresholder->GetOutput()->GetNumberOfCells());
+  */
+
   // ------------------------------------------------------------------------
 
   // ------------------------------------------------------------------------
   // Get the medial edges
   // Get all separated regions from the thresholded polydata
   vtkNew(vtkConnectivityFilter, connector);
-  connector->SetInputData(mRelThresholder->GetOutput());
+  connector->SetInputData(MRel_threshold);
+  //dp connector->SetInputData(mRelThresholder->GetOutput());
   connector->SetExtractionModeToAllRegions();
   connector->ColorRegionsOn();
   connector->Update();
@@ -509,7 +519,7 @@ int vtkSVCenterlines::RequestData(
   // Loop through
   for (int i=0; i<connector->GetNumberOfExtractedRegions(); i++)
   {
-    regionThresholder->ThresholdBetween(i, i);
+    //dp regionThresholder->ThresholdBetween(i, i);
     regionThresholder->Update();
 
     vtkDebugMacro("Thresholded region " << i << " " << regionThresholder->GetOutput()->GetNumberOfCells());
@@ -566,7 +576,7 @@ int vtkSVCenterlines::RequestData(
   vtkNew(vtkThreshold, finalThreshold);
   finalThreshold->SetInputData(nextEdgePd);
   finalThreshold->SetInputArrayToProcess(0, 0, 0, 1, "RemovalIteration");
-  finalThreshold->ThresholdBetween(finalRange[1], finalRange[1]);
+  //dp finalThreshold->ThresholdBetween(finalRange[1], finalRange[1]);
   finalThreshold->Update();
 
   // Surface
@@ -596,7 +606,8 @@ int vtkSVCenterlines::RequestData(
 
   // ------------------------------------------------------------------------
   // Check to see if duplicate lines, and remove if necessary
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   vtkNew(vtkIdList, cellEdgeNeighbors);
   std::vector<int> dupDeleted(linesPd->GetNumberOfCells(), 0);
   for (int i=0; i<linesPd->GetNumberOfCells(); i++)
@@ -1106,7 +1117,7 @@ int vtkSVCenterlines::RequestData(
 #else
   voronoiCostFunctionCalculator->SetInputData(voronoiDiagram);
 #endif
-  voronoiCostFunctionCalculator->SetAttributeModeToUsePointData();
+  voronoiCostFunctionCalculator->SetAttributeTypeToPointData();
   voronoiCostFunctionCalculator->AddScalarVariable("R",this->RadiusArrayName,0);
   voronoiCostFunctionCalculator->SetFunction(this->CostFunction);
   voronoiCostFunctionCalculator->SetResultArrayName(this->CostFunctionArrayName);
@@ -1387,9 +1398,14 @@ int vtkSVCenterlines::RequestData(
         else
           input->GetPoint(this->SourceSeedIds->GetId(0), startPt);
 
+        vtkIdType fromId = 0;
         int newPointId = newPoints->InsertNextPoint(startPt);
         newLine->GetPointIds()->InsertNextId(newPointId);
-        newPointData->CopyData(appender->GetInput(fullCenterlineEdges[i][0])->GetPointData(), 0, newPointId);
+        newPointData->CopyData(appender->GetInput(fullCenterlineEdges[i][0])->GetPointData(), fromId, newPointId);
+
+        // int newPointId = newPoints->InsertNextPoint(startPt);
+        // newLine->GetPointIds()->InsertNextId(newPointId);
+        // newPointData->CopyData(appender->GetInput(fullCenterlineEdges[i][0])->GetPointData(), 0, newPointId);
       }
     }
 
@@ -2141,7 +2157,8 @@ int vtkSVCenterlines::GetLinesEndPoints(vtkPolyData *pd,
   endPointIds->Reset();
   endPoints->Reset();
 
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   int numEndPoints = 0;
   double maxRadiusValue = -1.0;
   vtkNew(vtkIdList, pointCellIds);

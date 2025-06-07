@@ -87,13 +87,13 @@ vtkStandardNewMacro(vtkSVParameterizeVolumeOnPolycube);
 vtkSVParameterizeVolumeOnPolycube::vtkSVParameterizeVolumeOnPolycube()
 {
   this->WorkPd = vtkPolyData::New();
-  this->SurfaceOnPolycubePd = NULL;
+  this->SurfaceOnPolycubePd = nullptr;
 
-  this->PolycubeUg = NULL;
+  this->PolycubeUg = nullptr;
   this->FinalHexMesh = vtkUnstructuredGrid::New();
 
-  this->GroupIdsArrayName = NULL;
-  this->GridIdsArrayName = NULL;
+  this->GroupIdsArrayName = nullptr;
+  this->GridIdsArrayName = nullptr;
 }
 
 // ----------------------
@@ -101,38 +101,38 @@ vtkSVParameterizeVolumeOnPolycube::vtkSVParameterizeVolumeOnPolycube()
 // ----------------------
 vtkSVParameterizeVolumeOnPolycube::~vtkSVParameterizeVolumeOnPolycube()
 {
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
-  if (this->SurfaceOnPolycubePd != NULL)
+  if (this->SurfaceOnPolycubePd != nullptr)
   {
     this->SurfaceOnPolycubePd->Delete();
-    this->SurfaceOnPolycubePd = NULL;
+    this->SurfaceOnPolycubePd = nullptr;
   }
-  if (this->PolycubeUg != NULL)
+  if (this->PolycubeUg != nullptr)
   {
     this->PolycubeUg->Delete();
-    this->PolycubeUg = NULL;
+    this->PolycubeUg = nullptr;
   }
 
-  if (this->FinalHexMesh != NULL)
+  if (this->FinalHexMesh != nullptr)
   {
     this->FinalHexMesh->Delete();
-    this->FinalHexMesh = NULL;
+    this->FinalHexMesh = nullptr;
   }
 
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
   {
     delete [] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
   }
 
-  if (this->GridIdsArrayName != NULL)
+  if (this->GridIdsArrayName != nullptr)
   {
     delete [] this->GridIdsArrayName;
-    this->GridIdsArrayName = NULL;
+    this->GridIdsArrayName = nullptr;
   }
 }
 
@@ -196,7 +196,7 @@ int vtkSVParameterizeVolumeOnPolycube::PrepFilter()
     strcpy(this->GroupIdsArrayName, "GroupIds");
   }
 
-  if (this->PolycubeUg == NULL)
+  if (this->PolycubeUg == nullptr)
   {
     vtkErrorMacro("Volume polycube not provided");
     return SV_ERROR;
@@ -208,7 +208,7 @@ int vtkSVParameterizeVolumeOnPolycube::PrepFilter()
     return SV_ERROR;
   }
 
-  if (this->SurfaceOnPolycubePd == NULL)
+  if (this->SurfaceOnPolycubePd == nullptr)
   {
     vtkErrorMacro("Surface on polycube not provided");
     return SV_ERROR;
@@ -266,7 +266,7 @@ int vtkSVParameterizeVolumeOnPolycube::RunFilter()
   std::vector<int> l_divs(numGroups);
 
   vtkDataArray *polycubeDivisions = this->PolycubeUg->GetFieldData()->GetArray("PolycubeDivisions");
-  if (polycubeDivisions == NULL)
+  if (polycubeDivisions == nullptr)
   {
     vtkErrorMacro("Array with name PolycubeDivivisions needs to be present on volume polycube");
     return SV_ERROR;
@@ -372,7 +372,7 @@ int vtkSVParameterizeVolumeOnPolycube::RunFilter()
 
   vtkNew(vtkIdFilter, ider2);
   ider2->SetInputData(mappedSurface);
-  ider2->SetIdsArrayName("TmpInternalIds");
+  ider2->SetCellIdsArrayName("TmpInternalIds");
   ider2->Update();
   vtkDataArray *tmpArray = ider2->GetOutput()->GetPointData()->GetArray("TmpInternalIds");
   mappedSurface->GetPointData()->AddArray(tmpArray);
@@ -431,7 +431,7 @@ int vtkSVParameterizeVolumeOnPolycube::RunFilter()
 
     vtkNew(vtkIdFilter, ider3);
     ider3->SetInputData(realHexMesh);
-    ider3->SetIdsArrayName(this->GridIdsArrayName);
+    ider3->SetCellIdsArrayName(this->GridIdsArrayName);
     ider3->Update();
 
     vtkNew(vtkAppendFilter, converter);
@@ -643,7 +643,7 @@ int vtkSVParameterizeVolumeOnPolycube::RunFilter()
   //  for (int j=0; j<numChildren; j++)
   //    nurbs->AddPatchConnection(i+1, groupMap->IsId(gCell->Children[j]->GroupId)+1, 1, 6);
 
-  //  if (gCell->Parent != NULL)
+  //  if (gCell->Parent != nullptr)
   //  {
   //    int numBrothers = gCell->Parent->Children.size();
   //    for (int j=0; j<numBrothers; j++)
@@ -731,7 +731,7 @@ int vtkSVParameterizeVolumeOnPolycube::ConvertUGToSG(vtkUnstructuredGrid *ug,
 void vtkSVParameterizeVolumeOnPolycube::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
     os << indent << "Group ids array name: " << this->GroupIdsArrayName << "\n";
 }
 
@@ -829,11 +829,11 @@ int vtkSVParameterizeVolumeOnPolycube::MapInteriorBoundary(vtkStructuredGrid *pa
   vtkDataArray *ptIds = mappedSurface->GetPointData()->GetArray("TmpInternalIds");
   vtkDataArray *mappedIds = mappedSurface->GetPointData()->GetArray(this->GridIdsArrayName);
 
-  if (ptIds == NULL)
+  if (ptIds == nullptr)
   {
     vtkErrorMacro("No TmpInternals2 on mapped surface\n");
   }
-  if (mappedIds == NULL)
+  if (mappedIds == nullptr)
   {
     vtkErrorMacro("No TmpInternals on mapped surface\n");
   }
@@ -1819,7 +1819,7 @@ int vtkSVParameterizeVolumeOnPolycube::InterpolateMapOntoTarget(vtkPolyData *sou
   interpolator->SetInputData(1, targetPd);
   interpolator->SetInputData(2, targetBasePd);
   interpolator->SetNumSourceSubdivisions(0);
-  if (dataMatchingArrayName.c_str() != NULL)
+  if (dataMatchingArrayName.c_str() != nullptr)
   {
     interpolator->SetEnableDataMatching(1);
     interpolator->SetDataMatchingArrayName(dataMatchingArrayName.c_str());

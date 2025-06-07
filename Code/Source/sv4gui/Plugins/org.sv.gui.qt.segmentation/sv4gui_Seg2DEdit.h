@@ -48,7 +48,8 @@
 #include "sv4gui_MachineLearningUtils.h"
 
 #include <QmitkSliceWidget.h>
-#include <QmitkSliderNavigatorWidget.h>
+#include <QmitkSliceNavigationWidget.h>
+//dp #include <QmitkSliderNavigatorWidget.h>
 #include <QmitkStepperAdapter.h>
 
 #include <mitkDataStorage.h>
@@ -200,7 +201,9 @@ public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
+    // this was overriden in QmitkFunctionality. Need to figure out if we need it
+    virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/,
+                                    const QList<mitk::DataNode::Pointer>& /*nodes*/) override;
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -208,9 +211,9 @@ public:
 
     virtual void NodeRemoved(const mitk::DataNode* node) override;
 
-//    virtual void Activated() override;
+    virtual void Activated() override;
 
-//    virtual void Deactivated() override;
+    virtual void Deactivated() override;
 
     virtual void Visible() override;
 
@@ -218,8 +221,6 @@ public:
 
     void EnableGuiControls(bool enable);
     void ShowNoImageDataWarning();
-
-//    bool IsExclusiveFunctionality() const override;
 
     void PreparePreviewInteraction(QString method);
 
@@ -292,8 +293,6 @@ protected:
 
     bool m_ContourChanging;
 
-    QmitkStdMultiWidget* m_DisplayWidget;
-
     std::vector<sv4guiPathElement::sv4guiPathPoint> m_PathPoints;
 
     QMenu* m_ManualMenu;
@@ -320,8 +319,7 @@ protected:
 
     bool m_MachineLearninginitialized = false;
 
-    bool m_HasImageData = true;
-    bool m_NoImageDataWarningShown = false;
+    mitk::IRenderWindowPart* m_renderWindow;
 };
 
 #endif // SV4GUI_SEG2DEDIT_H

@@ -36,106 +36,123 @@ Version:   $Revision: 1.1 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineSections : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeMacro(vtkvmtkPolyDataCenterlineSections,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
-  static vtkvmtkPolyDataCenterlineSections* New();
+    //-----------
+    // DataArray
+    //-----------
+    // This class provides an interface to store and access VTK data arrays.
+    //
+    template<class T>
+    class DataArray {
+      public:
+        DataArray() {
+          data = vtkSmartPointer<T>::New();
+        }
+        std::string name;
+        vtkSmartPointer<T> data;
+        void initialize(const int size, const double value) {
+          data->SetNumberOfTuples(size);
+          data->Fill(value);
+        }
+        void set_name(const std::string& array_name) {
+          name = array_name;
+          data->SetName(name.c_str());
+        }
+        const char* get_name() {
+          return name.c_str();
+        }
+        void set_component_size(const int size) {
+          data->SetNumberOfComponents(size);
+        }
+    };
 
-  vtkSetObjectMacro(Centerlines,vtkPolyData);
-  vtkGetObjectMacro(Centerlines,vtkPolyData);
+    // Classification of points within a centerline. 
+    //
+    // Declare using enum to compare with int values from 
+    // centerline data arrays.
+    //
+    enum PointType {
+      bifurcation = 1,
+      bifurcation_downstream = 2,
+      branch = 0,
+      undefined = -1
+    };
+    PointType point_types[2] = { PointType::branch, PointType::bifurcation };
 
-  vtkGetObjectMacro(Surface,vtkPolyData);
+    // Set some of the arrays names used internally.
+    class ArrayName {
+      public:
+        const char* BifurcationId = "BifurcationId";
+        const char* BifurcationIdTmp = "BifurcationIdTmp";
+        const char* BranchId = "BranchId";
+        const char* BranchIdTmp = "BranchIdTmp";
+        const char* CenterlineId = "CenterlineId";
+        const char* GlobalNodeId = "GlobalNodeId";
+        const char* Path = "Path";
+        const char* Radius = "MaximumInscribedSphereRadius";
+    };
 
-  vtkSetStringMacro(CenterlineSectionAreaArrayName);
-  vtkGetStringMacro(CenterlineSectionAreaArrayName);
+    vtkTypeMacro(vtkvmtkPolyDataCenterlineSections,vtkPolyDataAlgorithm);
+    void PrintSelf(ostream& os, vtkIndent indent) override; 
 
-  vtkSetStringMacro(CenterlineSectionMinSizeArrayName);
-  vtkGetStringMacro(CenterlineSectionMinSizeArrayName);
-
-  vtkSetStringMacro(CenterlineSectionMaxSizeArrayName);
-  vtkGetStringMacro(CenterlineSectionMaxSizeArrayName);
-
-  vtkSetStringMacro(CenterlineSectionShapeArrayName);
-  vtkGetStringMacro(CenterlineSectionShapeArrayName);
-
-  vtkSetStringMacro(CenterlineSectionClosedArrayName);
-  vtkGetStringMacro(CenterlineSectionClosedArrayName);
-
-  vtkSetStringMacro(CenterlineSectionBifurcationArrayName);
-  vtkGetStringMacro(CenterlineSectionBifurcationArrayName);
-
-  vtkSetStringMacro(CenterlineSectionNormalArrayName);
-  vtkGetStringMacro(CenterlineSectionNormalArrayName);
-
-  vtkSetStringMacro(RadiusArrayName);
-  vtkGetStringMacro(RadiusArrayName);
-
-  vtkSetStringMacro(GlobalNodeIdArrayName);
-  vtkGetStringMacro(GlobalNodeIdArrayName);
-
-  vtkSetStringMacro(BifurcationIdArrayNameTmp);
-  vtkGetStringMacro(BifurcationIdArrayNameTmp);
-
-  vtkSetStringMacro(BifurcationIdArrayName);
-  vtkGetStringMacro(BifurcationIdArrayName);
-
-  vtkSetStringMacro(BranchIdArrayNameTmp);
-  vtkGetStringMacro(BranchIdArrayNameTmp);
-
-  vtkSetStringMacro(BranchIdArrayName);
-  vtkGetStringMacro(BranchIdArrayName);
-
-  vtkSetStringMacro(PathArrayName);
-  vtkGetStringMacro(PathArrayName);
-
-  vtkSetStringMacro(CenterlineIdArrayName);
-  vtkGetStringMacro(CenterlineIdArrayName);
+    static vtkvmtkPolyDataCenterlineSections* New();
+    vtkSetObjectMacro(Centerlines,vtkPolyData);
+    vtkGetObjectMacro(Centerlines,vtkPolyData);
+    vtkGetObjectMacro(Surface,vtkPolyData);
 
   protected:
-  vtkvmtkPolyDataCenterlineSections();
-  ~vtkvmtkPolyDataCenterlineSections();  
+    vtkvmtkPolyDataCenterlineSections();
+    ~vtkvmtkPolyDataCenterlineSections();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+    virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
-  // based on original vmtk function
-  int ComputeCenterlineSections(vtkPolyData* output);
+    int ComputeCenterlineSections(vtkPolyData* output);
+    int CleanBifurcation();
+    int ConnectivityCenterline(vtkPolyData* geo, const char* nameThis, const char* nameOther);
+    int GroupCenterline();
+    int SplitCenterline(vtkPolyData* branches, vtkPolyData* bifurcations);
+    void AddBifurcationCellArray();
+    int GenerateCleanCenterline();
+    int BranchSurface(const char* nameBranch, const char* nameBifurcation);
+    int CalculateTangent();
+    int RefineCapPoints();
+    bool IsOnePiece(vtkPolyData* inp, const std::string& name="");
 
-  // new functions to detect branches/bifurcations
-  int CleanBifurcation();
-  int ConnectivityCenterline(vtkPolyData* geo, char* nameThis, char* nameOther);
-  int GroupCenterline();
-  int SplitCenterline(vtkPolyData* branches, vtkPolyData* bifurcations);
-  int GenerateCleanCenterline();
-  int BranchSurface(char* nameBranch, char* nameBifurcation);
-  int CalculateTangent();
-  int RefineCapPoints();
+    // Originally the VMTK centerlines geometry but is later modified.
+    vtkPolyData* Centerlines;
 
-  bool IsOnePiece(vtkPolyData* inp);
+    // The vtkPolyData surface from which the VMTK centerlines was computed.
+    vtkPolyData* Surface;
 
-  vtkPolyData* Centerlines;
-  vtkPolyData* Surface;
-
-  char* RadiusArrayName;
-  char* GlobalNodeIdArrayName;
-  char* BifurcationIdArrayNameTmp;
-  char* BifurcationIdArrayName;
-  char* BranchIdArrayNameTmp;
-  char* BranchIdArrayName;
-  char* PathArrayName;
-  char* CenterlineIdArrayName;
-  char* CenterlineSectionAreaArrayName;
-  char* CenterlineSectionMinSizeArrayName;
-  char* CenterlineSectionMaxSizeArrayName;
-  char* CenterlineSectionShapeArrayName;
-  char* CenterlineSectionClosedArrayName;
-  char* CenterlineSectionBifurcationArrayName;
-  char* CenterlineSectionNormalArrayName;
-
-  int n_centerlines;
+    // The number of VMTK continuous line geometry objects representing each 
+    // centerline (branch) in the original VMTK centerlines geometry.
+    int n_centerlines;
 
   private:
-  vtkvmtkPolyDataCenterlineSections(const vtkvmtkPolyDataCenterlineSections&);  // Not implemented.
-  void operator=(const vtkvmtkPolyDataCenterlineSections&);  // Not implemented.
+    vtkvmtkPolyDataCenterlineSections(const vtkvmtkPolyDataCenterlineSections&);  // Not implemented.
+    void operator=(const vtkvmtkPolyDataCenterlineSections&);  // Not implemented.
+
+    void initialize_data_arrays();
+
+    ArrayName array_name;
+
+    // Objects used to store VTK data arrays.
+    DataArray<vtkDoubleArray> section_area;
+    DataArray<vtkIntArray>    section_bifurcation;
+    DataArray<vtkIntArray>    section_closed;
+    DataArray<vtkIntArray>    section_global_node_ids;
+    DataArray<vtkDoubleArray> section_max_size;
+    DataArray<vtkDoubleArray> section_min_size;
+    DataArray<vtkDoubleArray> section_normal;
+    DataArray<vtkDoubleArray> section_shape;
+
+    DataArray<vtkDoubleArray> centerline_area;
+    DataArray<vtkIntArray>    centerline_bifurcation;
+    DataArray<vtkIntArray>    centerline_closed;
+    DataArray<vtkDoubleArray> centerline_normal;
+    DataArray<vtkDoubleArray> centerline_max_size;
+    DataArray<vtkDoubleArray> centerline_min_size;
+    DataArray<vtkDoubleArray> centerline_shape;
 };
 
 #endif

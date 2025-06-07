@@ -58,11 +58,11 @@ sv4guiPathObjectFactory::~sv4guiPathObjectFactory()
 
 mitk::Mapper::Pointer sv4guiPathObjectFactory::CreateMapper(mitk::DataNode* node, MapperSlotId id)
 {
-  mitk::Mapper::Pointer newMapper=NULL;
+  mitk::Mapper::Pointer newMapper=nullptr;
 
   if ( id == mitk::BaseRenderer::Standard2D )
   {
-    if( dynamic_cast<sv4guiPath*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiPath*>(node->GetData())!=nullptr )
     {
       newMapper = sv4guiPathVtkMapper2D::New();
       newMapper->SetDataNode(node);
@@ -70,7 +70,7 @@ mitk::Mapper::Pointer sv4guiPathObjectFactory::CreateMapper(mitk::DataNode* node
   }
   else if ( id == mitk::BaseRenderer::Standard3D )
   {
-    if( dynamic_cast<sv4guiPath*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiPath*>(node->GetData())!=nullptr )
     {
       newMapper = sv4guiPathVtkMapper3D::New();
       newMapper->SetDataNode(node);
@@ -83,15 +83,15 @@ mitk::Mapper::Pointer sv4guiPathObjectFactory::CreateMapper(mitk::DataNode* node
 void sv4guiPathObjectFactory::SetDefaultProperties(mitk::DataNode* node)
 {
 
-  if(node==NULL)
+  if(node==nullptr)
     return;
 
   mitk::DataNode::Pointer nodePointer = node;
 
-  if(node->GetData() ==NULL)
+  if(node->GetData() ==nullptr)
     return;
 
-  if( dynamic_cast<sv4guiPath*>(node->GetData())!=NULL )
+  if( dynamic_cast<sv4guiPath*>(node->GetData())!=nullptr )
   {
     sv4guiPathVtkMapper2D::SetDefaultProperties(node);
     sv4guiPathVtkMapper3D::SetDefaultProperties(node);
@@ -99,7 +99,7 @@ void sv4guiPathObjectFactory::SetDefaultProperties(mitk::DataNode* node)
 
 }
 
-const char* sv4guiPathObjectFactory::GetFileExtensions()
+std::string sv4guiPathObjectFactory::GetFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_FileExtensionsMap, fileExtension);
@@ -120,7 +120,7 @@ void sv4guiPathObjectFactory::CreateFileExtensionsMap()
 {
 }
 
-const char* sv4guiPathObjectFactory::GetSaveFileExtensions()
+std::string sv4guiPathObjectFactory::GetSaveFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_SaveFileExtensionsMap, fileExtension);

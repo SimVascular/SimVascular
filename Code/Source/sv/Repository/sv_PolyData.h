@@ -87,7 +87,7 @@ int cvPolyData::InitDistance()
   switch (distMethod_) {
 
   case PD_DIST_VTK:
-    if ( ( locator_ == NULL ) || ( genericCell_ == NULL ) ) {
+    if ( ( locator_ == nullptr ) || ( genericCell_ == nullptr ) ) {
       return BuildVtkCellLocator();
     } else {
       return SV_OK;

@@ -28,9 +28,17 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#-----------------------------------------------------------------------------
-# GDCM
 set(proj GDCM)
+
+set(msg "[Code/CMake/Externals/GDCM.cmake]")
+message(STATUS "${msg} =============== Code/CMake/Externals    GDCM.cmake ===============")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_USE_GDCM: ${SV_USE_GDCM}")
+message(STATUS "${msg} SV_GDCM_DIR: ${SV_GDCM_DIR}")
+message(STATUS "${msg} GDCM_VERISON: ${${proj}_VERSION}")
+message(STATUS "${msg} SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR: ${SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR}")
+message(STATUS "${msg} PYTHON_LIBRARY: ${PYTHON_LIBRARY}")
+
 if(SV_USE_${proj})
 
   # If using toplevel dir, foce GDCM_DIR to be the SV_GDCM_DIR set by the

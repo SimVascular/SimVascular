@@ -42,19 +42,21 @@
 
 #include "sv4gui_ModelDataInteractor.h"
 
-#include <berryIBerryPreferences.h>
+#include <mitkIPreferences.h>
 
 #include <QWidget>
 #include <QStandardItemModel>
 #include <QProcess>
 #include <QMessageBox>
+#include <QTimer>
+#include <QmitkStdMultiWidget.h>
 
 class sv4guiConvertProcessHandlerROM : public QObject
 {
     Q_OBJECT
 
 public:
-    sv4guiConvertProcessHandlerROM(QProcess* process, int startStep, int totalSteps, QString runDir, QWidget* parent=NULL);
+    sv4guiConvertProcessHandlerROM(QProcess* process, int startStep, int totalSteps, QString runDir, QWidget* parent=nullptr);
     virtual ~sv4guiConvertProcessHandlerROM();
 
     void Start();

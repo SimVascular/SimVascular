@@ -140,7 +140,7 @@ PyTetGenRadiusMeshing_compute_size_function(PyMeshingTetGenRadiusMeshing* self, 
 {
   std::cout << "========== PyTetGenRadiusMeshing_compute_size_function_doc ==========" << std::endl;
   auto api = PyUtilApiFunction("d", PyRunTimeErr, __func__);
-  static char *keywords[] = {"edge_size", NULL};
+  static char *keywords[] = {"edge_size", nullptr};
   double edgeSize;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &edgeSize)) {
@@ -187,7 +187,7 @@ PyTetGenRadiusMeshing_load_centerlines(PyMeshingTetGenRadiusMeshing* self, PyObj
 {
   std::cout << "========== PyTetGenRadiusMeshing_load_centerlines ==========" << std::endl;
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", NULL};
+  static char *keywords[] = {"file_name", nullptr};
   char* fileName;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
@@ -251,7 +251,7 @@ PyTetGenRadiusMeshing_set_centerlines(PyMeshingTetGenRadiusMeshing* self, PyObje
 {
   std::cout << "========== PyTetGenRadiusMeshing_set_centerlines ==========" << std::endl;
   auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
-  static char *keywords[] = {"centerlines", NULL};
+  static char *keywords[] = {"centerlines", nullptr};
   PyObject* centerlinesArg;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &centerlinesArg)) {
@@ -280,7 +280,7 @@ static PyObject *
 PyTetGenRadiusMeshing_write_centerlines(PyMeshingTetGenRadiusMeshing* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", NULL};
+  static char *keywords[] = {"file_name", nullptr};
   char* fileName;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
@@ -321,7 +321,7 @@ static PyMethodDef PyTetGenRadiusMeshingMethods[] = {
   {"load_centerlines", (PyCFunction)PyTetGenRadiusMeshing_load_centerlines, METH_VARARGS|METH_KEYWORDS, PyTetGenRadiusMeshing_load_centerlines_doc},
   {"set_centerlines", (PyCFunction)PyTetGenRadiusMeshing_set_centerlines, METH_VARARGS|METH_KEYWORDS, PyTetGenRadiusMeshing_set_centerlines_doc},
   {"write_centerlines", (PyCFunction)PyTetGenRadiusMeshing_write_centerlines, METH_VARARGS|METH_KEYWORDS, PyTetGenRadiusMeshing_write_centerlines_doc},
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -333,7 +333,7 @@ static PyMethodDef PyTetGenRadiusMeshingMethods[] = {
 // The attributes can be set/get directly in from the MeshingOptions object.
 //
 static PyMemberDef PyTetGenRadiusMeshingMembers[] = {
-    {NULL}
+    {nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -377,8 +377,8 @@ PyTetGenRadiusMeshing_set_edge_size(PyMeshingTetGenRadiusMeshing* self, PyObject
 //
 PyGetSetDef PyTetGenRadiusMeshingGetSets[] = {
   { "edge_size", (getter)PyTetGenRadiusMeshing_get_edge_size, (setter)PyTetGenRadiusMeshing_set_edge_size,
-        NULL,  PyTetGenRadiusMeshing_edge_size_doc},
-    {NULL}
+        nullptr,  PyTetGenRadiusMeshing_edge_size_doc},
+    {nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -396,7 +396,7 @@ PyDoc_STRVAR(TetGenRadiusMeshingClass_doc, "TetGen meshing options class functio
 // Define the Python type object that implements the meshing.TetGenRadiusMeshing class.
 //
 PyTypeObject PyTetGenRadiusMeshingType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   MESHING_TETGEN_RADIUS_MESHING_MODULE_CLASS,
   sizeof(PyMeshingTetGenRadiusMeshing)
 };
@@ -415,8 +415,8 @@ PyTetGenRadiusMeshingInit(PyMeshingTetGenRadiusMeshing* self, PyObject* args, Py
 {
   std::cout << "[PyTetGenRadiusMeshingInit] Initialize a RadiusMeshing object." << std::endl;
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
-  static char *keywords[] = { "mesher", NULL};
-  PyObject* mesherArg = NULL;
+  static char *keywords[] = { "mesher", nullptr};
+  PyObject* mesherArg = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyMeshingTetGenClassType, &mesherArg)) {
       api.argsError();
@@ -442,7 +442,7 @@ PyTetGenRadiusMeshingNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   std::cout << "[PyTetGenRadiusMeshingNew] PyTetGenRadiusMeshingNew " << std::endl;
   auto self = (PyMeshingTetGenRadiusMeshing*)type->tp_alloc(type, 0);
-  if (self == NULL) {
+  if (self == nullptr) {
       std::cout << "[PyTetGenRadiusMeshingNew] ERROR: Can't allocate type." << std::endl;
       return nullptr;
   }

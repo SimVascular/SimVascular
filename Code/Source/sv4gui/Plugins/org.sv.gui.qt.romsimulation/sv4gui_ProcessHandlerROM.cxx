@@ -45,8 +45,8 @@
 #include <mitkStatusBar.h>
 #include <mitkGenericProperty.h>
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <usModuleRegistry.h>
@@ -69,7 +69,7 @@ sv4guiProcessHandlerROM::sv4guiProcessHandlerROM(QProcess* process, mitk::DataNo
     : m_Process(process)
     , m_JobNode(jobNode)
     , m_Parent(parent)
-    , m_MessageBox(NULL)
+    , m_MessageBox(nullptr)
     , m_Stoppable(stoppable)
     , m_MultiThreading(multithreading)
 {
@@ -90,7 +90,7 @@ sv4guiProcessHandlerROM::~sv4guiProcessHandlerROM()
 //
 void sv4guiProcessHandlerROM::Start()
 {
-    if(m_Process==NULL) {
+    if(m_Process==nullptr) {
         return;
     }
 
@@ -128,7 +128,7 @@ void sv4guiProcessHandlerROM::AfterProcessFinished(int exitCode, QProcess::ExitS
 {
     if(m_MessageBox) {
         delete m_MessageBox;
-        m_MessageBox=NULL;
+        m_MessageBox=nullptr;
     }
 
     QString title="";

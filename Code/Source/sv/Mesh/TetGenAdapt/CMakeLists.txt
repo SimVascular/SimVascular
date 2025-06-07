@@ -41,11 +41,10 @@ include_directories(${TETGEN_INCLUDE_DIR})
 set(HDRS sv_TetGenAdapt.h)
 set(CXXSRCS sv_TetGenAdapt.cxx)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_tetgen_adapt_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} )
 
 target_link_libraries(${lib}
 	${ZLIB_LIBRARY} ${VTK_LIBRARIES}
-	${TCL_LIBRARY} ${TK_LIBRARY}
 	${INTELRUNTIME_LIBRARIES}
                     ${SV_LIB_ADAPTOR_NAME}
 	${SV_LIB_MESH_NAME}

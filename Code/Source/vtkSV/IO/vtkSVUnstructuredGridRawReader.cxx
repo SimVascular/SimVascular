@@ -67,9 +67,9 @@ vtkCxxSetObjectMacro(vtkSVUnstructuredGridRawReader, Locator, vtkIncrementalPoin
 // ----------------------
 vtkSVUnstructuredGridRawReader::vtkSVUnstructuredGridRawReader()
 {
-  this->FileName = NULL;
+  this->FileName = nullptr;
   this->Merging = 0;
-  this->Locator = NULL;
+  this->Locator = nullptr;
 
   this->SetNumberOfInputPorts(0);
 }
@@ -110,7 +110,7 @@ int vtkSVUnstructuredGridRawReader::RequestData(
 
   // Initialize
   FILE *fp = fopen(this->FileName, "r");
-  if (fp == NULL)
+  if (fp == nullptr)
   {
     vtkErrorMacro(<< "File " << this->FileName << " not found");
     this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
@@ -145,14 +145,14 @@ int vtkSVUnstructuredGridRawReader::RequestData(
     mergedCells->Allocate(newCells->GetSize());
 
     vtkSmartPointer<vtkIncrementalPointLocator> locator = this->Locator;
-    if (this->Locator == NULL)
+    if (this->Locator == nullptr)
     {
       locator.TakeReference(this->NewDefaultLocator());
     }
     locator->InitPointInsertion(mergedPts, newPts->GetBounds());
 
     int nextCell = 0;
-    vtkIdType *pts = 0;
+    const vtkIdType *pts;
     vtkIdType npts;
     for (newCells->InitTraversal(); newCells->GetNextCell(npts, pts);)
     {

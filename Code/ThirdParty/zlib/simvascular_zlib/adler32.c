@@ -78,7 +78,7 @@ uLong ZEXPORT adler32(adler, buf, len)
     }
 
     /* initial Adler-32 value (deferred check for len == 1 speed) */
-    if (buf == Z_NULL)
+    if (buf == Z_nullptr)
         return 1L;
 
     /* in case short lengths are provided, keep it somewhat fast */

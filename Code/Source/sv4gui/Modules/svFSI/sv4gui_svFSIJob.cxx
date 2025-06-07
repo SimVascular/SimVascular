@@ -39,6 +39,7 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QRegularExpression>
 
 //----------------
 // sv4guisvFSIJob
@@ -356,7 +357,8 @@ bool sv4guisvFSIJob::WriteFile(std::string filePath)
             }
 
             if (iBc.effectiveDirection.trimmed()!="") {
-                QStringList list=iBc.effectiveDirection.trimmed().split(QRegExp("[(),{}-\\s+]"),QString::SkipEmptyParts);
+                QStringList list=iBc.effectiveDirection.trimmed().split(QRegularExpression("[(),{}-\\s+]"),Qt::SkipEmptyParts);
+                //dp QStringList list=iBc.effectiveDirection.trimmed().split(QRegExp("[(),{}-\\s+]"),QString::SkipEmptyParts);
                 out << tabS << tabS << "Effective direction: (" << list[0] << ", " << list[1] <<", " << list[2] << ")" << endL;
             }
 

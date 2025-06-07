@@ -172,7 +172,7 @@ static PyObject*
 ContourSegmentation_set_contour_points(PyContourSegmentation* self, PyObject* args, PyObject *kwargs)
 {
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"contour_points", NULL};
+  static char *keywords[] = {"contour_points", nullptr};
   PyObject* pointsArg= nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &pointsArg)) {
@@ -233,7 +233,7 @@ static PyMethodDef PyContourSegmentationMethods[] = {
   {"get_center", (PyCFunction)ContourSegmentation_get_center, METH_VARARGS, ContourSegmentation_get_center_doc },
   {"get_normal", (PyCFunction)ContourSegmentation_get_normal, METH_VARARGS, ContourSegmentation_get_normal_doc },
   {"set_contour_points", (PyCFunction)ContourSegmentation_set_contour_points, METH_VARARGS|METH_KEYWORDS, ContourSegmentation_set_contour_points_doc },
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //---------------------------
@@ -249,7 +249,7 @@ static int
 PyContourSegmentationInit(PyContourSegmentation* self, PyObject* args, PyObject *kwargs)
 {
   auto api = PyUtilApiFunction("|O!", PyRunTimeErr, "ContourSegmentation");
-  static char *keywords[] = {"contour_points", NULL};
+  static char *keywords[] = {"contour_points", nullptr};
   PyObject* pointsArg = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &pointsArg)) {
@@ -307,7 +307,7 @@ PyContourSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 {
   //std::cout << "[PyContourSegmentationNew] New ContourSegmentation " << std::endl;
   auto self = (PyContourSegmentation*)type->tp_alloc(type, 0);
-  if (self == NULL) {
+  if (self == nullptr) {
       std::cout << "[PyContourSegmentationNew] ERROR: alloc failed." << std::endl;
       return nullptr;
   }
@@ -335,7 +335,7 @@ PyContourSegmentationDealloc(PyContourSegmentation* self)
 // designated initializers.
 //
 static PyTypeObject PyContourSegmentationType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   SEGMENTATION_CONTOUR_MODULE_CLASS,

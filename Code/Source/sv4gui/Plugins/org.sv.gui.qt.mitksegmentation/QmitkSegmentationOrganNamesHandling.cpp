@@ -15,6 +15,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 ===================================================================*/
 
 #include <QStringList>
+#include <QColor>
+#include <QRegularExpression>
 #include <mitkAnatomicalStructureColorPresets.h>
 
 namespace mitk
@@ -43,7 +45,9 @@ namespace mitk
       QString listElement(organname + QColor(color.GetRed() * 255, color.GetGreen() * 255, color.GetBlue() * 255).name());
 
       // remove previous definition if necessary
-      int oldIndex = organColors.indexOf(QRegExp(QRegExp::escape(organname) + "#......", Qt::CaseInsensitive));
+
+/* [TODO:DaveP] i don't know how to convert this code.
+      int oldIndex = organColors.indexOf(QRegularExpression(QRegularExpression::escape(organname) + "#......", Qt::CaseInsensitive));
       if (oldIndex < 0 || organColors.at(oldIndex) != listElement)
       {
         if (oldIndex >= 0)
@@ -55,6 +59,7 @@ namespace mitk
         organColors.append(listElement);
         organColors.sort();
       }
+*/
     }
 
     static void AppendToOrganList(QStringList& organColors, const QString& organname, const QColor& color)

@@ -57,11 +57,11 @@ sv4guiModelObjectFactory::~sv4guiModelObjectFactory()
 
 mitk::Mapper::Pointer sv4guiModelObjectFactory::CreateMapper(mitk::DataNode* node, MapperSlotId id)
 {
-  mitk::Mapper::Pointer newMapper=NULL;
+  mitk::Mapper::Pointer newMapper=nullptr;
 
   if ( id == mitk::BaseRenderer::Standard2D )
   {
-    if( dynamic_cast<sv4guiModel*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiModel*>(node->GetData())!=nullptr )
     {
         newMapper = sv4guiModelVtkMapper2D::New();
         newMapper->SetDataNode(node);
@@ -69,7 +69,7 @@ mitk::Mapper::Pointer sv4guiModelObjectFactory::CreateMapper(mitk::DataNode* nod
   }
   else if ( id == mitk::BaseRenderer::Standard3D )
   {
-    if( dynamic_cast<sv4guiModel*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiModel*>(node->GetData())!=nullptr )
     {
         newMapper = sv4guiModelVtkMapper3D::New();
         newMapper->SetDataNode(node);
@@ -81,22 +81,22 @@ mitk::Mapper::Pointer sv4guiModelObjectFactory::CreateMapper(mitk::DataNode* nod
 void sv4guiModelObjectFactory::SetDefaultProperties(mitk::DataNode* node)
 {
 
-  if(node==NULL)
+  if(node==nullptr)
     return;
 
 //  mitk::DataNode::Pointer nodePointer = node;
 
-  if(node->GetData() ==NULL)
+  if(node->GetData() ==nullptr)
     return;
 
-  if( dynamic_cast<sv4guiModel*>(node->GetData())!=NULL )
+  if( dynamic_cast<sv4guiModel*>(node->GetData())!=nullptr )
   {
       sv4guiModelVtkMapper2D::SetDefaultProperties(node);
       sv4guiModelVtkMapper3D::SetDefaultProperties(node);
   }
 }
 
-const char* sv4guiModelObjectFactory::GetFileExtensions()
+std::string sv4guiModelObjectFactory::GetFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_FileExtensionsMap, fileExtension);
@@ -117,7 +117,7 @@ void sv4guiModelObjectFactory::CreateFileExtensionsMap()
 {
 }
 
-const char* sv4guiModelObjectFactory::GetSaveFileExtensions()
+std::string sv4guiModelObjectFactory::GetSaveFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_SaveFileExtensionsMap, fileExtension);

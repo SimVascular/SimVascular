@@ -52,7 +52,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <mitkILifecycleAwarePart.h>
 #include <mitkIRenderWindowPartListener.h>
 
-#include <berryIBerryPreferences.h>
+#include <mitkIPreferences.h>
 
 #include "ui_sv4gui_QmitkSegmentationControls.h"
 
@@ -100,7 +100,7 @@ public:
   virtual void RenderWindowPartDeactivated(mitk::IRenderWindowPart* renderWindowPart) override;
 
   // BlueBerry's notification about preference changes (e.g. from a dialog)
-  virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
+  virtual void OnPreferencesChanged(const mitk::IPreferences* prefs) override;
 
   // observer to mitk::RenderingManager's RenderingManagerViewsInitializedEvent event
   void RenderingManagerReinitialized();

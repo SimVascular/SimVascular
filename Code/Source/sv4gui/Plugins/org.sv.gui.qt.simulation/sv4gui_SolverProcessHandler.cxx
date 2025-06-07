@@ -45,8 +45,8 @@
 #include <mitkStatusBar.h>
 #include <mitkGenericProperty.h>
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <usModuleRegistry.h>
@@ -64,6 +64,8 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QApplication>
+#include <QTimer>
+#include <QRegularExpression>
 
 sv4guiSolverProcessHandler::sv4guiSolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent)
     : m_Process(process)
@@ -72,7 +74,7 @@ sv4guiSolverProcessHandler::sv4guiSolverProcessHandler(QProcess* process, mitk::
     , m_TotalSteps(totalSteps)
     , m_RunDir(runDir)
     , m_Parent(parent)
-    , m_Timer(NULL)
+    , m_Timer(nullptr)
 {
 }
 
@@ -92,7 +94,7 @@ void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
   QString text = "";
   QString status = "Simulation failed";
   QMessageBox::Icon icon = QMessageBox::Warning;
-  QMessageBox messageBox(NULL); 
+  QMessageBox messageBox(nullptr); 
 
   if (error == QProcess::FailedToStart) {
     title = "Simulation cannot be started";
@@ -131,7 +133,7 @@ void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
 
 void sv4guiSolverProcessHandler::Start()
 {
-    if(m_Process==NULL)
+    if(m_Process==nullptr)
         return;
 
     if(m_JobNode.IsNull())
@@ -175,7 +177,7 @@ void sv4guiSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::Ex
 
     QString title = "SimVascular SV Simulation";
     QMessageBox::Icon icon=QMessageBox::NoIcon;
-    QMessageBox mb(NULL); //svSimualtionView maybe doesn't exist.
+    QMessageBox mb(nullptr); //svSimualtionView maybe doesn't exist.
     QString status="";
 
     auto jobName = QString::fromStdString(m_JobNode->GetName()); 
@@ -236,10 +238,10 @@ void sv4guiSolverProcessHandler::UpdateStatus()
         QTextStream in(&historFile);
         QString content=in.readAll();
 
-        QStringList list=content.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+        QStringList list=content.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
         info=list.last();
 
-        list=info.split(QRegExp("\\s+"),QString::SkipEmptyParts);
+        list=info.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
         QString stepStr=list.first();
         bool ok;
         int step=stepStr.toInt(&ok);

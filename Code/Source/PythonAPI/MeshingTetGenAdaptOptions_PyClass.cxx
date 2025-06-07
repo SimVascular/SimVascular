@@ -179,7 +179,7 @@ PyTetGenAdaptOptGetValue(PyObject* meshingOptions, std::string name, double& val
 
   if (PyFloat_Check(obj)) {
       value = PyFloat_AsDouble(obj);
-  } else if (PyInt_Check(obj)) {
+  } else if (PyLong_Check(obj)) {
       value = PyLong_AsDouble(obj);
   }
 
@@ -253,7 +253,7 @@ PyTetGenAdaptOpt_set_defaults(PyMeshingTetGenAdaptOpt* self)
 static PyMethodDef PyTetGenAdaptOptMethods[] = {
   //{"create_sphere_parameter", (PyCFunction)PyTetGenAdaptOpt_create_sphere_parameter, METH_VARARGS|METH_KEYWORDS, PyTetGenAdaptOpt_create_sphere_parameter_doc},
   {"get_values", (PyCFunction)PyTetGenAdaptOpt_get_values, METH_NOARGS, PyTetGenAdaptOpt_get_values_doc},
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -290,22 +290,22 @@ PyDoc_STRVAR(use_isotropic_meshing_doc,
 
 PyDoc_STRVAR(use_multiple_steps_doc, "If True then use multiple simlation steps.");
 
+// compilation error from here
 static PyMemberDef PyTetGenAdaptOptMembers[] = {
+    // {TetGenAdaptOption::end_step, T_INT, offsetof(PyMeshingTetGenAdaptOpt, end_step), 0, end_step_doc},
 
-    {TetGenAdaptOption::end_step, T_INT, offsetof(PyMeshingTetGenAdaptOpt, end_step), 0, end_step_doc},
+    // {TetGenAdaptOption::max_edge_size, T_DOUBLE, offsetof(PyMeshingTetGenAdaptOpt, max_edge_size), 0, max_edge_size_doc},
 
-    {TetGenAdaptOption::max_edge_size, T_DOUBLE, offsetof(PyMeshingTetGenAdaptOpt, max_edge_size), 0, max_edge_size_doc},
+    // {TetGenAdaptOption::min_edge_size, T_DOUBLE, offsetof(PyMeshingTetGenAdaptOpt, min_edge_size), 0, min_edge_size_doc},
 
-    {TetGenAdaptOption::min_edge_size, T_DOUBLE, offsetof(PyMeshingTetGenAdaptOpt, min_edge_size), 0, min_edge_size_doc},
+    // {TetGenAdaptOption::start_step, T_INT, offsetof(PyMeshingTetGenAdaptOpt, start_step), 0, "Simulation start step"},
 
-    {TetGenAdaptOption::start_step, T_INT, offsetof(PyMeshingTetGenAdaptOpt, start_step), 0, "Simulation start step"},
+    // {TetGenAdaptOption::step_increment, T_INT, offsetof(PyMeshingTetGenAdaptOpt, step_increment), 0, "Simulation step increment."},
 
-    {TetGenAdaptOption::step_increment, T_INT, offsetof(PyMeshingTetGenAdaptOpt, step_increment), 0, "Simulation step increment."},
+    // {TetGenAdaptOption::use_multiple_steps, T_BOOL, offsetof(PyMeshingTetGenAdaptOpt, use_multiple_steps), 0, use_multiple_steps_doc},
 
-    {TetGenAdaptOption::use_multiple_steps, T_BOOL, offsetof(PyMeshingTetGenAdaptOpt, use_multiple_steps), 0, use_multiple_steps_doc},
-
-    {TetGenAdaptOption::use_isotropic_meshing, T_BOOL, offsetof(PyMeshingTetGenAdaptOpt, use_isotropic_meshing), READONLY, use_isotropic_meshing_doc},
-    {NULL, NULL}
+    // {TetGenAdaptOption::use_isotropic_meshing, T_BOOL, offsetof(PyMeshingTetGenAdaptOpt, use_isotropic_meshing), READONLY, use_isotropic_meshing_doc},
+    // {nullptr, nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -380,12 +380,12 @@ PyTetGenOptions_set_step(PyMeshingTetGenAdaptOpt* self, PyObject* arg, void* clo
 PyGetSetDef PyTetGenAdaptOptGetSets[] = {
 
     { TetGenAdaptOption::error_reduction_factor,
-          (getter)PyTetGenOptions_get_error_reduction_factor, (setter)PyTetGenOptions_set_error_reduction_factor, NULL,  error_reduction_factor_doc },
+          (getter)PyTetGenOptions_get_error_reduction_factor, (setter)PyTetGenOptions_set_error_reduction_factor, nullptr,  const_cast<char*>(error_reduction_factor_doc) },
 
     { TetGenAdaptOption::step,
-          (getter)PyTetGenOptions_get_step, (setter)PyTetGenOptions_set_step, NULL,  NULL },
+          (getter)PyTetGenOptions_get_step, (setter)PyTetGenOptions_set_step, nullptr,  nullptr },
 
-    {NULL, NULL}
+    {nullptr, nullptr}
 };
 
 
@@ -404,7 +404,7 @@ PyDoc_STRVAR(TetGenAdaptOptClass_doc, "TetGen adaptive meshing options class fun
 // Define the Python type object that implements the meshing.MeshingOptions class.
 //
 static PyTypeObject PyTetGenAdaptOptType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   MESHING_TETGEN_ADAPTIVE_OPTIONS_MODULE_CLASS,
   sizeof(PyMeshingTetGenAdaptOpt)
 };
@@ -426,11 +426,11 @@ PyTetGenAdaptOptInit(PyMeshingTetGenAdaptOpt* self, PyObject* args, PyObject* kw
 /*
   auto api = PyUtilApiFunction("d|O!O!O!", PyRunTimeErr, __func__);
   static char *keywords[] = { TetGenAdaptOption::GlobalEdgeSize, TetGenAdaptOption::SurfaceMeshFlag, TetGenAdaptOption::VolumeMeshFlag,
-                              TetGenAdaptOption::MeshWallFirst, NULL};
+                              TetGenAdaptOption::MeshWallFirst, nullptr};
   double global_edge_size = 0.0;
-  PyObject* surface_mesh_flag = NULL;
-  PyObject* volume_mesh_flag = NULL;
-  PyObject* mesh_wall_first = NULL;
+  PyObject* surface_mesh_flag = nullptr;
+  PyObject* volume_mesh_flag = nullptr;
+  PyObject* mesh_wall_first = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &global_edge_size, &PyBool_Type, &surface_mesh_flag,
         &PyBool_Type, &volume_mesh_flag, &PyBool_Type, &mesh_wall_first)) {
@@ -468,7 +468,7 @@ PyTetGenAdaptOptNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyTetGenAdaptOptNew] PyTetGenAdaptOptNew " << std::endl;
   auto self = (PyMeshingTetGenAdaptOpt*)type->tp_alloc(type, 0);
-  if (self == NULL) {
+  if (self == nullptr) {
       std::cout << "[PyTetGenAdaptOptNew] ERROR: Can't allocate type." << std::endl;
       return nullptr;
   }

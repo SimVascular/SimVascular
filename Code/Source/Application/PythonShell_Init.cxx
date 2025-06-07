@@ -49,15 +49,10 @@
 #include <string.h>
 #include <iostream>
 
-#include "tcl.h"
-#include "tk.h"
-
 // The following is needed for Windows
 #ifdef GetObject
 #undef GetObject
 #endif
-
-#include "sv2_globals.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -86,8 +81,6 @@
 #else
 #define SV_PYTHON_MAXPATH 16384
 #endif
-
-#include "SimVascular_Init.h"
 
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
@@ -158,11 +151,11 @@ int PythonShell_Init(int argc, char *argv[])
 #if PYTHON_MAJOR_VERSION >= 3
   wchar_t *argv0;
 #if PY_VERSION_HEX >= 0x03050000
-  argv0 = Py_DecodeLocale(av0.c_str(), NULL);
+  argv0 = Py_DecodeLocale(av0.c_str(), nullptr);
 #elif defined(__APPLE__)
   argv0 = _Py_DecodeUTF8_surrogateescape(av0.data(), av0.length());
 #else
-  argv0 = _Py_char2wchar(av0.c_str(), NULL);
+  argv0 = _Py_char2wchar(av0.c_str(), nullptr);
 #endif
   if (argv0 == 0)
   {
@@ -233,11 +226,11 @@ int PythonShell_Init(int argc, char *argv[])
   for (int i = 0; i < argc; i++)
   {
 #if PY_VERSION_HEX >= 0x03050000
-    argvWide[i] = Py_DecodeLocale(argv[i], NULL);
+    argvWide[i] = Py_DecodeLocale(argv[i], nullptr);
 #elif defined(__APPLE__)
     argvWide[i] = _Py_DecodeUTF8_surrogateescape(argv[i], strlen(argv[i]));
 #else
-    argvWide[i] = _Py_char2wchar(argv[i], NULL);
+    argvWide[i] = _Py_char2wchar(argv[i], nullptr);
 #endif
     argvWide2[i] = argvWide[i];
     if (argvWide[i] == 0)

@@ -53,8 +53,8 @@ void sv4guiContourGroupVtkMapper2D::FindContourOnCurrentSlice(mitk::BaseRenderer
     }
 
     const mitk::PlaneGeometry *rendererPlaneGeometry = renderer->GetCurrentWorldPlaneGeometry();
-    m_Contour=NULL;
-    if(input!=NULL && rendererPlaneGeometry!=NULL)
+    m_Contour=nullptr;
+    if(input!=nullptr && rendererPlaneGeometry!=nullptr)
     {
         int contourIndex=input->SearchContourByPlane(rendererPlaneGeometry,1.0,t);
         m_Contour=input->GetContour(contourIndex,t);

@@ -133,14 +133,14 @@ void MeshingMeshSimOptionsSetDictValues(PyObject* optionObj, const std::string& 
       if (PyFloat_Check(obj)) {
           auto value = PyFloat_AsDouble(obj);
           values.push_back(value);
-      } else if (PyInt_Check(obj)) {
+      } else if (PyLong_Check(obj)) {
           auto value = PyLong_AsDouble(obj);
           values.push_back(value);
 
       // A string type is used only for face names in 'face_id' for now.
-      } else if (PyString_Check(obj)) {
+      } else if (PyUnicode_Check(obj)) {
          if (elemName == "face_id") {
-             auto name = std::string(PyString_AsString(obj));
+             auto name = std::string(PyUnicode_AsUTF8(obj));
              if (nameIDMap.count(name) == 0) {
                  throw std::runtime_error("The face name '" + name + "' is not valid.");
              }
@@ -179,7 +179,7 @@ MeshingMeshSimOptionsGetValues(cvMeshObject* mesher, PyObject* meshingOptions, s
   if (PyFloat_Check(obj)) {
       auto value = PyFloat_AsDouble(obj);
       values.push_back(value);
-  } else if (PyInt_Check(obj)) {
+  } else if (PyLong_Check(obj)) {
       auto value = PyLong_AsDouble(obj);
       values.push_back(value);
   } else if (PyTuple_Check(obj)) {
@@ -333,7 +333,7 @@ MeshingMeshSim_generate_mesh(PyMeshingMesher* self, PyObject* args, PyObject* kw
 {
   using namespace MeshingTetGen;
   auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
-  static char *keywords[] = {"options", NULL};
+  static char *keywords[] = {"options", nullptr};
   PyObject* options;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &options)) {
@@ -379,7 +379,7 @@ static PyObject *
 MeshingMeshSim_load_model(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", NULL};
+  static char *keywords[] = {"file_name", nullptr};
   char *fileName;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
@@ -416,7 +416,7 @@ static PyObject *
 MesherMeshSim_set_model(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
-  static char *keywords[] = {"model", NULL};
+  static char *keywords[] = {"model", nullptr};
   PyObject* modelArg;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &modelArg)) {
@@ -546,7 +546,7 @@ static PyMethodDef PyMeshingMeshSimMethods[] = {
   {"load_model", (PyCFunction)MeshingMeshSim_load_model, METH_VARARGS|METH_KEYWORDS, MeshingMeshSim_load_model_doc},
   {"set_model", (PyCFunction)MesherMeshSim_set_model, METH_VARARGS|METH_KEYWORDS, MesherMeshSim_set_model_doc},
   //{"set_options", (PyCFunction)MeshingMeshSim_set_options, METH_VARARGS, MeshingMeshSim_set_options_doc},
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //----------------------
@@ -599,7 +599,7 @@ PyMeshingMeshSimDealloc(PyMeshingMeshSim* self)
 // designated initializers.
 //
 PyTypeObject PyMeshingMeshSimType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   MESHING_MESHSIM_MODULE_CLASS,
@@ -650,7 +650,7 @@ PyAPI_InitMeshSim(CreateMesherObjectFunction create_object)
   CvMesherCtorMap[cvMeshObject::KERNEL_MESHSIM] = []()-> cvMeshObject*{ return PyCreateMeshSimObject(); };
 
   // Add a method to create a MeshSim mesh generation PyObject.
-  PyMesherCtorMap[cvMeshObject::KERNEL_MESHSIM] = []()->PyObject*{ return PyObject_CallObject((PyObject*)&PyMeshingMeshSimType, NULL); };
+  PyMesherCtorMap[cvMeshObject::KERNEL_MESHSIM] = []()->PyObject*{ return PyObject_CallObject((PyObject*)&PyMeshingMeshSimType, nullptr); };
 
 }
 

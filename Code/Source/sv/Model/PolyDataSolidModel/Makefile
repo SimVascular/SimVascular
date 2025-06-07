@@ -34,7 +34,7 @@ TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VMTK_INCDIR) $(TCLTK_INCDIR) $(PYTHON_INCDIR) $(VTK_INCDIRS)
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VMTK_INCDIR) $(PYTHON_INCDIR) $(VTK_INCDIRS)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_POLYDATASOLID
 CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_POLYDATASOLID
@@ -53,12 +53,6 @@ HDRS	= sv_PolyDataSolid.h \
 CXXSRCS	= sv_PolyDataSolid.cxx \
           sv_polydatasolid_utils.cxx \
           sv_vtkGetBoundaryFaces.cxx
-
-DLLHDRS = sv_polydatasolid_init.h
-DLLSRCS = sv_polydatasolid_init.cxx
-
-SVPYHDRS = sv_polydatasolid_init_py.h
-SVPYSRCS = sv_polydatasolid_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
 	  $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \

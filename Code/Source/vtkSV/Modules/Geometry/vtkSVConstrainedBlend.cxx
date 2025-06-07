@@ -70,8 +70,8 @@ vtkStandardNewMacro(vtkSVConstrainedBlend);
 // ----------------------
 vtkSVConstrainedBlend::vtkSVConstrainedBlend()
 {
-    this->CellArrayName  = NULL;
-    this->PointArrayName = NULL;
+    this->CellArrayName  = nullptr;
+    this->PointArrayName = nullptr;
     this->Weight = 0.2;
 
     this->UsePointArray = 0;
@@ -92,15 +92,15 @@ vtkSVConstrainedBlend::vtkSVConstrainedBlend()
 // ----------------------
 vtkSVConstrainedBlend::~vtkSVConstrainedBlend()
 {
-  if (this->CellArrayName != NULL)
+  if (this->CellArrayName != nullptr)
   {
     delete [] this->CellArrayName;
-    this->CellArrayName = NULL;
+    this->CellArrayName = nullptr;
   }
-  if (this->PointArrayName != NULL)
+  if (this->PointArrayName != nullptr)
   {
     delete [] this->PointArrayName;
-    this->PointArrayName = NULL;
+    this->PointArrayName = nullptr;
   }
 }
 
@@ -111,9 +111,9 @@ void vtkSVConstrainedBlend::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
-  if (this->CellArrayName != NULL)
+  if (this->CellArrayName != nullptr)
     os << indent << "Cell array name: " << this->CellArrayName << "\n";
-  if (this->PointArrayName != NULL)
+  if (this->PointArrayName != nullptr)
     os << indent << "Point array name: " << this->PointArrayName << "\n";
 
   os << indent << "Weight: " << this->Weight << "\n";
@@ -166,7 +166,7 @@ int vtkSVConstrainedBlend::RequestData(vtkInformation *vtkNotUsed(request),
 
     if (this->UsePointArray)
     {
-      if (this->PointArrayName == NULL)
+      if (this->PointArrayName == nullptr)
       {
         vtkErrorMacro("No PointArrayName given.");
         this->SetErrorCode(vtkErrorCode::UserError + 1);
@@ -181,7 +181,7 @@ int vtkSVConstrainedBlend::RequestData(vtkInformation *vtkNotUsed(request),
     }
     if (this->UseCellArray)
     {
-      if (this->CellArrayName == NULL)
+      if (this->CellArrayName == nullptr)
       {
         vtkErrorMacro("No CellArrayName given.");
         this->SetErrorCode(vtkErrorCode::UserError + 1);

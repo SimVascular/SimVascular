@@ -59,7 +59,7 @@ vtkProp* sv4guiMitkSeg3DVtkMapper3D::GetVtkProp(mitk::BaseRenderer* renderer)
 void sv4guiMitkSeg3DVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 {
     mitk::DataNode* node = GetDataNode();
-    if( node == NULL )
+    if( node == nullptr )
         return;
 
     svLocalStorage *ls = m_LSHandler.GetLocalStorage(renderer);
@@ -94,7 +94,7 @@ void sv4guiMitkSeg3DVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *re
     sv4guiMitkSeg3D::Pointer input=const_cast< sv4guiMitkSeg3D* >( this->GetInput() );
     sv4guiSeg3D* seg3D=input->GetSeg3D();
 
-    if(seg3D==NULL)
+    if(seg3D==nullptr)
     {
         ls->m_SelectedSeedActor->VisibilityOff();
         ls->m_SeedActor->VisibilityOff();

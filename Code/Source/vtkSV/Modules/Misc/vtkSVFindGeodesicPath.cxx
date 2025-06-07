@@ -73,9 +73,9 @@ vtkSVFindGeodesicPath::vtkSVFindGeodesicPath()
   for (int i=0; i<3; i++)
     this->ClosePt[i] = 0.0;
 
-  this->DijkstraArrayName = NULL;
-  this->InternalIdsArrayName = NULL;
-  this->PathBooleanArrayName = NULL;
+  this->DijkstraArrayName = nullptr;
+  this->InternalIdsArrayName = nullptr;
+  this->PathBooleanArrayName = nullptr;
 
   this->WorkPd       = vtkPolyData::New();
   this->BoundaryPd   = vtkPolyData::New();
@@ -88,41 +88,41 @@ vtkSVFindGeodesicPath::vtkSVFindGeodesicPath()
 // ----------------------
 vtkSVFindGeodesicPath::~vtkSVFindGeodesicPath()
 {
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
-  if (this->PathIds != NULL)
+  if (this->PathIds != nullptr)
   {
     this->PathIds->Delete();
-    this->PathIds = NULL;
+    this->PathIds = nullptr;
   }
-  if (this->BoundaryPd != NULL)
+  if (this->BoundaryPd != nullptr)
   {
     this->BoundaryPd->Delete();
-    this->BoundaryPd = NULL;
+    this->BoundaryPd = nullptr;
   }
-  if (this->PathBoolean != NULL)
+  if (this->PathBoolean != nullptr)
   {
     this->PathBoolean->Delete();
-    this->PathBoolean = NULL;
+    this->PathBoolean = nullptr;
   }
 
   if (this->DijkstraArrayName)
   {
     delete [] this->DijkstraArrayName;
-    this->DijkstraArrayName = NULL;
+    this->DijkstraArrayName = nullptr;
   }
   if (this->InternalIdsArrayName)
   {
     delete [] this->InternalIdsArrayName;
-    this->InternalIdsArrayName = NULL;
+    this->InternalIdsArrayName = nullptr;
   }
   if (this->PathBooleanArrayName)
   {
     delete [] this->PathBooleanArrayName;
-    this->PathBooleanArrayName = NULL;
+    this->PathBooleanArrayName = nullptr;
   }
 }
 
@@ -143,11 +143,11 @@ void vtkSVFindGeodesicPath::PrintSelf(ostream& os, vtkIndent indent)
     this->RepelCloseBoundaryPoints << "\n";
   os << indent << "Boundary close point: " <<
     this->ClosePt[0] << " " << this->ClosePt[1] << " " << this->ClosePt[2] << "\n";
-  if (this->InternalIdsArrayName != NULL)
+  if (this->InternalIdsArrayName != nullptr)
     os << indent << "Internal Ids array name: " << this->InternalIdsArrayName << "\n";
-  if (this->DijkstraArrayName != NULL)
+  if (this->DijkstraArrayName != nullptr)
     os << indent << "Dijkstra distance array name: " << this->DijkstraArrayName << "\n";
-  if (this->PathBooleanArrayName != NULL)
+  if (this->PathBooleanArrayName != nullptr)
     os << indent << "Path boolean array name: " << this->PathBooleanArrayName << "\n";
 }
 
@@ -345,7 +345,7 @@ int vtkSVFindGeodesicPath::RunFilter()
 int vtkSVFindGeodesicPath::FindClosestBoundaryPoint()
 {
   // Get closest boundary point by runnning initial dijkstra
-  if (this->RunDijkstra(NULL) != SV_OK)
+  if (this->RunDijkstra(nullptr) != SV_OK)
   {
     vtkErrorMacro("vtkDijkstraGraphGeodesicPath failed");
     return SV_ERROR;
@@ -404,7 +404,7 @@ int vtkSVFindGeodesicPath::RunDijkstra(vtkPoints *repelPoints)
   dijkstra->SetStartVertex(this->StartPtId);
 
   // Add repel points
-  if (repelPoints != NULL)
+  if (repelPoints != nullptr)
   {
     if (repelPoints->GetNumberOfPoints() != 0)
     {
@@ -507,7 +507,8 @@ int vtkSVFindGeodesicPath::GetNeighborBoundaryPoints(const int ptId,
   if (cells->GetNumberOfIds() == 1)
   {
     // Get cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     this->WorkPd->GetCellPoints(cells->GetId(0), npts, pts);
 
     // Loop through neighbor points

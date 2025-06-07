@@ -58,23 +58,18 @@
   #define gzclose fclose
 #endif
 
-// Some elementary notes on abstract base classes (ABC's)
-// ------------------------------------------------------
-// ABC's provide a means for defining an *interface*.  Since (by
-// definition) they contain pure virtual methods, objects of these
-// classes can not be instantiated.  Clients of ABC's are interested
-// in using the abstract interface, but can not work with the objects
-// themselves.  Instead, clients instantiate concrete classes derived
-// from the ABC.  And then, to use the abstraction, clients use
-// *pointers* or *references* to the ABC.  See Meyers' Effective C++,
-// Item 34.
 enum KernelType {
   KERNEL_INVALID,
   KERNEL_MESHSIM,
   KERNEL_TETGEN,
 };
 
-
+//---------------
+// cvAdaptObject
+//---------------
+// The cvAdaptObject class provides an abstract interface for
+// adaptive meshing.
+//
 class SV_EXPORT_ADAPTOR cvAdaptObject : public cvRepositoryData {
 
 public:
@@ -83,22 +78,6 @@ public:
   virtual ~cvAdaptObject();
 
   KernelType GetKernel() const {return adapt_kernel_;}
-  //Instantiation function from SimVascular
-  #ifdef SV_USE_TCL
-  static cvAdaptObject* DefaultInstantiateAdaptObject( Tcl_Interp *interp = NULL, KernelType t = KERNEL_TETGEN);
-  #endif
-  #ifdef SV_USE_PYTHON
-  static cvAdaptObject* DefaultInstantiateAdaptObject(KernelType t = KERNEL_TETGEN);
-  #endif
-  //Called after Insantiation, create a cvMeshObject
-  #ifdef SV_USE_TCL
-  virtual int CreateInternalMeshObject(Tcl_Interp *interp,char *meshFileName,
-      char *solidFileName)=0;
-  #endif
-  #ifdef SV_USE_PYTHON
-  virtual int CreateInternalMeshObject(char *meshFileName,
-      char *solidFileName)=0;
-  #endif
   static KernelType gCurrentKernel;
   static cvFactoryRegistrar gRegistrar;
 

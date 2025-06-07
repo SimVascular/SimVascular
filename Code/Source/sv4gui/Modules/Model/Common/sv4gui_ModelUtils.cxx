@@ -42,6 +42,7 @@
 #include "sv_vmtk_utils.h"
 #include "sv_PolyData.h"
 #include "sv_polydatasolid_utils.h"
+#include "sv_vtk_utils.h"
 
 #include <vtkCellType.h>
 #include <vtkFillHolesFilter.h>
@@ -65,12 +66,12 @@ vtkPolyData* sv4guiModelUtils::CreatePolyData(std::vector<sv4guiContourGroup*> g
     {
       sv4guiContourGroup* group=groups[i];
       vtkPolyData *vtkpd = CreateLoftSurface(group,numSamplingPts,1,param,t);
-      if (vtkpd == NULL)
+      if (vtkpd == nullptr)
       {
         for (int j=0; j< i-1; j++)
           delete srcs[j];
         delete [] srcs;
-        return NULL;
+        return nullptr;
       }
       srcs[i]=new cvPolyData(vtkpd);
       vtkpd->Delete();
@@ -78,12 +79,12 @@ vtkPolyData* sv4guiModelUtils::CreatePolyData(std::vector<sv4guiContourGroup*> g
 
     for(int i=0;i<vtpNumber;i++)
     {
-        if(vtps[i]==NULL)
+        if(vtps[i]==nullptr)
         {
             for(int j=0;j<i+groupNumber-1;j++)
                 delete srcs[j];
             delete [] srcs;
-            return NULL;
+            return nullptr;
         }
         vtkPolyData* newvtp=vtkPolyData::New();
         newvtp->DeepCopy(vtps[i]);
@@ -103,7 +104,7 @@ vtkPolyData* sv4guiModelUtils::CreatePolyData(std::vector<sv4guiContourGroup*> g
         newvtp->Delete();
     }
 
-    cvPolyData *dst=NULL;
+    cvPolyData *dst=nullptr;
 
     int status=sys_geom_all_union(srcs, groupNumber+vtpNumber, noInterOut, tol, &dst);
 
@@ -114,145 +115,162 @@ vtkPolyData* sv4guiModelUtils::CreatePolyData(std::vector<sv4guiContourGroup*> g
     delete [] srcs;
 
     if(status!=SV_OK)
-        return NULL;
+        return nullptr;
     else
         return dst->GetVtkPolyData();
 }
 
-sv4guiModelElementPolyData* sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], svLoftingParam *param, unsigned int t, int noInterOut, double tol)
+//----------------------------
+// CreateModelElementPolyData
+//----------------------------
+//
+sv4guiModelElementPolyData* 
+sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, 
+    int numSamplingPts, int stats[], svLoftingParam *param, unsigned int t, int noInterOut, double tol)
 {
-    std::vector<sv4guiContourGroup*> groups;
-    std::vector<vtkPolyData*> vtps;
-    std::vector<std::string> segNames;
+  #ifdef debug_CreateModelElementPolyData
+  std::string msg("[sv4guiModelUtils::CreateModelElementPolyData] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== CreateModelElementPolyData ==========" << std::endl;
+  #endif
 
-    for(int i=0;i<segNodes.size();i++)
-    {
-        mitk::DataNode::Pointer segNode=segNodes[i];
-        sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*>(segNode->GetData());
-        if(group!=NULL)
-        {
-            groups.push_back(group);
-            segNames.push_back(segNode->GetName());
-        }
+  std::vector<sv4guiContourGroup*> groups;
+  std::vector<vtkPolyData*> vtps;
+  std::vector<std::string> segNames;
+
+  #ifdef debug_CreateModelElementPolyData
+  std::cout << msg << "Add segmentation names ... " << std::endl;
+  #endif
+
+  for(int i=0;i<segNodes.size();i++) {
+    mitk::DataNode::Pointer segNode=segNodes[i];
+    sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*>(segNode->GetData());
+    if(group!=nullptr) {
+      groups.push_back(group);
+      segNames.push_back(segNode->GetName());
+      #ifdef debug_CreateModelElementPolyData
+      std::cout << msg << "segNode name: " << segNode->GetName() << std::endl;
+      #endif
     }
+  }
 
-    for(int i=0;i<segNodes.size();i++)
-    {
-        mitk::DataNode::Pointer segNode=segNodes[i];
-        sv4guiMitkSeg3D* seg3D=dynamic_cast<sv4guiMitkSeg3D*>(segNode->GetData());
-        if(seg3D && seg3D->GetVtkPolyData())
-        {
-            vtps.push_back(seg3D->GetVtkPolyData());
-            segNames.push_back(segNode->GetName());
-        }
+  for(int i=0;i<segNodes.size();i++) {
+    mitk::DataNode::Pointer segNode=segNodes[i];
+    sv4guiMitkSeg3D* seg3D=dynamic_cast<sv4guiMitkSeg3D*>(segNode->GetData());
+    if(seg3D && seg3D->GetVtkPolyData()) {
+      vtps.push_back(seg3D->GetVtkPolyData());
+      segNames.push_back(segNode->GetName());
     }
+  }
 
-    vtkPolyData* solidvpd=CreatePolyData(groups,vtps,numSamplingPts,param,t,noInterOut,tol);
-    if(solidvpd==NULL) return NULL;
+  vtkPolyData* solidvpd=CreatePolyData(groups,vtps,numSamplingPts,param,t,noInterOut,tol);
+  if(solidvpd==nullptr) {
+    return nullptr;
+  }
 
-    cvPolyData *src=new cvPolyData(solidvpd);
-    cvPolyData *dst = NULL;
+  cvPolyData *src=new cvPolyData(solidvpd);
+  cvPolyData *dst = nullptr;
 
-    if(stats&&sys_geom_checksurface(src,stats,tol)!=SV_OK)
-    {
-      solidvpd->Delete();
-      return NULL;
+  if(stats&&sys_geom_checksurface(src,stats,tol)!=SV_OK) {
+    solidvpd->Delete();
+    return nullptr;
+  }
+
+  int *doublecaps;
+  int numfaces=0;
+
+  if (sys_geom_set_ids_for_caps(src, &dst,  &doublecaps,&numfaces) != SV_OK) {
+    solidvpd->Delete();
+    return nullptr;
+  }
+
+  vtkSmartPointer<vtkPolyData> forClean = vtkSmartPointer<vtkPolyData>::New();
+  forClean->DeepCopy(dst->GetVtkPolyData());
+  vtkSmartPointer<vtkPolyData> nowClean = vtkSmartPointer<vtkPolyData>::New();
+  nowClean = sv4guiModelUtils::OrientVtkPolyData(forClean);
+
+  solidvpd->DeepCopy(nowClean);;
+
+  int numSeg=segNames.size();
+  int numCap2=0;
+
+  for(int i=numSeg-1;i>-1;i--) {
+    if(doublecaps[i]!=0) {
+      numCap2=doublecaps[i];
+      break;
     }
+  }
 
-    int *doublecaps;
-    int numfaces=0;
+  std::string *allNames=new std::string[2*numSeg+numCap2];
 
-    if (sys_geom_set_ids_for_caps(src, &dst,  &doublecaps,&numfaces) != SV_OK)
-    {
-      solidvpd->Delete();
-      return NULL;
-    }
-
-    vtkSmartPointer<vtkPolyData> forClean =
-      vtkSmartPointer<vtkPolyData>::New();
-    forClean->DeepCopy(dst->GetVtkPolyData());
-    vtkSmartPointer<vtkPolyData> nowClean =
-      vtkSmartPointer<vtkPolyData>::New();
-    nowClean = sv4guiModelUtils::OrientVtkPolyData(forClean);
-
-    solidvpd->DeepCopy(nowClean);;
-
-    int numSeg=segNames.size();
-    int numCap2=0;
-    for(int i=numSeg-1;i>-1;i--)
-    {
-        if(doublecaps[i]!=0)
-        {
-            numCap2=doublecaps[i];
-            break;
-        }
-    }
-
-    std::string *allNames=new std::string[2*numSeg+numCap2];
-
-    for(int i=0;i<numSeg;i++)
-    {
-        allNames[i]="wall_"+segNames[i];
-        allNames[numSeg+i]="cap_"+segNames[i];
-        if(doublecaps[i]!=0)
+  for(int i=0;i<numSeg;i++) {
+    allNames[i]="wall_"+segNames[i];
+    allNames[numSeg+i]="cap_"+segNames[i];
+    if(doublecaps[i]!=0) {
             allNames[2*numSeg+doublecaps[i]-1]="cap_"+segNames[i]+"_2";
     }
+  }
 
-    std::vector<sv4guiModelElement::svFace*> faces;
+  std::vector<sv4guiModelElement::svFace*> faces;
 
-    for(int i=0;i<2*numSeg+numCap2;i++)
-    {
-        vtkPolyData *facepd = vtkPolyData::New();
-        int faceid=i+1;
-        PlyDtaUtils_GetFacePolyData(solidvpd, &faceid, facepd);
+  for(int i=0;i<2*numSeg+numCap2;i++) {
+    vtkPolyData *facepd = vtkPolyData::New();
+    int faceid = i+1;
+    PlyDtaUtils_GetFacePolyData(solidvpd, &faceid, facepd);
+    //std::cout << msg << ">>> faceid " << faceid << std::endl;
+    //std::cout << msg << "    Num nodes: " << facepd->GetNumberOfPoints() << std::endl;
 
-        if(facepd==NULL||facepd->GetNumberOfPoints()==0)
-            continue;
+    if (facepd == nullptr || facepd->GetNumberOfPoints() == 0) {
+      continue;
+    }
 
-        sv4guiModelElement::svFace* face =new sv4guiModelElement::svFace;
-        face->id=faceid;
-        face->name=allNames[i];
-        face->vpd=facepd;
+    sv4guiModelElement::svFace* face =new sv4guiModelElement::svFace;
+    face->id = faceid;
+    face->name = allNames[i];
+    face->vpd = facepd;
 
-        if(face->name.substr(0,5)=="wall_")
+    if(face->name.substr(0,5)=="wall_")
             face->type="wall";
-        else if(face->name.substr(0,4)=="cap_")
+    else if(face->name.substr(0,4)=="cap_")
             face->type="cap";
 
-        faces.push_back(face);
-    }
+    #ifdef debug_CreateModelElementPolyData
+    std::cout << msg << "    Name: " << face->name << std::endl;
+    std::cout << msg << "    Type: " << face->type << std::endl;
+    #endif
+    faces.push_back(face);
+  }
 
-    delete[] allNames;
+  delete[] allNames;
 
-    sv4guiModelElementPolyData* modelElement=new sv4guiModelElementPolyData();
-    modelElement->SetSegNames(segNames);
-    modelElement->SetFaces(faces);
-    modelElement->SetWholeVtkPolyData(solidvpd);
-    modelElement->SetNumSampling(numSamplingPts);
+  sv4guiModelElementPolyData* modelElement = new sv4guiModelElementPolyData();
+  modelElement->SetSegNames(segNames);
+  modelElement->SetFaces(faces);
+  modelElement->SetWholeVtkPolyData(solidvpd);
+  modelElement->SetNumSampling(numSamplingPts);
 
+  bool ok = false;
 
-    bool ok = false;
-    if(modelElement->MarkCellsByFaces(modelElement->GetCapFaceIDs()))
-    {
-      int numDivs = 1;
-      ok=modelElement->LinearSubdivideLocal(numDivs);
-    }
-    if(!ok)
-    {
-      MITK_ERROR << "Failed to subdivide caps of created PolyData";
-      return NULL;
-    }
+  if (modelElement->MarkCellsByFaces(modelElement->GetCapFaceIDs())) {
+    int numDivs = 1;
+    ok = modelElement->LinearSubdivideLocal(numDivs);
+  }
 
-    return modelElement;
+  if(!ok) {
+    MITK_ERROR << "Failed to subdivide caps of created PolyData";
+    return nullptr;
+  }
+
+  return modelElement;
 }
 
 vtkPolyData* sv4guiModelUtils::CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, sv4guiModelElement::svBlendParam* param)
 {
-    if(vpdsrc==NULL)
-        return NULL;
+    if(vpdsrc==nullptr)
+        return nullptr;
 
     cvPolyData *src=new cvPolyData(vpdsrc);
-    cvPolyData *dst = NULL;
+    cvPolyData *dst = nullptr;
 
     int vals[2];
     vals[0]=faceID1;
@@ -262,21 +280,21 @@ vtkPolyData* sv4guiModelUtils::CreatePolyDataByBlend(vtkPolyData* vpdsrc, int fa
          != SV_OK )
     {
         MITK_ERROR << "poly blend (using radius) error ";
-        return NULL;
+        return nullptr;
     }
 
-    cvPolyData *dst2 = NULL;
+    cvPolyData *dst2 = nullptr;
 
     if ( sys_geom_local_blend( dst, &dst2, param->numblenditers,
                                param->numsubblenditers, param->numsubdivisioniters,
                                param->numcgsmoothiters, param->numlapsmoothiters,
                                param->targetdecimation,
-                               NULL, "ActiveCells")
+                               nullptr, "ActiveCells")
 
          != SV_OK )
     {
         MITK_ERROR << "poly blend error ";
-        return NULL;
+        return nullptr;
     }
 
     vtkPolyData* vpd=dst2->GetVtkPolyData();
@@ -290,7 +308,7 @@ sv4guiModelElementPolyData* sv4guiModelUtils::CreateModelElementPolyDataByBlend(
 {
 
     vtkSmartPointer<vtkPolyData> oldVpd=mepdsrc->GetWholeVtkPolyData();
-    if(oldVpd==NULL) return NULL;
+    if(oldVpd==nullptr) return nullptr;
 
     vtkSmartPointer<vtkPolyData> lastVpd=oldVpd;
 
@@ -309,7 +327,7 @@ sv4guiModelElementPolyData* sv4guiModelUtils::CreateModelElementPolyDataByBlend(
 
         lastVpd=sv4guiModelUtils::CreatePolyDataByBlend(lastVpd, faceID1, faceID2, radius, param);
 
-        if(lastVpd==NULL) return NULL;
+        if(lastVpd==nullptr) return nullptr;
 
     }
 
@@ -332,207 +350,214 @@ vtkPolyData* sv4guiModelUtils::CreateLoftSurface(sv4guiContourGroup* contourGrou
 {
 
     svLoftingParam* usedParam= contourGroup->GetLoftingParam();
-    if(param!=NULL) usedParam=param;
+    if(param!=nullptr) usedParam=param;
 
     std::vector<sv4guiContour*> contourSet=contourGroup->GetValidContourSet(t);
 
     return CreateLoftSurface(contourSet,numSamplingPts,usedParam,addCaps);
 }
 
+//-------------------
+// CreateLoftSurface
+//-------------------
+//
 vtkPolyData* sv4guiModelUtils::CreateLoftSurface(std::vector<sv4guiContour*> contourSet, int numSamplingPts, svLoftingParam* param, int addCaps)
 {
-    int contourNumber=contourSet.size();
-    if (contourNumber < 2)
-      return NULL;
+  #ifdef debug_CreateLoftSurface
+  std::string msg("[sv4guiModelUtils::CreateLoftSurface] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== CreateLoftSurface ==========" << std::endl;
+  #endif
 
-    if(param==NULL)
-        return NULL;
+  int contourNumber = contourSet.size();
+  #ifdef debug_CreateLoftSurface
+  std::cout << msg << "contourNumber: " << contourNumber << std::endl;
+  #endif
 
-    param->numOutPtsAlongLength=param->samplePerSegment*contourNumber;
-    param->numPtsInLinearSampleAlongLength=param->linearMuliplier*param->numOutPtsAlongLength;
+  if (contourNumber < 2) {
+    return nullptr;
+  }
 
-    param->numSuperPts=0;
-    for(int i=0;i<contourNumber;i++)
-    {
-        int pointNunumber=contourSet[i]->GetContourPointNumber();
-        if(pointNunumber>param->numSuperPts)
-            param->numSuperPts=pointNunumber;
+  if (param == nullptr) {
+    return nullptr;
+  }
+
+  param->numOutPtsAlongLength = param->samplePerSegment*contourNumber;
+  param->numPtsInLinearSampleAlongLength = param->linearMuliplier*param->numOutPtsAlongLength;
+  param->numSuperPts = 0;
+
+  for(int i=0;i<contourNumber;i++) {
+    int pointNunumber=contourSet[i]->GetContourPointNumber();
+    if(pointNunumber>param->numSuperPts) {
+      param->numSuperPts=pointNunumber;
     }
+  }
 
-    if(param->numOutPtsInSegs>param->numSuperPts)
-        param->numSuperPts=param->numOutPtsInSegs;
+  if(param->numOutPtsInSegs>param->numSuperPts) {
+    param->numSuperPts=param->numOutPtsInSegs;
+  }
 
-    int newNumSamplingPts=param->numOutPtsInSegs;
+  int newNumSamplingPts = param->numOutPtsInSegs;
 
-    if(numSamplingPts>3)
-    {
-        newNumSamplingPts=numSamplingPts;
-        if(numSamplingPts>param->numSuperPts)
-            param->numSuperPts=numSamplingPts;
+  if(numSamplingPts > 3) {
+    newNumSamplingPts=numSamplingPts;
+    if(numSamplingPts>param->numSuperPts) {
+      param->numSuperPts=numSamplingPts;
     }
+  }
 
-    std::vector<cvPolyData*> superSampledContours;
-    for(int i=0;i<contourNumber;i++)
-    {
-        vtkPolyData* vtkpd=vtkPolyData::New();
+  #ifdef debug_CreateLoftSurface
+  std::cout << msg << "Create polydata from contours " << std::endl;
+  #endif
+  std::vector<cvPolyData*> superSampledContours;
 
-        vtkpd->DeepCopy(contourSet[i]->CreateVtkPolyDataFromContour(false));
-        cvPolyData* cvpd=new cvPolyData(vtkpd);
-        vtkpd->Delete();
-        cvPolyData* cvpd2=sys_geom_sampleLoop(cvpd,param->numSuperPts);
-        if(cvpd2==NULL)
-        {
-            MITK_ERROR << "Supersampling error ";
-            return NULL;
+  for(int i=0;i<contourNumber;i++) {
+    vtkPolyData* vtkpd=vtkPolyData::New();
+    vtkpd->DeepCopy(contourSet[i]->CreateVtkPolyDataFromContour(false));
+    cvPolyData* cvpd=new cvPolyData(vtkpd);
+    vtkpd->Delete();
+    cvPolyData* cvpd2=sys_geom_sampleLoop(cvpd,param->numSuperPts);
+    if(cvpd2==nullptr) {
+      MITK_ERROR << "Supersampling error ";
+      return nullptr;
+    }
+    superSampledContours.push_back(cvpd2);
+  }
+
+  std::vector<cvPolyData*> alignedContours;
+
+  for(int i=0;i<contourNumber;i++) {
+    if (i == 0) {
+      alignedContours.push_back(superSampledContours[0]);
+    } else {
+      cvPolyData* cvpd3;
+      if(param->vecFlag == 1) {
+        cvpd3=sys_geom_Align(alignedContours[i-1],superSampledContours[i]);
+      } else {
+        cvpd3=sys_geom_AlignByDist(alignedContours[i-1],superSampledContours[i]);
+      }
+
+      if(cvpd3==nullptr) {
+        MITK_ERROR << "aligning error ";
+        // Clean up
+        for (int i=0; i<contourNumber; i++) {
+          delete superSampledContours[i];
         }
-        superSampledContours.push_back(cvpd2);
+
+        return nullptr;
+      }
+
+      alignedContours.push_back(cvpd3);
+    }
+  }
+
+  // Create a uniform sampled geometry for each contour.
+  //
+  cvPolyData **sampledContours=new cvPolyData*[contourNumber];
+
+  for (int i=0;i<contourNumber;i++) {
+    cvPolyData * cvpd4=sys_geom_sampleLoop(alignedContours[i],newNumSamplingPts);
+    if(cvpd4==nullptr) {
+      MITK_ERROR << "sampling error ";
+      for (int j=0; j<i; j++) {
+        delete sampledContours[j];
+      }
+      delete [] sampledContours;
+      return nullptr;
+    }
+    sampledContours[i]=cvpd4;
+  }
+
+  #ifdef debug_CreateLoftSurface
+  std::cout << msg << "addCaps: " << addCaps << std::endl;
+  std::cout << msg << "param->method: " << param->method << std::endl;
+  #endif
+  cvPolyData *dst;
+  vtkPolyData* outpd=nullptr;
+
+  if (param->method=="spline") {
+
+    if ( sys_geom_loft_solid(sampledContours, contourNumber,param->useLinearSampleAlongLength,param->useFFT,
+                             param->numOutPtsAlongLength,newNumSamplingPts,
+                             param->numPtsInLinearSampleAlongLength,
+                             param->numModes,param->splineType,param->bias,param->tension,param->continuity, &dst ) != SV_OK ) {
+      MITK_ERROR << "poly manipulation error ";
+      outpd=nullptr;
+
+    } else {
+      if(addCaps==1) {
+        outpd=CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
+      } else {
+        outpd=CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
+      }
     }
 
-    std::vector<cvPolyData*> alignedContours;
-    for(int i=0;i<contourNumber;i++)
-    {
-        if(i==0)
-        {
-            alignedContours.push_back(superSampledContours[0]);
+  } else if (param->method=="nurbs") {
+    // Degrees of surface
+    int uDegree = param->uDegree;
+    int vDegree = param->vDegree;
+
+    // Override to maximum possible degree if too large a degree for given number of inputs!
+    if (uDegree >= contourNumber) {
+      uDegree = contourNumber-1;
+    }
+    if (vDegree >= newNumSamplingPts) {
+      vDegree = newNumSamplingPts-1;
+    }
+
+    // Set to average knot span and chord length if just two inputs
+    if (contourNumber == 2) {
+      param->uKnotSpanType = "average";
+      param->uParametricSpanType = "chord";
+    }
+
+    if (newNumSamplingPts == 2) {
+      param->uKnotSpanType = "average";
+      param->uParametricSpanType = "chord";
+    }
+
+    // Output spacing function of given input points
+    double uSpacing = 1.0/param->numOutPtsAlongLength;
+    double vSpacing = 1.0/newNumSamplingPts;
+
+    // span types
+    const char *uKnotSpanType       = param->uKnotSpanType.c_str();
+    const char *vKnotSpanType       = param->vKnotSpanType.c_str();
+    const char *uParametricSpanType = param->uParametricSpanType.c_str();
+    const char *vParametricSpanType = param->vParametricSpanType.c_str();
+    vtkNew(vtkSVNURBSSurface, NURBSSurface);
+
+    if ( sys_geom_loft_solid_with_nurbs(sampledContours, contourNumber, uDegree, vDegree, uSpacing,
+             vSpacing, uKnotSpanType, vKnotSpanType, uParametricSpanType, vParametricSpanType, NURBSSurface, &dst ) != SV_OK ) {
+      MITK_ERROR << "poly manipulation error ";
+      outpd=nullptr;
+
+    } else {
+      if (PlyDtaUtils_CheckLoftSurface(dst->GetVtkPolyData()) != SV_OK) {
+        MITK_ERROR << "Error lofting surface";
+        outpd=nullptr;
+      } else {
+        if (addCaps == 1) {
+          outpd = CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
+        } else {
+          outpd = CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
         }
-        else
-        {
-            cvPolyData* cvpd3;
-            if(param->vecFlag==1)
-                cvpd3=sys_geom_Align(alignedContours[i-1],superSampledContours[i]);
-            else
-                cvpd3=sys_geom_AlignByDist(alignedContours[i-1],superSampledContours[i]);
-
-            if(cvpd3==NULL)
-            {
-                MITK_ERROR << "aligning error ";
-                // Clean up
-                for (int i=0; i<contourNumber; i++)
-                  delete superSampledContours[i];
-
-                return NULL;
-            }
-
-            alignedContours.push_back(cvpd3);
-        }
-    }
-
-    cvPolyData **sampledContours=new cvPolyData*[contourNumber];
-    for(int i=0;i<contourNumber;i++)
-    {
-        cvPolyData * cvpd4=sys_geom_sampleLoop(alignedContours[i],newNumSamplingPts);
-        if(cvpd4==NULL)
-        {
-            MITK_ERROR << "sampling error ";
-            for (int j=0; j<i; j++)
-              delete sampledContours[j];
-            delete [] sampledContours;
-            return NULL;
-        }
-        sampledContours[i]=cvpd4;
-    }
-
-    cvPolyData *dst;
-    vtkPolyData* outpd=NULL;
-
-    if (param->method=="spline")
-    {
-      if ( sys_geom_loft_solid(sampledContours, contourNumber,param->useLinearSampleAlongLength,param->useFFT,
-                               param->numOutPtsAlongLength,newNumSamplingPts,
-                               param->numPtsInLinearSampleAlongLength,param->numModes,param->splineType,param->bias,param->tension,param->continuity,
-                               &dst )
-           != SV_OK )
-      {
-          MITK_ERROR << "poly manipulation error ";
-          outpd=NULL;
-      }
-      else
-      {
-
-          if(addCaps==1)
-              outpd=CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
-          else
-              outpd=CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
       }
     }
-    else if (param->method=="nurbs")
-    {
-      // Degrees of surface
-      int uDegree = param->uDegree;
-      int vDegree = param->vDegree;
+  }
 
-      // Override to maximum possible degree if too large a degree for given number of inputs!
-      if (uDegree >= contourNumber)
-        uDegree = contourNumber-1;
-      if (vDegree >= newNumSamplingPts)
-        vDegree = newNumSamplingPts-1;
+  // Clean up
+  for (int i=0; i<contourNumber; i++) {
+    delete superSampledContours[i];
+    delete sampledContours[i];
+  }
+  delete [] sampledContours;
 
-      // Set to average knot span and chord length if just two inputs
-      if (contourNumber == 2)
-      {
-        param->uKnotSpanType = "average";
-        param->uParametricSpanType = "chord";
-      }
-      if (newNumSamplingPts == 2)
-      {
-        param->uKnotSpanType = "average";
-        param->uParametricSpanType = "chord";
-      }
+  if (dst != nullptr) {
+    delete dst;
+  }
 
-      // Output spacing function of given input points
-      double uSpacing = 1.0/param->numOutPtsAlongLength;
-      double vSpacing = 1.0/newNumSamplingPts;
-
-      // span types
-      const char *uKnotSpanType       = param->uKnotSpanType.c_str();
-      const char *vKnotSpanType       = param->vKnotSpanType.c_str();
-      const char *uParametricSpanType = param->uParametricSpanType.c_str();
-      const char *vParametricSpanType = param->vParametricSpanType.c_str();
-      vtkNew(vtkSVNURBSSurface, NURBSSurface);
-
-      if ( sys_geom_loft_solid_with_nurbs(sampledContours, contourNumber,
-                                          uDegree, vDegree, uSpacing,
-                                          vSpacing, uKnotSpanType,
-                                          vKnotSpanType,
-                                          uParametricSpanType,
-                                          vParametricSpanType,
-                                          NURBSSurface,
-                                          &dst )
-           != SV_OK )
-      {
-          MITK_ERROR << "poly manipulation error ";
-          outpd=NULL;
-      }
-      else
-      {
-          if (PlyDtaUtils_CheckLoftSurface(dst->GetVtkPolyData()) != SV_OK)
-          {
-            MITK_ERROR << "Error lofting surface";
-            outpd=NULL;
-          }
-          else
-          {
-            if(addCaps==1)
-                outpd=CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
-            else
-                outpd=CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
-          }
-
-      }
-    }
-
-    // Clean up
-    for (int i=0; i<contourNumber; i++)
-    {
-      delete superSampledContours[i];
-      delete sampledContours[i];
-    }
-    delete [] sampledContours;
-
-    if(dst!=NULL) delete dst;
-
-    return outpd;
-
+  return outpd;
 }
 
 vtkPolyData* sv4guiModelUtils::CreateOrientOpenPolySolidVessel(vtkPolyData* inpd)
@@ -601,46 +626,72 @@ vtkPolyData* sv4guiModelUtils::Orient(vtkPolyData* inpd)
     return outpd;
 }
 
+//-----------------------------------
+// CreateOrientClosedPolySolidVessel
+//-----------------------------------
+//
 vtkPolyData* sv4guiModelUtils::CreateOrientClosedPolySolidVessel(vtkPolyData* inpd)
 {
-    int fillID=0;
-    int fillType=0;
+  #ifdef debug_CreateOrientClosedPolySolidVessel
+  std::string msg("[sv4guiModelUtils::CreateOrientClosedPolySolidVessel] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== CreateOrientClosedPolySolidVessel ==========" << std::endl;
+  #endif
 
-    vtkPolyData* tmppd=FillHolesWithIDs(inpd,fillID,fillType);
+  int fillID = 0;
+  int fillType = 0;
 
-    vtkSmartPointer<vtkPolyDataNormals> nrmls = vtkSmartPointer<vtkPolyDataNormals>::New();
-    nrmls->SplittingOff();
-    nrmls->ConsistencyOn();
-    nrmls->AutoOrientNormalsOn();
-    nrmls->ComputeCellNormalsOn();
-    nrmls->ComputePointNormalsOff();
-    nrmls->SetInputData(tmppd);
-    nrmls->Update();
+  vtkPolyData* tmppd = FillHolesWithIDs(inpd,fillID,fillType);
 
-    vtkPolyData* outpd=vtkPolyData::New();
-    outpd->DeepCopy(nrmls->GetOutput());
+  vtkSmartPointer<vtkPolyDataNormals> nrmls = vtkSmartPointer<vtkPolyDataNormals>::New();
+  nrmls->SplittingOff();
+  nrmls->ConsistencyOn();
+  nrmls->AutoOrientNormalsOn();
+  nrmls->ComputeCellNormalsOn();
+  nrmls->ComputePointNormalsOff();
+  nrmls->SetInputData(tmppd);
+  nrmls->Update();
 
-    tmppd->Delete();
+  vtkPolyData* outpd = vtkPolyData::New();
+  outpd->DeepCopy(nrmls->GetOutput());
 
-    return outpd;
+  tmppd->Delete();
+
+  return outpd;
 }
 
+//------------------
+// FillHolesWithIDs
+//------------------
+//
 vtkPolyData* sv4guiModelUtils::FillHolesWithIDs(vtkPolyData* inpd, int fillID, int fillType)
 {
-    cvPolyData* cvpd=new cvPolyData(inpd);
-    int numFilled=0;
-    cvPolyData* tmpcvpd;
-    if(sys_geom_cap_with_ids(cvpd,&tmpcvpd,fillID,numFilled,fillType)!=SV_OK)
-        return NULL;
+  #ifdef debug_FillHolesWithIDs
+  std::string msg("[sv4guiModelUtils::FillHolesWithIDs] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== FillHolesWithIDs ==========" << std::endl;
+  #endif
 
-    if(tmpcvpd==NULL)
-        return NULL;
+  cvPolyData* cvpd=new cvPolyData(inpd);
+  int numFilled=0;
+  cvPolyData* tmpcvpd;
 
-    vtkPolyData* outpd=Orient(tmpcvpd->GetVtkPolyData());
+  if (sys_geom_cap_with_ids(cvpd,&tmpcvpd,fillID,numFilled,fillType) != SV_OK) {
+    #ifdef debug_FillHolesWithIDs
+    std::cout << msg << "**** ERROR: failed to fill holes " << std::endl;
+    #endif
+    return nullptr;
+  }
 
-    delete tmpcvpd;
+  if(tmpcvpd==nullptr) {
+    return nullptr;
+  }
 
-    return outpd;
+  vtkPolyData* outpd = Orient(tmpcvpd->GetVtkPolyData());
+
+  delete tmpcvpd;
+
+  return outpd;
 }
 
 bool sv4guiModelUtils::CheckArrayName(vtkDataSet *object,int datatype,std::string arrayname )
@@ -705,18 +756,18 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::OrientVtkPolyData(vtkSmartPointer
 
 vtkSmartPointer<vtkPolyData> sv4guiModelUtils::MarkCells(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> cellIDs)
 {
-    if(inpd==NULL)
-        return NULL;
+    if(inpd==nullptr)
+        return nullptr;
 
     cvPolyData *src=new cvPolyData(inpd);
-    cvPolyData *dst = NULL;
+    cvPolyData *dst = nullptr;
 
     int* cellIDArray = &cellIDs[0];
 
     if ( sys_geom_set_array_for_local_op_cells(src, &dst, cellIDArray, cellIDs.size(), "ActiveCells", 1) != SV_OK )
     {
         MITK_ERROR << "poly marking cells (by cell ids) error ";
-        return NULL;
+        return nullptr;
     }
 
     return dst->GetVtkPolyData();
@@ -725,16 +776,16 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::MarkCells(vtkSmartPointer<vtkPoly
 
 vtkSmartPointer<vtkPolyData> sv4guiModelUtils::MarkCellsBySphere(vtkSmartPointer<vtkPolyData> inpd, double radius, double center[3])
 {
-    if(inpd==NULL)
-        return NULL;
+    if(inpd==nullptr)
+        return nullptr;
 
     cvPolyData *src=new cvPolyData(inpd);
-    cvPolyData *dst = NULL;
+    cvPolyData *dst = nullptr;
 
     if ( sys_geom_set_array_for_local_op_sphere(src, &dst, radius, center, "ActiveCells", 1) != SV_OK )
     {
         MITK_ERROR << "poly marking cells (by sphere) error ";
-        return NULL;
+        return nullptr;
     }
 
     return dst->GetVtkPolyData();
@@ -742,18 +793,18 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::MarkCellsBySphere(vtkSmartPointer
 
 vtkSmartPointer<vtkPolyData> sv4guiModelUtils::MarkCellsByFaces(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> faceIDs)
 {
-    if(inpd==NULL)
-        return NULL;
+    if(inpd==nullptr)
+        return nullptr;
 
     cvPolyData *src=new cvPolyData(inpd);
-    cvPolyData *dst = NULL;
+    cvPolyData *dst = nullptr;
 
     int* faceIDArray = &faceIDs[0];
 
     if ( sys_geom_set_array_for_local_op_face(src, &dst, "ModelFaceID", faceIDArray, faceIDs.size(), "ActiveCells", 1) != SV_OK )
     {
         MITK_ERROR << "poly marking cells (by face ids) error ";
-        return NULL;
+        return nullptr;
     }
 
     return dst->GetVtkPolyData();
@@ -761,18 +812,18 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::MarkCellsByFaces(vtkSmartPointer<
 
 vtkSmartPointer<vtkPolyData> sv4guiModelUtils::MarkCellsByFaceJunctions(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> faceIDs, double radius)
 {
-    if(inpd==NULL)
-        return NULL;
+    if(inpd==nullptr)
+        return nullptr;
 
     cvPolyData *src=new cvPolyData(inpd);
-    cvPolyData *dst = NULL;
+    cvPolyData *dst = nullptr;
 
     int* faceIDArray = &faceIDs[0];
 
     if ( sys_geom_set_array_for_local_op_face_blend(src, &dst, "ModelFaceID", faceIDArray, faceIDs.size(), radius, "ActiveCells", 1) != SV_OK )
     {
         MITK_ERROR << "poly marking cells (by face functions) error ";
-        return NULL;
+        return nullptr;
     }
 
     return dst->GetVtkPolyData();
@@ -780,16 +831,16 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::MarkCellsByFaceJunctions(vtkSmart
 
 vtkSmartPointer<vtkPolyData> sv4guiModelUtils::DecimateLocal(vtkSmartPointer<vtkPolyData> inpd, double targetRate)
 {
-    if(inpd==NULL)
-        return NULL;
+    if(inpd==nullptr)
+        return nullptr;
 
     cvPolyData *src=new cvPolyData(inpd);
-    cvPolyData *dst = NULL;
+    cvPolyData *dst = nullptr;
 
-    if ( sys_geom_local_quadric_decimation(src, &dst, targetRate, NULL, "ActiveCells") != SV_OK )
+    if ( sys_geom_local_quadric_decimation(src, &dst, targetRate, nullptr, "ActiveCells") != SV_OK )
     {
         MITK_ERROR << "poly local decimation error ";
-        return NULL;
+        return nullptr;
     }
 
     return dst->GetVtkPolyData();
@@ -797,16 +848,16 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::DecimateLocal(vtkSmartPointer<vtk
 
 vtkSmartPointer<vtkPolyData> sv4guiModelUtils::LaplacianSmoothLocal(vtkSmartPointer<vtkPolyData> inpd, int numIters, double relaxFactor)
 {
-    if(inpd==NULL)
-        return NULL;
+    if(inpd==nullptr)
+        return nullptr;
 
     cvPolyData *src=new cvPolyData(inpd);
-    cvPolyData *dst = NULL;
+    cvPolyData *dst = nullptr;
 
-    if ( sys_geom_local_laplacian_smooth(src, &dst, numIters, relaxFactor, NULL, "ActiveCells") != SV_OK )
+    if ( sys_geom_local_laplacian_smooth(src, &dst, numIters, relaxFactor, nullptr, "ActiveCells") != SV_OK )
     {
         MITK_ERROR << "poly local Laplacian smooth error ";
-        return NULL;
+        return nullptr;
     }
 
     return dst->GetVtkPolyData();
@@ -814,16 +865,16 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::LaplacianSmoothLocal(vtkSmartPoin
 
 vtkSmartPointer<vtkPolyData> sv4guiModelUtils::ConstrainSmoothLocal(vtkSmartPointer<vtkPolyData> inpd, int numIters, double constrainFactor, int numCGSolves)
 {
-    if(inpd==NULL)
-        return NULL;
+    if(inpd==nullptr)
+        return nullptr;
 
     cvPolyData *src=new cvPolyData(inpd);
-    cvPolyData *dst = NULL;
+    cvPolyData *dst = nullptr;
 
-    if ( sys_geom_local_constrain_smooth(src, &dst, numIters, constrainFactor, numCGSolves, NULL, "ActiveCells") != SV_OK )
+    if ( sys_geom_local_constrain_smooth(src, &dst, numIters, constrainFactor, numCGSolves, nullptr, "ActiveCells") != SV_OK )
     {
         MITK_ERROR << "poly local constrain smooth error ";
-        return NULL;
+        return nullptr;
     }
 
     return dst->GetVtkPolyData();
@@ -831,16 +882,16 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::ConstrainSmoothLocal(vtkSmartPoin
 
 vtkSmartPointer<vtkPolyData> sv4guiModelUtils::LinearSubdivideLocal(vtkSmartPointer<vtkPolyData> inpd, int numDivs)
 {
-    if(inpd==NULL)
-        return NULL;
+    if(inpd==nullptr)
+        return nullptr;
 
     cvPolyData *src=new cvPolyData(inpd);
-    cvPolyData *dst = NULL;
+    cvPolyData *dst = nullptr;
 
-    if ( sys_geom_local_linear_subdivision(src, &dst, numDivs, NULL, "ActiveCells") != SV_OK )
+    if ( sys_geom_local_linear_subdivision(src, &dst, numDivs, nullptr, "ActiveCells") != SV_OK )
     {
         MITK_ERROR << "poly local linear subdivision error ";
-        return NULL;
+        return nullptr;
     }
 
     return dst->GetVtkPolyData();
@@ -848,16 +899,16 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::LinearSubdivideLocal(vtkSmartPoin
 
 vtkSmartPointer<vtkPolyData> sv4guiModelUtils::LoopSubdivideLocal(vtkSmartPointer<vtkPolyData> inpd, int numDivs)
 {
-    if(inpd==NULL)
-        return NULL;
+    if(inpd==nullptr)
+        return nullptr;
 
     cvPolyData *src=new cvPolyData(inpd);
-    cvPolyData *dst = NULL;
+    cvPolyData *dst = nullptr;
 
-    if ( sys_geom_local_loop_subdivision(src, &dst, numDivs, NULL, "ActiveCells") != SV_OK )
+    if ( sys_geom_local_loop_subdivision(src, &dst, numDivs, nullptr, "ActiveCells") != SV_OK )
     {
         MITK_ERROR << "poly local loop subdivision error ";
-        return NULL;
+        return nullptr;
     }
 
     return dst->GetVtkPolyData();
@@ -865,8 +916,8 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::LoopSubdivideLocal(vtkSmartPointe
 
 vtkSmartPointer<vtkPolyData> sv4guiModelUtils::CutByPlane(vtkSmartPointer<vtkPolyData> inpd, double origin[3], double point1[3], double point2[3], bool above )
 {
-    if(inpd==NULL)
-        return NULL;
+    if(inpd==nullptr)
+        return nullptr;
 
     vtkSmartPointer<vtkPlaneSource> plane= vtkSmartPointer<vtkPlaneSource>::New();
     plane->SetOrigin(origin);
@@ -905,11 +956,11 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::CutByPlane(vtkSmartPointer<vtkPol
 
 vtkSmartPointer<vtkPolyData> sv4guiModelUtils::CutByBox(vtkSmartPointer<vtkPolyData> inpd, vtkSmartPointer<vtkPlanes> boxPlanes, bool inside)
 {
-    if(inpd==NULL)
-        return NULL;
+    if(inpd==nullptr)
+        return nullptr;
 
-    if(boxPlanes==NULL)
-        return NULL;
+    if(boxPlanes==nullptr)
+        return nullptr;
 
     vtkSmartPointer<vtkClipPolyData> clipper=vtkSmartPointer<vtkClipPolyData>::New();
     clipper->SetInputData(inpd);
@@ -938,7 +989,7 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::CutByBox(vtkSmartPointer<vtkPolyD
 //
 bool sv4guiModelUtils::DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> regionIDs)
 {
-    if (inpd == NULL) {
+    if (inpd == nullptr) {
         return false;
     }
 
@@ -982,115 +1033,130 @@ bool sv4guiModelUtils::DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vec
 vtkPolyData* 
 sv4guiModelUtils::CreateCenterlines(sv4guiModelElement* modelElement, vtkIdList *sourceCapIds, bool getSections)
 {
-    if(modelElement==NULL || modelElement->GetWholeVtkPolyData()==NULL) {
-        return NULL;
-    }
+  std::string msg("[sv4guiModelUtils::CreateCenterlines] ");
+  std::cout << msg << "========== CreateCenterlines ==========" << std::endl;
+  std::cout << msg << "getSections: " << getSections << std::endl;
 
-    // Copy model twice (?)
-    auto inpd = vtkSmartPointer<vtkPolyData>::New();
-    inpd->DeepCopy(modelElement->GetWholeVtkPolyData());
-    auto fullpd = vtkSmartPointer<vtkPolyData>::New();
-    fullpd->DeepCopy(modelElement->GetWholeVtkPolyData());
+  if (modelElement==nullptr || modelElement->GetWholeVtkPolyData()==nullptr) {
+    return nullptr;
+  }
 
-    // Remove the cells defining the model caps.
-    if (!DeleteRegions(inpd, modelElement->GetCapFaceIDs())) {
-        return NULL;
-    }
+  // Copy model twice (?)
+  auto inpd = vtkSmartPointer<vtkPolyData>::New();
+  inpd->DeepCopy(modelElement->GetWholeVtkPolyData());
+  auto fullpd = vtkSmartPointer<vtkPolyData>::New();
+  fullpd->DeepCopy(modelElement->GetWholeVtkPolyData());
 
-    cvPolyData *src = new cvPolyData(inpd);
-    auto cleaned = sys_geom_Clean(src);
-    delete src;
+  // Remove the cells defining the model caps.
+  if (!DeleteRegions(inpd, modelElement->GetCapFaceIDs())) {
+      return nullptr;
+  }
 
-    // Recap the model surface.
-    //
-    cvPolyData *capped  = NULL;
-    int numCapCenterIds;
-    int *capCenterIds = NULL;
-    int capUsingCenter = 1;     // Cap using a point in the cap center.
+  cvPolyData *src = new cvPolyData(inpd);
+  auto cleaned = sys_geom_Clean(src);
+  delete src;
 
-    if (sys_geom_cap_for_centerlines(cleaned, &capped, &numCapCenterIds, &capCenterIds, capUsingCenter ) != SV_OK) {
-      delete cleaned;
-      if (capped != NULL) {
-        delete capped;
-      }
-      return NULL;
-    }
+  // Recap the model surface.
+  //
+  //std::cout << msg << "Recap the model surface ..." << std::endl;
+  cvPolyData *capped  = nullptr;
+  int numCapCenterIds;
+  int *capCenterIds = nullptr;
+  int capUsingCenter = 1;     // Cap using a point in the cap center.
 
-    if (numCapCenterIds < 2) {
-      delete cleaned;
-      if (capped != NULL) {
-        delete capped;
-      }
-      return NULL;
-    }
+  if (sys_geom_cap_for_centerlines(cleaned, &capped, &numCapCenterIds, &capCenterIds, capUsingCenter ) != SV_OK) {
     delete cleaned;
+    if (capped != nullptr) {
+      delete capped;
+    }
+    return nullptr;
+  }
 
-    bool capIdsGiven = false;
-    if ((sourceCapIds != NULL) && (sourceCapIds->GetNumberOfIds() > 0)) {
-        capIdsGiven = true;
+  std::cout << msg << "numCapCenterIds: " << numCapCenterIds << std::endl;
+
+  if (numCapCenterIds < 2) {
+    delete cleaned;
+    if (capped != nullptr) {
+      delete capped;
+    }
+    return nullptr;
+  }
+  delete cleaned;
+
+  bool capIdsGiven = false;
+  if ((sourceCapIds != nullptr) && (sourceCapIds->GetNumberOfIds() > 0)) {
+      capIdsGiven = true;
+  }
+  std::cout << msg << "capIdsGiven: " << capIdsGiven << std::endl;
+
+  // Define the source and target cap node IDs used to compute the centerline.
+  //
+  auto sourcePtIds = vtkSmartPointer<vtkIdList>::New();
+  auto targetPtIds = vtkSmartPointer<vtkIdList>::New();
+
+  if (!capIdsGiven) {
+    sourcePtIds->InsertNextId(capCenterIds[0]);
+    for (int i = 1; i < numCapCenterIds; i++) {
+      targetPtIds->InsertNextId(capCenterIds[i]);
     }
 
-    // Define the source and target cap node IDs used to compute the centerline.
-    //
-    auto sourcePtIds = vtkSmartPointer<vtkIdList>::New();
-    auto targetPtIds = vtkSmartPointer<vtkIdList>::New();
+  // Get the node IDs closest to the cap centers. 
+  //
+  // capFaceId's are added to a map to produce a sorted list. 
+  //
+  } else {
+    auto locator = vtkSmartPointer<vtkCellLocator>::New();
+    locator->SetDataSet(fullpd);
+    locator->BuildLocator();
+    auto genericCell = vtkSmartPointer<vtkGenericCell>::New();
+    std::map<int,int> facePtIdMap;
 
-    if (!capIdsGiven) {
-      sourcePtIds->InsertNextId(capCenterIds[0]);
-      for (int i = 1; i < numCapCenterIds; i++) {
-        targetPtIds->InsertNextId(capCenterIds[i]);
-      }
+    for (int i = 0;  i < numCapCenterIds; i++) {
+      int ptId = capCenterIds[i];
+      double capPt[3];
+      capped->GetVtkPolyData()->GetPoint(ptId, capPt);
+      std::cout << msg << "--- ptId: " << ptId << std::endl;
+      std::cout << msg << "    capPt: " << capPt[0] << " " << capPt[1] << " " << capPt[2]<< std::endl;
 
-    // Get the node IDs closest to the cap centers. 
-    //
-    // capFaceId's are added to a map to produce a sorted list. 
-    //
-    } else {
-      auto locator = vtkSmartPointer<vtkCellLocator>::New();
-      locator->SetDataSet(fullpd);
-      locator->BuildLocator();
-      auto genericCell = vtkSmartPointer<vtkGenericCell>::New();
-      std::map<int,int> facePtIdMap;
+      int subId;
+      double closestPt[3];
+      vtkIdType closestCellId;
+      double distance;
+      locator->FindClosestPoint(capPt, closestPt, genericCell, closestCellId, subId, distance);
 
-      for (int i = 0;  i < numCapCenterIds; i++) {
-        int ptId = capCenterIds[i];
-        double capPt[3];
-        capped->GetVtkPolyData()->GetPoint(ptId, capPt);
-
-        int subId;
-        double closestPt[3];
-        vtkIdType closestCellId;
-        double distance;
-        locator->FindClosestPoint(capPt, closestPt, genericCell, closestCellId, subId, distance);
-
-        int capFaceId = fullpd->GetCellData()->GetArray("ModelFaceID")->GetTuple1(closestCellId);
-        facePtIdMap[capFaceId] = ptId;
-      }
-
-      // Add point IDs to the source and target lists.
-      for (auto face : facePtIdMap) { 
-        int capFaceId = face.first;
-        int ptId = face.second;
-        if (sourceCapIds->IsId(capFaceId) != -1) {
-          sourcePtIds->InsertNextId(ptId);
-        } else {
-          targetPtIds->InsertNextId(ptId);
-        }
-      }
+      int capFaceId = fullpd->GetCellData()->GetArray("ModelFaceID")->GetTuple1(closestCellId);
+      facePtIdMap[capFaceId] = ptId;
+      std::cout << msg << "    capFaceId: " << capFaceId << std::endl;
+      std::cout << msg << "    distance: " << distance << std::endl;
+      std::cout << msg << "    closestCellId: " << closestCellId << std::endl;
     }
 
-    delete [] capCenterIds;
-
-    vtkPolyData* centerlines;
-
-    if (getSections) {
-      centerlines = CreateCenterlineSections(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
-    } else {
-      centerlines = CreateCenterlines(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
+    // Add point IDs to the source and target lists.
+    for (auto face : facePtIdMap) { 
+      int capFaceId = face.first;
+      int ptId = face.second;
+      if (sourceCapIds->IsId(capFaceId) != -1) {
+        sourcePtIds->InsertNextId(ptId);
+        std::cout << msg << "Add source ptId " << ptId << std::endl;
+      } else {
+        targetPtIds->InsertNextId(ptId);
+        std::cout << msg << "Add target ptId " << ptId << std::endl;
+      }
     }
+  }
 
-    delete capped;
-    return centerlines;
+  delete [] capCenterIds;
+
+  vtkPolyData* centerlines;
+
+  if (getSections) {
+    centerlines = CreateCenterlineSections(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
+  } else {
+    centerlines = CreateCenterlines(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
+  }
+
+  delete capped;
+  return centerlines;
 }
 
 vtkPolyData* sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd)
@@ -1100,26 +1166,26 @@ vtkPolyData* sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd)
 
   // Cap the solid to get centerline ids
   cvPolyData *src = new cvPolyData(inpd);
-  cvPolyData *cleaned = NULL;
-  cvPolyData *capped  = NULL;
+  cvPolyData *cleaned = nullptr;
+  cvPolyData *capped  = nullptr;
   int numCapCenterIds;
-  int *capCenterIds=NULL;
+  int *capCenterIds=nullptr;
 
   cleaned = sys_geom_Clean(src);
 
   if ( sys_geom_cap_for_centerlines(cleaned, &capped, &numCapCenterIds, &capCenterIds, 1 ) != SV_OK)
   {
     delete cleaned;
-    if (capped != NULL)
+    if (capped != nullptr)
       delete capped;
-    return NULL;
+    return nullptr;
   }
   if (numCapCenterIds < 2)
   {
     delete cleaned;
-    if (capped != NULL)
+    if (capped != nullptr)
       delete capped;
-    return NULL;
+    return nullptr;
   }
   delete cleaned;
 
@@ -1136,17 +1202,21 @@ vtkPolyData* sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd)
 
 }
 
-
-vtkPolyData* sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd,
-                                             vtkIdList *sourcePtIds,
-                                             vtkIdList *targetPtIds)
+//-------------------
+// CreateCenterlines
+//-------------------
+// Compute the centerlines for the input surface model. 
+//
+vtkPolyData* 
+sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd, vtkIdList *sourcePtIds, vtkIdList *targetPtIds)
 {
-    if(inpd==NULL)
-        return NULL;
+    if (inpd == nullptr) {
+        return nullptr;
+    }
 
     cvPolyData *src = new cvPolyData(inpd);
-    cvPolyData *tempCenterlines = NULL;
-    cvPolyData *voronoi = NULL;
+    cvPolyData *tempCenterlines = nullptr;
+    cvPolyData *voronoi = nullptr;
 
     int numSourcePts = sourcePtIds->GetNumberOfIds();
     int *sources=new int[numSourcePts];
@@ -1163,34 +1233,46 @@ vtkPolyData* sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd,
         delete src;
         delete [] sources;
         delete [] targets;
-        return NULL;
+        return nullptr;
     }
     delete src;
     delete voronoi;
     delete [] sources;
     delete [] targets;
 
-    cvPolyData *centerlines=NULL;
+    // [DaveP] This is not working so disable for now.
+    /*
+    cvPolyData *centerlines=nullptr;
     if ( sys_geom_separatecenterlines(tempCenterlines, &centerlines) != SV_OK )
     {
         delete tempCenterlines;
-        return NULL;
+        return nullptr;
     }
     delete tempCenterlines;
 
     return centerlines->GetVtkPolyData();
+    */
+    return tempCenterlines->GetVtkPolyData();
 }
 
-vtkPolyData* sv4guiModelUtils::CreateCenterlineSections(vtkPolyData* inpd,
-                                                        vtkIdList *sourcePtIds,
-                                                        vtkIdList *targetPtIds)
+//--------------------------
+// CreateCenterlineSections
+//--------------------------
+// Compute the centerlines for a closed surface using cross-sectional
+// planar slices to better identify branches and bifurcations.
+//
+// This is used by the ROM Simulation Tool.
+//
+vtkPolyData* 
+sv4guiModelUtils::CreateCenterlineSections(vtkPolyData* inpd, vtkIdList *sourcePtIds, vtkIdList *targetPtIds)
 {
-    if(inpd==NULL)
-        return NULL;
+    if (inpd==nullptr) {
+        return nullptr;
+    }
 
     cvPolyData *src = new cvPolyData(inpd);
-    cvPolyData *tempCenterlines = NULL;
-    cvPolyData *voronoi = NULL;
+    cvPolyData *tempCenterlines = nullptr;
+    cvPolyData *voronoi = nullptr;
 
     int numSourcePts = sourcePtIds->GetNumberOfIds();
     int *sources=new int[numSourcePts];
@@ -1207,22 +1289,23 @@ vtkPolyData* sv4guiModelUtils::CreateCenterlineSections(vtkPolyData* inpd,
         delete src;
         delete [] sources;
         delete [] targets;
-        return NULL;
+        return nullptr;
     }
     delete voronoi;
     delete [] sources;
     delete [] targets;
 
-    cvPolyData *centerlines=NULL;
-    cvPolyData *surf_grouped=NULL;
-    cvPolyData *sections=NULL;
-    if ( sys_geom_centerlinesections(tempCenterlines, src, &centerlines, &surf_grouped, &sections) != SV_OK )
+    cvPolyData *centerlines=nullptr;
+    cvPolyData *surf_grouped=nullptr;
+    cvPolyData *sections=nullptr;
+
+    if ( sys_geom_centerline_sections(tempCenterlines, src, &centerlines, &surf_grouped, &sections) != SV_OK )
     {
         delete src;
         delete centerlines;
         delete surf_grouped;
         delete sections;
-        return NULL;
+        return nullptr;
     }
     delete src;
     delete surf_grouped;
@@ -1233,17 +1316,17 @@ vtkPolyData* sv4guiModelUtils::CreateCenterlineSections(vtkPolyData* inpd,
 
 vtkPolyData* sv4guiModelUtils::MergeCenterlines(vtkPolyData* centerlinesPD)
 {
-    if(centerlinesPD==NULL)
-        return NULL;
+    if(centerlinesPD==nullptr)
+        return nullptr;
 
     cvPolyData *centerlines =new cvPolyData(centerlinesPD);
 
-    cvPolyData *merged_centerlines=NULL;
+    cvPolyData *merged_centerlines=nullptr;
     int mergeblanked = 1;
     if (sys_geom_mergecenterlines(centerlines, mergeblanked, &merged_centerlines) != SV_OK )
     {
       delete centerlines;
-      return NULL;
+      return nullptr;
     }
     delete centerlines;
 
@@ -1252,15 +1335,15 @@ vtkPolyData* sv4guiModelUtils::MergeCenterlines(vtkPolyData* centerlinesPD)
 
 vtkPolyData* sv4guiModelUtils::CalculateDistanceToCenterlines(vtkPolyData* centerlines, vtkPolyData* original)
 {
-    if(centerlines==NULL || original==NULL)
-        return NULL;
+    if(centerlines==nullptr || original==nullptr)
+        return nullptr;
 
     cvPolyData *src=new cvPolyData(original);
     cvPolyData *lines=new cvPolyData(centerlines);
-    cvPolyData *distance = NULL;
+    cvPolyData *distance = nullptr;
     if ( sys_geom_distancetocenterlines(src, lines, &distance) != SV_OK )
     {
-        return NULL;
+        return nullptr;
     }
 
     return distance->GetVtkPolyData();
@@ -1288,12 +1371,19 @@ std::vector<sv4guiPathElement::sv4guiPathPoint> sv4guiModelUtils::ConvertToPathP
     return pathPoints;
 }
 
-vtkSmartPointer<vtkPolyData> sv4guiModelUtils::GetThresholdRegion(vtkSmartPointer<vtkPolyData> pd, vtkDataObject::FieldAssociations dataType, std::string arrayName, double minValue, double maxValue )
+//--------------------
+// GetThresholdRegion
+//--------------------
+//
+vtkSmartPointer<vtkPolyData> 
+sv4guiModelUtils::GetThresholdRegion(vtkSmartPointer<vtkPolyData> pd, vtkDataObject::FieldAssociations dataType, 
+    std::string arrayName, double minValue, double maxValue )
 {
-    vtkSmartPointer<vtkThreshold> thresholder=vtkSmartPointer<vtkThreshold>::New();
+    auto thresholder = vtkSmartPointer<vtkThreshold>::New();
     thresholder->SetInputData(pd);
     thresholder->SetInputArrayToProcess(0, 0, 0, dataType, arrayName.c_str());
-    thresholder->ThresholdBetween(minValue, maxValue);
+    thresholder->SetLowerThreshold(minValue);
+    thresholder->SetUpperThreshold(maxValue);
     thresholder->Update();
 
     vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer=vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
@@ -1308,7 +1398,7 @@ std::vector<sv4guiPathElement*> sv4guiModelUtils::CreatePathElements(sv4guiModel
 {
     std::vector<sv4guiPathElement*> pathElements;
 
-    if(centerlinesPD==NULL || !centerlinesPD->GetCellData()->HasArray("CenterlineIds"))
+    if(centerlinesPD==nullptr || !centerlinesPD->GetCellData()->HasArray("CenterlineIds"))
         return pathElements;
 
     int numCenterlines=centerlinesPD->GetCellData()->GetArray("CenterlineIds")->GetRange()[1]+1;
@@ -1347,7 +1437,7 @@ std::vector<sv4guiPathElement*> sv4guiModelUtils::CreatePathElements(sv4guiModel
 
 double sv4guiModelUtils::CalculateVpdArea(vtkPolyData* vpd)
 {
-    if(vpd==NULL)
+    if(vpd==nullptr)
         return 0;
 
     double area=0;
@@ -1363,7 +1453,7 @@ double sv4guiModelUtils::CalculateVpdArea(vtkPolyData* vpd)
 
 bool sv4guiModelUtils::CheckPolyDataSurface(vtkPolyData* pd, std::string &msg)
 {
-    if(pd==NULL)
+    if(pd==nullptr)
     {
       msg = "Polydata is empty\n";
       return SV_ERROR;
@@ -1380,7 +1470,8 @@ bool sv4guiModelUtils::CheckPolyDataSurface(vtkPolyData* pd, std::string &msg)
     int numNonManifoldEdges=0;
     for (int i=0; i<numPolys; i++)
     {
-      vtkIdType npts, *pts;
+      vtkIdType npts;
+      const vtkIdType *pts;
       pd->GetCellPoints(i, npts, pts);
       if (npts != 3)
       {

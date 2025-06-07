@@ -157,7 +157,7 @@ static PyObject*
 CircleSegmentation_set_center(PyCircleSegmentation* self, PyObject* args, PyObject *kwargs)
 {
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"center", NULL};
+  static char *keywords[] = {"center", nullptr};
   PyObject* centerArg = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &centerArg)) {
@@ -199,7 +199,7 @@ CircleSegmentation_set_frame(PyCircleSegmentation* self, PyObject* args, PyObjec
 {
   //std::cout << "[CircleSegmentation_set_frame] ========== CircleSegmentation_set_frame ========== " << std::endl;
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"frame", NULL};
+  static char *keywords[] = {"frame", nullptr};
   PyObject* frameArg = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyPathFrameType, &frameArg)) {
@@ -249,7 +249,7 @@ static PyObject*
 CircleSegmentation_set_normal(PyCircleSegmentation* self, PyObject* args, PyObject *kwargs)
 {
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"normal", NULL};
+  static char *keywords[] = {"normal", nullptr};
   PyObject* normalArg = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &normalArg)) {
@@ -364,7 +364,7 @@ static PyMethodDef PyCircleSegmentationMethods[] = {
   { "set_normal", (PyCFunction)CircleSegmentation_set_normal, METH_VARARGS|METH_KEYWORDS, CircleSegmentation_set_normal_doc},
   { "set_radius", (PyCFunction)CircleSegmentation_set_radius, METH_VARARGS, CircleSegmentation_set_radius_doc},
 
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //--------------------------
@@ -383,7 +383,7 @@ PyCircleSegmentationInit(PyCircleSegmentation* self, PyObject* args, PyObject *k
 {
   //std::cout << "[PyCircleSegmentationInit] ========== Init Circle Segmentation object ========== " << std::endl;
   auto api = PyUtilApiFunction("|O!O!O!O!", PyRunTimeErr, "CircleSegmentation");
-  static char *keywords[] = {"radius", "center", "normal", "frame", NULL};
+  static char *keywords[] = {"radius", "center", "normal", "frame", nullptr};
   PyObject* radiusArg = nullptr;
   PyObject* centerArg = nullptr;
   PyObject* normalArg = nullptr;
@@ -460,7 +460,7 @@ PyCircleSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 {
   //std::cout << "[PyCircleSegmentationNew] New CircleSegmentation " << std::endl;
   auto self = (PyCircleSegmentation*)type->tp_alloc(type, 0);
-  if (self == NULL) {
+  if (self == nullptr) {
       std::cout << "[PyCircleSegmentationNew] ERROR: alloc failed." << std::endl;
       return nullptr;
   }
@@ -490,7 +490,7 @@ PyCircleSegmentationDealloc(PyCircleSegmentation* self)
 // designated initializers.
 //
 static PyTypeObject PyCircleSegmentationType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   SEGMENTATION_CIRCLE_MODULE_CLASS,

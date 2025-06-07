@@ -28,16 +28,18 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+set(svapp_msg "[Application] ")
+message(STATUS "${svapp_msg} ========== Coude/Source/Application/CMakeLists.txt ==========")
+message(STATUS "${svapp_msg} SV_EXE: ${SV_EXE} ") 
+message(STATUS "${svapp_msg} SV_USE_MITK_CONFIG: ${SV_USE_MITK_CONFIG} ") 
+
 project(simvascular)
+
 
 set(APP_NAME ${SV_EXE})
 set(APP_SHOW_CONSOLE ON)
 
-set(CXXSRCS main.cxx SimVascular_Init.cxx)
-
-if(SV_USE_TCL)
-  LIST(APPEND CXXSRCS svTcl_AppInit.cxx)
-endif()
+set(CXXSRCS main.cxx)
 
 if(SV_USE_WIN32_REGISTRY)
   LIST(APPEND CXXSRCS sv_use_win32_registry.cxx)
@@ -50,61 +52,59 @@ endif()
 
 unset(OPTLIBS)
 
-if(NOT ${USE_SYSTEM_TCL})
-	include_directories(${TCL_INCLUDE_PATH})
-	include_directories(${TK_INCLUDE_PATH})
-endif()
-
 if(SV_USE_TETGEN)
-	set(OPTLIBS ${OPTLIBS} ${SV_LIB_TETGEN_MESH_NAME})
+  set(OPTLIBS ${OPTLIBS} ${SV_LIB_TETGEN_MESH_NAME})
 endif()
 #
 if(SV_USE_MMG)
-	set(OPTLIBS ${OPTLIBS} ${SV_LIB_MMG_MESH_NAME})
+  set(OPTLIBS ${OPTLIBS} ${SV_LIB_MMG_MESH_NAME})
 endif()
 
 if(SV_USE_MESHSIM)
-	if (NOT SV_USE_MESHSIM_SHARED_LIBRARIES)
-	  set(OPTLIBS ${OPTLIBS} ${SV_LIB_MESHSIM_MESH_NAME})
+  if (NOT SV_USE_MESHSIM_SHARED_LIBRARIES)
+    set(OPTLIBS ${OPTLIBS} ${SV_LIB_MESHSIM_MESH_NAME})
   endif()
 endif()
 
 if(SV_USE_MESHSIM_DISCRETE_MODEL)
-	if (NOT SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
-	  set(OPTLIBS ${OPTLIBS} ${SV_LIB_MESHSIM_DISCRETE_SOLID_NAME})
+  if (NOT SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
+    set(OPTLIBS ${OPTLIBS} ${SV_LIB_MESHSIM_DISCRETE_SOLID_NAME})
   endif()
 endif()
 
 if(SV_USE_PARASOLID)
-	if (NOT SV_USE_PARASOLID_SHARED_LIBRARIES)
-	  set(OPTLIBS ${OPTLIBS} ${SV_LIB_PARASOLID_SOLID_NAME})
+  if (NOT SV_USE_PARASOLID_SHARED_LIBRARIES)
+    set(OPTLIBS ${OPTLIBS} ${SV_LIB_PARASOLID_SOLID_NAME})
   endif()
 endif()
 
 if(SV_USE_OpenCASCADE)
-	set(OPTLIBS ${OPTLIBS} ${SV_LIB_OpenCASCADE_SOLID_NAME})
+  set(OPTLIBS ${OPTLIBS} ${SV_LIB_OpenCASCADE_SOLID_NAME})
 endif()
 
 if(SV_USE_ITK)
-	set(OPTLIBS ${OPTLIBS} ${SV_LIB_ITK_LSET_NAME})
+  set(OPTLIBS ${OPTLIBS} ${SV_LIB_ITK_LSET_NAME})
 endif()
 
 if(SV_USE_TETGEN_ADAPTOR)
   set(OPTLIBS ${OPTLIBS} ${SV_LIB_ADAPTOR_NAME})
-	set(OPTLIBS ${OPTLIBS} ${SV_LIB_TETGEN_ADAPTOR_NAME})
+  set(OPTLIBS ${OPTLIBS} ${SV_LIB_TETGEN_ADAPTOR_NAME})
 endif()
 
 if (SV_USE_MESHSIM_ADAPTOR)
-	if(NOT SV_USE_MESHSIM_SHARED_LIBRARIES)
-	  set(OPTLIBS ${OPTLIBS} ${SV_LIB_ADAPTOR_NAME})
-	  set(OPTLIBS ${OPTLIBS} ${SV_LIB_MESHSIM_ADAPTOR_NAME})
+  if(NOT SV_USE_MESHSIM_SHARED_LIBRARIES)
+    set(OPTLIBS ${OPTLIBS} ${SV_LIB_ADAPTOR_NAME})
+    set(OPTLIBS ${OPTLIBS} ${SV_LIB_MESHSIM_ADAPTOR_NAME})
   endif()
 endif()
 
-set(SV_WORKBENCH_PROVISIONING_FILE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${SV_EXE}.provisioning" CACHE INTERNAL "svWorkbench provisioning file" FORCE)
+set(SV_WORKBENCH_PROVISIONING_FILE 
+    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${SV_EXE}.provisioning" 
+    CACHE INTERNAL "svWorkbench provisioning file" FORCE)
 
+# If not using MITK config file, so just use regular simvascular functions
+#
 if(NOT SV_USE_MITK_CONFIG)
-  # Not using MITK config file, so just use regular simvascular functions
   simvascular_add_executable(${SV_EXE}
     SRCS ${CXXSRCS}
     DEV_SCRIPT_NAME "sv"
@@ -127,8 +127,10 @@ if(NOT SV_USE_MITK_CONFIG)
     configure_file(${SV_EXE}.ini
       ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${SV_EXE}.ini)
   endif()
+
+# Using MITK Config files, have to create sv script
+#
 else()
-  # Using MITK Config files, have to create sv script
   set(SV_SCRIPT_TARGETS_WORK ${SV_SCRIPT_TARGETS})
   list(APPEND SV_SCRIPT_TARGETS_WORK "${SV_EXE}")
   list(REMOVE_DUPLICATES SV_SCRIPT_TARGETS_WORK)
@@ -191,12 +193,10 @@ else()
   endif()
 endif()
 
-#-
 target_link_libraries(${SV_EXE} PRIVATE
 	${SV_LIB_POST_NAME}
 	${SV_LIB_IMAGE_NAME}
 	${SV_LIB_REPOSITORY_NAME}
-	${SV_LIB_LSET_NAME}
 	${SV_LIB_SOLID_NAME}
 	${SV_LIB_MESH_NAME}
 	${SV_LIB_GEOM_NAME}
@@ -218,7 +218,7 @@ if(SV_USE_SV4_GUI)
 endif()
 
 target_link_libraries(${SV_EXE} PRIVATE ${OPTLIBS}
-  ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+  ${VTK_LIBRARIES} 
   ${ZLIB_LIBRARY} ${ITK_LIBRARIES}
   ${GDCM_LIBRARIES}
   ${INTELRUNTIME_LIBRARIES}
@@ -233,6 +233,8 @@ endif()
 
 if(SV_USE_QT)
   target_link_libraries(${SV_EXE} PRIVATE ${QT_LIBRARIES})
+  # CoreExecutables
+  # install(FILES ${MOC_HDRS} DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 endif()
 
 if(WIN32)
@@ -240,7 +242,8 @@ if(WIN32)
 endif()
 
 if(SV_INSTALL_HEADERS)
-  install(FILES ${MOC_HDRS}
-		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
-		)
+  install(FILES ${MOC_HDRS} 
+      DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+  )
 endif()
+

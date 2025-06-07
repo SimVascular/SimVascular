@@ -72,19 +72,19 @@ void vtkSVCenterlineBranchSplitter::ComputeCenterlineSplitting(vtkPolyData* inpu
   if (this->SubIds)
     {
     delete[] this->SubIds;
-    this->SubIds = NULL;
+    this->SubIds = nullptr;
     }
 
   if (this->PCoords)
     {
     delete[] this->PCoords;
-    this->PCoords = NULL;
+    this->PCoords = nullptr;
     }
 
   if (this->TractBlanking)
     {
     delete[] this->TractBlanking;
-    this->TractBlanking = NULL;
+    this->TractBlanking = nullptr;
     }
 
   if (!this->RadiusArrayName)
@@ -136,7 +136,8 @@ void vtkSVCenterlineBranchSplitter::ComputeCenterlineSplitting(vtkPolyData* inpu
     int alreadyDeleted = deletedCellArray->GetTuple1(i);
     if (!alreadyDeleted)
     {
-      vtkIdType npts, *pts;
+      vtkIdType npts;
+      const vtkIdType *pts;
       cleanInput->GetCellPoints(i, npts, pts);
 
       vtkIdList *cellPtIds = vtkIdList::New();

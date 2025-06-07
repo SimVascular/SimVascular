@@ -51,10 +51,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <functional>
-#include "sv_Repository.h"
 #include "sv_RepositoryData.h"
 #include "sv_PolyData.h"
-#include "sv_arg.h"
 #include "sv_VTK.h"
 #include "sv_misc_utils.h"
 #include "Python.h"
@@ -65,7 +63,6 @@
 #endif
 
 #include <iostream>
-#include "sv2_globals.h"
 
 // Exception type used by PyErr_SetString() to set the for the error indicator.
 static PyObject * PyRunTimeErr;
@@ -225,7 +222,7 @@ static PyMethodDef PyMeshingModuleMethods[] =
 
   {"create_mesher", (PyCFunction)PyMeshing_create_mesher, METH_VARARGS, PyMeshing_create_mesher_doc},
 
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //-----------------------
@@ -399,7 +396,7 @@ PyInit_PyMeshing()
   //
   //std::cout << "[PyInit_PyMeshing] Create the 'meshing' module. " << std::endl;
   auto module = PyModule_Create(&PyMeshingModule);
-  if (module == NULL) {
+  if (module == nullptr) {
     fprintf(stdout,"Error in initializing meshing module.\n");
     return SV_PYTHON_ERROR;
   }
@@ -408,7 +405,7 @@ PyInit_PyMeshing()
   // Add meshing.MeshingException exception
   //----------------------------------------
   //
-  PyRunTimeErr = PyErr_NewException(MESHING_MODULE_EXCEPTION, NULL, NULL);
+  PyRunTimeErr = PyErr_NewException(MESHING_MODULE_EXCEPTION, nullptr, nullptr);
   PyModule_AddObject(module, MESHING_MODULE_EXCEPTION_OBJECT, PyRunTimeErr);
 
   //---------------------
@@ -510,7 +507,7 @@ PyMODINIT_FUNC initpyMeshObject()
 {
   // Associate the mesh registrar with the python interpreter so it can be
   // retrieved by the DLLs.
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository = new cvRepository();
     fprintf(stdout,"New gRepository created from cv_mesh_init\n");
@@ -541,13 +538,13 @@ PyMODINIT_FUNC initpyMeshObject()
   PyObject* pythonC;
   pythonC = Py_InitModule("pyMeshObject",pyMeshObjectModule_methods);
 
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyMeshObject\n");
     return;
 
   }
-  PyRunTimeErr = PyErr_NewException("pyMeshObject.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyMeshObject.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyMeshObjectType);
   PyModule_AddObject(pythonC,"pyMeshObject",(PyObject*)&pyMeshObjectType);

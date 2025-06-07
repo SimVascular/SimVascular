@@ -196,7 +196,7 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
     //
     template <typename TDataFolder>
     mitk::DataNode::Pointer static CreateDataFolder(mitk::DataStorage::Pointer dataStorage, QString folderName, 
-          mitk::DataNode::Pointer projFolderNode=NULL)
+          mitk::DataNode::Pointer projFolderNode=nullptr)
     {
         mitk::NodePredicateDataType::Pointer isDataFolder = mitk::NodePredicateDataType::New(TDataFolder::GetStaticNameOfClass());
         mitk::DataStorage::SetOfObjects::ConstPointer rs;
@@ -208,7 +208,7 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
         }
 
         bool exists = false;
-        mitk::DataNode::Pointer dataFolderNode = NULL;
+        mitk::DataNode::Pointer dataFolderNode = nullptr;
         std::string fdName=folderName.toStdString();
 
         for (int i = 0; i < rs->size(); i++) {

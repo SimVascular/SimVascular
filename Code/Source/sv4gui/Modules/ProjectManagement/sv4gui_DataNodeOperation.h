@@ -47,7 +47,7 @@ public:
 
     enum ModelOperationType {OpADDDATANODE, OpREMOVEDATANODE};
 
-    sv4guiDataNodeOperation(mitk::OperationType operationType, mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, mitk::DataNode::Pointer parentNode = NULL);
+    sv4guiDataNodeOperation(mitk::OperationType operationType, mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, mitk::DataNode::Pointer parentNode = nullptr);
 
     virtual ~sv4guiDataNodeOperation();
 

@@ -37,7 +37,7 @@
 #include <QmitkModulesDialog.h>
 #include <mitkVersion.h>
 #include <itkConfigure.h>
-#include <vtkConfigure.h>
+//dp #include <vtkConfigure.h>
 #include <QPushButton>
 #include <vtkVersionMacros.h>
 
@@ -79,7 +79,7 @@ QString sv4guiAboutDialog::GetAboutText() const
 
 QString sv4guiAboutDialog::GetCaptionText() const
 {
-    return NULL;
+    return nullptr;
 //  return m_GUI.m_CaptionLabel->text();
 }
 

@@ -65,7 +65,7 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
   boundaryScalars->GetRange(minmax, 0);
   int range = minmax[1] - minmax[0];
 
-  if (useSizingFunction && meshSizingFunction == NULL)
+  if (useSizingFunction && meshSizingFunction == nullptr)
   {
     fprintf(stderr,"Cannot use sizing function without a function!");
     return SV_ERROR;
@@ -181,7 +181,8 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
 
   int refineCt=0;
   MMG5_pTria  tria;
-  vtkIdType npts,*pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   for (int i=0;i<numTris;i++)
   {
     refineCt=0;
@@ -323,8 +324,8 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
   }
   MMG5_pMesh mesh;
   MMG5_pSol  sol;
-  mesh = NULL;
-  sol = NULL;
+  mesh = nullptr;
+  sol = nullptr;
 
   MMGS_Init_mesh(MMG5_ARG_start,
         	 MMG5_ARG_ppMesh,&mesh,MMG5_ARG_ppMet,&sol,
@@ -332,7 +333,7 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
   mesh->ver = 2;
   mesh->dim = 3;
 
-  vtkDoubleArray *dummyArray = NULL;
+  vtkDoubleArray *dummyArray = nullptr;
   surface->BuildCells();
   surface->BuildLinks();
   if (MMGUtils_ConvertToMMG(mesh, sol, surface, hmin, hmax,
@@ -413,7 +414,7 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
     thresholder->SetInputData(pd);
      //Set Input Array to 0 port,0 connection,1 for Cell Data, and WallID is the type name
     thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
-    thresholder->ThresholdBetween(1,1);
+    //dp thresholder->ThresholdBetween(1,1);
     thresholder->Update();
 
     vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
@@ -455,7 +456,7 @@ int MMGUtils_PassCellArray(vtkPolyData *newgeom,
   int i,j,k;
   int subId;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts;
   double distance;
   double closestPt[3];
   double minmax[2];
@@ -583,7 +584,8 @@ int MMGUtils_BuildRidgeTable(vtkPolyData *polydatasolid, vtkEdgeTable *ridges, s
   }
   ridgePtArray = vtkIntArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(ridgePtArrayName.c_str()));
 
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   int numPts = polydatasolid->GetNumberOfPoints();
   int numTris = polydatasolid->GetNumberOfCells();
   ridges->InitEdgeInsertion(numPts, 1);

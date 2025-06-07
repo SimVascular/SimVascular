@@ -104,7 +104,8 @@ BlendOptionsGetInt(PyObject* blendOptions, std::string name)
       std::cout << "Internal error: The '" + name + "' BlendOptions paramater is not correctly setup." << std::endl;
       return 0;
   }
-  auto value = PyInt_AsLong(obj);
+  auto value = PyLong_AsLong(obj);
+  //dp auto value = PyInt_AsLong(obj);
   Py_DECREF(obj);
   return value;
 }
@@ -229,7 +230,7 @@ PyBlendOptions_get_values(PyBlendOptions* self, PyObject* args)
 //
 static PyMethodDef PyBlendOptionsMethods[] = {
   {"get_values", (PyCFunction)PyBlendOptions_get_values, METH_NOARGS, PyBlendOptions_get_values_doc},
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -302,7 +303,7 @@ static PyMemberDef PyBlendOptionsMembers[] = {
     {BlendOptions::NUM_CGSMOOTH_ITERATIONS, T_INT, offsetof(PyBlendOptions, num_cgsmooth_iterations), 0, num_cgsmooth_iterations_doc},
     {BlendOptions::NUM_LAPSMOOTH_ITERATIONS, T_INT, offsetof(PyBlendOptions, num_lapsmooth_iterations), 0, num_lapsmooth_iterations_doc},
     {BlendOptions::TARGET_DECIMATION, T_DOUBLE, offsetof(PyBlendOptions, target_decimation), 0, target_decimation_doc},
-    {NULL}
+    {nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -334,7 +335,7 @@ PyDoc_STRVAR(BlendOptionsClass_doc,
 // Define the Python type object that implements the geometry.BlendOptions class.
 //
 static PyTypeObject PyBlendOptionsType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   GEOMETRY_BLEND_OPTIONS_MODULE_CLASS,
   sizeof(PyBlendOptions)
 };
@@ -373,7 +374,7 @@ PyBlendOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyBlendOptionsNew] PyBlendOptionsNew " << std::endl;
   auto self = (PyBlendOptions*)type->tp_alloc(type, 0);
-  if (self == NULL) {
+  if (self == nullptr) {
       std::cout << "[PyBlendOptionsNew] ERROR: Can't allocate type." << std::endl;
       return nullptr;
   }

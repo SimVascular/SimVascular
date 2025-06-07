@@ -115,7 +115,7 @@ cvStrPts* SegmentationUtils::vtkImageData2cvStrPts(vtkImageData* vtkImg)
 std::deque<int> SegmentationUtils::GetOrderedPtIDs(vtkCellArray* lines, bool& ifClosed)
 {
 
-    vtkIdType *ptIds;
+    const vtkIdType *ptIds;
     vtkIdType npts;
 
     lines->InitTraversal();

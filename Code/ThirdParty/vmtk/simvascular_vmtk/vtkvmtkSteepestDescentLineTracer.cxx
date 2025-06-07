@@ -36,17 +36,17 @@ vtkStandardNewMacro(vtkvmtkSteepestDescentLineTracer);
 
 vtkvmtkSteepestDescentLineTracer::vtkvmtkSteepestDescentLineTracer()
 {
-  this->Seeds = NULL;
-  this->Targets = NULL;
+  this->Seeds = nullptr;
+  this->Targets = nullptr;
   this->StopOnTargets = 0;
-  this->DataArrayName = NULL;
-  this->EdgeArrayName = NULL;
-  this->EdgePCoordArrayName = NULL;
+  this->DataArrayName = nullptr;
+  this->EdgeArrayName = nullptr;
+  this->EdgePCoordArrayName = nullptr;
 
   this->MergePaths = 0;
   this->MergeTolerance = VTK_VMTK_DOUBLE_TOL;
 
-  this->LineDataArray = NULL;
+  this->LineDataArray = nullptr;
 
   this->HitTargets = vtkIdList::New();
 }
@@ -58,37 +58,37 @@ vtkvmtkSteepestDescentLineTracer::~vtkvmtkSteepestDescentLineTracer()
   if (this->Seeds)
     {
     this->Seeds->Delete();
-    this->Seeds = NULL;
+    this->Seeds = nullptr;
     }
 
   if (this->Targets)
     {
     this->Targets->Delete();
-    this->Targets = NULL;
+    this->Targets = nullptr;
     }
 
   if (this->EdgePCoordArrayName)
     {
     delete [] this->EdgePCoordArrayName;
-    this->EdgePCoordArrayName = NULL;
+    this->EdgePCoordArrayName = nullptr;
     }
 
   if (this->EdgeArrayName)
     {
     delete [] this->EdgeArrayName;
-    this->EdgeArrayName = NULL;
+    this->EdgeArrayName = nullptr;
     }
 
   if (this->DescentArrayName)
     {
     delete[] this->DescentArrayName;
-    this->DescentArrayName = NULL;
+    this->DescentArrayName = nullptr;
     }
 
   if (this->DataArrayName)
     {
     delete[] this->DataArrayName;
-    this->DataArrayName = NULL;
+    this->DataArrayName = nullptr;
     }
 
 }

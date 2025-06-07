@@ -61,7 +61,8 @@ SV_EXPORT_VMTK_UTILS int sys_geom_distancetocenterlines( cvPolyData *polydata,cv
 
 SV_EXPORT_VMTK_UTILS int sys_geom_separatecenterlines( cvPolyData *lines,cvPolyData **separate );
 
-SV_EXPORT_VMTK_UTILS int sys_geom_centerlinesections(cvPolyData *lines_in, cvPolyData *surface_in, cvPolyData **lines_out, cvPolyData **surface_out, cvPolyData **sections);
+SV_EXPORT_VMTK_UTILS int sys_geom_centerline_sections(cvPolyData *lines_in, cvPolyData *surface_in, 
+    cvPolyData **lines_out, cvPolyData **surface_out, cvPolyData **sections);
 
 SV_EXPORT_VMTK_UTILS int sys_geom_mergecenterlines( cvPolyData *lines, int mergeblanked, cvPolyData **merged);
 

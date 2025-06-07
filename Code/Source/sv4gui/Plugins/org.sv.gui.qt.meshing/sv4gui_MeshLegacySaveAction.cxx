@@ -37,8 +37,8 @@
 
 #include <mitkNodePredicateDataType.h>
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <QFileDialog>
@@ -61,7 +61,7 @@ void sv4guiMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selec
 
     std::string modelName=mitkMesh->GetModelName();
 
-    mitk::DataNode::Pointer modelNode=NULL;
+    mitk::DataNode::Pointer modelNode=nullptr;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=m_DataStorage->GetSources (meshNode,isProjFolder,false);
 
@@ -77,7 +77,7 @@ void sv4guiMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selec
         }
     }
 
-    sv4guiModel* model=NULL;
+    sv4guiModel* model=nullptr;
     if(modelNode.IsNotNull())
     {
         model=dynamic_cast<sv4guiModel*>(modelNode->GetData());
@@ -88,26 +88,27 @@ void sv4guiMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selec
 
     try
     {
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
+
         if (prefService)
         {
             prefs = prefService->GetSystemPreferences()->Node("/General");
         }
         else
         {
-            prefs = berry::IPreferences::Pointer(0);
+            prefs = nullptr; 
         }
 
         QString lastFileSavePath="";
-        if(prefs.IsNotNull())
+        if(prefs != nullptr) 
         {
-            lastFileSavePath = prefs->Get("LastFileSavePath", "");
+            lastFileSavePath = QString::fromStdString(prefs->Get("LastFileSavePath", ""));
         }
         if(lastFileSavePath=="")
             lastFileSavePath=QDir::homePath();
 
-        QString dir = QFileDialog::getExistingDirectory(NULL
+        QString dir = QFileDialog::getExistingDirectory(nullptr
                                                         , tr("Export as Legacy Mesh (Choose Directory)")
                                                         , lastFileSavePath);
 
@@ -118,13 +119,13 @@ void sv4guiMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selec
 
         if(!sv4guiMeshLegacyIO::WriteFiles(meshNode,model->GetModelElement(), outputDir))
         {
-            QMessageBox::warning(NULL,"Mesh info missing","Please make sure the mesh exists and is valid.");
+            QMessageBox::warning(nullptr,"Mesh info missing","Please make sure the mesh exists and is valid.");
             return;
         }
 
-        if(prefs.IsNotNull())
+        if(prefs != nullptr)
         {
-            prefs->Put("LastFileSavePath", dir);
+            prefs->Put("LastFileSavePath", dir.toStdString());
             prefs->Flush();
         }
     }

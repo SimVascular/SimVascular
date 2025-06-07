@@ -37,7 +37,7 @@
 // cvDataObject
 // -------
 // Recall that constructors are called top-down in the derivation
-// hierarchy.  Setting data_ to NULL here will serve as a signal to
+// hierarchy.  Setting data_ to nullptr here will serve as a signal to
 // ShallowCopy that data_ has not been allocated yet.  (Note that this
 // does not ensure TYPE COMPATIBILITY between ShallowCopy's input and
 // the member data_.  This is why ShallowCopy must be protected.)
@@ -45,7 +45,7 @@
 cvDataObject::cvDataObject( RepositoryDataT type )
   : cvRepositoryData( type )
 {
-  data_ = NULL;
+  data_ = nullptr;
 }
 
 
@@ -55,7 +55,7 @@ cvDataObject::cvDataObject( RepositoryDataT type )
 
 cvDataObject::~cvDataObject()
 {
-  if ( data_ != NULL ) {
+  if ( data_ != nullptr ) {
     data_->Delete();
   }
 }
@@ -70,7 +70,7 @@ int cvDataObject::GetMemoryUsage()
   int sz = 0;
 
   sz += sizeof( this );
-  if ( data_ != NULL ) {
+  if ( data_ != nullptr ) {
     sz += data_->GetActualMemorySize() * 1024;  // vtk returns kB
   }
   return sz;

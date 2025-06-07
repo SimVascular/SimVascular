@@ -58,13 +58,14 @@
 
 #include "sv4gui_ModelDataInteractor.h"
 
-#include <berryIBerryPreferences.h>
+#include <mitkIPreferences.h>
 
 #include <QWidget>
 #include <QStandardItemModel>
 #include <QProcess>
 #include <QMessageBox>
 #include <QItemSelection>
+#include <QmitkStdMultiWidget.h>
 
 namespace Ui {
 class SV_QT_ROMSIMULATION sv4guiROMSimulationView;
@@ -306,7 +307,9 @@ public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
+    // This was override in QmitkFunctionality, need to figure out if it's still
+    // needed
+     virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/, const QList<mitk::DataNode::Pointer>& /*nodes*/) override;
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -314,15 +317,15 @@ public:
 
     virtual void NodeRemoved(const mitk::DataNode* node) override;
 
-//    virtual void Activated() override;
+    virtual void Activated() override;
 
-//    virtual void Deactivated() override;
+    virtual void Deactivated() override;
 
     virtual void Visible() override;
 
     virtual void Hidden() override;
 
-    virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
+    virtual void OnPreferencesChanged(const mitk::IPreferences* prefs) override;
 
     sv4guiROMSimJob* CreateJob(std::string& msg, bool checkValidity = true);
 
@@ -345,7 +348,7 @@ public:
 
     bool IsDouble(std::string value);
 
-    bool AreDouble(std::string values, int* count = NULL);
+    bool AreDouble(std::string values, int* count = nullptr);
 
     bool IsInt(std::string value);
 

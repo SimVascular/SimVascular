@@ -98,8 +98,8 @@ MeshingAdaptiveKernel_get_names()
 //------------------------------
 //
 static PyMethodDef MeshingAdaptiveKernelMethods[] = {
-  { "get_names", (PyCFunction)MeshingAdaptiveKernel_get_names, METH_NOARGS, NULL},
-  {NULL, NULL}
+  { "get_names", (PyCFunction)MeshingAdaptiveKernel_get_names, METH_NOARGS, nullptr},
+  {nullptr, nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ PyDoc_STRVAR(MeshingAdaptiveKernel_doc, "adaptive meshing kernel class functions
 // Define the Python type object that stores contour.kernel types.
 //
 static PyTypeObject PyMeshingAdaptiveKernelType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   MESHING_ADAPTIVE_KERNEL_MODULE_CLASS,
   sizeof(MeshingAdaptiveKernel)
 };

@@ -56,17 +56,12 @@
 #include <string.h>
 #include <iostream>
 
-#include "tcl.h"
-#include "tk.h"
-#include "svTcl_AppInit.h"
 #include <vtkObject.h>
 
 // The following is needed for Windows
 #ifdef GetObject
 #undef GetObject
 #endif
-
-#include "sv2_globals.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -95,8 +90,6 @@
 #else
 #define SV_PYTHON_MAXPATH 16384
 #endif
-
-#include "SimVascular_Init.h"
 
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
@@ -142,26 +135,23 @@ svCatchDebugger() {
  FILE *simvascularstdout;
  FILE *simvascularstderr;
 
+ static int gSimVascularBatchMode = 0;
+
  int main( int argc, char *argv[] )
  {
 
   // default to qt gui if built
   // default to python if built
-  bool use_tcl = false;
-  bool use_tk_gui = false;
   bool use_python  = true;
   bool use_qt_gui  = true;
   gSimVascularBatchMode = 0;
  
 #ifndef SV_USE_PYTHON
   use_python  = false;
-  use_tcl = true;
 #endif
 
 #ifndef SV_USE_SV4_GUI
   use_qt_gui  = false;
-  // default to python console instead of tcl gui
-  //use_tk_gui = true;
   gSimVascularBatchMode = 1;
 #endif
   
@@ -176,7 +166,6 @@ svCatchDebugger() {
   
   ios::sync_with_stdio();
 
-  // want to hide launch only flags from tcl/python/mitk
   // shells
   int pass_along_start_index = 0;
   int pass_along_argc = 1;
@@ -196,10 +185,7 @@ svCatchDebugger() {
 #ifdef SV_USE_PYTHON
 	fprintf(stdout,"  --python                 : use python command line\n");
 #endif
-#ifdef SV_USE_TCL
-	fprintf(stdout,"  -tcl, --tcl              : use tcl command line\n");
-	fprintf(stdout,"  -tk, --tk-gui            : use TclTk GUI (SV_BATCH_MODE overrides)\n");
-#endif
+
 #ifdef SV_USE_SV4_GUI
 	fprintf(stdout,"  -qt, --qt-gui            : use Qt GUI (SV_BATCH_MODE overrides)\n");
 	fprintf(stdout,"  --workbench              : use mitk workbench application\n");
@@ -212,7 +198,7 @@ svCatchDebugger() {
 	fprintf(stdout,"  -d, --debug              : infinite loop for debugging\n");
 	fprintf(stdout,"  --warn                   : warn if invalid cmd line params (on by default)\n");
 	fprintf(stdout,"  --redirect-stdio prefix  : redirect stdout & stderr to prefix/std.out etc. \n");
-	fprintf(stdout,"  --                       : pass remaining params to tcl/python shells\n");
+	fprintf(stdout,"  --                       : pass remaining params to python shells\n");
 	exit(0);
       }
       if((!strcmp("--warn",argv[iarg]))) {
@@ -222,48 +208,23 @@ svCatchDebugger() {
 #ifdef SV_USE_PYTHON
       if((!strcmp("-python",argv[iarg]))    ||
 	 (!strcmp("--python",argv[iarg]))) {
-	use_tcl = false;
 	use_python = true;
-	use_tk_gui = false;
 	use_qt_gui = false;
 	gSimVascularBatchMode = 1;
 	foundValid = true;
       }
 #endif
-#ifdef SV_USE_TCL
-      if((!strcmp("-tcl",argv[iarg]))    ||
-	 (!strcmp("--tcl",argv[iarg]))) {
-	use_tcl = true;
-	use_python = false;
-	use_tk_gui = false;
-	use_qt_gui = false;
-	gSimVascularBatchMode = 1;
-	foundValid = true;
-      }
-      if((!strcmp("-tk",argv[iarg]))    ||
-	 (!strcmp("--tk-gui",argv[iarg]))) {
-	use_tcl = true;
-	use_python = false;
-	use_tk_gui = true;
-	use_qt_gui = false;
-	gSimVascularBatchMode = 0;
-	foundValid = true;
-      }
-#endif
+
 #ifdef SV_USE_SV4_GUI
       if((!strcmp("-qt",argv[iarg]))    ||
 	 (!strcmp("--qt-gui",argv[iarg]))) {
-	use_tcl = false;
 	use_python = true;
-	use_tk_gui = false;
 	use_qt_gui = true;
 	gSimVascularBatchMode = 0;
 	foundValid = true;
       }
       if((!strcmp("--workbench",argv[iarg]))) {
-	use_tcl = false;
 	use_python = true;
-	use_tk_gui = false;
 	use_qt_gui = true;
 	use_workbench = true;
 	gSimVascularBatchMode = 0;
@@ -387,19 +348,12 @@ svCatchDebugger() {
   vtkObject::GlobalWarningDisplayOff();
 
   if (gSimVascularBatchMode == 1) {
-    if (use_tcl) {    
-      Tcl_Main (useme_argc, useme_argv, Tcl_AppInit);
-      return 0;
-    }
 #ifdef SV_USE_PYTHON
     if(use_python) {
       return PythonShell_Init(useme_argc, useme_argv);
     }
 #endif
   } else {
-    if (use_tk_gui) {
-      Tk_Main(useme_argc, useme_argv, Tcl_AppInit );
-    }
 #ifdef SV_USE_SV4_GUI
     if(use_qt_gui) {
       sv4guiMain(useme_argc, useme_argv, use_provisioning_file, use_workbench);

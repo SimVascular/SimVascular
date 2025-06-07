@@ -5,12 +5,12 @@ diff -rupN original/IO/Video/vtkWin32VideoSource.cxx patch/IO/Video/vtkWin32Vide
  {
    this->vtkWin32VideoSource::ReleaseSystemResources();
  
--  if (this->Internal->BitMapPtr != NULL)
+-  if (this->Internal->BitMapPtr != nullptr)
 -    {
 -    delete [] (char *)(this->Internal->BitMapPtr);
 -    }
 +  delete [] (char *)(this->Internal->BitMapPtr);
-   this->Internal->BitMapPtr = NULL;
+   this->Internal->BitMapPtr = nullptr;
    this->BitMapSize = 0;
    delete this->Internal;
 @@ -349,7 +346,7 @@ void vtkWin32VideoSource::Initialize()

@@ -32,7 +32,7 @@
 #include "sv4gui_ROMSimulationPreferencePage.h"
 #include "ui_sv4gui_ROMSimulationPreferencePage.h"
 
-#include <berryIPreferencesService.h>
+#include <mitkIPreferencesService.h>
 #include <berryPlatform.h>
 
 #include <mitkExceptionMacro.h>
@@ -68,7 +68,7 @@ void sv4guiROMSimulationPreferencePage::CreateQtControl(QWidget* parent)
 
     m_Ui->setupUi(m_Control);
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     Q_ASSERT(prefService);
 
     m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.romsimulation");

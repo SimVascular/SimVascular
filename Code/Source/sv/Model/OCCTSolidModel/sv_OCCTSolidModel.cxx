@@ -29,19 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file sv_OCCTSolidModel.cxx
- *  @brief The implementations of functions in OCCTSolidModel
- *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- *  @note Most functions in class call functions in cv_occtsolid_utils.
- */
-
 #include "SimVascular.h"
 
-#include "sv2_globals.h"
 #include "simvascular_options.h"
 
 #include "sv_OCCTSolidModel.h"
@@ -92,7 +81,7 @@
 #include "BRepAlgoAPI_Common.hxx"
 #include "BRepAlgoAPI_Cut.hxx"
 #include "BRepAdaptor_Curve.hxx"
-#include "BRepAdaptor_HCurve.hxx"
+// #include "BRepAdaptor_HCurve.hxx"
 #include "BRepFill_Filling.hxx"
 #include "BRepFill_CurveConstraint.hxx"
 #include "BRepFilletAPI_MakeFillet.hxx"
@@ -117,7 +106,7 @@
 #include "GCPnts_AbscissaPoint.hxx"
 #include "Adaptor3d_Curve.hxx"
 #include "Adaptor3d_CurveOnSurface.hxx"
-#include "Adaptor3d_HCurveOnSurface.hxx"
+// #include "Adaptor3d_HCurveOnSurface.hxx"
 #include "BRepGProp.hxx"
 #include "GProp_GProps.hxx"
 #include "TColgp_SequenceOfXY.hxx"
@@ -150,6 +139,9 @@
 #include "IGESCAFControl_Reader.hxx"
 #include "StlAPI_Writer.hxx"
 
+// This used to be defined in sv2/Globals/sv2_globals.h but
+// it seemed that it was never set.
+void *cvOCCTSolidModel::gOCCTManager = nullptr; 
 
 // ----------
 // OCCTSolidModel
@@ -158,20 +150,18 @@
  * @brief Constructor for OCCTSolidModel (Should never be called directly)
  */
 
-cvOCCTSolidModel::cvOCCTSolidModel()
-  : cvSolidModel( SM_KT_OCCT)
+cvOCCTSolidModel::cvOCCTSolidModel() : cvSolidModel( SM_KT_OCCT)
 {
 /**
- * @brief Data Member is a vtkPolyData. It is initiated as NULL. When a
+ * @brief Data Member is a vtkPolyData. It is initiated as nullptr. When a
  * solid is loaded, a new PolyData is created
  */
   numBoundaryRegions = 0;
-  geom_ = NULL;
+  geom_ = nullptr;
 
   //Get the document created inside of the manager
   Handle(TDocStd_Document) doc;
-  Handle(XCAFApp_Application) OCCTManager =
-    static_cast<XCAFApp_Application*>(gOCCTManager);
+  Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
   OCCTManager->GetDocument(1,doc);
 
   shapetool_ = XCAFDoc_DocumentTool::ShapeTool(doc->Main());
@@ -179,7 +169,7 @@ cvOCCTSolidModel::cvOCCTSolidModel()
   //TDF_Label root = doc->Main();
 
   ////Create label
-  shapelabel_ = NULL;
+  shapelabel_ = nullptr;
   //*shapelabel_ = root.NewChild();
   numFaces_ = 0;
 }
@@ -193,7 +183,7 @@ cvOCCTSolidModel::cvOCCTSolidModel()
 
 cvOCCTSolidModel::~cvOCCTSolidModel()
 {
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
     this->RemoveShape();
 }
 
@@ -206,7 +196,7 @@ cvOCCTSolidModel::~cvOCCTSolidModel()
 cvOCCTSolidModel::cvOCCTSolidModel( const cvOCCTSolidModel& sm)
 	: cvSolidModel( SM_KT_OCCT)
 {
-  geom_ = NULL;
+  geom_ = nullptr;
   Copy( sm );
 }
 
@@ -221,7 +211,7 @@ int cvOCCTSolidModel::Copy(const cvSolidModel& src )
 {
   cvOCCTSolidModel *solidPtr;
 
-  if (geom_ != NULL) {
+  if (geom_ != nullptr) {
     return SV_ERROR;
   }
   if (src.GetKernelT() != SM_KT_OCCT) {
@@ -236,7 +226,7 @@ int cvOCCTSolidModel::Copy(const cvSolidModel& src )
   shapetool_ = XCAFDoc_DocumentTool::ShapeTool(doc->Main());
 
   solidPtr = (cvOCCTSolidModel *)( &src );
-  if ( solidPtr->geom_ != NULL ) {
+  if ( solidPtr->geom_ != nullptr ) {
     this->NewShape();
     BRepBuilderAPI_Copy copier(*(solidPtr->geom_));
     *geom_ = copier.Shape();
@@ -278,7 +268,7 @@ cvSolidModel *cvOCCTSolidModel::Copy() const
 
 void cvOCCTSolidModel::Print() const
 {
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
   {
     fprintf(stderr,"No geometry in model\n");
   }
@@ -307,7 +297,7 @@ void cvOCCTSolidModel::Print() const
 
 int cvOCCTSolidModel::MakeBox3d( double dims[], double ctr[])
 {
-  if(geom_ != NULL)
+  if(geom_ != nullptr)
     this->RemoveShape();
 
   double crn[3];
@@ -331,7 +321,7 @@ int cvOCCTSolidModel::MakeBox3d( double dims[], double ctr[])
 
 int cvOCCTSolidModel::MakeSphere( double r, double ctr[])
 {
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
     this->RemoveShape();
 
   gp_Pnt center(ctr[0],ctr[1],ctr[2]);
@@ -352,7 +342,7 @@ int cvOCCTSolidModel::MakeSphere( double r, double ctr[])
 int cvOCCTSolidModel::MakeCylinder( double r, double length, double ctr[],
     					double axis[])
 {
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
     this->RemoveShape();
 
   double axiscopy[3]; axiscopy[0]=axis[0]; axiscopy[1]=axis[1]; axiscopy[2]=axis[2];
@@ -380,7 +370,7 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves, char
       double w1,double w2,double w3,int smoothing, bool capSurface)
 {
 
-  //if (geom_ != NULL)
+  //if (geom_ != nullptr)
   //  this->RemoveShape();
 
   //if ( numCurves < 2 ) {
@@ -453,7 +443,7 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves, char
 
   //return SV_OK;
 
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
     this->RemoveShape();
 
   if ( numCurves < 2 ) {
@@ -507,7 +497,7 @@ int cvOCCTSolidModel::MakeInterpCurveLoop( cvPolyData *pd, int closed)
   double *ord_pts;
   int num_pts;
 
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
     this->RemoveShape();
 
   // We're assuming / requiring that the given cvPolyData describes a
@@ -555,7 +545,7 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   solidPtr = (cvOCCTSolidModel *) surf;
   TopoDS_Shape shape = *(solidPtr->geom_);
 
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
     this->RemoveShape();
 
   int numFilled=0;
@@ -623,18 +613,18 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
   cvOCCTSolidModel *occtPtrA;
   cvOCCTSolidModel *occtPtrB;
 
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
     return SV_ERROR;
 
   //Need both objects to create a union
-  if (a == NULL)
+  if (a == nullptr)
     return SV_ERROR;
   if (a->GetKernelT() != SM_KT_OCCT ) {
     fprintf(stderr,"Model not of type OCCT\n");
     return SV_ERROR;
   }
 
-  if (b == NULL)
+  if (b == nullptr)
     return SV_ERROR;
   if (b->GetKernelT() != SM_KT_OCCT ) {
     fprintf(stderr,"Model not of type OCCT\n");
@@ -717,18 +707,18 @@ int cvOCCTSolidModel::Intersect( cvSolidModel *a, cvSolidModel *b,
   cvOCCTSolidModel *occtPtrA;
   cvOCCTSolidModel *occtPtrB;
 
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
     return SV_ERROR;
 
   //Need both objects to create an intersection
-  if (a == NULL)
+  if (a == nullptr)
     return SV_ERROR;
   if (a->GetKernelT() != SM_KT_OCCT ) {
     fprintf(stderr,"Model not of type OCCT\n");
     return SV_ERROR;
   }
 
-  if (b == NULL)
+  if (b == nullptr)
     return SV_ERROR;
   if (b->GetKernelT() != SM_KT_OCCT ) {
     fprintf(stderr,"Model not of type OCCT\n");
@@ -805,18 +795,18 @@ int cvOCCTSolidModel::Subtract( cvSolidModel *a, cvSolidModel *b,
   cvOCCTSolidModel *occtPtrA;
   cvOCCTSolidModel *occtPtrB;
 
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
     return SV_ERROR;
 
   //Need both objects to create a subtraction
-  if (a == NULL)
+  if (a == nullptr)
     return SV_ERROR;
   if (a->GetKernelT() != SM_KT_OCCT ) {
     fprintf(stderr,"Model not of type OCCT\n");
     return SV_ERROR;
   }
 
-  if (b == NULL)
+  if (b == nullptr)
     return SV_ERROR;
   if (b->GetKernelT() != SM_KT_OCCT ) {
     fprintf(stderr,"Model not of type OCCT\n");
@@ -891,7 +881,7 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
 {
   //In OpenCASCADE case, max_dist corresponds to angle in degrees for which
   //faceted normals are allowed
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
   {
     fprintf(stderr,"Solid is null\n");
     return SV_ERROR;
@@ -911,20 +901,22 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
   double angcoeff = max_dist * M_PI/180.0;
   int uIsoLine= 0;
   int vIsoLine= 0;
-  IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher(
-      devcoeff,angcoeff,uIsoLine,vIsoLine);
-  aMesher->Build(aShapeImpl,aDataImpl);
+  std::cout << "IVtkOCC_ShapeMesher's interface has changed" << std::endl << std::flush;
+  exit(1);
+  // IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher(
+  //     devcoeff,angcoeff,uIsoLine,vIsoLine);
+  // aMesher->Build(aShapeImpl,aDataImpl);
 
-  pd = vtkPolyData::New();
-  pd->DeepCopy(aDataImpl->getVtkPolyData());
-  //if (max_dist != -1)
-  //{
-    this->GetOnlyPD(pd,max_dist);
-  //}
+  // pd = vtkPolyData::New();
+  // pd->DeepCopy(aDataImpl->getVtkPolyData());
+  // //if (max_dist != -1)
+  // //{
+  //   this->GetOnlyPD(pd,max_dist);
+  // //}
 
-  result = new cvPolyData(pd);
-  pd->Delete();
-  return result;
+  // result = new cvPolyData(pd);
+  // pd->Delete();
+  // return result;
 }
 
 // ------------
@@ -933,7 +925,7 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
 int cvOCCTSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
 
 
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
   {
     fprintf(stderr,"Solid is null\n");
     return SV_ERROR;
@@ -954,7 +946,7 @@ int cvOCCTSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
 // ------------
 int cvOCCTSolidModel::GetFaceAttribute (char *attr,int faceid,char **value)
 {
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
   {
     fprintf(stderr,"solid is null\n");
     return SV_ERROR;
@@ -992,7 +984,7 @@ int cvOCCTSolidModel::GetFaceAttribute (char *attr,int faceid,char **value)
 // ------------
 int cvOCCTSolidModel::SetFaceAttribute (char *attr,int faceid,char *value)
 {
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
   {
     fprintf(stderr,"solid is null\n");
     return SV_ERROR;
@@ -1031,7 +1023,7 @@ int cvOCCTSolidModel::SetFaceAttribute (char *attr,int faceid,char *value)
 // ---------------
 cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double max_dist) const
 {
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
   {
     fprintf(stderr,"Solid is null\n");
     return SV_ERROR;
@@ -1076,18 +1068,20 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
   double angcoeff = max_dist * M_PI/180.0;
   int uIsoLine= 0;
   int vIsoLine= 0;
-  IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher(
-      devcoeff,angcoeff,uIsoLine,vIsoLine);
-  aMesher->Build(aShapeImpl,aDataImpl);
+  std::cout << "IVtkOCC_ShapeMesher's interface has changes" << std::endl << std::flush;
+  exit(1);
+  // IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher(
+  //     devcoeff,angcoeff,uIsoLine,vIsoLine);
+  // aMesher->Build(aShapeImpl,aDataImpl);
 
-  pd = vtkPolyData::New();
-  pd->DeepCopy(aDataImpl->getVtkPolyData());
-  //if (max_dist != -1)
-    this->GetOnlyPD(pd,max_dist);
+  // pd = vtkPolyData::New();
+  // pd->DeepCopy(aDataImpl->getVtkPolyData());
+  // //if (max_dist != -1)
+  //   this->GetOnlyPD(pd,max_dist);
 
-  result = new cvPolyData(pd);
-  pd->Delete();
-  return result;
+  // result = new cvPolyData(pd);
+  // pd->Delete();
+  // return result;
 }
 
 // ---------------
@@ -1095,7 +1089,7 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
 // ---------------
 int cvOCCTSolidModel::MakeEllipsoid( double r[], double ctr[])
 {
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
     this->RemoveShape();
 
   gp_Pnt pnt1(0.0,0.0,1.0);
@@ -1141,7 +1135,7 @@ int cvOCCTSolidModel::MakeEllipsoid( double r[], double ctr[])
 // ---------------
 int cvOCCTSolidModel::DeleteFaces(int numfaces, int *faces )
 {
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
   {
     fprintf(stderr,"Solid is null\n");
     return SV_ERROR;
@@ -1199,7 +1193,7 @@ int cvOCCTSolidModel::DeleteFaces(int numfaces, int *faces )
 // ---------------
 int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius, int filletshape)
 {
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
   {
     fprintf(stderr,"Solid is Null\n");
     return SV_ERROR;
@@ -1299,7 +1293,7 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius, int f
 // ---------------
 int cvOCCTSolidModel::ReadNative( char *filename )
 {
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
     this->RemoveShape();
 
   // Get the lowercase file extension.
@@ -1313,16 +1307,18 @@ int cvOCCTSolidModel::ReadNative( char *filename )
   this->NewShape();
   if (!strncmp(extension,"brep",4)) {
     fprintf(stdout,"Reading file %s\n",filename);
-    Standard_Boolean worked =
-      BRepTools::Read(*geom_,filename,builder,progress);
-    if (worked = Standard_True)
-      fprintf(stdout,"File read\n");
-    else
-    {
-      fprintf(stderr,"File was not read\n");
-      return SV_ERROR;
-    }
-    this->AddShape();
+    std::cout << "The interface of Read function in OpenCascade has changed" << std::endl << std::flush;
+    exit(1);
+    // Standard_Boolean worked =
+    //   BRepTools::Read(*geom_,filename,builder,progress);
+    // if (worked = Standard_True)
+    //   fprintf(stdout,"File read\n");
+    // else
+    // {
+    //   fprintf(stderr,"File was not read\n");
+    //   return SV_ERROR;
+    // }
+    // this->AddShape();
   }
   else if (!strncmp(extension,"step",4)) {
     Handle(TDocStd_Document) aDoc;
@@ -1367,7 +1363,7 @@ int cvOCCTSolidModel::ReadNative( char *filename )
 // ---------------
 int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
 {
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
   {
     fprintf(stderr,"Need geometry to write file\n");
     return SV_ERROR;
@@ -1378,20 +1374,22 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
   Handle(Message_ProgressIndicator) progress;
   if (!strncmp(extension,"brep",4)) {
     fprintf(stdout,"Writing file %s\n",filename);
-    Standard_Boolean worked =
-      BRepTools::Write(*geom_,filename,progress);
-    if (worked = Standard_True)
-      fprintf(stdout,"File written\n");
-    else
-    {
-      fprintf(stderr,"File was not written\n");
-      return SV_ERROR;
-    }
+    std::cout << "Write's interface has changes" << std::endl << std::flush;
+    exit(1);
+    // Standard_Boolean worked =
+    //   BRepTools::Write(*geom_,filename,progress);
+    // if (worked = Standard_True)
+    //   fprintf(stdout,"File written\n");
+    // else
+    // {
+    //   fprintf(stderr,"File was not written\n");
+    //   return SV_ERROR;
+    // }
   }
   else if (!strncmp(extension,"step",4)) {
     fprintf(stdout,"Writing file %s\n",filename);
     STEPCAFControl_Writer writer;
-    char *empty = NULL;
+    char *empty = nullptr;
     writer.Transfer(*shapelabel_,STEPControl_AsIs);
     IFSelect_ReturnStatus ret = writer.Write(filename);
     if (ret == IFSelect_RetError || ret == IFSelect_RetFail || ret == IFSelect_RetStop)
@@ -1406,7 +1404,7 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
 #else
     fprintf(stdout,"Writing file %s\n",filename);
     IGESCAFControl_Writer writer;
-    char *empty = NULL;
+    char *empty = nullptr;
     writer.Transfer(*shapelabel_);
     Standard_Boolean ret = writer.Write(filename);
 #endif
@@ -1429,9 +1427,9 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
 // ---------------
 int cvOCCTSolidModel::RegisterShapeFaces()
 {
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
   {
-    fprintf(stderr,"Geometry is NULL, cannot register faces\n");
+    fprintf(stderr,"Geometry is nullptr, cannot register faces\n");
     return SV_ERROR;
   }
   TopExp_Explorer FaceExp;
@@ -1455,7 +1453,7 @@ int cvOCCTSolidModel::AddFaceLabel(TopoDS_Shape &shape, int &id)
 {
   if (shape.IsNull())
   {
-    fprintf(stderr,"Face is NULL, cannot add\n");
+    fprintf(stderr,"Face is nullptr, cannot add\n");
     return SV_ERROR;
   }
   int checkid=-1;
@@ -1520,7 +1518,7 @@ int cvOCCTSolidModel::AddFaceLabel(TopoDS_Shape &shape, int &id)
 // ---------------
 int cvOCCTSolidModel::NewShape()
 {
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
     this->RemoveShape();
 
   geom_ = new TopoDS_Shape;
@@ -1534,7 +1532,7 @@ int cvOCCTSolidModel::NewShape()
 // ---------------
 int cvOCCTSolidModel::AddShape()
 {
-  if (geom_ == NULL)
+  if (geom_ == nullptr)
     return SV_ERROR;
 
   *shapelabel_ = shapetool_->NewShape();
@@ -1549,7 +1547,7 @@ int cvOCCTSolidModel::AddShape()
 // ---------------
 int cvOCCTSolidModel::RemoveShape()
 {
-  if (geom_ != NULL)
+  if (geom_ != nullptr)
   {
     if (shapelabel_->IsNull())
     {
@@ -1560,15 +1558,15 @@ int cvOCCTSolidModel::RemoveShape()
     //Full shape info for new shape cannot be retrieved if removed currently
     //Will try some other stuff
     //shapetool_->RemoveShape(*shapelabel_,Standard_False);
-    if (shapelabel_ != NULL)
+    if (shapelabel_ != nullptr)
     {
       delete shapelabel_;
-      shapelabel_ = NULL;
+      shapelabel_ = nullptr;
     }
-    if (geom_ != NULL)
+    if (geom_ != nullptr)
     {
       delete geom_;
-      geom_ = NULL;
+      geom_ = nullptr;
     }
   }
   else
@@ -1699,7 +1697,7 @@ int cvOCCTSolidModel::CreateBSplineSurface(double **CX,double **CY,double **CZ,
 // ---------------
 int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd,double &max_dist) const
 {
-  if (pd == NULL)
+  if (pd == nullptr)
     return SV_ERROR;
 
   if (VtkUtils_PDCheckArrayName(pd,1,"MESH_TYPES"))
@@ -1709,12 +1707,17 @@ int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd,double &max_dist) const
     cleaner->SetInputData(pd);
     cleaner->PointMergingOn();
     cleaner->Update();
+
+    auto threshold_surface = VtkUtils_ThresholdSurface(7.0, 7.0, "MESH_TYPES", cleaner->GetOutput());
+
+    #ifdef dp_old 
     vtkSmartPointer<vtkThreshold> thresholder =
       vtkSmartPointer<vtkThreshold>::New();
     thresholder->SetInputData(cleaner->GetOutput());
+
     //Set Input Array to 0 port,0 connection,1 for Cell Data, and MESh_TYPES is the type name
-    thresholder->SetInputArrayToProcess(0,0,0,1,"MESH_TYPES");
     //Source polydata is on MESH_TYPE 7
+    thresholder->SetInputArrayToProcess(0,0,0,1,"MESH_TYPES");
     thresholder->ThresholdBetween(7,7);
     thresholder->Update();
     //Extract surface
@@ -1722,20 +1725,18 @@ int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd,double &max_dist) const
       vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
     surfacer->SetInputData(thresholder->GetOutput());
     surfacer->Update();
-    //For polydata of just edges, MESH_TYPE is not 7
-    //Only want if not edges
-    //fprintf(stderr,"Num Points bef! %d\n",surfacer->GetOutput()->GetNumberOfPoints());
-    //  vtkSmartPointer<vtkQuadricDecimation> decimator =
-    //    vtkSmartPointer<vtkQuadricDecimation>::New();
-    //  decimator->SetInputData(surfacer->GetOutput());
-    //  decimator->SetTargetReduction(0.2);
-    //  decimator->GetOutput();
-    //  pd->DeepCopy(decimator->GetOutput());
+    #endif
+
+    if (threshold_surface->GetNumberOfPoints() != 0)
+    {
+      pd->DeepCopy(threshold_surface);
+    }
+    /* dp
     if (surfacer->GetOutput()->GetNumberOfPoints() != 0)
     {
       pd->DeepCopy(surfacer->GetOutput());
     }
-    //fprintf(stderr,"Num Points now! %d\n",pd->GetNumberOfPoints());
+    */
   }
 
   return SV_OK;

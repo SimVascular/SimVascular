@@ -73,11 +73,11 @@ vtkSVPlacePointsOnS2::vtkSVPlacePointsOnS2()
 // ----------------------
 vtkSVPlacePointsOnS2::~vtkSVPlacePointsOnS2()
 {
-  if (this->InitialPd != NULL)
+  if (this->InitialPd != nullptr)
   {
     this->InitialPd->Delete();
   }
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
   }

@@ -78,7 +78,7 @@ void sv4guiPath::InitializeEmpty()
 
 bool sv4guiPath::IsEmptyTimeStep(unsigned int t) const
 {
-//    return IsInitialized() && (GetPathElement(t) == NULL);
+//    return IsInitialized() && (GetPathElement(t) == nullptr);
     return false;
 }
 
@@ -363,7 +363,7 @@ bool Equal( const sv4guiPath* leftHandSide, const sv4guiPath* rightHandSide, mit
 {
     if((leftHandSide == nullptr) || (rightHandSide == nullptr))
     {
-        MITK_ERROR << "Equal( const sv4guiPath* leftHandSide, const sv4guiPath* rightHandSide, mitk::ScalarType eps, bool verbose ) does not work with NULL pointer input.";
+        MITK_ERROR << "Equal( const sv4guiPath* leftHandSide, const sv4guiPath* rightHandSide, mitk::ScalarType eps, bool verbose ) does not work with nullptr pointer input.";
         return false;
     }
     return Equal( *leftHandSide, *rightHandSide, eps, verbose);

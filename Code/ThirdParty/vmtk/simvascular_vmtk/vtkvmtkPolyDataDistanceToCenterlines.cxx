@@ -34,10 +34,10 @@ vtkStandardNewMacro(vtkvmtkPolyDataDistanceToCenterlines);
 
 vtkvmtkPolyDataDistanceToCenterlines::vtkvmtkPolyDataDistanceToCenterlines()
 {
-  this->DistanceToCenterlinesArrayName = NULL;
+  this->DistanceToCenterlinesArrayName = nullptr;
 
-  this->Centerlines = NULL;
-  this->CenterlineRadiusArrayName = NULL;
+  this->Centerlines = nullptr;
+  this->CenterlineRadiusArrayName = nullptr;
 
   this->UseRadiusInformation = 1;
   this->EvaluateTubeFunction = 0;
@@ -50,19 +50,19 @@ vtkvmtkPolyDataDistanceToCenterlines::~vtkvmtkPolyDataDistanceToCenterlines()
   if (this->DistanceToCenterlinesArrayName)
     {
     delete[] this->DistanceToCenterlinesArrayName;
-    this->DistanceToCenterlinesArrayName = NULL;
+    this->DistanceToCenterlinesArrayName = nullptr;
     }
 
   if (this->Centerlines)
     {
     this->Centerlines->Delete();
-    this->Centerlines = NULL;
+    this->Centerlines = nullptr;
     }
 
   if (this->CenterlineRadiusArrayName)
     {
     delete[] this->CenterlineRadiusArrayName;
-    this->CenterlineRadiusArrayName = NULL;
+    this->CenterlineRadiusArrayName = nullptr;
     }
 }
 
@@ -125,7 +125,7 @@ int vtkvmtkPolyDataDistanceToCenterlines::RequestData(
 
   output->GetPointData()->AddArray(distanceToCenterlinesArray);
 
-  vtkDoubleArray* surfaceCenterlineRadiusArray = NULL;
+  vtkDoubleArray* surfaceCenterlineRadiusArray = nullptr;
   if (this->EvaluateCenterlineRadius)
     {
     surfaceCenterlineRadiusArray = vtkDoubleArray::New();

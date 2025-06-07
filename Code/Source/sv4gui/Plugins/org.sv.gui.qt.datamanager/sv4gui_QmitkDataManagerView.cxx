@@ -81,7 +81,9 @@ See LICENSE.txt or http://www.mitk.org for details.
 //## Berry
 #include <berryIEditorPart.h>
 #include <berryIWorkbenchPage.h>
-#include <berryIPreferencesService.h>
+
+#include <mitkIPreferencesService.h>
+//dp #include <berryIPreferencesService.h>
 #include <berryPlatform.h>
 #include <berryPlatformUI.h>
 #include <berryIEditorRegistry.h>
@@ -123,8 +125,9 @@ const QString sv4guiQmitkDataManagerView::VIEW_ID = "org.sv.views.datamanager";
 
 sv4guiQmitkDataManagerView::sv4guiQmitkDataManagerView()
     : m_GlobalReinitOnNodeDelete(true),
-      m_ItemDelegate(NULL)
+      m_ItemDelegate(nullptr)
 {
+  std::cout << "sv4guiQmitkDataManagerView" << std::endl << std::flush;
 }
 
 sv4guiQmitkDataManagerView::~sv4guiQmitkDataManagerView()
@@ -142,15 +145,14 @@ void sv4guiQmitkDataManagerView::CreateQtPartControl(QWidget* parent)
   m_CurrentRowCount = 0;
   m_Parent = parent;
   //# Preferences
-  berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  //dp berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
 
-  berry::IBerryPreferences::Pointer prefs
-      = (prefService->GetSystemPreferences()->Node(VIEW_ID))
-        .Cast<berry::IBerryPreferences>();
+  mitk::IPreferences* prefs = (prefService->GetSystemPreferences()->Node(VIEW_ID.toStdString()));
+  //dp berry::IBerryPreferences::Pointer prefs = (prefService->GetSystemPreferences()->Node(VIEW_ID)).Cast<berry::IBerryPreferences>();
   assert( prefs );
-  prefs->OnChanged.AddListener( berry::MessageDelegate1<sv4guiQmitkDataManagerView
-    , const berry::IBerryPreferences*>( this
-      , &sv4guiQmitkDataManagerView::OnPreferencesChanged ) );
+  prefs->OnChanged.AddListener( mitk::MessageDelegate1<sv4guiQmitkDataManagerView, const mitk::IPreferences*>( this, &sv4guiQmitkDataManagerView::OnPreferencesChanged ) );
+  //dp prefs->OnChanged.AddListener( berry::MessageDelegate1<sv4guiQmitkDataManagerView, const mitk::IPreferences*>( this, &sv4guiQmitkDataManagerView::OnPreferencesChanged ) );
 
   //# GUI
   m_NodeTreeModel = new QmitkDataStorageTreeModel(this->GetDataStorage());
@@ -299,7 +301,8 @@ void sv4guiQmitkDataManagerView::CreateQtPartControl(QWidget* parent)
       m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(tmpDescriptor,contextMenuAction));
       m_ConfElements[contextMenuAction] = *cmActionsIt;
 
-      cmActionDataIt.setValue<int>(i);
+      cmActionDataIt.setValue(i);
+      //dp cmActionDataIt.setValue<int>(i);
       contextMenuAction->setData( cmActionDataIt );
       connect( contextMenuAction, SIGNAL( triggered(bool) ) , this, SLOT( ContextMenuActionTriggered(bool) ) );
       ++i;
@@ -372,7 +375,7 @@ void sv4guiQmitkDataManagerView::CreateQtPartControl(QWidget* parent)
     , this, SLOT( ComponentActionChanged() ) );
   multiComponentImageDataNodeDescriptor->AddAction(componentAction, false);
   m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(multiComponentImageDataNodeDescriptor,componentAction));
-  if (diffusionImageDataNodeDescriptor!=NULL)
+  if (diffusionImageDataNodeDescriptor!=nullptr)
   {
       diffusionImageDataNodeDescriptor->AddAction(componentAction, false);
       m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(diffusionImageDataNodeDescriptor,componentAction));
@@ -386,7 +389,7 @@ void sv4guiQmitkDataManagerView::CreateQtPartControl(QWidget* parent)
     , this, SLOT( TextureInterpolationToggled(bool) ) );
   imageDataNodeDescriptor->AddAction(m_TextureInterpolation, false);
   m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(imageDataNodeDescriptor,m_TextureInterpolation));
-  if (diffusionImageDataNodeDescriptor!=NULL)
+  if (diffusionImageDataNodeDescriptor!=nullptr)
   {
       diffusionImageDataNodeDescriptor->AddAction(m_TextureInterpolation, false);
       m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(diffusionImageDataNodeDescriptor,m_TextureInterpolation));
@@ -398,7 +401,7 @@ void sv4guiQmitkDataManagerView::CreateQtPartControl(QWidget* parent)
     , this, SLOT( ColormapMenuAboutToShow() ) );
   imageDataNodeDescriptor->AddAction(m_ColormapAction, false);
   m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(imageDataNodeDescriptor, m_ColormapAction));
-  if (diffusionImageDataNodeDescriptor!=NULL)
+  if (diffusionImageDataNodeDescriptor!=nullptr)
   {
       diffusionImageDataNodeDescriptor->AddAction(m_ColormapAction, false);
       m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(diffusionImageDataNodeDescriptor, m_ColormapAction));
@@ -514,7 +517,8 @@ void sv4guiQmitkDataManagerView::ContextMenuActionTriggered( bool )
   contextMenuAction->Run( this->GetCurrentSelection() ); // run the action
 }
 
-void sv4guiQmitkDataManagerView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
+void sv4guiQmitkDataManagerView::OnPreferencesChanged(const mitk::IPreferences* prefs)
+//dp void sv4guiQmitkDataManagerView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
 {
   if( m_NodeTreeModel->GetPlaceNewNodesOnTopFlag() !=  prefs->GetBool("Place new nodes on top", false) )
     m_NodeTreeModel->SetPlaceNewNodesOnTop( !m_NodeTreeModel->GetPlaceNewNodesOnTopFlag() );
@@ -630,14 +634,14 @@ void sv4guiQmitkDataManagerView::OpacityActionChanged()
 void sv4guiQmitkDataManagerView::ComponentActionChanged()
 {
   mitk::DataNode* node = m_NodeTreeModel->GetNode(m_FilterModel->mapToSource(m_NodeTreeView->selectionModel()->currentIndex()));
-  mitk::IntProperty* componentProperty = NULL;
+  mitk::IntProperty* componentProperty = nullptr;
   int numComponents = 0;
   if(node)
   {
     componentProperty =
         dynamic_cast<mitk::IntProperty*>(node->GetProperty("Image.Displayed Component"));
     mitk::Image* img = dynamic_cast<mitk::Image*>(node->GetData());
-    if (img != NULL)
+    if (img != nullptr)
     {
       numComponents = img->GetPixelType().GetNumberOfComponents();
     }
@@ -650,7 +654,7 @@ void sv4guiQmitkDataManagerView::ComponentActionChanged()
   }
   else
   {
-    m_ComponentSlider->SetProperty(static_cast<mitk::IntProperty*>(NULL));
+    m_ComponentSlider->SetProperty(static_cast<mitk::IntProperty*>(nullptr));
   }
 }
 
@@ -911,7 +915,7 @@ void sv4guiQmitkDataManagerView::RemoveSelectedNodes( bool )
   }
   std::vector<mitk::DataNode::Pointer> selectedNodes;
 
-  mitk::DataNode::Pointer node = 0;
+  mitk::DataNode::Pointer node = nullptr;
   QString question = tr("Do you really want to remove ");
 
   for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
@@ -1039,11 +1043,11 @@ void sv4guiQmitkDataManagerView::GlobalReinit( bool )
 {
   mitk::IRenderWindowPart* renderWindow = this->GetRenderWindowPart();
 
-  if (renderWindow == NULL)
+  if (renderWindow == nullptr)
     renderWindow = this->OpenRenderWindowPart(false);
 
   // no render window available
-  if (renderWindow == NULL) return;
+  if (renderWindow == nullptr) return;
 
   mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(this->GetDataStorage());
 }
@@ -1099,10 +1103,12 @@ mitk::IRenderWindowPart* sv4guiQmitkDataManagerView::OpenRenderWindowPart(bool a
 {
   if (activatedEditor)
   {
-    return this->GetRenderWindowPart(QmitkAbstractView::ACTIVATE | QmitkAbstractView::OPEN);
+    return this->GetRenderWindowPart(mitk::WorkbenchUtil::IRenderWindowPartStrategy::ACTIVATE | 
+         mitk::WorkbenchUtil::IRenderWindowPartStrategy::OPEN);
   }
   else
   {
-    return this->GetRenderWindowPart(QmitkAbstractView::BRING_TO_FRONT | QmitkAbstractView::OPEN);
+    return this->GetRenderWindowPart(mitk::WorkbenchUtil::IRenderWindowPartStrategy::BRING_TO_FRONT |
+         mitk::WorkbenchUtil::IRenderWindowPartStrategy::OPEN);
   }
 }

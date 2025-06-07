@@ -62,14 +62,14 @@ vtkSVBoundaryMapper::vtkSVBoundaryMapper()
 
   this->InitialPd     = vtkPolyData::New();
   this->BoundaryPd    = vtkPolyData::New();
-  this->EdgeTable     = NULL;
+  this->EdgeTable     = nullptr;
 
-  this->IsBoundary    = NULL;
-  this->BoundaryIds   = NULL;
+  this->IsBoundary    = nullptr;
+  this->BoundaryIds   = nullptr;
   this->Boundaries    = vtkPolyData::New();
   this->BoundaryLoop  = vtkPolyData::New();
 
-  this->InternalIdsArrayName = NULL;
+  this->InternalIdsArrayName = nullptr;
 
   this->ObjectXAxis[0] = 1.0;
   this->ObjectXAxis[1] = 0.0;
@@ -85,30 +85,30 @@ vtkSVBoundaryMapper::vtkSVBoundaryMapper()
 // ----------------------
 vtkSVBoundaryMapper::~vtkSVBoundaryMapper()
 {
-  if (this->InitialPd != NULL)
+  if (this->InitialPd != nullptr)
   {
     InitialPd->Delete();
   }
-  if (this->BoundaryPd != NULL)
+  if (this->BoundaryPd != nullptr)
   {
     BoundaryPd->Delete();
   }
-  if (this->EdgeTable != NULL)
+  if (this->EdgeTable != nullptr)
   {
     EdgeTable->Delete();
   }
-  if (this->Boundaries != NULL)
+  if (this->Boundaries != nullptr)
   {
     this->Boundaries->Delete();
   }
-  if (this->BoundaryLoop != NULL)
+  if (this->BoundaryLoop != nullptr)
   {
     this->BoundaryLoop->Delete();
   }
   if (this->InternalIdsArrayName)
   {
     delete [] this->InternalIdsArrayName;
-    this->InternalIdsArrayName = NULL;
+    this->InternalIdsArrayName = nullptr;
   }
 }
 
@@ -330,7 +330,7 @@ void vtkSVBoundaryMapper::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  if (this->InternalIdsArrayName != NULL)
+  if (this->InternalIdsArrayName != nullptr)
     os << indent << "Internal Ids array name: " << this->InternalIdsArrayName << "\n";
   os << indent << "Z axis: " <<
     this->ObjectZAxis[0] << " " << this->ObjectZAxis[1] << " " << this->ObjectZAxis[2] << "\n";

@@ -52,7 +52,7 @@ public:
 
     static sv4guiModelElementPolyData* CreateModelElementPolyDataByBlend(sv4guiModelElementPolyData* mepdsrc, std::vector<sv4guiModelElement::svBlendParamRadius*> blendRadii, sv4guiModelElement::svBlendParam* param);
 
-    static vtkPolyData* CreateLoftSurface(sv4guiContourGroup* contourGroup, int numSamplingPts, int addCaps, svLoftingParam* param = NULL, unsigned int t = 0);
+    static vtkPolyData* CreateLoftSurface(sv4guiContourGroup* contourGroup, int numSamplingPts, int addCaps, svLoftingParam* param = nullptr, unsigned int t = 0);
 
     static vtkPolyData* CreateLoftSurface(std::vector<sv4guiContour*> contourSet, int numSamplingPts, svLoftingParam* param, int addCaps);
 
@@ -94,7 +94,7 @@ public:
 
     static bool DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> regionIDs);
 
-    static vtkPolyData* CreateCenterlines(sv4guiModelElement* modelElement, vtkIdList *sourceCapIds = NULL, bool getSections = false);
+    static vtkPolyData* CreateCenterlines(sv4guiModelElement* modelElement, vtkIdList *sourceCapIds = nullptr, bool getSections = false);
 
     static vtkPolyData* CreateCenterlines(vtkPolyData* inpd);
 

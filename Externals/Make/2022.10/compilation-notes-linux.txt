@@ -1,0 +1,30 @@
+# might be necessary to install sqlite3 for python
+sudo apt-get install libsqlite3-dev
+
+# might be necessary to install openssl for python
+sudo apt-get install libssl-dev
+
+# build essential should be installed
+sudo apt-get install build-essential
+
+# PCRE developer package needed for swig
+sudo apt-get install libpcre3 libpcre3-dev
+
+# needed for vtk
+sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev libglvnd-dev
+
+# needed for opencascade
+sudo apt-get install libxmu-dev libxi-dev libfontconfig1-dev
+
+# needed for mitk
+sudo apt-get install libtiff-dev
+
+# needed for qt (see https://github.com/microsoft/vcpkg/issues/16486)
+sudo apt-get install '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
+
+# qt needs some packages 
+https://github.com/conan-io/conan-center-index/issues/10068
+
+# it is not easy to update qt to 5.15 nor 6.4. During compilation of mitk, 
+# we get an error that Qt5Script/Qt6Script is not available. This is a
+# a deprecated package. Not sure if the problem is in mitk.

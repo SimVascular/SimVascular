@@ -38,16 +38,12 @@
 #include "sv3_Contour.h"
 #include "Segmentation_PyModule.h"
 #include "sv3_LevelSetContour.h"
-#include "sv_arg.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "sv_Repository.h"
-#include "sv_arg.h"
 #include "sv_misc_utils.h"
 
 #include "Python.h"
-#include "sv2_globals.h"
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -98,7 +94,7 @@ PyDoc_STRVAR(PyLevelSetSegmentationClass_doc, "level set segmentation functions"
 //-------------------------------
 //
 PyMethodDef PyLevelSetSegmentationMethods[] = {
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //----------------------------
@@ -128,7 +124,7 @@ PyLevelSetSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyLevelSetSegmentationNew] PyLevelSetSegmentationNew " << std::endl;
   auto self = (PyLevelSetSegmentation*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->super.id = 2;
   }
   return (PyObject *) self;
@@ -155,7 +151,7 @@ PyLevelSetSegmentationDealloc(PyLevelSetSegmentation* self)
 // designated initializers.
 //
 static PyTypeObject PyLevelSetSegmentationType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   SEGMENTATION_LEVELSET_MODULE_CLASS,
   sizeof(PyLevelSetSegmentation)
 };

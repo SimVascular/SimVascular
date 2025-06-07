@@ -54,6 +54,12 @@ public:
     void Write() override;
     mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
 
+    std::vector<mitk::BaseData::Pointer> DoRead() override
+    {
+        std::cout << "Need to implement this one" << std::endl << std::flush;
+        exit(1);
+    }
+
 private:
     sv4guiPathIO* IOClone() const override;
 };

@@ -35,8 +35,8 @@ vtkStandardNewMacro(vtkvmtkNonManifoldSteepestDescent);
 
 vtkvmtkNonManifoldSteepestDescent::vtkvmtkNonManifoldSteepestDescent()
 {
-  this->DescentArrayName = NULL;
-  this->DescentArray = NULL;
+  this->DescentArrayName = nullptr;
+  this->DescentArray = nullptr;
   this->NumberOfEdgeSubdivisions = 250;
   this->Direction = VTK_VMTK_DOWNWARD;
 }
@@ -54,7 +54,8 @@ double vtkvmtkNonManifoldSteepestDescent::GetSteepestDescentInCell(vtkPolyData* 
   double scalar0, scalar1, scalar;
   double currentS;
   double directionFactor = 0.0;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   vtkIdType i, j;
 
   if (!this->DescentArray)

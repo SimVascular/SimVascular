@@ -39,7 +39,7 @@
 #include "sv4gui_svFSIUtil.h"
 
 #include <sv4gui_QmitkFunctionality.h>
-#include <berryIBerryPreferences.h>
+#include <mitkIPreferences.h>
 
 #include <QWidget>
 #include <QProcess>
@@ -145,7 +145,7 @@ public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
+     virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/, const QList<mitk::DataNode::Pointer>& /*nodes*/) override;
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -153,15 +153,15 @@ public:
 
     virtual void NodeRemoved(const mitk::DataNode* node) override;
 
-//    virtual void Activated() override;
+    virtual void Activated() override;
 
-//    virtual void Deactivated() override;
+    virtual void Deactivated() override;
 
     virtual void Visible() override;
 
     virtual void Hidden() override;
 
-    virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
+    virtual void OnPreferencesChanged(const mitk::IPreferences* prefs) override;
 
     void DataChanged();
 
@@ -210,7 +210,7 @@ class sv4guisvFSISolverProcessHandler : public QObject
     Q_OBJECT
 
 public:
-    sv4guisvFSISolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent=NULL);
+    sv4guisvFSISolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent=nullptr);
     virtual ~sv4guisvFSISolverProcessHandler();
 
     void Start();

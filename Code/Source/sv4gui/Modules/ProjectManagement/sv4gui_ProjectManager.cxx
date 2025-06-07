@@ -118,6 +118,9 @@
 #include <map>
 #include <regex>
 
+// Fix for deprecatd Qt endl;
+static QString qt_endl = "\n";
+
 // Define the name of the files used to identify the image data location.
 //
 // SVPROJ_CONFIG_FILE_NAME is deprecated.
@@ -277,7 +280,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
 
     // Create the SV Data Manager top level plugin mitk data nodes.
     //
-    auto projectFolderNode = CreateDataFolder<sv4guiProjectFolder>(dataStorage, projName);
+     mitk::DataNode::Pointer projectFolderNode = CreateDataFolder<sv4guiProjectFolder>(dataStorage, projName);
     projectFolderNode->AddProperty("project path",mitk::StringProperty::New(projPath.toStdString().c_str()));
 
     QString imageFolderName = PluginNames::IMAGES; 
@@ -420,7 +423,7 @@ void sv4guiProjectManager::ReadImageInfoFromImageLoc(QString imageLocFilePath, Q
   QDomDocument doc("image_location");
   QFile xmlFile(imageLocFilePath);
   xmlFile.open(QIODevice::ReadOnly);
-  QString *em = NULL;
+  QString *em = nullptr;
   doc.setContent(&xmlFile, em);
   xmlFile.close();
 
@@ -440,7 +443,7 @@ void sv4guiProjectManager::ReadImageInfoFromImageLoc(QString imageLocFilePath, Q
 
     if (XmlImageInformationElementNames::valid_names.count(tagName) == 0) { 
       auto msg = "An unknown element '" + tagName + "' was found in the image location file '" + imageLocFilePath + "'.";
-      QMessageBox::warning(NULL, "", msg);
+      QMessageBox::warning(nullptr, "", msg);
     }
 
     if (tagName == XmlImageInformationElementNames::IMAGE_NAME) {
@@ -485,7 +488,7 @@ void sv4guiProjectManager::ReadImageInfoFromSvproj(const QString& projPath, QStr
   QDomDocument doc("svproj");
   QFile xmlFile(svprojFilePath);
   xmlFile.open(QIODevice::ReadOnly);
-  QString *em = NULL;
+  QString *em = nullptr;
   doc.setContent(&xmlFile, em);
   xmlFile.close();
 
@@ -622,7 +625,7 @@ void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString
 
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out(&file);
-        out << xml <<endl;
+        out << xml <<qt_endl;
     }
 }
 
@@ -644,7 +647,7 @@ void sv4guiProjectManager::ReadProjectFile(const QString& projPath, QString& ver
   QDomDocument doc(XmlProjectElementNames::ROOT);
   QFile xmlFile(projFilePath);
   xmlFile.open(QIODevice::ReadOnly);
-  QString *em = NULL;
+  QString *em = nullptr;
   doc.setContent(&xmlFile, em);
   xmlFile.close();
 
@@ -666,7 +669,7 @@ void sv4guiProjectManager::ReadProjectFile(const QString& projPath, QString& ver
 
     if (XmlProjectElementNames::valid_names.count(tagName) == 0) { 
       auto msg = "An unknown element '" + tagName + "' was found in the project file '" + projFilePath + "'.";
-      QMessageBox::warning(NULL, "", msg);
+      QMessageBox::warning(nullptr, "", msg);
     }
 
     node = node.nextSibling();
@@ -702,7 +705,7 @@ void sv4guiProjectManager::WriteProjectFile(const QString& projPath)
 
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out(&file);
-        out << xml <<endl;
+        out << xml <<qt_endl;
     }
 }
 
@@ -928,7 +931,7 @@ void sv4guiProjectManager::writeTransformFile(mitk::Image* image, std::string im
 
   if (file.open(QFile::WriteOnly | QFile::Truncate)) {
       QTextStream out(&file);
-      out << xml <<endl;
+      out << xml <<qt_endl;
   }
 }
 
@@ -946,7 +949,7 @@ void sv4guiProjectManager::setTransformFromFile(mitk::Image* image, std::string 
 
   QFile xmlFile(QString::fromStdString(imageHeaderAbsoluteFileName));
   if (xmlFile.open(QIODevice::ReadOnly)){
-    QString *em=NULL;
+    QString *em=nullptr;
     doc.setContent(&xmlFile,em);
     xmlFile.close();
 
@@ -1084,7 +1087,7 @@ void sv4guiProjectManager::writeImageHeaderFile(mitk::Image* image,
 
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
       QTextStream out(&file);
-      out << xml <<endl;
+      out << xml <<qt_endl;
     }
 }
 
@@ -1110,7 +1113,7 @@ void sv4guiProjectManager::setTransformFromImageHeaderFile(mitk::Image* image, s
   QDomDocument doc("image_header");
   QFile xmlFile( q_imageHeaderAbsoluteFileName);
   xmlFile.open(QIODevice::ReadOnly);
-  QString *em = NULL;
+  QString *em = nullptr;
   doc.setContent(&xmlFile, em);
   xmlFile.close();
 
@@ -1131,7 +1134,7 @@ void sv4guiProjectManager::setTransformFromImageHeaderFile(mitk::Image* image, s
 
     if (XmlImageHeaderElementNames::valid_names.count(tagName) == 0) { 
       auto msg = "An unknown element '" + tagName + "' was found in the image header file '" + q_imageHeaderAbsoluteFileName + "'.";
-      QMessageBox::warning(NULL, "", msg);
+      QMessageBox::warning(nullptr, "", msg);
     }
 
     if (tagName == XmlImageHeaderElementNames::TRANSFORM_LPS) {
@@ -1279,7 +1282,7 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
         }
 
         sv4guiPath *path=dynamic_cast<sv4guiPath*>(node->GetData());
-        if(path==NULL || (!path->IsDataModified() && dir.exists(QString::fromStdString(node->GetName())+FileExtension::PATHS)) )
+        if(path==nullptr || (!path->IsDataModified() && dir.exists(QString::fromStdString(node->GetName())+FileExtension::PATHS)) )
             continue;
 
         QString	filePath=dir.absoluteFilePath(QString::fromStdString(node->GetName())+FileExtension::PATHS);
@@ -1416,7 +1419,7 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
         }
 
         sv4guiModel *model=dynamic_cast<sv4guiModel*>(node->GetData());
-        if(model==NULL || (!model->IsDataModified() && dirModel.exists(QString::fromStdString(node->GetName())+".mdl")) )
+        if(model==nullptr || (!model->IsDataModified() && dirModel.exists(QString::fromStdString(node->GetName())+".mdl")) )
             continue;
 
         QString	filePath=dirModel.absoluteFilePath(QString::fromStdString(node->GetName())+".mdl");
@@ -1462,7 +1465,7 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
         }
 
         sv4guiMitkMesh *mitkMesh=dynamic_cast<sv4guiMitkMesh*>(node->GetData());
-        if(mitkMesh==NULL || (!mitkMesh->IsDataModified() && dirMesh.exists(QString::fromStdString(node->GetName())+".msh")) )
+        if(mitkMesh==nullptr || (!mitkMesh->IsDataModified() && dirMesh.exists(QString::fromStdString(node->GetName())+".msh")) )
             continue;
 
         QString	filePath=dirMesh.absoluteFilePath(QString::fromStdString(node->GetName())+".msh");
@@ -1508,7 +1511,7 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
         }
 
         sv4guiMitkSimJob *mitkJob=dynamic_cast<sv4guiMitkSimJob*>(node->GetData());
-        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dirSim.exists(QString::fromStdString(node->GetName())+".sjb")) )
+        if(mitkJob==nullptr || (!mitkJob->IsDataModified() && dirSim.exists(QString::fromStdString(node->GetName())+".sjb")) )
             continue;
 
         QString	filePath=dirSim.absoluteFilePath(QString::fromStdString(node->GetName())+".sjb");
@@ -1548,7 +1551,7 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
         }
 
         sv4guiMitkROMSimJob *mitkJob=dynamic_cast<sv4guiMitkROMSimJob*>(node->GetData());
-        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dirROMSim.exists(QString::fromStdString(node->GetName())+".romsimjob")) )
+        if(mitkJob==nullptr || (!mitkJob->IsDataModified() && dirROMSim.exists(QString::fromStdString(node->GetName())+".romsimjob")) )
             continue;
 
         QString	filePath=dirROMSim.absoluteFilePath(QString::fromStdString(node->GetName())+".romsimjob");
@@ -1592,7 +1595,7 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
         }
 
         sv4guiMitksvFSIJob *mitkJob=dynamic_cast<sv4guiMitksvFSIJob*>(node->GetData());
-        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dirFSI.exists(QString::fromStdString(node->GetName())+".fsijob")) )
+        if(mitkJob==nullptr || (!mitkJob->IsDataModified() && dirFSI.exists(QString::fromStdString(node->GetName())+".fsijob")) )
             continue;
 
         QString	filePath=dirFSI.absoluteFilePath(QString::fromStdString(node->GetName())+".fsijob");
@@ -1696,7 +1699,7 @@ mitk::DataNode::Pointer sv4guiProjectManager::LoadDataNode(std::string filePath)
  std::vector<mitk::BaseData::Pointer> baseDataList = mitk::IOUtil::Load(filePath);
  if (baseDataList.empty()) {
    MITK_ERROR << "Object not added to Data Storage! Please make sure object is valid: " << filePath;
-   return NULL;
+   return nullptr;
  }
 
  // Create a data node for the data.
@@ -1740,7 +1743,7 @@ sv4guiProjectManager::GetProjectFolderNode(mitk::DataStorage::Pointer dataStorag
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources (dataNode,isProjFolder,false);
 
-    mitk::DataNode::Pointer projFolderNode=NULL;
+    mitk::DataNode::Pointer projFolderNode=nullptr;
     if(rs->size()>0)
         projFolderNode=rs->GetElement(0);
 
@@ -2200,7 +2203,7 @@ void sv4guiProjectManager::UpdateSimulations1dFolder(const QString& projPath, co
   project_dir.rename("Simulations1d", "ROMSimulations"); 
 
   QString msg = "To maintain compatibility the `Simulations1d` folder has been renamed to `ROMSimulations` and files with the .s1djb extension have been changed to use the .romsimjob extension."; 
-  QMessageBox::information(NULL, "", msg);
+  QMessageBox::information(nullptr, "", msg);
 }
 
 

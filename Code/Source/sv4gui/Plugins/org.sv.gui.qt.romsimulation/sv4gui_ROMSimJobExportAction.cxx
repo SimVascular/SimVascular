@@ -35,14 +35,14 @@
 
 #include "sv4gui_ROMSimulationView.h"
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <QFileDialog>
 
 sv4guiROMSimJobExportAction::sv4guiROMSimJobExportAction()
-    : m_Functionality(NULL)
+    : m_Functionality(nullptr)
 {
 }
 
@@ -83,34 +83,35 @@ void sv4guiROMSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &sele
 //            timeStep=timeNavigationController->GetTime()->GetPos();
 //        }
 
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
+
         if (prefService)
         {
             prefs = prefService->GetSystemPreferences()->Node("/General");
         }
         else
         {
-            prefs = berry::IPreferences::Pointer(0);
+            prefs = nullptr;
         }
 
         QString lastFileSavePath="";
-        if(prefs.IsNotNull())
+        if(prefs != nullptr)
         {
-            lastFileSavePath = prefs->Get("LastFileSavePath", "");
+            lastFileSavePath = QString::fromStdString(prefs->Get("LastFileSavePath", ""));
         }
         if(lastFileSavePath=="")
             lastFileSavePath=QDir::homePath();
 
-        QString dir = QFileDialog::getExistingDirectory(NULL
+        QString dir = QFileDialog::getExistingDirectory(nullptr
                                                         , tr("Export Simulation Data Files (Choose Directory)")
                                                         , lastFileSavePath);
 
         dir=dir.trimmed();
         if(dir.isEmpty()) return;
-        if(prefs.IsNotNull())
+        if(prefs != nullptr) 
          {
-             prefs->Put("LastFileSavePath", dir);
+             prefs->Put("LastFileSavePath", dir.toStdString());
              prefs->Flush();
          }
 
@@ -136,14 +137,14 @@ void sv4guiROMSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &sele
 
         if(projPath=="" || simFolderName=="")
         {
-            QMessageBox::warning(NULL,"Warning","No project or simualtion folder are found.");
+            QMessageBox::warning(nullptr,"Warning","No project or simualtion folder are found.");
             return;
         }
 
         QString jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+selectedNode->GetName());
         if(!QDir(jobPath).exists())
         {
-            QMessageBox::warning(NULL,"Warning","Make sure data files have been created for the job.");
+            QMessageBox::warning(nullptr,"Warning","Make sure data files have been created for the job.");
             return;
         }
 
@@ -158,7 +159,7 @@ void sv4guiROMSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &sele
             QString filePath=jobPath+"/"+fileListRequired[i];
             if(!QFile(filePath).exists())
             {
-                QMessageBox::warning(NULL,"Missing File","Missing: "+ filePath);
+                QMessageBox::warning(nullptr,"Missing File","Missing: "+ filePath);
                 return;
             }
 
@@ -185,7 +186,7 @@ void sv4guiROMSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &sele
         }
         else
         {
-            QMessageBox::warning(NULL,"Missing File","Failed to create numstart.dat");
+            QMessageBox::warning(nullptr,"Missing File","Failed to create numstart.dat");
         }
 
     }

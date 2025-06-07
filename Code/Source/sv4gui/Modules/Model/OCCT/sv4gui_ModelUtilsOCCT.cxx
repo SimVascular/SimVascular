@@ -43,10 +43,10 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
     int contourNumber=contourSet.size();
 
     if(contourNumber==0 || numSamplingPts==0)
-        return NULL;
+        return nullptr;
 
-    if(param==NULL)
-        return NULL;
+    if(param==nullptr)
+        return nullptr;
 
     int numSuperPts=0;
     for(int i=0;i<contourNumber;i++)
@@ -73,10 +73,10 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
 
         //        delete cvpd;
 
-        if(cvpd2==NULL)
+        if(cvpd2==nullptr)
         {
             MITK_ERROR << "Supersampling error ";
-            return NULL;
+            return nullptr;
         }
         superSampledContours.push_back(cvpd2);
     }
@@ -99,10 +99,10 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
 
             //            delete superSampledContours[i];
 
-            if(cvpd3==NULL)
+            if(cvpd3==nullptr)
             {
                 MITK_ERROR << "aligning error ";
-                return NULL;
+                return nullptr;
             }
 
             alignedContours.push_back(cvpd3);
@@ -116,13 +116,13 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
 
         //        delete alignedContours[i];
 
-        if(cvpd4==NULL)
+        if(cvpd4==nullptr)
         {
             MITK_ERROR << "sampling error ";
             for (int j=0; j<i; j++)
               delete sampledContours[j];
             delete [] sampledContours;
-            return NULL;
+            return nullptr;
         }
         sampledContours[i]=cvpd4;
     }
@@ -147,13 +147,13 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
             for (int j=0; j<contourNumber; j++)
               delete sampledContours[j];
             delete [] sampledContours;
-            return NULL;
+            return nullptr;
         }
 
         curveList[i]=curve;
     }
 
-    cvOCCTSolidModel* surfFinal=NULL;
+    cvOCCTSolidModel* surfFinal=nullptr;
 
     cvOCCTSolidModel* surf=new cvOCCTSolidModel();
     if(param->method=="spline")
@@ -173,7 +173,7 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
           delete [] curveList;
           delete [] sampledContours;
           delete surf;
-          return NULL;
+          return nullptr;
       }
       //delete curveList;
     }
@@ -187,7 +187,7 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
       if (contourNumber < 3)
       {
         MITK_ERROR << "Not enough segmentations provided in group. Need at least 3";
-        return NULL;
+        return nullptr;
       }
 
       // Override to maximum possible degree if too large a degree for given number of inputs!
@@ -233,7 +233,7 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
           delete [] curveList;
           delete sampledContours;
           delete surf;
-          return NULL;
+          return nullptr;
       }
 
       // Get multiplicities, then convert everything to double arrays
@@ -323,7 +323,7 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
           delete [] vKarr;
           delete [] uMarr;
           delete [] vMarr;
-          return NULL;
+          return nullptr;
       }
       //Clean up
       for (int i=0;i<Xlen1;i++)
@@ -359,7 +359,7 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
         {
             MITK_ERROR << "error in cap / bound operation ";
             delete surf;
-            return NULL;
+            return nullptr;
         }
         //delete surf
         surfFinal=surfCapped;
@@ -371,7 +371,7 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
     {
         MITK_ERROR << "GetFaceIds: error on object";
         delete surf;
-        return NULL;
+        return nullptr;
     }
 
     for(int i=0;i<numFaces;i++)
@@ -393,28 +393,28 @@ sv4guiModelElementOCCT* sv4guiModelUtilsOCCT::CreateModelElementOCCT(std::vector
     {
         mitk::DataNode::Pointer segNode=segNodes[i];
         sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*>(segNode->GetData());
-        if(group!=NULL)
+        if(group!=nullptr)
         {
             std::vector<sv4guiContour*> contourSet=group->GetValidContourSet(t);
             std::string groupName=segNode->GetName();
             segNames.push_back(groupName);
 
             svLoftingParam* usedParam= group->GetLoftingParam();
-            if(param!=NULL) usedParam=param;
+            if(param!=nullptr) usedParam=param;
 
             cvOCCTSolidModel* solid=CreateLoftSurfaceOCCT(contourSet,groupName,numSamplingPts,usedParam,0,1);
             loftedSolids.push_back(solid);
-            if (solid == NULL)
-              return NULL;
+            if (solid == nullptr)
+              return nullptr;
         }
     }
 
     if(loftedSolids.size()==0)
-        return NULL;
+        return nullptr;
 
     cvOCCTSolidModel* unionSolid=loftedSolids[0];
 
-    cvOCCTSolidModel* previousUnionSolid=NULL;
+    cvOCCTSolidModel* previousUnionSolid=nullptr;
     //    SolidModel_SimplifyT smp = SM_Simplify_All;
     for(int i=1;i<loftedSolids.size();i++)
     {
@@ -434,7 +434,7 @@ sv4guiModelElementOCCT* sv4guiModelUtilsOCCT::CreateModelElementOCCT(std::vector
     {
         //        delete unionSolid;
         MITK_ERROR << "GetFaceIds: error on object";
-        return NULL;
+        return nullptr;
     }
 
     std::vector<int> faceIDs;
@@ -442,8 +442,8 @@ sv4guiModelElementOCCT* sv4guiModelUtilsOCCT::CreateModelElementOCCT(std::vector
     for(int i=0;i<numFaces;i++)
     {
         faceIDs.push_back(ids[i]);
-        char *value=NULL;
-        char *parent=NULL;
+        char *value=nullptr;
+        char *parent=nullptr;
         unionSolid->GetFaceAttribute("gdscName",ids[i],&value);
         std::string type(value);
         unionSolid->GetFaceAttribute("parent",ids[i],&parent);
@@ -475,16 +475,16 @@ sv4guiModelElementOCCT* sv4guiModelUtilsOCCT::CreateModelElementOCCT(std::vector
     }
 
     cvPolyData* cvwholevpd=unionSolid->GetPolyData(1,maxDist);
-    if(cvwholevpd==NULL || cvwholevpd->GetVtkPolyData()==NULL)
-        return NULL;
+    if(cvwholevpd==nullptr || cvwholevpd->GetVtkPolyData()==nullptr)
+        return nullptr;
 
     std::vector<sv4guiModelElement::svFace*> faces;
 
     for(int i=0;i<numFaces;i++)
     {
         cvPolyData* cvfacevpd=unionSolid->GetFacePolyData(ids[i],1,maxDist);
-        if(cvfacevpd==NULL || cvfacevpd->GetVtkPolyData()==NULL)
-            return NULL;
+        if(cvfacevpd==nullptr || cvfacevpd->GetVtkPolyData()==nullptr)
+            return nullptr;
 
         sv4guiModelElement::svFace* face =new sv4guiModelElement::svFace;
         face->id=ids[i];
@@ -512,8 +512,8 @@ sv4guiModelElementOCCT* sv4guiModelUtilsOCCT::CreateModelElementOCCT(std::vector
 
 sv4guiModelElementOCCT* sv4guiModelUtilsOCCT::CreateModelElementOCCTByBlend(sv4guiModelElementOCCT* meocctsrc, std::vector<sv4guiModelElement::svBlendParamRadius*> blendRadii)
 {
-    if(meocctsrc==NULL || meocctsrc->GetInnerSolid()==NULL)
-        return NULL;
+    if(meocctsrc==nullptr || meocctsrc->GetInnerSolid()==nullptr)
+        return nullptr;
 
     sv4guiModelElementOCCT* meocctdst =meocctsrc->Clone();
 
@@ -543,14 +543,14 @@ sv4guiModelElementOCCT* sv4guiModelUtilsOCCT::CreateModelElementOCCTByBlend(sv4g
     {
         delete meocctdst;
         MITK_ERROR << "OpenCASCADE model GetFaceIds: error on object";
-        return NULL;
+        return nullptr;
     }
 
     vtkSmartPointer<vtkPolyData> wholevpd=meocctdst->CreateWholeVtkPolyData();
-    if(wholevpd==NULL)
+    if(wholevpd==nullptr)
     {
         delete meocctdst;
-        return NULL;
+        return nullptr;
     }
 
     meocctdst->SetWholeVtkPolyData(wholevpd);
@@ -560,10 +560,10 @@ sv4guiModelElementOCCT* sv4guiModelUtilsOCCT::CreateModelElementOCCTByBlend(sv4g
     for(int i=0;i<numFaces;i++)
     {
         vtkSmartPointer<vtkPolyData> facevpd=meocctdst->CreateFaceVtkPolyData(ids[i]);
-        if(facevpd==NULL)
+        if(facevpd==nullptr)
         {
             delete meocctdst;
-            return NULL;
+            return nullptr;
         }
 
         sv4guiModelElement::svFace* face =new sv4guiModelElement::svFace;

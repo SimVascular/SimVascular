@@ -38,7 +38,9 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
+#CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
+
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
            $(ZLIB_INCDIR) $(TETGEN_INCDIR) \
            $(ITK_INCDIRS) $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) $(SV_MMG_INCDIR) \
            $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) $(QT_DEFS) \
@@ -46,12 +48,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
 
 HDRS	= 
 
-CXXSRCS = main.cxx SimVascular_Init.cxx 
-
-ifeq ($(SV_USE_TCL),1)
-  HDRS += svTcl_AppInit.h
-  CXXSRCS += svTcl_AppInit.cxx
-endif
+CXXSRCS = main.cxx 
 
 ifeq ($(SV_USE_WIN32_REGISTRY),1)
   HDRS += sv_use_win32_registry.h
@@ -92,7 +89,7 @@ ifeq ($(SV_USE_MITK),1)
 endif
 
 # add SV globals
-LINK_EXE_LFLAGS += $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
+#LINK_EXE_LFLAGS += $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
 # vtk libs
 LINK_EXE_LFLAGS += $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
@@ -113,10 +110,6 @@ endif
 ifeq ($(CLUSTER), x64_macosx)
   LINK_EXE_LFLAGS += $(QT_LIBS)
 endif
-endif
-
-ifeq ($(SV_USE_TCL),1)
-  LINK_EXE_LFLAGS += $(TCLTK_LIBS)
 endif
 
 ifeq ($(SV_USE_PYTHON),1)

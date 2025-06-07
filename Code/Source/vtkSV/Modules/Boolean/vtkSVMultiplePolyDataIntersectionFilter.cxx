@@ -67,7 +67,7 @@ vtkSVMultiplePolyDataIntersectionFilter::vtkSVMultiplePolyDataIntersectionFilter
   this->AssignSurfaceIds = 0;
 
   this->BooleanObject = vtkPolyData::New();
-  this->IntersectionTable = NULL;
+  this->IntersectionTable = nullptr;
   this->Status = 1;
   this->Tolerance = 1e-6;
 }

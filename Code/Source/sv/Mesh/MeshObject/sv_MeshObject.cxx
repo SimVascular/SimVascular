@@ -44,8 +44,7 @@ const std::string cvMeshObject::ModelFaceInfo::MODEL_ID = "modelID";
 // cvMeshObject
 // -------------
 
-cvMeshObject::cvMeshObject()
-  : cvRepositoryData( MESH_T )
+cvMeshObject::cvMeshObject() : cvRepositoryData( MESH_T )
 {
 
 }
@@ -82,7 +81,7 @@ char *cvMeshObject::GetKernelName( cvMeshObject::KernelType kernel )
   default:
     strcpy( result, "Invalid kernel name; must be one of "
 	    "{ MeshSim, GMsh,TetGen }" );
-    return NULL;
+    return nullptr;
     break;
   }
 
@@ -103,20 +102,20 @@ cvMeshObject::KernelType cvMeshObject::GetKernelType( const char* kernel_name )
 
 
 int cvMeshObject::openOutputFile(char* filename) {
-  fp_ = NULL;
+  fp_ = nullptr;
   // open the output file
   #ifdef SV_USE_ZLIB
   char filenamegz[MAXPATHLEN];
   filenamegz[0]='\0';
   sprintf (filenamegz, "%s.gz", filename);
   fp_ = gzopen (filenamegz, "wb");
-  if (fp_ == NULL) {
+  if (fp_ == nullptr) {
       fprintf(stderr,"Error: Could not open output file %s.\n",filenamegz);
       return SV_ERROR;
   }
   #else
   fp_ = gzopen (filename, "wb");
-  if (fp_ == NULL) {
+  if (fp_ == nullptr) {
       fprintf(stderr,"Error: Could not open output file %s.\n",filename);
       return SV_ERROR;
   }

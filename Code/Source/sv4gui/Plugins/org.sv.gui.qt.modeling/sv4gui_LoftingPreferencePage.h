@@ -32,7 +32,7 @@
 #ifndef SV4GUI_LOFTINGPREFERENCEPAGE_H
 #define SV4GUI_LOFTINGPREFERENCEPAGE_H
 
-#include <berryIPreferences.h>
+#include <mitkIPreferences.h>
 #include <berryIQtPreferencePage.h>
 
 namespace Ui {
@@ -60,7 +60,7 @@ public slots:
     void SelectionChanged(const QString &text);
 
 private:
-  berry::IPreferences::Pointer m_Preferences;
+  mitk::IPreferences* m_Preferences;
   QScopedPointer<Ui::sv4guiLoftParamWidget> m_Ui;
   QWidget* m_Control;
 

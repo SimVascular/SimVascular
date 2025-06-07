@@ -135,7 +135,7 @@ ModelingKernel_get_names()
 //
 static PyMethodDef ModelingKernelMethods[] = {
   { "get_names", (PyCFunction)ModelingKernel_get_names, METH_NOARGS, ModelingKernel_get_names_doc},
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -175,7 +175,7 @@ PyDoc_STRVAR(ModelingKernelClass_doc,
 // Define the Python type object that stores contour.kernel types.
 //
 static PyTypeObject PyModelingKernelType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   MODELING_KERNEL_MODULE_CLASS,
   sizeof(ModelingKernelObject)
 };

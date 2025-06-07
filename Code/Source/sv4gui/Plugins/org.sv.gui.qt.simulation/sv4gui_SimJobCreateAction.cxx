@@ -36,8 +36,8 @@
 //#include <QmitkDataManagerView.h>
 
 sv4guiSimJobCreateAction::sv4guiSimJobCreateAction()
-    : m_SimJobCreateWidget(NULL)
-    , m_Functionality(NULL)
+    : m_SimJobCreateWidget(nullptr)
+    , m_Functionality(nullptr)
 {
 }
 

@@ -102,14 +102,7 @@ public:
 
   cvAdaptObject *Copy() const;
   int Copy( const cvAdaptObject& src);
-  #ifdef SV_USE_TCL
-  int CreateInternalMeshObject(Tcl_Interp *interp,char *meshFileName,
-		  char *solidFileName);
-  #endif
-  #ifdef SV_USE_PYTHON
-  int CreateInternalMeshObject(char *meshFileName,
-		  char *solidFileName);
-  #endif
+
   int SetMeshObject(cvMeshObject* meshobj) {meshobject_=meshobj; return SV_OK;}
 
   //Setup Operations

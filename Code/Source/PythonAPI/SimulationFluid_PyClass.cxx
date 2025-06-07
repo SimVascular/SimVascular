@@ -74,7 +74,7 @@ static PyMethodDef PyFluidSimMethods[] = {
 
   //{"set_subdivision_method", (PyCFunction)Fluid_set_subdivision_method, METH_VARARGS|METH_KEYWORDS, Fluid_set_subdivision_method_doc},
 
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 //----------------
@@ -86,7 +86,7 @@ static PyMethodDef PyFluidSimMethods[] = {
 // designated initializers. 
 //
 PyTypeObject PySimulationFluidType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and 
   // the name of the type within the module.
   SIMULATION_FLUID_MODULE_CLASS, 
@@ -118,7 +118,7 @@ PyFluidSimNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   std::cout << "[PyFluidSimNew] PyFluidSimNew " << std::endl;
   auto self = (PySimulationFluid*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
   }
 
   return (PyObject *) self;
@@ -170,7 +170,7 @@ PyObject *
 CreatePyFluidSim(FluidElement* path)
 {
   std::cout << "[CreatePyFluidSim] Create Fluid object ... " << std::endl;
-  auto pathObj = PyObject_CallObject((PyObject*)&PyFluidSimType, NULL);
+  auto pathObj = PyObject_CallObject((PyObject*)&PyFluidSimType, nullptr);
   auto pyFluid = (PyFluidSim*)pathObj;
 
   if (path != nullptr) {

@@ -133,7 +133,7 @@ svMainWindow::svMainWindow(QWidget *parent) :
 
     initializePythonConsole();
 
-    QMenu* currentMenu=NULL;
+    QMenu* currentMenu=nullptr;
     QToolBar* currentToolBar;
     QAction* action;
 

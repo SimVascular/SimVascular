@@ -45,8 +45,8 @@
 #include <mitkStatusBar.h>
 #include <mitkGenericProperty.h>
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <usModuleRegistry.h>
@@ -67,7 +67,7 @@
 
 sv4guiConvertProcessHandlerROM::sv4guiConvertProcessHandlerROM(QProcess* process, int startStep, int totalSteps, 
   QString runDir, QWidget* parent) : m_Process(process) , m_StartStep(startStep) , m_TotalSteps(totalSteps), 
-  m_RunDir(runDir) , m_Parent(parent) , m_Timer(NULL)
+  m_RunDir(runDir) , m_Parent(parent) , m_Timer(nullptr)
 {
 }
 
@@ -96,7 +96,7 @@ void sv4guiConvertProcessHandlerROM::ProcessError(QProcess::ProcessError error)
   QString text = "";
   QString status = "Convert results failed";
   QMessageBox::Icon icon = QMessageBox::Warning;
-  QMessageBox messageBox(NULL); 
+  QMessageBox messageBox(nullptr); 
 
   if (error == QProcess::FailedToStart) {
     title = "Convert results failed";
@@ -141,7 +141,7 @@ void sv4guiConvertProcessHandlerROM::ProcessError(QProcess::ProcessError error)
 //
 void sv4guiConvertProcessHandlerROM::Start()
 {
-    if (m_Process == NULL) {
+    if (m_Process == nullptr) {
         return;
     }
 
@@ -183,7 +183,7 @@ void sv4guiConvertProcessHandlerROM::AfterProcessFinished(int exitCode, QProcess
 
     QString title = "ROM Simulation convert results";
     QMessageBox::Icon icon = QMessageBox::NoIcon;
-    QMessageBox mb(NULL); 
+    QMessageBox mb(nullptr); 
     QString status = "";
 
     QString text = "Convert results ";

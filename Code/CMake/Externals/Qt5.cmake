@@ -32,6 +32,8 @@
 # Qt
 set(proj Qt5)
 
+message(FATAL_ERROR "====================== Qt5.cmake ==========")
+ 
 if(SV_USE_${proj})
   if(SV_EXTERNALS_USE_PREBUILT_QT)
     set(Qt5_DIR ${SV_EXTERNALS_PREBUILT_QT_PATH} CACHE PATH "Force ${proj} dir to prebuilt Qt" FORCE)
@@ -60,11 +62,11 @@ if(SV_USE_${proj})
         if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
           set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
         elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
-          set(${proj}_DIR ${SV_${proj}_DIR}/${Qt5_VERSION}/gcc_64/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
+          set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
 	elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2019.02")
-          set(${proj}_DIR ${SV_${proj}_DIR}/${Qt5_VERSION}/gcc_64/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
+          set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
 	elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.06")
-          set(${proj}_DIR ${SV_${proj}_DIR}/${Qt5_VERSION}/gcc_64/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
+          set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
         else()
 	   message(FATAL_ERROR "Invalid SV_EXTERNALS_VERSION_NUMBER ${SV_EXTERNALS_VERSION_NUMBER}")
         endif()
@@ -76,7 +78,7 @@ if(SV_USE_${proj})
 	elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2019.02")
           set(${proj}_DIR ${SV_${proj}_DIR}/${Qt5_VERSION}/clang_64/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
 	elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.06")
-          set(${proj}_DIR ${SV_${proj}_DIR}/${Qt5_VERSION}/clang_64/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
+          set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
         else()
 	   message(FATAL_ERROR "Invalid SV_EXTERNALS_VERSION_NUMBER ${SV_EXTERNALS_VERSION_NUMBER}")
         endif()
@@ -121,7 +123,7 @@ if(SV_USE_${proj})
         WebEngineWidgets
         WebView
         )
-    elseif(${proj}_VERSION VERSION_EQUAL "5.11.3")
+    else()
       list(APPEND SV_${proj}_COMPONENTS
         WebEngineCore
         WebEngineWidgets

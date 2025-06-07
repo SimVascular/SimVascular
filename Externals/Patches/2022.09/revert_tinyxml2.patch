@@ -1,0 +1,20 @@
+diff -Naur tinyxml2-6.2.0/lib/cmake/tinyxml2/tinyxml2Targets.cmake tinyxml2-6.2.0-modified/lib/cmake/tinyxml2/tinyxml2Targets.cmake
+--- tinyxml2-6.2.0/lib/cmake/tinyxml2/tinyxml2Targets.cmake     2022-10-13 12:13:54.671448772 -0700
++++ tinyxml2-6.2.0-modified/lib/cmake/tinyxml2/tinyxml2Targets.cmake    2022-10-13 12:25:22.875581638 -0700
+@@ -47,13 +47,13 @@
+ 
+ 
+ # The installation prefix configured by this project.
+-set(_IMPORT_PREFIX "/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/tinyxml2-6.2.0")
++set(_IMPORT_PREFIX "${SV_EXTERNALS_TOPLEVEL_BINDIR}/tinyxml2-6.2.0")
+ 
+ # Create imported target tinyxml2
+ add_library(tinyxml2 SHARED IMPORTED)
+ 
+ set_target_properties(tinyxml2 PROPERTIES
+-  INTERFACE_INCLUDE_DIRECTORIES "/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/tinyxml2-6.2.0/include"
++  INTERFACE_INCLUDE_DIRECTORIES "${SV_EXTERNALS_TOPLEVEL_BINDIR}/tinyxml2-6.2.0/include"
+ )
+ 
+ # Load information for each installed configuration.
+

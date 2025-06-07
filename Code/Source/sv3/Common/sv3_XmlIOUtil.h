@@ -36,29 +36,35 @@
 
 #include <sv3CommonExports.h>
 
-#include <simvascular_tinyxml.h>
+#include <tinyxml2.h>
 
 #include <list>
 #include <array>
 namespace sv3 {
     
+// The XmlIOUtil is used to create XML elements for points and vectors.
+//
+// An XmlIOUtil object must be constructed with an existing tinyxml2::XMLDocument.
+//
 class SV_EXPORT_COMMON XmlIOUtil
 {
-public:
+  public:
+    XmlIOUtil(tinyxml2::XMLDocument& doc) : document(doc) { }
+    XmlIOUtil() = delete; 
 
-    static TiXmlElement* CreateXMLxyzElement(const char* name, double v[3]);
-    static TiXmlElement* CreateXMLPointElement(const char* name, int id, std::array<double,3> point);
-    static TiXmlElement* CreateXMLPointElement(const char* name, std::array<double,3> point);
-    static TiXmlElement* CreateXMLVectorElement(const char* name, std::array<double,3> vec);
+    tinyxml2::XMLElement* CreateXMLxyzElement(const char* name, double v[3]);
+    tinyxml2::XMLElement* CreateXMLPointElement(const char* name, int id, std::array<double,3> point);
+    tinyxml2::XMLElement* CreateXMLPointElement(const char* name, std::array<double,3> point);
+    tinyxml2::XMLElement* CreateXMLVectorElement(const char* name, std::array<double,3> vec);
 
-    static void Getxyz(TiXmlElement* element, double xyz[3]);
+    void Getxyz(tinyxml2::XMLElement* element, double xyz[3]);
+    std::array<double,3> GetPoint(tinyxml2::XMLElement* element);
+    std::array<double,3> GetVector(tinyxml2::XMLElement* element);
+    std::list< double > GetDoubleAttributeListFromXMLNode(tinyxml2::XMLElement* e, const char *attributeNameBase, unsigned int count);
 
-    static std::array<double,3> GetPoint(TiXmlElement* element);
-
-    static std::array<double,3> GetVector(TiXmlElement* element);
-
-    static std::list< double > GetDoubleAttributeListFromXMLNode(TiXmlElement* e, const char *attributeNameBase, unsigned int count);
+    tinyxml2::XMLDocument& document;
 };
+
 }
 
 #endif // __SV3_XMLIOUTIL_H__

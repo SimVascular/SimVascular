@@ -28,16 +28,28 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#-----------------------------------------------------------------------------
-# FREETYPE
 set(proj FREETYPE)
+
+set(msg "[Code/CMake/Externals/FREETYPE.cmake]")
+message(STATUS "${msg} =============== Code/CMake/Externals    FREETYPE.cmake ===============")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_USE_FREETYPE: ${SV_USE_FREETYPE}")
+message(STATUS "${msg} SV_FREETYPE_DIR: ${SV_FREETYPE_DIR}")
+message(STATUS "${msg} FREETYPE_VERISON: ${${proj}_VERSION}")
+message(STATUS "${msg} SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR: ${SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR}")
+
 if(SV_USE_${proj})
 
   # If using toplevel dir, force FREETYPE_DIR to be the SV_FREETYPE_DIR set by the
   # simvascular_add_new_external macro
-  if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
-    set(${proj}_DIR ${SV_${proj}_DIR} CACHE PATH "Force ${proj} dir to externals" FORCE)
-  endif()
+  #
+  # [davep] always set this ?
+  #
+  #if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
+  #  set(${proj}_DIR ${SV_${proj}_DIR} CACHE PATH "Force ${proj} dir to externals" FORCE)
+  #endif()
+
+  set(${proj}_DIR ${SV_${proj}_DIR} CACHE PATH "Force ${proj} dir to externals" FORCE)
 
   # Find Freetype
   simvascular_external(${proj}
@@ -47,7 +59,7 @@ if(SV_USE_${proj})
     )
 
   # Set SV_FREETYPE_DIR to the directory that was found to contain FREETYPE
-  set(SV_${proj}_DIR ${${proj}_DIR})
+  #set(SV_${proj}_DIR ${${proj}_DIR})
 
   link_directories(${${proj}_LIBRARY_DIR})
 

@@ -55,7 +55,7 @@ public:
 
     bool IsDouble(QString value);
 
-    bool AreDouble(QString values, int* count = NULL);
+    bool AreDouble(QString values, int* count = nullptr);
 
 public slots:
 

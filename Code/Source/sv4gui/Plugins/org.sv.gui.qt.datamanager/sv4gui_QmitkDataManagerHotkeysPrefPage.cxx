@@ -48,7 +48,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include "sv4gui_QmitkDataManagerHotkeysPrefPage.h"
 #include <QmitkHotkeyLineEdit.h>
 
-#include "berryIPreferencesService.h"
+#include "mitkIPreferencesService.h"
+//dp #include "berryIPreferencesService.h"
 #include "berryPlatform.h"
 
 #include <QLabel>
@@ -75,8 +76,9 @@ void sv4guiQmitkDataManagerHotkeysPrefPage::Init(berry::IWorkbench::Pointer )
 
 void sv4guiQmitkDataManagerHotkeysPrefPage::CreateQtControl(QWidget* parent)
 {
-  IPreferencesService* prefService = Platform::GetPreferencesService();
-  berry::IPreferences::Pointer _DataManagerHotkeysPreferencesNode = prefService->GetSystemPreferences()->Node("/DataManager/Hotkeys");
+  mitk::IPreferencesService* prefService = Platform::GetPreferencesService();
+  mitk::IPreferences* _DataManagerHotkeysPreferencesNode = prefService->GetSystemPreferences()->Node("/DataManager/Hotkeys");
+  //dp berry::IPreferences::Pointer _DataManagerHotkeysPreferencesNode = prefService->GetSystemPreferences()->Node("/DataManager/Hotkeys");
   m_DataManagerHotkeysPreferencesNode = _DataManagerHotkeysPreferencesNode;
 
   m_HotkeyEditors["Make all nodes invisible"] = new QmitkHotkeyLineEdit("Ctrl+, V");
@@ -116,8 +118,12 @@ QWidget* sv4guiQmitkDataManagerHotkeysPrefPage::GetQtControl() const
 
 bool sv4guiQmitkDataManagerHotkeysPrefPage::PerformOk()
 {
-  IPreferences::Pointer _DataManagerHotkeysPreferencesNode = m_DataManagerHotkeysPreferencesNode.Lock();
-  if(_DataManagerHotkeysPreferencesNode.IsNotNull())
+  // [Note] Can't find a Lock() method for IPreferences.
+  mitk::IPreferences* _DataManagerHotkeysPreferencesNode = m_DataManagerHotkeysPreferencesNode;
+  //dp mitk::IPreferences* _DataManagerHotkeysPreferencesNode = m_DataManagerHotkeysPreferencesNode->Lock();
+
+  if(_DataManagerHotkeysPreferencesNode != nullptr)
+  //if(_DataManagerHotkeysPreferencesNode->IsNotNull())
   {
     bool duplicate = false;
     QString keyString;
@@ -154,10 +160,9 @@ bool sv4guiQmitkDataManagerHotkeysPrefPage::PerformOk()
     }
 
   //# no errors -> save all values and flush to file
-    for (auto it = m_HotkeyEditors.begin()
-      ; it != m_HotkeyEditors.end(); ++it)
-      _DataManagerHotkeysPreferencesNode->Put(it->first
-        , it->second->GetKeySequenceAsString());
+    for (auto it = m_HotkeyEditors.begin(); it != m_HotkeyEditors.end(); ++it) {
+      _DataManagerHotkeysPreferencesNode->Put(it->first.toStdString(), it->second->GetKeySequenceAsString().toStdString());
+    }
 
     _DataManagerHotkeysPreferencesNode->Flush();
 
@@ -173,13 +178,17 @@ void sv4guiQmitkDataManagerHotkeysPrefPage::PerformCancel()
 
 void sv4guiQmitkDataManagerHotkeysPrefPage::Update()
 {
-  IPreferences::Pointer _DataManagerHotkeysPreferencesNode = m_DataManagerHotkeysPreferencesNode.Lock();
-  if(_DataManagerHotkeysPreferencesNode.IsNotNull())
+  mitk::IPreferences* _DataManagerHotkeysPreferencesNode = m_DataManagerHotkeysPreferencesNode;
+  //dp IPreferences::Pointer _DataManagerHotkeysPreferencesNode = m_DataManagerHotkeysPreferencesNode.Lock();
+
+  if(_DataManagerHotkeysPreferencesNode != nullptr)
+  //dp if(_DataManagerHotkeysPreferencesNode.IsNotNull())
   {
-    for (auto it = m_HotkeyEditors.begin()
-      ; it != m_HotkeyEditors.end(); ++it)
-    {
-      it->second->setText(_DataManagerHotkeysPreferencesNode->Get(it->first, it->second->text()));
+    for (auto it = m_HotkeyEditors.begin() ; it != m_HotkeyEditors.end(); ++it) {
+      auto s1 = it->first.toStdString();
+      auto s2 = it->second->text().toStdString(); 
+      auto s3 = _DataManagerHotkeysPreferencesNode->Get(s1, s2);
+      it->second->setText(QString::fromStdString(s3));
     }
   }
 }

@@ -48,7 +48,7 @@ vtkStandardNewMacro(vtkSVCenterlineGCell);
 // ----------------------
 vtkSVCenterlineGCell::vtkSVCenterlineGCell()
 {
-  this->Parent   = NULL;
+  this->Parent   = nullptr;
   this->Id       = -1;
   this->GroupId  = -1;
   this->BranchDir      = -1;
@@ -84,7 +84,7 @@ vtkSVCenterlineGCell::vtkSVCenterlineGCell(int a_Id, int a_GroupId,
   this->RefAngle       = 0.0;
   for (int i=0; i<3; i++)
   {
-    if (a_Parent != NULL)
+    if (a_Parent != nullptr)
       this->StartPt[i] = a_Parent->EndPt[i];
     else
       this->StartPt[i] = -1.0;
@@ -104,7 +104,7 @@ vtkSVCenterlineGCell::vtkSVCenterlineGCell(int a_Id, int a_GroupId,
                                            int a_BranchDir, double a_StartPt[3],
                                            double a_EndPt[3])
 {
-  this->Parent   = NULL;
+  this->Parent   = nullptr;
   this->Id       = a_Id;
   this->GroupId  = a_GroupId;
   this->BranchDir      = a_BranchDir;
@@ -130,7 +130,7 @@ vtkSVCenterlineGCell::vtkSVCenterlineGCell(int a_Id, int a_GroupId,
 vtkSVCenterlineGCell::vtkSVCenterlineGCell(int a_Id, int a_GroupId,
                                            int a_BranchDir)
 {
-  this->Parent   = NULL;
+  this->Parent   = nullptr;
   this->Id       = a_Id;
   this->GroupId  = a_GroupId;
   this->BranchDir      = a_BranchDir;
@@ -157,10 +157,10 @@ vtkSVCenterlineGCell::~vtkSVCenterlineGCell()
 {
   for (int i=0; i<this->Children.size(); i++)
   {
-    if (this->Children[i] != NULL)
+    if (this->Children[i] != nullptr)
     {
       this->Children[i]->Delete();
-      this->Children[i] = NULL;
+      this->Children[i] = nullptr;
     }
   }
 }
@@ -172,7 +172,7 @@ int vtkSVCenterlineGCell::GetBeginningType(int &beginningType, int &splitType)
 {
   vtkSVCenterlineGCell *parent = this->Parent;
 
-  if (parent == NULL)
+  if (parent == nullptr)
   {
     splitType     = ZERO;
     beginningType = NONE;

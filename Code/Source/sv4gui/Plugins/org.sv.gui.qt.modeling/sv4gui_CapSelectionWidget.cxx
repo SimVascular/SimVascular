@@ -39,8 +39,8 @@
 sv4guiCapSelectionWidget::sv4guiCapSelectionWidget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::sv4guiCapSelectionWidget)
-    , m_TableModel(NULL)
-    , m_ModelElement(NULL)
+    , m_TableModel(nullptr)
+    , m_ModelElement(nullptr)
     , m_ModelType("")
 {
     ui->setupUi(this);
@@ -118,7 +118,7 @@ void sv4guiCapSelectionWidget::SetTableView(std::vector<std::string> caps, sv4gu
 std::vector<std::string> sv4guiCapSelectionWidget::GetUsedCapNames()
 {
     std::vector<std::string> capNames;
-    if(m_TableModel==NULL)
+    if(m_TableModel==nullptr)
         return capNames;
 
 //    int rowCount=m_TableModel->rowCount(QModelIndex());
@@ -136,7 +136,7 @@ std::vector<std::string> sv4guiCapSelectionWidget::GetUsedCapNames()
 
 void sv4guiCapSelectionWidget::SetUsedCapNames(std::set<std::string> capNames)
 {
-    if(m_TableModel==NULL) {
+    if(m_TableModel==nullptr) {
         return;
     }
 
@@ -159,7 +159,7 @@ std::vector<std::string> sv4guiCapSelectionWidget::GetUnselectedCapNames()
 {
     std::vector<std::string> capNames;
 
-    if(m_TableModel==NULL) {
+    if(m_TableModel==nullptr) {
         return capNames;
     }
 
@@ -194,7 +194,7 @@ void sv4guiCapSelectionWidget::TableViewContextMenuRequested( const QPoint & pos
 
 void sv4guiCapSelectionWidget::UseSelected(bool)
 {
-    if(m_TableModel==NULL)
+    if(m_TableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableView->selectionModel()->selectedRows();
@@ -215,7 +215,7 @@ void sv4guiCapSelectionWidget::UseSelected(bool)
 
 void sv4guiCapSelectionWidget::UseAll(bool)
 {
-    if(m_TableModel==NULL)
+    if(m_TableModel==nullptr)
         return;
 
     int rowCount=m_TableModel->rowCount();
@@ -230,7 +230,7 @@ void sv4guiCapSelectionWidget::UseAll(bool)
 
 void sv4guiCapSelectionWidget::NotUseSelected(bool)
 {
-    if(m_TableModel==NULL)
+    if(m_TableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableView->selectionModel()->selectedRows();
@@ -251,7 +251,7 @@ void sv4guiCapSelectionWidget::NotUseSelected(bool)
 
 void sv4guiCapSelectionWidget::UseNone(bool)
 {
-    if(m_TableModel==NULL)
+    if(m_TableModel==nullptr)
         return;
 
     int rowCount=m_TableModel->rowCount();

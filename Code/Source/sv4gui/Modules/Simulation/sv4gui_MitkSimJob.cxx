@@ -33,7 +33,7 @@
 
 sv4guiMitkSimJob::sv4guiMitkSimJob()
     : m_CalculateBoundingBox(true)
-//    , m_Job(NULL)
+//    , m_Job(nullptr)
     , m_MeshName("")
     , m_ModelName("")
     , m_Status("No Data Files")
@@ -55,7 +55,7 @@ sv4guiMitkSimJob::sv4guiMitkSimJob(const sv4guiMitkSimJob &other)
         if(other.m_JobSet[t])
             m_JobSet[t]=other.m_JobSet[t]->Clone();
 //        else
-//            m_JobSet.push_back(NULL);
+//            m_JobSet.push_back(nullptr);
     }
 }
 
@@ -168,7 +168,7 @@ sv4guiSimJob* sv4guiMitkSimJob::GetSimJob(unsigned int t) const
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }
 

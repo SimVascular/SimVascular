@@ -84,7 +84,7 @@ MeshExists(PyUtilApiFunction& api, cvMeshObject* mesher)
 {
   if (!mesher->HasVolumeMesh()) {
       api.error("No volume mesh has been generated.");
-      return nullptr;
+      return false;
   }
 
   return true;
@@ -153,7 +153,7 @@ static PyObject *
 Mesher_compute_model_boundary_faces(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("d", PyRunTimeErr, __func__);
-  static char *keywords[] = {"angle", NULL};
+  static char *keywords[] = {"angle", nullptr};
   double angle = 0.0;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &angle)) {
@@ -218,7 +218,7 @@ Mesher_get_face_polydata(PyMeshingMesher* self, PyObject* args, PyObject* kwargs
 {
   using namespace MeshingMesher;
   auto api = PyUtilApiFunction("i", PyRunTimeErr, __func__);
-  static char *keywords[] = {"face_id", NULL};
+  static char *keywords[] = {"face_id", nullptr};
   int faceID;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &faceID)) {
@@ -232,7 +232,7 @@ Mesher_get_face_polydata(PyMeshingMesher* self, PyObject* args, PyObject* kwargs
 
   // Get the cvPolyData:
   auto cvPolydata = mesher->GetFacePolyData(faceID);
-  if (cvPolydata == NULL) {
+  if (cvPolydata == nullptr) {
     api.error("Could not get mesh polydata for the face ID '" + std::to_string(faceID) + "'.");
     return nullptr;
   }
@@ -287,7 +287,7 @@ Mesher_get_mesh(PyMeshingMesher* self, PyObject* args)
 
   // Get the cvUnstructuredGrid:
   auto mesh = mesher->GetUnstructuredGrid();
-  if (mesh == NULL) {
+  if (mesh == nullptr) {
       api.error("Could not get the unstructured grid for the mesh.");
       return nullptr;
   }
@@ -399,7 +399,7 @@ Mesher_get_model_polydata(PyMeshingMesher* self, PyObject* args)
 
   // Get the cvPolyData:
   auto cvPolydata = mesher->GetSolid();
-  if (cvPolydata == NULL) {
+  if (cvPolydata == nullptr) {
       api.error("Could not get polydata for the mesh solid model.");
       return nullptr;
   }
@@ -429,7 +429,7 @@ static PyObject *
 Mesher_load_mesh(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("s|s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"volume_file", "surface_file", NULL};
+  static char *keywords[] = {"volume_file", "surface_file", nullptr};
   char *volumeFileName;
   char *surfFileName = nullptr;
 
@@ -482,7 +482,7 @@ static PyObject *
 Mesher_load_model(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", NULL};
+  static char *keywords[] = {"file_name", nullptr};
   char *fileName;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
@@ -532,7 +532,7 @@ Mesher_get_surface(PyMeshingMesher* self, PyObject* args)
 
   // Get the cvPolyData:
   auto cvPolydata = mesher->GetPolyData();
-  if (cvPolydata == NULL) {
+  if (cvPolydata == nullptr) {
       api.error("Could not get polydata for the mesh.");
       return nullptr;
   }
@@ -570,7 +570,7 @@ static PyObject *
 Mesher_set_boundary_layer_options(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("iddO!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"number_of_layers", "edge_size_fraction", "layer_decreasing_ratio", "constant_thickness", NULL};
+  static char *keywords[] = {"number_of_layers", "edge_size_fraction", "layer_decreasing_ratio", "constant_thickness", nullptr};
   int numLayers;
   double edgeSizeFraction;
   double layerDecreasingRatio;
@@ -625,7 +625,7 @@ static PyObject *
 Mesher_set_walls(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"face_ids", NULL};
+  static char *keywords[] = {"face_ids", nullptr};
   PyObject* faceIDsList;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &faceIDsList)) {
@@ -698,7 +698,7 @@ Mesher_write_mesh(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 {
   using namespace MeshingMesher;
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", NULL};
+  static char *keywords[] = {"file_name", nullptr};
   char *fileName;
   int smsver = 0;
 
@@ -811,7 +811,7 @@ Mesher_set_vtk_polydata(PyMeshingMesher* self, PyObject* args)
   }
 
   auto pd = ((cvPolyData *)obj)->GetVtkPolyData();
-  if (pd == NULL) {
+  if (pd == nullptr) {
       api.error("Could not get polydata for the mesh.");
       return nullptr;
   }
@@ -850,7 +850,7 @@ Mesher_logging_on(PyObject* self, PyObject* args)
   }
 
   auto meshKernel = cvMesherSystem::GetCurrentKernel();
-  if (meshKernel == NULL) {
+  if (meshKernel == nullptr) {
       api.error("The mesh kernel is not set.");
       return nullptr;
   }
@@ -882,7 +882,7 @@ Mesher_logging_off(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto meshKernel = cvMesherSystem::GetCurrentKernel();
-  if (meshKernel == NULL) {
+  if (meshKernel == nullptr) {
       api.error("The mesh kernel is not set.");
       return nullptr;
   }
@@ -1132,7 +1132,7 @@ static PyMethodDef PyMeshingMesherMethods[] = {
 
 #endif // use_old_class_funcs
 
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 
@@ -1145,7 +1145,7 @@ static PyMethodDef PyMeshingMesherMethods[] = {
 // each of which implements a small part of the type’s functionality.
 //
 static PyTypeObject PyMeshingMesherType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   MESHING_MESHER_MODULE_CLASS,
   sizeof(PyMeshingMesher)
 };
@@ -1162,7 +1162,7 @@ static PyTypeObject PyMeshingMesherType = {
 //
 using PyMesherCtorMapType = std::map<cvMeshObject::KernelType, std::function<PyObject*()>>;
 PyMesherCtorMapType PyMesherCtorMap = {
-  //{cvMeshObject::KernelType::KERNEL_TETGEN, []()->PyObject* {return PyObject_CallObject((PyObject*)&PyMeshingTetGenType, NULL);}},
+  //{cvMeshObject::KernelType::KERNEL_TETGEN, []()->PyObject* {return PyObject_CallObject((PyObject*)&PyMeshingTetGenType, nullptr);}},
 };
 
 // Include derived mesh generator classes.
@@ -1287,7 +1287,7 @@ PyMeshingMesherNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 */
 
   auto self = (PyMeshingMesher*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->id = 1;
   }
 

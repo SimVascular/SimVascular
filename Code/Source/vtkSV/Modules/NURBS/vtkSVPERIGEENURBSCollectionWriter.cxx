@@ -59,8 +59,8 @@ static char header[]="Visualization Toolkit generated SLA File                  
 
 vtkSVPERIGEENURBSCollectionWriter::vtkSVPERIGEENURBSCollectionWriter()
 {
-  this->FileName = NULL;
-  this->InternalCollection = NULL;
+  this->FileName = nullptr;
+  this->InternalCollection = nullptr;
 }
 
 void vtkSVPERIGEENURBSCollectionWriter::SetInputData(vtkSVNURBSCollection *input)
@@ -143,7 +143,7 @@ int vtkSVPERIGEENURBSCollectionWriter::RequestData(
 {
  int numInputs = this->GetNumberOfInputPorts();
 
-  if (this->FileName == NULL)
+  if (this->FileName == nullptr)
   {
     vtkErrorMacro(<< "Please specify FileName to write");
     this->SetErrorCode(vtkErrorCode::NoFileNameError);
@@ -184,7 +184,7 @@ int vtkSVPERIGEENURBSCollectionWriter::RequestData(
 
     FILE *fp;
 
-    if ((fp = fopen(fn.c_str(), "w")) == NULL)
+    if ((fp = fopen(fn.c_str(), "w")) == nullptr)
     {
       vtkErrorMacro(<< "Couldn't open file: " << this->FileName);
       this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
@@ -220,7 +220,7 @@ void vtkSVPERIGEENURBSCollectionWriter::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 
   os << indent << "FileName: "
-     << ((this->GetFileName() == NULL) ?
+     << ((this->GetFileName() == nullptr) ?
          "(none)" : this->GetFileName()) << std::endl;
 }
 

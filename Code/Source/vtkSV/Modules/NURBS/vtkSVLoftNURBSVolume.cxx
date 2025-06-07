@@ -80,13 +80,13 @@ vtkSVLoftNURBSVolume::vtkSVLoftNURBSVolume()
   this->InputGrid = vtkStructuredGrid::New();
   this->Volume = vtkSVNURBSVolume::New();
 
-  this->UKnotSpanType        = NULL;
-  this->VKnotSpanType        = NULL;
-  this->WKnotSpanType        = NULL;
+  this->UKnotSpanType        = nullptr;
+  this->VKnotSpanType        = nullptr;
+  this->WKnotSpanType        = nullptr;
 
-  this->UParametricSpanType = NULL;
-  this->VParametricSpanType = NULL;
-  this->WParametricSpanType = NULL;
+  this->UParametricSpanType = nullptr;
+  this->VParametricSpanType = nullptr;
+  this->WParametricSpanType = nullptr;
 }
 
 // ----------------------
@@ -94,68 +94,68 @@ vtkSVLoftNURBSVolume::vtkSVLoftNURBSVolume()
 // ----------------------
 vtkSVLoftNURBSVolume::~vtkSVLoftNURBSVolume()
 {
-  if (this->InputGrid != NULL)
+  if (this->InputGrid != nullptr)
   {
     this->InputGrid->Delete();
   }
-  if (this->Volume != NULL)
+  if (this->Volume != nullptr)
   {
     this->Volume->Delete();
   }
-  if (this->StartUDerivatives != NULL)
+  if (this->StartUDerivatives != nullptr)
   {
     this->StartUDerivatives->Delete();
   }
-  if (this->StartVDerivatives != NULL)
+  if (this->StartVDerivatives != nullptr)
   {
     this->StartVDerivatives->Delete();
   }
-  if (this->StartWDerivatives != NULL)
+  if (this->StartWDerivatives != nullptr)
   {
     this->StartWDerivatives->Delete();
   }
-  if (this->EndUDerivatives != NULL)
+  if (this->EndUDerivatives != nullptr)
   {
     this->EndUDerivatives->Delete();
   }
-  if (this->EndVDerivatives != NULL)
+  if (this->EndVDerivatives != nullptr)
   {
     this->EndVDerivatives->Delete();
   }
-  if (this->EndWDerivatives != NULL)
+  if (this->EndWDerivatives != nullptr)
   {
     this->EndWDerivatives->Delete();
   }
 
-  if (this->UKnotSpanType != NULL)
+  if (this->UKnotSpanType != nullptr)
   {
     delete [] this->UKnotSpanType;
-    this->UKnotSpanType = NULL;
+    this->UKnotSpanType = nullptr;
   }
-  if (this->VKnotSpanType != NULL)
+  if (this->VKnotSpanType != nullptr)
   {
     delete [] this->VKnotSpanType;
-    this->VKnotSpanType = NULL;
+    this->VKnotSpanType = nullptr;
   }
-  if (this->WKnotSpanType != NULL)
+  if (this->WKnotSpanType != nullptr)
   {
     delete [] this->WKnotSpanType;
-    this->WKnotSpanType = NULL;
+    this->WKnotSpanType = nullptr;
   }
-  if (this->UParametricSpanType != NULL)
+  if (this->UParametricSpanType != nullptr)
   {
     delete [] this->UParametricSpanType;
-    this->UParametricSpanType = NULL;
+    this->UParametricSpanType = nullptr;
   }
-  if (this->VParametricSpanType != NULL)
+  if (this->VParametricSpanType != nullptr)
   {
     delete [] this->VParametricSpanType;
-    this->VParametricSpanType = NULL;
+    this->VParametricSpanType = nullptr;
   }
-  if (this->WParametricSpanType != NULL)
+  if (this->WParametricSpanType != nullptr)
   {
     delete [] this->WParametricSpanType;
-    this->WParametricSpanType = NULL;
+    this->WParametricSpanType = nullptr;
   }
 }
 
@@ -174,25 +174,25 @@ int vtkSVLoftNURBSVolume::RequestData(
 
   this->InputGrid->DeepCopy(input);
 
-  if (this->InputGrid == NULL)
+  if (this->InputGrid == nullptr)
   {
     vtkErrorMacro("Need to set the input grid");
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
 
-  if (this->UKnotSpanType == NULL ||
-      this->VKnotSpanType == NULL ||
-      this->WKnotSpanType == NULL)
+  if (this->UKnotSpanType == nullptr ||
+      this->VKnotSpanType == nullptr ||
+      this->WKnotSpanType == nullptr)
   {
     vtkErrorMacro("Need to provide knot span types for u, v, w directions");
     this->SetErrorCode(vtkErrorCode::UserError + 2);
     return SV_ERROR;
   }
 
-  if (this->UParametricSpanType == NULL ||
-      this->VParametricSpanType == NULL ||
-      this->WParametricSpanType == NULL)
+  if (this->UParametricSpanType == nullptr ||
+      this->VParametricSpanType == nullptr ||
+      this->WParametricSpanType == nullptr)
   {
     vtkErrorMacro("Need to provide parametric span types for u, v, w directions");
     this->SetErrorCode(vtkErrorCode::UserError + 3);

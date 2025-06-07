@@ -81,7 +81,7 @@ std::vector<mitk::Point3D> sv4guiMath3::CreateSmoothedCurve(std::vector<mitk::Po
         pts[i][1] = actualPoints[i][1];
         pts[i][2] = actualPoints[i][2];
     }
-    double **outPts = NULL;
+    double **outPts = nullptr;
     int isClosed=closed?1:0;
     int rslt;
     if(closed)

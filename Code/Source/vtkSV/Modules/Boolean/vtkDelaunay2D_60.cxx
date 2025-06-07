@@ -71,7 +71,7 @@ vtkDelaunay2D_60::vtkDelaunay2D_60()
   this->Tolerance = 0.00001;
   this->BoundingTriangulation = 0;
   this->Offset = 1.0;
-  this->Transform = NULL;
+  this->Transform = nullptr;
   this->ProjectionPlaneMode = VTK_DELAUNAY_XY_PLANE;
 
   // optional 2nd input
@@ -104,7 +104,7 @@ vtkPolyData *vtkDelaunay2D_60::GetSource()
 {
   if (this->GetNumberOfInputConnections(1) < 1)
     {
-    return NULL;
+    return nullptr;
     }
   return vtkPolyData::SafeDownCast(
     this->GetExecutive()->GetInputData(1, 0));
@@ -147,9 +147,10 @@ vtkIdType vtkDelaunay2D_60::FindTriangle(double x[3], vtkIdType ptIds[3],
                                       vtkIdType nei[3], vtkIdList *neighbors)
 {
   int i, j, ir, ic, inside, i2, i3;
-  vtkIdType *pts, npts, newNei;
+  vtkIdType npts, newNei;
   double p[3][3], n[2], vp[2], vx[2], dp, minProj;
 
+  const vtkIdType* pts;
   // get local triangle info
   this->Mesh->GetCellPoints(tri,npts,pts);
   for (i=0; i<3; i++)
@@ -243,7 +244,8 @@ void vtkDelaunay2D_60::CheckEdge(vtkIdType ptId, double x[3], vtkIdType p1,
                               vtkIdType p2, vtkIdType tri)
 {
   int i;
-  vtkIdType *pts, npts, numNei, nei, p3;
+  vtkIdType npts, numNei, nei, p3;
+  const vtkIdType* pts;
   double x1[3], x2[3], x3[3];
   vtkIdList *neighbors;
   vtkIdType swapTri[3];
@@ -335,11 +337,12 @@ int vtkDelaunay2D_60::RequestData(
   vtkIdType p3 = 0;
   vtkPoints *inPoints;
   vtkPoints *points;
-  vtkPoints *tPoints = NULL;
+  vtkPoints *tPoints = nullptr;
   vtkCellArray *triangles;
   int ncells;
-  vtkIdType nodes[4][3], *neiPts;
-  vtkIdType *triPts = 0;
+  vtkIdType nodes[4][3];
+  const vtkIdType *neiPts;
+  const vtkIdType *triPts;
   vtkIdType numNeiPts;
   vtkIdType npts = 0;
   vtkIdType pts[3], swapPts[3];
@@ -347,7 +350,7 @@ int vtkDelaunay2D_60::RequestData(
   vtkIdType tri1, tri2;
   double center[3], radius, tol, x[3];
   double n1[3], n2[3];
-  int *triUse = NULL;
+  int *triUse = nullptr;
   double *bounds;
 
   vtkDebugMacro(<<"Generating 2D Delaunay triangulation");
@@ -364,7 +367,7 @@ int vtkDelaunay2D_60::RequestData(
 
   // Initialize; check input
   //
-  if ( (inPoints=input->GetPoints()) == NULL )
+  if ( (inPoints=input->GetPoints()) == nullptr )
     {
     vtkDebugMacro("Cannot triangulate; no input points");
     return 1;
@@ -428,7 +431,7 @@ int vtkDelaunay2D_60::RequestData(
     {
     points->DeepCopy(tPoints);
     tPoints->Delete();
-    tPoints = NULL;
+    tPoints = nullptr;
     }
 
   bounds = points->GetBounds();
@@ -758,7 +761,7 @@ int vtkDelaunay2D_60::RequestData(
   // - the bounding triangulation must be deleted
   //   (BoundingTriangulation == OFF)
   // - alpha spheres are not used (Alpha == 0.0)
-  // - the triangulation is not constrained (source == NULL)
+  // - the triangulation is not constrained (source == nullptr)
 
   if ( !this->BoundingTriangulation && this->Alpha == 0.0 && !source )
     {
@@ -950,7 +953,7 @@ int vtkDelaunay2D_60::RequestData(
     {
     vtkCellArray *alphaTriangles = vtkCellArray::New();
     alphaTriangles->Allocate(numTriangles);
-    vtkIdType *alphaTriPts;
+    const vtkIdType *alphaTriPts;
 
     for (i=0; i<numTriangles; i++)
       {
@@ -978,7 +981,7 @@ int vtkDelaunay2D_60::RequestData(
     if (this->Transform)
       {
       this->Transform->UnRegister(this);
-      this->Transform = NULL;
+      this->Transform = nullptr;
       }
     }
 
@@ -999,7 +1002,7 @@ int *vtkDelaunay2D_60::RecoverBoundary(vtkPolyData *source)
 {
   vtkCellArray *lines=source->GetLines();
   vtkCellArray *polys=source->GetPolys();
-  vtkIdType *pts = 0;
+  const vtkIdType *pts;
   vtkIdType npts = 0;
   vtkIdType i, p1, p2;
   int *triUse;
@@ -1060,7 +1063,8 @@ int vtkDelaunay2D_60::RecoverEdge(vtkIdType p1, vtkIdType p2)
   double p1X[3], p2X[3], xyNormal[3], splitNormal[3], p21[3];
   double x1[3], x2[3], sepNormal[3], v21[3];
   int ncells, v1=0, v2=0, signX1=0, signX2, signP1, signP2;
-  vtkIdType *pts, *leftTris, *rightTris, npts, numRightTris, numLeftTris;
+  vtkIdType *leftTris, *rightTris, npts, numRightTris, numLeftTris;
+  const vtkIdType *pts;
   int success=0;
 
   vtkIdList *cells=vtkIdList::New(); cells->Allocate(64);
@@ -1255,8 +1259,8 @@ void vtkDelaunay2D_60::FillPolygons(vtkCellArray *polys, int *triUse)
 {
   vtkIdType p1, p2, j, kk;
   int i, k;
-  vtkIdType *pts = 0;
-  vtkIdType *triPts;
+  const vtkIdType *pts;
+  const vtkIdType *triPts;
   vtkIdType npts = 0;
   vtkIdType numPts;
   static double xyNormal[3]={0.0,0.0,1.0};

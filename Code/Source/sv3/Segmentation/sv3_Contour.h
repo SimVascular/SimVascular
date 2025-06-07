@@ -36,7 +36,6 @@
 
 #include <sv3SegmentationExports.h>
 
-#include "sv_RepositoryData.h"
 #include "sv_FactoryRegistrar.h"
 #include "sv3_PathElement.h"
 
@@ -127,7 +126,7 @@ public:
 
     virtual ~Contour();
 
-    virtual Contour* Clone(){return NULL;};
+    virtual Contour* Clone(){return nullptr;};
 
     virtual std::string GetClassName();
 
@@ -278,7 +277,7 @@ public:
     
     virtual void SetLevelSetParas(svLSParam* paras){return;};
     
-    virtual svLSParam* GetLevelSetParas(){return NULL;};
+    virtual svLSParam* GetLevelSetParas(){return nullptr;};
     
     virtual void SetThresholdValue(double thresholdValue){return;}
     

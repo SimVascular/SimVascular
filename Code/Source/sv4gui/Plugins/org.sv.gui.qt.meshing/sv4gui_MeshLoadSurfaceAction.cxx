@@ -54,9 +54,9 @@ void sv4guiMeshLoadSurfaceAction::Run(const QList<mitk::DataNode::Pointer> &sele
     sv4guiMesh* mesh=mitkMesh->GetMesh();
     if(!mesh) return;
 
-    if(mesh->GetSurfaceMesh()==NULL)
+    if(mesh->GetSurfaceMesh()==nullptr)
     {
-        if (QMessageBox::question(NULL, "Load Surface Mesh from File", "Do you want to load surface mesh from file if applicable?",
+        if (QMessageBox::question(nullptr, "Load Surface Mesh from File", "Do you want to load surface mesh from file if applicable?",
                                   QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
         {
           return;
@@ -72,14 +72,14 @@ void sv4guiMeshLoadSurfaceAction::Run(const QList<mitk::DataNode::Pointer> &sele
     }
     else
     {
-        if (QMessageBox::question(NULL, "Unload Surface/Volume Mesh", "Do you want to unload surface and volume mesh?",
+        if (QMessageBox::question(nullptr, "Unload Surface/Volume Mesh", "Do you want to unload surface and volume mesh?",
                                   QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
         {
           return;
         }
 
-        mesh->SetSurfaceMesh(NULL);
-        mesh->SetVolumeMesh(NULL);
+        mesh->SetSurfaceMesh(nullptr);
+        mesh->SetVolumeMesh(nullptr);
     }
 
     mitkMesh->SetMesh(mesh);

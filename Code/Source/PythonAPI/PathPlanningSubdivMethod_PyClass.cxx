@@ -143,7 +143,7 @@ PyDoc_STRVAR(PathSubdivisionMethod_doc,
 //
 static PyMethodDef PyPathSubdivisionMethodMethods[] = {
   { "get_names", (PyCFunction)PathSubdivisionMethod_get_names, METH_NOARGS, PathSubdivisionMethod_get_names_doc},
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //------------------------------
@@ -152,7 +152,7 @@ static PyMethodDef PyPathSubdivisionMethodMethods[] = {
 // Define the Python type object that stores path.CalculationMethod types.
 //
 static PyTypeObject PyPathSubdivisionMethodType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   PATH_SUBDIVISION_METHOD_MODULE_CLASS,
   sizeof(PyPathSubdivisionMethod)
 };

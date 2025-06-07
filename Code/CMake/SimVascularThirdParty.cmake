@@ -71,31 +71,18 @@ endif()
 #-----------------------------------------------------------------------------
 # TINYXML
 if(SV_USE_TINYXML)
-	SET(USE_TINYXML ON)
+  SET(USE_TINYXML ON)
   SET(SV_USE_TINYXML ON)
-	simvascular_third_party(tinyxml)
-	if(NOT SV_USE_SYSTEM_TINYXML)
-    set(TINYXML_LIBRARY ${SV_LIB_THIRDPARTY_TINYXML_NAME})
-	else()
-		simvascular_external(TINYXML)
-	endif()
-else()
-	unset(TINYXML_LIBRARY CACHE)
-endif()
+  # [DaveP] simvascular_third_party(tinyxml)
 
-#-----------------------------------------------------------------------------
-# TINYXML2
-if(SV_USE_TINYXML2)
-	SET(USE_TINYXML2 ON)
-  SET(SV_USE_TINYXML2 ON)
-	simvascular_third_party(tinyxml2)
-	if(NOT SV_USE_SYSTEM_TINYXML2)
-    set(TINYXML2_LIBRARY ${SV_LIB_THIRDPARTY_TINYXML2_NAME})
-	else()
-		simvascular_external(TINYXML2)
-	endif()
+  if(NOT SV_USE_SYSTEM_TINYXML)
+    set(TINYXML_LIBRARY ${SV_LIB_THIRDPARTY_TINYXML_NAME})
+  else()
+    simvascular_external(TINYXML)
+  endif()
+
 else()
-	unset(TINYXML2_LIBRARY CACHE)
+  unset(TINYXML_LIBRARY CACHE)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -126,5 +113,4 @@ if(SV_USE_SOLVERIO)
 else()
   unset(SOLVERIO_LIBRARY)
 endif()
-
 #-----------------------------------------------------------------------------

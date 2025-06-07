@@ -28,6 +28,13 @@
 # GDCM
 set(proj GDCM)
 
+message(STATUS "[GDCM.cmake] ")
+message(STATUS "[GDCM.cmake] -------------------------------------------------------------------------------------")
+message(STATUS "[GDCM.cmake] +++++                            GDCM.cmake                                          ")
+message(STATUS "[GDCM.cmake] -------------------------------------------------------------------------------------")
+message(STATUS "[GDCM.cmake] proj: ${proj}")
+message(STATUS "[GDCM.cmake] SV_GDCM_DIR: ${SV_GDCM_DIR}")
+
 #if(NOT SV_EXTERNALS_DOWNLOAD_${proj})
 #  # Find SWIG!
 #  find_package(SWIG REQUIRED)
@@ -84,41 +91,61 @@ if(APPLE AND SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "2.6.3")
 endif()
 
 # Add external project
-if(SV_EXTERNALS_DOWNLOAD_${proj})
-  ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    UPDATE_COMMAND ""
-    )
+
+if (SV_GDCM_DIR STREQUAL "system")
+#if(SV_EXTERNALS_DOWNLOAD_${proj})
+
+  message(STATUS "[GDCM.cmake] Use system GDCM") 
+
+  find_package(GDCM REQUIRED PATHS ${SV_GDCM_DIR} NO_DEFAULT_PATH)
+
+  if(GDCM_FOUND)
+    message(STATUS "[GDCM.cmake] GDCM found") 
+  else()
+    message(FATAL_ERROR "[GDCM.cmake] GDCM not found")
+  endif()
+
+  message(STATUS "[GDCM.cmake] GDCM_DIR: ${GDCM_DIR}") 
+  message(STATUS "[GDCM.cmake] GDCM_INCLUDE_DIRS: ${GDCM_INCLUDE_DIRS}") 
+  message(STATUS "[GDCM.cmake] GDCM_LIBRARY_DIRS: ${GDCM_LIBRARY_DIRS}") 
+
+  #ExternalProject_Add(${proj}
+    #URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #CONFIGURE_COMMAND ""
+    #BUILD_COMMAND ""
+    #INSTALL_COMMAND ""
+    #UPDATE_COMMAND ""
+    #)
+
 else()
-  ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-    UPDATE_COMMAND ""
-    CMAKE_CACHE_ARGS
-      -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
-      -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
-      -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-      -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-      -DCMAKE_MACOSX_RPATH:BOOL=ON
-      -DGDCM_BUILD_SHARED_LIBS:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
-      -DGDCM_USE_VTK:BOOL=OFF
-      -DGDCM_WRAP_PYTHON:BOOL=${SV_EXTERNALS_ENABLE_PYTHON}
-      -DGDCM_BUILD_APPLICATIONS:BOOL=ON
-      -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
-      ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
-    )
+
+  #ExternalProject_Add(${proj}
+    #URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+    #UPDATE_COMMAND ""
+    #CMAKE_CACHE_ARGS
+      #-DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+      #-DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+      #-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+      #-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+      #-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+      #-DCMAKE_MACOSX_RPATH:BOOL=ON
+      #-DGDCM_BUILD_SHARED_LIBS:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
+      #-DGDCM_USE_VTK:BOOL=OFF
+      #-DGDCM_WRAP_PYTHON:BOOL=${SV_EXTERNALS_ENABLE_PYTHON}
+      #-DGDCM_BUILD_APPLICATIONS:BOOL=ON
+      #-DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
+      #${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
+    #)
+
 endif()
 #TODO Add install rpath
 

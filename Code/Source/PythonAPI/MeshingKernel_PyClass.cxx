@@ -110,7 +110,7 @@ MeshingKernel_get_names()
 //
 static PyMethodDef MeshingKernelMethods[] = {
   { "get_names", (PyCFunction)MeshingKernel_get_names, METH_NOARGS, ModelingKernel_get_names_doc},
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 ////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ PyDoc_STRVAR(PyMeshingKernel_doc,
 // Define the Python type object that stores contour.kernel types.
 //
 static PyTypeObject PyMeshingKernelType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   MESHING_KERNEL_MODULE_CLASS,
   sizeof(PyMeshingKernel)
 };

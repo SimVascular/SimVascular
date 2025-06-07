@@ -42,7 +42,7 @@
 
 #include "sv4gui_ModelDataInteractor.h"
 
-#include <berryIBerryPreferences.h>
+//dp #include <berryIBerryPreferences.h>
 
 #include <QWidget>
 #include <QStandardItemModel>
@@ -56,10 +56,10 @@ class SV_QT_ROMSIMULATION sv4guiProcessHandlerROM : public QObject
 public:
 
     sv4guiProcessHandlerROM(QProcess* process, mitk::DataNode::Pointer jobNode, bool multithreading=false, 
-        bool stoppable=true, QWidget* parent=NULL);
+        bool stoppable=true, QWidget* parent=nullptr);
 
     //sv4guiProcessHandlerROM(QProcess* process, mitk::DataNode::Pointer jobNode, bool multithreading=true, 
-    //    bool stoppable=true, QWidget* parent=NULL);
+    //    bool stoppable=true, QWidget* parent=nullptr);
 
     virtual ~sv4guiProcessHandlerROM();
 

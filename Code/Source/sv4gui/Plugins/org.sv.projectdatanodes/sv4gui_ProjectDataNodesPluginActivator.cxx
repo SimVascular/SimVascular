@@ -55,6 +55,7 @@ static Registersv4guiMitkROMSimulationObjectFactory registersv4guiMitkROMSimulat
 
 sv4guiProjectDataNodesPluginActivator::sv4guiProjectDataNodesPluginActivator()
 {
+    std::cout << "sv4guiProjectDataNodesPluginActivator::sv4guiProjectDataNodesPluginActivator()" << std::endl << std::flush;
 }
 
 sv4guiProjectDataNodesPluginActivator::~sv4guiProjectDataNodesPluginActivator()
@@ -169,7 +170,7 @@ void sv4guiProjectDataNodesPluginActivator::stop(ctkPluginContext* context)
 //void sv4guiProjectDataNodesPluginActivator::SetupDataManagerDoubleClick()
 //{
 //    berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
-//    if(workbench==NULL)
+//    if(workbench==nullptr)
 //        return;
 
 //    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow();

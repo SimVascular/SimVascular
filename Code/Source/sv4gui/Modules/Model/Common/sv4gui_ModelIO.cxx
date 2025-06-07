@@ -34,10 +34,13 @@
 #include "sv4gui_ModelElementAnalytic.h"
 #include "sv4gui_ModelElementFactory.h"
 
+#include "sv4gui_ContourGroupIO.h"
+auto set_string_from_attribute = &sv4guiContourGroupIO::set_string_from_attribute;
+
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
 
-#include <tinyxml.h>
+#include <tinyxml2.h>
 
 #include <vtkCleanPolyData.h>
 #include <vtkXMLPolyDataReader.h>
@@ -81,9 +84,9 @@ std::vector<mitk::BaseData::Pointer> sv4guiModelIO::ReadFile(std::string fileNam
 //
 sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
 {
-    TiXmlDocument document;
+    tinyxml2::XMLDocument document;
 
-    if (!document.LoadFile(fileName))
+    if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
 //        return result;
@@ -91,7 +94,7 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
 
     //    TiXmlElement* version = document.FirstChildElement("format");
 
-    TiXmlElement* modelElement = document.FirstChildElement("model");
+    auto modelElement = document.FirstChildElement("model");
 
     if(!modelElement){
         mitkThrow() << "No Model data in "<< fileName;
@@ -99,12 +102,14 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
     }
 
     sv4guiModel::Pointer model = sv4guiModel::New();
-    std::string modelType="";
-    modelElement->QueryStringAttribute("type",&modelType);
+    //std::string modelType="";
+    //modelElement->QueryStringAttribute("type", &modelType);
+    const char* modelType="";
+    //modelElement->QueryStringAttribute("type", &modelType);
     model->SetType(modelType);
 
     int timestep=-1;
-    for( TiXmlElement* timestepElement = modelElement->FirstChildElement("timestep");
+    for( auto timestepElement = modelElement->FirstChildElement("timestep");
          timestepElement != nullptr;
          timestepElement = timestepElement->NextSiblingElement("timestep") )
     {
@@ -115,10 +120,10 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
         timestep++;
         model->Expand(timestep+1);
 
-        TiXmlElement* meElement = timestepElement->FirstChildElement("model_element");
+        auto meElement = timestepElement->FirstChildElement("model_element");
         if(meElement != nullptr)
         {
-            std::string type="";
+            const char* type="";
             meElement->QueryStringAttribute("type", &type);
             if(type=="")
             {
@@ -127,7 +132,7 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
             }
 
             sv4guiModelElement* me=sv4guiModelElementFactory::CreateModelElement(type);
-            if(me==NULL)
+            if(me==nullptr)
             {
                 mitkThrow() << "No model constructor available for model type: "<< type;
 //                return result;
@@ -155,7 +160,7 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
             if(meAnalytic)
             {
                 double maxDist=0;
-                if(meElement->QueryDoubleAttribute("max_dist", &maxDist)==TIXML_SUCCESS)
+                if(meElement->QueryDoubleAttribute("max_dist", &maxDist) == tinyxml2::XML_SUCCESS)
                 {
                     meAnalytic->SetMaxDist(maxDist);
                 }
@@ -173,7 +178,8 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
             svLoftingParam* param=me->GetLoftingParam();
             if(useUniform && param )
             {
-                meElement->QueryStringAttribute("method", &param->method);
+                set_string_from_attribute(meElement, "method", param->method);
+                // davep meElement->QueryStringAttribute("method", &param->method);
 
                 meElement->QueryIntAttribute("sampling", &param->numOutPtsInSegs);
                 meElement->QueryIntAttribute("sample_per_seg",&param->samplePerSegment);
@@ -184,17 +190,18 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
 
                 meElement->QueryIntAttribute("u_degree",&param->uDegree);
                 meElement->QueryIntAttribute("v_degree",&param->vDegree);
-                meElement->QueryStringAttribute("u_knot_type",&param->uKnotSpanType);
-                meElement->QueryStringAttribute("v_knot_type",&param->vKnotSpanType);
-                meElement->QueryStringAttribute("u_parametric_type",&param->uParametricSpanType);
-                meElement->QueryStringAttribute("v_parametric_type",&param->vParametricSpanType);
+
+                set_string_from_attribute(meElement, "u_knot_type",param->uKnotSpanType);
+                set_string_from_attribute(meElement, "v_knot_type", param->vKnotSpanType);
+                set_string_from_attribute(meElement, "u_parametric_type",param->uParametricSpanType);
+                set_string_from_attribute(meElement, "v_parametric_type",param->vParametricSpanType);
             }
 
-            TiXmlElement* facesElement = meElement->FirstChildElement("faces");
+            auto facesElement = meElement->FirstChildElement("faces");
             if(facesElement!=nullptr)
             {
                 std::vector<sv4guiModelElement::svFace*> faces;
-                for( TiXmlElement* faceElement = facesElement->FirstChildElement("face");
+                for( auto faceElement = facesElement->FirstChildElement("face");
                      faceElement != nullptr;
                      faceElement =faceElement->NextSiblingElement("face") )
                 {
@@ -211,15 +218,17 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
                     float color3=1.0f;
 
                     faceElement->QueryIntAttribute("id", &id);
-                    faceElement->QueryStringAttribute("name", &name);
-                    faceElement->QueryStringAttribute("type", &facetype);
-                    faceElement->QueryStringAttribute("visible", &isVisible);
+
+                    set_string_from_attribute(faceElement, "name", name);
+                    set_string_from_attribute(faceElement, "type", facetype);
+                    set_string_from_attribute(faceElement, "visible", isVisible);
+
                     faceElement->QueryFloatAttribute("opacity", &opacity);
                     faceElement->QueryFloatAttribute("color1", &color1);
                     faceElement->QueryFloatAttribute("color2", &color2);
                     faceElement->QueryFloatAttribute("color3", &color3);
 
-                    vtkSmartPointer<vtkPolyData> facepd=NULL;
+                    vtkSmartPointer<vtkPolyData> facepd=nullptr;
                     //face id not exists in parasolid, so skip this and set later.
                     if(type!="Parasolid")
                         facepd=me->CreateFaceVtkPolyData(id);
@@ -240,11 +249,11 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
                 me->SetFaces(faces);
             }
 
-            TiXmlElement* segsElement = meElement->FirstChildElement("segmentations");
+            auto segsElement = meElement->FirstChildElement("segmentations");
             if(segsElement!=nullptr)
             {
                 std::vector<std::string> segNames;
-                for( TiXmlElement* segElement = segsElement->FirstChildElement("seg");
+                for( auto segElement = segsElement->FirstChildElement("seg");
                      segElement != nullptr;
                      segElement = segElement->NextSiblingElement("seg") )
                 {
@@ -252,17 +261,18 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
                         continue;
 
                     std::string name;
-                    segElement->QueryStringAttribute("name", &name);
+                    set_string_from_attribute(segElement, "name", name);
                     segNames.push_back(name);
                 }
+
                 me->SetSegNames(segNames);
             }
 
-            TiXmlElement* blendRadiiElement = meElement->FirstChildElement("blend_radii");
+            auto blendRadiiElement = meElement->FirstChildElement("blend_radii");
             if(blendRadiiElement!=nullptr)
             {
                 std::vector<sv4guiModelElement::svBlendParamRadius*> blendRadii;
-                for( TiXmlElement* radiusElement = blendRadiiElement->FirstChildElement("face_pair");
+                for( auto radiusElement = blendRadiiElement->FirstChildElement("face_pair");
                      radiusElement != nullptr;
                      radiusElement =blendRadiiElement->NextSiblingElement("face_pair") )
                 {
@@ -286,7 +296,7 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
 
             if(type=="PolyData")
             {
-                TiXmlElement* blendElement = meElement->FirstChildElement("blend_param");
+                auto blendElement = meElement->FirstChildElement("blend_param");
                 if(blendElement!=nullptr)
                 {
                     sv4guiModelElement::svBlendParam* param=me->GetBlendParam();
@@ -295,7 +305,7 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
                     blendElement->QueryIntAttribute("cstr_smooth_iter", &(param->numcgsmoothiters));
                     blendElement->QueryIntAttribute("lap_smooth_iter", &(param->numlapsmoothiters));
                     blendElement->QueryIntAttribute("subdivision_iters", &(param->numsubdivisioniters));
-                    blendElement->QueryDoubleAttribute("decimation", &(param->targetdecimation));
+                    blendElement->QueryAttribute("decimation", &(param->targetdecimation));
                 }
             }
 
@@ -373,18 +383,18 @@ void sv4guiModelIO::Write()
 //
 void sv4guiModelIO::WriteGroupToFile(sv4guiModel* model, std::string& fileName)
 {
-    TiXmlDocument document;
-    auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
+    tinyxml2::XMLDocument document;
+    auto decl = document.NewDeclaration();
     document.LinkEndChild( decl );
 
-    auto  modelElement = new TiXmlElement("model");
-    modelElement->SetAttribute("type", model->GetType());
+    auto modelElement = document.NewElement("model");
+    modelElement->SetAttribute("type", model->GetType().c_str());
     modelElement->SetAttribute("version",  "1.0" );
     document.LinkEndChild(modelElement);
 
     for(int t=0;t<model->GetTimeSize();t++)
     {
-        auto  timestepElement = new TiXmlElement("timestep");
+        auto timestepElement = document.NewElement("timestep");
         timestepElement->SetAttribute("id",t);
         modelElement->LinkEndChild(timestepElement);
 
@@ -392,9 +402,9 @@ void sv4guiModelIO::WriteGroupToFile(sv4guiModel* model, std::string& fileName)
 
         if(!me) continue;
 
-        auto meElement = new TiXmlElement("model_element");
+        auto meElement = document.NewElement("model_element");
         timestepElement->LinkEndChild(meElement);
-        meElement->SetAttribute("type",me->GetType());
+        meElement->SetAttribute("type",me->GetType().c_str());
         meElement->SetAttribute("num_sampling", me->GetNumSampling());
         meElement->SetAttribute("use_uniform", me->IfUseUniform());
 
@@ -403,7 +413,7 @@ void sv4guiModelIO::WriteGroupToFile(sv4guiModel* model, std::string& fileName)
             svLoftingParam* param=me->GetLoftingParam();
             if(param)
             {
-                meElement->SetAttribute("method",param->method);
+                meElement->SetAttribute("method",param->method.c_str());
 
                 meElement->SetAttribute("sampling",param->numOutPtsInSegs);
                 meElement->SetAttribute("sample_per_seg",param->samplePerSegment);
@@ -414,28 +424,25 @@ void sv4guiModelIO::WriteGroupToFile(sv4guiModel* model, std::string& fileName)
 
                 meElement->SetAttribute("u_degree",param->uDegree);
                 meElement->SetAttribute("v_degree",param->vDegree);
-                meElement->SetAttribute("u_knot_type",param->uKnotSpanType);
-                meElement->SetAttribute("v_knot_type",param->vKnotSpanType);
-                meElement->SetAttribute("u_parametric_type",param->uParametricSpanType);
-                meElement->SetAttribute("v_parametric_type",param->vParametricSpanType);
+                meElement->SetAttribute("u_knot_type",param->uKnotSpanType.c_str());
+                meElement->SetAttribute("v_knot_type",param->vKnotSpanType.c_str());
+                meElement->SetAttribute("u_parametric_type",param->uParametricSpanType.c_str());
+                meElement->SetAttribute("v_parametric_type",param->vParametricSpanType.c_str());
             }
         }
 
-
-
-
-        auto segsElement= new TiXmlElement("segmentations");
+        auto segsElement= document.NewElement("segmentations");
         meElement->LinkEndChild(segsElement);
 
         std::vector<std::string> segNames=me->GetSegNames();
         for(int i=0;i<segNames.size();i++)
         {
-            auto segElement=new TiXmlElement("seg");
+            auto segElement= document.NewElement("seg");
             segsElement->LinkEndChild(segElement);
-            segElement->SetAttribute("name", segNames[i]);
+            segElement->SetAttribute("name", segNames[i].c_str());
         }
 
-        auto facesElement= new TiXmlElement("faces");
+        auto facesElement= document.NewElement("faces");
         meElement->LinkEndChild(facesElement);
 
         std::vector<sv4guiModelElement::svFace*> faces=me->GetFaces();
@@ -443,39 +450,39 @@ void sv4guiModelIO::WriteGroupToFile(sv4guiModel* model, std::string& fileName)
         {
             if(faces[i])
             {
-                auto faceElement=new TiXmlElement("face");
+                auto faceElement = document.NewElement("face");
                 facesElement->LinkEndChild(faceElement);
                 faceElement->SetAttribute("id", faces[i]->id);
-                faceElement->SetAttribute("name", faces[i]->name);
-                faceElement->SetAttribute("type", faces[i]->type);
+                faceElement->SetAttribute("name", faces[i]->name.c_str());
+                faceElement->SetAttribute("type", faces[i]->type.c_str());
                 faceElement->SetAttribute("visible", faces[i]->visible?"true":"false");
-                faceElement->SetDoubleAttribute("opacity", faces[i]->opacity);
-                faceElement->SetDoubleAttribute("color1", faces[i]->color[0]);
-                faceElement->SetDoubleAttribute("color2", faces[i]->color[1]);
-                faceElement->SetDoubleAttribute("color3", faces[i]->color[2]);
+                faceElement->SetAttribute("opacity", faces[i]->opacity);
+                faceElement->SetAttribute("color1", faces[i]->color[0]);
+                faceElement->SetAttribute("color2", faces[i]->color[1]);
+                faceElement->SetAttribute("color3", faces[i]->color[2]);
             }
         }
 
         //radii for blending
-        auto blendRadiiElement= new TiXmlElement("blend_radii");
+        auto blendRadiiElement= document.NewElement("blend_radii");
         meElement->LinkEndChild(blendRadiiElement);
         std::vector<sv4guiModelElement::svBlendParamRadius*> blendRadii=me->GetBlendRadii();
         for(int i=0;i<blendRadii.size();i++)
         {
             if(blendRadii[i])
             {
-                auto radiusElement=new TiXmlElement("face_pair");
+                auto radiusElement = document.NewElement("face_pair");
                 blendRadiiElement->LinkEndChild(radiusElement);
                 radiusElement->SetAttribute("face_id1", blendRadii[i]->faceID1);
                 radiusElement->SetAttribute("face_id2", blendRadii[i]->faceID2);
-                radiusElement->SetDoubleAttribute("radius", blendRadii[i]->radius);
+                radiusElement->SetAttribute("radius", blendRadii[i]->radius);
             }
         }
 
         if(me->GetType()=="PolyData")
         {
             // for PolyData
-            auto blendElement= new TiXmlElement("blend_param");
+            auto blendElement= document.NewElement("blend_param");
             meElement->LinkEndChild(blendElement);
             sv4guiModelElement::svBlendParam* param=me->GetBlendParam();
 
@@ -484,13 +491,13 @@ void sv4guiModelIO::WriteGroupToFile(sv4guiModel* model, std::string& fileName)
             blendElement->SetAttribute("cstr_smooth_iters", param->numcgsmoothiters);
             blendElement->SetAttribute("lap_smooth_iters", param->numlapsmoothiters);
             blendElement->SetAttribute("subdivision_iters", param->numsubdivisioniters);
-            blendElement->SetDoubleAttribute("decimation", param->targetdecimation);
+            blendElement->SetAttribute("decimation", param->targetdecimation);
         }
 
         sv4guiModelElementAnalytic* meAnalytic=dynamic_cast<sv4guiModelElementAnalytic*>(me);
         if(meAnalytic)
         {
-            meElement->SetDoubleAttribute("max_dist", meAnalytic->GetMaxDist());
+            meElement->SetAttribute("max_dist", meAnalytic->GetMaxDist());
         }
 
         //Output actual model data file
@@ -512,7 +519,7 @@ void sv4guiModelIO::WriteGroupToFile(sv4guiModel* model, std::string& fileName)
             mitkThrow() << "Failed to write model to " << dataFileName;
     }
 
-    if (document.SaveFile(fileName) == false)
+    if (document.SaveFile(fileName.c_str()) == false)
     {
         mitkThrow() << "Could not write model to " << fileName;
 

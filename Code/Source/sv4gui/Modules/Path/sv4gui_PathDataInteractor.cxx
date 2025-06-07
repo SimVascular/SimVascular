@@ -52,7 +52,7 @@ sv4guiPathDataInteractor::~sv4guiPathDataInteractor()
 void sv4guiPathDataInteractor::SetAccuracy(double accuracy)
 {
 //    m_SelectionAccuracy = accuracy;
-//    if (GetDataNode()!=NULL)
+//    if (GetDataNode()!=nullptr)
 //    {
 //        GetDataNode()->AddProperty("selection accuracy", mitk::DoubleProperty::New(accuracy));
 //    }
@@ -61,7 +61,7 @@ void sv4guiPathDataInteractor::SetAccuracy(double accuracy)
 double sv4guiPathDataInteractor::GetAccuracy(const mitk::InteractionPositionEvent* positionEvent) const
 {
     double accuracy=0.1;
-    if (GetDataNode()!=NULL && positionEvent!=NULL)
+    if (GetDataNode()!=nullptr && positionEvent!=nullptr)
     {
         float pointsize=0.0f;
         if(IsOn2DView(positionEvent))
@@ -102,10 +102,10 @@ void sv4guiPathDataInteractor::ConnectActionsAndFunctions()
 
 void sv4guiPathDataInteractor::DataNodeChanged()
 {
-    if (GetDataNode()!=NULL)
+    if (GetDataNode()!=nullptr)
     {
         sv4guiPath* path = dynamic_cast<sv4guiPath*>(GetDataNode()->GetData());
-        if (path == NULL)
+        if (path == nullptr)
         {
             m_Path = sv4guiPath::New();
             GetDataNode()->SetData(m_Path);
@@ -163,14 +163,14 @@ bool sv4guiPathDataInteractor::IsOn2DView(const mitk::InteractionEvent* interact
 bool sv4guiPathDataInteractor::IsOverPoint(const mitk::InteractionEvent *interactionEvent)
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if (positionEvent == NULL)
+    if (positionEvent == nullptr)
         return false;
 
     int timeStep = positionEvent->GetSender()->GetTimeStep();
     mitk::Point3D point = positionEvent->GetPositionInWorld();
 
     sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL)
+    if(pathElement==nullptr)
         return false;
 
     int index=SearchControlPoint(positionEvent,pathElement);
@@ -196,7 +196,7 @@ void sv4guiPathDataInteractor::AddPoint(mitk::StateMachineAction* stateMachineAc
 
     std::cout << "[AddPoint] positionEvent: " << positionEvent << std::endl;
 
-    if (positionEvent != NULL) {
+    if (positionEvent != nullptr) {
         // this statement indicates that a new Operation starts here
         mitk::OperationEvent::IncCurrObjectEventId();
         mitk::Point3D newPoint = positionEvent->GetPositionInWorld();
@@ -204,7 +204,7 @@ void sv4guiPathDataInteractor::AddPoint(mitk::StateMachineAction* stateMachineAc
         std::cout << "[AddPoint] Point: " << newPoint[0] << "  " << newPoint[1] << "  " << newPoint[2] << std::endl;
 
         sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-        if(pathElement==NULL)
+        if(pathElement==nullptr)
             return;
 
         //Check if the point already exits.
@@ -256,7 +256,11 @@ void sv4guiPathDataInteractor::AddPoint(mitk::StateMachineAction* stateMachineAc
             if ( !m_UndoEnabled )
                 delete doOp;
 
-            interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+            interactionEvent->GetSender()->RequestUpdate();
+            // previously this was done, but BaseRenderer does not have access
+            // anymore to the manager. If bugs occur, We need to find the way to
+            // access the manager
+            // interactionEvent->GetSender()->RequestUpdate();
         }
 
     }
@@ -268,14 +272,14 @@ void sv4guiPathDataInteractor::RemovePoint(mitk::StateMachineAction*, mitk::Inte
     unsigned int timeStep = interactionEvent->GetSender()->GetTimeStep(GetDataNode()->GetData());
 
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if (positionEvent != NULL)
+    if (positionEvent != nullptr)
     {
         mitk::OperationEvent::IncCurrObjectEventId();
 
         mitk::Point3D point = positionEvent->GetPositionInWorld();
 
         sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-        if(pathElement==NULL)
+        if(pathElement==nullptr)
             return;
 
         int index = SearchControlPoint(positionEvent,pathElement);
@@ -312,7 +316,11 @@ void sv4guiPathDataInteractor::RemovePoint(mitk::StateMachineAction*, mitk::Inte
             //            }
         }
 
-        interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+        interactionEvent->GetSender()->RequestUpdate();
+        // previously this was done, but BaseRenderer does not have access
+        // anymore to the manager. If bugs occur, We need to find the way to
+        // access the manager
+        // interactionEvent->GetSender()->RequestUpdate();
     }
 
 }
@@ -322,7 +330,7 @@ void sv4guiPathDataInteractor::InitMove(mitk::StateMachineAction*, mitk::Interac
 
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
 
-    if (positionEvent == NULL)
+    if (positionEvent == nullptr)
         return;
 
     mitk::OperationEvent::IncCurrObjectEventId();
@@ -342,13 +350,13 @@ void sv4guiPathDataInteractor::MovePoint(mitk::StateMachineAction* stateMachineA
 {
     unsigned int timeStep = interactionEvent->GetSender()->GetTimeStep(GetDataNode()->GetData());
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if (positionEvent != NULL)
+    if (positionEvent != nullptr)
     {
         mitk::Point3D newPoint, resultPoint;
         newPoint = positionEvent->GetPositionInWorld();
 
         sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-        if(pathElement==NULL)
+        if(pathElement==nullptr)
             return;
 
         // search the elements in the list that are selected then calculate the
@@ -384,7 +392,11 @@ void sv4guiPathDataInteractor::MovePoint(mitk::StateMachineAction* stateMachineA
 
         m_LastPoint = newPoint;//for calculation of the direction vector
 
-        interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+        interactionEvent->GetSender()->RequestUpdate();
+        // previously this was done, but BaseRenderer does not have access
+        // anymore to the manager. If bugs occur, We need to find the way to
+        // access the manager
+        // interactionEvent->GetSender()->RequestUpdate();
     }
 
 }
@@ -395,10 +407,10 @@ void sv4guiPathDataInteractor::FinishMove(mitk::StateMachineAction*, mitk::Inter
 
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
 
-    if (positionEvent != NULL)
+    if (positionEvent != nullptr)
     {
         sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-        if(pathElement==NULL)
+        if(pathElement==nullptr)
             return;
 
         //finish the movement:
@@ -439,7 +451,11 @@ void sv4guiPathDataInteractor::FinishMove(mitk::StateMachineAction*, mitk::Inter
 
         m_Path->InvokeEvent( sv4guiPathFinishMovePointEvent() );
 
-        interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+        interactionEvent->GetSender()->RequestUpdate();
+        // previously this was done, but BaseRenderer does not have access
+        // anymore to the manager. If bugs occur, We need to find the way to
+        // access the manager
+        // interactionEvent->GetSender()->RequestUpdate();
         mitk::OperationEvent::IncCurrGroupEventId();
 
         this->NotifyResultReady();
@@ -457,9 +473,9 @@ void sv4guiPathDataInteractor::SelectPoint(mitk::StateMachineAction*, mitk::Inte
     unsigned int timeStep = interactionEvent->GetSender()->GetTimeStep(GetDataNode()->GetData());
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
 
-    if (positionEvent != NULL) {
+    if (positionEvent != nullptr) {
         sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-        if(pathElement==NULL) {
+        if(pathElement==nullptr) {
             return;
         }
 
@@ -472,7 +488,11 @@ void sv4guiPathDataInteractor::SelectPoint(mitk::StateMachineAction*, mitk::Inte
             sv4guiPathOperation* doOp = new sv4guiPathOperation(sv4guiPathOperation::OpSELECTCONTROLPOINT,timeStep, index,true);
             m_Path->ExecuteOperation(doOp);
 
-            interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+            interactionEvent->GetSender()->RequestUpdate();
+            // previously this was done, but BaseRenderer does not have access
+            // anymore to the manager. If bugs occur, We need to find the way to
+            // access the manager
+            // interactionEvent->GetSender()->RequestUpdate();
         }
     }
 }
@@ -483,10 +503,10 @@ void sv4guiPathDataInteractor::UnSelectAll(mitk::StateMachineAction *, mitk::Int
     unsigned int timeStep = interactionEvent->GetSender()->GetTimeStep(GetDataNode()->GetData());
 
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if (positionEvent != NULL)
+    if (positionEvent != nullptr)
     {
         sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-        if(pathElement==NULL)
+        if(pathElement==nullptr)
             return;
 
 //        pathElement->DeselectControlPoint();
@@ -494,12 +514,16 @@ void sv4guiPathDataInteractor::UnSelectAll(mitk::StateMachineAction *, mitk::Int
         m_Path->ExecuteOperation(doOp);
     }
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
+    // previously this was done, but BaseRenderer does not have access
+    // anymore to the manager. If bugs occur, We need to find the way to
+    // access the manager
+    // interactionEvent->GetSender()->RequestUpdate();
 }
 
 void sv4guiPathDataInteractor::Abort(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
-    mitk::InternalEvent::Pointer event = mitk::InternalEvent::New(NULL, this, IntDeactivateMe);
+    mitk::InternalEvent::Pointer event = mitk::InternalEvent::New(nullptr, this, IntDeactivateMe);
     interactionEvent->GetSender()->GetDispatcher()->QueueEvent(event.GetPointer());
 }
 

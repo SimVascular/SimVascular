@@ -640,7 +640,7 @@ bool sv4guiSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::st
         reader->Update();
         vtkSmartPointer<vtkPolyData> facevtp=reader->GetOutput();
         vtkSmartPointer<vtkDataArray> array=facevtp->GetPointData()->GetArray("GlobalNodeID");
-        if(array==NULL)
+        if(array==nullptr)
             facevtp->GetPointData()->GetScalars()->SetName("GlobalNodeID");
 
         facevtp->GetPointData()->SetActiveScalars("GlobalNodeID");
@@ -655,8 +655,8 @@ bool sv4guiSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::st
     {
         std::string vtxFilePath=vtxFilePaths[i];
 
-        vtkSmartPointer<vtkPolyData> simvtp=NULL;
-        vtkSmartPointer<vtkUnstructuredGrid> simvtu=NULL;
+        vtkSmartPointer<vtkPolyData> simvtp=nullptr;
+        vtkSmartPointer<vtkUnstructuredGrid> simvtu=nullptr;
 
         if(vtxFilePath.substr(vtxFilePath.find_last_of('.'),4)==".vtp")
         {
@@ -675,20 +675,20 @@ bool sv4guiSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::st
 
         if(useComboFile)
         {
-            if(simvtp!=NULL)
+            if(simvtp!=nullptr)
                 simVtps["combo"]=simvtp;
 
-            if(simvtu!=NULL)
+            if(simvtu!=nullptr)
                 simUgs["combo"]=simvtu;
         }
         else
         {
             std::string str=vtxFilePath.substr(vtxFilePath.find_last_of('_')+1);
             std::string step=str.substr(0,str.find_last_of('.'));
-            if(simvtp!=NULL)
+            if(simvtp!=nullptr)
                 simVtps[step]=simvtp;
 
-            if(simvtu!=NULL)
+            if(simvtu!=nullptr)
                 simUgs[step]=simvtu;
         }
 
@@ -709,7 +709,7 @@ bool sv4guiSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::st
             std::string step=step_simvtp.first;
             vtkSmartPointer<vtkPolyData> simvtp=step_simvtp.second;
 
-            if(simvtp!=NULL)
+            if(simvtp!=nullptr)
                 VtpExtractSingleFace(step,simvtp, it->second);
         }
 
@@ -718,7 +718,7 @@ bool sv4guiSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::st
             std::string step=step_simug.first;
             vtkSmartPointer<vtkUnstructuredGrid> simug=step_simug.second;
 
-            if(simug!=NULL)
+            if(simug!=nullptr)
                 VtuExtractSingleFace(step,simug, it->second);
         }
 
@@ -735,10 +735,10 @@ bool sv4guiSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::st
         it++;
     }
 
-    ofstream pressurefs(outPressureFlePath.c_str());
-    ofstream flowfs(outFlowFilePath.c_str());
-    ofstream averagefs(outAverageFilePath.c_str());
-    ofstream averageunitsfs(outAverageUnitsFilePath.c_str());
+    std::ofstream pressurefs(outPressureFlePath.c_str());
+    std::ofstream flowfs(outFlowFilePath.c_str());
+    std::ofstream averagefs(outAverageFilePath.c_str());
+    std::ofstream averageunitsfs(outAverageUnitsFilePath.c_str());
 
     pressurefs<<std::fixed<<"step\t";
     flowfs<<std::fixed<<"step\t";

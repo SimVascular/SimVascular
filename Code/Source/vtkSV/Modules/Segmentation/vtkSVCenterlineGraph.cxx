@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "sv_vtk_utils.h"
+
 #include "vtkSVCenterlineGraph.h"
 
 #include "vtkCellArray.h"
@@ -67,9 +69,9 @@ vtkSVCenterlineGraph::vtkSVCenterlineGraph()
   this->CubeSize = 0.5;
   this->Root = new vtkSVCenterlineGCell(this->NumberOfCells++, 0, RIGHT);
 
-  this->GroupIdsArrayName = NULL;
+  this->GroupIdsArrayName = nullptr;
 
-  this->Lines = NULL;
+  this->Lines = nullptr;
 }
 
 // ----------------------
@@ -77,21 +79,21 @@ vtkSVCenterlineGraph::vtkSVCenterlineGraph()
 // ----------------------
 vtkSVCenterlineGraph::~vtkSVCenterlineGraph()
 {
-  if (this->Root != NULL)
+  if (this->Root != nullptr)
   {
     this->Root->Delete();
-    this->Root = NULL;
+    this->Root = nullptr;
   }
-  if (this->Lines != NULL)
+  if (this->Lines != nullptr)
   {
     this->Lines->Delete();
-    this->Lines = NULL;
+    this->Lines = nullptr;
   }
 
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
   {
     delete [] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
   }
 
 }
@@ -117,7 +119,7 @@ int vtkSVCenterlineGraph::Recurse(vtkSVCenterlineGCell *rootGCell, int(*function
 // ----------------------
 int vtkSVCenterlineGraph::PrintGraph()
 {
-  vtkSVCenterlineGraph::Recurse(this->Root, vtkSVCenterlineGraph::PrintGCell, NULL, NULL, NULL);
+  vtkSVCenterlineGraph::Recurse(this->Root, vtkSVCenterlineGraph::PrintGCell, nullptr, nullptr, nullptr);
   return SV_OK;
 }
 
@@ -129,10 +131,10 @@ int vtkSVCenterlineGraph::PrintGCell(vtkSVCenterlineGCell *gCell, void *arg0, vo
   fprintf(stdout, "GCell ID: %d\n", gCell->Id);
   fprintf(stdout, "GCell Group ID: %d\n", gCell->GroupId);
   fprintf(stdout, "Direction: %d\n", gCell->BranchDir);
-  if(gCell->Parent != NULL)
+  if(gCell->Parent != nullptr)
     fprintf(stdout, "Parent: %d\n", gCell->Parent->Id);
   else
-    fprintf(stdout, "Parent is NULL\n");
+    fprintf(stdout, "Parent is nullptr\n");
   if(gCell->Children.size() != 0)
   {
     for (int i=0; i<gCell->Children.size(); i++)
@@ -198,7 +200,7 @@ int vtkSVCenterlineGraph::InsertGCellPoints(vtkSVCenterlineGCell *gCell, void *a
 int vtkSVCenterlineGraph::BuildGraph()
 {
   fprintf(stdout,"Building graph!!!\n");
-  if (this->Lines == NULL)
+  if (this->Lines == nullptr)
   {
     vtkErrorMacro("Need to provide the centerlines");
     return SV_ERROR;
@@ -216,7 +218,8 @@ int vtkSVCenterlineGraph::BuildGraph()
   }
 
   // Check to see if we need to flip the first line
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   this->Lines->BuildLinks();
   int cellId = this->Lines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(this->Root->GroupId);
   this->Lines->GetCellPoints(cellId, npts, pts);
@@ -355,7 +358,8 @@ int vtkSVCenterlineGraph::GrowGraph(vtkSVCenterlineGCell *parent)
 int vtkSVCenterlineGraph::GetConnectingLineGroups(const int groupId, std::vector<int> &connectingGroups)
 {
   // Get first cell points
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   int cellId = this->Lines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(groupId);
   this->Lines->GetCellPoints(cellId, npts, pts);
 
@@ -395,26 +399,31 @@ int vtkSVCenterlineGraph::GetConnectingLineGroups(const int groupId, std::vector
  */
 int vtkSVCenterlineGraph::ComputeGlobalReferenceVectors(vtkSVCenterlineGCell *parent)
 {
+  auto threshold = VtkUtils_ThresholdUgrid(parent->GroupId, parent->GroupId,  this->GroupIdsArrayName, this->Lines); 
+  /* dp
   vtkNew(vtkThreshold, thresholder);
   thresholder->SetInputData(this->Lines);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, this->GroupIdsArrayName);
-  thresholder->ThresholdBetween(parent->GroupId, parent->GroupId);
+  //dp thresholder->ThresholdBetween(parent->GroupId, parent->GroupId);
   thresholder->Update();
   int numPts = thresholder->GetOutput()->GetNumberOfPoints();
+  */
+  int numPts = threshold->GetNumberOfPoints();
 
   double endPt0[3], endPt1[3];
-  if (parent->Parent == NULL && parent->Children.size() == 0)
+  if (parent->Parent == nullptr && parent->Children.size() == 0)
   {
-    thresholder->GetOutput()->GetPoint(1, endPt0);
-    thresholder->GetOutput()->GetPoint(0, endPt1);
+    threshold->GetPoint(1, endPt0);
+    threshold->GetPoint(0, endPt1);
   }
   else
   {
-    thresholder->GetOutput()->GetPoint(numPts-2, endPt0);
-    thresholder->GetOutput()->GetPoint(numPts-1, endPt1);
+    threshold->GetPoint(numPts-2, endPt0);
+    threshold->GetPoint(numPts-1, endPt1);
   }
-  fprintf(stdout,"End pt 0 is: %.4f %.4f %.4f\n", endPt0[0], endPt0[1], endPt0[2]);
-  fprintf(stdout,"End pt 1 is: %.4f %.4f %.4f\n", endPt1[0], endPt1[1], endPt1[2]);
+
+  //fprintf(stdout,"End pt 0 is: %.4f %.4f %.4f\n", endPt0[0], endPt0[1], endPt0[2]);
+  //fprintf(stdout,"End pt 1 is: %.4f %.4f %.4f\n", endPt1[0], endPt1[1], endPt1[2]);
   vtkMath::Subtract(endPt0, endPt1, this->ReferenceVecs[0]);
   vtkMath::Normalize(this->ReferenceVecs[0]);
 
@@ -423,14 +432,21 @@ int vtkSVCenterlineGraph::ComputeGlobalReferenceVectors(vtkSVCenterlineGCell *pa
   {
     for (int i=0; i<numChildren; i++)
     {
+      double lower = parent->Children[i]->GroupId; 
+      double upper = lower;
+      auto threshold = VtkUtils_ThresholdSurface(lower, upper, this->GroupIdsArrayName, this->Lines); 
+      /*dp
       thresholder->SetInputData(this->Lines);
       thresholder->SetInputArrayToProcess(0, 0, 0, 1, this->GroupIdsArrayName);
       thresholder->ThresholdBetween(parent->Children[i]->GroupId, parent->Children[i]->GroupId);
       thresholder->Update();
+      */
 
       double startPt[3], secondPt[3];
-      thresholder->GetOutput()->GetPoint(0, startPt);
-      thresholder->GetOutput()->GetPoint(1, secondPt);
+      threshold->GetPoint(0, startPt);
+      threshold->GetPoint(1, secondPt);
+      //dp thresholder->GetOutput()->GetPoint(0, startPt);
+      //dp thresholder->GetOutput()->GetPoint(1, secondPt);
 
       vtkMath::Subtract(secondPt, startPt, parent->Children[i]->BranchVec);
       vtkMath::Normalize(parent->Children[i]->BranchVec);
@@ -505,16 +521,21 @@ int vtkSVCenterlineGraph::ComputeBranchReferenceVectors(vtkSVCenterlineGCell *pa
 {
   //fprintf(stdout,"Child %d of parent %d, dir: %d\n", parent->Children[0]->GroupId, parent->GroupId, parent->Children[0]->BranchDir);
   //fprintf(stdout,"Child %d of parent %d, dir: %d\n", parent->Children[1]->GroupId, parent->GroupId, parent->Children[1]->BranchDir);
+
+  auto threshold = VtkUtils_ThresholdSurface(parent->GroupId, parent->GroupId,  this->GroupIdsArrayName, this->Lines); 
+  /*dp
   vtkNew(vtkThreshold, thresholder);
   thresholder->SetInputData(this->Lines);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, this->GroupIdsArrayName);
   thresholder->ThresholdBetween(parent->GroupId, parent->GroupId);
   thresholder->Update();
   int numPts = thresholder->GetOutput()->GetNumberOfPoints();
+  */
+  int numPts = threshold->GetNumberOfPoints();
 
   double endPt0[3], endPt1[3];
-  thresholder->GetOutput()->GetPoint(numPts-2, endPt0);
-  thresholder->GetOutput()->GetPoint(numPts-1, endPt1);
+  threshold->GetPoint(numPts-2, endPt0);
+  threshold->GetPoint(numPts-1, endPt1);
 
   double vec0[3];
   vtkMath::Subtract(endPt0, endPt1, vec0);
@@ -527,14 +548,19 @@ int vtkSVCenterlineGraph::ComputeBranchReferenceVectors(vtkSVCenterlineGCell *pa
   int numChildren = parent->Children.size();
   for (int i=0; i<numChildren; i++)
   {
+    double lower = parent->Children[i]->GroupId; 
+    double upper = lower;
+    auto threshold = VtkUtils_ThresholdSurface(lower, upper, this->GroupIdsArrayName, this->Lines); 
+    /* dp
     thresholder->SetInputData(this->Lines);
     thresholder->SetInputArrayToProcess(0, 0, 0, 1, this->GroupIdsArrayName);
     thresholder->ThresholdBetween(parent->Children[i]->GroupId, parent->Children[i]->GroupId);
     thresholder->Update();
+    */
 
     double startPt[3], secondPt[3];
-    thresholder->GetOutput()->GetPoint(0, startPt);
-    thresholder->GetOutput()->GetPoint(1, secondPt);
+    threshold->GetPoint(0, startPt);
+    threshold->GetPoint(1, secondPt);
 
     vtkMath::Subtract(secondPt, startPt, parent->Children[i]->BranchVec);
     vtkMath::Normalize(parent->Children[i]->BranchVec);
@@ -745,7 +771,7 @@ vtkSVCenterlineGCell* vtkSVCenterlineGraph::GetCell(const int findId)
   if (findId > this->NumberOfCells)
   {
     fprintf(stdout,"Id is larger than number of cells\n");
-    return NULL;
+    return nullptr;
   }
   return this->FindId(this->Root, findId);
 }
@@ -755,7 +781,7 @@ vtkSVCenterlineGCell* vtkSVCenterlineGraph::GetCell(const int findId)
 // ----------------------
 vtkSVCenterlineGCell* vtkSVCenterlineGraph::FindId(vtkSVCenterlineGCell *lookCell, const int findId)
 {
-  if (lookCell == NULL)
+  if (lookCell == nullptr)
   {
     return lookCell;
   }
@@ -770,13 +796,13 @@ vtkSVCenterlineGCell* vtkSVCenterlineGraph::FindId(vtkSVCenterlineGCell *lookCel
       for (int i=0; i<lookCell->Children.size(); i++)
       {
         vtkSVCenterlineGCell* foundCell = this->FindId(lookCell->Children[i], findId);
-        if (foundCell != NULL)
+        if (foundCell != nullptr)
           return foundCell;
       }
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // ----------------------
@@ -787,7 +813,7 @@ vtkSVCenterlineGCell* vtkSVCenterlineGraph::GetCellByGroupId(const int findId)
   //if (findId > this->NumberOfCells)
   //{
   //  fprintf(stdout,"Id is larger than number of cells\n");
-  //  return NULL;
+  //  return nullptr;
   //}
   return this->FindGroupId(this->Root, findId);
 }
@@ -798,7 +824,7 @@ vtkSVCenterlineGCell* vtkSVCenterlineGraph::GetCellByGroupId(const int findId)
 // ----------------------
 vtkSVCenterlineGCell* vtkSVCenterlineGraph::FindGroupId(vtkSVCenterlineGCell *lookCell, const int findId)
 {
-  if (lookCell == NULL)
+  if (lookCell == nullptr)
   {
     return lookCell;
   }
@@ -813,13 +839,13 @@ vtkSVCenterlineGCell* vtkSVCenterlineGraph::FindGroupId(vtkSVCenterlineGCell *lo
       for (int i=0; i<lookCell->Children.size(); i++)
       {
         vtkSVCenterlineGCell* foundCell = this->FindGroupId(lookCell->Children[i], findId);
-        if (foundCell != NULL)
+        if (foundCell != nullptr)
           return foundCell;
       }
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // ----------------------
@@ -840,7 +866,8 @@ int vtkSVCenterlineGraph::GetGraphPoints()
      this->GroupIdsArrayName)->LookupValue(gCell->GroupId);
 
     // Get Cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     this->Lines->GetCellPoints(cellId, npts, pts);
 
     double length = 0.0;
@@ -863,7 +890,7 @@ int vtkSVCenterlineGraph::GetGraphPoints()
       length = minLength;
 
     vtkSVCenterlineGCell *parent = gCell->Parent;
-    if (parent == NULL)
+    if (parent == nullptr)
     {
       this->Lines->GetPoint(pts[0], gCell->EndPt);
       double lineDir[3];
@@ -887,7 +914,7 @@ int vtkSVCenterlineGraph::GetGraphPoints()
 
       double rotationAngle;
       vtkSVCenterlineGCell *grandParent = parent->Parent;
-      if (grandParent == NULL)
+      if (grandParent == nullptr)
       {
         fprintf(stdout,"NO GRANDPARENT\n");
         double parentVec[3];
@@ -1315,12 +1342,13 @@ int vtkSVCenterlineGraph::UpdateBranchReferenceDirections()
      this->GroupIdsArrayName)->LookupValue(gCell->GroupId);
 
     // Get Cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     this->Lines->GetCellPoints(cellId, npts, pts);
 
     int isTerminating = 0;
     double endVecs[3][3];
-    if (gCell->Parent == NULL)
+    if (gCell->Parent == nullptr)
     {
       // found parent, flip around
       isTerminating = 1;
@@ -1357,7 +1385,7 @@ int vtkSVCenterlineGraph::UpdateBranchReferenceDirections()
         for (int l=0; l<3; l++)
           checkRefs[k][l] = refVecs[k][l];
 
-      if (gCell->Parent == NULL)
+      if (gCell->Parent == nullptr)
         vtkMath::Subtract(pt1, pt0, refVecs[0]);
       else
         vtkMath::Subtract(pt0, pt1, refVecs[0]);
@@ -1598,17 +1626,19 @@ int vtkSVCenterlineGraph::RotateVecAroundLine(const double inVec[3],
 // ----------------------
 int vtkSVCenterlineGraph::FlipLinePoints(vtkPolyData *pd, const int cellId)
 {
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   pd->GetCellPoints(cellId, npts, pts);
 
   double *tmpPts = new double[npts];
   for (int i=0; i<npts; i++)
     tmpPts[i] = pts[i];
 
+  vtkIdType* ptsCopy = new vtkIdType[npts];
   for (int i=0; i<npts; i++)
-    pts[(npts-1)-i] = tmpPts[i];
+    ptsCopy[(npts-1)-i] = tmpPts[i];
 
-  pd->ReplaceCell(cellId, npts, pts);
+  pd->ReplaceCell(cellId, npts, ptsCopy);
   pd->Modified();
   pd->BuildLinks();
 
@@ -1630,7 +1660,7 @@ int vtkSVCenterlineGraph::ComputeMinimumLength(vtkSVCenterlineGCell *gCell, doub
 
   // Get all brothers
   double minTopLength = 0.0;
-  if (gCell->Parent != NULL)
+  if (gCell->Parent != nullptr)
   {
     vtkSVCenterlineGCell *parent = gCell->Parent;
 

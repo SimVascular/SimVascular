@@ -46,6 +46,8 @@
 #include <QStandardItemModel>
 #include <QItemDelegate>
 #include <QItemSelection>
+#include <QmitkStdMultiWidget.h>
+#include <QMenu>
 
 namespace Ui {
 class sv4guiMeshEdit;
@@ -149,7 +151,8 @@ public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
+    virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
+                                    const QList<mitk::DataNode::Pointer>& nodes) override;
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -157,9 +160,9 @@ public:
 
     virtual void NodeRemoved(const mitk::DataNode* node) override;
 
-//    virtual void Activated() override;
+    virtual void Activated() override;
 
-//    virtual void Deactivated() override;
+    virtual void Deactivated() override;
 
     virtual void Visible() override;
 
@@ -192,8 +195,6 @@ protected:
     long m_ModelSelectFaceObserverTag;
 //    long m_SphereObserverTag;
 
-    QmitkStdMultiWidget* m_DisplayWidget;
-
     QMenu* m_TableMenuLocal;
     QStandardItemModel* m_TableModelLocal;
 
@@ -215,7 +216,8 @@ protected:
     sv4guiLocalTableDelegate* m_CustomDelegate;
 
     QItemDelegate* m_DefaultDelegate;
-
+    
+    mitk::IRenderWindowPart* m_RenderWindow;
 };
 
 #endif // SV4GUI_MESHEDIT_H

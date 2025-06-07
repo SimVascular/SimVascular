@@ -87,15 +87,15 @@ vtkSVNewVesselNetworkDecomposerAndParameterizer::vtkSVNewVesselNetworkDecomposer
   this->PolycubePd = vtkPolyData::New();
   this->GraphPd = vtkPolyData::New();
   this->NURBSSurfaceRepresentationPd = vtkPolyData::New();
-  this->Centerlines = NULL;
+  this->Centerlines = nullptr;
 
   this->PolycubeUg   = vtkUnstructuredGrid::New();
   this->FinalHexMesh = vtkUnstructuredGrid::New();
 
-  this->CenterlineGroupIdsArrayName = NULL;
-  this->CenterlineRadiusArrayName = NULL;
-  this->GroupIdsArrayName = NULL;
-  this->BlankingArrayName = NULL;
+  this->CenterlineGroupIdsArrayName = nullptr;
+  this->CenterlineRadiusArrayName = nullptr;
+  this->GroupIdsArrayName = nullptr;
+  this->BlankingArrayName = nullptr;
 
   this->UseVmtkClipping = 0;
   this->CutoffRadiusFactor = VTK_SV_LARGE_DOUBLE;
@@ -119,71 +119,71 @@ vtkSVNewVesselNetworkDecomposerAndParameterizer::vtkSVNewVesselNetworkDecomposer
 // ----------------------
 vtkSVNewVesselNetworkDecomposerAndParameterizer::~vtkSVNewVesselNetworkDecomposerAndParameterizer()
 {
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
-  if (this->MergedCenterlines != NULL)
+  if (this->MergedCenterlines != nullptr)
   {
     this->MergedCenterlines->Delete();
-    this->MergedCenterlines = NULL;
+    this->MergedCenterlines = nullptr;
   }
-  if (this->Centerlines != NULL)
+  if (this->Centerlines != nullptr)
   {
     this->Centerlines->Delete();
-    this->Centerlines = NULL;
+    this->Centerlines = nullptr;
   }
-  if (this->PolycubePd != NULL)
+  if (this->PolycubePd != nullptr)
   {
     this->PolycubePd->Delete();
-    this->PolycubePd = NULL;
+    this->PolycubePd = nullptr;
   }
-  if (this->GraphPd != NULL)
+  if (this->GraphPd != nullptr)
   {
     this->GraphPd->Delete();
-    this->GraphPd = NULL;
+    this->GraphPd = nullptr;
   }
-  if (this->NURBSSurfaceRepresentationPd != NULL)
+  if (this->NURBSSurfaceRepresentationPd != nullptr)
   {
     this->NURBSSurfaceRepresentationPd->Delete();
-    this->NURBSSurfaceRepresentationPd = NULL;
+    this->NURBSSurfaceRepresentationPd = nullptr;
   }
 
-  if (this->PolycubeUg != NULL)
+  if (this->PolycubeUg != nullptr)
   {
     this->PolycubeUg->Delete();
-    this->PolycubeUg = NULL;
+    this->PolycubeUg = nullptr;
   }
 
-  if (this->FinalHexMesh != NULL)
+  if (this->FinalHexMesh != nullptr)
   {
     this->FinalHexMesh->Delete();
-    this->FinalHexMesh = NULL;
+    this->FinalHexMesh = nullptr;
   }
 
-  if (this->CenterlineGroupIdsArrayName != NULL)
+  if (this->CenterlineGroupIdsArrayName != nullptr)
   {
     delete [] this->CenterlineGroupIdsArrayName;
-    this->CenterlineGroupIdsArrayName = NULL;
+    this->CenterlineGroupIdsArrayName = nullptr;
   }
 
-  if (this->CenterlineRadiusArrayName != NULL)
+  if (this->CenterlineRadiusArrayName != nullptr)
   {
     delete [] this->CenterlineRadiusArrayName;
-    this->CenterlineRadiusArrayName = NULL;
+    this->CenterlineRadiusArrayName = nullptr;
   }
 
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
   {
     delete [] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
   }
 
-  if (this->BlankingArrayName != NULL)
+  if (this->BlankingArrayName != nullptr)
   {
     delete [] this->BlankingArrayName;
-    this->BlankingArrayName = NULL;
+    this->BlankingArrayName = nullptr;
   }
 }
 
@@ -538,7 +538,8 @@ int vtkSVNewVesselNetworkDecomposerAndParameterizer::MergeCenterlines()
 
     for (int i=0; i<this->MergedCenterlines->GetNumberOfCells(); i++)
     {
-      vtkIdType npts, *pts;
+      vtkIdType npts;
+      const vtkIdType *pts;
       this->MergedCenterlines->GetCellPoints(i, npts, pts);
 
       vtkNew(vtkIdList, point0CellIds);
@@ -619,12 +620,12 @@ void vtkSVNewVesselNetworkDecomposerAndParameterizer::PrintSelf(ostream& os, vtk
   os << indent << "Clip value: " << this->ClipValue << "\n";
   os << indent << "Cutoff Radius Factor: " << this->CutoffRadiusFactor << "\n";
   os << indent << "Use radius information: " << this->UseRadiusInformation << "\n";
-  if (this->CenterlineGroupIdsArrayName != NULL)
+  if (this->CenterlineGroupIdsArrayName != nullptr)
     os << indent << "Centerline group ids name: " << this->CenterlineGroupIdsArrayName << "\n";
-  if (this->CenterlineRadiusArrayName != NULL)
+  if (this->CenterlineRadiusArrayName != nullptr)
     os << indent << "Centerline radius array name: " << this->CenterlineRadiusArrayName << "\n";
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
     os << indent << "Group ids array name: " << this->GroupIdsArrayName << "\n";
-  if (this->BlankingArrayName != NULL)
+  if (this->BlankingArrayName != nullptr)
     os << indent << "Blanking array name: " << this->BlankingArrayName << "\n";
 }

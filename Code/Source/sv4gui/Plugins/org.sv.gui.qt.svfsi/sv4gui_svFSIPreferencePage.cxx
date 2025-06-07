@@ -32,7 +32,7 @@
 #include "sv4gui_svFSIPreferencePage.h"
 #include "ui_sv4gui_svFSIPreferencePage.h"
 
-#include <berryIPreferencesService.h>
+#include <mitkIPreferencesService.h>
 #include <berryPlatform.h>
 
 #include <mitkExceptionMacro.h>
@@ -57,7 +57,7 @@ void sv4guisvFSIPreferencePage::CreateQtControl(QWidget* parent)
 
     m_Ui->setupUi(m_Control);
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     Q_ASSERT(prefService);
 
     m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.svfsi");
@@ -93,11 +93,11 @@ void sv4guisvFSIPreferencePage::PerformCancel()
 bool sv4guisvFSIPreferencePage::PerformOk()
 {
     QString flowsolverPath=m_Ui->lineEditFlowsolverPath->text().trimmed();
-    m_Preferences->Put("svFSI solver path", flowsolverPath);
+    m_Preferences->Put("svFSI solver path", flowsolverPath.toStdString());
     return true;
 }
 
 void sv4guisvFSIPreferencePage::Update()
 {
-    m_Ui->lineEditFlowsolverPath->setText(m_Preferences->Get("svFSI solver path",""));
+    m_Ui->lineEditFlowsolverPath->setText(QString::fromStdString(m_Preferences->Get("svFSI solver path","")));
 }

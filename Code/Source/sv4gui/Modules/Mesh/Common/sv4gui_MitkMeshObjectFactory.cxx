@@ -57,11 +57,11 @@ sv4guiMitkMeshObjectFactory::~sv4guiMitkMeshObjectFactory()
 
 mitk::Mapper::Pointer sv4guiMitkMeshObjectFactory::CreateMapper(mitk::DataNode* node, MapperSlotId id)
 {
-  mitk::Mapper::Pointer newMapper=NULL;
+  mitk::Mapper::Pointer newMapper=nullptr;
 
   if ( id == mitk::BaseRenderer::Standard2D )
   {
-    if( dynamic_cast<sv4guiMitkMesh*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiMitkMesh*>(node->GetData())!=nullptr )
     {
         newMapper = sv4guiMitkMeshMapper2D::New();
         newMapper->SetDataNode(node);
@@ -69,7 +69,7 @@ mitk::Mapper::Pointer sv4guiMitkMeshObjectFactory::CreateMapper(mitk::DataNode* 
   }
   else if ( id == mitk::BaseRenderer::Standard3D )
   {
-    if( dynamic_cast<sv4guiMitkMesh*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiMitkMesh*>(node->GetData())!=nullptr )
     {
         newMapper = sv4guiMitkMeshMapper3D::New();
         newMapper->SetDataNode(node);
@@ -81,20 +81,20 @@ mitk::Mapper::Pointer sv4guiMitkMeshObjectFactory::CreateMapper(mitk::DataNode* 
 void sv4guiMitkMeshObjectFactory::SetDefaultProperties(mitk::DataNode* node)
 {
 
-  if(node==NULL)
+  if(node==nullptr)
     return;
 
-  if(node->GetData() ==NULL)
+  if(node->GetData() ==nullptr)
     return;
 
-  if( dynamic_cast<sv4guiMitkMesh*>(node->GetData())!=NULL )
+  if( dynamic_cast<sv4guiMitkMesh*>(node->GetData())!=nullptr )
   {
       sv4guiMitkMeshMapper2D::SetDefaultProperties(node);
       sv4guiMitkMeshMapper3D::SetDefaultProperties(node);
   }
 }
 
-const char* sv4guiMitkMeshObjectFactory::GetFileExtensions()
+std::string sv4guiMitkMeshObjectFactory::GetFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_FileExtensionsMap, fileExtension);
@@ -115,7 +115,7 @@ void sv4guiMitkMeshObjectFactory::CreateFileExtensionsMap()
 {
 }
 
-const char* sv4guiMitkMeshObjectFactory::GetSaveFileExtensions()
+std::string sv4guiMitkMeshObjectFactory::GetSaveFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_SaveFileExtensionsMap, fileExtension);

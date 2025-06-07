@@ -52,7 +52,6 @@ endif
 
 CXXFLAGS += $(LOCAL_INCDIR) \
 	    $(VTK_INCDIRS) \
-	    $(TCLTK_INCDIR) \
 	    $(PYTHON_INCDIR) \
             $(VMTK_INCDIR)
 
@@ -63,12 +62,6 @@ endif
 HDRS	= sv_vmtk_utils.h
 
 CXXSRCS	= sv_vmtk_utils.cxx
-
-DLLHDRS = sv_vmtk_utils_init.h
-DLLSRCS = sv_vmtk_utils_init.cxx
-
-SVPYHDRS = sv_vmtk_utils_init_py.h
-SVPYSRCS = sv_vmtk_utils_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \

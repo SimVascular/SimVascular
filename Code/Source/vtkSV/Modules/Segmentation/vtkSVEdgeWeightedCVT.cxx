@@ -545,7 +545,8 @@ int vtkSVEdgeWeightedCVT::GetCellRingNeighbors(int ringNumber)
     {
       // Get neighbor cell points
       int neiCellId = this->Neighbors[i][j];
-      vtkIdType *pts, npts;
+      const vtkIdType *pts; 
+      vtkIdType npts;
       this->WorkPd->GetCellPoints(neiCellId, npts, pts);
 
       // Loop around cell points
@@ -625,7 +626,8 @@ int vtkSVEdgeWeightedCVT::GetCellDirectNeighbors()
     std::vector<int> neighborCells;
 
     // Get cell points
-    vtkIdType *pts, npts;
+    const vtkIdType *pts;
+    vtkIdType npts;
     this->WorkPd->GetCellPoints(i, npts, pts);
 
     // Get cell edge neighbors

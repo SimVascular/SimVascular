@@ -28,18 +28,32 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#-----------------------------------------------------------------------------
-# ITK
 set(proj ITK)
+
+set(msg "[Code/CMake/Externals/ITK.cmake]")
+message(STATUS "${msg} =============== Code/CMake/Externals    ITK.cmake ===============")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_USE_ITK: ${SV_USE_ITK}")
+message(STATUS "${msg} SV_ITK_DIR: ${SV_ITK_DIR}")
+message(STATUS "${msg} ITK_VERISON: ${${proj}_VERSION}")
+message(STATUS "${msg} SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR: ${SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR}")
+message(STATUS "${msg} PYTHON_LIBRARY: ${PYTHON_LIBRARY}")
+message(STATUS "${msg} SV_VTK_DIR: ${SV_VTK_DIR}")
+message(STATUS "${msg} VTK_LIBRARIES: ${VTK_LIBRARIES}")
+message(STATUS "${msg} HDF5_DIR: ${HDF5_DIR}")
+message(STATUS "${msg} HDF5_LIB_DIR: ${HDF5_LIB_DIR}")
+
 if(SV_USE_${proj})
 
   # ITK resets the vtk dir and variables (very annoying), must set temp vars
   # vtk dir to reset at the end
+  #
   set(TEMP_VTK_DIR ${VTK_DIR})
   set(TEMP_VTK_LIBRARIES ${VTK_LIBRARIES})
 
   # If using toplevel dir, foce ITK_DIR to be the SV_ITK_DIR set by the
   # simvascular_add_new_external macro
+  #
   if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
     set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/${proj}-${${proj}_MAJOR_VERSION}.${ITK_MINOR_VERSION} CACHE PATH "Force ${proj} dir to externals" FORCE)
     if(WIN32)
@@ -47,8 +61,14 @@ if(SV_USE_${proj})
     endif()
   endif()
 
+  message(STATUS "${msg} ITK_DIR: ${ITK_DIR}")
+
   # Find ITK
-  list(APPEND CMAKE_PREFIX_PATH ${GDCM_DIR})
+  #
+  list(APPEND CMAKE_PREFIX_PATH ${ITK_DIR})
+
+  #find_package(ITK REQUIRED PATHS ${SV_ITK_DIR}/lib/cmake NO_DEFAULT_PATH)
+
   simvascular_external(${proj}
     SHARED_LIB ${SV_USE_${proj}_SHARED}
     VERSION ${${proj}_VERSION}

@@ -31,9 +31,14 @@
 #-----------------------------------------------------------------------------
 # TINYXML2
 set(proj TINYXML2)
-if(LINUX)
-  set(proj tinyxml2)
-endif()
+
+set(msg "[Code/CMake/Externals/TINYXML2.cmake] ")
+message(STATUS "${msg} =============== Code/CMake/Externals    TINYXML2.cmake ===============")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_TINYXML2_DIR: ${SV_TINYXML2_DIR}")
+message(STATUS "${msg} TINYXML2_DIR: ${TINYXML2_DIR}")
+message(STATUS "${msg} SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR: ${SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR}")
+
 if(SV_USE_${proj})
   # If using toplevel dir, TINYXML2_DIR to be the SV_TINYXML2_DIR set by the
   # simvascular_add_new_external macro
@@ -45,7 +50,9 @@ if(SV_USE_${proj})
           set(${proj}_DIR ${SV_${proj}_DIR}/share/lib/cmake/tinyxml2 CACHE PATH "Force ${proj} dir to externals" FORCE)
 	elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2019.02")
           set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/tinyxml2 CACHE PATH "Force ${proj} dir to externals" FORCE)
-	elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.06")
+	elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2019.06")
+          set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/tinyxml2 CACHE PATH "Force ${proj} dir to externals" FORCE)
+        elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2022.10")
           set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/tinyxml2 CACHE PATH "Force ${proj} dir to externals" FORCE)
         else()
 	  message(FATAL_ERROR "Invalid SV_EXTERNALS_VERSION_NUMBER ${SV_EXTERNALS_VERSION_NUMBER}")
@@ -58,6 +65,14 @@ if(SV_USE_${proj})
       endif()
   endif()
 
+  # temporary fix: there is some inconsistency between TINYXML2 and tinyxml2.
+  # These few lines allow adding tinyxml2 to the startup script in the CMakeList 
+  # in Code/Scripts
+  set(SV_tinyxml2_DIR ${SV_${proj}_DIR})
+  set(SV_INSTALL_tinyxml2_LIBRARY_DIR "${SV_${proj}_DIR}/lib")
+
+  set(tinyxml2_DIR ${${proj}_DIR})
+
   # No version in tinyxml2 config files, leave version out
   ## Find TINYXML2
   #simvascular_external(${proj}
@@ -66,15 +81,21 @@ if(SV_USE_${proj})
   #  REQUIRED
   #  )
 
+  set(tinyxml2_INCLUDE_DIR "${SV_${proj}_DIR}/include/")
+
   # Find TINYXML2
-  simvascular_external(${proj}
+  simvascular_external(tinyxml2
     SHARED_LIB ${SV_USE_${proj}_SHARED}
     REQUIRED
     )
 
-  # Set SV_HDF5_DIR to the directory that was found to contain HDF5
-  set(SV_${proj}_DIR ${${proj}_DIR})
+  if(APPLE)
+    set(TINYXML2_LIBRARY "${SV_${proj}_DIR}/lib/libtinyxml2.dylib")
+  endif()
 
+  # [DaveP] i don't know what this is about but 
+  # it messes up locating the library to install.
+  #set(SV_${proj}_DIR ${${proj}_DIR})
 endif()
-#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------

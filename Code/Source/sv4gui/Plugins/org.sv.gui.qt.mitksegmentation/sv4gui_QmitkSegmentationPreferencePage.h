@@ -49,7 +49,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #define sv4gui_QmitkSegmentationPreferencePage_h_included
 
 #include "org_sv_gui_qt_mitksegmentation_Export.h"
-#include <berryIPreferences.h>
+#include <mitkIPreferences.h>
 #include "berryIQtPreferencePage.h"
 
 class QWidget;
@@ -108,7 +108,7 @@ protected:
 
   bool m_Initializing;
 
-  berry::IPreferences::Pointer m_SegmentationPreferencesNode;
+  mitk::IPreferences* m_SegmentationPreferencesNode;
 };
 
 #endif /* QMITKDATAMANAGERPREFERENCEPAGE_H_ */

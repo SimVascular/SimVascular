@@ -38,8 +38,8 @@ vtkStandardNewMacro(vtkvmtkSimpleCapPolyData);
 
 vtkvmtkSimpleCapPolyData::vtkvmtkSimpleCapPolyData()
 {
-  this->CellEntityIdsArrayName = NULL;
-  this->BoundaryIds = NULL;
+  this->CellEntityIdsArrayName = nullptr;
+  this->BoundaryIds = nullptr;
   this->CellEntityIdOffset = 1;
 }
 
@@ -48,13 +48,13 @@ vtkvmtkSimpleCapPolyData::~vtkvmtkSimpleCapPolyData()
   if (this->CellEntityIdsArrayName)
     {
     delete[] this->CellEntityIdsArrayName;
-    this->CellEntityIdsArrayName = NULL;
+    this->CellEntityIdsArrayName = nullptr;
     }
 
   if (this->BoundaryIds)
     {
     this->BoundaryIds->Delete();
-    this->BoundaryIds = NULL;
+    this->BoundaryIds = nullptr;
     }
 }
 
@@ -96,7 +96,7 @@ int vtkvmtkSimpleCapPolyData::RequestData(
   vtkCellArray* newPolys = vtkCellArray::New();
   newPolys->DeepCopy(input->GetPolys());
 
-  vtkIdTypeArray* cellEntityIdsArray = NULL;
+  vtkIdTypeArray* cellEntityIdsArray = nullptr;
 
   if (markCells)
     {

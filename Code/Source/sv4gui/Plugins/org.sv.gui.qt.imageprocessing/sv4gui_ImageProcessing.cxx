@@ -68,7 +68,6 @@
 #include <mitkImageCast.h>
 
 #include "sv_PolyData.h"
-#include "sv_vmtk_utils_init.h"
 #include "sv_vmtk_utils.h"
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkXMLPolyDataWriter.h>
@@ -191,9 +190,9 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
   ui->setupUi(parent);
 
   // Get access to the four-window widget in the centre of the application.
-  m_DisplayWidget = GetActiveStdMultiWidget();
+  m_renderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
 
-  if (m_DisplayWidget == NULL) {
+  if (m_renderWindow == nullptr) {
       parent->setEnabled(false);
       MITK_ERROR << "Plugin ImageProcessing Init Error: No QmitkStdMultiWidget!";
       return;
@@ -208,6 +207,7 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
   mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
   mitk::DataNode::Pointer projFolderNode = m_DataStorage->GetNode(isProjFolder);
   if (projFolderNode == nullptr) {
+    std::cout << "Entering here 2" << std::endl << std::flush;
     parent->setEnabled(false);
     return;
   }
@@ -337,7 +337,7 @@ void sv4guiImageProcessing::ExtractPaths()
 {
   // Check if there is are centerlines.
   if (m_CenterlinesContainer.IsNull()) {
-    QMessageBox::warning(NULL, "", "No centerlines have been created.");
+    QMessageBox::warning(nullptr, "", "No centerlines have been created.");
     return;
   }
 
@@ -508,19 +508,19 @@ void sv4guiImageProcessing::ComputeCenterlines()
   // A start seed must be defined. 
   int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
   if (numStartSeeds < 1) {
-    QMessageBox::warning(NULL,"","No start seeds have been defined.");
+    QMessageBox::warning(nullptr,"","No start seeds have been defined.");
     return;
   }
 
   // An end seed must be defined. 
   if (m_SeedContainer->GetNumEndSeeds() == 0) { 
-    QMessageBox::warning(NULL,"","No end seeds have been defined.");
+    QMessageBox::warning(nullptr,"","No end seeds have been defined.");
     return;
   } 
 
   // Check if there is a segmentation surface.
   if (m_CollidingFrontsSurface.IsNull()) {
-    QMessageBox::warning(NULL, "", "No segmentation surface has been created.");
+    QMessageBox::warning(nullptr, "", "No segmentation surface has been created.");
     return;
   }
 
@@ -558,14 +558,14 @@ void sv4guiImageProcessing::ComputeCenterlines()
   cvPolyData cvSurfPolydata(segPolyData);
   if (sys_geom_centerlines(&cvSurfPolydata, sourceIDs.data(), sourceIDs.size(), targetIDs.data(), targetIDs.size(), 
         &centerlines, &voronoiDst) != SV_OK) {
-    QMessageBox::critical(NULL, "", "The centerline extraction computation has failed."); 
+    QMessageBox::critical(nullptr, "", "The centerline extraction computation has failed."); 
     return;
   }
 
   // Compute separate sections. 
   cvPolyData* separateCenterlines = nullptr;
   if (sys_geom_separatecenterlines(centerlines, &separateCenterlines) != SV_OK) {
-    QMessageBox::critical(NULL, "", "The centerline extraction computation has failed."); 
+    QMessageBox::critical(nullptr, "", "The centerline extraction computation has failed."); 
     return;
   }
 
@@ -573,7 +573,7 @@ void sv4guiImageProcessing::ComputeCenterlines()
   cvPolyData* mergedCenterlines = nullptr;
   int mergeblanked = 1;
   if (sys_geom_mergecenterlines(separateCenterlines, mergeblanked, &mergedCenterlines) != SV_OK ) {
-    QMessageBox::critical(NULL, "", "The centerline extraction computation has failed."); 
+    QMessageBox::critical(nullptr, "", "The centerline extraction computation has failed."); 
     return;
   }
   auto lines = mergedCenterlines->GetVtkPolyData();
@@ -704,7 +704,7 @@ int sv4guiImageProcessing::FindClosesetPoint(vtkPolyData* polyData, std::array<d
 //
 void sv4guiImageProcessing::AddStartSeed()
 {
-  mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
+  mitk::Point3D point = m_renderWindow->GetSelectedPosition();
   int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
   m_SeedContainer->AddStartSeed(point[0], point[1], point[2]);
 
@@ -720,12 +720,12 @@ void sv4guiImageProcessing::AddStartSeed()
 //
 void sv4guiImageProcessing::AddEndSeed()
 {
-  mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
+  mitk::Point3D point = m_renderWindow->GetSelectedPosition();
 
   // A start seed must have been selected.
   int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
   if (numStartSeeds < 1) { 
-    QMessageBox::warning(NULL,"","No start seeds have been defined.");
+    QMessageBox::warning(nullptr,"","No start seeds have been defined.");
     return;
   }
 
@@ -896,8 +896,14 @@ void sv4guiImageProcessing::SeedSize()
 // OnSelectionChanged
 //--------------------
 //
-void sv4guiImageProcessing::OnSelectionChanged(std::vector<mitk::DataNode*> nodes)
+void sv4guiImageProcessing::OnSelectionChanged(berry::IWorkbenchPart::Pointer 
+                                               part,
+                                               const
+                                               QList<mitk::DataNode::Pointer>& 
+                                               nodes)
 {
+  if (!m_isVisible) return;
+
   m_DataStorage = GetDataStorage();
 
   if (m_DataStorage == nullptr) {
@@ -942,6 +948,24 @@ sv4guiImageProcessing::GetImageSpacing()
   return std::array<double,3> {spacing[0], spacing[1], spacing[2]};
 }
 
+void sv4guiImageProcessing::Activated()
+{
+
+}
+void sv4guiImageProcessing::Deactivated()
+{
+
+}
+void sv4guiImageProcessing::Visible()
+{
+  m_isVisible = true;
+}
+
+void sv4guiImageProcessing::Hidden()
+{
+  m_isVisible = false;
+}
+
 //----------
 // getImage
 //----------
@@ -965,14 +989,14 @@ mitk::Image::Pointer sv4guiImageProcessing::getImage(std::string image_name)
 
   if (!found){
     MITK_ERROR << "Image with name "<< image_name <<" not found\n";
-    return NULL;
+    return nullptr;
   }
 
   mitk::Image::Pointer image_data = dynamic_cast<mitk::Image*>(image_node->GetData());
 
   if (!image_data){
     MITK_ERROR << "Image data is null for image "<< image_name <<"\n";
-    return NULL;
+    return nullptr;
   }
   return image_data;
 }
@@ -987,17 +1011,16 @@ sv4guiImageProcessing::getItkImage(int index)
   std::string image_name = getImageName(index);
   if (image_name.empty()){
     MITK_ERROR << "No image found";
-    return NULL;
+    return nullptr;
   }
 
   mitk::Image::Pointer image = getImage(image_name);
 
   if (!image){
     MITK_ERROR << "Image data is null";
-    return NULL;
+    return nullptr;
   }
 
-  image->GetScalarValueMin();
   sv4guiImageProcessingUtils::itkImPoint itkImage = sv4guiImageProcessingUtils::itkImageType::New();
   mitk::CastToItkImage(image, itkImage);
 
@@ -1021,7 +1044,7 @@ void sv4guiImageProcessing::storeImage(sv4guiImageProcessingUtils::itkImPoint im
     GetDataStorage()->GetNamedNode(new_image_name.toStdString());
 
   if (newImageNode){
-    QMessageBox::warning(NULL,"Image Already exists","Please use a different image name!");
+    QMessageBox::warning(nullptr,"Image Already exists","Please use a different image name!");
     return;
   }
   if(!ok){
@@ -1066,14 +1089,14 @@ void sv4guiImageProcessing::storePolyData(vtkSmartPointer<vtkPolyData>& surface)
   //mitk::DataNode::Pointer segFolderNode = GetDataStorage()->GetNamedNode("Images");
   if (!segFolderNode) {
     MITK_ERROR << "No Segmentations folder found\n";
-    QMessageBox::critical(NULL, "", "No Segmentations folder was found in the SV Data Manager."); 
+    QMessageBox::critical(nullptr, "", "No Segmentations folder was found in the SV Data Manager."); 
     return;
   }
 
   // Check for a duplicate node name.
   mitk::DataNode::Pointer newPdNode = GetDataStorage()->GetNamedNode(newNodeName.toStdString());
   if (newPdNode) {
-    QMessageBox::warning(NULL, "", "The segmentation node named '" + newNodeName + "' already exists.");
+    QMessageBox::warning(nullptr, "", "The segmentation node named '" + newNodeName + "' already exists.");
     return;
   }
 
@@ -1397,7 +1420,7 @@ sv4guiImageProcessing::CombinedCollidingFronts(sv4guiImageProcessingUtils::itkIm
   if (min_init) {
     return minImage;
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -1416,7 +1439,7 @@ void sv4guiImageProcessing::runCollidingFronts()
   std::cout << "[runCollidingFronts] Number of start seeds: " << startSeeds << std::endl;
 
   if (startSeeds == 0) {
-    QMessageBox::warning(NULL,"","No start seeds have been defined.");
+    QMessageBox::warning(nullptr,"","No start seeds have been defined.");
     return;
   }
 
@@ -1467,13 +1490,13 @@ void sv4guiImageProcessing::ExectuteLevelSet()
   std::cout << "[runCollidingFronts] Number of start seeds: " << startSeeds << std::endl;
   #endif
   if (startSeeds == 0) {
-    QMessageBox::warning(NULL, "", "No start seeds have been defined.");
+    QMessageBox::warning(nullptr, "", "No start seeds have been defined.");
     return;
   }
 
   // An end seed must be defined. 
   if (m_SeedContainer->GetNumEndSeeds() == 0) { 
-    QMessageBox::warning(NULL,"","No end seeds have been defined.");
+    QMessageBox::warning(nullptr,"","No end seeds have been defined.");
     return;
   } 
 
@@ -1482,7 +1505,7 @@ void sv4guiImageProcessing::ExectuteLevelSet()
   auto upperThreshold = ui->LS_UpThresh_DoubleSpinBox->value();
   auto lowerThreshold = ui->LS_LowThresh_DoubleSpinBox->value();
   if (lowerThreshold >= upperThreshold) {
-    QMessageBox::warning(NULL, "", "The upper threshold value must be larger than the lower threshold value.");
+    QMessageBox::warning(nullptr, "", "The upper threshold value must be larger than the lower threshold value.");
     return;
   }
 
@@ -1507,7 +1530,7 @@ void sv4guiImageProcessing::ExectuteLevelSet()
 
   if (!gradImage || !minImage){
     MITK_ERROR << "Error in gradient image or colliding fronts image\n";
-    QMessageBox::critical(NULL, "", "The colliding fronts computation has failed.");
+    QMessageBox::critical(nullptr, "", "The colliding fronts computation has failed.");
     return;
   }
 

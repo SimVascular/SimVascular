@@ -56,14 +56,14 @@ static char header[]="Visualization Toolkit generated SLA File                  
 
 vtkSVMUPFESNURBSWriter::vtkSVMUPFESNURBSWriter()
 {
-  this->FileName = NULL;
+  this->FileName = nullptr;
 }
 
 void vtkSVMUPFESNURBSWriter::WriteData()
 {
   vtkSVNURBSObject *input = this->GetInput();
 
-  if (this->FileName == NULL)
+  if (this->FileName == nullptr)
   {
     vtkErrorMacro(<< "Please specify FileName to write");
     this->SetErrorCode(vtkErrorCode::NoFileNameError);
@@ -91,7 +91,7 @@ void vtkSVMUPFESNURBSWriter::WriteMUPFESFile(vtkSVNURBSObject *object)
   {
     vtkSVNURBSVolume *volume = vtkSVNURBSVolume::SafeDownCast(object);
 
-    if ((fp = fopen(this->FileName, "w")) == NULL)
+    if ((fp = fopen(this->FileName, "w")) == nullptr)
     {
       vtkErrorMacro(<< "Couldn't open file: " << this->FileName);
       this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
@@ -156,7 +156,7 @@ void vtkSVMUPFESNURBSWriter::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 
   os << indent << "FileName: "
-     << ((this->GetFileName() == NULL) ?
+     << ((this->GetFileName() == nullptr) ?
          "(none)" : this->GetFileName()) << std::endl;
   os << indent << "Input: " << this->GetInput() << std::endl;
 }

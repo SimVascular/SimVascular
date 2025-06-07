@@ -45,8 +45,8 @@
 #include <mitkStatusBar.h>
 #include <mitkGenericProperty.h>
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <usModuleRegistry.h>
@@ -64,6 +64,7 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QApplication>
+#include <QTimer>
 
 sv4guiSolverProcessHandlerROM::sv4guiSolverProcessHandlerROM(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent)
     : m_Process(process)
@@ -72,7 +73,7 @@ sv4guiSolverProcessHandlerROM::sv4guiSolverProcessHandlerROM(QProcess* process, 
     , m_TotalSteps(totalSteps)
     , m_RunDir(runDir)
     , m_Parent(parent)
-    , m_Timer(NULL)
+    , m_Timer(nullptr)
 {
 }
 
@@ -99,7 +100,7 @@ void sv4guiSolverProcessHandlerROM::ProcessError(QProcess::ProcessError error)
   QString text = "";
   QString status = "Simulation failed";
   QMessageBox::Icon icon = QMessageBox::Warning;
-  QMessageBox messageBox(NULL); 
+  QMessageBox messageBox(nullptr); 
 
   if (error == QProcess::FailedToStart) {
     title = "Simulation cannot be started";
@@ -143,7 +144,7 @@ void sv4guiSolverProcessHandlerROM::ProcessError(QProcess::ProcessError error)
 //
 void sv4guiSolverProcessHandlerROM::Start()
 {
-    if ((m_Process == NULL) || (m_JobNode.IsNull())) {
+    if ((m_Process == nullptr) || (m_JobNode.IsNull())) {
         return;
     }
 
@@ -185,7 +186,7 @@ void sv4guiSolverProcessHandlerROM::AfterProcessFinished(int exitCode, QProcess:
 
     QString title = "SimVascular SV Simulation";
     QMessageBox::Icon icon=QMessageBox::NoIcon;
-    QMessageBox mb(NULL); //svSimualtionView maybe doesn't exist.
+    QMessageBox mb(nullptr); //svSimualtionView maybe doesn't exist.
     QString status="";
 
     auto jobName = QString::fromStdString(m_JobNode->GetName()); 

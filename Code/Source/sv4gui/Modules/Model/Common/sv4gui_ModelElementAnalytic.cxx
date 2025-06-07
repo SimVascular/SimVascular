@@ -55,24 +55,24 @@ sv4guiModelElementAnalytic* sv4guiModelElementAnalytic::Clone()
 
 vtkSmartPointer<vtkPolyData> sv4guiModelElementAnalytic::CreateFaceVtkPolyData(int id)
 {
-    if(m_InnerSolid==NULL)
-        return NULL;
+    if(m_InnerSolid==nullptr)
+        return nullptr;
 
     cvPolyData* cvfacevpd=m_InnerSolid->GetFacePolyData(id,1,m_MaxDist);
-    if(cvfacevpd==NULL)
-        return NULL;
+    if(cvfacevpd==nullptr)
+        return nullptr;
 
     return cvfacevpd->GetVtkPolyData();
 }
 
 vtkSmartPointer<vtkPolyData> sv4guiModelElementAnalytic::CreateWholeVtkPolyData()
 {
-    if(m_InnerSolid==NULL)
-        return NULL;
+    if(m_InnerSolid==nullptr)
+        return nullptr;
 
     cvPolyData* cvwholevpd=m_InnerSolid->GetPolyData(1,m_MaxDist);
-    if(cvwholevpd==NULL)
-        return NULL;
+    if(cvwholevpd==nullptr)
+        return nullptr;
 
     return cvwholevpd->GetVtkPolyData();
 }
@@ -123,15 +123,15 @@ sv4guiModelElementPolyData* sv4guiModelElementAnalytic::ConverToPolyDataModel()
     sv4guiModelElementPolyData* mepd=new sv4guiModelElementPolyData();
     mepd->SetSegNames(GetSegNames());
 
-    vtkSmartPointer<vtkPolyData> wholevpd=NULL;
+    vtkSmartPointer<vtkPolyData> wholevpd=nullptr;
     if(GetWholeVtkPolyData())
     {
         wholevpd=vtkSmartPointer<vtkPolyData>::New();
         wholevpd->DeepCopy(GetWholeVtkPolyData());
     }
 
-    if(wholevpd==NULL)
-        return NULL;
+    if(wholevpd==nullptr)
+        return nullptr;
 
     cvPolyData* src=new cvPolyData(wholevpd);
 
@@ -151,13 +151,13 @@ sv4guiModelElementPolyData* sv4guiModelElementAnalytic::ConverToPolyDataModel()
         faces.push_back(face);
     }
 
-    cvPolyData *dst=NULL;
+    cvPolyData *dst=nullptr;
     if ( sys_geom_assign_ids_based_on_faces(src,facevpds,numFaces,ids,&dst ) != SV_OK ) {
-        if(dst!=NULL)
+        if(dst!=nullptr)
             delete dst;
 
         delete [] ids;
-        return NULL;
+        return nullptr;
     }
 
     mepd->SetWholeVtkPolyData(dst->GetVtkPolyData());

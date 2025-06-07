@@ -59,16 +59,16 @@ sv4guiSegmentationObjectFactory::~sv4guiSegmentationObjectFactory()
 
 mitk::Mapper::Pointer sv4guiSegmentationObjectFactory::CreateMapper(mitk::DataNode* node, MapperSlotId id)
 {
-  mitk::Mapper::Pointer newMapper=NULL;
+  mitk::Mapper::Pointer newMapper=nullptr;
 
   if ( id == mitk::BaseRenderer::Standard2D )
   {
-    if( dynamic_cast<sv4guiContourModel*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiContourModel*>(node->GetData())!=nullptr )
     {
       newMapper = sv4guiContourModelVtkMapper2D::New();
       newMapper->SetDataNode(node);
     }
-    else if( dynamic_cast<sv4guiContourGroup*>(node->GetData())!=NULL )
+    else if( dynamic_cast<sv4guiContourGroup*>(node->GetData())!=nullptr )
     {
       newMapper = sv4guiContourGroupVtkMapper2D::New();
       newMapper->SetDataNode(node);
@@ -76,12 +76,12 @@ mitk::Mapper::Pointer sv4guiSegmentationObjectFactory::CreateMapper(mitk::DataNo
   }
   else if ( id == mitk::BaseRenderer::Standard3D )
   {
-    if( dynamic_cast<sv4guiContourGroup*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiContourGroup*>(node->GetData())!=nullptr )
     {
       newMapper = sv4guiContourGroupVtkMapper3D::New();
       newMapper->SetDataNode(node);
     }
-    else if( dynamic_cast<sv4guiMitkSeg3D*>(node->GetData())!=NULL )
+    else if( dynamic_cast<sv4guiMitkSeg3D*>(node->GetData())!=nullptr )
     {
       newMapper = sv4guiMitkSeg3DVtkMapper3D::New();
       newMapper->SetDataNode(node);
@@ -93,30 +93,30 @@ mitk::Mapper::Pointer sv4guiSegmentationObjectFactory::CreateMapper(mitk::DataNo
 void sv4guiSegmentationObjectFactory::SetDefaultProperties(mitk::DataNode* node)
 {
 
-  if(node==NULL)
+  if(node==nullptr)
     return;
 
   mitk::DataNode::Pointer nodePointer = node;
 
-  if(node->GetData() ==NULL)
+  if(node->GetData() ==nullptr)
     return;
 
-  if( dynamic_cast<sv4guiContourModel*>(node->GetData())!=NULL )
+  if( dynamic_cast<sv4guiContourModel*>(node->GetData())!=nullptr )
   {
     sv4guiContourModelVtkMapper2D::SetDefaultProperties(node);
   }
-  if( dynamic_cast<sv4guiContourGroup*>(node->GetData())!=NULL )
+  if( dynamic_cast<sv4guiContourGroup*>(node->GetData())!=nullptr )
   {
       sv4guiContourGroupVtkMapper2D::SetDefaultProperties(node);
       sv4guiContourGroupVtkMapper3D::SetDefaultProperties(node);
   }
-  if( dynamic_cast<sv4guiMitkSeg3D*>(node->GetData())!=NULL )
+  if( dynamic_cast<sv4guiMitkSeg3D*>(node->GetData())!=nullptr )
   {
     sv4guiMitkSeg3DVtkMapper3D::SetDefaultProperties(node);
   }
 }
 
-const char* sv4guiSegmentationObjectFactory::GetFileExtensions()
+std::string sv4guiSegmentationObjectFactory::GetFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_FileExtensionsMap, fileExtension);
@@ -137,7 +137,7 @@ void sv4guiSegmentationObjectFactory::CreateFileExtensionsMap()
 {
 }
 
-const char* sv4guiSegmentationObjectFactory::GetSaveFileExtensions()
+std::string sv4guiSegmentationObjectFactory::GetSaveFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_SaveFileExtensionsMap, fileExtension);

@@ -274,12 +274,16 @@ mitk::MorphologicalOperations::StructuralElementType QmitkMorphologicalOperation
   if(ball){
    if(m_Controls.planeSelectionComboBox->currentIndex() == 0) accum_flag = mitk::MorphologicalOperations::Ball; // 3D Operation
    if(m_Controls.planeSelectionComboBox->currentIndex() == 1) accum_flag = mitk::MorphologicalOperations::Ball_Axial; // 2D Operation - Axial plane
-   if(m_Controls.planeSelectionComboBox->currentIndex() == 2) accum_flag = mitk::MorphologicalOperations::Ball_Sagital; // 2D Operation - Sagital plane
+   std::cout << "Ball_Sagital does not exist anymore" << std::endl << std::flush;
+   exit(1);
+  //  if(m_Controls.planeSelectionComboBox->currentIndex() == 2) accum_flag = mitk::MorphologicalOperations::Ball_Sagital; // 2D Operation - Sagital plane
    if(m_Controls.planeSelectionComboBox->currentIndex() == 3) accum_flag = mitk::MorphologicalOperations::Ball_Coronal; // 2D Operation - Coronal plane
   }else{
     if(m_Controls.planeSelectionComboBox->currentIndex() == 0) accum_flag = mitk::MorphologicalOperations::Cross;
     if(m_Controls.planeSelectionComboBox->currentIndex() == 1) accum_flag = mitk::MorphologicalOperations::Cross_Axial;
-    if(m_Controls.planeSelectionComboBox->currentIndex() == 2) accum_flag = mitk::MorphologicalOperations::Cross_Sagital;
+    std::cout << "Cross_Sagital does not exist anymore" << std::endl << std::flush;
+    exit(1);
+    // if(m_Controls.planeSelectionComboBox->currentIndex() == 2) accum_flag = mitk::MorphologicalOperations::Cross_Sagital;
     if(m_Controls.planeSelectionComboBox->currentIndex() == 3) accum_flag = mitk::MorphologicalOperations::Cross_Coronal;
   }
   return (mitk::MorphologicalOperations::StructuralElementType)accum_flag;

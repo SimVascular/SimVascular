@@ -38,6 +38,7 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
+# [NOTE:DaveP] nee to include $(TCLTK_INCDIR) because VTK uses TCL?.
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(ZLIB_INCDIR) $(VTK_INCDIRS)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_POST
@@ -52,9 +53,8 @@ HDRS	= sv2_ConvertVisFiles.h sv2_CalculateWallShearStress.h \
 CXXSRCS	= sv2_ConvertVisFiles.cxx sv2_CalculateWallShearStress.cxx \
 	  sv2_CalculateTKE.cxx
 
-DLLHDRS = sv2_post_init.h
-
-DLLSRCS = sv2_post_init.cxx
+DLLHDRS = 
+DLLSRCS = 
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
@@ -63,10 +63,4 @@ DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
 TARGET_LIB_NAME = $(SV_LIB_POST_NAME)
 
 include $(TOP)/targetlib.mk
-
-
-
-
-
-
 

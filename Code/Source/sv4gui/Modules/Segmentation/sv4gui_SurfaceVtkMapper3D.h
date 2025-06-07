@@ -127,7 +127,7 @@ public:
 
   virtual void ApplyAllProperties(mitk::BaseRenderer* renderer, vtkActor* actor);
 
-  static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = NULL, bool overwrite = false);
+  static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = nullptr, bool overwrite = false);
 
 protected:
   sv4guiSurfaceVtkMapper3D();

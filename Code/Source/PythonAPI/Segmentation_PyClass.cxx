@@ -351,7 +351,7 @@ Segmentation_set_control_points(PySegmentation* self, PyObject* args)
     }
 
     Contour* contour = self->contour;
-    if (contour == NULL ) {
+    if (contour == nullptr ) {
         throw std::runtime_error("Geometry has not been created for the contour.");
     }
 
@@ -421,7 +421,7 @@ Segmentation_set_control_points_by_radius(PySegmentation* self, PyObject* args)
     }
 
     auto contour = self->contour;
-    if (contour == NULL) {
+    if (contour == nullptr) {
         api.error("No geometry has been created for the contour.");
         return nullptr;
     }
@@ -453,7 +453,7 @@ Segmentation_get_area(PySegmentation* self, PyObject* args)
 {
     auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
     auto contour = self->contour;
-    if (contour == NULL) {
+    if (contour == nullptr) {
         api.error("No geometry has been created for the contour.");
         return nullptr;
 
@@ -478,7 +478,7 @@ PyObject* Segmentation_get_perimeter(PySegmentation* self, PyObject* args)
 {
     auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
     auto contour = self->contour;
-    if (contour == NULL) {
+    if (contour == nullptr) {
         api.error("No geometry has been created for the Contour.");
         return nullptr;
     }
@@ -516,7 +516,7 @@ Segmentation_set_threshold_value(PySegmentation* self, PyObject* args)
     }
 
     Contour* contour = self->contour;
-    if (contour == NULL) {
+    if (contour == nullptr) {
         api.error("No geometry has been created for the contour.");
         return nullptr;
     }
@@ -552,7 +552,7 @@ Segmentation_create_smooth_contour(PySegmentation* self, PyObject* args)
     }
 
     Contour* contour = self->contour;
-    if (contour == NULL) {
+    if (contour == nullptr) {
         api.error("No geometry has been created for the Contour.");
         return nullptr;
     }
@@ -560,12 +560,6 @@ Segmentation_create_smooth_contour(PySegmentation* self, PyObject* args)
     auto newContour = CreateSegmentationObject(Contour::gCurrentKernel, contour->GetPathPoint());
     //Contour *newContour = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, contour->GetPathPoint());
     newContour= contour->CreateSmoothedContour(fourierNumber);
-
-    if ( !( gRepository->Register(contourName, newContour))) {
-        delete newContour;
-        api.error("Could not add the new contour into the repository.");
-        return nullptr;
-    }
 
     Py_INCREF(newContour);
     PySegmentation* pyNewCt;
@@ -658,7 +652,7 @@ static PyMethodDef PySegmentationMethods[] = {
   {"set_threshold_value", (PyCFunction)Segmentation_set_threshold_value, METH_VARARGS, Segmentation_set_threshold_value_doc },
   */
 
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 //--------------------
@@ -670,7 +664,7 @@ static PyMethodDef PySegmentationMethods[] = {
 // designated initializers.
 //
 static PyTypeObject PySegmentationType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   SEGMENTATION_CLASS,
   sizeof(PySegmentation)
 };
@@ -712,7 +706,7 @@ PySegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PySegmentationNew] PySegmentationNew " << std::endl;
   auto self = (PySegmentation*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->id = 1;
   }
 

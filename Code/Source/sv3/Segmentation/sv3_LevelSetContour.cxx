@@ -91,13 +91,13 @@ std::string levelSetContour::GetClassName()
 void levelSetContour::CreateContourPoints()
 {
         
-    if(m_VtkImageSlice==NULL)
+    if(m_VtkImageSlice==nullptr)
     {
         printf("Image slice is empty.\n");
         return;
     }
     
-    if(m_paras == NULL)
+    if(m_paras == nullptr)
     {
         printf("Level Set parameters have not been set.\n");
         return;
@@ -111,7 +111,7 @@ void levelSetContour::CreateContourPoints()
     ls->SetDebug(false);
     ls->SetUseInputImageAsFeature(false);
 
-    cvPolyData *seedPd = NULL;
+    cvPolyData *seedPd = nullptr;
     //    int loc[3];
     //    loc[0] = x;
     //    loc[1] = y;

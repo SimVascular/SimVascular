@@ -45,7 +45,7 @@ const std::vector<std::string> sv4guiMitkROMSimJob::JobBasicParameters::names =
 
 sv4guiMitkROMSimJob::sv4guiMitkROMSimJob()
     : m_CalculateBoundingBox(true)
-//    , m_Job(NULL)
+//    , m_Job(nullptr)
     , m_MeshName("")
     , m_ModelName("")
     , m_ModelOrder("1")
@@ -70,7 +70,7 @@ sv4guiMitkROMSimJob::sv4guiMitkROMSimJob(const sv4guiMitkROMSimJob &other)
         if(other.m_JobSet[t])
             m_JobSet[t]=other.m_JobSet[t]->Clone();
 //        else
-//            m_JobSet.push_back(NULL);
+//            m_JobSet.push_back(nullptr);
     }
 }
 
@@ -183,7 +183,7 @@ sv4guiROMSimJob* sv4guiMitkROMSimJob::GetSimJob(unsigned int t) const
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }
 

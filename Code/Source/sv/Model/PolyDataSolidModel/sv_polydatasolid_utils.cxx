@@ -29,15 +29,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file sv_polydatasolid_utils.cxx
- *  @brief The implementations of functions in cv_polydatasolid_utils
- *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- */
-
 #include "SimVascular.h"
 
 #include <stdio.h>
@@ -50,7 +41,6 @@
 #include "sv_vtk_utils.h"
 #include "sv_sys_geom.h"
 
-#include "sv2_globals.h"
 #include "vtkConnectivityFilter.h"
 #include "vtkSmartPointer.h"
 #include "vtkSTLReader.h"
@@ -110,7 +100,7 @@ int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces)
   int check = 0;
   int faceid = 0;
   double range[2];
-  *v_faces = NULL;
+  *v_faces = nullptr;
 
   boundaryScalars = vtkSmartPointer<vtkIntArray>::New();
   if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != SV_OK)
@@ -218,7 +208,6 @@ int PlyDtaUtils_GetBoundaryFaces( vtkPolyData *geom,double angle,int *numRegions
 
 int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *facepd)
 {
-
   vtkSmartPointer<vtkThreshold> idThreshold = vtkSmartPointer<vtkThreshold>::New();
   vtkSmartPointer<vtkUnstructuredGrid> tempGrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
   vtkSmartPointer<vtkDataSetSurfaceFilter> getPoly = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
@@ -226,13 +215,15 @@ int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *fac
   double facenum;
 
   facenum = (double) *faceid;
-  idThreshold->SetInputData(geom);
-  //Set Input Array to 0 port,0 connection,1 for Cell Data, and Regions is the type name
-  idThreshold->SetInputArrayToProcess(0,0,0,1,"ModelFaceID");
-  idThreshold->ThresholdBetween(facenum,facenum);
-  idThreshold->Update();
 
-  tempGrid = idThreshold->GetOutput();
+  // [DaveP] idThreshold->ThresholdBetween(facenum,facenum) is no longer supported.
+  //
+  tempGrid = VtkUtils_ThresholdUgrid(facenum, facenum, "ModelFaceID", geom); 
+  //idThreshold->SetInputData(geom);
+  //idThreshold->SetInputArrayToProcess(0,0,0,1,"ModelFaceID");
+  //idThreshold->ThresholdBetween(facenum,facenum);
+  //idThreshold->Update();
+  //tempGrid = idThreshold->GetOutput();
 
   getPoly->SetInputData(tempGrid);
   getPoly->Update();
@@ -329,7 +320,7 @@ int PlyDtaUtils_ReadNative( char *filename, vtkPolyData *result)
  * @param *filename Pointer to a char filename of the file to write
  * @param file_version int for filetype
  * @param *geom vtkPolyData that contains the info to be written to file
- * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the write function does not return properly.
  */
 
@@ -419,7 +410,7 @@ int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename
  * @brief Function to combine the ids of two faces in the polydata
  * @param targetface id of the face to set the two faces to have new id of
  * @param loseface id of the second face, id will be lost
- * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the function does not return properly.
  */
 
@@ -465,7 +456,7 @@ int PlyDtaUtils_CombineFaces(vtkPolyData *geom,int *targetface,int *loseface )
  * @brief Function to delete the cells in the polydata
  * @param numfaces this is the number of cells to delete from the polydata
  * @param faces this is an array containing the ids of the cells to delete
- * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the function does not return properly.
  */
 
@@ -492,7 +483,7 @@ int PlyDtaUtils_DeleteCells(vtkPolyData *geom,int *numcells,int *cells )
 /**
  * @brief Function to delete a region in the polydata
  * @param regionid this is the region id to delete all of the cells in
- * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the function does not return properly.
  */
 

@@ -46,8 +46,8 @@ cvPolyData::cvPolyData()
 {
   data_ = vtkPolyData::New();
 
-  locator_ = NULL;
-  genericCell_ = NULL;
+  locator_ = nullptr;
+  genericCell_ = nullptr;
   distMethod_ = PD_DIST_VTK;
 
 }
@@ -63,8 +63,8 @@ cvPolyData::cvPolyData( vtkPolyData *pd )
   data_ = vtkPolyData::New();
   ShallowCopy( pd );
 
-  locator_ = NULL;
-  genericCell_ = NULL;
+  locator_ = nullptr;
+  genericCell_ = nullptr;
   distMethod_ = PD_DIST_VTK;
 
 }
@@ -80,8 +80,8 @@ cvPolyData::cvPolyData( cvPolyData *src )
   data_ = vtkPolyData::New();
   ShallowCopy( static_cast<vtkDataSet*>(src->data_) );
 
-  locator_ = NULL;
-  genericCell_ = NULL;
+  locator_ = nullptr;
+  genericCell_ = nullptr;
   distMethod_ = PD_DIST_VTK;
 
 }
@@ -259,9 +259,9 @@ void cvPolyData::SetDistMethod( PolyData_DistanceT dt )
 
 int cvPolyData::BuildVtkCellLocator()
 {
-  if ( locator_ == NULL ) {
+  if ( locator_ == nullptr ) {
     locator_ = vtkCellLocator::New();
-    if ( locator_ == NULL ) {
+    if ( locator_ == nullptr ) {
       return SV_ERROR;
     }
     locator_->DebugOff();
@@ -272,9 +272,9 @@ int cvPolyData::BuildVtkCellLocator()
     locator_->Initialize();
     locator_->BuildLocator();
   }
-  if ( genericCell_ == NULL ) {
+  if ( genericCell_ == nullptr ) {
     genericCell_ = vtkGenericCell::New();
-    if ( genericCell_ == NULL ) {
+    if ( genericCell_ == nullptr ) {
       return SV_ERROR;
     }
   }
@@ -288,13 +288,13 @@ int cvPolyData::BuildVtkCellLocator()
 
 void cvPolyData::ClearVtkCellLocator()
 {
-  if ( locator_ != NULL ) {
+  if ( locator_ != nullptr ) {
     locator_->Delete();
-    locator_ = NULL;
+    locator_ = nullptr;
   }
-  if ( genericCell_ != NULL ) {
+  if ( genericCell_ != nullptr ) {
     genericCell_->Delete();
-    genericCell_ = NULL;
+    genericCell_ = nullptr;
   }
   return;
 }

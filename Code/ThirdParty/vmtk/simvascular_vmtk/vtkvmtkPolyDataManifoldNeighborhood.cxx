@@ -42,9 +42,9 @@ void vtkvmtkPolyDataManifoldNeighborhood::Build()
   vtkCell* cell;
   vtkPolyData* pdata = vtkPolyData::SafeDownCast(this->DataSet);
 
-  if (pdata==NULL)
+  if (pdata==nullptr)
     {
-    vtkErrorMacro(<< "Input data NULL or not poly data");
+    vtkErrorMacro(<< "Input data nullptr or not poly data");
     }
 
   pointId = this->DataSetPointId;
@@ -162,10 +162,10 @@ void vtkvmtkPolyDataManifoldNeighborhood::Build()
     }
 
   this->NPoints = stencilIds->GetNumberOfIds();
-  if (this->PointIds!=NULL)
+  if (this->PointIds!=nullptr)
     {
     delete[] this->PointIds;
-    this->PointIds = NULL;
+    this->PointIds = nullptr;
     }
   this->PointIds = new vtkIdType[this->NPoints];
   memcpy(this->PointIds,stencilIds->GetPointer(0),this->NPoints*sizeof(vtkIdType));

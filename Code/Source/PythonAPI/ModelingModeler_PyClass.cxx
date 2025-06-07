@@ -175,7 +175,7 @@ ModelingModeler_approximate_curve(PyModelingModeler* self, PyObject* args, PyObj
   std::cout << "========== ModelingModeler_approximate_curve ==========" << std::endl;
 
   auto api = PyUtilApiFunction("Od|O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"polydata", "tolerance", "closed", NULL};
+  static char *keywords[] = {"polydata", "tolerance", "closed", nullptr};
   PyObject* polydataArg = nullptr; 
   double tolerance;
   PyObject* closedArg = nullptr;
@@ -244,7 +244,7 @@ ModelingModeler_box(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
   std::cout << "[ModelingModeler_box] self->id: " << self->id << std::endl;
   #endif
   auto api = PyUtilApiFunction("O!ddd", PyRunTimeErr, __func__);
-  static char *keywords[] = {"center", "width", "height", "length", NULL};
+  static char *keywords[] = {"center", "width", "height", "length", nullptr};
   double width = 1.0;
   double height = 1.0;
   double length = 1.0;
@@ -292,7 +292,7 @@ ModelingModeler_box(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
   // Create the new solid object.
   auto pyModelingModelObj = CreatePyModelingModelObject(self->kernel);
   auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
-  if (model == NULL) {
+  if (model == nullptr) {
       api.error("Error creating a 3D box solid model.");
       return nullptr;
   }
@@ -328,7 +328,7 @@ ModelingModeler_cap_surface(PyModelingModeler* self, PyObject* args, PyObject* k
   //std::cout << "========== ModelingModeler_cap_surface ==========" << std::endl;
 
   auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", NULL};
+  static char *keywords[] = {"surface", nullptr};
   PyObject* surfaceArg;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg)) {
@@ -354,7 +354,7 @@ ModelingModeler_cap_surface(PyModelingModeler* self, PyObject* args, PyObject* k
       return nullptr;
   }
   auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
-  if (model == NULL) {
+  if (model == nullptr) {
       api.error("Error capping a surface solid model.");
       return nullptr;
   }
@@ -396,7 +396,7 @@ ModelingModeler_cylinder(PyModelingModeler* self, PyObject* args, PyObject* kwar
   std::cout << "[ModelingModel_cylinder] Kernel: " << self->kernel << std::endl;
   #endif
   auto api = PyUtilApiFunction("O!O!dd", PyRunTimeErr, __func__);
-  static char *keywords[] = {"center", "axis", "radius", "length", NULL};
+  static char *keywords[] = {"center", "axis", "radius", "length", nullptr};
   double radius;
   double length;
   PyObject* centerArg;
@@ -446,7 +446,7 @@ ModelingModeler_cylinder(PyModelingModeler* self, PyObject* args, PyObject* kwar
       return nullptr;
   }
   auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
-  if (model == NULL) {
+  if (model == nullptr) {
       api.error("Error creating a cylinder solid model.");
       return nullptr;
   }
@@ -481,7 +481,7 @@ static PyObject *
 ModelingModeler_ellipsoid(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O!O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"center", "radii", NULL};
+  static char *keywords[] = {"center", "radii", nullptr};
   PyObject* centerArg;
   PyObject* radiiArg;
 
@@ -515,7 +515,7 @@ ModelingModeler_ellipsoid(PyModelingModeler* self, PyObject* args, PyObject* kwa
       return nullptr;
   }
   auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
-  if (model == NULL) {
+  if (model == nullptr) {
       api.error("Error creating a solid model object.");
       return nullptr;
   }
@@ -551,7 +551,7 @@ ModelingModeler_interpolate_curve(PyModelingModeler* self, PyObject* args, PyObj
   std::cout << "========== ModelingModeler_interpolate_curve ==========" << std::endl;
 
   auto api = PyUtilApiFunction("O|O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"polydata", "closed", NULL};
+  static char *keywords[] = {"polydata", "closed", nullptr};
   PyObject* polydataArg = nullptr; 
   PyObject* closedArg = nullptr;
 
@@ -616,7 +616,7 @@ static PyObject *
 ModelingModeler_intersect(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("OO", PyRunTimeErr, __func__);
-  static char *keywords[] = {"model1", "model2", NULL};
+  static char *keywords[] = {"model1", "model2", nullptr};
   PyObject* model1Arg;
   PyObject* model2Arg;
 
@@ -650,7 +650,7 @@ ModelingModeler_intersect(PyModelingModeler* self, PyObject* args, PyObject* kwa
       return nullptr;
   }
   auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
-  if (model == NULL) {
+  if (model == nullptr) {
       api.error("Error creating a solid model.");
       return nullptr;
   }
@@ -695,7 +695,7 @@ ModelingModeler_loft(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
   std::cout << "========== ModelingModeler_loft ==========" << std::endl;
 
   auto api = PyUtilApiFunction("O!|iiiddd", PyRunTimeErr, __func__);
-  static char *keywords[] = {"curve_list", NULL};
+  static char *keywords[] = {"curve_list", nullptr};
   PyObject* curveListArg;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &curveListArg)) {
@@ -725,7 +725,7 @@ ModelingModeler_loft(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
   auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
-  if (model == NULL) {
+  if (model == nullptr) {
       api.error("Error creating a lofted surface solid model.");
       return nullptr;
   }
@@ -779,7 +779,7 @@ static PyObject *
 ModelingModeler_read(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", NULL};
+  static char *keywords[] = {"file_name", nullptr};
   char *fileName;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
@@ -798,7 +798,7 @@ ModelingModeler_read(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
   auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
-  if (model == NULL) {
+  if (model == nullptr) {
       api.error("Error creating a solid model.");
       return nullptr;
   }
@@ -832,7 +832,7 @@ static PyObject *
 ModelingModeler_sphere(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O!d", PyRunTimeErr, __func__);
-  static char *keywords[] = {"center", "radius", NULL};
+  static char *keywords[] = {"center", "radius", nullptr};
   PyObject* centerArg;
   double radius;
 
@@ -865,7 +865,7 @@ ModelingModeler_sphere(PyModelingModeler* self, PyObject* args, PyObject* kwargs
       return nullptr;
   }
   auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
-  if (model == NULL) {
+  if (model == nullptr) {
       api.error("Error creating a cylinder solid model.");
       return nullptr;
   }
@@ -899,7 +899,7 @@ static PyObject *
 ModelingModeler_subtract(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("OO", PyRunTimeErr, __func__);
-  static char *keywords[] = {"main", "subtract", NULL};
+  static char *keywords[] = {"main", "subtract", nullptr};
   PyObject* mainModelArg;
   PyObject* subtractModelArg;
 
@@ -933,7 +933,7 @@ ModelingModeler_subtract(PyModelingModeler* self, PyObject* args, PyObject* kwar
       return nullptr;
   }
   auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
-  if (model == NULL) {
+  if (model == nullptr) {
       api.error("Error creating a solid model.");
       return nullptr;
   }
@@ -972,7 +972,7 @@ static PyObject *
 ModelingModeler_union(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("OO", PyRunTimeErr, __func__);
-  static char *keywords[] = {"model1", "model2", NULL};
+  static char *keywords[] = {"model1", "model2", nullptr};
   PyObject* model1Arg;
   PyObject* model2Arg;
 
@@ -1006,7 +1006,7 @@ ModelingModeler_union(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
   auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
-  if (model == NULL) {
+  if (model == nullptr) {
       api.error("Error creating a solid model.");
       return nullptr;
   }
@@ -1070,7 +1070,7 @@ PyDoc_STRVAR(ModelingModelerClass_doc,
 //
 PyMemberDef PyModelingModelerMembers[] = {
   {"kernel",  offsetof(PyModelingModeler, kernelName),  T_OBJECT_EX, READONLY,  "The kernel name for this modeler."},
-  {NULL}
+  {nullptr}
 };
 
 //------------------------
@@ -1104,7 +1104,7 @@ static PyMethodDef PyModelingModelerMethods[] = {
 
   { "union", (PyCFunction)ModelingModeler_union, METH_VARARGS | METH_KEYWORDS, ModelingModeler_union_doc},
 
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //-----------------------
@@ -1150,7 +1150,7 @@ PyModelingModelerInit(PyModelingModeler* self, PyObject* args, PyObject *kwds)
 // Define the Python type object that stores contour.kernel types.
 //
 PyTypeObject PyModelingModelerType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   MODELING_MODELER_MODULE_CLASS,
   sizeof(PyModelingModeler)
 };
@@ -1198,7 +1198,7 @@ PyModelingModelerNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   }
 
   auto self = (PyModelingModeler*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       self->id = 0;
   }
 

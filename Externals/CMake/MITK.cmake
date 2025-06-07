@@ -28,6 +28,20 @@
 # MITK
 set(proj MITK)
 
+set(SV_MITK_DIR /Users/parkerda/software/ktbolt/svExternals/install/mitk)
+
+set(SV_EXTERNALS_MITK_PFX_DIR ${SV_MITK_DIR})
+set(SV_EXTERNALS_MITK_BIN_DIR ${SV_MITK_DIR})
+set(SV_EXTERNALS_MITK_BLD_DIR ${SV_MITK_DIR})
+
+set(msg "[Externals/CMake/MITK.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} +++++                         Externals/CMake/MITK.cmake                             ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_MITK_DIR: ${SV_ITK_DIR}")
+
 # Dependencies
 set(${proj}_DEPENDENCIES "QT")
 
@@ -35,30 +49,37 @@ if(SV_EXTERNALS_ENABLE_PYTHON AND SV_EXTERNALS_BUILD_MITK_WITH_PYTHON)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "PYTHON")
 endif()
+
 if(SV_EXTERNALS_ENABLE_NUMPY)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "NUMPY")
 endif()
+
 if(SV_EXTERNALS_ENABLE_PIP)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "PIP")
 endif()
+
 if(SV_EXTERNALS_ENABLE_GDCM)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "GDCM")
 endif()
+
 if(SV_EXTERNALS_ENABLE_VTK)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "VTK")
 endif()
+
 if(SV_EXTERNALS_ENABLE_ITK)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "ITK")
 endif()
+
 if(SV_EXTERNALS_ENABLE_SWIG)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "SWIG")
 endif()
+
 if(SV_EXTERNALS_ENABLE_HDF5)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "HDF5")
@@ -79,12 +100,12 @@ endif()
 
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
 #Special for QT, make sure that MITK uses the same libs we are!
-foreach(comp ${SV_EXTERNALS_QT5_COMPONENTS})
-  #if(Qt5${comp}_LIBRARIES)
+foreach(comp ${SV_EXTERNALS_QT6_COMPONENTS})
+  #if(Qt6${comp}_LIBRARIES)
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-      -DQt5${comp}_DIR:PATH=${SV_EXTERNALS_QT_TOPLEVEL_CMAKE_DIR}/Qt5${comp}
+      -DQt6${comp}_DIR:PATH=${SV_EXTERNALS_QT_TOPLEVEL_CMAKE_DIR}/Qt6${comp}
       )
-      #-DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
+      #-DQt6${comp}_DIR:PATH=${Qt6${comp}_DIR}
   #endif()
 endforeach()
 
@@ -168,6 +189,7 @@ if(SV_EXTERNALS_ENABLE_HDF5)
     -DEXTERNAL_HDF5_DIR:PATH=${SV_EXTERNALS_HDF5_CMAKE_DIR}
     )
 endif()
+
 if(SV_EXTERNALS_DOWNLOAD_HDF5)
   list(APPEND CMAKE_PREFIX_PATH
     ${SV_EXTERNALS_HDF5_CMAKE_DIR}
@@ -205,19 +227,43 @@ elseif(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "2018.04.0")
 endif()
 
 # Add external project
-if(SV_EXTERNALS_DOWNLOAD_${proj})
+#
+if(SV_MITK_DIR)
+
+  message(STATUS "${msg} +++++ Use installed MITK ")
+
+  # find_package does not work because MITK install does 
+  # not provide a MITKConfig.cmake file.
+  #find_package(MITK REQUIRED PATHS ${SV_MITK_DIR} NO_DEFAULT_PATH)
+
+  message(STATUS "${msg} MITK_DIR: ${MITK_DIR}")
+  message(STATUS "${msg} MITK_LIBRARY_DIRS: ${MITK_LIBRARY_DIRS}")
+  message(STATUS "${msg} MITK_LIBRARIES: ${MITK_LIBRARIES}")
+  message(STATUS "${msg} MITK_INCLUDE_DIR: ${MITK_INCLUDE_DIR}")
+  message(STATUS "${msg} Qt6_DIR: ${Qt6_DIR}")
+
+  message(STATUS "${msg} ")
+  message(STATUS "${msg} +++ Create external project ... ")
+  message(STATUS "${msg} PREFIX: ${${proj}_PREFIX}")
+  message(STATUS "${msg} SOURCE_DIR: ${SV_EXTERNALS_${proj}_BIN_DIR}") 
+  message(STATUS "${msg} DEPENDS: ${${proj}_DEPENDENCIES}")
+
   ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
+    #URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
+    PREFIX ${SV_MITK_DIR}
+    SOURCE_DIR ${SV_MITK_DIR}
+    BINARY_DIR ${SV_MITK_DIR}
+    DEPENDS ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
     UPDATE_COMMAND ""
     )
+
+  message(STATUS "${msg} --- Done Create external project ")
+
 else()
+
   ExternalProject_Add(${proj}
     URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
@@ -248,7 +294,7 @@ else()
       -DMITK_USE_Numpy:BOOL=${SV_EXTERNALS_ENABLE_NUMPY}
       -DMITK_USE_VMTK:BOOL=OFF
       -DMITK_USE_HDF5:BOOL=${SV_EXTERNALS_ENABLE_HDF5}
-      -DQt5_DIR:PATH:STRING=${SV_EXTERNALS_QT_CMAKE_DIR}
+      -DQt6_DIR:PATH:STRING=${SV_EXTERNALS_QT_CMAKE_DIR}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${SV_EXTERNALS_QT_QMAKE_EXECUTABLE}
       -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
       ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}

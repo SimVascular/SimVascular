@@ -36,7 +36,7 @@
 
 #include "mitkAbstractFileIO.h"
 
-#include "simvascular_tinyxml.h"
+#include <tinyxml2.h>
 
 class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiMitkROMSimJobIO : public mitk::AbstractFileIO
 {
@@ -46,6 +46,9 @@ public:
 
     using mitk::AbstractFileReader::Read;
     std::vector<mitk::BaseData::Pointer> Read() override;
+    std::vector<mitk::BaseData::Pointer> DoRead() override {
+        std::cout << "Should implement this?" << std::endl << std::flush;
+    }
     mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
 
     void Write() override;
@@ -53,8 +56,8 @@ public:
 
 private:
     sv4guiMitkROMSimJobIO* IOClone() const override;
-    std::map<std::string,std::string> GetProps(TiXmlElement* jobElement, const std::string& propName);
-    std::map<std::string,std::map<std::string,std::string> > GetMapProps(TiXmlElement* jobElement, 
+    std::map<std::string,std::string> GetProps(tinyxml2::XMLElement* jobElement, const std::string& propName);
+    std::map<std::string,std::map<std::string,std::string> > GetMapProps(tinyxml2::XMLElement* jobElement, 
       const std::string& propName1, const std::string& propName2);
 
 

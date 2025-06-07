@@ -32,8 +32,7 @@
 #include "sv4gui_MeshTetGenAdaptor.h"
 
 
-sv4guiMeshTetGenAdaptor::sv4guiMeshTetGenAdaptor()
-    : m_cvTetGetMesh(new cvTetGenMeshObject(NULL))
+sv4guiMeshTetGenAdaptor::sv4guiMeshTetGenAdaptor() : m_cvTetGetMesh(new cvTetGenMeshObject())
     , m_cvTetGenAdaptor(new cvTetGenAdapt())
 {
     m_Type="TetGen";
@@ -42,12 +41,12 @@ sv4guiMeshTetGenAdaptor::sv4guiMeshTetGenAdaptor()
 
 sv4guiMeshTetGenAdaptor::~sv4guiMeshTetGenAdaptor()
 {
-    if(m_cvTetGetMesh!=NULL)
+    if(m_cvTetGetMesh!=nullptr)
         delete m_cvTetGetMesh;
 
-    if(m_cvTetGenAdaptor!=NULL)
+    if(m_cvTetGenAdaptor!=nullptr)
     {
-        m_cvTetGenAdaptor->SetMeshObject(NULL);
+        m_cvTetGenAdaptor->SetMeshObject(nullptr);
         delete m_cvTetGenAdaptor;
     }
 }
@@ -74,7 +73,7 @@ bool sv4guiMeshTetGenAdaptor::SetAdaptOptions(std::string flag, double value)
 bool sv4guiMeshTetGenAdaptor::Adapt()
 {
     return m_cvTetGenAdaptor
-            && m_cvTetGenAdaptor->SetMetric(NULL,-1,-1)==SV_OK
+            && m_cvTetGenAdaptor->SetMetric(nullptr,-1,-1)==SV_OK
             && m_cvTetGenAdaptor->SetupMesh()==SV_OK
             && m_cvTetGenAdaptor->RunAdaptor()==SV_OK
             && m_cvTetGenAdaptor->GetAdaptedMesh()==SV_OK
@@ -107,7 +106,7 @@ sv4guiMeshTetGen* sv4guiMeshTetGenAdaptor::GetAdaptedMesh()
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 bool sv4guiMeshTetGenAdaptor::WriteAdaptedMesh(std::string filePath)

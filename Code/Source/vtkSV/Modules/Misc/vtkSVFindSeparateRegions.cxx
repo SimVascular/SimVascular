@@ -59,8 +59,8 @@ vtkStandardNewMacro(vtkSVFindSeparateRegions);
 // ----------------------
 vtkSVFindSeparateRegions::vtkSVFindSeparateRegions()
 {
-  this->CellArrayName     = NULL;
-  this->OutPointArrayName = NULL;
+  this->CellArrayName     = nullptr;
+  this->OutPointArrayName = nullptr;
 
   this->WorkPd        = vtkPolyData::New();
   this->TargetCellIds = vtkIdList::New();
@@ -74,24 +74,24 @@ vtkSVFindSeparateRegions::~vtkSVFindSeparateRegions()
   if (this->WorkPd)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
   if (this->TargetCellIds)
   {
     this->TargetCellIds->Delete();
-    this->TargetCellIds = NULL;
+    this->TargetCellIds = nullptr;
   }
 
-  if (this->CellArrayName != NULL)
+  if (this->CellArrayName != nullptr)
   {
     delete [] this->CellArrayName;
-    this->CellArrayName = NULL;
+    this->CellArrayName = nullptr;
   }
 
-  if (this->OutPointArrayName != NULL)
+  if (this->OutPointArrayName != nullptr)
   {
     delete [] this->OutPointArrayName;
-    this->OutPointArrayName = NULL;
+    this->OutPointArrayName = nullptr;
   }
 }
 
@@ -102,9 +102,9 @@ void vtkSVFindSeparateRegions::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
-  if (this->CellArrayName != NULL)
+  if (this->CellArrayName != nullptr)
     os << indent << "Cell array name: " << this->CellArrayName << "\n";
-  if (this->OutPointArrayName != NULL)
+  if (this->OutPointArrayName != nullptr)
     os << indent << "Out point array name: " << this->OutPointArrayName << "\n";
   if (this->TargetCellIds->GetNumberOfIds() != 0)
   {
@@ -173,7 +173,7 @@ int vtkSVFindSeparateRegions::PrepFilter()
     std::cout<<"No Cell Array Named "<<this->CellArrayName<<" on surface"<<endl;
     return SV_ERROR;
   }
-  if (this->OutPointArrayName == NULL)
+  if (this->OutPointArrayName == nullptr)
   {
     std::cout<<"Need name for output point data information"<<endl;
     return SV_ERROR;

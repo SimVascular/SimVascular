@@ -73,8 +73,8 @@ vtkSVLoftNURBSCurve::vtkSVLoftNURBSCurve()
 
   this->Curve = vtkSVNURBSCurve::New();
 
-  this->KnotSpanType       = NULL;
-  this->ParametricSpanType = NULL;
+  this->KnotSpanType       = nullptr;
+  this->ParametricSpanType = nullptr;
 }
 
 // ----------------------
@@ -82,7 +82,7 @@ vtkSVLoftNURBSCurve::vtkSVLoftNURBSCurve()
 // ----------------------
 vtkSVLoftNURBSCurve::~vtkSVLoftNURBSCurve()
 {
-  if (this->Curve != NULL)
+  if (this->Curve != nullptr)
   {
     this->Curve->Delete();
   }
@@ -101,14 +101,14 @@ int vtkSVLoftNURBSCurve::RequestData(
   vtkPolyData *input = vtkPolyData::GetData(inputVector[0], 0);
   vtkPolyData *output = vtkPolyData::GetData(outputVector, 0);
 
-  if (this->KnotSpanType == NULL)
+  if (this->KnotSpanType == nullptr)
   {
     vtkErrorMacro("Need to provide knot span type");
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
 
-  if (this->ParametricSpanType == NULL)
+  if (this->ParametricSpanType == nullptr)
   {
     vtkErrorMacro("Need to provide parametric span type");
     this->SetErrorCode(vtkErrorCode::UserError + 2);

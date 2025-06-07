@@ -40,6 +40,7 @@
  */
 
 #include "sv_vmtk_utils.h"
+#include "sv_vtk_utils.h"
 
 #include "SimVascular.h"
 #include "sv_tetgenmesh_utils.h"
@@ -88,36 +89,28 @@
 #define vtkNew(type,name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
-/* -------------- */
-/* sys_geom_centerlines */
-/* -------------- */
-
-/** @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- *
- *  @brief Function to extract centerlines from a vtkPolyData surface
- *  @brief VTMK is called to do this. Each cap on PolyData has an
- *  @brief id and then each id is set as either inlet or outlet.
- *  @param *sources list of source cap ids
- *  @param nsources number of source cap ids
- *  @param *targets list of target cap ids
- *  @param ntargets number of target cap ids
- *  @param **lines returned center lines as vtkPolyData
- *  @param ** voronoi returned voronoi diagram as vtkPolyData
- *  @return SV_OK if the VTMK function executes properly
- */
-
-int sys_geom_centerlines( cvPolyData *polydata,int *sources,int nsources,
-		int *targets,int ntargets,
-		cvPolyData **lines, cvPolyData **voronoi)
+//----------------------
+// sys_geom_centerlines 
+//----------------------
+// Compute centerlines for a closed surface.
+//
+// Note: this is used by the SV Modeling Tool.
+//
+// sources list of source cap ids
+// nsources number of source cap ids
+// targets list of target cap ids
+// ntargets number of target cap ids
+// lines returned center lines as vtkPolyData
+// voronoi returned voronoi diagram as vtkPolyData
+//
+int sys_geom_centerlines( cvPolyData *polydata, int *sources, int nsources, int *targets, int ntargets,
+    cvPolyData **lines, cvPolyData **voronoi)
 {
   vtkPolyData *geom = polydata->GetVtkPolyData();
-  cvPolyData *result1 = NULL;
-  cvPolyData *result2 = NULL;
-  *lines = NULL;
-  *voronoi = NULL;
+  cvPolyData *result1 = nullptr;
+  cvPolyData *result2 = nullptr;
+  *lines = nullptr;
+  *voronoi = nullptr;
 
 //  vtkSmartPointer<vtkvmtkPolyDataCenterlines> centerLiner =
 //    vtkSmartPointer<vtkvmtkPolyDataCenterlines>::New();
@@ -191,8 +184,8 @@ int sys_geom_mergecenterlines( cvPolyData *lines, int mergeblanked,
 		cvPolyData **merged)
 {
   vtkPolyData *geom = lines->GetVtkPolyData();
-  cvPolyData *result1 = NULL;
-  *merged = NULL;
+  cvPolyData *result1 = nullptr;
+  *merged = nullptr;
 
   vtkNew(vtkvmtkMergeCenterlines, merger);
   try {
@@ -242,8 +235,8 @@ int sys_geom_separatecenterlines( cvPolyData *lines,
 		cvPolyData **separate)
 {
   vtkPolyData *geom = lines->GetVtkPolyData();
-  cvPolyData *result1 = NULL;
-  *separate = NULL;
+  cvPolyData *result1 = nullptr;
+  *separate = nullptr;
 
   vtkNew(vtkvmtkCenterlineBranchExtractor,brancher);
   try {
@@ -268,61 +261,41 @@ int sys_geom_separatecenterlines( cvPolyData *lines,
   return SV_OK;
 }
 
-/* -------------- */
-/* sys_geom_centerlinesections */
-/* -------------- */
-
-/** @author Martin Pfaller
- *  @author pfaller@stanford.edu
- *  @author Stanford University
- *
- *  @brief Function to indicate centerline branches and bifurcations and calculate cross-sectional area
- *  @param *lines_in from centerline extraction, the centerlines to be used
- *  @param *surface_in surface geometry
- *  @note  The point array names are the ones from vmtkcenterlinesections and "BranchId", "BifurcationId", "Path", "GlobalNodeId"
- *  @param **lines_out cleaned and connected centerline with point arrays describing branching attached
- *  @param **surface_out as surface_in with point arrays "BranchId", "BifurcationId"
- *  @param **sections cross-sections of the surface geometry along the centerline
- *  @return SV_OK if the VTMK function executes properly
- */
-
-int sys_geom_centerlinesections(cvPolyData *lines_in, cvPolyData *surface_in, cvPolyData **lines_out, cvPolyData **surface_out, cvPolyData **sections)
+//------------------------------
+// sys_geom_centerline_sections 
+//------------------------------
+// Compute centerlines for a closed surface.
+//
+// Note: this is used by the SV ROM Simulation Tool.
+//
+// The centerlines branches and bifurcations are identified using cross sections
+// of planar slices of the surface.
+// 
+// Input:
+//   lines_in - from centerline extraction, the centerlines to be used
+//   surface_in s- urface geometry
+//
+// Output:
+//   lines_out - cleaned and connected centerline with point arrays describing branching attached
+//   surface_out - as surface_in with point arrays "BranchId", "BifurcationId"
+//   sections - cross-sections of the surface geometry along the centerline
+//
+int sys_geom_centerline_sections(cvPolyData *lines_in, cvPolyData *surface_in, cvPolyData **lines_out, 
+    cvPolyData **surface_out, cvPolyData **sections)
 {
   vtkPolyData *cent = lines_in->GetVtkPolyData();
   vtkPolyData *surf = surface_in->GetVtkPolyData();
-  cvPolyData *result1 = NULL;
-  cvPolyData *result2 = NULL;
-  cvPolyData *result3 = NULL;
-  *lines_out = NULL;
-  *sections = NULL;
+  cvPolyData *result1 = nullptr;
+  cvPolyData *result2 = nullptr;
+  cvPolyData *result3 = nullptr;
+  *lines_out = nullptr;
+  *sections = nullptr;
 
   vtkNew(vtkvmtkPolyDataCenterlineSections, cross_sections);
   try {
     std::cout<<"Calculating CenterlineSections..."<<endl;
     cross_sections->SetInputData(surf);
     cross_sections->SetCenterlines(cent);
-    
-    // for branch/bifurcation splitting
-    cross_sections->SetGlobalNodeIdArrayName("GlobalNodeId");
-    cross_sections->SetBifurcationIdArrayNameTmp("BifurcationIdTmp");
-    cross_sections->SetBifurcationIdArrayName("BifurcationId");
-    cross_sections->SetBranchIdArrayNameTmp("BranchIdTmp");
-    cross_sections->SetBranchIdArrayName("BranchId");
-    cross_sections->SetPathArrayName("Path");
-    cross_sections->SetCenterlineIdArrayName("CenterlineId");
-
-    // from vmtkcenterlines
-    cross_sections->SetRadiusArrayName("MaximumInscribedSphereRadius");
-    
-    // from vmtkcenterlinesections
-    cross_sections->SetCenterlineSectionAreaArrayName("CenterlineSectionArea");
-    cross_sections->SetCenterlineSectionClosedArrayName("CenterlineSectionClosed");
-    cross_sections->SetCenterlineSectionBifurcationArrayName("CenterlineSectionBifurcation");
-    cross_sections->SetCenterlineSectionNormalArrayName("CenterlineSectionNormal");
-	cross_sections->SetCenterlineSectionMaxSizeArrayName("CenterlineSectionMaxSize");
-	cross_sections->SetCenterlineSectionMinSizeArrayName("CenterlineSectionMinSize");
-	cross_sections->SetCenterlineSectionShapeArrayName("CenterlineSectionShape");
-	
     cross_sections->Update();
 
     result1 = new cvPolyData( cross_sections->GetCenterlines() );
@@ -362,8 +335,8 @@ int sys_geom_grouppolydata( cvPolyData *polydata,cvPolyData *lines,
 {
   vtkPolyData *geom = polydata->GetVtkPolyData();
   vtkPolyData *centerlines = lines->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *grouped = NULL;
+  cvPolyData *result = nullptr;
+  *grouped = nullptr;
 
   vtkNew(vtkvmtkPolyDataCenterlineGroupsClipper,grouper);
   try {
@@ -412,8 +385,8 @@ int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,
 {
   vtkPolyData *geom = polydata->GetVtkPolyData();
   vtkPolyData *centerlines = lines->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *distance = NULL;
+  cvPolyData *result = nullptr;
+  *distance = nullptr;
 
   vtkNew(vtkvmtkPolyDataDistanceToCenterlines,distancer);
   try {
@@ -465,8 +438,8 @@ int sys_geom_cap_for_centerlines(cvPolyData* polydata, cvPolyData** cappedpolyda
       int **centerids, int type)
 {
   auto geom = polydata->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *cappedpolydata = NULL;
+  cvPolyData *result = nullptr;
+  *cappedpolydata = nullptr;
   auto capCenterIds = vtkSmartPointer<vtkIdList>::New();
   auto triangulate = vtkSmartPointer<vtkTriangleFilter>::New();
 
@@ -514,6 +487,11 @@ int sys_geom_cap_for_centerlines(cvPolyData* polydata, cvPolyData** cappedpolyda
 
   *numcenterids = numids;
   *centerids = allids;
+
+  vtkXMLPolyDataWriter *writer = vtkXMLPolyDataWriter::New();
+  writer->SetInputData((*cappedpolydata)->GetVtkPolyData());
+  writer->SetFileName("cappedpolydata.vtp");
+  writer->Write();
 
   return SV_OK;
 }
@@ -629,8 +607,8 @@ int sys_geom_cap_with_ids( cvPolyData *polydata,cvPolyData **cappedpolydata,
 {
 
   vtkPolyData *geom = polydata->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *cappedpolydata = NULL;
+  cvPolyData *result = nullptr;
+  *cappedpolydata = nullptr;
 
   try {
 
@@ -715,14 +693,14 @@ int sys_geom_mapandcorrectids( cvPolyData *originalpd, cvPolyData *newpd, cvPoly
 {
   vtkPolyData *originalgeom = originalpd->GetVtkPolyData();
   vtkPolyData *newgeom = newpd->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *polydata = NULL;
+  cvPolyData *result = nullptr;
+  *polydata = nullptr;
 
   int i,j,k;
   int subId;
   int count;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts;
   double distance;
   double closestPt[3];
   double minmax[2];
@@ -1269,7 +1247,7 @@ int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen, vtkUnstructuredGri
 
   // Get model regions on tetgen mesh
   auto meshFromTetGenRegionIds = meshFromTetGen->GetCellData()->GetArray("ModelRegionID");
-  if (meshFromTetGenRegionIds == NULL) {
+  if (meshFromTetGenRegionIds == nullptr) {
     fprintf(stderr,"No model region id on tetgen mesh\n");
     return SV_ERROR;
   }
@@ -1612,6 +1590,7 @@ int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMes
 
   // Create boundary layer surface mesh from cells with 'isSurface' array value 1. 
   //
+  /* dp
   auto thresholder = vtkSmartPointer<vtkThreshold>::New();
   thresholder->SetInputData(boundaryMesh);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, "isSurface");
@@ -1623,27 +1602,35 @@ int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMes
   surfacer->Update();
 
   boundaryMeshSurface->DeepCopy(surfacer->GetOutput());
+  */
+  auto threshold_surface = VtkUtils_ThresholdSurface(1.0, 1.0, "isSurface", boundaryMesh);
+  boundaryMeshSurface->DeepCopy(threshold_surface);
 
   // Create boundary layer volume mesh from cells with 'isSurface' array value 0. 
   //
+  /* dp
   thresholder->SetInputData(boundaryMesh);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, "isSurface");
   thresholder->ThresholdBetween(0, 0);
   thresholder->Update();
-
   boundaryMeshVolume->DeepCopy(thresholder->GetOutput());
+  */
+  auto threshold_volume = VtkUtils_ThresholdUgrid(0.0, 0.0, "isSurface", boundaryMesh);
+  boundaryMeshVolume->DeepCopy(threshold_volume);
 
   // Create boundary layer mesh caps from cells with 'WallID' array value 0. 
   //
+  /* dp
   thresholder->SetInputData(surfaceWithSize);
   thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
-  thresholder->ThresholdBetween(0,0);
+  dp thresholder->ThresholdBetween(0,0);
   thresholder->Update();
-
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
-
   surfaceMeshCaps->DeepCopy(surfacer->GetOutput());
+  */
+  auto threshold_caps = VtkUtils_ThresholdSurface(0.0, 0.0, "WallID", surfaceWithSize);
+  surfaceMeshCaps->DeepCopy(threshold_caps);
 
   // Set the values of the 'ModelFaceID' array for the caps to 9999(?). 
   //
@@ -1800,7 +1787,7 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newGeom, vtkPolyData *originalGe
   for (int cellId = 0; cellId < newGeom->GetNumberOfCells(); cellId++) {
       // Calculate cell center.
       vtkIdType npts;
-      vtkIdType *pts;
+      const vtkIdType *pts;
       double center[3];
       newGeom->GetCellPoints(cellId, npts, pts);
       auto polyPts = vtkSmartPointer<vtkPoints>::New();
@@ -1843,7 +1830,7 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom, vtkPolyData *originalge
   int count;
   int bigcount;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts;
   double distance;
   double closestPt[3];
   double tolerance = 1.0;
@@ -1858,8 +1845,8 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom, vtkPolyData *originalge
   auto genericCell = vtkSmartPointer<vtkGenericCell>::New();
   auto originalCopy = vtkSmartPointer<vtkPolyData>::New();
 
-  if (excludeList == NULL) {
-    fprintf(stderr,"Cannot give NULL excludeList. Use other reset function without exclude list\n");
+  if (excludeList == nullptr) {
+    fprintf(stderr,"Cannot give nullptr excludeList. Use other reset function without exclude list\n");
     return SV_ERROR;
   }
 
@@ -1940,7 +1927,7 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   int count;
   int bigcount;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts =  new vtkIdType;
   double distance;
   double closestPt[3];
   double tolerance = 1.0;
@@ -1957,9 +1944,9 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   vtkSmartPointer<vtkPolyData> originalCopy =
     vtkSmartPointer<vtkPolyData>::New();
 
-  if (onlyList == NULL)
+  if (onlyList == nullptr)
   {
-    fprintf(stderr,"Cannot give NULL onlyList. Use other reset function without only list\n");
+    fprintf(stderr,"Cannot give nullptr onlyList. Use other reset function without only list\n");
     return SV_ERROR;
   }
 

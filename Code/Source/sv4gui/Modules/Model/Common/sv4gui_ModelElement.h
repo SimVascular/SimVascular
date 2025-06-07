@@ -68,7 +68,7 @@ public:
             : id(0)
             , name("")
             , type("")
-            , vpd(NULL)
+            , vpd(nullptr)
             , selected(false)
             , visible(true)
             , opacity(1.0f)
@@ -92,7 +92,7 @@ public:
 
             if(copyData)
             {
-                vtkSmartPointer<vtkPolyData> othervpd=NULL;
+                vtkSmartPointer<vtkPolyData> othervpd=nullptr;
                 if(other.vpd)
                 {
                     othervpd=vtkSmartPointer<vtkPolyData>::New();
@@ -101,7 +101,7 @@ public:
                 vpd=othervpd;
             }
             else
-                vpd=NULL;
+                vpd=nullptr;
         }
 
     };
@@ -226,9 +226,9 @@ public:
 
     void SetWholeVtkPolyData(vtkSmartPointer<vtkPolyData> wvpd);
 
-    virtual vtkSmartPointer<vtkPolyData> CreateFaceVtkPolyData(int id) {return NULL;}
+    virtual vtkSmartPointer<vtkPolyData> CreateFaceVtkPolyData(int id) {return nullptr;}
 
-    virtual vtkSmartPointer<vtkPolyData> CreateWholeVtkPolyData() {return NULL;}
+    virtual vtkSmartPointer<vtkPolyData> CreateWholeVtkPolyData() {return nullptr;}
 
 //    int GetSelectedFaceIndex();
 
@@ -281,14 +281,14 @@ public:
     virtual sv4guiModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
                                                , int numSamplingPts
                                                , svLoftingParam *param
-                                               , int* stats = NULL
+                                               , int* stats = nullptr
                                                , double maxDist = 1.0
                                                , int noInterOut = 1
                                                , double tol = 1e-6
-                                               , unsigned int t = 0) {return NULL;}
+                                               , unsigned int t = 0) {return nullptr;}
 
     virtual sv4guiModelElement* CreateModelElementByBlend(std::vector<sv4guiModelElement::svBlendParamRadius*> blendRadii
-                                                      , sv4guiModelElement::svBlendParam* param) {return NULL;}
+                                                      , sv4guiModelElement::svBlendParam* param) {return nullptr;}
 
     virtual bool ReadFile(std::string filePath){return false;}
 

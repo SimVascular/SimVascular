@@ -32,7 +32,7 @@
 #ifndef __CV_VTK_H
 #define __CV_VTK_H
 
-#include "vtkToolkits.h"
+//dp #include "vtkToolkits.h"
 #include "vtkAbstractMapper.h"
 #include "vtkAbstractTransform.h"
 #include "vtkActor2D.h"
@@ -101,7 +101,7 @@
 #include "vtkMatrixToLinearTransform.h"
 #include "vtkMergePoints.h"
 //#include "vtkMultiThreader.h"
-#include "vtkMutexLock.h"
+//dp #include "vtkMutexLock.h"
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkObjectFactoryCollection.h"

@@ -44,7 +44,7 @@ void sv4guiModelElementFactory::RegisterCreationFunction(std::string type, Model
 
 sv4guiModelElement* sv4guiModelElementFactory::CreateModelElement(std::string type)
 {
-    sv4guiModelElement* me=NULL;
+    sv4guiModelElement* me=nullptr;
 
     auto search=m_FunctionMap.find(type);
     if(search!=m_FunctionMap.end())

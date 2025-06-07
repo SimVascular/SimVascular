@@ -46,16 +46,16 @@
 vtkSVGeneralCVT::vtkSVGeneralCVT()
 {
   this->WorkPd =     vtkPolyData::New();
-  this->Generators = NULL;
+  this->Generators = nullptr;
   this->WorkGenerators = vtkPolyData::New();
 
-  this->CVTDataArray =    NULL;
-  this->PatchIdsArray =   NULL;
-  this->GeneratorsArray = NULL;
-  this->FixedIdsList = NULL;
+  this->CVTDataArray =    nullptr;
+  this->PatchIdsArray =   nullptr;
+  this->GeneratorsArray = nullptr;
+  this->FixedIdsList = nullptr;
 
-  this->CVTDataArrayName =    NULL;
-  this->PatchIdsArrayName =   NULL;
+  this->CVTDataArrayName =    nullptr;
+  this->PatchIdsArrayName =   nullptr;
 
   this->UsePointArray =      0;
   this->UseCellArray  =      1;
@@ -72,44 +72,44 @@ vtkSVGeneralCVT::vtkSVGeneralCVT()
 // ----------------------
 vtkSVGeneralCVT::~vtkSVGeneralCVT()
 {
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
-  if (this->WorkGenerators != NULL)
+  if (this->WorkGenerators != nullptr)
   {
     this->WorkGenerators->Delete();
-    this->WorkGenerators = NULL;
+    this->WorkGenerators = nullptr;
   }
-  if (this->Generators != NULL)
+  if (this->Generators != nullptr)
   {
     this->Generators->Delete();
-    this->Generators = NULL;
+    this->Generators = nullptr;
   }
   if (this->NoInitialization == 0)
   {
-    if (this->PatchIdsArray != NULL)
+    if (this->PatchIdsArray != nullptr)
     {
       this->PatchIdsArray->Delete();
-      this->PatchIdsArray = NULL;
+      this->PatchIdsArray = nullptr;
     }
   }
-  if (this->FixedIdsList != NULL)
+  if (this->FixedIdsList != nullptr)
   {
     this->FixedIdsList->Delete();
-    this->FixedIdsList = NULL;
+    this->FixedIdsList = nullptr;
   }
 
-  if (this->CVTDataArrayName != NULL)
+  if (this->CVTDataArrayName != nullptr)
   {
     delete [] this->CVTDataArrayName;
-    this->CVTDataArrayName = NULL;
+    this->CVTDataArrayName = nullptr;
   }
-  if (this->PatchIdsArrayName != NULL)
+  if (this->PatchIdsArrayName != nullptr)
   {
     delete [] this->PatchIdsArrayName;
-    this->PatchIdsArrayName = NULL;
+    this->PatchIdsArrayName = nullptr;
   }
 
 }
@@ -121,9 +121,9 @@ void vtkSVGeneralCVT::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
-  if (this->CVTDataArrayName != NULL)
+  if (this->CVTDataArrayName != nullptr)
     os << indent << "CVT data array name: " << this->CVTDataArrayName << "\n";
-  if (this->PatchIdsArrayName != NULL)
+  if (this->PatchIdsArrayName != nullptr)
     os << indent << "Patch ids array name: " << this->PatchIdsArrayName << "\n";
 
   os << indent << "Use cell array: " << this->UseCellArray << "\n";
@@ -172,7 +172,7 @@ int vtkSVGeneralCVT::RequestData(vtkInformation *vtkNotUsed(request),
 int vtkSVGeneralCVT::PrepFilter()
 {
 
-  if (this->Generators == NULL)
+  if (this->Generators == nullptr)
   {
     vtkErrorMacro("Must set the generators!");
     return SV_ERROR;
@@ -187,7 +187,7 @@ int vtkSVGeneralCVT::PrepFilter()
 
   if (this->UseCellArray)
   {
-    if (this->PatchIdsArrayName == NULL)
+    if (this->PatchIdsArrayName == nullptr)
     {
       vtkDebugMacro("Patch Ids Array Name not given, setting to PatchIds");
       this->PatchIdsArrayName = new char[strlen("PatchIds") + 1];
@@ -214,7 +214,7 @@ int vtkSVGeneralCVT::PrepFilter()
     }
     this->PatchIdsArray->SetName(this->PatchIdsArrayName);
 
-    if (this->CVTDataArrayName == NULL)
+    if (this->CVTDataArrayName == nullptr)
     {
       vtkErrorMacro("Must provide data array name on input");
       return SV_ERROR;
@@ -230,7 +230,7 @@ int vtkSVGeneralCVT::PrepFilter()
   }
   else if (this->UsePointArray)
   {
-    if (this->PatchIdsArrayName == NULL)
+    if (this->PatchIdsArrayName == nullptr)
     {
       vtkDebugMacro("Patch Ids Array Name not given, setting to PatchIds");
       this->PatchIdsArrayName = new char[strlen("PatchIds") + 1];
@@ -257,7 +257,7 @@ int vtkSVGeneralCVT::PrepFilter()
     }
     this->PatchIdsArray->SetName(this->PatchIdsArrayName);
 
-    if (this->CVTDataArrayName == NULL)
+    if (this->CVTDataArrayName == nullptr)
     {
       vtkErrorMacro("Must provide array name on input");
       return SV_ERROR;
@@ -329,7 +329,7 @@ int vtkSVGeneralCVT::RunFilter()
   for (int i=0; i<numDatas; i++)
     this->FixedIds[i] = 0;
 
-  if (this->FixedIdsList != NULL)
+  if (this->FixedIdsList != nullptr)
   {
     for (int i=0; i<numDatas; i++)
     {

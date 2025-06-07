@@ -37,7 +37,7 @@
 #include "sv_spline.h"
 
 int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
-                                  char *filename, int flag, Tcl_Interp *interp)
+                                  char *filename, int flag)
 {
   SplinePoints *x;
   SplinePoints *y;
@@ -74,8 +74,8 @@ int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
       num = y->numPts;
       dimensions = y->dim;
 
-      // if filename is NULL, then do not generate an output file
-      if (filename != NULL) {
+      // if filename is nullptr, then do not generate an output file
+      if (filename != nullptr) {
         outfile = fopen(filename, "w");
         fprintf(outfile, "pointcount=%d\nviewinterval=1.00000\nviewwindow=25.00000\nviewcount=%d\n", numOutputPts, numOutputPts);
 
@@ -84,16 +84,6 @@ int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
 	  fprintf(outfile, "p=(%f,%f,%f) t=(%f,%f,%f) tx=(%f,%f,%f)\n", y->pts[dimensions * i], y->pts[dimensions * i + 1], y->pts[dimensions * i + 2], y->tangents[dimensions * i], y->tangents[dimensions * i + 1], y->tangents[dimensions * i + 2], y->rotVectors[dimensions * i], y->rotVectors[dimensions * i + 1], y->rotVectors[dimensions * i  + 2]);
         }
         fclose(outfile);
-      }
-
-      // return the splined path to the Tcl interpreter
-      if (interp != NULL) {
-        char rtnstr[2048];
-        for (i = 0; i < num; i++) {
-          rtnstr[0]='\0';
-	  sprintf(rtnstr, "p (%f,%f,%f) t (%f,%f,%f) tx (%f,%f,%f)", y->pts[dimensions * i], y->pts[dimensions * i + 1], y->pts[dimensions * i + 2], y->tangents[dimensions * i], y->tangents[dimensions * i + 1], y->tangents[dimensions * i + 2], y->rotVectors[dimensions * i], y->rotVectors[dimensions * i + 1], y->rotVectors[dimensions * i  + 2]);
-          Tcl_AppendElement(interp, rtnstr);
-        }
       }
 
       sys_geom_SplinePointsDelete(x);
@@ -141,8 +131,8 @@ int pysys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
       num = y->numPts;
       dimensions = y->dim;
 
-      // if filename is NULL, then do not generate an output file
-      if (filename != NULL) {
+      // if filename is nullptr, then do not generate an output file
+      if (filename != nullptr) {
         outfile = fopen(filename, "w");
         fprintf(outfile, "pointcount=%d\nviewinterval=1.00000\nviewwindow=25.00000\nviewcount=%d\n", numOutputPts, numOutputPts);
 
@@ -151,16 +141,6 @@ int pysys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
 	  fprintf(outfile, "p=(%f,%f,%f) t=(%f,%f,%f) tx=(%f,%f,%f)\n", y->pts[dimensions * i], y->pts[dimensions * i + 1], y->pts[dimensions * i + 2], y->tangents[dimensions * i], y->tangents[dimensions * i + 1], y->tangents[dimensions * i + 2], y->rotVectors[dimensions * i], y->rotVectors[dimensions * i + 1], y->rotVectors[dimensions * i  + 2]);
         }
         fclose(outfile);
-      }
-
-      // return the splined path to the Tcl interpreter
-      if (output != NULL) {
-        char rtnstr[2048];
-        for (i = 0; i < num; i++) {
-          rtnstr[0]='\0';
-	  sprintf(rtnstr, "p (%f,%f,%f) t (%f,%f,%f) tx (%f,%f,%f)", y->pts[dimensions * i], y->pts[dimensions * i + 1], y->pts[dimensions * i + 2], y->tangents[dimensions * i], y->tangents[dimensions * i + 1], y->tangents[dimensions * i + 2], y->rotVectors[dimensions * i], y->rotVectors[dimensions * i + 1], y->rotVectors[dimensions * i  + 2]);
-          strcpy(*output,rtnstr);
-        }
       }
 
       sys_geom_SplinePointsDelete(x);

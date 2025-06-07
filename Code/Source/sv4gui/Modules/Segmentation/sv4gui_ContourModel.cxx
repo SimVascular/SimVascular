@@ -71,7 +71,7 @@ void sv4guiContourModel::InitializeEmpty()
 
 bool sv4guiContourModel::IsEmptyTimeStep(unsigned int t) const
 {
-    return IsInitialized() && (GetContour(t) == NULL);
+    return IsInitialized() && (GetContour(t) == nullptr);
 }
 
 void sv4guiContourModel::Expand( unsigned int timeSteps )
@@ -103,7 +103,7 @@ sv4guiContour* sv4guiContourModel::GetContour(unsigned int t) const
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }
 

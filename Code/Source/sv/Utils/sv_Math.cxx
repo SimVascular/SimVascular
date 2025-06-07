@@ -51,15 +51,15 @@ cvMath::~cvMath() {
 // dynamically allocate a 2-dimensional array
 double **cvMath::createArray(int a, int b) {
     double ** rtn = new double*[a+1];
-    if (rtn == NULL) {
+    if (rtn == nullptr) {
         printf("ERROR: Memory allocation error.\n");
-        return NULL;
+        return nullptr;
     }
     for (int i = 0; i < a+1; i++) {
         rtn[i] = new double[b+1];
-        if (rtn[i] == NULL) {
+        if (rtn[i] == nullptr) {
             printf("ERROR:  Memory allocation error.\n");
-            return NULL;
+            return nullptr;
         }
         for (int j = 0; j < b + 1; j++) {
             rtn[i][j] = 0.0;
@@ -92,7 +92,7 @@ int cvMath::linearInterpolate(double **orgPts, int numOrgPts, double t0,
     }
 
     double **outPts = createArray(numOutPts,2);
-    if (*outPts == NULL) {
+    if (*outPts == nullptr) {
         return SV_ERROR;
     }
 
@@ -201,7 +201,7 @@ int cvMath::FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms,
 
     double **terms = createArray(numDesiredTerms,2);
 
-    if (*terms == NULL) {
+    if (*terms == nullptr) {
         return SV_ERROR;
     }
 
@@ -210,7 +210,7 @@ int cvMath::FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms,
 
     double t0 = pts[0][0];
     double dt = (pts[numPts-1][0]-t0)/numInterpPts;
-    double **outPts = NULL;
+    double **outPts = nullptr;
 
     if (linearInterpolate(pts, numPts, t0, dt, numInterpPts, &outPts) == SV_ERROR) {
         return SV_ERROR;
@@ -249,7 +249,7 @@ int cvMath::inverseFFT(double **terms, int numTerms, double t0, double dt, doubl
   double omega_t;
 
   double **pts = createArray(numRtnPts,2);
-  if (pts == NULL) {
+  if (pts == nullptr) {
       return SV_ERROR;
   }
 
@@ -568,7 +568,7 @@ int cvMath::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
 
     // put it all back together
     double **outPts = createArray(numOutPts,3);
-    if (*outPts == NULL) {
+    if (*outPts == nullptr) {
         deleteArray(xin,numOrgPts+1,2); deleteArray(xout,numOutPts,2);
         deleteArray(yin,numOrgPts+1,2); deleteArray(yout,numOutPts,2);
         deleteArray(zin,numOrgPts+1,2); deleteArray(zout,numOutPts,2);
@@ -723,7 +723,7 @@ int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumM
 
     // put it all back together
     double **outPts = createArray(numOutPts,3);
-    if (*outPts == NULL) {
+    if (*outPts == nullptr) {
         deleteArray(xin,numOrgPts+1,2); deleteArray(xout,numOutPts,2);
         deleteArray(yin,numOrgPts+1,2); deleteArray(yout,numOutPts,2);
         deleteArray(zin,numOrgPts+1,2); deleteArray(zout,numOutPts,2);
@@ -1041,7 +1041,7 @@ std::vector<std::array<double, 3> > cvMath::CreateSmoothedCurve(std::vector<std:
         pts[i][1] = actualPoints[i][1];
         pts[i][2] = actualPoints[i][2];
     }
-    double **outPts = NULL;
+    double **outPts = nullptr;
     int isClosed=closed?1:0;
     int rslt;
     if(closed)

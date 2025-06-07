@@ -39,7 +39,7 @@
 cvFactoryRegistrar::cvFactoryRegistrar()
 {
   for (int i = 0; i < CV_MAX_FACTORY_METHOD_PTRS; i++)
-    factoryMethodPtrs[i] = NULL;
+    factoryMethodPtrs[i] = nullptr;
 }
 
 FactoryMethodPtr cvFactoryRegistrar::GetFactoryMethodPtr( int factory_type )

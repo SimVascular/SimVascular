@@ -122,7 +122,7 @@ public:
     virtual sv4guiModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
                                     , int numSamplingPts
                                     , svLoftingParam *param
-                                    , int* stats = NULL
+                                    , int* stats = nullptr
                                     , double maxDist = 1.0
                                     , int noInterOut = 1
                                     , double tol = 1e-6

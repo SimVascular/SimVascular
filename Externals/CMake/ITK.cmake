@@ -28,15 +28,28 @@
 # ITK
 set(proj ITK)
 
+set(SV_ITK_DIR /Users/parkerda/software/ktbolt/svExternals/install/itk)
+    
+set(msg "[Externals/CMake/ITK.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} +++++                                 ITK.cmake                                      ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_ITK_DIR: ${SV_ITK_DIR}")
+
 # Dependencies
+#
 if(${SV_EXTERNALS_ENABLE_VTK})
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "VTK")
 endif()
+
 if(${SV_EXTERNALS_ENABLE_GDCM})
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "GDCM")
 endif()
+
 if(${SV_EXTERNALS_ENABLE_HDF5})
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "HDF5")
@@ -51,7 +64,8 @@ else()
   set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL}")
 endif()
 
-#If using QT
+# If using QT
+#
 if(SV_EXTERNALS_ENABLE_QT)
   #MINGW specific flags
   if(MINGW)
@@ -66,7 +80,8 @@ if(SV_EXTERNALS_ENABLE_QT)
     )
 endif()
 
-#if using VTK
+# if using VTK
+#
 if(SV_EXTERNALS_ENABLE_VTK)
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
     -DModule_ITKVtkGlue:BOOL=ON
@@ -74,7 +89,7 @@ if(SV_EXTERNALS_ENABLE_VTK)
     )
 endif()
 
-#If using GDCM
+# If using GDCM
 if(SV_EXTERNALS_ENABLE_GDCM)
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
     -DITK_USE_SYTEM_GDCM:BOOL=ON
@@ -82,7 +97,7 @@ if(SV_EXTERNALS_ENABLE_GDCM)
     )
 endif()
 
-#if using HDF5
+# if using HDF5
 if(SV_EXTERNALS_ENABLE_HDF5)
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
     -DITK_USE_SYSTEM_HDF5:BOOL=ON
@@ -90,7 +105,8 @@ if(SV_EXTERNALS_ENABLE_HDF5)
     )
 endif()
 
-#Patch for vclcompiler if ITK less than 4.7.2 and gcc version > 5
+# Patch for vclcompiler if ITK less than 4.7.2 and gcc version > 5
+#
 if("${SV_EXTERNALS_${proj}_VERSION}" VERSION_LESS "4.7.2" AND
     "${COMPILER_VERSION}" STREQUAL "GNU" AND
     "${CMAKE_CXX_COMPILER_VERSION}" VERSION_GREATER "5.0")
@@ -104,44 +120,69 @@ else()
 endif()
 
 # Add external project
-if(SV_EXTERNALS_DOWNLOAD_${proj})
-  ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    UPDATE_COMMAND ""
-    )
+
+# Add ITK as an external project
+#
+if (SV_ITK_DIR)
+#if(SV_EXTERNALS_DOWNLOAD_${proj})
+
+  message(STATUS "${msg} +++++ Use installed ITK ")
+
+  if(SV_ITK_DIR STREQUAL "system")
+    message(STATUS "${msg} Use system ITK")
+    find_package(ITK REQUIRED)
+  else()
+    message(STATUS "${msg} Use ITK from custom build ${SV_ITK_DIR}")
+    find_package(ITK REQUIRED PATHS ${SV_ITK_DIR} NO_DEFAULT_PATH)
+  endif()
+
+  message(STATUS "${msg} ITK_PREFIX_PATH: ${ITK_PREFIX_PATH}")
+  message(STATUS "${msg} ITK_DIR: ${ITK_DIR}")
+  message(STATUS "${msg} ITK_USE_FILE: ${ITK_USE_FILE}")
+  message(STATUS "${msg} ITK_LIBRARIES: ${ITK_LIBRARIES}")
+
+  find_package(EIGEN3 REQUIRED)
+
+  #ExternalProject_Add(${proj}
+    #URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #CONFIGURE_COMMAND ""
+    #BUILD_COMMAND ""
+    #INSTALL_COMMAND ""
+    #UPDATE_COMMAND ""
+    #)
+
 else()
-  ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-    UPDATE_COMMAND ""
-    CMAKE_CACHE_ARGS
-      -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
-      -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
-      -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-      -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-      -DCMAKE_MACOSX_RPATH:BOOL=ON
-      -DBUILD_SHARED_LIBS:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
-      -DBUILD_EXAMPLES:BOOL=OFF
-      -DBUILD_TESTING:BOOL=OFF
-      -DITK_USE_SYSTEM_GDCM:BOOL=${SV_EXTERNALS_ENABLE_GDCM}
-      -DITK_WRAP_PYTHON:BOOL=OFF
-      -DITK_LEGACY_SILENT:BOOL=OFF
-      -DModule_ITKReview:BOOL=ON
-      -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
-      ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
-    )
+
+  #ExternalProject_Add(${proj}
+    #URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+    #UPDATE_COMMAND ""
+    #CMAKE_CACHE_ARGS
+      #-DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+      #-DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+      #-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+      #-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+      #-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+      #-DCMAKE_MACOSX_RPATH:BOOL=ON
+      #-DBUILD_SHARED_LIBS:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
+      #-DBUILD_EXAMPLES:BOOL=OFF
+      #-DBUILD_TESTING:BOOL=OFF
+      #-DITK_USE_SYSTEM_GDCM:BOOL=${SV_EXTERNALS_ENABLE_GDCM}
+      #-DITK_WRAP_PYTHON:BOOL=OFF
+      #-DITK_LEGACY_SILENT:BOOL=OFF
+      #-DModule_ITKReview:BOOL=ON
+      #-DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
+      #${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
+    #)
+
 endif()
 
 # ITK variables needed later on

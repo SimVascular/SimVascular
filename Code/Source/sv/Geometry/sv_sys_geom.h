@@ -35,8 +35,6 @@
 #include "SimVascular.h"
 #include "svGeometryExports.h" // For exports
 
-#include "tcl.h"
-
 #include "sv_PolyData.h"
 #include "vtkSVNURBSSurface.h"
 
@@ -64,8 +62,6 @@ SV_EXPORT_SYSGEOM cvPolyData *sys_geom_Clean( cvPolyData *src);
 SV_EXPORT_SYSGEOM int sys_geom_NumClosedLineRegions( cvPolyData *src, int *num );
 
 SV_EXPORT_SYSGEOM int sys_geom_GetClosedLineRegion( cvPolyData *src, int id, cvPolyData **dst );
-
-SV_EXPORT_SYSGEOM int sys_geom_Pick( cvPolyData *src, double pos[], cvPolyData **dst );
 
 SV_EXPORT_SYSGEOM int sys_geom_Reduce( cvPolyData *src, double tol, cvPolyData **dst );
 
@@ -135,7 +131,7 @@ SV_EXPORT_SYSGEOM int sys_geom_PolygonNormal( cvPolyData *pgn, double n[] );
 SV_EXPORT_SYSGEOM int sys_geom_AvgPt( cvPolyData *src, double pt[] );
 
 SV_EXPORT_SYSGEOM int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
-                                  char *filename, int flag, Tcl_Interp *interp);
+                                  char *filename, int flag);
                                   
 #ifdef SV_USE_PYTHON
 SV_EXPORT_SYSGEOM int pysys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,

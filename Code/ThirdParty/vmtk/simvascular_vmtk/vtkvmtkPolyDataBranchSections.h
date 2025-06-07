@@ -45,7 +45,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBranchSections : pub
 {
   public: 
   vtkTypeMacro(vtkvmtkPolyDataBranchSections,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  // davep void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkPolyDataBranchSections* New();
 
@@ -98,19 +99,21 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBranchSections : pub
   vtkGetMacro(ReverseDirection,int);
   vtkBooleanMacro(ReverseDirection,int);
 
-  static double ComputeBranchSectionArea(vtkPolygon* sectionPolygon);
-  static double ComputeBranchSectionShape(vtkPolygon* sectionPolygon, double center[3], double sizeRange[2]);
+  static double ComputeBranchSectionArea(vtkPolyData* sectionPolygon);
+  static double ComputeBranchSectionShape(vtkPolyData* sectionPolygon, double center[3], double sizeRange[2]);
   static int ComputeBranchCenterlineIntersections(vtkPolyData* section, vtkPolyData* centerline, double origin[3], double normal[3]);
   static bool InsidePolygon(vtkPoints* polygon, double* point);
   static int ComputeBranchSurfaceIntersections(vtkPolyData* section, const char* idsArrayName);
 
-  static void ExtractCylinderSection(vtkPolyData* cylinder, double origin[3], double normal[3], vtkPolyData* section, bool & closed);
+  static void ExtractSurfaceSection(vtkPolyData* surface, double origin[3], double normal[3], 
+      vtkPolyData* section, bool & closed);
 
   protected:
   vtkvmtkPolyDataBranchSections();
   ~vtkvmtkPolyDataBranchSections();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  // davep virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   void ComputeBranchSections(vtkPolyData* input, int groupId, vtkPolyData* output);
 

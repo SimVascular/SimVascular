@@ -59,7 +59,7 @@ struct Binding
 {
   std::string key;
   std::string text;
-  vtkCallbackCommand *callback = NULL;
+  vtkCallbackCommand *callback = nullptr;
   std::string group;
 };
 

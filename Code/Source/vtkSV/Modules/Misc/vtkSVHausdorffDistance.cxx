@@ -63,7 +63,7 @@ vtkSVHausdorffDistance::vtkSVHausdorffDistance()
   this->SourcePd = vtkPolyData::New();
   this->TargetPd = vtkPolyData::New();
 
-  this->DistanceArrayName = NULL;
+  this->DistanceArrayName = nullptr;
 
   this->AverageDistance   = 0.0;
   this->HausdorffDistance = 0.0;
@@ -77,17 +77,17 @@ vtkSVHausdorffDistance::~vtkSVHausdorffDistance()
   if (this->SourcePd)
   {
     this->SourcePd->Delete();
-    this->SourcePd = NULL;
+    this->SourcePd = nullptr;
   }
   if (this->TargetPd)
   {
     this->TargetPd->Delete();
-    this->TargetPd = NULL;
+    this->TargetPd = nullptr;
   }
-  if (this->DistanceArrayName != NULL)
+  if (this->DistanceArrayName != nullptr)
   {
     delete [] this->DistanceArrayName;
-    this->DistanceArrayName = NULL;
+    this->DistanceArrayName = nullptr;
   }
 }
 
@@ -98,7 +98,7 @@ void vtkSVHausdorffDistance::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
-  if (this->DistanceArrayName != NULL)
+  if (this->DistanceArrayName != nullptr)
   {
     os << indent << "Distance array name: " <<
       this->DistanceArrayName << "\n";
@@ -158,7 +158,7 @@ int vtkSVHausdorffDistance::RequestData(vtkInformation *vtkNotUsed(request),
 // ----------------------
 int vtkSVHausdorffDistance::PrepFilter()
 {
-  if (this->DistanceArrayName == NULL)
+  if (this->DistanceArrayName == nullptr)
   {
     vtkDebugMacro("Distance Array Name not given, setting to Distance");
     this->DistanceArrayName = new char[strlen("Distance") + 1];

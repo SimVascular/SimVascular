@@ -77,9 +77,9 @@ vtkSVPlanarMapper::vtkSVPlanarMapper()
   this->ATutte        = vtkSVSparseMatrix::New();
   this->AHarm         = vtkSVSparseMatrix::New();
 
-  this->BoundaryMapper = NULL;
+  this->BoundaryMapper = nullptr;
 
-  this->InternalIdsArrayName = NULL;
+  this->InternalIdsArrayName = nullptr;
 
   this->Lambda = 0.5;
   this->Mu     = 0.5;
@@ -94,73 +94,73 @@ vtkSVPlanarMapper::vtkSVPlanarMapper()
 // ----------------------
 vtkSVPlanarMapper::~vtkSVPlanarMapper()
 {
-  if (this->InitialPd != NULL)
+  if (this->InitialPd != nullptr)
   {
     this->InitialPd->Delete();
-    this->InitialPd = NULL;
+    this->InitialPd = nullptr;
   }
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
-  if (this->PlanarPd != NULL)
+  if (this->PlanarPd != nullptr)
   {
     this->PlanarPd->Delete();
-    this->PlanarPd = NULL;
+    this->PlanarPd = nullptr;
   }
-  if (this->EdgeTable != NULL)
+  if (this->EdgeTable != nullptr)
   {
     this->EdgeTable->Delete();
-    this->EdgeTable = NULL;
+    this->EdgeTable = nullptr;
   }
-  if (this->EdgeWeights != NULL)
+  if (this->EdgeWeights != nullptr)
   {
     this->EdgeWeights->Delete();
-    this->EdgeWeights = NULL;
+    this->EdgeWeights = nullptr;
   }
-  if (this->EdgeNeighbors != NULL)
+  if (this->EdgeNeighbors != nullptr)
   {
     this->EdgeNeighbors->Delete();
-    this->EdgeNeighbors = NULL;
+    this->EdgeNeighbors = nullptr;
   }
-  if (this->IsBoundary != NULL)
+  if (this->IsBoundary != nullptr)
   {
     this->IsBoundary->Delete();
-    this->IsBoundary = NULL;
+    this->IsBoundary = nullptr;
   }
-  if (this->Boundaries != NULL)
+  if (this->Boundaries != nullptr)
   {
     this->Boundaries->Delete();
-    this->Boundaries = NULL;
+    this->Boundaries = nullptr;
   }
-  if (this->BoundaryLoop != NULL)
+  if (this->BoundaryLoop != nullptr)
   {
     this->BoundaryLoop->Delete();
-    this->BoundaryLoop = NULL;
+    this->BoundaryLoop = nullptr;
   }
 
   if (this->InternalIdsArrayName)
   {
     delete [] this->InternalIdsArrayName;
-    this->InternalIdsArrayName = NULL;
+    this->InternalIdsArrayName = nullptr;
   }
 
-  if (this->ATutte != NULL)
+  if (this->ATutte != nullptr)
   {
     this->ATutte->Delete();
-    this->ATutte = NULL;
+    this->ATutte = nullptr;
   }
-  if (this->AHarm != NULL)
+  if (this->AHarm != nullptr)
   {
     this->AHarm->Delete();
-    this->AHarm = NULL;
+    this->AHarm = nullptr;
   }
 
-  if (this->BoundaryMapper != NULL)
+  if (this->BoundaryMapper != nullptr)
   {
     this->BoundaryMapper->Delete();
-    this->BoundaryMapper = NULL;
+    this->BoundaryMapper = nullptr;
   }
 }
 
@@ -171,7 +171,7 @@ void vtkSVPlanarMapper::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
-  if (this->InternalIdsArrayName != NULL)
+  if (this->InternalIdsArrayName != nullptr)
     os << indent << "Internal Ids array name: " << this->InternalIdsArrayName << "\n";
 }
 
@@ -254,7 +254,7 @@ int vtkSVPlanarMapper::PrepFilter()
   {
     vtkNew(vtkIdFilter, ider);
     ider->SetInputData(this->WorkPd);
-    ider->SetIdsArrayName(this->InternalIdsArrayName);
+    ider->SetCellIdsArrayName(this->InternalIdsArrayName);
     ider->Update();
     this->WorkPd->DeepCopy(ider->GetOutput());
   }

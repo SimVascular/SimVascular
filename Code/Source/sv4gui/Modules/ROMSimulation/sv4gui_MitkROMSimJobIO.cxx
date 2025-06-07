@@ -33,6 +33,9 @@
 
 #include "sv4gui_MitkROMSimJob.h"
 
+#include "sv4gui_ContourGroupIO.h"
+auto set_string_from_attribute = &sv4guiContourGroupIO::set_string_from_attribute;
+
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
 
@@ -63,16 +66,15 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkROMSimJobIO::Read()
 {
     std::vector<mitk::BaseData::Pointer> result;
 
-    TiXmlDocument document;
-
+    tinyxml2::XMLDocument document;
     std::string fileName=GetInputLocation();
 
-    if (!document.LoadFile(fileName)) {
+    if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS) {
         mitkThrow() << "Could not open/read/parse " << fileName;
         return result;
     }
 
-    TiXmlElement* mjElement = document.FirstChildElement("mitk_job");
+    auto mjElement = document.FirstChildElement("mitk_job");
 
     if(!mjElement){
         mitkThrow() << "No job data in "<< fileName;
@@ -84,16 +86,18 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkROMSimJobIO::Read()
     std::string modelOrder = "";
     std::string meshName = "";
     std::string status = "";
-    mjElement->QueryStringAttribute("model_name",&modelName);
-    mjElement->QueryStringAttribute("model_order", &modelOrder);
-    mjElement->QueryStringAttribute("mesh_name",&meshName);
-    mjElement->QueryStringAttribute("status",&status);
+
+    set_string_from_attribute(mjElement, "model_name",modelName);
+    set_string_from_attribute(mjElement, "model_order", modelOrder);
+    set_string_from_attribute(mjElement, "mesh_name",meshName);
+    set_string_from_attribute(mjElement, "status",status);
+
     mitkSimJob->SetModelName(modelName);
     mitkSimJob->SetModelOrder(modelOrder);
     mitkSimJob->SetMeshName(meshName);
     mitkSimJob->SetStatus(status);
 
-    TiXmlElement* jobElement = mjElement->FirstChildElement("job");
+    auto jobElement = mjElement->FirstChildElement("job");
 
     if(jobElement != nullptr) {
         sv4guiROMSimJob* job = new sv4guiROMSimJob();
@@ -146,10 +150,10 @@ mitk::IFileIO::ConfidenceLevel sv4guiMitkROMSimJobIO::GetReaderConfidenceLevel()
 //----------
 // Get job properties from an xml element.
 //
-std::map<std::string,std::string> sv4guiMitkROMSimJobIO::GetProps(TiXmlElement* jobElement, const std::string& propName)
+std::map<std::string,std::string> sv4guiMitkROMSimJobIO::GetProps(tinyxml2::XMLElement* jobElement, const std::string& propName)
 {
     std::map<std::string,std::string> props;
-    TiXmlElement* element = jobElement->FirstChildElement(propName);
+    auto * element = jobElement->FirstChildElement(propName.c_str());
     if(element == nullptr) {
         return props;
     }
@@ -159,8 +163,8 @@ std::map<std::string,std::string> sv4guiMitkROMSimJobIO::GetProps(TiXmlElement* 
     while (element != nullptr) {
         std::string key="";
         std::string value="";
-        element->QueryStringAttribute("key", &key);
-        element->QueryStringAttribute("value", &value);
+        set_string_from_attribute(element, "key", key);
+        set_string_from_attribute(element, "value", value);
         props[key]=value;
         element = element->NextSiblingElement("prop");
     }
@@ -176,21 +180,21 @@ std::map<std::string,std::string> sv4guiMitkROMSimJobIO::GetProps(TiXmlElement* 
 // The properties here are a two-level hierarchy of elements.
 //
 std::map<std::string,std::map<std::string,std::string> > 
-sv4guiMitkROMSimJobIO::GetMapProps(TiXmlElement* jobElement, const std::string& propName1, const std::string& propName2)
+sv4guiMitkROMSimJobIO::GetMapProps(tinyxml2::XMLElement* jobElement, const std::string& propName1, const std::string& propName2)
 {
   std::map<std::string,std::map<std::string,std::string> > props;
-  TiXmlElement* element = jobElement->FirstChildElement(propName1);
+  auto element = jobElement->FirstChildElement(propName1.c_str());
 
-  for( TiXmlElement* element1 = element->FirstChildElement(propName2); element1 != nullptr; 
-    element1 = element1->NextSiblingElement(propName2) ) {
+  for( auto element1 = element->FirstChildElement(propName2.c_str()); element1 != nullptr; 
+    element1 = element1->NextSiblingElement(propName2.c_str()) ) {
       if (element1 == nullptr) {
           continue;
       }
 
       std::string name="";
-      element1->QueryStringAttribute("name", &name);
+      set_string_from_attribute(element1, "name", name);
 
-      for( TiXmlElement* element2 = element1->FirstChildElement("prop"); element2 != nullptr;
+      for( auto element2 = element1->FirstChildElement("prop"); element2 != nullptr;
         element2 =element2->NextSiblingElement("prop") ) {
           if (element2 == nullptr) {
               continue;
@@ -198,8 +202,8 @@ sv4guiMitkROMSimJobIO::GetMapProps(TiXmlElement* jobElement, const std::string& 
 
           std::string key="";
           std::string value="";
-          element2->QueryStringAttribute("key", &key);
-          element2->QueryStringAttribute("value", &value);
+          set_string_from_attribute(element2, "key", key);
+          set_string_from_attribute(element2, "value", value);
           props[name][key]=value;
       }
   }
@@ -221,168 +225,168 @@ void sv4guiMitkROMSimJobIO::Write()
     const sv4guiMitkROMSimJob* mitkSimJob = dynamic_cast<const sv4guiMitkROMSimJob*>(this->GetInput());
     if(!mitkSimJob) return;
 
-    TiXmlDocument document;
-    auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
+    tinyxml2::XMLDocument document;
+    auto decl = document.NewDeclaration();
     document.LinkEndChild( decl );
 
-    auto  mjElement = new TiXmlElement("mitk_job");
-    mjElement->SetAttribute("model_name", mitkSimJob->GetModelName());
-    mjElement->SetAttribute("model_order", mitkSimJob->GetModelOrder());
-    mjElement->SetAttribute("mesh_name", mitkSimJob->GetMeshName());
-    mjElement->SetAttribute("status", mitkSimJob->GetStatus());
+    auto mjElement = document.NewElement("mitk_job");
+    mjElement->SetAttribute("model_name", mitkSimJob->GetModelName().c_str());
+    mjElement->SetAttribute("model_order", mitkSimJob->GetModelOrder().c_str());
+    mjElement->SetAttribute("mesh_name", mitkSimJob->GetMeshName().c_str());
+    mjElement->SetAttribute("status", mitkSimJob->GetStatus().c_str());
     mjElement->SetAttribute("version",  "1.0" );
     document.LinkEndChild(mjElement);
 
     sv4guiROMSimJob* job=mitkSimJob->GetSimJob();
 
     if (job) {
-        auto jobElement = new TiXmlElement("job");
+        auto jobElement = document.NewElement("job");
         mjElement->LinkEndChild(jobElement);
 
-        auto modelElement = new TiXmlElement("model_props");
+        auto modelElement = document.NewElement("model_props");
         jobElement->LinkEndChild(modelElement);
         std::map<std::string,std::string> modelProps = job->GetModelProps();
         for (auto const& prop : modelProps) {
-            auto element = new TiXmlElement("prop");
+            auto element = document.NewElement("prop");
             modelElement->LinkEndChild(element);
-            element->SetAttribute("key", prop.first);
-            element->SetAttribute("value", prop.second);
+            element->SetAttribute("key", prop.first.c_str());
+            element->SetAttribute("value", prop.second.c_str());
         }
         //std::map<std::string, std::string>::iterator it = basicProps.begin();
 
         //while(it != basicProps.end()) {
-            //auto element = new TiXmlElement("prop");
+            //auto element = document.NewElement("prop");
             //modelElement->LinkEndChild(element);
             //element->SetAttribute("key", it->first);
             //element->SetAttribute("value", it->second);
             //it++;
         //}
 
-        auto bpElement = new TiXmlElement("basic_props");
+        auto bpElement = document.NewElement("basic_props");
         jobElement->LinkEndChild(bpElement);
         std::map<std::string,std::string> basicProps=job->GetBasicProps();
         std::map<std::string, std::string>::iterator it = basicProps.begin();
 
         while (it != basicProps.end()) {
-            auto element = new TiXmlElement("prop");
+            auto element = document.NewElement("prop");
             bpElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first);
-            element->SetAttribute("value", it->second);
+            element->SetAttribute("key", it->first.c_str());
+            element->SetAttribute("value", it->second.c_str());
             it++;
         }
 
-        auto cpElement = new TiXmlElement("cap_props");
+        auto cpElement = document.NewElement("cap_props");
         jobElement->LinkEndChild(cpElement);
         std::map<std::string, std::map<std::string, std::string> > capProps=job->GetCapProps();
         auto itit = capProps.begin();
         while(itit != capProps.end()) {
-            auto celement = new TiXmlElement("cap");
+            auto celement = document.NewElement("cap");
             cpElement->LinkEndChild(celement);
-            celement->SetAttribute("name", itit->first);
+            celement->SetAttribute("name", itit->first.c_str());
             std::map<std::string, std::string> props=itit->second;
             it = props.begin();
             while(it != props.end()) {
-                auto element = new TiXmlElement("prop");
+                auto element = document.NewElement("prop");
                 celement->LinkEndChild(element);
-                element->SetAttribute("key", it->first);
-                element->SetAttribute("value", it->second);
+                element->SetAttribute("key", it->first.c_str());
+                element->SetAttribute("value", it->second.c_str());
                 it++;
             }
             itit++;
         }
 
-        auto convElement = new TiXmlElement("convert_results_props");
+        auto convElement = document.NewElement("convert_results_props");
         jobElement->LinkEndChild(convElement);
         std::map<std::string,std::string> convProps = job->GetConvertResultsProps();
         it = convProps.begin();
         while (it != convProps.end()) {
-            auto element = new TiXmlElement("prop");
+            auto element = document.NewElement("prop");
             convElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first);
-            element->SetAttribute("value", it->second);
+            element->SetAttribute("key", it->first.c_str());
+            element->SetAttribute("value", it->second.c_str());
             it++;
         }
 
-        auto msElement = new TiXmlElement("mesh_props");
+        auto msElement = document.NewElement("mesh_props");
         jobElement->LinkEndChild(msElement);
         std::map<std::string,std::string> meshProps = job->GetMeshProps();
         it = meshProps.begin();
         while(it != meshProps.end()) {
-            auto element = new TiXmlElement("prop");
+            auto element = document.NewElement("prop");
             msElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first);
-            element->SetAttribute("value", it->second);
+            element->SetAttribute("key", it->first.c_str());
+            element->SetAttribute("value", it->second.c_str());
             it++;
         }
 
-        auto wpElement = new TiXmlElement("wall_props");
+        auto wpElement = document.NewElement("wall_props");
         jobElement->LinkEndChild(wpElement);
         std::map<std::string,std::string> wallProps=job->GetWallProps();
         it = wallProps.begin();
         while(it != wallProps.end())
         {
-            auto element = new TiXmlElement("prop");
+            auto element = document.NewElement("prop");
             wpElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first);
-            element->SetAttribute("value", it->second);
+            element->SetAttribute("key", it->first.c_str());
+            element->SetAttribute("value", it->second.c_str());
             it++;
         }
 
-        auto vpElement = new TiXmlElement("var_props");
+        auto vpElement = document.NewElement("var_props");
         jobElement->LinkEndChild(vpElement);
         std::map<std::string, std::map<std::string, std::string> > varProps=job->GetVarProps();
         itit = varProps.begin();
         while(itit != varProps.end())
         {
-            auto felement = new TiXmlElement("face");
+            auto felement = document.NewElement("face");
             vpElement->LinkEndChild(felement);
 
-            felement->SetAttribute("name", itit->first);
+            felement->SetAttribute("name", itit->first.c_str());
 
             std::map<std::string, std::string> props=itit->second;
 
             it = props.begin();
             while(it != props.end())
             {
-                auto element = new TiXmlElement("prop");
+                auto element = document.NewElement("prop");
                 felement->LinkEndChild(element);
-                element->SetAttribute("key", it->first);
-                element->SetAttribute("value", it->second);
+                element->SetAttribute("key", it->first.c_str());
+                element->SetAttribute("value", it->second.c_str());
                 it++;
             }
 
             itit++;
         }
 
-        auto spElement = new TiXmlElement("solver_props");
+        auto spElement = document.NewElement("solver_props");
         jobElement->LinkEndChild(spElement);
         std::map<std::string,std::string> solverProps=job->GetSolverProps();
         it = solverProps.begin();
         while(it != solverProps.end())
         {
-            auto element = new TiXmlElement("prop");
+            auto element = document.NewElement("prop");
             spElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first);
-            element->SetAttribute("value", it->second);
+            element->SetAttribute("key", it->first.c_str());
+            element->SetAttribute("value", it->second.c_str());
             it++;
         }
 
-        auto rpElement = new TiXmlElement("run_props");
+        auto rpElement = document.NewElement("run_props");
         jobElement->LinkEndChild(rpElement);
         std::map<std::string,std::string> runProps=job->GetRunProps();
         it = runProps.begin();
         while(it != runProps.end())
         {
-            auto element = new TiXmlElement("prop");
+            auto element = document.NewElement("prop");
             rpElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first);
-            element->SetAttribute("value", it->second);
+            element->SetAttribute("key", it->first.c_str());
+            element->SetAttribute("value", it->second.c_str());
             it++;
         }
 
     }
 
-    if (document.SaveFile(fileName) == false)
+    if (document.SaveFile(fileName.c_str()) == false)
     {
         mitkThrow() << "Could not write model to " << fileName;
     }

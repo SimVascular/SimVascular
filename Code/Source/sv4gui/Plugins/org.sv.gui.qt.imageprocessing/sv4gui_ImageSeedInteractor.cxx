@@ -87,12 +87,12 @@ bool sv4guiImageSeedInteractor::IsOverSeed(const mitk::InteractionEvent* interac
   #endif
   const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
 
-  if (positionEvent == NULL) {
+  if (positionEvent == nullptr) {
       return false;
   }
 
   auto seeds = static_cast< sv4guiImageSeedContainer*>(GetDataNode()->GetData());
-  if (seeds == NULL) {
+  if (seeds == nullptr) {
       std::cout << "[IsOverSeed] No seeds." << std::endl;
       return false;
   }
@@ -157,7 +157,7 @@ bool sv4guiImageSeedInteractor::IsOverSeed(const mitk::InteractionEvent* interac
   }
 
   if (updateGraphics) { 
-     interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+     interactionEvent->GetSender()->RequestUpdate();
   }
 
   return selected;
@@ -176,7 +176,7 @@ bool sv4guiImageSeedInteractor::IsOverCenterline(const mitk::InteractionEvent* i
   #endif
   const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
 
-  if (positionEvent == NULL) {
+  if (positionEvent == nullptr) {
       return false;
   }
 
@@ -200,7 +200,7 @@ void sv4guiImageSeedInteractor::AddSeed(mitk::StateMachineAction*, mitk::Interac
   IsOverSeed(interactionEvent);
   sv4guiImageSeedContainer* seeds  = static_cast< sv4guiImageSeedContainer* >( GetDataNode()->GetData() );
 
-  if (seeds == NULL) {
+  if (seeds == nullptr) {
       return;
   }
 
@@ -218,7 +218,7 @@ void sv4guiImageSeedInteractor::AddSeed(mitk::StateMachineAction*, mitk::Interac
 
   m_currentStartSeed += 1;
 
-  //interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+  //interactionEvent->GetSender()->RequestUpdate();
 }
 
 //------------
@@ -232,13 +232,13 @@ void sv4guiImageSeedInteractor::AddEndSeed(mitk::StateMachineAction*, mitk::Inte
 
   sv4guiImageSeedContainer* seeds = static_cast< sv4guiImageSeedContainer* >( GetDataNode()->GetData() );
 
-  if(seeds==NULL || m_currentStartSeed < 0) {
+  if(seeds==nullptr || m_currentStartSeed < 0) {
       return;
   }
 
   seeds->AddEndSeed(m_currentPickedPoint[0], m_currentPickedPoint[1], m_currentPickedPoint[2]);
 
-  // interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+  // interactionEvent->GetSender()->RequestUpdate();
 }
 
 //-----------------
@@ -255,7 +255,7 @@ void sv4guiImageSeedInteractor::MakeSeedCurrent(mitk::StateMachineAction*, mitk:
 
   seeds->SetActiveStartSeed(seeds->selectStartSeedIndex);
 
-  interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+  interactionEvent->GetSender()->RequestUpdate();
 }
 
 //------------
@@ -269,7 +269,7 @@ void sv4guiImageSeedInteractor::DeleteSeed(mitk::StateMachineAction*, mitk::Inte
   std::cout << "========== sv4guiImageSeedInteractor::DeleteSeed ========== " << std::endl;
   #endif
   auto seeds = static_cast< sv4guiImageSeedContainer*>(GetDataNode()->GetData());
-  if (seeds == NULL) {
+  if (seeds == nullptr) {
       return;
   }
 
@@ -300,7 +300,7 @@ void sv4guiImageSeedInteractor::DeleteSeed(mitk::StateMachineAction*, mitk::Inte
   seeds->selectEndSeed = false;
   seeds->selectEndSeedIndex = -1;
 
-  interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+  interactionEvent->GetSender()->RequestUpdate();
 }
 
 //------------------
@@ -316,7 +316,7 @@ void sv4guiImageSeedInteractor::SelectCenterline(mitk::StateMachineAction*, mitk
   #endif
   const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
 
-  if (positionEvent == NULL) {
+  if (positionEvent == nullptr) {
       return;
   }
 

@@ -48,16 +48,12 @@
 #include "sv3_Contour.h"
 #include "Segmentation_PyModule.h"
 #include "sv3_PolygonContour.h"
-#include "sv_arg.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "sv_Repository.h"
-#include "sv_arg.h"
 #include "sv_misc_utils.h"
 
 #include "Python.h"
-#include "sv2_globals.h"
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -222,7 +218,7 @@ static PyObject*
 PolygonSegmentation_set_control_points(PyPolygonSegmentation* self, PyObject* args, PyObject *kwargs)
 {
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"control_points", NULL};
+  static char *keywords[] = {"control_points", nullptr};
   PyObject* pointsArg= nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &pointsArg)) {
@@ -304,7 +300,7 @@ PyMethodDef PyPolygonSegmentationMethods[] = {
 
  {"set_control_points", (PyCFunction)PolygonSegmentation_set_control_points, METH_VARARGS|METH_KEYWORDS, PolygonSegmentation_set_control_points_doc },
 
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //---------------------------
@@ -322,7 +318,7 @@ PyPolygonSegmentationInit(PyPolygonSegmentation* self, PyObject* args, PyObject 
 {
   //std::cout << "[PyPolygonSegmentationInit] ========== New Polygon Segmentation object ==========  " << std::endl;
   auto api = PyUtilApiFunction("|O!", PyRunTimeErr, "PolygonSegmentation");
-  static char *keywords[] = {"control_points", NULL};
+  static char *keywords[] = {"control_points", nullptr};
   PyObject* pointsArg = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &pointsArg)) {
@@ -374,7 +370,7 @@ PyPolygonSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyPolygonSegmentationNew] PyPolygonSegmentationNew " << std::endl;
   auto self = (PyPolygonSegmentation*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->super.id = 2;
   }
   return (PyObject *) self;
@@ -401,7 +397,7 @@ PyPolygonSegmentationDealloc(PyPolygonSegmentation* self)
 // designated initializers.
 //
 static PyTypeObject PyPolygonSegmentationType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   SEGMENTATION_POLYGON_MODULE_CLASS,

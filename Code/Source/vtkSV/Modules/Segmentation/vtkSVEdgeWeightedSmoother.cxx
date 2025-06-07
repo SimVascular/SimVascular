@@ -138,7 +138,8 @@ double vtkSVEdgeWeightedSmoother::GetEdgeWeightedDistance(const int generatorId,
 
   // Get cell point coords
   double pts[3][3];
-  vtkIdType npts, *ptids;
+  vtkIdType npts;
+  const vtkIdType *ptids;
   this->WorkPd->GetCellPoints(evalId, npts, ptids);
   for (int j=0; j<npts; j++)
     this->WorkPd->GetPoint(ptids[j], pts[j]);

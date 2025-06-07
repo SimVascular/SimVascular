@@ -39,11 +39,11 @@
 sv4guiSegSelectionWidget::sv4guiSegSelectionWidget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::sv4guiSegSelectionWidget)
-    , m_TableModel(NULL)
+    , m_TableModel(nullptr)
     , m_NumSampling(0)
-    , m_ModelElement(NULL)
+    , m_ModelElement(nullptr)
     , m_ModelType("")
-    , m_LoftWidget(NULL)
+    , m_LoftWidget(nullptr)
 {
     ui->setupUi(this);
 
@@ -168,7 +168,7 @@ void sv4guiSegSelectionWidget::SetTableView(std::vector<mitk::DataNode::Pointer>
 std::vector<std::string> sv4guiSegSelectionWidget::GetUsedSegNames()
 {
     std::vector<std::string> segNames;
-    if(m_TableModel==NULL)
+    if(m_TableModel==nullptr)
         return segNames;
 
 //    int rowCount=m_TableModel->rowCount(QModelIndex());
@@ -249,7 +249,7 @@ void sv4guiSegSelectionWidget::TableViewContextMenuRequested( const QPoint & pos
 
 void sv4guiSegSelectionWidget::UseSelected(bool)
 {
-    if(m_TableModel==NULL)
+    if(m_TableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableView->selectionModel()->selectedRows();
@@ -270,7 +270,7 @@ void sv4guiSegSelectionWidget::UseSelected(bool)
 
 void sv4guiSegSelectionWidget::UseAll(bool)
 {
-    if(m_TableModel==NULL)
+    if(m_TableModel==nullptr)
         return;
 
     int rowCount=m_TableModel->rowCount();
@@ -285,7 +285,7 @@ void sv4guiSegSelectionWidget::UseAll(bool)
 
 void sv4guiSegSelectionWidget::NotUseSelected(bool)
 {
-    if(m_TableModel==NULL)
+    if(m_TableModel==nullptr)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableView->selectionModel()->selectedRows();
@@ -306,7 +306,7 @@ void sv4guiSegSelectionWidget::NotUseSelected(bool)
 
 void sv4guiSegSelectionWidget::UseNone(bool)
 {
-    if(m_TableModel==NULL)
+    if(m_TableModel==nullptr)
         return;
 
     int rowCount=m_TableModel->rowCount();

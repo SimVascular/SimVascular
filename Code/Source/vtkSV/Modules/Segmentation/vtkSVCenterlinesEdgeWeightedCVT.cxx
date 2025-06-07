@@ -53,8 +53,8 @@ vtkSVCenterlinesEdgeWeightedCVT::vtkSVCenterlinesEdgeWeightedCVT()
 {
   this->DistanceFunction = vtkSVPolyBallLine::New();
 
-  this->GroupIdsArrayName = NULL;
-  this->CenterlineRadiusArrayName =   NULL;
+  this->GroupIdsArrayName = nullptr;
+  this->CenterlineRadiusArrayName =   nullptr;
 
   this->EdgeWeight = 1.0;
   this->UseRadiusInformation = 1;
@@ -68,21 +68,21 @@ vtkSVCenterlinesEdgeWeightedCVT::vtkSVCenterlinesEdgeWeightedCVT()
 // ----------------------
 vtkSVCenterlinesEdgeWeightedCVT::~vtkSVCenterlinesEdgeWeightedCVT()
 {
-  if (this->DistanceFunction != NULL)
+  if (this->DistanceFunction != nullptr)
   {
     this->DistanceFunction->Delete();
-    this->DistanceFunction = NULL;
+    this->DistanceFunction = nullptr;
   }
 
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
   {
     delete [] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
   }
-  if (this->CenterlineRadiusArrayName != NULL)
+  if (this->CenterlineRadiusArrayName != nullptr)
   {
     delete [] this->CenterlineRadiusArrayName;
-    this->CenterlineRadiusArrayName = NULL;
+    this->CenterlineRadiusArrayName = nullptr;
   }
 }
 
@@ -148,7 +148,8 @@ int vtkSVCenterlinesEdgeWeightedCVT::InitializeGenerators()
     {
       // Get cell point coords
       double pts[3][3];
-      vtkIdType npts, *ptids;
+      vtkIdType npts;
+      const vtkIdType *ptids;
       this->WorkPd->GetCellPoints(i, npts, ptids);
       for (int j=0; j<npts; j++)
         this->WorkPd->GetPoint(ptids[j], pts[j]);
@@ -278,7 +279,8 @@ double vtkSVCenterlinesEdgeWeightedCVT::GetEdgeWeightedDistance(const int genera
 
   // Get cell point coords
   double pts[3][3];
-  vtkIdType npts, *ptids;
+  vtkIdType npts;
+  const vtkIdType *ptids;
   this->WorkPd->GetCellPoints(evalId, npts, ptids);
   for (int j=0; j<npts; j++)
     this->WorkPd->GetPoint(ptids[j], pts[j]);

@@ -102,7 +102,7 @@ bool sv4guiImageCenterlineInteractor::IsOverCenterline(const mitk::InteractionEv
 
 /*
   if (updateGraphics) { 
-     interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+     interactionEvent->GetSender()->RequestUpdate();
   }
 */
 
@@ -123,8 +123,8 @@ void sv4guiImageCenterlineInteractor::SelectCenterline(mitk::StateMachineAction*
   const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
 
   /*
-  if (positionEvent == NULL) {
-      std::cout << "[SelectCenterline] positionEvent == NULL" << std::endl;
+  if (positionEvent == nullptr) {
+      std::cout << "[SelectCenterline] positionEvent == nullptr" << std::endl;
       return;
   }
   */

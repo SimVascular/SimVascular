@@ -62,7 +62,11 @@ public:
 
   void start(ctkPluginContext* context) override;
   void stop(ctkPluginContext* context) override;
+private Q_SLOTS:
 
+private:
+    // static ctkPluginContext* _context;
+    // static sv4guiDataManagerPluginActivator* inst;
 }; // PluginActivator
 
 //}

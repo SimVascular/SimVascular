@@ -85,19 +85,19 @@ vtkStandardNewMacro(vtkSVSurfaceCuboidPatcher);
 vtkSVSurfaceCuboidPatcher::vtkSVSurfaceCuboidPatcher()
 {
   this->WorkPd = vtkPolyData::New();
-  this->MergedCenterlines = NULL;
-  this->PolycubePd = NULL;
+  this->MergedCenterlines = nullptr;
+  this->PolycubePd = nullptr;
 
-  this->CenterlineGroupIdsArrayName = NULL;
-  this->CenterlineRadiusArrayName = NULL;
-  this->CenterlineIdsArrayName = NULL;
-  this->GroupIdsArrayName = NULL;
-  this->BlankingArrayName = NULL;
-  this->TractIdsArrayName = NULL;
-  this->PatchIdsArrayName = NULL;
-  this->SlicePointsArrayName = NULL;
-  this->ClusteringVectorArrayName = NULL;
-  this->ParallelTransportVectorArrayName = NULL;
+  this->CenterlineGroupIdsArrayName = nullptr;
+  this->CenterlineRadiusArrayName = nullptr;
+  this->CenterlineIdsArrayName = nullptr;
+  this->GroupIdsArrayName = nullptr;
+  this->BlankingArrayName = nullptr;
+  this->TractIdsArrayName = nullptr;
+  this->PatchIdsArrayName = nullptr;
+  this->SlicePointsArrayName = nullptr;
+  this->ClusteringVectorArrayName = nullptr;
+  this->ParallelTransportVectorArrayName = nullptr;
 
   this->EnforcePolycubeConnectivity = 0;
 
@@ -111,80 +111,80 @@ vtkSVSurfaceCuboidPatcher::vtkSVSurfaceCuboidPatcher()
 // ----------------------
 vtkSVSurfaceCuboidPatcher::~vtkSVSurfaceCuboidPatcher()
 {
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
-  if (this->MergedCenterlines != NULL)
+  if (this->MergedCenterlines != nullptr)
   {
     this->MergedCenterlines->Delete();
-    this->MergedCenterlines = NULL;
+    this->MergedCenterlines = nullptr;
   }
-  if (this->PolycubePd != NULL)
+  if (this->PolycubePd != nullptr)
   {
     this->PolycubePd->Delete();
-    this->PolycubePd = NULL;
+    this->PolycubePd = nullptr;
   }
 
-  if (this->CenterlineGroupIdsArrayName != NULL)
+  if (this->CenterlineGroupIdsArrayName != nullptr)
   {
     delete [] this->CenterlineGroupIdsArrayName;
-    this->CenterlineGroupIdsArrayName = NULL;
+    this->CenterlineGroupIdsArrayName = nullptr;
   }
 
-  if (this->CenterlineRadiusArrayName != NULL)
+  if (this->CenterlineRadiusArrayName != nullptr)
   {
     delete [] this->CenterlineRadiusArrayName;
-    this->CenterlineRadiusArrayName = NULL;
+    this->CenterlineRadiusArrayName = nullptr;
   }
 
-  if (this->CenterlineIdsArrayName != NULL)
+  if (this->CenterlineIdsArrayName != nullptr)
   {
     delete [] this->CenterlineIdsArrayName;
-    this->CenterlineIdsArrayName = NULL;
+    this->CenterlineIdsArrayName = nullptr;
   }
 
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
   {
     delete [] this->GroupIdsArrayName;
-    this->GroupIdsArrayName = NULL;
+    this->GroupIdsArrayName = nullptr;
   }
 
-  if (this->BlankingArrayName != NULL)
+  if (this->BlankingArrayName != nullptr)
   {
     delete [] this->BlankingArrayName;
-    this->BlankingArrayName = NULL;
+    this->BlankingArrayName = nullptr;
   }
 
-  if (this->TractIdsArrayName != NULL)
+  if (this->TractIdsArrayName != nullptr)
   {
     delete [] this->TractIdsArrayName;
-    this->TractIdsArrayName = NULL;
+    this->TractIdsArrayName = nullptr;
   }
 
-  if (this->PatchIdsArrayName != NULL)
+  if (this->PatchIdsArrayName != nullptr)
   {
     delete [] this->PatchIdsArrayName;
-    this->PatchIdsArrayName = NULL;
+    this->PatchIdsArrayName = nullptr;
   }
 
-  if (this->SlicePointsArrayName != NULL)
+  if (this->SlicePointsArrayName != nullptr)
   {
     delete [] this->SlicePointsArrayName;
-    this->SlicePointsArrayName = NULL;
+    this->SlicePointsArrayName = nullptr;
   }
 
-  if (this->ClusteringVectorArrayName != NULL)
+  if (this->ClusteringVectorArrayName != nullptr)
   {
     delete [] this->ClusteringVectorArrayName;
-    this->ClusteringVectorArrayName = NULL;
+    this->ClusteringVectorArrayName = nullptr;
   }
 
-  if (this->ParallelTransportVectorArrayName != NULL)
+  if (this->ParallelTransportVectorArrayName != nullptr)
   {
     delete [] this->ParallelTransportVectorArrayName;
-    this->ParallelTransportVectorArrayName = NULL;
+    this->ParallelTransportVectorArrayName = nullptr;
   }
 }
 
@@ -348,7 +348,7 @@ int vtkSVSurfaceCuboidPatcher::PrepFilter()
   //  return SV_ERROR;
   //}
 
-  if (this->PolycubePd == NULL)
+  if (this->PolycubePd == nullptr)
   {
     vtkDebugMacro("Polycube not provided, generating from centerlines");
 
@@ -541,7 +541,8 @@ int vtkSVSurfaceCuboidPatcher::RunFilter()
     // Loop through points to evaluate function at each point
     vtkDebugMacro("Computing closest centerline points per cell of group " << groupId);
 
-    vtkIdType nlinepts, *linepts;
+    vtkIdType nlinepts;
+    const vtkIdType *linepts;
     int centerlineId = this->MergedCenterlines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(groupId);
     this->MergedCenterlines->GetCellPoints(centerlineId, nlinepts, linepts);
     int isTerminating = 1;
@@ -636,7 +637,8 @@ int vtkSVSurfaceCuboidPatcher::RunFilter()
     {
       // Get cell point coords
       double pts[3][3];
-      vtkIdType npts, *ptids;
+      vtkIdType npts;
+      const vtkIdType *ptids;
       branchPd->GetCellPoints(j, npts, ptids);
       for (int k=0; k<npts; k++)
         branchPd->GetPoint(ptids[k], pts[k]);
@@ -878,7 +880,8 @@ int vtkSVSurfaceCuboidPatcher::RunFilter()
   if (this->EnforcePolycubeConnectivity && this->MergedCenterlines->GetNumberOfCells() > 1)
   {
     // Now enforce boundaries if we need to!!!!
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     double avgRadius = 0.0;
     std::vector<double> avgRadiusValues;
     for (int i=0; i<this->MergedCenterlines->GetNumberOfCells(); i++)
@@ -922,7 +925,8 @@ int vtkSVSurfaceCuboidPatcher::RunFilter()
       // Loop through points to evaluate function at each point
       vtkDebugMacro("Computing boundary vectors of group " << groupId);
 
-      vtkIdType nlinepts, *linepts;
+      vtkIdType nlinepts;
+      const vtkIdType *linepts;
       int centerlineId = this->MergedCenterlines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(groupId);
       this->MergedCenterlines->GetCellPoints(centerlineId, nlinepts, linepts);
       int isTerminating = 1;
@@ -1662,7 +1666,8 @@ int vtkSVSurfaceCuboidPatcher::RunFilter()
   for (int i=0; i<numGroups; i++)
   {
     int groupId = groupIds->GetId(i);
-    vtkIdType nlinepts, *linepts;
+    vtkIdType nlinepts;
+    const vtkIdType *linepts;
     int centerlineId = this->MergedCenterlines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(groupId);
     this->MergedCenterlines->GetCellPoints(centerlineId, nlinepts, linepts);
 
@@ -2222,7 +2227,8 @@ int vtkSVSurfaceCuboidPatcher::ClusterBranchWithGeodesics(vtkPolyData *pd, vtkPo
         }
         pd->GetCellData()->GetArray(this->PatchIdsArrayName)->SetTuple1(tmpCellId, patchVal0);
 
-        vtkIdType npts, *pts;
+        vtkIdType npts;
+        const vtkIdType *pts;
         pd->GetCellPoints(tmpCellId, npts, pts);
         for (int l=0; l<npts; l++)
         {
@@ -2303,13 +2309,13 @@ int vtkSVSurfaceCuboidPatcher::RunEdgeWeightedCVT(vtkPolyData *pd, vtkPolyData *
 void vtkSVSurfaceCuboidPatcher::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
-  if (this->CenterlineGroupIdsArrayName != NULL)
+  if (this->CenterlineGroupIdsArrayName != nullptr)
     os << indent << "Centerline group ids name: " << this->CenterlineGroupIdsArrayName << "\n";
-  if (this->CenterlineRadiusArrayName != NULL)
+  if (this->CenterlineRadiusArrayName != nullptr)
     os << indent << "Centerline radius array name: " << this->CenterlineRadiusArrayName << "\n";
-  if (this->GroupIdsArrayName != NULL)
+  if (this->GroupIdsArrayName != nullptr)
     os << indent << "Group ids array name: " << this->GroupIdsArrayName << "\n";
-  if (this->BlankingArrayName != NULL)
+  if (this->BlankingArrayName != nullptr)
     os << indent << "Blanking array name: " << this->BlankingArrayName << "\n";
 }
 
@@ -2347,7 +2353,8 @@ int vtkSVSurfaceCuboidPatcher::FixEndPatches(vtkPolyData *pd)
       {
         int cellId = endRegions[badPatch].Elements[i];
 
-        vtkIdType npts, *pts;
+        vtkIdType npts;
+        const vtkIdType *pts;
         pd->GetCellPoints(cellId, npts, pts);
 
         for (int j=0; j<npts; j++)
@@ -2724,7 +2731,8 @@ int vtkSVSurfaceCuboidPatcher::FixSidePatches(vtkPolyData *pd)
           for (int j=0; j<sideRegions[minPatch].Elements.size(); j++)
           {
             int cellId = sideRegions[minPatch].Elements[j];
-            vtkIdType npts, *pts;
+            vtkIdType npts;
+            const vtkIdType *pts;
             pd->GetCellPoints(cellId, npts, pts);
             for (int k=0; k<npts; k++)
             {
@@ -2875,7 +2883,8 @@ int vtkSVSurfaceCuboidPatcher::FixPatchesWithPolycube()
   for (int i=0; i<polycubePd->GetNumberOfCells(); i++)
   {
     // Check for non-manifold cell, if found, delete (just the one).
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     polycubePd->GetCellPoints(i, npts, pts);
 
     for (int j=0; j<npts; j++)
@@ -2891,7 +2900,8 @@ int vtkSVSurfaceCuboidPatcher::FixPatchesWithPolycube()
         // Mark for deletion! but not the current cell
         for (int k=0; k<cellIds->GetNumberOfIds(); k++)
         {
-          vtkIdType npts_new, *pts_new;
+          vtkIdType npts_new;
+          const vtkIdType *pts_new;
           polycubePd->GetCellPoints(cellIds->GetId(k), npts_new, pts_new);
 
           int ptFound = 0;
@@ -3461,7 +3471,8 @@ int vtkSVSurfaceCuboidPatcher::MatchPatchesToPolycube(vtkPolyData *branchPd, vtk
           continue;
         }
         branchPd->GetCellData()->GetArray(this->PatchIdsArrayName)->SetTuple1(tmpCellId, newCellValue);
-        vtkIdType npts, *pts;
+        vtkIdType npts;
+        const vtkIdType *pts;
         branchPd->GetCellPoints(tmpCellId, npts, pts);
         for (int l=0; l<npts; l++)
         {
@@ -4515,7 +4526,8 @@ int vtkSVSurfaceCuboidPatcher::CheckCornersOfPatches()
 
       int realPtId;
       int ptId0, ptId1, ptId2;
-      vtkIdType npts, *pts;
+      vtkIdType npts;
+const vtkIdType *pts;
       for (int j=0; j<numCells; j++)
       {
         branchPd->GetCellPoints(j, npts, pts);
@@ -4621,7 +4633,8 @@ int vtkSVSurfaceCuboidPatcher::GetOpenBoundaryEdges(vtkPolyData *pd,
 
   for (int i=0; i<numCells; i++)
   {
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     pd->GetCellPoints(i, npts, pts);
 
     for (int j=0; j<npts; j++)
@@ -5347,7 +5360,8 @@ int vtkSVSurfaceCuboidPatcher::FixNoBoundaryRegions(vtkPolyData *pd, std::string
 
   // Loop through cells
   int count = 1;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   vtkNew(vtkIdList, queue);
   vtkNew(vtkIdList, cellEdgeNeighbors);
   std::vector<int> numCellsInRegion;
@@ -5819,7 +5833,8 @@ int vtkSVSurfaceCuboidPatcher::FixThinRegions(vtkPolyData *pd, std::string array
     int cellId0, cellId1;
     int cellVal0, cellVal1;
     int ptId, ptId0, ptId1, ptIdN;
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     vtkNew(vtkIdList, pointCellIds);
     vtkNew(vtkIdList, cellEdgeNeighbors);
     for (int patchId=0; patchId<4; patchId++)

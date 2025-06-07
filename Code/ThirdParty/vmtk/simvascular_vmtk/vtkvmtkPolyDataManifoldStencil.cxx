@@ -43,7 +43,7 @@ void vtkvmtkPolyDataManifoldStencil::ComputeArea()
   double point[3], point1[3], point2[3];
   vtkIdType j, numberOfTriangles;
 
-  if (this->DataSet==NULL)
+  if (this->DataSet==nullptr)
     {
     vtkErrorMacro(<<"No DataSet specified.");
     return;
@@ -110,20 +110,20 @@ void vtkvmtkPolyDataManifoldStencil::Build()
   manifoldNeighborhood->Build();
 
   this->NPoints = manifoldNeighborhood->GetNumberOfPoints();
-  if (this->PointIds!=NULL)
+  if (this->PointIds!=nullptr)
     {
     delete[] this->PointIds;
-    this->PointIds = NULL;
+    this->PointIds = nullptr;
     }
   this->PointIds = new vtkIdType[this->NPoints];
   memcpy(this->PointIds,manifoldNeighborhood->GetPointer(0),this->NPoints*sizeof(vtkIdType));
 
   this->IsBoundary = manifoldNeighborhood->GetIsBoundary();
 
-  if (this->Weights!=NULL)
+  if (this->Weights!=nullptr)
     {
     delete[] this->Weights;
-    this->Weights = NULL;
+    this->Weights = nullptr;
     }
   this->Weights = new double[this->NumberOfComponents*this->NPoints];
   for (i=0; i<this->NumberOfComponents*this->NPoints; i++)

@@ -37,35 +37,37 @@
 # to build SimVascular with those externals, this is the right place to be.
 #-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.10.0)
-#-----------------------------------------------------------------------------
+set(msg "[Code/CMakeLists] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} =============================================")
+message(STATUS "${msg} +++++ Code/CMakeLists.tx                     ")
+message(STATUS "${msg} =============================================")
+message(STATUS "${msg} SV_Qt6_DIR: ${SV_Qt6_DIR}")
+#message(FATAL_ERROR "${msg} SV_Qt6_DIR: ${SV_Qt6_DIR}")
 
 #-----------------------------------------------------------------------------
+cmake_minimum_required(VERSION 3.18.0)
+#-----------------------------------------------------------------------------
+
 Project(SV)
-#-----------------------------------------------------------------------------
+message(STATUS "${msg} Set SV project ")
 
-#-----------------------------------------------------------------------------
 # CMake module path
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
 	"${CMAKE_MODULE_PATH}")
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # CMake Includes
 include(CheckLibraryExists)
 include(GetPrerequisites)
 include(GenerateExportHeader)
 include(ExternalProject)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # SimVascular Includes
+#
 include(SimVascularMacros)
 include(SimVascularSystemSetup)
 include(SimVascularFunctionCheckCompilerFlags)
 include(SimVascularInstallSetup)
-#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # RPATH handling
@@ -85,64 +87,63 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 # NOTE: seems like SimVascularDependentOptions should be read BEFORE
 # including SimVascularExternalVersions.  This seems to break things,
 # so for now repeating code to ignore mitk when buiding without sv4gui
+#
 if(DEFINED SV_USE_SV4_GUI)
   if(NOT SV_USE_SV4_GUI)
     set(SV_USE_MITK "OFF" CACHE BOOL "Force OFF" FORCE)
     set(SV_USE_MITK_SHARED "OFF" CACHE BOOL "Force OFF" FORCE)
   endif()
 endif()
+
+message(STATUS "${msg} Include SimVascularExternalsVersions ")
 include(SimVascularExternalsVersions)
+
+message(STATUS "${msg} Include SimVascularOptions")
 include(SimVascularOptions)
+
+message(STATUS "${msg} Include SimVascularDependentOptions")
 include(SimVascularDependentOptions)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Include SimVascular Internals
+message(STATUS "${msg} Include SimVascularInternals")
 include(SimVascularInternals)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Include SimVascular Externals
+message(STATUS "${msg} Include SimVascularExternals")
 include(SimVascularExternals)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Include SimVascular Third Party
 include(SimVascularThirdParty)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Include SimVascular Licensed
 include(SimVascularLicensed)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Include Solver - TEMPORARY
 if(SV_USE_THREEDSOLVER)
   include(SimVascularSolver)
 endif()
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Set EXE names for the executables
+#
 set(SV_EXE "simvascular")
 set(SV_PRESOLVER_EXE "svpre")
 set(SV_FLOWSOLVER_EXE "svsolver")
 set(SV_POSTSOLVER_EXE "svpost")
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# start internal cache variables
+# Define internal cache variables
+#
 set(SV_INCLUDE_DIRS "")
 set(SV_CORE_LIBRARY_DIRS "")
 set(SV_MODULE_DIRS "")
 set(SV_PLUGIN_DIRS "")
 set(SV_CORE_EXECUTABLE_DIRS "")
-#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# [NOTE:DaveP] I'm not sure what this is for but commenting it 
+# out seems OK.
+#
 # Tcl Setup
-include(SimVascularTclSetup)
+#include(SimVascularTclSetup)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -169,7 +170,6 @@ endif(DOXYGEN_FOUND)
 # Basic Core Libs
 set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
   "Source/PythonAPI"
-  "Source/sv2/Globals"
   "Source/sv/Utils"
   "Source/sv/Repository"
   "Source/sv3/Path"
@@ -184,7 +184,6 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
   "Source/vtkSV/Modules/Segmentation"
   "Source/sv2/ImageProcessing"
   "Source/sv/Geometry"
-  "Source/sv2/Segmentation"
   "Source/sv/Model/SolidModel"
   "Source/sv2/PostProcessing"
   "Source/sv/Mesh/MeshObject"
@@ -199,47 +198,56 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 if(SV_USE_TETGEN)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/TetGenMeshObject")
 endif()
+
 # Meshsim
 if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/MeshSimMeshObject")
 endif()
+
 if(SV_USE_MESHSIM_DISCRETE_MODEL)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Model/MeshSimDiscreteSolidModel")
 endif()
+
 # Adaptors
 if(SV_USE_MESHIM_ADAPTOR OR SV_USE_TETGEN_ADAPTOR)
     set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/AdaptObject")
 endif()
+
 if(SV_USE_MESHSIM_ADAPTOR)
   set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/MeshSimAdapt")
 endif()
+
 if(SV_USE_TETGEN_ADAPTOR)
   set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/TetGenAdapt")
 endif()
+
 # VMTK
 if(SV_USE_VMTK)
   set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/VMTKUtils")
 endif()
+
 # MMG
 if(SV_USE_MMG)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/MMGMeshUtils")
 endif()
+
 # ITK
 if(SV_USE_ITK)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/ITKSegmentation")
 endif()
+
 # OpenCASCADE
 if(SV_USE_OpenCASCADE)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Model/OCCTSolidModel")
 endif()
+
 # PARASOLID
 if(SV_USE_PARASOLID)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Licensed/ParasolidSolidModel")
 endif()
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# Modules
+# Set modules.
+#
 if(SV_USE_SV4_GUI)
   set(SV_MODULE_DIRS ${SV_MODULE_DIRS}
     "Source/sv4gui/Modules/Common"
@@ -253,8 +261,8 @@ if(SV_USE_SV4_GUI)
     "Source/sv4gui/Modules/QtWidgets"
     "Source/sv4gui/Modules/ImageProcessing"
     "Source/sv4gui/Modules/svFSI"
-		"Source/sv4gui/Modules/MachineLearning"
-     )
+    "Source/sv4gui/Modules/MachineLearning"
+  )
 
   #if(SV_USE_ONEDSOLVER)
    # set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/sv4gui/Modules/ROMSimulation")
@@ -274,10 +282,8 @@ if(SV_USE_SV4_GUI)
 
 endif()
 
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Plugins
+# Set plugins.
+#
 if(SV_USE_SV4_GUI)
   if(NOT SV_USE_MITK_CONFIG)
       set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
@@ -301,15 +307,12 @@ if(SV_USE_SV4_GUI)
       endif()
   endif()
 endif()
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Executables
 set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/Application")
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Enable Testing
+#
 if(BUILD_TESTING)
 	enable_testing()
 	add_subdirectory(Testing)
@@ -320,15 +323,16 @@ if(WIN32)
 		set(SV_USE_WIN32_REGISTRY ON)
 	endif()
 endif()
+
 if(SV_USE_WIN32_REGISTRY_FORCE_OFF)
 	set(SV_USE_WIN32_REGISTRY OFF)
 	message(STATUS "Forcing SV_USE_WIN32_REGISTRY off, even in distribution mode")
 	message(STATUS "SV_USE_WIN32_REGISTRY: ${SV_USE_WIN32_REGISTRY}")
 endif()
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# Put timestamp
+
+# Set timestamp.
+#
 message(STATUS "Install timestamp: ${SV_RELEASE_TIMESTAMP}")
 file(WRITE "${TEMP_DIR}/release-date" "${SV_RELEASE_TIMESTAMP}")
 install(FILES "${TEMP_DIR}/release-date" DESTINATION ${SV_INSTALL_HOME_DIR} COMPONENT CoreFiles)
@@ -336,9 +340,7 @@ install(FILES "${TEMP_DIR}/release-date" DESTINATION ${SV_INSTALL_HOME_DIR} COMP
 if(SV_ENABLE_DISTRIBUTION)
   add_subdirectory(${SV_DISTRIBUTION_DIR} ${SV_BINARY_DISTRIBUTION_DIR})
 endif()
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
 # Add GLOBAL_DEFINES to definitions
 dev_message(" Global Flags: ${GLOBAL_DEFINES}")
 add_definitions(${GLOBAL_DEFINES})
@@ -452,14 +454,18 @@ if(SV_USE_MITK_CONFIG)
   endif()
 endif()
 
-message(STATUS "Executables")
+message(STATUS "${msg} Executables ...")
 foreach(dir ${SV_CORE_EXECUTABLE_DIRS})
-        message(STATUS "	${dir}")
+        message(STATUS "${msg}  ${dir}")
         add_subdirectory("${dir}")
 endforeach()
 #-----------------------------------------------------------------------------
 
 # add git submodules
+message(STATUS "${msg} Add git submodules ...")
+message(STATUS "${msg} +++++ Don't update git submodules ")
+
+#[[
 if(SV_GIT_PULL_SUBMODULES)
   #message(STATUS "inside of SV_GIT_PULL_SUBMODULES")
   find_package(Git)
@@ -475,12 +481,19 @@ if(SV_GIT_PULL_SUBMODULES)
     endif()
   endif()
 endif()
+#]]
 
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory
+#
+# [DaveP] change to find Qt6 package.
+#
 if(SV_USE_SV4_GUI)
+  #find_package(Qt6 COMPONENTS Core CoreTools Gui Widgets) 
+  #find_package(Qt6 COMPONENTS Core CoreTools Gui Widgets PATHS /Users/parkerda/software/qt/qt-6-install/lib/cmake NO_DEFAULT_PATH)
   include(SimVascularInstallQt)
 endif()
+
 include(SimVascularInstallLibs)
 add_subdirectory(Scripts)
 #-----------------------------------------------------------------------------
@@ -489,3 +502,6 @@ add_subdirectory(Scripts)
 # Create SimVascularConfig.cmake
 include(SimVascularConfigSetup)
 #-----------------------------------------------------------------------------
+
+#target_link_libraries(SV Qt6::Core Qt6::Gui Qt6::Widgets )
+

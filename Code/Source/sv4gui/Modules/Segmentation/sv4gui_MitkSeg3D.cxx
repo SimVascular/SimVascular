@@ -34,7 +34,7 @@
 
 sv4guiMitkSeg3D::sv4guiMitkSeg3D()
     : mitk::sv4guiSurface()
-    , m_Seg3D(NULL)
+    , m_Seg3D(nullptr)
     , m_DataModified(false)
 {
 }
@@ -74,7 +74,7 @@ void sv4guiMitkSeg3D::ExecuteOperation( mitk::Operation* operation )
 
     sv4guiMitkSeg3DOperation* seg3DOperation = dynamic_cast<sv4guiMitkSeg3DOperation*>(operation);
 
-    if(seg3DOperation==NULL)
+    if(seg3DOperation==nullptr)
     {
         MITK_ERROR << "No valid Operation for sv4guiMitkSeg3D" << std::endl;
         return;

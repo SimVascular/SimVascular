@@ -67,10 +67,10 @@ vtkSVSmoothVolume::vtkSVSmoothVolume()
 // ----------------------
 vtkSVSmoothVolume::~vtkSVSmoothVolume()
 {
-  if (this->WorkUg != NULL)
+  if (this->WorkUg != nullptr)
   {
     this->WorkUg->Delete();
-    this->WorkUg = NULL;
+    this->WorkUg = nullptr;
   }
 }
 

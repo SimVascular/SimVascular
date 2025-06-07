@@ -142,7 +142,7 @@ protected:
 
   /// \brief Split cells into polygons created by intersection lines
   vtkCellArray* SplitCell(vtkPolyData *input, vtkIdType cellId,
-                          vtkIdType *cellPts,
+                          const vtkIdType *cellPts,
                           IntersectionMapType *map,
                           vtkPolyData *interLines, int inputIndex,
                           int numCurrCells);
@@ -151,7 +151,7 @@ protected:
   int AddToPointEdgeMap(int index, vtkIdType ptId, double x[3],
                         vtkPolyData *mesh, vtkIdType cellId,
                         vtkIdType edgeId, vtkIdType lineId,
-                        vtkIdType triPts[3]);
+                        const vtkIdType triPts[3]);
 
   /// \brief Function to add information about the new cell data
   void AddToNewCellMap(int inputIndex, int interPtCount, int interPts[3],
@@ -250,8 +250,8 @@ vtkSVLoopIntersectionPolyDataFilter::Impl::Impl() :
 {
   for (int i = 0; i < 2; i++)
     {
-    this->Mesh[i]                 = NULL;
-    this->CellIds[i]              = NULL;
+    this->Mesh[i]                 = nullptr;
+    this->CellIds[i]              = nullptr;
     this->IntersectionMap[i]      = new IntersectionMapType();
     this->IntersectionPtsMap[i]   = new IntersectionMapType();
     this->PointEdgeMap[i]         = new PointEdgeMapType();
@@ -309,7 +309,8 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
     //Make sure the cell is a triangle
     if (type0 == VTK_TRIANGLE)
       {
-      vtkIdType npts0, *triPtIds0;
+      vtkIdType npts0;
+      const vtkIdType *triPtIds0;
       mesh0->GetCellPoints(cellId0, npts0, triPtIds0);
       double triPts0[3][3];
       for (vtkIdType id = 0; id < npts0; id++)
@@ -330,7 +331,8 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
             // See if the two cells actually intersect. If they do,
             // add an entry into the intersection maps and add an
             // intersection line.
-            vtkIdType npts1, *triPtIds1;
+            vtkIdType npts1;
+            const vtkIdType *triPtIds1;
             mesh1->GetCellPoints(cellId1, npts1, triPtIds1);
 
             double triPts1[3][3];
@@ -619,7 +621,7 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
 
     vtkNew( vtkIdList , edgeNeighbors);
     vtkIdType nptsX = 0;
-    vtkIdType *pts = 0;
+    const vtkIdType *pts;
     vtkNew( vtkIdList , cellsToCheck);
     for (cells->InitTraversal(); cells->GetNextCell(nptsX, pts); cellIdX++)
       {
@@ -674,7 +676,7 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
         vtkCellArray *splitCells = this->SplitCell
           (input, cellIdX, pts, intersectionMap, splitLines,
            inputIndex,numCurrCells);
-        if (splitCells != NULL)
+        if (splitCells != nullptr)
           {
           double pt0[3], pt1[3], pt2[3], normal[3];
           points->GetPoint(pts[0], pt0);
@@ -683,7 +685,8 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
           vtkTriangle::ComputeNormal(pt0, pt1, pt2, normal);
           vtkMath::Normalize(normal);
 
-          vtkIdType npts, *ptIds, subCellId;
+          vtkIdType npts, subCellId;
+          const vtkIdType *ptIds;
           splitCells->InitTraversal();
           for (subCellId = 0; splitCells->GetNextCell(npts, ptIds); subCellId++)
             {
@@ -728,7 +731,7 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
 // Impl::SplitCell
 // ----------------------
 vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
-::SplitCell(vtkPolyData *input, vtkIdType cellId, vtkIdType *cellPts,
+::SplitCell(vtkPolyData *input, vtkIdType cellId, const vtkIdType *cellPts,
             IntersectionMapType *map,
             vtkPolyData *interLines, int inputIndex,
             int numCurrCells)
@@ -784,7 +787,8 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
   while (iterLower != iterUpper)
     {
     vtkIdType lineId = iterLower->second;
-    vtkIdType nLinePts, *linePtIds;
+    vtkIdType nLinePts;
+    const vtkIdType *linePtIds;
     interLines->GetLines()->GetCell(3*lineId, nLinePts, linePtIds);
 
     interceptlines->InsertNextCell(2);
@@ -880,7 +884,8 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
       while (iterLower != iterUpper)
         {
         vtkIdType lineId = iterLower->second;
-        vtkIdType nLinePts, *linePtIds;
+        vtkIdType nLinePts;
+        const vtkIdType *linePtIds;
         interLines->GetLines()->GetCell(3*lineId, nLinePts, linePtIds);
         for (vtkIdType k = 0; k < nLinePts; k++)
           {
@@ -1098,7 +1103,7 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
     if (this->GetLoops(transformedpd, &loops) != SV_OK)
       {
       splitCells->Delete();
-      splitCells = NULL;
+      splitCells = nullptr;
       delete [] interPtBool;
       return splitCells;
       }
@@ -1194,7 +1199,7 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
           polys = triangulator->GetOutput()->GetPolys();
 
           splitCells->Delete();
-          splitCells = NULL;
+          splitCells = nullptr;
           delete [] pointMapper;
           delete [] interPtBool;
           return splitCells;
@@ -1206,7 +1211,8 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
         }
 
       // Renumber the point IDs.
-      vtkIdType npts, *ptIds;
+      vtkIdType npts;
+      const vtkIdType *ptIds;
       interLines->BuildLinks();
       for (polys->InitTraversal(); polys->GetNextCell(npts, ptIds);)
         {
@@ -1276,7 +1282,8 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
     vtkCellArray *polys = del2D->GetOutput()->GetPolys();
 
     // Renumber the point IDs.
-    vtkIdType npts, *ptIds;
+    vtkIdType npts;
+    const vtkIdType *ptIds;
     for (polys->InitTraversal(); polys->GetNextCell(npts, ptIds);)
       {
       if (ptIds[0] >= points->GetNumberOfPoints() ||
@@ -1328,7 +1335,7 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
 int vtkSVLoopIntersectionPolyDataFilter::Impl
 ::AddToPointEdgeMap(int index, vtkIdType ptId, double x[3], vtkPolyData *mesh,
                     vtkIdType cellId, vtkIdType edgeId, vtkIdType lineId,
-                    vtkIdType triPtIds[3])
+                    const vtkIdType triPtIds[3])
 {
   int value = -1;
   vtkIdType edgePtId0 = triPtIds[edgeId];
@@ -2291,7 +2298,7 @@ void vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckSurface(vtkPolyData *pd,
   //indicates a bad cell with possible intersecting facets!
   for (int i = 0; i < pd->GetNumberOfCells(); i++)
     {
-    vtkIdType *pts = 0;
+    const vtkIdType *pts;
     vtkIdType npts = 0;
     pd->GetCellPoints(i, npts, pts);
     int badcell = 0;
@@ -2350,7 +2357,8 @@ void vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckInput(vtkPolyData *pd,
   normaler->ComputeCellNormalsOn();
   normaler->Update();
 
-  vtkIdType *cellPts, npts;
+  vtkIdType npts;
+  const vtkIdType *cellPts;
   double pt0[3], pt1[3], pt2[3];
   normaler->GetOutput()->GetPolys()->GetCell(0, npts, cellPts);
   normaler->GetOutput()->GetPoints()->GetPoint(cellPts[0], pt0);

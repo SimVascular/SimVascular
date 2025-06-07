@@ -37,8 +37,12 @@
 
 #include <mitkNodePredicateDataType.h>
 #include <berryPlatform.h>
-#include <berryIPreferences.h>
-#include <berryIPreferencesService.h>
+
+#include <mitkIPreferences.h>
+#include <mitkIPreferencesService.h>
+
+//dp #include <berryIPreferences.h>
+//dp #include <berryIPreferencesService.h>
 
 #include <mitkIOUtil.h>
 
@@ -69,26 +73,25 @@ void sv4guiSegmentationLoadAction::Run(const QList<mitk::DataNode::Pointer> &sel
 
     try
     {
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
-        if (prefService)
-        {
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
+
+        if (prefService) {
             prefs = prefService->GetSystemPreferences()->Node("/General");
-        }
-        else
-        {
-            prefs = berry::IPreferences::Pointer(0);
+        } else {
+            prefs = nullptr;
         }
 
         QString lastFilePath="";
-        if(prefs.IsNotNull())
-        {
-            lastFilePath = prefs->Get("LastFileOpenPath", "");
+
+        if(prefs != nullptr) {
+            lastFilePath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
         }
+
         if(lastFilePath=="")
             lastFilePath=QDir::homePath();
 
-        QString filePath = QFileDialog::getOpenFileName(NULL, "Import Segmentation (Choose File)", lastFilePath, tr("SimVascular Segmentations (*.ctgr *.s3d);;VTP Files (*.vtp)"));
+        QString filePath = QFileDialog::getOpenFileName(nullptr, "Import Segmentation (Choose File)", lastFilePath, tr("SimVascular Segmentations (*.ctgr *.s3d);;VTP Files (*.vtp)"));
 
         filePath=filePath.trimmed();
         if(filePath.isEmpty())
@@ -98,19 +101,19 @@ void sv4guiSegmentationLoadAction::Run(const QList<mitk::DataNode::Pointer> &sel
         // std::string baseName=fi.baseName().toStdString();
         
         bool ok;
-        QString text = QInputDialog::getText(NULL, tr("Segmentation Name"),
+        QString text = QInputDialog::getText(nullptr, tr("Segmentation Name"),
                                         tr("Please give a segmentation name:"), QLineEdit::Normal,
                                         "", &ok);
         std::string baseName=text.trimmed().toStdString();
         
         if(baseName==""){
-            QMessageBox::warning(NULL,"Segmentation Empty","Please give a segmentation name!");
+            QMessageBox::warning(nullptr,"Segmentation Empty","Please give a segmentation name!");
             return;
         }
     
         mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(baseName.c_str(),selectedNode);
         if(exitingNode){
-            QMessageBox::warning(NULL,"Segmentation Already Created","Please use a different name!");
+            QMessageBox::warning(nullptr,"Segmentation Already Created","Please use a different name!");
             return;
         }
 
@@ -171,9 +174,8 @@ void sv4guiSegmentationLoadAction::Run(const QList<mitk::DataNode::Pointer> &sel
             }
         }
 
-        if(prefs.IsNotNull())
-         {
-             prefs->Put("LastFileOpenPath", filePath);
+        if(prefs != nullptr) {
+             prefs->Put("LastFileOpenPath", filePath.toStdString());
              prefs->Flush();
          }
     }

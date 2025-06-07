@@ -32,29 +32,31 @@
 #include "sv3_XmlIOUtil.h"
 #include <array>
 #include <stdexcept>
+#include <sstream>
 
 using sv3::XmlIOUtil;
 
-TiXmlElement* XmlIOUtil::CreateXMLxyzElement(const char* name, double v[3])
+tinyxml2::XMLElement* 
+XmlIOUtil::CreateXMLxyzElement(const char* name, double v[3])
 {
-    auto  xyzElement = new TiXmlElement(name);
-    xyzElement->SetDoubleAttribute("x", v[0]);
-    xyzElement->SetDoubleAttribute("y", v[1]);
-    xyzElement->SetDoubleAttribute("z", v[2]);
+    auto  xyzElement = document.NewElement(name);
+    xyzElement->SetAttribute("x", v[0]);
+    xyzElement->SetAttribute("y", v[1]);
+    xyzElement->SetAttribute("z", v[2]);
     return xyzElement;
 }
 
-TiXmlElement* XmlIOUtil::CreateXMLPointElement(const char* name, int id,std::array<double,3> point)
+tinyxml2::XMLElement* XmlIOUtil::CreateXMLPointElement(const char* name, int id,std::array<double,3> point)
 {
-    auto  xyzElement = new TiXmlElement(name);
-    xyzElement->SetDoubleAttribute("id", id);
-    xyzElement->SetDoubleAttribute("x", point[0]);
-    xyzElement->SetDoubleAttribute("y", point[1]);
-    xyzElement->SetDoubleAttribute("z", point[2]);
+    auto  xyzElement = document.NewElement(name);
+    xyzElement->SetAttribute("id", id);
+    xyzElement->SetAttribute("x", point[0]);
+    xyzElement->SetAttribute("y", point[1]);
+    xyzElement->SetAttribute("z", point[2]);
     return xyzElement;
 }
 
-TiXmlElement* XmlIOUtil::CreateXMLPointElement(const char* name, std::array<double,3> point)
+tinyxml2::XMLElement* XmlIOUtil::CreateXMLPointElement(const char* name, std::array<double,3> point)
 {
     double v[3];
     v[0]=point[0];
@@ -64,7 +66,7 @@ TiXmlElement* XmlIOUtil::CreateXMLPointElement(const char* name, std::array<doub
     return CreateXMLxyzElement(name,v);
 }
 
-TiXmlElement* XmlIOUtil::CreateXMLVectorElement(const char* name, std::array<double,3> vec)
+tinyxml2::XMLElement* XmlIOUtil::CreateXMLVectorElement(const char* name, std::array<double,3> vec)
 {
     double v[3];
     v[0]=vec[0];
@@ -74,14 +76,14 @@ TiXmlElement* XmlIOUtil::CreateXMLVectorElement(const char* name, std::array<dou
     return CreateXMLxyzElement(name,v);
 }
 
-void XmlIOUtil::Getxyz(TiXmlElement* element, double xyz[3])
+void XmlIOUtil::Getxyz(tinyxml2::XMLElement* element, double xyz[3])
 {
     element->QueryDoubleAttribute("x", &xyz[0]);
     element->QueryDoubleAttribute("y", &xyz[1]);
     element->QueryDoubleAttribute("z", &xyz[2]);
 }
 
-std::array<double,3> XmlIOUtil::GetPoint(TiXmlElement* element)
+std::array<double,3> XmlIOUtil::GetPoint(tinyxml2::XMLElement* element)
 {
     double p[3]={0};
     Getxyz(element,p);
@@ -94,7 +96,7 @@ std::array<double,3> XmlIOUtil::GetPoint(TiXmlElement* element)
     return point;
 }
 
-std::array<double,3> XmlIOUtil::GetVector(TiXmlElement* element)
+std::array<double,3> XmlIOUtil::GetVector(tinyxml2::XMLElement* element)
 {
     double v[3]={0};
     Getxyz(element,v);
@@ -108,7 +110,7 @@ std::array<double,3> XmlIOUtil::GetVector(TiXmlElement* element)
 }
 
 std::list< double >
-XmlIOUtil::GetDoubleAttributeListFromXMLNode(TiXmlElement* e, const char *attributeNameBase, unsigned int count)
+XmlIOUtil::GetDoubleAttributeListFromXMLNode(tinyxml2::XMLElement* e, const char *attributeNameBase, unsigned int count)
 {
     std::list< double > list;
 
@@ -122,7 +124,7 @@ XmlIOUtil::GetDoubleAttributeListFromXMLNode(TiXmlElement* e, const char *attrib
         std::stringstream attributeName;
         attributeName << attributeNameBase << i;
 
-        if (e->QueryDoubleAttribute( attributeName.str().c_str(), &p ) == TIXML_WRONG_TYPE)
+        if (e->QueryAttribute( attributeName.str().c_str(), &p ) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
         {
             throw std::invalid_argument("node malformatted");
         }

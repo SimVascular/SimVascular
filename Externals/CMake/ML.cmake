@@ -30,6 +30,16 @@
 #
 set(proj ml)
 
+#set(SV_ML_DIR /Users/parkerda/tmp/ml-1.0.0)
+
+set(msg "[Externals/CMake/ML.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} +++++                               ML.cmake                                         ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_ML_DIR: ${SV_ML_DIR}")
+
 # Dependencies
 include(ExternalProject)
 
@@ -37,13 +47,22 @@ set(ML_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_SRC_DIR}/${proj}-${SV_EXTERNALS_ML_VERSIO
 set(ML_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_PFX_DIR}/${proj}-${SV_EXTERNALS_ML_VERSION})
 set(ML_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${proj}-${SV_EXTERNALS_ML_VERSION})
 
+message(STATUS "${msg} ")
+message(STATUS "${msg} ML_SRC_DIR: ${ML_SRC_DIR}")
+message(STATUS "${msg} ML_PFX_DIR: ${ML_PFX_DIR}")
+message(STATUS "${msg} ML_BIN_DIR: ${ML_BIN_DIR}")
+
+#file(COPY ${SV_ML_DIR}${CMAKE_SOURCE_DIR}/../Python/site-packages/sv_ml/results
+
 ExternalProject_Add("${proj}_networks"
-  URL               http://simvascular.stanford.edu/downloads/public/machine_learning/networks.tar
+  URL               
   PREFIX            ${ML_PFX_DIR}
-  DOWNLOAD_DIR      ${ML_SRC_DIR}
+  DOWNLOAD_DIR      ${SV_ML_DIR}
+  #DOWNLOAD_DIR      ${ML_SRC_DIR}
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/../Python/site-packages/sv_ml/results
   UPDATE_COMMAND    ""
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   ""
 )
+

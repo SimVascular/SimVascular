@@ -63,8 +63,6 @@
 #undef GetObject
 #endif
 
-#include "sv2_globals.h"
-
 #ifdef WIN32
 #include <windows.h>
 #include <tchar.h>
@@ -99,7 +97,6 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
      int single_argc = 1;
      //mitk::BaseApplication app(single_argc, argv);
      sv4guiMitkApp app(single_argc, argv);
-
      // note: this command doesn't seem to work.
      // US_LOAD_IMPORTED_MODULES_INTO_MAIN(svmodel svpath ...)
      #ifdef QT_STATICPLUGIN
@@ -139,7 +136,6 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
        app.setProperty(mitk::BaseApplication::ARG_PLUGIN_DIRS, "");
 
        QStringList pluginsToStart;
-       QString pluginPath;
 
        // Note: You can specify full URL filenames as well, e.g.
        // pluginsToStart.push_back("file:///C:/.../liborg_commontk_eventadmin.dll");
@@ -210,7 +206,7 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
        size_t requiredSize;
        custom_plugins[0]='\0';
        requiredSize = 0;
-       getenv_s( &requiredSize, NULL, 0, "SV_CUSTOM_PLUGINS");
+       getenv_s( &requiredSize, nullptr, 0, "SV_CUSTOM_PLUGINS");
 
        if (requiredSize >= _MAX_ENV) {
          std::cerr << "FATAL ERROR:  SV_CUSTOM_PLUGINS to long!\n" << std::endl << std::flush;
@@ -220,30 +216,30 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
          char seps[] = ";";
          char *token;
          token = strtok( custom_plugins, seps );
-         while( token != NULL ) {
+         while( token != nullptr ) {
            // While there are tokens in "string"
-           //printf( " %s\n", token );
+           // printf( " %s\n", token );
            QString newPlugin = token;
            pluginsToStart.push_back(newPlugin);
            std::cout << "   Adding custom plugin (" << newPlugin.toStdString() << ")" << std::endl << std::flush;
            // Get next token
-           token = strtok( NULL, seps );
+           token = strtok( nullptr, seps );
          }
        }
 #else
        char *custom_plugins = getenv("SV_CUSTOM_PLUGINS");
-       if (custom_plugins != NULL) {
+       if (custom_plugins != nullptr) {
          char seps[] = ":";
          char *token;
          token = strtok( custom_plugins, seps );
-         while( token != NULL ) {
+         while( token != nullptr ) {
            // While there are tokens in "string"
-           //printf( " %s\n", token );
+           //  printf( " %s\n", token );
            QString newPlugin = token;
            pluginsToStart.push_back(newPlugin);
            std::cout << "   Adding custom plugin (" << newPlugin.toStdString() << ")" << std::endl << std::flush;
            // Get next token
-           token = strtok( NULL, seps );
+           token = strtok( nullptr, seps );
          }
        }
 #endif
@@ -274,6 +270,5 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
 #endif
 
      return app.run();
-
 }
 

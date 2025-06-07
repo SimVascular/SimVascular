@@ -39,9 +39,6 @@
 #include "sv_tetgenmesh_utils.h"
 
 #include "sv_sys_geom.h"
-#ifdef SV_USE_PYTHON
-#include "Python.h"
-#endif
 #include "vtkGeometryFilter.h"
 #include "vtkCleanPolyData.h"
 #include "vtkSmartPointer.h"
@@ -74,119 +71,27 @@
 #include <math.h>
 
 // -----------
-// cvTetGenMeshObject
-// -----------
-/**
- * @brief Constructor for cvTetGenMeshObject(Should never be called directly)
- */
-#ifdef SV_USE_TCL
-cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
-  : cvMeshObject()
-{
-  interp_ = interp;
-  inmesh_ = NULL;
-  outmesh_ = NULL;
-  polydatasolid_ = NULL;
-  inputug_ = NULL;
-  meshloaded_ = 0;
-  loadedVolumeMesh_ = 0;
-  //nodemap_ = NULL;
-  pts_ = NULL;
-
-  originalpolydata_ = NULL;
-  surfacemesh_ = NULL;
-  volumemesh_ = NULL;
-  boundarylayermesh_ = NULL;
-  innerblmesh_ = NULL;
-  holelist_ = NULL;
-  regionlist_ = NULL;
-  regionsizelist_ = NULL;
-
-  meshFileName_[0] = '\0';
-  solidFileName_[0] = '\0';
-
-  solidmodeling_kernel_ = SM_KT_POLYDATA;
-  numModelRegions_ = 0;
-  numBoundaryRegions_ = 0;
-
-  //All the different mesh options. Originally set to zero. Changed by calls to object from GUI
-  //Specifically ->SetMeshOptions()
-  meshoptions_.surfacemeshflag=0;
-  meshoptions_.volumemeshflag=0;
-  meshoptions_.nomerge=0;
-  meshoptions_.quiet=0;
-  meshoptions_.docheck=0;
-  meshoptions_.verbose=0;
-  meshoptions_.diagnose=0;
-  meshoptions_.nobisect=0;
-  meshoptions_.optlevel=0;
-  meshoptions_.maxedgesize=0;
-  meshoptions_.epsilon=0;
-  meshoptions_.minratio=0;
-  meshoptions_.mindihedral=0;
-  meshoptions_.coarsenpercent=0;
-  meshoptions_.boundarylayermeshflag=0;
-  meshoptions_.numsublayers=0;
-  meshoptions_.blthicknessfactor=0;
-  meshoptions_.sublayerratio=0;
-  meshoptions_.useconstantblthickness=0;
-  meshoptions_.newregionboundarylayer=0;
-  meshoptions_.boundarylayerdirection=1;
-  meshoptions_.refinement=0;
-  meshoptions_.refinedsize=0;
-  meshoptions_.sphereradius=0;
-  meshoptions_.cylinderradius=0;
-  meshoptions_.cylinderlength=0;
-  meshoptions_.functionbasedmeshing=0;
-  meshoptions_.secondarrayfunction=0;
-  meshoptions_.meshwallfirst=0;
-  meshoptions_.startwithvolume=0;
-  meshoptions_.refinecount=0;
-  meshoptions_.numberofholes=0;
-  meshoptions_.numberofregions=0;
-  meshoptions_.allowMultipleRegions=false;
-
-#ifdef SV_USE_MMG
-  meshoptions_.usemmg=1;
-#else
-  meshoptions_.usemmg=0;
-#endif
-  meshoptions_.hausd=0;
-  for (int i=0;i<3;i++)
-  {
-    meshoptions_.spherecenter[i] = 0;
-    meshoptions_.cylindercenter[i] = 0;
-    meshoptions_.cylindernormal[i] = 0;
-  }
-}
-#endif
-// -----------
 // cvTetGenMeshObject for python
 // -----------
-/**
- * @brief Constructor for cvTetGenMeshObject(Should never be called directly)
- */
-#ifdef SV_USE_PYTHON
-cvTetGenMeshObject::cvTetGenMeshObject()
-: cvMeshObject()
+cvTetGenMeshObject::cvTetGenMeshObject() : cvMeshObject()
 {
-  inmesh_ = NULL;
-  outmesh_ = NULL;
-  polydatasolid_ = NULL;
-  inputug_ = NULL;
+  inmesh_ = nullptr;
+  outmesh_ = nullptr;
+  polydatasolid_ = nullptr;
+  inputug_ = nullptr;
   meshloaded_ = 0;
   loadedVolumeMesh_ = 0;
-  //nodemap_ = NULL;
-  pts_ = NULL;
+  //nodemap_ = nullptr;
+  pts_ = nullptr;
 
-  originalpolydata_ = NULL;
-  surfacemesh_ = NULL;
-  volumemesh_ = NULL;
-  boundarylayermesh_ = NULL;
-  innerblmesh_ = NULL;
-  holelist_ = NULL;
-  regionlist_ = NULL;
-  regionsizelist_ = NULL;
+  originalpolydata_ = nullptr;
+  surfacemesh_ = nullptr;
+  volumemesh_ = nullptr;
+  boundarylayermesh_ = nullptr;
+  innerblmesh_ = nullptr;
+  holelist_ = nullptr;
+  regionlist_ = nullptr;
+  regionsizelist_ = nullptr;
 
   meshFileName_[0] = '\0';
   solidFileName_[0] = '\0';
@@ -244,13 +149,12 @@ cvTetGenMeshObject::cvTetGenMeshObject()
     meshoptions_.cylindernormal[i] = 0;
   }
 }
-#endif
+
 // -----------
 // cvTetGenMeshObject
 // -----------
 //
-cvTetGenMeshObject::cvTetGenMeshObject( const cvTetGenMeshObject& sm )
-  : cvMeshObject()
+cvTetGenMeshObject::cvTetGenMeshObject( const cvTetGenMeshObject& sm ) : cvMeshObject()
 {
 
   // Copy( sm );   // relying on automatic upcast to cvMeshObject*
@@ -266,40 +170,40 @@ cvTetGenMeshObject::cvTetGenMeshObject( const cvTetGenMeshObject& sm )
 
 cvTetGenMeshObject::~cvTetGenMeshObject()
 {
-  if (inmesh_ != NULL)
+  if (inmesh_ != nullptr)
     delete inmesh_;
 
-  if (outmesh_ != NULL)
+  if (outmesh_ != nullptr)
     delete outmesh_;
 
-  if (surfacemesh_ != NULL)
+  if (surfacemesh_ != nullptr)
     surfacemesh_->Delete();
 
-  if (volumemesh_ != NULL)
+  if (volumemesh_ != nullptr)
     volumemesh_->Delete();
 
-  if (polydatasolid_ != NULL)
+  if (polydatasolid_ != nullptr)
     polydatasolid_->Delete();
 
-  if (inputug_ != NULL)
+  if (inputug_ != nullptr)
     inputug_->Delete();
 
-  if (originalpolydata_ != NULL)
+  if (originalpolydata_ != nullptr)
     originalpolydata_->Delete();
 
-  if (boundarylayermesh_ != NULL)
+  if (boundarylayermesh_ != nullptr)
     boundarylayermesh_->Delete();
 
-  if (innerblmesh_ != NULL)
+  if (innerblmesh_ != nullptr)
     innerblmesh_->Delete();
 
-  if (holelist_ != NULL)
+  if (holelist_ != nullptr)
     holelist_->Delete();
 
-  if (regionlist_ != NULL)
+  if (regionlist_ != nullptr)
     regionlist_->Delete();
 
-  if (regionsizelist_ != NULL)
+  if (regionsizelist_ != nullptr)
     regionsizelist_->Delete();
 }
 
@@ -338,7 +242,7 @@ bool cvTetGenMeshObject::SizeFunctionBasedMeshIsEnabled()
 
 int cvTetGenMeshObject::SetMeshFileName( const char* meshFileName )
 {
-  if (meshFileName != NULL)
+  if (meshFileName != nullptr)
     sprintf(meshFileName_, "%s", meshFileName);
   else
     meshFileName_[0] = '\0';
@@ -353,7 +257,7 @@ void cvTetGenMeshObject::SetAllowMultipleRegions(bool value)
 
 int cvTetGenMeshObject::SetSolidFileName( const char* solidFileName )
 {
-  if (solidFileName != NULL)
+  if (solidFileName != nullptr)
     sprintf(solidFileName_, "%s", solidFileName);
   else
     solidFileName_[0] = '\0';
@@ -361,14 +265,6 @@ int cvTetGenMeshObject::SetSolidFileName( const char* solidFileName )
   return SV_OK;
 }
 
-// -----
-// Print
-// -----
-/**
- * @brief Function to print out the mesh statistics
- * @return SV_OK if executed correctly
- */
-#ifdef SV_USE_TCL
 int cvTetGenMeshObject::Print()
 {
   int num_nodes = 0;
@@ -380,7 +276,7 @@ int cvTetGenMeshObject::Print()
   int nEdge = 0;
   int nVertex = 0;
 
-  if (polydatasolid_ == NULL)
+  if (polydatasolid_ == nullptr)
   {
     fprintf(stderr,"Solid has not been loaded\n");
     return SV_ERROR;
@@ -392,7 +288,7 @@ int cvTetGenMeshObject::Print()
   }
   else if(meshoptions_.boundarylayermeshflag)
   {
-    if (volumemesh_ == NULL)
+    if (volumemesh_ == nullptr)
     {
       fprintf(stderr,"Mesh has not been created\n");
       return SV_ERROR;
@@ -404,7 +300,7 @@ int cvTetGenMeshObject::Print()
   }
   else
   {
-    if (outmesh_ == NULL)
+    if (outmesh_ == nullptr)
     {
       fprintf(stderr,"Mesh has not been created\n");
       return SV_ERROR;
@@ -433,20 +329,6 @@ int cvTetGenMeshObject::Print()
   fprintf(stdout,"  edges            = %i\n",nEdge);
   fprintf(stdout,"  vertices         = %i\n\n",nVertex);
 
-  char rtnstr[2048];
-  rtnstr[0]='\0';
-  sprintf(rtnstr,"number_of_nodes %i",num_nodes);
-  Tcl_AppendElement(interp_, rtnstr);
-  rtnstr[0]='\0';
-  sprintf(rtnstr,"number_of_elements %i",num_elems);
-  Tcl_AppendElement(interp_, rtnstr);
-  rtnstr[0]='\0';
-  sprintf(rtnstr,"number_of_mesh_edges %i",nMeshEdges);
-  Tcl_AppendElement(interp_, rtnstr);
-  rtnstr[0]='\0';
-  sprintf(rtnstr,"number_of_mesh_faces %i",nMeshFaces);
-  Tcl_AppendElement(interp_, rtnstr);
-
   //Reset all the meshoptions to be ready for next mesh
   meshoptions_.volumemeshflag = 0;
   meshoptions_.surfacemeshflag = 0;
@@ -454,101 +336,7 @@ int cvTetGenMeshObject::Print()
 
   return SV_OK;
 }
-#endif
-// -----
-// pyPrint
-// -----
-/**
- * @brief Function to print out the mesh statistics
- * @return SV_OK if executed correctly
- */
-#ifdef SV_USE_PYTHON
-int cvTetGenMeshObject::pyPrint()
-{
-  int num_nodes = 0;
-  int nMeshFaces = 0;
-  int num_elems = 0;
-  int nMeshEdges = 0;
-  int nRegion = 1;
-  int nFace = 0;
-  int nEdge = 0;
-  int nVertex = 0;
 
-  if (polydatasolid_ == NULL)
-  {
-    fprintf(stderr,"Solid has not been loaded\n");
-    return SV_ERROR;
-  }
-  if(meshoptions_.surfacemeshflag && !meshoptions_.volumemeshflag)
-  {
-    num_nodes = polydatasolid_->GetNumberOfPoints();
-    nMeshFaces = polydatasolid_->GetNumberOfCells();
-  }
-  else if(meshoptions_.boundarylayermeshflag)
-  {
-    if (volumemesh_ == NULL)
-    {
-      fprintf(stderr,"Mesh has not been created\n");
-      return SV_ERROR;
-    }
-    num_nodes = volumemesh_->GetNumberOfPoints();
-    num_elems = volumemesh_->GetNumberOfCells();
-    nMeshFaces = 4.0*(volumemesh_->GetNumberOfCells());
-    nMeshEdges = 3.0*(nMeshFaces);
-  }
-  else
-  {
-    if (outmesh_ == NULL)
-    {
-      fprintf(stderr,"Mesh has not been created\n");
-      return SV_ERROR;
-    }
-    num_nodes = outmesh_->numberofpoints;
-    num_elems = outmesh_->numberoftetrahedra;
-    nMeshFaces = outmesh_->numberoftrifaces;
-    nMeshEdges = outmesh_->numberofedges;
-    nFace = outmesh_->numberoftrifaces;
-    nEdge = outmesh_->numberofregions;
-    nVertex = outmesh_->numberofpoints;
-  }
-   /* output the statistics */
-
-  nFace = originalpolydata_->GetNumberOfPolys();
-  nVertex = originalpolydata_->GetNumberOfPoints();
-  nEdge = 3*(originalpolydata_->GetNumberOfPolys());
-
-  fprintf(stdout,"\nMESH STATISTICS:\n");
-  fprintf(stdout,"  elements         = %i\n",num_elems);
-  fprintf(stdout,"  nodes            = %i\n",num_nodes);
-  fprintf(stdout,"  mesh edges       = %i\n",nMeshEdges);
-  fprintf(stdout,"  mesh faces       = %i\n",nMeshFaces);
-  fprintf(stdout,"\nMODEL STATISTICS:\n");
-  fprintf(stdout,"  material regions = %i\n",nRegion);
-  fprintf(stdout,"  edges            = %i\n",nEdge);
-  fprintf(stdout,"  vertices         = %i\n\n",nVertex);
-
-  char rtnstr[2048];
-  rtnstr[0]='\0';
-  sprintf(rtnstr,"number_of_nodes %i\n",num_nodes);
-  PySys_WriteStdout(rtnstr);
-  rtnstr[0]='\0';
-  sprintf(rtnstr,"number_of_elements %i\n",num_elems);
-  PySys_WriteStdout(rtnstr);
-  rtnstr[0]='\0';
-  sprintf(rtnstr,"number_of_mesh_edges %i\n",nMeshEdges);
-  PySys_WriteStdout(rtnstr);
-  rtnstr[0]='\0';
-  sprintf(rtnstr,"number_of_mesh_faces %i\n",nMeshFaces);
-  PySys_WriteStdout(rtnstr);
-
-  //Reset all the meshoptions to be ready for next mesh
-  meshoptions_.volumemeshflag = 0;
-  meshoptions_.surfacemeshflag = 0;
-  meshoptions_.boundarylayermeshflag = 0;
-
-  return SV_OK;
-}
-#endif
 // ----
 // Copy
 // ----
@@ -589,13 +377,13 @@ int cvTetGenMeshObject::Update() {
  */
 cvPolyData* cvTetGenMeshObject::GetSolid() {
 
-  if (polydatasolid_ == NULL)
+  if (polydatasolid_ == nullptr)
   {
     //Mesh must be created first
     return SV_ERROR;
   }
 
-  cvPolyData* result =NULL;
+  cvPolyData* result =nullptr;
 
   result = new cvPolyData(polydatasolid_);
 
@@ -610,7 +398,7 @@ cvPolyData* cvTetGenMeshObject::GetSolid() {
 //
 bool cvTetGenMeshObject::HasSolid() {
 
-  if (polydatasolid_ == NULL) {
+  if (polydatasolid_ == nullptr) {
     return false;
   }
 
@@ -628,13 +416,13 @@ bool cvTetGenMeshObject::HasSolid() {
  */
 cvPolyData* cvTetGenMeshObject::GetPolyData() {
 
-  if (surfacemesh_ == NULL)
+  if (surfacemesh_ == nullptr)
   {
     //Mesh must be created first
     return SV_ERROR;
   }
 
-  cvPolyData* result =NULL;
+  cvPolyData* result =nullptr;
 
   result = new cvPolyData(surfacemesh_);
 
@@ -649,7 +437,7 @@ cvPolyData* cvTetGenMeshObject::GetPolyData() {
 //
 bool cvTetGenMeshObject::HasSurfaceMesh()
 {
-  return (surfacemesh_ != NULL);
+  return (surfacemesh_ != nullptr);
 }
 
 //---------------
@@ -659,7 +447,7 @@ bool cvTetGenMeshObject::HasSurfaceMesh()
 //
 bool cvTetGenMeshObject::HasVolumeMesh()
 {
-  return (volumemesh_ != NULL);
+  return (volumemesh_ != nullptr);
 }
 
 // --------------------
@@ -675,13 +463,13 @@ cvUnstructuredGrid* cvTetGenMeshObject::GetUnstructuredGrid() {
 
   // recall the node numbers start at 1 in the P_id,
   // but in vtkPolyData file they start at 0.
-  if (volumemesh_ == NULL)
+  if (volumemesh_ == nullptr)
   {
     //Mesh must be created first
-    return NULL;
+    return nullptr;
   }
 
-  cvUnstructuredGrid *result = NULL;
+  cvUnstructuredGrid *result = nullptr;
 
   result = new cvUnstructuredGrid(volumemesh_);
 
@@ -701,7 +489,7 @@ int cvTetGenMeshObject::WriteMetisAdjacency(char *filename) {
   //No longer need to write adjacency
   return SV_OK;
 
-  if (filename == NULL) {
+  if (filename == nullptr) {
         return SV_ERROR;
   }
 
@@ -719,7 +507,7 @@ int cvTetGenMeshObject::WriteMetisAdjacency(char *filename) {
     vtkIdType meshCellId;
     vtkIdType p1,p2,p3;
     vtkIdType npts = 0;
-    vtkIdType *pts = 0;
+    const vtkIdType *pts;
     vtkSmartPointer<vtkCellArray> volCells = vtkSmartPointer<vtkCellArray>::New();
     vtkSmartPointer<vtkIntArray> globalIds = vtkSmartPointer<vtkIntArray>::New();
     vtkSmartPointer<vtkIdList> ptIds = vtkSmartPointer<vtkIdList>::New();
@@ -827,21 +615,21 @@ int cvTetGenMeshObject::GetNodeCoords(int node)
 
 int cvTetGenMeshObject::LoadModel(char *filename) {
 
-  if (filename == NULL) {
+  if (filename == nullptr) {
     return SV_ERROR;
   }
 
   // must load model before mesh!
-  if (inmesh_ != NULL) {
+  if (inmesh_ != nullptr) {
     return SV_ERROR;
   }
 
   //polydatasolid cannot already exist
-  if (polydatasolid_ != NULL)
+  if (polydatasolid_ != nullptr)
   {
     polydatasolid_->Delete();
   }
-  if (originalpolydata_ != NULL) {
+  if (originalpolydata_ != nullptr) {
     originalpolydata_->Delete();
   }
 
@@ -858,21 +646,21 @@ int cvTetGenMeshObject::LoadModel(char *filename) {
 
 int cvTetGenMeshObject::LoadModel(vtkPolyData *pd) {
 
-  if (pd == NULL) {
+  if (pd == nullptr) {
     return SV_ERROR;
   }
 
   // must load model before mesh!
-  if (inmesh_ != NULL) {
+  if (inmesh_ != nullptr) {
     return SV_ERROR;
   }
 
   //polydatasolid cannot already exist
-  if (polydatasolid_ != NULL)
+  if (polydatasolid_ != nullptr)
   {
     polydatasolid_->Delete();
   }
-  if (originalpolydata_ != NULL)
+  if (originalpolydata_ != nullptr)
   {
     originalpolydata_->Delete();
   }
@@ -902,7 +690,7 @@ int cvTetGenMeshObject::LoadModel(vtkPolyData *pd) {
 
 int cvTetGenMeshObject::GetBoundaryFaces(double angle)
 {
-  if (polydatasolid_ == NULL) {
+  if (polydatasolid_ == nullptr) {
     return SV_ERROR;
   }
 
@@ -925,17 +713,17 @@ int cvTetGenMeshObject::GetBoundaryFaces(double angle)
  */
 int cvTetGenMeshObject::LoadMesh(char *filename,char *surfilename) {
 
-  if (filename == NULL) {
+  if (filename == nullptr) {
     return SV_ERROR;
   }
-  if (volumemesh_ != NULL)
+  if (volumemesh_ != nullptr)
     volumemesh_->Delete();
   volumemesh_ = vtkUnstructuredGrid::New();
   if (TGenUtils_LoadMesh(filename,volumemesh_) != SV_OK)
     return SV_ERROR;
   if (surfilename != 0)
   {
-    if (surfacemesh_ != NULL)
+    if (surfacemesh_ != nullptr)
       surfacemesh_->Delete();
 
     surfacemesh_ = vtkPolyData::New();
@@ -959,16 +747,16 @@ int cvTetGenMeshObject::LoadMesh(char *filename,char *surfilename) {
 int cvTetGenMeshObject::NewMesh() {
 
   // cant overwrite mesh
-  if (inmesh_ != NULL) {
+  if (inmesh_ != nullptr) {
     delete inmesh_;
   }
-  if (outmesh_ != NULL)
+  if (outmesh_ != nullptr)
   {
     delete outmesh_;
   }
 
   // need solid to convert to new tetgen mesh
-  if (polydatasolid_ == NULL) {
+  if (polydatasolid_ == nullptr) {
     return SV_ERROR;
   }
 
@@ -1163,7 +951,7 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
       return SV_ERROR;
     }
     meshoptions_.numberofholes++;
-    if (holelist_ == NULL)
+    if (holelist_ == nullptr)
       holelist_ = vtkPoints::New();
     holelist_->InsertNextPoint(values[0], values[1], values[2]);
   }
@@ -1174,10 +962,10 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
       return SV_ERROR;
     }
     meshoptions_.numberofregions++;
-    if (regionsizelist_ == NULL)
+    if (regionsizelist_ == nullptr)
       regionsizelist_ = vtkDoubleArray::New();
     regionsizelist_->InsertNextTuple1(values[0]);
-    if (regionlist_ == NULL)
+    if (regionlist_ == nullptr)
       regionlist_ = vtkPoints::New();
     regionlist_->InsertNextPoint(values[1], values[2], values[3]);
 
@@ -1328,7 +1116,7 @@ int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
     thresholder->SetInputData(polydatasolid_);
      //Set Input Array to 0 port,0 connection,1 for Cell Data, and WallID is the type name
     thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
-    thresholder->ThresholdBetween(1,1);
+    //dp thresholder->ThresholdBetween(1,1);
     thresholder->Update();
 
     auto surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
@@ -1471,13 +1259,13 @@ int cvTetGenMeshObject::SetSizeFunctionBasedMesh(double size,char *sizefunctionn
 
 int cvTetGenMeshObject::GenerateMesh() {
 
-  if (surfacemesh_ != NULL)
+  if (surfacemesh_ != nullptr)
   {
     surfacemesh_->Delete();
     surfacemesh_ = nullptr;
   }
 
-  if (volumemesh_ != NULL)
+  if (volumemesh_ != nullptr)
   {
     volumemesh_->Delete();
     volumemesh_ = nullptr;
@@ -1701,14 +1489,14 @@ int cvTetGenMeshObject::GenerateMesh() {
   // must have created mesh
   if (meshoptions_.volumemeshflag && !meshoptions_.boundarylayermeshflag)
   {
-    if (outmesh_ == NULL) {
+    if (outmesh_ == nullptr) {
       return SV_ERROR;
     }
-    if (surfacemesh_ != NULL)
+    if (surfacemesh_ != nullptr)
     {
       surfacemesh_->Delete();
     }
-    if (volumemesh_ != NULL)
+    if (volumemesh_ != nullptr)
     {
       volumemesh_->Delete();
     }
@@ -1744,7 +1532,7 @@ int cvTetGenMeshObject::GenerateMesh() {
 //
 int cvTetGenMeshObject::WriteMesh(char *filename, int smsver) 
 {
-  if (volumemesh_ == NULL) {
+  if (volumemesh_ == nullptr) {
     return SV_ERROR;
   }
 
@@ -1755,7 +1543,7 @@ int cvTetGenMeshObject::WriteMesh(char *filename, int smsver)
 
 int cvTetGenMeshObject::WriteStats(char *filename) {
   // must have created mesh
-  if (inmesh_ == NULL) {
+  if (inmesh_ == nullptr) {
     return SV_ERROR;
   }
   return SV_OK;
@@ -1771,7 +1559,7 @@ cvPolyData* cvTetGenMeshObject::GetFacePolyData (int orgfaceid) {
   // recall the node numbers start at 1 in the P_id,
   // but in vtkPolyData file they start at 0.
   vtkPolyData *face = vtkPolyData::New();
-  cvPolyData *result = NULL;
+  cvPolyData *result = nullptr;
 
   if (TGenUtils_GetFacePolyData(orgfaceid,surfacemesh_,face) != SV_OK)
   {
@@ -1866,7 +1654,7 @@ int cvTetGenMeshObject::GetModelFaceIDs(std::vector<int>& faceIDs)
  */
 int cvTetGenMeshObject::SetVtkPolyDataObject(vtkPolyData *newPolyData)
 {
-  if (polydatasolid_ != NULL)
+  if (polydatasolid_ != nullptr)
   {
     polydatasolid_->Delete();
   }
@@ -1884,7 +1672,7 @@ int cvTetGenMeshObject::SetVtkPolyDataObject(vtkPolyData *newPolyData)
  */
 int cvTetGenMeshObject::SetInputUnstructuredGrid(vtkUnstructuredGrid *ug)
 {
-  if (inputug_ != NULL)
+  if (inputug_ != nullptr)
   {
     inputug_->Delete();
   }
@@ -1949,7 +1737,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
   else
   {
     useSizingFunction = 0;
-    meshsizingfunction = NULL;
+    meshsizingfunction = nullptr;
   }
 
 #ifdef SV_USE_MMG
@@ -1980,7 +1768,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
     //Generate Surface Remeshing
     if(VMTKUtils_SurfaceRemeshing(polydatasolid_,meshoptions_.maxedgesize,
           meshcapsonly,preserveedges,trianglesplitfactor,
-          collapseanglethreshold,NULL,markerListName,
+          collapseanglethreshold,nullptr,markerListName,
           useSizingFunction,meshsizingfunction) != SV_OK)
     {
       fprintf(stderr,"Problem with surface meshing\n");
@@ -2151,12 +1939,12 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
   std::cout << "[GenerateBoundaryLayerMesh] ========== cvTetGenMeshObject::GenerateBoundaryLayerMesh ==========" << std::endl;
 
 #ifdef SV_USE_VMTK
-  if (boundarylayermesh_ != NULL)
+  if (boundarylayermesh_ != nullptr)
   {
     boundarylayermesh_->Delete();
   }
 
-  if (innerblmesh_ != NULL)
+  if (innerblmesh_ != nullptr)
   {
     innerblmesh_->Delete();
   }
@@ -2332,7 +2120,7 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
   }
 
   vtkDataArray *currentMarkers = polydatasolid_->GetCellData()->GetArray(markerListName.c_str());
-  if (currentMarkers == NULL)
+  if (currentMarkers == nullptr)
   {
     excluded->SetNumberOfIds(1);
     excluded->InsertId(0,1);
@@ -2451,20 +2239,20 @@ int cvTetGenMeshObject::GenerateMeshSizingFunction()
 int cvTetGenMeshObject::AppendBoundaryLayerMesh()
 {
 #ifdef SV_USE_VMTK
-  if (surfacemesh_ != NULL)
+  if (surfacemesh_ != nullptr)
   {
     surfacemesh_->Delete();
   }
-  if (volumemesh_ != NULL)
+  if (volumemesh_ != nullptr)
   {
     volumemesh_->Delete();
   }
-  if (boundarylayermesh_ == NULL)
+  if (boundarylayermesh_ == nullptr)
   {
     fprintf(stderr,"Cannot append mesh without a Boundary Layer Mesh\n");
     return SV_ERROR;
   }
-  if (innerblmesh_ == NULL)
+  if (innerblmesh_ == nullptr)
   {
     fprintf(stderr,"Cannot append mesh without inner surface from boundary layer\n");
     return SV_ERROR;
@@ -2525,7 +2313,7 @@ int cvTetGenMeshObject::AppendBoundaryLayerMesh()
  */
 int cvTetGenMeshObject::ResetOriginalRegions(std::string regionName)
 {
-  if (polydatasolid_ == NULL || originalpolydata_ == NULL)
+  if (polydatasolid_ == nullptr || originalpolydata_ == nullptr)
   {
     fprintf(stderr,"Cannot reset original regions without orignal surface \
 		    or without new surface\n");
@@ -2583,13 +2371,13 @@ int cvTetGenMeshObject::Adapt()
 
   cout<<"Done with Adaptive Mesh..."<<endl;
 
-  if (outmesh_ == NULL) {
+  if (outmesh_ == nullptr) {
     return SV_ERROR;
   }
-  if (surfacemesh_ != NULL)
+  if (surfacemesh_ != nullptr)
     surfacemesh_->Delete();
 
-  if (volumemesh_ != NULL)
+  if (volumemesh_ != nullptr)
     volumemesh_->Delete();
 
   surfacemesh_ = vtkPolyData::New();
@@ -2614,18 +2402,18 @@ int cvTetGenMeshObject::Adapt()
 int cvTetGenMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy)
 {
   // cant overwrite mesh
-  if (inmesh_ != NULL) {
+  if (inmesh_ != nullptr) {
     delete inmesh_;
   }
-  if (outmesh_ != NULL)
+  if (outmesh_ != nullptr)
   {
     delete outmesh_;
   }
 
-  if (inputug_ == NULL)
+  if (inputug_ == nullptr)
     return SV_ERROR;
 
-  if (polydatasolid_ == NULL)
+  if (polydatasolid_ == nullptr)
     return SV_ERROR;
 
   //Create new tetgen mesh objects and set first number of output mesh to 0
@@ -2648,13 +2436,13 @@ int cvTetGenMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double
 // --------------------
 int cvTetGenMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd)
 {
-  if (outmesh_ == NULL) {
+  if (outmesh_ == nullptr) {
     return SV_ERROR;
   }
-  if (volumemesh_ == NULL) {
+  if (volumemesh_ == nullptr) {
     return SV_ERROR;
   }
-  if (surfacemesh_ == NULL) {
+  if (surfacemesh_ == nullptr) {
     return SV_ERROR;
   }
 

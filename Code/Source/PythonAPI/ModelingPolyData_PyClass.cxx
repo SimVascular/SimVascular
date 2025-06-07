@@ -323,12 +323,12 @@ classify_face(PyModelingModel* self, int faceID, PyUtilApiFunction& api, double 
   double max_dist = -1.0;
   int useMaxDist = 0;
   auto cvPolydata = model->GetFacePolyData(faceID, useMaxDist, max_dist);
-  if (cvPolydata == NULL) {
+  if (cvPolydata == nullptr) {
       throw std::runtime_error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
   }
   vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
   polydata = cvPolydata->GetVtkPolyData();
-  if (polydata == NULL) {
+  if (polydata == nullptr) {
       throw std::runtime_error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
   }
 
@@ -417,7 +417,7 @@ static PyObject *
 ModelingPolyData_combine_faces(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("iO!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"face_id", "combine_with", NULL};
+  static char *keywords[] = {"face_id", "combine_with", nullptr};
   int combFaceID;
   PyObject* faceListArg;
 
@@ -463,7 +463,7 @@ ModelingPolyData_combine_faces(PyModelingModel* self, PyObject* args, PyObject* 
 
   auto polydata = vtkSmartPointer<vtkPolyData>::New();
   polydata->DeepCopy(cvPolydata->GetVtkPolyData());
-  if (polydata == NULL) {
+  if (polydata == nullptr) {
       api.error("Could not get polydata for the solid model.");
       return nullptr;
   }
@@ -518,7 +518,7 @@ static PyObject *
 ModelingPolyData_compute_boundary_faces(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("d", PyRunTimeErr, __func__);
-  static char *keywords[] = {"angle", NULL};
+  static char *keywords[] = {"angle", nullptr};
   double angle = 0.0;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &angle)) {
@@ -819,7 +819,7 @@ static PyObject *
 ModelingPolyData_delete_faces(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"face_ids", NULL};
+  static char *keywords[] = {"face_ids", nullptr};
   PyObject* faceListArg;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &faceListArg)) {
@@ -988,7 +988,7 @@ static PyObject *
 ModelingPolyData_identify_caps(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("|d", PyRunTimeErr, __func__);
-  static char *keywords[] = {"tolerance", NULL};
+  static char *keywords[] = {"tolerance", nullptr};
   double tolerance = 1e-5;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &tolerance)) {
@@ -1047,7 +1047,7 @@ static PyObject *
 ModelingPolyData_set_surface(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", NULL};
+  static char *keywords[] = {"surface", nullptr};
   PyObject* surfaceArg;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg)) {
@@ -1106,7 +1106,7 @@ PyMethodDef PyPolyDataSolidMethods[] = {
 
   { "set_surface", (PyCFunction)ModelingPolyData_set_surface, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_set_surface_doc},
 
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //---------------------
@@ -1122,7 +1122,7 @@ static int
 PyPolyDataSolidInit(PyPolyDataSolid* self, PyObject* args, PyObject *kwargs)
 {
   auto api = PyUtilApiFunction("|O", PyRunTimeErr, "PolyDataSolid");
-  static char *keywords[] = {"surface", NULL};
+  static char *keywords[] = {"surface", nullptr};
   PyObject* surfaceArg = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg)) {
@@ -1153,7 +1153,7 @@ PyPolyDataSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyPolyDataSolidNew] PyPolyDataSolidNew " << std::endl;
   auto self = (PyPolyDataSolid*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->super.id = 2;
   }
   return (PyObject *) self;
@@ -1180,7 +1180,7 @@ PyPolyDataSolidDealloc(PyPolyDataSolid* self)
 // designated initializers.
 //
 PyTypeObject PyPolyDataSolidType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   MODELING_POLYDATA_MODULE_CLASS,

@@ -438,7 +438,7 @@ void sv4guiImageSeedMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *rende
     //std::cout << "===================== sv4guiImageSeedMapper2D::GenerateDataForRenderer =====================" << std::endl;
     const mitk::DataNode* node = GetDataNode();
 
-    if (node == NULL) {
+    if (node == nullptr) {
         return;
     }
 
@@ -495,7 +495,7 @@ void sv4guiImageSeedMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *rende
         ls->m_UnselectedActor->VisibilityOn();
         ls->m_SelectedActor->VisibilityOn();
 
-        if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("unselected color")) != NULL)
+        if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("unselected color")) != nullptr)
         {
             mitk::Color tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("unselected color"))->GetValue();
             unselectedColor[0] = tmpColor[0];
@@ -503,16 +503,16 @@ void sv4guiImageSeedMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *rende
             unselectedColor[2] = tmpColor[2];
 //            unselectedColor[3] = 1.0f; // alpha value
         }
-        else if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("unselected color")) != NULL)
+        else if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("unselected color")) != nullptr)
         {
-            mitk::Color tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("unselected color"))->GetValue();
+            mitk::Color tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("unselected color"))->GetValue();
             unselectedColor[0] = tmpColor[0];
             unselectedColor[1] = tmpColor[1];
             unselectedColor[2] = tmpColor[2];
 //            unselectedColor[3] = 1.0f; // alpha value
         }
 
-        if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("selected color")) != NULL)
+        if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("selected color")) != nullptr)
         {
             mitk::Color tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("selected color"))->GetValue();
             selectedColor[0] = tmpColor[0];
@@ -520,9 +520,9 @@ void sv4guiImageSeedMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *rende
             selectedColor[2] = tmpColor[2];
 //            selectedColor[3] = 1.0f; // alpha value
         }
-        else if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("selected color")) != NULL)
+        else if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("selected color")) != nullptr)
         {
-            mitk::Color tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("selected color"))->GetValue();
+            mitk::Color tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("selected color"))->GetValue();
             selectedColor[0] = tmpColor[0];
             selectedColor[1] = tmpColor[1];
             selectedColor[2] = tmpColor[2];
@@ -546,16 +546,16 @@ void sv4guiImageSeedMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *rende
         ls->m_SplinePointsActor->VisibilityOn();
 
         //get selected color property
-//        if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("spline point color")) != NULL)
+//        if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("spline point color")) != nullptr)
 //        {
 //            mitk::Color tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(renderer)->GetProperty("spline point color"))->GetValue();
 //            splinePointsColor[0] = tmpColor[0];
 //            splinePointsColor[1] = tmpColor[1];
 //            splinePointsColor[2] = tmpColor[2];
 //        }
-//        else if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("spline point color")) != NULL)
+//        else if (dynamic_cast<mitk::ColorProperty*>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("spline point color")) != nullptr)
 //        {
-//            mitk::Color tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(NULL)->GetProperty("spline point color"))->GetValue();
+//            mitk::Color tmpColor = dynamic_cast<mitk::ColorProperty *>(this->GetDataNode()->GetPropertyList(nullptr)->GetProperty("spline point color"))->GetValue();
 //            splinePointsColor[0] = tmpColor[0];
 //            splinePointsColor[1] = tmpColor[1];
 //            splinePointsColor[2] = tmpColor[2];

@@ -67,9 +67,9 @@ vtkStandardNewMacro(vtkSVGetSphereRegions);
 // ----------------------
 vtkSVGetSphereRegions::vtkSVGetSphereRegions()
 {
-    this->CellArrayName    = NULL;
-    this->PointArrayName   = NULL;
-    this->OutCellArrayName = NULL;
+    this->CellArrayName    = nullptr;
+    this->PointArrayName   = nullptr;
+    this->OutCellArrayName = nullptr;
 
     this->SphereRadius = 0.0;
 }
@@ -79,20 +79,20 @@ vtkSVGetSphereRegions::vtkSVGetSphereRegions()
 // ----------------------
 vtkSVGetSphereRegions::~vtkSVGetSphereRegions()
 {
-  if (this->CellArrayName != NULL)
+  if (this->CellArrayName != nullptr)
   {
     delete [] this->CellArrayName;
-    this->CellArrayName = NULL;
+    this->CellArrayName = nullptr;
   }
-  if (this->PointArray != NULL)
+  if (this->PointArray != nullptr)
   {
     delete [] this->PointArrayName;
-    this->PointArrayName = NULL;
+    this->PointArrayName = nullptr;
   }
-  if (this->OutCellArrayName != NULL)
+  if (this->OutCellArrayName != nullptr)
   {
     delete [] this->OutCellArrayName;
-    this->OutCellArrayName = NULL;
+    this->OutCellArrayName = nullptr;
   }
 }
 
@@ -104,11 +104,11 @@ void vtkSVGetSphereRegions::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Sphere Radius: " << this->SphereRadius << "\n";
-  if (this->CellArrayName != NULL)
+  if (this->CellArrayName != nullptr)
     os << indent << "Cell array name: " << this->CellArrayName << "\n";
-  if (this->PointArrayName != NULL)
+  if (this->PointArrayName != nullptr)
     os << indent << "Point array name: " << this->PointArrayName << "\n";
-  if (this->OutCellArrayName != NULL)
+  if (this->OutCellArrayName != nullptr)
     os << indent << "Out cell array name: " << this->OutCellArrayName << "\n";
 }
 
@@ -145,13 +145,13 @@ int vtkSVGetSphereRegions::RequestData(vtkInformation *vtkNotUsed(request),
       return SV_ERROR;
     }
 
-    if (this->PointArrayName == NULL)
+    if (this->PointArrayName == nullptr)
     {
       std::cout<<"No PointArrayName given." << endl;
       this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
     }
-    if (this->CellArrayName == NULL)
+    if (this->CellArrayName == nullptr)
     {
       std::cout<<"No CellArrayName given." << endl;
       this->SetErrorCode(vtkErrorCode::UserError + 1);
@@ -380,12 +380,16 @@ int vtkSVGetSphereRegions::SetSphereRegions(vtkPolyData *pd, vtkPolyData *lines,
   radius = new double[numLoops];
 
   // Set up loop thresholder
+
   thresholder->SetInputData(lines);
   thresholder->SetInputArrayToProcess(0,0,0,1,"LoopId");
+
   for (int i=0;i<numLoops;i++)
   {
     // Threshold the loop
-    thresholder->ThresholdBetween(i,i);
+    thresholder->SetLowerThreshold(i);
+    thresholder->SetUpperThreshold(i);
+    //dp thresholder->ThresholdBetween(i,i);
     thresholder->Update();
 
     // Get surface
@@ -457,7 +461,8 @@ int vtkSVGetSphereRegions::SetSphereRegions(vtkPolyData *pd, vtkPolyData *lines,
   }
 
   // Time to set our cells in sphere radius
-  vtkIdType npts,*pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   double centroid[3];
   for (vtkIdType cellId=0;cellId < pd->GetNumberOfCells();cellId++)
   {

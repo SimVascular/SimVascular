@@ -34,8 +34,8 @@ vtkStandardNewMacro(vtkvmtkSimplifyVoronoiDiagram);
 
 vtkvmtkSimplifyVoronoiDiagram::vtkvmtkSimplifyVoronoiDiagram()
 {
-  this->UnremovablePointIds = NULL;
-  this->UnremovableCellIds = NULL;
+  this->UnremovablePointIds = nullptr;
+  this->UnremovableCellIds = nullptr;
   this->Simplification = VTK_VMTK_REMOVE_BOUNDARY_POINTS;
   this->IncludeUnremovable = 1;
   this->OnePassOnly = 0;
@@ -46,13 +46,13 @@ vtkvmtkSimplifyVoronoiDiagram::~vtkvmtkSimplifyVoronoiDiagram()
   if (this->UnremovablePointIds)
     {
     this->UnremovablePointIds->Delete();
-    this->UnremovablePointIds = NULL;
+    this->UnremovablePointIds = nullptr;
     }
 
   if (this->UnremovableCellIds)
     {
     this->UnremovableCellIds->Delete();
-    this->UnremovableCellIds = NULL;
+    this->UnremovableCellIds = nullptr;
     }
 }
 
@@ -109,9 +109,10 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   bool* isUnremovable;
   vtkIdType i, j, id;
   vtkIdType n;
-  vtkIdType npts, *pts, ncells;
+  vtkIdType npts, ncells;
+  const vtkIdType *pts;
   npts = 0;
-  pts = NULL;
+  pts = nullptr;
   vtkIdType edge[2];
   vtkCellArray *currentPolys;
   vtkCellLinks* currentLinks;
@@ -182,7 +183,11 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   currentPolys->DeepCopy(inputPolys);
 
   currentLinks->Allocate(input->GetNumberOfPoints());
-  currentLinks->BuildLinks(input,currentPolys);
+  
+  // Previous version of VTK (8.1.1)
+  // currentLinks->BuildLinks(input,currentPolys);
+  currentLinks->BuildLinks();
+  //currentLinks->BuildLinks(input);
 
   anyRemoved = true;
   while (anyRemoved)
@@ -271,7 +276,10 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
     currentLinks->Delete();
     currentLinks = vtkCellLinks::New();
     currentLinks->Allocate(input->GetNumberOfPoints());
-    currentLinks->BuildLinks(input,currentPolys);
+    // previous version of VTK (8.1.1)
+    // currentLinks->BuildLinks(input,currentPolys);
+    currentLinks->BuildLinks();
+    //dp currentLinks->BuildLinks(input);
 
     newPolys->Delete();
     newCell->Delete();

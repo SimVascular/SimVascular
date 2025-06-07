@@ -69,7 +69,8 @@ private slots:
 
 private:
   void EnableButtons(bool enable = true);
-  void DoBooleanOperation(mitk::BooleanOperation::Type type);
+  // [NOTE:DaveP] Comment out, not supported in new mitk, not sure how to convert.
+  //void DoBooleanOperation(mitk::BooleanOperation::Type type);
 
   Ui::QmitkBooleanOperationsWidgetControls m_Controls;
 };

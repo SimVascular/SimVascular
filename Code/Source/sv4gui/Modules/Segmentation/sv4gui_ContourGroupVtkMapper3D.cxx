@@ -60,7 +60,7 @@ void sv4guiContourGroupVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer 
     LocalStorage *localStorage = m_LSH.GetLocalStorage(renderer);
 
     mitk::DataNode* node = GetDataNode();
-    if( node == NULL )
+    if( node == nullptr )
         return;
 
     bool visible = true;
@@ -79,7 +79,7 @@ void sv4guiContourGroupVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer 
 
     //    localStorage->m_Assembly=vtkSmartPointer<vtkPropAssembly>::New();
 
-    //    if(contourGroup==NULL||contourGroup->GetSize(t)==0){
+    //    if(contourGroup==nullptr||contourGroup->GetSize(t)==0){
     //        localStorage->m_Assembly->VisibilityOff();
     //        return;
     //    }
@@ -159,7 +159,7 @@ void sv4guiContourGroupVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer 
 
     //show control points for the contour which currently appears on 2D View
     sv4guiContour* contour=contourGroup->GetContour(index,t);
-    if(contour!=NULL)
+    if(contour!=nullptr)
     {
         double pointColor[3]={0,1,0};
         colorprop = dynamic_cast<mitk::ColorProperty*>(node->GetProperty("point.color", renderer));
@@ -275,7 +275,7 @@ void sv4guiContourGroupVtkMapper3D::ResetMapper( mitk::BaseRenderer* renderer )
 
 
 //    sv4guiContourGroup* data  = static_cast< sv4guiContourGroup*>( GetDataNode()->GetData() );
-//    if ( data == NULL )
+//    if ( data == nullptr )
 //    {
 //        return;
 //    }

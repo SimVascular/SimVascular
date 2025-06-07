@@ -14,8 +14,8 @@ index d36f03b..90522c1 100644
 +++ b/Code/ThirdParty/tetgen/simvascular_tetgen/tetgen.cxx
 
 @@ -29546,7 +29546,7 @@ void tetgenmesh::outsubfaces(tetgenio* out)
-   int *elist = NULL;
-   int *emlist = NULL;
+   int *elist = nullptr;
+   int *emlist = nullptr;
    int index = 0, index1 = 0, index2 = 0;
 -  triface abuttingtet;
 +  triface abuttingtet, abuttingtet2;
@@ -27,7 +27,7 @@ index d36f03b..90522c1 100644
        neigh2 = -1;
        stpivot(faceloop, abuttingtet);
 +
-       if (abuttingtet.tet != NULL) {
+       if (abuttingtet.tet != nullptr) {
 -        neigh1 = elemindex(abuttingtet.tet);
 -        fsymself(abuttingtet);
          if (!ishulltet(abuttingtet)) {
@@ -38,7 +38,7 @@ index d36f03b..90522c1 100644
 +
 +      fsym(abuttingtet, abuttingtet2);
 +
-+      if (abuttingtet2.tet != NULL) {
++      if (abuttingtet2.tet != nullptr) {
 +        if (!ishulltet(abuttingtet2)) {
 +          neigh2 = elemindex(abuttingtet2.tet);
          }

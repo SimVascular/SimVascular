@@ -57,8 +57,8 @@
 // ----------------------
 vtkSVLocalInterpolatingSubdivisionFilter::vtkSVLocalInterpolatingSubdivisionFilter()
 {
-  this->SubdivideCellArrayName  = NULL;
-  this->SubdividePointArrayName = NULL;
+  this->SubdivideCellArrayName  = nullptr;
+  this->SubdividePointArrayName = nullptr;
 
   this->NumberOfSubdivisions = 1;
   this->UseCellArray = 0;
@@ -70,15 +70,15 @@ vtkSVLocalInterpolatingSubdivisionFilter::vtkSVLocalInterpolatingSubdivisionFilt
 // ----------------------
 vtkSVLocalInterpolatingSubdivisionFilter::~vtkSVLocalInterpolatingSubdivisionFilter()
 {
-  if (this->SubdivideCellArrayName != NULL)
+  if (this->SubdivideCellArrayName != nullptr)
   {
     delete [] this->SubdivideCellArrayName;
-    this->SubdivideCellArrayName = NULL;
+    this->SubdivideCellArrayName = nullptr;
   }
-  if (this->SubdividePointArrayName != NULL)
+  if (this->SubdividePointArrayName != nullptr)
   {
     delete [] this->SubdividePointArrayName;
-    this->SubdividePointArrayName = NULL;
+    this->SubdividePointArrayName = nullptr;
   }
 }
 
@@ -132,7 +132,8 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
   inputDS->BuildLinks();
   vtkCellArray *polys = inputDS->GetPolys();
   int hasTris = 0;
-  vtkIdType numCellPts = 0, *pts = 0;
+  vtkIdType numCellPts = 0;
+  const vtkIdType *pts;
   polys->InitTraversal();
 
   while(polys->GetNextCell(numCellPts, pts))
@@ -157,7 +158,7 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
 
     if (this->UsePointArray)
     {
-      if (this->SubdividePointArrayName == NULL)
+      if (this->SubdividePointArrayName == nullptr)
       {
         std::cout<<"No PointArrayName given." << endl;
         this->SetErrorCode(vtkErrorCode::UserError + 1);
@@ -166,7 +167,7 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
     }
     if (this->UseCellArray)
     {
-      if (this->SubdivideCellArrayName == NULL)
+      if (this->SubdivideCellArrayName == nullptr)
       {
         std::cout<<"No CellArrayName given." << endl;
         this->SetErrorCode(vtkErrorCode::UserError + 1);
@@ -334,7 +335,7 @@ void vtkSVLocalInterpolatingSubdivisionFilter::GenerateSubdivisionCells (vtkPoly
   vtkIdType cellId, newId;
   int id;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts;
   double edgePts[3];
   vtkIdType newCellPts[3];
   vtkCellData *inputCD = inputDS->GetCellData();

@@ -39,8 +39,8 @@
 #include <QApplication>
 
 #include <berryPlatform.h>
-#include <berryIPreferences.h>
-#include <berryIPreferencesService.h>
+#include <mitkIPreferences.h>
+#include <mitkIPreferencesService.h>
 
 #include <mitkProgressBar.h>
 #include <mitkStatusBar.h>
@@ -111,27 +111,28 @@ void sv4guiFileOpenProjectAction::Run()
 
         mitk::DataStorage::Pointer dataStorage = dsRef->GetDataStorage();
 
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
+        mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        mitk::IPreferences* prefs;
+
        if (prefService)
        {
            prefs = prefService->GetSystemPreferences()->Node("/General");
        }
        else
        {
-           prefs = berry::IPreferences::Pointer(0);
+           prefs = nullptr; 
        }
 
        QString lastSVProjPath="";
-       if(prefs.IsNotNull())
+       if(prefs != nullptr)
        {
-           lastSVProjPath = prefs->Get("LastSVProjPath", prefs->Get("LastSVProjCreatParentPath", ""));
+           lastSVProjPath = QString::fromStdString(prefs->Get("LastSVProjPath", prefs->Get("LastSVProjCreatParentPath", "")));
        }
 
        if(lastSVProjPath=="")
            lastSVProjPath=QDir::homePath();
 
-       QString projPath = QFileDialog::getExistingDirectory(NULL, tr("Choose Project"),
+       QString projPath = QFileDialog::getExistingDirectory(nullptr, tr("Choose Project"),
                                                         lastSVProjPath);
 
         if(projPath.trimmed().isEmpty()) return;
@@ -157,13 +158,14 @@ void sv4guiFileOpenProjectAction::Run()
             mitk::ProgressBar::GetInstance()->Progress(2);
             mitk::StatusBar::GetInstance()->DisplayText("SV project loaded.");
             QApplication::restoreOverrideCursor();
-            if(prefs.IsNotNull())
+
+            if(prefs != nullptr)
             {
-                prefs->Put("LastSVProjPath", lastSVProjPath);
+                prefs->Put("LastSVProjPath", lastSVProjPath.toStdString());
                 prefs->Flush();
             }
         }else{
-            QMessageBox::warning(NULL,"Invalid Project","No project image location file found.");
+            QMessageBox::warning(nullptr,"Invalid Project","No project image location file found.");
         }
     }
     catch (std::exception& e)

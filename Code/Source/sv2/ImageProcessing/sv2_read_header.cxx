@@ -159,7 +159,7 @@ int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
     FILE *in;
 
     in = fopen(filename,"rb");
-    if ( in  == NULL) {
+    if ( in  == nullptr) {
         fprintf(stderr,"ERROR:  Could not open file %s!\n",filename);
         return SV_ERROR;
     }

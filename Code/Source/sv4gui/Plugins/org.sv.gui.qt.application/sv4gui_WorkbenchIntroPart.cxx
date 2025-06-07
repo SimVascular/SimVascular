@@ -36,8 +36,8 @@
 #include <berryIWorkbenchPage.h>
 #include <berryIPerspectiveRegistry.h>
 #include <berryWorkbenchPreferenceConstants.h>
-#include <berryIPreferences.h>
-#include <berryIPreferencesService.h>
+#include <mitkIPreferences.h>
+#include <mitkIPreferencesService.h>
 #include <berryPlatform.h>
 
 #include <berryIEditorReference.h>
@@ -58,6 +58,7 @@
 #include <QWebView>
 #include <QWebPage>
 #else
+// QtWebEngineWidgets might not be necessary. TODO: change cmake file
 #include <QWebEngineView>
 #include <QWebEnginePage>
 #endif
@@ -77,7 +78,7 @@
 sv4guiWorkbenchIntroPart::sv4guiWorkbenchIntroPart()
     : m_Controls(nullptr)
 {
-    berry::IPreferences::Pointer workbenchPrefs = sv4guiApplicationPluginActivator::GetDefault()->GetPreferencesService()->GetSystemPreferences();
+    mitk::IPreferences* workbenchPrefs = sv4guiApplicationPluginActivator::GetDefault()->GetPreferencesService()->GetSystemPreferences();
     workbenchPrefs->PutBool(berry::WorkbenchPreferenceConstants::SHOW_INTRO, true);
     workbenchPrefs->Flush();
 }
@@ -87,13 +88,13 @@ sv4guiWorkbenchIntroPart::~sv4guiWorkbenchIntroPart()
     // if the workbench is not closing (that means, welcome screen was closed explicitly), set "Show_intro" false
     if (!this->GetIntroSite()->GetPage()->GetWorkbenchWindow()->GetWorkbench()->IsClosing())
     {
-        berry::IPreferences::Pointer workbenchPrefs = sv4guiApplicationPluginActivator::GetDefault()->GetPreferencesService()->GetSystemPreferences();
+        mitk::IPreferences* workbenchPrefs = sv4guiApplicationPluginActivator::GetDefault()->GetPreferencesService()->GetSystemPreferences();
         workbenchPrefs->PutBool(berry::WorkbenchPreferenceConstants::SHOW_INTRO, false);
         workbenchPrefs->Flush();
     }
     else
     {
-        berry::IPreferences::Pointer workbenchPrefs = sv4guiApplicationPluginActivator::GetDefault()->GetPreferencesService()->GetSystemPreferences();
+        mitk::IPreferences* workbenchPrefs = sv4guiApplicationPluginActivator::GetDefault()->GetPreferencesService()->GetSystemPreferences();
         workbenchPrefs->PutBool(berry::WorkbenchPreferenceConstants::SHOW_INTRO, true);
         workbenchPrefs->Flush();
     }

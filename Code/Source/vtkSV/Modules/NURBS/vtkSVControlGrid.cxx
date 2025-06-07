@@ -109,7 +109,7 @@ int vtkSVControlGrid::SetNumberOfControlPoints(const int numPoints)
 {
   this->GetPoints()->SetNumberOfPoints(numPoints);
   vtkDataArray *weights = this->GetPointData()->GetArray("Weights");
-  if (weights == NULL)
+  if (weights == nullptr)
   {
     vtkErrorMacro("No weigths on surface");
     return SV_ERROR;

@@ -221,7 +221,7 @@ unsigned long ZEXPORT crc32(crc, buf, len)
     const unsigned char FAR *buf;
     unsigned len;
 {
-    if (buf == Z_NULL) return 0UL;
+    if (buf == Z_nullptr) return 0UL;
 
 #ifdef DYNAMIC_CRC_TABLE
     if (crc_table_empty)

@@ -41,7 +41,7 @@
 
 #include <sv4gui_SimulationPreferences.h>
 
-#include <berryIPreferences.h>
+#include <mitkIPreferences.h>
 #include <berryIQtPreferencePage.h>
 
 namespace Ui {
@@ -53,12 +53,12 @@ class sv4guiSimulationPreferencePage;
 // The keys are used to store property values in a MITK database.
 //
 namespace sv4guiSimulationPreferenceDBKey {
-    const QString FLOW_SOLVER_NO_MPI_PATH = "flowsolver nompi path";
-    const QString FLOW_SOLVER_PATH = "flowsolver path";
-    const QString POST_SOLVER_PATH = "postsolver path";
-    const QString PRE_SOLVER_PATH = "presolver path";
-    const QString SOLVER_TEMPLATE_PATH = "solver template path";
-    const QString USE_CUSTOM = "use custom";
+    const std::string FLOW_SOLVER_NO_MPI_PATH = "flowsolver nompi path";
+    const std::string FLOW_SOLVER_PATH = "flowsolver path";
+    const std::string POST_SOLVER_PATH = "postsolver path";
+    const std::string PRE_SOLVER_PATH = "presolver path";
+    const std::string SOLVER_TEMPLATE_PATH = "solver template path";
+    const std::string USE_CUSTOM = "use custom";
 };
 
 class sv4guiSimulationPreferencePage : public QObject, public berry::IQtPreferencePage
@@ -91,7 +91,7 @@ private:
   void SetSolverNOMPI();
   void SetPostSolver();
 
-  berry::IPreferences::Pointer m_Preferences;
+  mitk::IPreferences* m_Preferences;
   QScopedPointer<Ui::sv4guiSimulationPreferencePage> m_Ui;
   QWidget* m_Control;
   sv4guiSimulationPreferences m_DefaultPrefs;

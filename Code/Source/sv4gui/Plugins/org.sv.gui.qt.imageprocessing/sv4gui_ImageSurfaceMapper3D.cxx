@@ -61,6 +61,7 @@
 #include <vtkPointData.h>
 #include <vtkPlaneCollection.h>
 #include <vtkSmartPointer.h>
+#include <vtkTexture.h>
 
 const mitk::sv4guiSurface* mitk::sv4guiImageSurfaceMapper3D::GetInput()
 {
@@ -94,7 +95,7 @@ void mitk::sv4guiImageSurfaceMapper3D::GenerateDataForRenderer(mitk::BaseRendere
   //
   mitk::sv4guiSurface::Pointer input  = const_cast< mitk::sv4guiSurface* >( this->GetInput() );
   vtkSmartPointer<vtkPolyData> polydata = input->GetVtkPolyData( this->GetTimestep() );
-  if(polydata == NULL)
+  if(polydata == nullptr)
   {
     ls->m_Actor->VisibilityOff();
     return;
@@ -364,7 +365,7 @@ void mitk::sv4guiImageSurfaceMapper3D::ApplyAllProperties( mitk::BaseRenderer* r
       }
       //pass the texture to the actor
       ls->m_Actor->SetTexture(vtkTxture);
-      if(ls->m_VtkPolyDataMapper->GetInput()->GetPointData()->GetTCoords() == NULL)
+      if(ls->m_VtkPolyDataMapper->GetInput()->GetPointData()->GetTCoords() == nullptr)
       {
         MITK_ERROR << "Surface.Texture property was set, but there are no texture coordinates. Please provide texture coordinates for the vtkPolyData via vtkPolyData->GetPointData()->SetTCoords().";
       }
@@ -394,11 +395,11 @@ void mitk::sv4guiImageSurfaceMapper3D::ApplyAllProperties( mitk::BaseRenderer* r
     else if (deprecatedUsePointData)
     {
       float scalarsMin = 0;
-      if (dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("ScalarsRangeMinimum")) != NULL)
+      if (dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("ScalarsRangeMinimum")) != nullptr)
         scalarsMin = dynamic_cast<mitk::FloatProperty*>(this->GetDataNode()->GetProperty("ScalarsRangeMinimum"))->GetValue();
 
       float scalarsMax = 0.1;
-      if (dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("ScalarsRangeMaximum")) != NULL)
+      if (dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("ScalarsRangeMaximum")) != nullptr)
         scalarsMax = dynamic_cast<mitk::FloatProperty*>(this->GetDataNode()->GetProperty("ScalarsRangeMaximum"))->GetValue();
 
       ls->m_VtkPolyDataMapper->SetScalarRange(scalarsMin,scalarsMax);
@@ -422,7 +423,7 @@ void mitk::sv4guiImageSurfaceMapper3D::ApplyAllProperties( mitk::BaseRenderer* r
     // this node. Check both renderer specific and global property lists, since
     // properties in both should be considered.
     const PropertyList::PropertyMap *rendererProperties = this->GetDataNode()->GetPropertyList( renderer )->GetMap();
-    const PropertyList::PropertyMap *globalProperties = this->GetDataNode()->GetPropertyList( NULL )->GetMap();
+    const PropertyList::PropertyMap *globalProperties = this->GetDataNode()->GetPropertyList( nullptr )->GetMap();
 
     // Add clipping planes (if any)
     ls->m_ClippingPlaneCollection->RemoveAllItems();
@@ -460,7 +461,7 @@ void mitk::sv4guiImageSurfaceMapper3D::CheckForClippingProperty( mitk::BaseRende
 
   ClippingProperty *clippingProperty = dynamic_cast< ClippingProperty * >( property );
 
-  if ( (clippingProperty != NULL)
+  if ( (clippingProperty != nullptr)
     && (clippingProperty->GetClippingEnabled()) )
   {
     const Point3D &origin = clippingProperty->GetOrigin();
@@ -513,7 +514,7 @@ void mitk::sv4guiImageSurfaceMapper3D::SetDefaultProperties(mitk::DataNode* node
   mitk::sv4guiSurface::Pointer surface = dynamic_cast<sv4guiSurface*>(node->GetData());
   if(surface.IsNotNull())
   {
-    if((surface->GetVtkPolyData() != 0) && (surface->GetVtkPolyData()->GetPointData() != NULL) && (surface->GetVtkPolyData()->GetPointData()->GetScalars() != 0))
+    if((surface->GetVtkPolyData() != 0) && (surface->GetVtkPolyData()->GetPointData() != nullptr) && (surface->GetVtkPolyData()->GetPointData()->GetScalars() != 0))
     {
       node->AddProperty( "scalar visibility", mitk::BoolProperty::New(true), renderer, overwrite );
       node->AddProperty( "color mode", mitk::BoolProperty::New(true), renderer, overwrite );

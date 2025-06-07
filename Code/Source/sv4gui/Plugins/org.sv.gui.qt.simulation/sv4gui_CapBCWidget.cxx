@@ -32,13 +32,14 @@
 #include "sv4gui_CapBCWidget.h"
 #include "ui_sv4gui_CapBCWidget.h"
 
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QRegularExpression>
 
 #include <sstream>
 
@@ -92,7 +93,7 @@ void sv4guiCapBCWidget::UpdateGUI(std::string capName, std::map<std::string, std
     QString period=QString::fromStdString(props["Period"]);
     if(period=="")
     {
-        QStringList list = QString::fromStdString(m_FlowrateContent).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+        QStringList list = QString::fromStdString(m_FlowrateContent).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
         if(list.size()>1)
             period=list[list.size()-2];
     }
@@ -123,7 +124,7 @@ void sv4guiCapBCWidget::UpdateGUI(std::string capName, std::map<std::string, std
     QString pressurePeriod=QString::fromStdString(props["Pressure Period"]);
     if(pressurePeriod=="")
     {
-        QStringList list = QString::fromStdString(m_TimedPressureContent).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+        QStringList list = QString::fromStdString(m_TimedPressureContent).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
         if(list.size()>1)
             pressurePeriod=list[list.size()-2];
     }
@@ -214,7 +215,7 @@ bool sv4guiCapBCWidget::CreateProps()
             }
             props["Values"]=values.toStdString();
 
-            QStringList list = values.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            QStringList list = values.split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
             props["R Values"]=list[0].toStdString()+" "+list[2].toStdString();
             props["C Values"]=list[1].toStdString();
         }
@@ -254,7 +255,7 @@ bool sv4guiCapBCWidget::CreateProps()
             props["Pressure Period"]=newPeriodStr.toStdString();
             props["Pressure Scaling"]=scalingFactorStr.toStdString();
 
-            QStringList list = values.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            QStringList list = values.split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
             props["R Values"]=list[0].toStdString()+" "+list[2].toStdString()+" "+list[4].toStdString();
             props["C Values"]=list[1].toStdString()+" "+list[3].toStdString();
         }
@@ -295,21 +296,23 @@ void sv4guiCapBCWidget::SelectionChanged(const QString &text)
 
 void sv4guiCapBCWidget::LoadFlowrateFromFile()
 {
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
+
     if (prefService)
     {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     }
     else
     {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr; 
     }
 
     QString lastFileOpenPath="";
-    if(prefs.IsNotNull())
+
+    if(prefs != nullptr) 
     {
-        lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+        lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
     }
     if(lastFileOpenPath=="")
         lastFileOpenPath=QDir::homePath();
@@ -322,9 +325,9 @@ void sv4guiCapBCWidget::LoadFlowrateFromFile()
     if(flowrateFilePath.isEmpty())
         return;
 
-    if(prefs.IsNotNull())
+    if(prefs != nullptr) 
     {
-        prefs->Put("LastFileOpenPath", flowrateFilePath);
+        prefs->Put("LastFileOpenPath", flowrateFilePath.toStdString());
         prefs->Flush();
     }
 
@@ -356,7 +359,7 @@ void sv4guiCapBCWidget::LoadFlowrateFromFile()
             if(line.contains("#"))
                 continue;
 
-            QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            QStringList list = line.split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
             if(list.size()!=2)
                 continue;
 
@@ -371,21 +374,22 @@ void sv4guiCapBCWidget::LoadFlowrateFromFile()
 
 void sv4guiCapBCWidget::LoadTimedPressureFromFile()
 {
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
+
     if (prefService)
     {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     }
     else
     {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr; 
     }
 
     QString lastFileOpenPath="";
-    if(prefs.IsNotNull())
+    if(prefs != nullptr)
     {
-        lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+        lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
     }
     if(lastFileOpenPath=="")
         lastFileOpenPath=QDir::homePath();
@@ -398,9 +402,9 @@ void sv4guiCapBCWidget::LoadTimedPressureFromFile()
     if(pressureFilePath.isEmpty())
         return;
 
-    if(prefs.IsNotNull())
+    if(prefs != nullptr)
     {
-        prefs->Put("LastFileOpenPath", pressureFilePath);
+        prefs->Put("LastFileOpenPath", pressureFilePath.toStdString());
         prefs->Flush();
     }
 
@@ -424,7 +428,7 @@ void sv4guiCapBCWidget::LoadTimedPressureFromFile()
             if(line.contains("#"))
                 continue;
 
-            QStringList list = line.split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
+            QStringList list = line.split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
             if(list.size()!=2)
                 continue;
 
@@ -463,7 +467,7 @@ bool sv4guiCapBCWidget::IsDouble(QString value)
 
 bool sv4guiCapBCWidget::AreDouble(QString values, int* count)
 {
-    QStringList list = values.split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
+    QStringList list = values.split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
     bool ok;
     for(int i=0;i<list.size();i++)
     {
@@ -471,7 +475,7 @@ bool sv4guiCapBCWidget::AreDouble(QString values, int* count)
         if(!ok) return false;
     }
 
-    if(count!=NULL)
+    if(count!=nullptr)
         (*count)=list.size();
 
     return true;

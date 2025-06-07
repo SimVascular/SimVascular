@@ -80,7 +80,19 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
+# This is the SV version of the CMake FindPython.cmake code. 
+#
+# [NOTE] The CMake system FindPython.cmake version does not work on MacOS in SV. 
+
 set(proj PYTHON)
+
+set(msg "[Code/CMake/FindPYTHON.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} ==========================================================")
+message(STATUS "${msg} =============== Code/CMake  FindPYTHON.cmake =============")
+message(STATUS "${msg} ==========================================================")
+message(STATUS "${msg} PYTHON_DIR: ${PYTHON_DIR}")
+#message(FATAL_ERROR "${msg} PYTHON_DIR: ${PYTHON_DIR}")
 
 include(FindPackageHandleStandardArgs)
 include(CMakeFindFrameworks)

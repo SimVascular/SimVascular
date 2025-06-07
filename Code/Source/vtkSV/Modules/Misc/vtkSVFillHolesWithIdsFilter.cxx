@@ -99,7 +99,8 @@ int vtkSVFillHolesWithIdsFilter::RequestData(
   vtkDebugMacro(<<"Executing hole fill operation");
 
   // check the input, build data structures as necessary
-  vtkIdType numPts, npts, *pts;
+  vtkIdType numPts, npts;
+  const vtkIdType *pts;
   vtkPoints *inPts=input->GetPoints();
   vtkIdType numPolys = input->GetNumberOfPolys();
   vtkIdType numStrips = input->GetNumberOfStrips();
@@ -187,7 +188,7 @@ int vtkSVFillHolesWithIdsFilter::RequestData(
   // add to the output list of cells
   this->NumberOfHolesFilled=0;
   numCells = newLines->GetNumberOfCells();
-  vtkCellArray *newCells = NULL;
+  vtkCellArray *newCells = nullptr;
   if ( numCells >= 3 ) //only do the work if there are free edges
     {
     double sphere[4];

@@ -49,7 +49,7 @@ static double gMachineEpsilon;
 // This function reads a stack of image files (flat, headerless
 // binaries) and puts the intensity data into an array.  Upon success,
 // a pointer to a newly allocated Image_T is returned.  Deallocation
-// is the responsibility of the caller.  If the function fails, a NULL
+// is the responsibility of the caller.  If the function fails, a nullptr
 // pointer is returned.  Note that it seems that both raw MR data in
 // the Signa format and slice planes from David Paik's path planner
 // store images as arrays of short's (size = 2), so that's why
@@ -63,8 +63,8 @@ Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
   char filename[1000];
   int filecount, filenum;
   int i, dataLen, fileLen, num;
-  short *tmpDataShort = NULL;
-  double *tmpDataDouble = NULL;
+  short *tmpDataShort = nullptr;
+  double *tmpDataDouble = nullptr;
   int rowIx, colIx, planeIx, planeOffset;
   int convertShort;
 
@@ -83,12 +83,12 @@ Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
     convertShort = 0;
   } else {
     fprintf(stderr, "ERR: Invalid image data type flag.\n");
-    return NULL;
+    return nullptr;
   }
 
   if ( fileNumRange[1] < fileNumRange[0] ) {
     fprintf(stderr, "ERR: Invalid file num range.\n");
-    return NULL;
+    return nullptr;
   }
 
   image = new Image_T;
@@ -133,11 +133,11 @@ Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
 
     sprintf( filename, "%s.%03d", filebase, filecount );
     fp = fopen( filename, "r" );
-    if (fp == NULL) {
+    if (fp == nullptr) {
       fprintf(stderr, "ERR: Couldn't open image file %s.\n", filename);
       delete image->pixels;
       delete image;
-      return NULL;
+      return nullptr;
     }
 
     if (convertShort) {
@@ -153,7 +153,7 @@ Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
       fprintf(stderr, "ERR: Image file size mismatch [%s].\n", filename);
       delete image->pixels;
       delete image;
-      return NULL;
+      return nullptr;
     }
   }
 
@@ -196,8 +196,8 @@ Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
 
 void Image_Delete( Image_T *img )
 {
-  if ( img != NULL ) {
-    if ( img->pixels != NULL ) {
+  if ( img != nullptr ) {
+    if ( img->pixels != nullptr ) {
       delete [] img->pixels;
     }
     delete img;
@@ -736,7 +736,7 @@ Image_T *CreateImage( void *data, int numData, char *imgTypeFlag,
   len = imgDims[0] * imgDims[1] * imgDims[2];
   if (len != numData) {
     fprintf(stderr, "ERR: Data size mismatch.\n");
-    return NULL;
+    return nullptr;
   }
   image->pixels = new Pixel_T [len];
 
@@ -1323,7 +1323,7 @@ int Img_GetMemoryUsage( Image_T *image )
   int numPix;
   int sz;
 
-  if ( image == NULL ) {
+  if ( image == nullptr ) {
     return 0;
   }
 

@@ -73,8 +73,8 @@ vtkSVPolyDataEdgeSplitter::vtkSVPolyDataEdgeSplitter()
 {
   this->WorkPd = vtkPolyData::New();
 
-  this->SplitPointIds = NULL;
-  this->SplitPointsArrayName = NULL;
+  this->SplitPointIds = nullptr;
+  this->SplitPointsArrayName = nullptr;
 
   this->SplitPointsArrayAdded = 0;
 }
@@ -84,21 +84,21 @@ vtkSVPolyDataEdgeSplitter::vtkSVPolyDataEdgeSplitter()
 // ----------------------
 vtkSVPolyDataEdgeSplitter::~vtkSVPolyDataEdgeSplitter()
 {
-  if (this->WorkPd != NULL)
+  if (this->WorkPd != nullptr)
   {
     this->WorkPd->Delete();
-    this->WorkPd = NULL;
+    this->WorkPd = nullptr;
   }
-  if (this->SplitPointIds != NULL)
+  if (this->SplitPointIds != nullptr)
   {
     this->SplitPointIds->Delete();
-    this->SplitPointIds = NULL;
+    this->SplitPointIds = nullptr;
   }
 
-  if (this->SplitPointsArrayName != NULL)
+  if (this->SplitPointsArrayName != nullptr)
   {
     delete [] this->SplitPointsArrayName;
-    this->SplitPointsArrayName = NULL;
+    this->SplitPointsArrayName = nullptr;
   }
 
 }
@@ -162,7 +162,7 @@ int vtkSVPolyDataEdgeSplitter::PrepFilter()
   {
     vtkWarningMacro(<< "SplitPoints Array with name specified does not exist on polydata");
 
-    if (this->SplitPointIds == NULL)
+    if (this->SplitPointIds == nullptr)
     {
       vtkErrorMacro("Either an array indicating slice points are slice point ids need to be given");
       return SV_ERROR;
@@ -261,7 +261,7 @@ int vtkSVPolyDataEdgeSplitter::RunFilter()
 void vtkSVPolyDataEdgeSplitter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
-  if (this->SplitPointsArrayName != NULL)
+  if (this->SplitPointsArrayName != nullptr)
     os << indent << "Split points array name: " << this->SplitPointsArrayName << "\n";
 }
 
@@ -288,7 +288,8 @@ int vtkSVPolyDataEdgeSplitter::SplitCellsAroundPoint(vtkPolyData *pd, int ptId)
     int cellId = pointCells->GetId(i);
 
     // Get Cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     pd->GetCellPoints(cellId, npts, pts);
     for (int j=0; j<npts; j++)
     {
@@ -352,7 +353,8 @@ int vtkSVPolyDataEdgeSplitter::SplitEdge(vtkPolyData *pd, int cellId, int ptId0,
     int splitCellId = edgeCells->GetId(i);
 
     // get cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     pd->GetCellPoints(splitCellId, npts, pts);
 
     // Loop through points

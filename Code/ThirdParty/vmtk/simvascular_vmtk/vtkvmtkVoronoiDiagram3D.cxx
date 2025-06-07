@@ -38,7 +38,7 @@ vtkvmtkVoronoiDiagram3D::vtkvmtkVoronoiDiagram3D()
 {
   this->BuildLines = 0;
   this->PoleIds = vtkIdList::New();
-  this->RadiusArrayName = NULL;
+  this->RadiusArrayName = nullptr;
 }
 
 vtkvmtkVoronoiDiagram3D::~vtkvmtkVoronoiDiagram3D()
@@ -48,7 +48,7 @@ vtkvmtkVoronoiDiagram3D::~vtkvmtkVoronoiDiagram3D()
   if (this->RadiusArrayName)
     {
     delete[] this->RadiusArrayName;
-    this->RadiusArrayName = NULL;
+    this->RadiusArrayName = nullptr;
     }
 }
 
@@ -63,7 +63,8 @@ void vtkvmtkVoronoiDiagram3D::ExtractUniqueEdges(vtkUnstructuredGrid* input, vtk
   int isVisited;
   vtkIdType i, j, k;
   vtkIdType edgePts[2];
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   vtkIntArray* visited;
   vtkIdList* pointCells;
   vtkIdList* insertedLoopPoints;
@@ -108,8 +109,9 @@ void vtkvmtkVoronoiDiagram3D::ExtractUniqueEdges(vtkUnstructuredGrid* input, vtk
 void vtkvmtkVoronoiDiagram3D::BuildVoronoiPolys(vtkUnstructuredGrid* input, vtkCellArray* voronoiPolys)
 {
   bool boundaryTetra;
-  vtkIdType npts, *pts;
-  pts = NULL;
+  vtkIdType npts;
+  const vtkIdType *pts;
+  pts = nullptr;
   vtkIdType neighborTetraId;
   vtkIdType i, k, h;
   vtkCellArray* edgeArray;

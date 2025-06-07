@@ -39,7 +39,7 @@ set(export_file_name svPythonAPIExports.h)
 list(APPEND CORELIBS ${lib})
 
 include_directories(${PYTHON_INCLUDE_PATH} ${PYTHON_INCLUDE_DIR} ${PYTHON_INCLUDE_DIRS})
-include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH} ${TINYXML_INCLUDE_DIR})
+include_directories(${TINYXML_INCLUDE_DIR})
 
 list (APPEND CXXSRCS 
   Imaging_PyModule.cxx
@@ -85,8 +85,6 @@ target_link_libraries(${lib}
   ${SV_LIB_MODULE_MODEL_OCCT_NAME}
   ${SV_LIB_MODULE_PATH_NAME}
   ${SV_LIB_MODULE_SEGMENTATION_NAME}
-  ${TCL_LIBRARY} 
-  ${TK_LIBRARY}
   ${VTK_LIBRARIES} 
   ${SV_LIB_MODULE_COMMON_NAME}
 )

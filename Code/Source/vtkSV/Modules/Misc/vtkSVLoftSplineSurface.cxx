@@ -374,7 +374,7 @@ int vtkSVLoftSplineSurface::LoftSolid(vtkPolyData *inputs[], int numInputs,
   double t;
   double tmpPt[3];
   int lenpts=0;
-  double **outPts = NULL;
+  double **outPts = nullptr;
   vtkPoints **sampledPts = new vtkPoints*[this->NumOutPtsAlongLength];
   for (int j=0;j<this->NumOutPtsAlongLength;j++)
   {
@@ -441,7 +441,7 @@ int vtkSVLoftSplineSurface::LoftSolid(vtkPolyData *inputs[], int numInputs,
 	lastPt[r] = outPts[numPts-1][r];
       }
       int numSmoothPts = 2*this->NumOutPtsAlongLength;
-      double **smoothOutPts = NULL;
+      double **smoothOutPts = nullptr;
       double **bigPts = this->createArray(numSmoothPts*2,3);
       for (int r = 0; r < numPts; r++)
       {
@@ -472,7 +472,7 @@ int vtkSVLoftSplineSurface::LoftSolid(vtkPolyData *inputs[], int numInputs,
 
       this->deleteArray(outPts,numPts,3);
       this->deleteArray(bigPts,numSmoothPts,3);
-      outPts = NULL;
+      outPts = nullptr;
       if ((this->linearInterpolateCurve(smoothOutPts,numPts,
               0,this->NumOutPtsAlongLength,&outPts)) != 1)
       {
@@ -568,15 +568,15 @@ int vtkSVLoftSplineSurface::LoftSolid(vtkPolyData *inputs[], int numInputs,
 /// \details dynamically allocate a 2-dimensional array
 double **vtkSVLoftSplineSurface::createArray(int a, int b) {
     double ** rtn = new double*[a+1];
-    if (rtn == NULL) {
+    if (rtn == nullptr) {
         printf("ERROR: Memory allocation error.\n");
-        return NULL;
+        return nullptr;
     }
     for (int i = 0; i < a+1; i++) {
         rtn[i] = new double[b+1];
-        if (rtn[i] == NULL) {
+        if (rtn[i] == nullptr) {
             printf("ERROR:  Memory allocation error.\n");
-            return NULL;
+            return nullptr;
         }
         for (int j = 0; j < b + 1; j++) {
             rtn[i][j] = 0.0;
@@ -615,7 +615,7 @@ int vtkSVLoftSplineSurface::linearInterpolate(double **orgPts, int numOrgPts, do
     }
 
     double **outPts = this->createArray(numOutPts,2);
-    if (*outPts == NULL) {
+    if (*outPts == nullptr) {
         return SV_ERROR;
     }
 
@@ -734,7 +734,7 @@ int vtkSVLoftSplineSurface::linearInterpolateCurve(double **orgPts, int numOrgPt
 
     // put it all back together
     double **outPts = this->createArray(numOutPts,3);
-    if (*outPts == NULL) {
+    if (*outPts == nullptr) {
         this->deleteArray(xin,numOrgPts+1,2); this->deleteArray(xout,numOutPts,2);
         this->deleteArray(yin,numOrgPts+1,2); this->deleteArray(yout,numOutPts,2);
         this->deleteArray(zin,numOrgPts+1,2); this->deleteArray(zout,numOutPts,2);
@@ -911,7 +911,7 @@ int vtkSVLoftSplineSurface::smoothCurve(double **orgPts, int numOrgPts, int clos
 
     // put it all back together
     double **outPts = this->createArray(numOutPts,3);
-    if (*outPts == NULL) {
+    if (*outPts == nullptr) {
         this->deleteArray(xin,numOrgPts+1,2); this->deleteArray(xout,numOutPts,2);
         this->deleteArray(yin,numOrgPts+1,2); this->deleteArray(yout,numOutPts,2);
         this->deleteArray(zin,numOrgPts+1,2); this->deleteArray(zout,numOutPts,2);
@@ -944,7 +944,7 @@ int vtkSVLoftSplineSurface::inverseFFT(double **terms, int numTerms, double t0, 
   double omega_t;
 
   double **pts = this->createArray(numRtnPts,2);
-  if (pts == NULL) {
+  if (pts == nullptr) {
       return SV_ERROR;
   }
 
@@ -1029,7 +1029,7 @@ int vtkSVLoftSplineSurface::FFT(double **pts, int numPts, int numInterpPts, int 
 
     double **terms = this->createArray(numDesiredTerms,2);
 
-    if (*terms == NULL) {
+    if (*terms == nullptr) {
         return SV_ERROR;
     }
 
@@ -1038,7 +1038,7 @@ int vtkSVLoftSplineSurface::FFT(double **pts, int numPts, int numInterpPts, int 
 
     double t0 = pts[0][0];
     double dt = (pts[numPts-1][0]-t0)/numInterpPts;
-    double **outPts = NULL;
+    double **outPts = nullptr;
 
     if (this->linearInterpolate(pts, numPts, t0, dt, numInterpPts, &outPts) == 0) {
         return SV_ERROR;

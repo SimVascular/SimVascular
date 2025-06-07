@@ -87,15 +87,15 @@ PyDoc_STRVAR(ROMSimParamsClass_doc,
 // Fluid class methods.
 //
 static PyMethodDef PyROMSimParamsMethods[] = {
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 static PyMemberDef PyROMSimParamsMembers[] = {
-    {"element_size", T_DOUBLE, offsetof(PySimulationROMParameters, element_size), 0, NULL},
-    {"fluid_density", T_DOUBLE, offsetof(PySimulationROMParameters, density), 0, NULL},
-    {"fluid_viscosity", T_DOUBLE, offsetof(PySimulationROMParameters, viscosity), 0, NULL},
-    {"material_model", T_OBJECT_EX, offsetof(PySimulationROMParameters, material_model), 0, NULL},
-    {NULL}
+    {"element_size", T_DOUBLE, offsetof(PySimulationROMParameters, element_size), 0, nullptr},
+    {"fluid_density", T_DOUBLE, offsetof(PySimulationROMParameters, density), 0, nullptr},
+    {"fluid_viscosity", T_DOUBLE, offsetof(PySimulationROMParameters, viscosity), 0, nullptr},
+    {"material_model", T_OBJECT_EX, offsetof(PySimulationROMParameters, material_model), 0, nullptr},
+    {nullptr}
 };
 
 //--------------
@@ -107,7 +107,7 @@ static PyMemberDef PyROMSimParamsMembers[] = {
 // designated initializers. 
 //
 PyTypeObject PySimulationROMParametersType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and 
   // the name of the type within the module.
   SIMULATION_ROM_PARAMETERS_MODULE_CLASS, 
@@ -141,7 +141,7 @@ static PyObject *
 PyROMSimParamsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   auto self = (PySimulationROM*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
   }
 
   return (PyObject *) self;

@@ -27,16 +27,16 @@
 vtkvmtkNeighborhood::vtkvmtkNeighborhood()
   {
   this->NPoints = 0;
-  this->PointIds = NULL;
+  this->PointIds = nullptr;
   this->IsBoundary = false;
   }
 
 vtkvmtkNeighborhood::~vtkvmtkNeighborhood()
   {
-  if (this->PointIds != NULL)
+  if (this->PointIds != nullptr)
     {
     delete [] this->PointIds;
-    this->PointIds = NULL;
+    this->PointIds = nullptr;
     }
   }
 
@@ -49,7 +49,7 @@ void vtkvmtkNeighborhood::ResizePointList(vtkIdType ptId, int size)
   pointIds = new vtkIdType[newSize];
   memcpy(pointIds, this->PointIds,this->NPoints*sizeof(vtkIdType));
   delete [] this->PointIds;
-  this->PointIds = NULL;
+  this->PointIds = nullptr;
 
   this->PointIds = pointIds;
 
@@ -62,17 +62,17 @@ void vtkvmtkNeighborhood::DeepCopy(vtkvmtkItem *src)
 
   vtkvmtkNeighborhood* neighborhoodSrc = vtkvmtkNeighborhood::SafeDownCast(src);
 
-  if (neighborhoodSrc==NULL)
+  if (neighborhoodSrc==nullptr)
     {
     vtkErrorMacro(<<"Trying to deep copy a non-stencil item");
     }
 
   this->NPoints = neighborhoodSrc->NPoints;
 
-  if (this->PointIds != NULL)
+  if (this->PointIds != nullptr)
     {
     delete [] this->PointIds;
-    this->PointIds = NULL;
+    this->PointIds = nullptr;
     }
 
   if (neighborhoodSrc->NPoints>0)

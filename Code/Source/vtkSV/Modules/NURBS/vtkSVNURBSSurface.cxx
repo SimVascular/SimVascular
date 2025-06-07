@@ -78,19 +78,19 @@ vtkSVNURBSSurface::vtkSVNURBSSurface()
 // ----------------------
 vtkSVNURBSSurface::~vtkSVNURBSSurface()
 {
-  if (this->ControlPointGrid != NULL)
+  if (this->ControlPointGrid != nullptr)
   {
     this->ControlPointGrid->Delete();
   }
   for (int i=0; i<2; i++)
   {
-    if (this->UVKnotVectors[i] != NULL)
+    if (this->UVKnotVectors[i] != nullptr)
     {
       this->UVKnotVectors[i]->Delete();
     }
   }
 
-  if (this->SurfaceRepresentation != NULL)
+  if (this->SurfaceRepresentation != nullptr)
   {
     this->SurfaceRepresentation->Delete();
   }

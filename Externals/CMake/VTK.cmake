@@ -28,44 +28,65 @@
 # VTK
 set(proj VTK)
 
+set(SV_VTK_DIR /Users/parkerda/software/ktbolt/svExternals/install/vtk)
+    
+set(msg "[Externals/CMake/VTK.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} +++++                                 VTK.cmake                                      ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_VTK_DIR: ${SV_VTK_DIR}")
+
 # Dependencies
+#
 set(${proj}_DEPENDENCIES "")
+
 if(SV_EXTERNALS_ENABLE_TCL)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "TCL")
 endif()
+
 if(SV_EXTERNALS_ENABLE_TCLLIB)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "TCLLIB")
 endif()
+
 if(SV_EXTERNALS_ENABLE_TK)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "TK")
 endif()
+
 if(SV_EXTERNALS_ENABLE_TKLIB)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "TKLIB")
 endif()
+
 if(SV_EXTERNALS_ENABLE_PYTHON)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "PYTHON")
 endif()
+
 if(SV_EXTERNALS_ENABLE_PIP)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "PIP")
 endif()
+
 if(SV_EXTERNALS_ENABLE_NUMPY)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "NUMPY")
 endif()
+
 if(SV_EXTERNALS_ENABLE_GDCM)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "GDCM")
 endif()
+
 if(SV_EXTERNALS_ENABLE_FREETYPE)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "FREETYPE")
 endif()
+
 if(SV_EXTERNALS_ENABLE_QT)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "QT")
@@ -78,6 +99,7 @@ endif()
 #mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
 set(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL "" CACHE STRING "Manual specification of ${proj}, can be web address or local path to tar file")
 mark_as_advanced(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+
 if(NOT SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
   set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/vtk/VTK-${SV_EXTERNALS_${proj}_VERSION}.tar.gz")
 else()
@@ -86,6 +108,7 @@ endif()
 
 # Platform specific additions
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
+
 if(APPLE)
 elseif(LINUX)
 elseif(WIN32)
@@ -110,9 +133,10 @@ elseif(MINGW)
     )
 endif()
 
-#If using QT
+# If using QT
+#
 if(SV_EXTERNALS_ENABLE_QT)
-  #MINGW specific flags
+
   if(MINGW)
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
       -DCMAKE_USE_WIN32_THREADS:BOOL=ON
@@ -120,7 +144,7 @@ if(SV_EXTERNALS_ENABLE_QT)
       -DVTK_USE_VIDEO4WINDOWS:BOOL=OFF # no header files provided by MinGW
       )
   endif()
-  #WIN32 specific flags
+
   if(WIN32)
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
       -DVTK_DO_NOT_DEFINE_OSTREAM_SLL:BOOL=ON
@@ -128,17 +152,17 @@ if(SV_EXTERNALS_ENABLE_QT)
       )
   endif()
 
-  foreach(comp ${SV_EXTERNALS_QT5_COMPONENTS})
-    #if(QT5${comp}_LIBRARIES)
+  foreach(comp ${SV_EXTERNALS_QT6_COMPONENTS})
+    #if(QT6${comp}_LIBRARIES)
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-      -DQt5${comp}_DIR:PATH=${SV_EXTERNALS_QT_TOPLEVEL_CMAKE_DIR}/Qt5${comp}
+      -DQt6${comp}_DIR:PATH=${SV_EXTERNALS_QT_TOPLEVEL_CMAKE_DIR}/Qt6${comp}
       )
-      #-DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
+      #-DQt6${comp}_DIR:PATH=${Qt6${comp}_DIR}
     #endif()
   endforeach()
 
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-    -DQt5_DIR:PATH:STRING=${SV_EXTERNALS_QT_CMAKE_DIR}
+    -DQt6_DIR:PATH:STRING=${SV_EXTERNALS_QT_CMAKE_DIR}
     -DVTK_QT_VERSION:STRING=5
     -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${SV_EXTERNALS_QT_QMAKE_EXECUTABLE}
@@ -151,10 +175,12 @@ if(SV_EXTERNALS_ENABLE_QT)
     -DVTK_MAKE_INSTANTIATORS:BOOL=ON
     -DVTK_WINDOWS_PYTHON_DEBUGGABLE:BOOL=OFF
     )
+
   if(SV_EXTERNALS_Qt_VERSION VERSION_EQUAL "5.6.3")
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
       -DModule_vtkGUISupportQtWebkit:BOOL=OFF
       )
+
   else()
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
       -DModule_vtkGUISupportQtWebkit:BOOL=ON
@@ -162,26 +188,8 @@ if(SV_EXTERNALS_ENABLE_QT)
   endif()
 endif()
 
-#If using TCL
-if(SV_EXTERNALS_ENABLE_TCL)
-  list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-    -DTCL_INCLUDE_PATH:PATH=${SV_EXTERNALS_TCL_INCLUDE_DIR}
-    -DTCL_LIBRARY:FILEPATH=${SV_EXTERNALS_TCL_LIBRARY}
-    -DTCL_TCLSH:FILEPATH=${SV_EXTERNALS_TCLSH_EXECUTABLE}
-    )
-endif()
-
-#If using TK
-if(SV_EXTERNALS_ENABLE_TK)
-  list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-    -DTK_INCLUDE_PATH:PATH=${SV_EXTERNALS_TK_INCLUDE_DIR}
-    ${VTK_TK_XLIB_PATH_DEFINE}
-    ${VTK_TK_INTERNAL_PATH_DEFINE}
-    -DTK_LIBRARY:FILEPATH=${SV_EXTERNALS_TK_LIBRARY}
-    )
-endif()
-
-#If using PYTHON
+# For PYTHON
+#
 if(SV_EXTERNALS_ENABLE_PYTHON)
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
     -DPYTHON_EXECUTABLE:FILEPATH=${SV_EXTERNALS_PYTHON_EXECUTABLE}
@@ -193,50 +201,62 @@ if(SV_EXTERNALS_ENABLE_PYTHON)
     )
 endif()
 
-#Patch for vtk
+# Apply VTK patch ? 
+#
 if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "6.2.0")
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
     COMMAND patch -N -p1 -i ${SV_EXTERNALS_SOURCE_DIR}/Patches/2018.01/patch-vtk-6.2.0.patch)
 endif()
 
-# Add external project
-if(SV_EXTERNALS_DOWNLOAD_${proj})
-  ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    UPDATE_COMMAND ""
-    )
+# Add VTK as an external project
+#
+if (SV_VTK_DIR)
+  message(STATUS "${msg} +++++ Use installed VTK ")
+
+  find_package(VTK REQUIRED PATHS ${SV_VTK_DIR} NO_DEFAULT_PATH)
+  message(STATUS "${msg} VTK_DIR: ${VTK_DIR}")
+  message(STATUS "${msg} VTK_USE_FILE: ${VTK_USE_FILE}")
+  message(STATUS "${msg} VTK_LIBRARIES: ${VTK_LIBRARIES}")
+
+  #ExternalProject_Add(${proj}
+    #URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #CONFIGURE_COMMAND ""
+    #BUILD_COMMAND ""
+    #INSTALL_COMMAND ""
+    #UPDATE_COMMAND ""
+    #)
+
 else()
-  ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-    UPDATE_COMMAND ""
-     CMAKE_CACHE_ARGS
-      -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
-      -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
-      -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-      -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-      -DCMAKE_MACOSX_RPATH:BOOL=ON
-      -DBUILD_SHARED_LIBS:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
-      -DVTK_WRAP_TCL:BOOL=${SV_EXTERNALS_ENABLE_TCL}
-      -DVTK_Group_Tk:BOOL=${SV_EXTERNALS_ENABLE_TK}
-      -DVTK_WRAP_PYTHON:BOOL=${SV_EXTERNALS_ENABLE_PYTHON}
-      -DBUILD_TESTING:BOOL=OFF
-      -DBUILD_EXAMPLES:BOOL=OFF
-      -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
-      ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
-      )
+
+  #ExternalProject_Add(${proj}
+    #URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+    #UPDATE_COMMAND ""
+     #CMAKE_CACHE_ARGS
+      #-DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+      #-DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+      #-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+      #-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+      #-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+      #-DCMAKE_MACOSX_RPATH:BOOL=ON
+      #-DBUILD_SHARED_LIBS:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
+      #-DVTK_WRAP_TCL:BOOL=${SV_EXTERNALS_ENABLE_TCL}
+      #-DVTK_Group_Tk:BOOL=${SV_EXTERNALS_ENABLE_TK}
+      #-DVTK_WRAP_PYTHON:BOOL=${SV_EXTERNALS_ENABLE_PYTHON}
+      #-DBUILD_TESTING:BOOL=OFF
+      #-DBUILD_EXAMPLES:BOOL=OFF
+      #-DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
+      #${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
+      #)
+
 endif()
 
 # VTK variables needed later on

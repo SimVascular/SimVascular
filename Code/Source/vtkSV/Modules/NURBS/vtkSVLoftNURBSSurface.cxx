@@ -85,11 +85,11 @@ vtkSVLoftNURBSSurface::vtkSVLoftNURBSSurface()
   this->InputGrid = vtkStructuredGrid::New();
   this->Surface = vtkSVNURBSSurface::New();
 
-  this->UKnotSpanType        = NULL;
-  this->VKnotSpanType        = NULL;
+  this->UKnotSpanType        = nullptr;
+  this->VKnotSpanType        = nullptr;
 
-  this->UParametricSpanType = NULL;
-  this->VParametricSpanType = NULL;
+  this->UParametricSpanType = nullptr;
+  this->VParametricSpanType = nullptr;
 }
 
 // ----------------------
@@ -97,46 +97,46 @@ vtkSVLoftNURBSSurface::vtkSVLoftNURBSSurface()
 // ----------------------
 vtkSVLoftNURBSSurface::~vtkSVLoftNURBSSurface()
 {
-  if (this->Surface != NULL)
+  if (this->Surface != nullptr)
   {
     this->Surface->Delete();
   }
-  if (this->StartUDerivatives != NULL)
+  if (this->StartUDerivatives != nullptr)
   {
     this->StartUDerivatives->Delete();
   }
-  if (this->StartVDerivatives != NULL)
+  if (this->StartVDerivatives != nullptr)
   {
     this->StartVDerivatives->Delete();
   }
-  if (this->EndUDerivatives != NULL)
+  if (this->EndUDerivatives != nullptr)
   {
     this->EndUDerivatives->Delete();
   }
-  if (this->EndVDerivatives != NULL)
+  if (this->EndVDerivatives != nullptr)
   {
     this->EndVDerivatives->Delete();
   }
 
-  if (this->UKnotSpanType != NULL)
+  if (this->UKnotSpanType != nullptr)
   {
     delete [] this->UKnotSpanType;
-    this->UKnotSpanType = NULL;
+    this->UKnotSpanType = nullptr;
   }
-  if (this->VKnotSpanType != NULL)
+  if (this->VKnotSpanType != nullptr)
   {
     delete [] this->VKnotSpanType;
-    this->VKnotSpanType = NULL;
+    this->VKnotSpanType = nullptr;
   }
-  if (this->UParametricSpanType != NULL)
+  if (this->UParametricSpanType != nullptr)
   {
     delete [] this->UParametricSpanType;
-    this->UParametricSpanType = NULL;
+    this->UParametricSpanType = nullptr;
   }
-  if (this->VParametricSpanType != NULL)
+  if (this->VParametricSpanType != nullptr)
   {
     delete [] this->VParametricSpanType;
-    this->VParametricSpanType = NULL;
+    this->VParametricSpanType = nullptr;
   }
 }
 
@@ -155,16 +155,16 @@ int vtkSVLoftNURBSSurface::RequestData(
 
   this->InputGrid->DeepCopy(input);
 
-  if (this->UKnotSpanType == NULL ||
-      this->VKnotSpanType == NULL)
+  if (this->UKnotSpanType == nullptr ||
+      this->VKnotSpanType == nullptr)
   {
     vtkErrorMacro("Need to provide knot span types for u, v directions");
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
 
-  if (this->UParametricSpanType == NULL ||
-      this->VParametricSpanType == NULL)
+  if (this->UParametricSpanType == nullptr ||
+      this->VParametricSpanType == nullptr)
   {
     vtkErrorMacro("Need to provide parametric span types for u, v directions");
     this->SetErrorCode(vtkErrorCode::UserError + 2);

@@ -39,11 +39,14 @@
 #include "itkGradientMagnitudeRecursiveGaussianImageFilter.h"
 #include "itkGradientImageFilter.h"
 #include "itkGradientMagnitudeImageFilter.h"
-#include "itkVectorCastImageFilter.h"
+
+#include "itkCastImageFilter.h"
+// davep #include "itkVectorCastImageFilter.h"
+
 #include "itkCastImageFilter.h"
 #include "itkImageAlgorithm.h"
 
-#include"vnl/vnl_math.h"
+#include "vnl/vnl_math.h"
 
 
 namespace itk
@@ -98,7 +101,9 @@ void VascularPhaseTwoLevelSetFunction< TImageType, TFeatureImageType >
 		derivative->Update();
 
 		typedef typename DerivativeFilterType::OutputImageType                      DerivativeOutputImageType;
-		typedef VectorCastImageFilter< DerivativeOutputImageType, VectorImageType > GradientCasterType;
+
+		typedef CastImageFilter< DerivativeOutputImageType, VectorImageType > GradientCasterType;
+		// davep typedef VectorCastImageFilter< DerivativeOutputImageType, VectorImageType > GradientCasterType;
 
 		typename GradientCasterType::Pointer caster = GradientCasterType::New();
 		caster->SetInput( derivative->GetOutput() );
@@ -195,8 +200,8 @@ VascularPhaseTwoLevelSetFunction< TImageType, TFeatureImageType >
 	curvature_term2 =curvature_term2*smooth*CurvatureWeight
 			* this->Superclass::CurvatureSpeed(it, offset);;
 
-	gd->m_MaxCurvatureChange = vnl_math_max( gd->m_MaxCurvatureChange,
-			vnl_math_abs(curvature_term2) );
+	gd->m_MaxCurvatureChange = vnl_math::max( gd->m_MaxCurvatureChange,
+			vnl_math::abs(curvature_term2) );
 	ScalarValueType advection_term2 = ZERO;
 	unsigned int i;
 	if(AdvectionWeight != ZERO)
@@ -224,7 +229,7 @@ VascularPhaseTwoLevelSetFunction< TImageType, TFeatureImageType >
 
 		advection_term2 = (!smooth)*AdvectionWeight*advection_term;
 		gd->m_MaxAdvectionChange =
-				vnl_math_max( gd->m_MaxAdvectionChange, vnl_math_abs(advection_term2) );
+				vnl_math::max( gd->m_MaxAdvectionChange, vnl_math::abs(advection_term2) );
 
 	}
 	else
@@ -236,7 +241,7 @@ VascularPhaseTwoLevelSetFunction< TImageType, TFeatureImageType >
 	PixelType update = (PixelType)(curvature_term2
 			-advection_term2);
 
-	this->GetCurrentCurvatureImage()->SetPixel(it.GetIndex(),vnl_math_min(vnl_math_max(curvature_term,(float)-1000.0),(float)1000.0));
+	this->GetCurrentCurvatureImage()->SetPixel(it.GetIndex(),vnl_math::min(vnl_math::max(curvature_term,(float)-1000.0),(float)1000.0));
 	this->GetCurrentAdvectionImage()->SetPixel(it.GetIndex(),advection_term);
 	this->GetCurrentUpdateImage()->SetPixel(it.GetIndex(),update);
 
@@ -264,11 +269,11 @@ VascularPhaseTwoLevelSetFunction< TImageType, TFeatureImageType >
 	double m_DT = this->Superclass::GetMaximumCurvatureTimeStep();
 	d->m_MaxAdvectionChange += d->m_MaxPropagationChange;
 
-	if ( vnl_math_abs(d->m_MaxCurvatureChange) > 0.0 )
+	if ( vnl_math::abs(d->m_MaxCurvatureChange) > 0.0 )
 	{
 		if ( d->m_MaxAdvectionChange > 0.0 )
 		{
-			dt = vnl_math_min( ( m_WaveDT / d->m_MaxAdvectionChange ),
+			dt = vnl_math::min( ( m_WaveDT / d->m_MaxAdvectionChange ),
 					(    m_DT / d->m_MaxCurvatureChange ) );
 		}
 		else
@@ -291,7 +296,7 @@ VascularPhaseTwoLevelSetFunction< TImageType, TFeatureImageType >
 	double maxScaleCoefficient = 0.0;
 	for ( unsigned int i = 0; i < ImageDimension; i++ )
 	{
-		maxScaleCoefficient = vnl_math_max(this->m_ScaleCoefficients[i], maxScaleCoefficient);
+		maxScaleCoefficient = vnl_math::max(this->m_ScaleCoefficients[i], maxScaleCoefficient);
 	}
 	dt /= maxScaleCoefficient;
 	//std::cout << "dt: " << dt << std::endl;

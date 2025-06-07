@@ -28,12 +28,25 @@
 # QT
 set(proj QT)
 
+set(Qt6_DIR /Users/parkerda/software/ktbolt/svExternals/install/qt6)
+set(SV_QT_DIR /Users/parkerda/software/ktbolt/svExternals/install/qt6)
+
+set(msg "[Externals/CMake/QT.cmake] ")
+message(STATUS "${msg} ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} +++++                               QT.cmake                                         ")
+message(STATUS "${msg} -------------------------------------------------------------------------------------")
+message(STATUS "${msg} proj: ${proj}")
+message(STATUS "${msg} SV_QT_DIR: ${SV_QT_DIR}")
+message(FATAL_ERROR "${msg} We should not be executing this")
+
 # Dependencies
 set(${proj}_DEPENDENCIES "")
 
 # Git info
 set(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL "" CACHE STRING "Manual specification of ${proj}, can be web address or local path to tar file")
 mark_as_advanced(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+
 if(NOT SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
   set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/qt/qt-everywhere-opensource-src-${SV_EXTERNALS_${proj}_VERSION}.tar.gz")
 else()
@@ -84,7 +97,10 @@ if(LINUX)
     )
 endif()
 
-#Patch for lalr.cpp
+message(STATUS "${msg} SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS: ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}")
+
+# Patch for lalr.cpp
+#
 if("${COMPILER_VERSION}" STREQUAL "Clang")
   if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.4.2")
     set(SV_EXTERNALS_${proj}_CUSTOM_PATCH COMMAND patch -N -p1 -i ${SV_EXTERNALS_SOURCE_DIR}/Patches/2018.01/patch-qt-5.4.2-clang.patch)
@@ -108,6 +124,7 @@ else()
 endif()
 
 # Post install script
+#
 if(APPLE AND SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.4.2")
   set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-qt-mac_osx.sh)
   configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
@@ -118,9 +135,12 @@ else()
 endif()
 
 
+message(STATUS "${msg} Set Qt components ...")
+
 # QT externals dirs also needed
   #Find QT!
-set(SV_EXTERNALS_QT5_COMPONENTS
+
+set(SV_QT_COMPONENTS
     Concurrent
     Core
     Designer
@@ -128,14 +148,18 @@ set(SV_EXTERNALS_QT5_COMPONENTS
     Help
     OpenGL
     PrintSupport
-    Script
+    #Script
     Sql
     Svg
     Widgets
+    WebEngineWidgets
+    WebEngineView
     Xml
     XmlPatterns
     UiTools
     )
+
+message(STATUS "${msg} SV_QT_COMPONENTS: ${SV_QT_COMPONENTS}")
 
 if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.4.2")
   list(APPEND SV_EXTERNALS_${proj}_COMPONENTS
@@ -150,60 +174,109 @@ elseif(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.6.3")
     )
 endif()
 
+message(STATUS "${msg} Add external project  ...")
+
 # Add external project
-if(SV_EXTERNALS_USE_PREBUILT_${proj})
+#
+if(SV_QT_DIR)
+#if(SV_EXTERNALS_USE_PREBUILT_${proj})
+  message(STATUS "${msg} +++++ Use prebuilt Qt ")
 
   # Find package
-  find_package(Qt5 COMPONENTS ${SV_EXTERNALS_QT5_COMPONENTS} REQUIRED)
+  #
+  if(SV_QT_DIR STREQUAL "system")
+    message(STATUS "${msg} Use system Qt6")
+    find_package(Qt6 COMPONENTS Core CoreTools Gui Widgets REQUIRED)
+  else()
+    message(STATUS "${msg} Use custom install Qt6")
+    find_package(Qt6 COMPONENTS Core CoreTools Gui Widgets REQUIRED PATHS ${SV_QT_DIR} NO_DEFAULT_PATH)
+  endif()
+
+  if(Qt6_FOUND)
+    message(STATUS "${msg} Qt6 found")
+  else()
+    message(FATAL_ERROR "[QT.cmake] Qt 6 not found")
+  endif()
+
+  #find_package(Qt6 COMPONENTS ${SV_EXTERNALS_QT5_COMPONENTS} REQUIRED PATHS ${SV_QT_DIR})
+  #find_package(Qt6 COMPONENTS ${SV_EXTERNALS_QT5_COMPONENTS} REQUIRED)
+
+  message(STATUS "${msg} Qt6_DIR: ${Qt6_DIR}")
+  message(STATUS "${msg} Qt6Widgets_INCLUDE_DIRS: ${Qt6Widgets_INCLUDE_DIRS}")
+  message(STATUS "${msg} QT_MAKE_EXECUTABLE: ${QT_MAKE_EXECUTABLE}")
 
   # Create empty qt to satisfy dependencies
-  ExternalProject_Add(${proj}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}-empty
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}-empty
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}-empty
-    DEPENDS ${${proj}_DEPENDENCIES}
-    DOWNLOAD_COMMAND ""
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    )
+  #ExternalProject_Add(${proj}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}-empty
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}-empty
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}-empty
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #DOWNLOAD_COMMAND ""
+    #CONFIGURE_COMMAND ""
+    #BUILD_COMMAND ""
+    #INSTALL_COMMAND ""
+    #)
+  message(STATUS "[QT.cmake] ----- Done Use prebuilt Qt ")
+  message(STATUS "[QT.cmake] ")
+
 elseif(SV_EXTERNALS_DOWNLOAD_${proj})
-  ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    UPDATE_COMMAND ""
-    )
+  message(STATUS "[QT.cmake] Use downloaded Qt ")
+  message(STATUS "[QT.cmake] +++++ ExternalProject_Add ${proj} ...")
+  message(STATUS "[QT.cmake] URL ${SV_EXTERNALS_${proj}_BINARIES_URL}")
+  message(STATUS "[QT.cmake] PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}") 
+  message(STATUS "[QT.cmake] SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}")
+  message(STATUS "[QT.cmake] BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}") 
+  message(STATUS "[QT.cmake] DEPENDS ${${proj}_DEPENDENCIES}") 
+
+  #ExternalProject_Add(${proj}
+    #URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #CONFIGURE_COMMAND ""
+    #BUILD_COMMAND ""
+    #INSTALL_COMMAND ""
+    #UPDATE_COMMAND ""
+    #)
+
+  message(STATUS "[QT.cmake] ----- Done ExternalProject_Add ${proj}")
+
 else()
+
+  message(FATAL_ERROR "${msg} Unknown Qt6 source")
+
   #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR} We have to do an in source build so that qt cmake files populate the private headers
-  ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
-    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-    DEPENDS ${${proj}_DEPENDENCIES}
-    PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-    CONFIGURE_COMMAND ${SV_EXTERNALS_${proj}_SRC_DIR}/configure ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
-    INSTALL_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_INSTALL}
-    UPDATE_COMMAND ""
-    )
+
+  #ExternalProject_Add(${proj}
+    #URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
+    #PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    #SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    #DEPENDS ${${proj}_DEPENDENCIES}
+    #PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+    #CONFIGURE_COMMAND ${SV_EXTERNALS_${proj}_SRC_DIR}/configure ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
+    #INSTALL_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_INSTALL}
+    #UPDATE_COMMAND ""
+    #)
+
 endif()
 
 # QT variables needed later on
+
 if(SV_EXTERNALS_USE_PREBUILT_${proj})
   set(SV_EXTERNALS_${proj}_QMAKE_EXECUTABLE ${QT_MAKE_EXECUTABLE})
-  get_filename_component(SV_EXTERNALS_${proj}_TOPLEVEL_CMAKE_DIR ${Qt5_DIR} DIRECTORY)
-  set(SV_EXTERNALS_${proj}_CMAKE_DIR ${Qt5_DIR})
+  get_filename_component(SV_EXTERNALS_${proj}_TOPLEVEL_CMAKE_DIR ${Qt6_DIR} DIRECTORY)
+  set(SV_EXTERNALS_${proj}_CMAKE_DIR ${Qt6_DIR})
 else()
   set(SV_EXTERNALS_${proj}_QMAKE_EXECUTABLE ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/qmake)
   set(SV_EXTERNALS_${proj}_TOPLEVEL_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/cmake)
-  set(SV_EXTERNALS_${proj}_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/cmake/Qt5)
+  set(SV_EXTERNALS_${proj}_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/cmake/Qt6)
 endif()
+
+message(STATUS "[QT.cmake] ----- Done QT.cmake -----")
+message(STATUS "[QT.cmake] ")
+
 #-----------------------------------------------------------------------------
 
 

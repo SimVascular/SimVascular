@@ -45,11 +45,9 @@
 #include <string.h>
 #include <array>
 #include <iostream>
-#include "sv_Repository.h"
 #include "sv_RepositoryData.h"
 #include "sv_PolyData.h"
 #include "vtkSmartPointer.h"
-#include "sv2_globals.h"
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -85,7 +83,7 @@ PyDoc_STRVAR(ProjectModule_doc, "Project module functions.");
 // Project class methods.
 //
 static PyMethodDef PyProjectModuleMethods[] = {
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 //-----------------------
@@ -137,14 +135,14 @@ PyMODINIT_FUNC PyInit_PyProject()
 
   // Create the project module.
   auto module = PyModule_Create(&PyProjectModule);
-  if (module == NULL) {
+  if (module == nullptr) {
     fprintf(stdout,"Error in initializing 'project' module \n");
     return SV_PYTHON_ERROR;
   }
 
   // Add project.ProjectException exception.
   //
-  PyRunTimeErr = PyErr_NewException(MODULE_EXCEPTION, NULL, NULL);
+  PyRunTimeErr = PyErr_NewException(MODULE_EXCEPTION, nullptr, nullptr);
   PyModule_AddObject(module, MODULE_EXCEPTION_OBJECT, PyRunTimeErr);
 
   // Add Project class.
@@ -165,7 +163,7 @@ PyMODINIT_FUNC initpyProject()
 {
   // Associate the mesh registrar with the python interpreter so it can be
   // retrieved by the DLLs.
-  if (gRepository==NULL)
+  if (gRepository==nullptr)
   {
     gRepository = new cvRepository();
     fprintf(stdout,"New gRepository created from cv_mesh_init\n");
@@ -180,12 +178,12 @@ PyMODINIT_FUNC initpyProject()
   }
   PyObject* pythonC;
   pythonC = Py_InitModule("pyProject",pyProjectModule_methods);
-  if(pythonC==NULL)
+  if(pythonC==nullptr)
   {
     fprintf(stdout,"Error in initializing pyProject\n");
     return;
   }
-  PyRunTimeErr = PyErr_NewException("pyProject.error",NULL,NULL);
+  PyRunTimeErr = PyErr_NewException("pyProject.error",nullptr,nullptr);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyProjectType);
   PyModule_AddObject(pythonC,"pyProject",(PyObject*)&pyProjectType);

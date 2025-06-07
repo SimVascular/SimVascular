@@ -22,13 +22,13 @@
 #include "vtkvmtkStencil.h"
 #include "vtkvmtkConstants.h"
 #include "vtkObjectFactory.h"
-
+#include <math.h>
 
 
 vtkvmtkStencil::vtkvmtkStencil()
   {
-  this->Weights = NULL;
-  this->CenterWeight = NULL;
+  this->Weights = nullptr;
+  this->CenterWeight = nullptr;
   this->NumberOfComponents = 1;
   this->WeightScaling = 1;
   this->NegateWeights = 1;
@@ -36,16 +36,16 @@ vtkvmtkStencil::vtkvmtkStencil()
 
 vtkvmtkStencil::~vtkvmtkStencil()
   {
-  if (this->CenterWeight != NULL)
+  if (this->CenterWeight != nullptr)
     {
     delete[] this->CenterWeight;
-    this->CenterWeight = NULL;
+    this->CenterWeight = nullptr;
     }
 
-  if (this->Weights != NULL)
+  if (this->Weights != nullptr)
     {
     delete[] this->Weights;
-    this->Weights = NULL;
+    this->Weights = nullptr;
     }
   }
 
@@ -134,21 +134,21 @@ void vtkvmtkStencil::DeepCopy(vtkvmtkItem *src)
 
   vtkvmtkStencil* stencilSrc = vtkvmtkStencil::SafeDownCast(src);
 
-  if (stencilSrc==NULL)
+  if (stencilSrc==nullptr)
     {
     vtkErrorMacro(<<"Trying to deep copy a non-stencil item");
     }
 
-  if (this->CenterWeight != NULL)
+  if (this->CenterWeight != nullptr)
     {
     delete[] this->CenterWeight;
-    this->CenterWeight = NULL;
+    this->CenterWeight = nullptr;
     }
 
-  if (this->Weights != NULL)
+  if (this->Weights != nullptr)
     {
     delete[] this->Weights;
-    this->Weights = NULL;
+    this->Weights = nullptr;
     }
 
   this->NumberOfComponents = stencilSrc->NumberOfComponents;

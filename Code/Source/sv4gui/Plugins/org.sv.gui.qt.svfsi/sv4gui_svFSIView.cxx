@@ -44,6 +44,9 @@
 #include <mitkStatusBar.h>
 #include <mitkIOUtil.h>
 
+#include <mitkIPreferences.h>
+#include <mitkIPreferencesService.h>
+
 #include <berryPlatform.h>
 
 #include <QFileDialog>
@@ -53,22 +56,22 @@
 #include <QTextStream>
 #include <QThread>
 #include <QInputDialog>
-
+#include <QTimer>
 #include <iostream>
 
 const QString sv4guisvFSIView::EXTENSION_ID = "org.sv.views.svfsi";
 
 sv4guisvFSIView::sv4guisvFSIView() : ui(new Ui::sv4guisvFSIView)
 {
-    m_MitkJob=NULL;
-    m_Job=NULL;
-    m_JobNode=NULL;
+    m_MitkJob=nullptr;
+    m_Job=nullptr;
+    m_JobNode=nullptr;
 
     m_InternalSolverPath="";
     m_ExternalSolverPath="";
 
-    m_RealVal=NULL;
-    m_IntVal=NULL;
+    m_RealVal=nullptr;
+    m_IntVal=nullptr;
 
     m_EnableSave=true;
 }
@@ -135,9 +138,10 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
     ui->btnSave->setEnabled(false);
 
     // Get paths for the external solvers
-    berry::IPreferences::Pointer prefs = this->GetPreferences();
-    berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
-    this->OnPreferencesChanged(berryprefs);
+    mitk::IPreferences* prefs = this->GetPreferences();
+    this->OnPreferencesChanged(prefs);
+    //dp mitk::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
+    //dp this->OnPreferencesChanged(berryprefs);
 
     ui->comboBoxRemesher->setEnabled(false);
 }
@@ -146,11 +150,9 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
 // OnSelectionChanged
 //--------------------
 //
-void sv4guisvFSIView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes)
+void sv4guisvFSIView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/, const QList<mitk::DataNode::Pointer>& nodes)
 {
-    if (!IsVisible()) {
-        return;
-    }
+    if (!m_isVisible) return;
 
     if(nodes.size()==0) {
         ui->Subpanel_Widget->setEnabled(false);
@@ -331,7 +333,8 @@ void sv4guisvFSIView::SetupPhysicsPanel()
 void sv4guisvFSIView::SetupDomainsPanel()
 {
     //connect(ui->comboBoxNsd, SIGNAL(currentTextChanged(const QString &)), this, SLOT(SetNsd(const QString &)));
-    SetNsd(QString(3));
+    SetNsd(QString("3"));
+
 //    connect(ui->btnAddMesh, SIGNAL(clicked()), this, SLOT(AddMesh()));
     connect(ui->btnAddMeshComplete, SIGNAL(clicked()), this, SLOT(AddMeshComplete()));
     connect(ui->comboBoxDomains, SIGNAL(currentTextChanged(const QString &)), this, SLOT(SelectDomain(const QString &)));
@@ -510,26 +513,34 @@ void sv4guisvFSIView::NodeRemoved(const mitk::DataNode* node)
 
 }
 
-//    virtual void Activated() {}
+void sv4guisvFSIView::Activated() 
+{
 
-//    virtual void Deactivated() {}
+}
+
+void sv4guisvFSIView::Deactivated() 
+{
+
+}
 
 void sv4guisvFSIView::Visible()
 {
-    OnSelectionChanged(GetDataManagerSelection());
+    m_isVisible = true;
+    OnSelectionChanged(berry::IWorkbenchPart::Pointer(), 
+                       GetDataManagerSelection());
 }
 
 void sv4guisvFSIView::Hidden()
 {
-
+    m_isVisible = false;
 }
 
-void sv4guisvFSIView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
+void sv4guisvFSIView::OnPreferencesChanged(const mitk::IPreferences* prefs)
 {
-    if(prefs==NULL)
+    if(prefs==nullptr)
         return;
 
-    m_ExternalSolverPath=prefs->Get("svFSI solver path","");
+    m_ExternalSolverPath = QString::fromStdString(prefs->Get("svFSI solver path",""));
 }
 
 void sv4guisvFSIView::DataChanged()
@@ -633,12 +644,13 @@ void sv4guisvFSIView::AddMeshComplete()
         return;
     }
 
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
+    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    mitk::IPreferences* prefs;
+
     if (prefService) {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     } else {
-        prefs = berry::IPreferences::Pointer(0);
+        prefs = nullptr;
     }
 
     // QString lastFileOpenPath=prefs->Get("LastFileOpenPath", "");
@@ -659,8 +671,8 @@ void sv4guisvFSIView::AddMeshComplete()
         return;
     }
 
-    if(prefs.IsNotNull()) {
-        prefs->Put("LastFileOpenPath", dirPath);
+    if(prefs != nullptr) { 
+        prefs->Put("LastFileOpenPath", dirPath.toStdString());
         prefs->Flush();
     }
 
@@ -869,7 +881,7 @@ void sv4guisvFSIView::AddEquation()
 
     QString eqName = items.first()->text();
 
-    QListWidgetItem* item=NULL;
+    QListWidgetItem* item=nullptr;
 //    int row=0;
     bool includingFluid=false;
 
@@ -1548,7 +1560,7 @@ void sv4guisvFSIView::StopSimulation()
     if(m_JobNode.IsNull())
         return;
 
-    if (QMessageBox::question(NULL, "Stop Simulation", "Are you sure to stop simulation for this job?",
+    if (QMessageBox::question(nullptr, "Stop Simulation", "Are you sure to stop simulation for this job?",
                               QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
     {
       return;
@@ -1559,7 +1571,7 @@ void sv4guisvFSIView::StopSimulation()
 
       if(running)
       {
-          sv4guisvFSISolverProcessHandler* handler=NULL;
+          sv4guisvFSISolverProcessHandler* handler=nullptr;
           bool ok=m_JobNode->GetPropertyValue<sv4guisvFSISolverProcessHandler*>("process handler",handler);
 
           if(ok && handler)
@@ -1570,7 +1582,7 @@ void sv4guisvFSIView::StopSimulation()
       }
       else
       {
-          QMessageBox::information(NULL,"Info","The selected job is not running.");
+          QMessageBox::information(nullptr,"Info","The selected job is not running.");
           return;
       }
 
@@ -1603,7 +1615,7 @@ void sv4guisvFSIView::UpdateJobStatus()
 void sv4guisvFSIView::CreateNewJob()
 {
     bool ok;
-    QString text = QInputDialog::getText(NULL, tr("Create svFSI Job"),
+    QString text = QInputDialog::getText(nullptr, tr("Create svFSI Job"),
                                          tr("Job Name:"), QLineEdit::Normal,
                                          "", &ok);
     if(!ok)
@@ -1611,13 +1623,13 @@ void sv4guisvFSIView::CreateNewJob()
 
     std::string jobName=text.trimmed().toStdString();
     if(jobName==""){
-        QMessageBox::warning(NULL,"No name for job!","Please give a name for the job!");
+        QMessageBox::warning(nullptr,"No name for job!","Please give a name for the job!");
         return;
     }
 
     mitk::DataNode::Pointer exitingNode=GetDataStorage()->GetNamedNode(jobName.c_str());
     if(exitingNode){
-        QMessageBox::warning(NULL,"Job Already Created","Please use a different job name!");
+        QMessageBox::warning(nullptr,"Job Already Created","Please use a different job name!");
         return;
     }
 
@@ -1674,7 +1686,7 @@ void sv4guisvFSIView::SaveJob()
 void sv4guisvFSIView::LoadJob()
 {
     auto sv4guisvFSI_dir = sv4guisvFSIUtil.getsv4guisvFSIDir();
-    QString dir = QFileDialog::getOpenFileName(NULL
+    QString dir = QFileDialog::getOpenFileName(nullptr
                                                     , tr("Choose .fsijob file")
                                                     , sv4guisvFSI_dir.absolutePath()
                                                     , tr("Job file (*.fsijob)"));
@@ -1781,7 +1793,7 @@ sv4guisvFSISolverProcessHandler::sv4guisvFSISolverProcessHandler(QProcess* proce
     , m_TotalSteps(totalSteps)
     , m_RunDir(runDir)
     , m_Parent(parent)
-    , m_Timer(NULL)
+    , m_Timer(nullptr)
 {
 }
 
@@ -1796,7 +1808,7 @@ sv4guisvFSISolverProcessHandler::~sv4guisvFSISolverProcessHandler()
 
 void sv4guisvFSISolverProcessHandler::Start()
 {
-    if(m_Process==NULL)
+    if(m_Process==nullptr)
         return;
 
     if(m_JobNode.IsNull())
@@ -1830,7 +1842,7 @@ void sv4guisvFSISolverProcessHandler::AfterProcessFinished(int exitCode, QProces
     QString title="";
     QString text="";
     QMessageBox::Icon icon=QMessageBox::NoIcon;
-    QMessageBox mb(NULL); //svSimualtionView maybe doesn't exist.
+    QMessageBox mb(nullptr); //svSimualtionView maybe doesn't exist.
     QString status="";
 
     if(exitStatus==QProcess::NormalExit)
@@ -1881,12 +1893,12 @@ void sv4guisvFSISolverProcessHandler::UpdateStatus()
         QTextStream in(&historFile);
         QString content=in.readAll();
 
-        QStringList list=content.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+        QStringList list=content.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
         info=list.last();
 
         std::cout<<info.toStdString()<<std::endl;
 
-        list=info.split(QRegExp("[(),{}-\\s+]"),QString::SkipEmptyParts);
+        list=info.split(QRegularExpression("[(),{}-\\s+]"), Qt::SkipEmptyParts);
 
         if(list.size()>1)
         {

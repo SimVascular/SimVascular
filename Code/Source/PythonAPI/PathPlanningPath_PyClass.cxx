@@ -56,7 +56,7 @@ static PathElement*
 GetPathElement(PyUtilApiFunction& api, PyPath* self)
 {
   auto path = self->path;
-  if (path == NULL) {
+  if (path == nullptr) {
       api.error("The path element data has not be created.");
       return nullptr;
   }
@@ -106,7 +106,7 @@ Path_add_control_point(PyPath* self, PyObject* args)
   }
 
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
       return nullptr;
   }
 
@@ -166,7 +166,7 @@ Path_get_control_points(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
     return nullptr;
   }
 
@@ -188,7 +188,7 @@ Path_get_control_points(PyPath* self, PyObject* args)
       PyList_SetItem(output, i, coordList);
     }
 
-  if (PyErr_Occurred() != NULL) {
+  if (PyErr_Occurred() != nullptr) {
       api.error("Error generating path control points output.");
       return nullptr;
   }
@@ -222,7 +222,7 @@ Path_get_curve_frame(PyPath* self, PyObject* args)
   }
 
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
     return nullptr;
   }
 
@@ -269,7 +269,7 @@ Path_get_curve_normal(PyPath* self, PyObject* args)
   }
 
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
     return nullptr;
   }
 
@@ -314,7 +314,7 @@ Path_get_curve_point(PyPath* self, PyObject* args)
   }
 
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
     return nullptr;
   }
 
@@ -351,7 +351,7 @@ Path_get_curve_points(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
     return nullptr;
   }
 
@@ -371,7 +371,7 @@ Path_get_curve_points(PyPath* self, PyObject* args)
         PyList_SetItem(output,i,tmpList);
     }
 
-  if(PyErr_Occurred()!=NULL) {
+  if(PyErr_Occurred()!=nullptr) {
     api.error("error generating pathpospt output");
     return nullptr;
   }
@@ -395,16 +395,16 @@ static PyObject*
 Path_get_curve_polydata(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
-  char* dstName = NULL;
+  char* dstName = nullptr;
 
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
       return nullptr;
   }
 
   // Get the VTK polydata.
   vtkSmartPointer<vtkPolyData> polydata = path->CreateVtkPolyDataFromPath(true);
-  if (polydata == NULL) {
+  if (polydata == nullptr) {
       api.error("Could not get polydata for the path's interpolating curve..");
       return nullptr;
   }
@@ -438,7 +438,7 @@ Path_get_curve_tangent(PyPath* self, PyObject* args)
   }
 
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
     return nullptr;
   }
 
@@ -474,7 +474,7 @@ Path_get_num_curve_points(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
     return nullptr;
   }
 
@@ -499,7 +499,7 @@ Path_get_num_subdivisions(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
     return nullptr;
   }
 
@@ -524,7 +524,7 @@ Path_get_subdivision_method(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
       return nullptr;
   }
 
@@ -563,7 +563,7 @@ Path_get_subdivision_spacing(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
       return nullptr;
   }
 
@@ -595,7 +595,7 @@ Path_remove_control_point(PyPath* self, PyObject* args)
   }
 
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
       return nullptr;
   }
 
@@ -642,7 +642,7 @@ Path_replace_control_point(PyPath* self, PyObject* args)
   }
 
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
       return nullptr;
   }
 
@@ -697,7 +697,7 @@ Path_set_control_points(PyPath* self, PyObject* args)
       return api.argsError();
   }
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
       return nullptr;
   }
 
@@ -748,7 +748,7 @@ Path_set_num_subdivisions(PyPath* self, PyObject* args)
   }
 
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
       return nullptr;
   }
 
@@ -784,19 +784,19 @@ static PyObject *
 Path_set_subdivision_method(PyPath* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("s|O!O!O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"method", "num_div", "num_total", "spacing", NULL};
+  static char *keywords[] = {"method", "num_div", "num_total", "spacing", nullptr};
   char* methodName;
   PyObject* numDivObj = nullptr;
   PyObject* numTotalObj = nullptr;
   PyObject* spacingObj = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &methodName, &PyInt_Type, &numDivObj, &PyInt_Type, &numTotalObj,
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &methodName, &PyLong_Type, &numDivObj, &PyLong_Type, &numTotalObj,
         &PyFloat_Type, &spacingObj)) {
       return api.argsError();
   }
 
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
       return nullptr;
   }
 
@@ -843,7 +843,7 @@ Path_set_subdivision_method(PyPath* self, PyObject* args, PyObject* kwargs)
           return nullptr;
       }
 
-      int numDiv = PyInt_AsLong(numDivObj);
+      int numDiv = PyLong_AsLong(numDivObj);
       if (PyErr_Occurred()) {
           return nullptr;
       }
@@ -864,7 +864,7 @@ Path_set_subdivision_method(PyPath* self, PyObject* args, PyObject* kwargs)
           return nullptr;
       }
 
-      int numTotal = PyInt_AsLong(numTotalObj);
+      int numTotal = PyLong_AsLong(numTotalObj);
       if (PyErr_Occurred()) {
           return nullptr;
       }
@@ -917,7 +917,7 @@ static PyObject *
 Path_smooth(PyPath* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("ii|O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"sample_rate", "num_modes", "smooth_control_pts", NULL};
+  static char *keywords[] = {"sample_rate", "num_modes", "smooth_control_pts", nullptr};
   int sampleRate, numModes;
   PyObject *smoothControlPtsArg = nullptr;
 
@@ -926,7 +926,7 @@ Path_smooth(PyPath* self, PyObject* args, PyObject* kwargs)
   }
 
   auto path = GetPathElement(api, self);
-  if (path == NULL) {
+  if (path == nullptr) {
       return nullptr;
   }
 
@@ -1018,7 +1018,7 @@ static PyMethodDef PyPathMethods[] = {
 
   {"smooth", (PyCFunction)Path_smooth, METH_VARARGS|METH_KEYWORDS, Path_smooth_doc },
 
-  {NULL,NULL}
+  {nullptr,nullptr}
 };
 
 //------------
@@ -1030,7 +1030,7 @@ static PyMethodDef PyPathMethods[] = {
 // designated initializers.
 //
 PyTypeObject PyPathType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   PATHPLANNING_MODULE_CLASS,
@@ -1066,7 +1066,7 @@ PyPathNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyPathNew] PyPathNew " << std::endl;
   auto self = (PyPath*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       self->id = 1;
   }
 
@@ -1119,7 +1119,7 @@ PyObject *
 CreatePyPath(PathElement* path)
 {
   //std::cout << "[CreatePyPath] Create Path object ... " << std::endl;
-  auto pathObj = PyObject_CallObject((PyObject*)&PyPathType, NULL);
+  auto pathObj = PyObject_CallObject((PyObject*)&PyPathType, nullptr);
   auto pyPath = (PyPath*)pathObj;
 
   if (path != nullptr) {

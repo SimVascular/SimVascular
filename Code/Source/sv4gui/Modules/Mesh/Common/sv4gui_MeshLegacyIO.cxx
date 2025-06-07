@@ -33,6 +33,7 @@
 #include "sv4gui_MitkMeshIO.h"
 
 #include "sv_polydatasolid_utils.h"
+#include "sv_vtk_utils.h"
 
 #include <QDir>
 
@@ -155,14 +156,14 @@ bool sv4guiMeshLegacyIO::WriteFiles(mitk::DataNode::Pointer meshNode, sv4guiMode
     // Get the surface mesh from a data node or from a file.
     std::string surfaceFileName = path+"/"+meshNode->GetName()+".vtp";
     auto surfaceMesh = mesh->GetSurfaceMesh();
-    if (surfaceMesh == NULL && path != "") {
+    if (surfaceMesh == nullptr && path != "") {
         surfaceMesh = mesh->CreateSurfaceMeshFromFile(surfaceFileName);
     }
 
     // Get the volume mesh from a data node or from a file.
     std::string volumeFileName = path+"/"+meshNode->GetName()+".vtu";
     auto volumeMesh = mesh->GetVolumeMesh();
-    if (volumeMesh == NULL && path != "") {
+    if (volumeMesh == nullptr && path != "") {
         volumeMesh = mesh->CreateVolumeMeshFromFile(volumeFileName);
     }
 
@@ -185,6 +186,11 @@ bool sv4guiMeshLegacyIO::WriteFiles(mitk::DataNode::Pointer meshNode, sv4guiMode
 
       // Extract surface mesh.
       //
+      auto threshold_surface = VtkUtils_ThresholdSurface(i, i, "ModelRegionID", surfaceMesh);
+      if (threshold_surface->GetNumberOfCells() == 0) { 
+        continue;
+      }
+      /* dp
       auto surfThresholder = vtkSmartPointer<vtkThreshold>::New();
       surfThresholder->SetInputData(surfaceMesh);
       surfThresholder->SetInputArrayToProcess(0,0,0,1,"ModelRegionID");
@@ -200,8 +206,14 @@ bool sv4guiMeshLegacyIO::WriteFiles(mitk::DataNode::Pointer meshNode, sv4guiMode
       if (surfacer->GetOutput()->GetNumberOfCells() == 0) {
         continue;
       }
+      */
 
       // Extract volume mesh.
+      auto threshold_volume = VtkUtils_ThresholdUgrid(i, i, "ModelRegionID", volumeMesh);
+      if (threshold_volume->GetNumberOfCells() == 0) {
+        continue;
+      }
+      /* dp
       auto volumeThresholder = vtkSmartPointer<vtkThreshold>::New();
       volumeThresholder->SetInputData(volumeMesh);
       volumeThresholder->SetInputArrayToProcess(0,0,0,1,"ModelRegionID");
@@ -210,13 +222,14 @@ bool sv4guiMeshLegacyIO::WriteFiles(mitk::DataNode::Pointer meshNode, sv4guiMode
       if (volumeThresholder->GetOutput()->GetNumberOfCells() == 0) {
         continue;
       }
+      */
 
       // Write meshes.
       //
       fprintf(stdout, "[sv4guiMeshLegacyIO::WriteFiles] Writing domain %d\n", i);
       QString newDir = meshDir+"_domain-" + QString::number(i);
       QDir().mkpath(newDir);
-      if (WriteFiles(surfacer->GetOutput(), volumeThresholder->GetOutput(), modelElement, newDir) == false) {
+      if (WriteFiles(threshold_surface, threshold_volume, modelElement, newDir) == false) {
         return false;
       }
     }
@@ -322,6 +335,10 @@ bool sv4guiMeshLegacyIO::WriteFiles(vtkSmartPointer<vtkPolyData> surfaceMesh, vt
       if (connectFilter->GetNumberOfExtractedRegions() > 1) {
 
         for (int j = 0; j < connectFilter->GetNumberOfExtractedRegions(); j++) {
+          auto region_surface = VtkUtils_ThresholdSurface(j, j, "RegionId", connectFilter->GetOutput());
+          region_surface->GetCellData()->RemoveArray("RegionId");
+          region_surface->GetPointData()->RemoveArray("RegionId");
+          /* dp
           auto thresholder = vtkSmartPointer<vtkThreshold>::New();
           thresholder->SetInputData(connectFilter->GetOutput());
           thresholder->SetInputArrayToProcess(0,0,0,1,"RegionId");
@@ -334,6 +351,7 @@ bool sv4guiMeshLegacyIO::WriteFiles(vtkSmartPointer<vtkPolyData> surfaceMesh, vt
           surfacer->GetOutput()->GetCellData()->RemoveArray("RegionId");
           surfacer->GetOutput()->GetPointData()->RemoveArray("RegionId");
           auto region_surface = surfacer->GetOutput(); 
+          */
 
           vtpFilePath = meshDir + "/walls_combined_connected_region_" + QString::number(j) + ".vtp";
           vtpFilePath = QDir::toNativeSeparators(vtpFilePath);

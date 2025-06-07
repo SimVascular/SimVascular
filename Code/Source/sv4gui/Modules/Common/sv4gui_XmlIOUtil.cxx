@@ -31,26 +31,26 @@
 
 #include "sv4gui_XmlIOUtil.h"
 
-TiXmlElement* sv4guiXmlIOUtil::CreateXMLxyzElement(const char* name, double v[3])
+tinyxml2::XMLElement* sv4guiXmlIOUtil::CreateXMLxyzElement(const char* name, double v[3])
 {
-    auto  xyzElement = new TiXmlElement(name);
-    xyzElement->SetDoubleAttribute("x", v[0]);
-    xyzElement->SetDoubleAttribute("y", v[1]);
-    xyzElement->SetDoubleAttribute("z", v[2]);
+    auto xyzElement = document.NewElement(name);
+    xyzElement->SetAttribute("x", v[0]);
+    xyzElement->SetAttribute("y", v[1]);
+    xyzElement->SetAttribute("z", v[2]);
     return xyzElement;
 }
 
-TiXmlElement* sv4guiXmlIOUtil::CreateXMLPointElement(const char* name, int id,mitk::Point3D point)
+tinyxml2::XMLElement* sv4guiXmlIOUtil::CreateXMLPointElement(const char* name, int id,mitk::Point3D point)
 {
-    auto  xyzElement = new TiXmlElement(name);
-    xyzElement->SetDoubleAttribute("id", id);
-    xyzElement->SetDoubleAttribute("x", point[0]);
-    xyzElement->SetDoubleAttribute("y", point[1]);
-    xyzElement->SetDoubleAttribute("z", point[2]);
+    auto  xyzElement = document.NewElement(name);
+    xyzElement->SetAttribute("id", id);
+    xyzElement->SetAttribute("x", point[0]);
+    xyzElement->SetAttribute("y", point[1]);
+    xyzElement->SetAttribute("z", point[2]);
     return xyzElement;
 }
 
-TiXmlElement* sv4guiXmlIOUtil::CreateXMLPointElement(const char* name, mitk::Point3D point)
+tinyxml2::XMLElement* sv4guiXmlIOUtil::CreateXMLPointElement(const char* name, mitk::Point3D point)
 {
     double v[3];
     v[0]=point[0];
@@ -60,7 +60,7 @@ TiXmlElement* sv4guiXmlIOUtil::CreateXMLPointElement(const char* name, mitk::Poi
     return CreateXMLxyzElement(name,v);
 }
 
-TiXmlElement* sv4guiXmlIOUtil::CreateXMLVectorElement(const char* name, mitk::Vector3D vec)
+tinyxml2::XMLElement* sv4guiXmlIOUtil::CreateXMLVectorElement(const char* name, mitk::Vector3D vec)
 {
     double v[3];
     v[0]=vec[0];
@@ -70,14 +70,14 @@ TiXmlElement* sv4guiXmlIOUtil::CreateXMLVectorElement(const char* name, mitk::Ve
     return CreateXMLxyzElement(name,v);
 }
 
-void sv4guiXmlIOUtil::Getxyz(TiXmlElement* element, double xyz[3])
+void sv4guiXmlIOUtil::Getxyz(tinyxml2::XMLElement* element, double xyz[3])
 {
     element->QueryDoubleAttribute("x", &xyz[0]);
     element->QueryDoubleAttribute("y", &xyz[1]);
     element->QueryDoubleAttribute("z", &xyz[2]);
 }
 
-mitk::Point3D sv4guiXmlIOUtil::GetPoint(TiXmlElement* element)
+mitk::Point3D sv4guiXmlIOUtil::GetPoint(tinyxml2::XMLElement* element)
 {
     double p[3]={0};
     Getxyz(element,p);
@@ -90,7 +90,7 @@ mitk::Point3D sv4guiXmlIOUtil::GetPoint(TiXmlElement* element)
     return point;
 }
 
-mitk::Vector3D sv4guiXmlIOUtil::GetVector(TiXmlElement* element)
+mitk::Vector3D sv4guiXmlIOUtil::GetVector(tinyxml2::XMLElement* element)
 {
     double v[3]={0};
     Getxyz(element,v);
@@ -104,7 +104,7 @@ mitk::Vector3D sv4guiXmlIOUtil::GetVector(TiXmlElement* element)
 }
 
 std::list< double >
-sv4guiXmlIOUtil::GetDoubleAttributeListFromXMLNode(TiXmlElement* e, const char *attributeNameBase, unsigned int count)
+sv4guiXmlIOUtil::GetDoubleAttributeListFromXMLNode(tinyxml2::XMLElement* e, const char *attributeNameBase, unsigned int count)
 {
     std::list< double > list;
 
@@ -119,7 +119,7 @@ sv4guiXmlIOUtil::GetDoubleAttributeListFromXMLNode(TiXmlElement* e, const char *
         std::stringstream attributeName;
         attributeName << attributeNameBase << i;
 
-        if (e->QueryDoubleAttribute( attributeName.str().c_str(), &p ) == TIXML_WRONG_TYPE)
+        if (e->QueryAttribute( attributeName.str().c_str(), &p ) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
         {
             mitkThrow() << "Xml node malformatted";
 //            throw std::invalid_argument("node malformatted");

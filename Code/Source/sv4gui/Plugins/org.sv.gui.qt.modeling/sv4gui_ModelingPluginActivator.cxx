@@ -45,7 +45,7 @@ void sv4guiModelingPluginActivator::start(ctkPluginContext* context)
 {
 //    m_Instance = this;
 //    m_Context = context;
-
+    std::cout << "sv4guiModelingPluginActivator::start()" << std::endl;
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiModelCreateAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiLoftingPreferencePage, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiModelLoadAction, context)

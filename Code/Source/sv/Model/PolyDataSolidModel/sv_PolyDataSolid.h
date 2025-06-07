@@ -29,20 +29,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file sv_PolyDataSolid.h
- *  @brief Class provides implementations of the PolyData solid type
- *
- *  This is derived from the SolidModel class and provides implementations
- *  of functions to be able to import a solid using vtkReaders, extract
- *  the boundaries of the solid, and mesh the solid with TetGen.
- *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- *  @note Most functions in class call functions in cv_polydatasolid_utils.
- */
-
 #ifndef __CVPOLYDATA_SOLID_H
 #define __CVPOLYDATA_SOLID_H
 
@@ -55,19 +41,10 @@
 #include "sv_VTK.h"
 #include "sv_misc_utils.h"
 
-
-// Some elementary notes on abstract base classes (ABC's)
-// ------------------------------------------------------
-// ABC's provide a means for defining an *interface*.  Since (by
-// definition) they contain pure  methods, objects of these
-// classes can not be instantiated.  Clients of ABC's are interested
-// in using the abstract interface, but can not work with the objects
-// themselves.  Instead, clients instantiate concrete classes derived
-// from the ABC.  And then, to use the abstraction, clients use
-// *pointers* or *references* to the ABC.  See Meyers' Effective C++,
-// Item 34.
+//-----------------
+// cvPolyDataSolid
+//-----------------
 //
-
 class SV_EXPORT_POLYDATASOLID cvPolyDataSolid : public cvSolidModel {
 
 public:

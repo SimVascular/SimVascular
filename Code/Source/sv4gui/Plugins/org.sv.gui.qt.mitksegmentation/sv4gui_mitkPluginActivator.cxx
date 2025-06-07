@@ -71,6 +71,7 @@ PluginActivator::~PluginActivator()
 
 void PluginActivator::start(ctkPluginContext *context)
 {
+  std::cout << "sv4gui_mitkPluginActivator::start()" << std::endl;
   BERRY_REGISTER_EXTENSION_CLASS(QmitkSegmentationView, context)
   BERRY_REGISTER_EXTENSION_CLASS(QmitkThresholdAction, context)
   BERRY_REGISTER_EXTENSION_CLASS(QmitkCreatePolygonModelAction, context)

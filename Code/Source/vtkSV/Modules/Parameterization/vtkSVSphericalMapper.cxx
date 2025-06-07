@@ -90,10 +90,10 @@ vtkSVSphericalMapper::vtkSVSphericalMapper()
   {
     this->BoundaryStart[i] = -1;
   }
-  this->FirstLoopPts      = NULL;
-  this->SecondLoopPts     = NULL;
-  this->FirstLoopHelper   = NULL;
-  this->SecondLoopHelper  = NULL;
+  this->FirstLoopPts      = nullptr;
+  this->SecondLoopPts     = nullptr;
+  this->FirstLoopHelper   = nullptr;
+  this->SecondLoopHelper  = nullptr;
   for (int i=0; i<2; i++)
   {
     this->CubeStart[i] = -1;
@@ -113,7 +113,7 @@ vtkSVSphericalMapper::vtkSVSphericalMapper()
   this->SetObjectXAxis(1.0, 0.0, 0.0);
   this->SetObjectZAxis(0.0, 0.0, 1.0);
 
-  this->IterOutputFilename = NULL;
+  this->IterOutputFilename = nullptr;
   this->NumSaveIterations  = 100;
   this->SaveIter           = 0;
 }
@@ -123,46 +123,46 @@ vtkSVSphericalMapper::vtkSVSphericalMapper()
 // ----------------------
 vtkSVSphericalMapper::~vtkSVSphericalMapper()
 {
-  if (this->InitialPd != NULL)
+  if (this->InitialPd != nullptr)
   {
     InitialPd->Delete();
   }
-  if (this->EdgeTable != NULL)
+  if (this->EdgeTable != nullptr)
   {
     this->EdgeTable->Delete();
   }
-  if (this->EdgeWeights != NULL)
+  if (this->EdgeWeights != nullptr)
   {
     this->EdgeWeights->Delete();
   }
-  if (this->PrevDescent != NULL)
+  if (this->PrevDescent != nullptr)
   {
     this->PrevDescent->Delete();
   }
-  if (this->CurrDescent != NULL)
+  if (this->CurrDescent != nullptr)
   {
     this->CurrDescent->Delete();
   }
-  if (this->ConjugateDir != NULL)
+  if (this->ConjugateDir != nullptr)
   {
     this->ConjugateDir->Delete();
   }
-  if (this->EdgeNeighbors != NULL)
+  if (this->EdgeNeighbors != nullptr)
   {
     this->EdgeNeighbors->Delete();
   }
-  if (this->IsBoundary != NULL)
+  if (this->IsBoundary != nullptr)
   {
     this->IsBoundary->Delete();
   }
   for (int i=0; i<2; i++)
   {
-    if (this->HarmonicMap[i] != NULL)
+    if (this->HarmonicMap[i] != nullptr)
     {
       this->HarmonicMap[i]->Delete();
     }
   }
-  if (this->Boundaries != NULL)
+  if (this->Boundaries != nullptr)
   {
     this->Boundaries->Delete();
   }
@@ -663,7 +663,7 @@ int vtkSVSphericalMapper::SphericalTutteMapping()
     {
       if (iter%this->NumSaveIterations == 0)
       {
-        if (this->IterOutputFilename != NULL)
+        if (this->IterOutputFilename != nullptr)
         {
           std::stringstream iterstr;
           iterstr << this->SaveIter++;
@@ -772,7 +772,7 @@ int vtkSVSphericalMapper::SphericalConformalMapper()
     {
       if (iter%this->NumSaveIterations == 0)
       {
-        if (this->IterOutputFilename != NULL)
+        if (this->IterOutputFilename != nullptr)
         {
           std::stringstream iterstr;
           iterstr << this->SaveIter++;
@@ -1186,7 +1186,8 @@ int vtkSVSphericalMapper::CalculateCircleLength(vtkPolyData *lines,
   length = 0.0;
   for (int i=0; i<numLines; i++)
   {
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     lines->GetCellPoints(i, npts, pts);
 
     double pt0[3], pt1[3];
@@ -1220,7 +1221,8 @@ int vtkSVSphericalMapper::CalculateSquareEdgeLengths(vtkPolyData *lines,
   for (int i=0; i<markerPts->GetNumberOfTuples(); i++)
   {
     int lastPt  = markerPts->GetValue(i);
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     int checkPt = -1;
     while (checkPt != lastPt)
     {
@@ -1255,7 +1257,8 @@ int vtkSVSphericalMapper::SetLoopOnUnitCircle(vtkPolyData *lines,
   double currLength = 0.0;
   for (int i=0; i<numLines; i++)
   {
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     lines->GetCellPoints(i, npts, pts);
 
     double pt0[3], pt1[3];
@@ -1307,7 +1310,8 @@ int vtkSVSphericalMapper::SetCircleBoundary(vtkPolyData *lines,
     double currLength = 0.0;
     int lastPt  = markerPts->GetValue(i);
     int dir     = markerDirs->GetValue(i);
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     while (checkPt != lastPt)
     {
       lines->GetCellPoints(currCell, npts, pts);
@@ -1426,7 +1430,8 @@ int vtkSVSphericalMapper::SetCubeBoundary(vtkPolyData *lines,
     double currLength = 0.0;
     int lastPt  = markerPts->GetValue(i);
     int dir     = markerDirs->GetValue(i);
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     while (checkPt != lastPt)
     {
       lines->GetCellPoints(currCell, npts, pts);

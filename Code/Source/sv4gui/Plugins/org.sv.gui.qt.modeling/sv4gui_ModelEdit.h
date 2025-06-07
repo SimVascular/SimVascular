@@ -45,6 +45,8 @@
 
 #include <QWidget>
 #include <QItemSelection>
+#include <QmitkStdMultiWidget.h>
+#include <QmitkRenderWindow.h>
 
 namespace Ui {
 class sv4guiModelEdit;
@@ -167,7 +169,9 @@ public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
+    // This was override when using QmitkFunctionality, we need to understand if it is required
+    virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
+                                    const QList<mitk::DataNode::Pointer>& nodes) override;
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -175,9 +179,9 @@ public:
 
     virtual void NodeRemoved(const mitk::DataNode* node) override;
 
-//    virtual void Activated() override;
+   virtual void Activated() override;
 
-//    virtual void Deactivated() override;
+   virtual void Deactivated() override;
 
     virtual void Visible() override;
 
@@ -204,8 +208,6 @@ protected:
     long m_ModelSelectFaceObserverTag;
     long m_ModelUpdateObserverTag;
 
-    QmitkStdMultiWidget* m_DisplayWidget;
-
     QMenu* m_BlendTableMenu;
     QStandardItemModel* m_BlendTableModel;
 
@@ -221,6 +223,8 @@ protected:
     bool m_OperatingWholeTableModel;
 
     bool m_LocalOperationforBlendRegion;
+
+    mitk::IRenderWindowPart* m_RenderWindow;
 
 private:
     void SetTimeModified();

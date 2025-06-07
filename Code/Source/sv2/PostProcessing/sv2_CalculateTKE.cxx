@@ -47,10 +47,10 @@
 // --------------
 
 cvCalculateTKE::cvCalculateTKE() {
-    inputVectors_ = NULL;
-    averageU_ = NULL;
-    rms_ = NULL;
-    KE_ = NULL;
+    inputVectors_ = nullptr;
+    averageU_ = nullptr;
+    rms_ = nullptr;
+    KE_ = nullptr;
     numInputArrays_ = 0;
     numArrayPts_ = 0;
 }
@@ -62,19 +62,19 @@ cvCalculateTKE::cvCalculateTKE() {
 
 cvCalculateTKE::~cvCalculateTKE() {
 
-    if (inputVectors_ != NULL) {
+    if (inputVectors_ != nullptr) {
       delete [] inputVectors_;
     }
 
-    if (averageU_ != NULL) {
+    if (averageU_ != nullptr) {
         averageU_->Delete();
     }
 
-    if (rms_ != NULL) {
+    if (rms_ != nullptr) {
         rms_->Delete();
     }
 
-    if (KE_ != NULL) {
+    if (KE_ != nullptr) {
         KE_->Delete();
     }
 
@@ -151,7 +151,7 @@ int cvCalculateTKE::CalculateAverageVelocity() {
 
 int cvCalculateTKE::CalculateTKE() {
 
-    if (averageU_ == NULL) {
+    if (averageU_ == nullptr) {
        this->CalculateAverageVelocity();
     }
 
@@ -198,7 +198,7 @@ int cvCalculateTKE::CalculateTKE() {
 
 cvPolyData* cvCalculateTKE::GetAverageVelocityPolyData() {
 
-  if (averageU_ == NULL) {
+  if (averageU_ == nullptr) {
     this->CalculateAverageVelocity();
   }
 
@@ -214,7 +214,7 @@ cvPolyData* cvCalculateTKE::GetAverageVelocityPolyData() {
 
 cvPolyData* cvCalculateTKE::GetTKEPolyData() {
 
-  if (rms_ == NULL) {
+  if (rms_ == nullptr) {
     this->CalculateTKE();
   }
 

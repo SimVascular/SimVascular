@@ -55,7 +55,7 @@ cvDataSet::~cvDataSet()
 
 void cvDataSet::ShallowCopy( vtkDataSet *src )
 {
-  if ( data_ == NULL ) {
+  if ( data_ == nullptr ) {
     return;
   }
   (static_cast<vtkDataSet*>(data_))->CopyStructure(src);

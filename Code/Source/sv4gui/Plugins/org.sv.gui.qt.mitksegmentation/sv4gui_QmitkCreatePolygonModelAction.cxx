@@ -58,8 +58,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <mitkIRenderingManager.h>
 
 // Blueberry
-#include <berryIPreferencesService.h>
-#include <berryIPreferences.h>
+#include <mitkIPreferencesService.h>
+#include <mitkIPreferences.h>
 #include <berryPlatform.h>
 #include <berryIWorkbenchPage.h>
 #include <QInputDialog>
@@ -169,7 +169,7 @@ void QmitkCreatePolygonModelAction::Run(const QList<DataNode::Pointer> &selected
   {
     // Get preference properties for smoothing and decimation
     IPreferencesService* prefService = Platform::GetPreferencesService();
-    IPreferences::Pointer segPref = prefService->GetSystemPreferences()->Node("/org.sv.views.mitksegmentation");
+    IPreferences* segPref = prefService->GetSystemPreferences()->Node("/org.sv.views.mitksegmentation");
 
     bool smoothingHint = segPref->GetBool("smoothing hint", true);
     ScalarType smoothing = segPref->GetDouble("smoothing value", 1.0);
@@ -239,7 +239,7 @@ void QmitkCreatePolygonModelAction::Run(const QList<DataNode::Pointer> &selected
         m_DataStorage->GetNamedNode(new_polydata_name.toStdString());
     
     if (newPdNode){
-        QMessageBox::warning(NULL,"Segmentation Already exists","Please use a different segmentation name!");
+        QMessageBox::warning(nullptr,"Segmentation Already exists","Please use a different segmentation name!");
         return;
     }
     if(!ok){

@@ -84,8 +84,8 @@ vtkSVSurfaceMapper::vtkSVSurfaceMapper()
   this->TargetBoundary = vtkIntArray::New();
   this->SourceBoundary = vtkIntArray::New();
 
-  this->InternalIdsArrayName  = NULL;
-  this->DataMatchingArrayName = NULL;
+  this->InternalIdsArrayName  = nullptr;
+  this->DataMatchingArrayName = nullptr;
 }
 
 // ----------------------
@@ -93,46 +93,46 @@ vtkSVSurfaceMapper::vtkSVSurfaceMapper()
 // ----------------------
 vtkSVSurfaceMapper::~vtkSVSurfaceMapper()
 {
-  if (this->SourceBaseDomainPd != NULL)
+  if (this->SourceBaseDomainPd != nullptr)
   {
     this->SourceBaseDomainPd->Delete();
-    this->SourceBaseDomainPd = NULL;
+    this->SourceBaseDomainPd = nullptr;
   }
-  if (this->TargetPd != NULL)
+  if (this->TargetPd != nullptr)
   {
     this->TargetPd->Delete();
-    this->TargetPd = NULL;
+    this->TargetPd = nullptr;
   }
-  if (this->TargetBaseDomainPd != NULL)
+  if (this->TargetBaseDomainPd != nullptr)
   {
     this->TargetBaseDomainPd->Delete();
-    this->TargetBaseDomainPd = NULL;
+    this->TargetBaseDomainPd = nullptr;
   }
-  if (this->SourceOnTargetPd != NULL)
+  if (this->SourceOnTargetPd != nullptr)
   {
     this->SourceOnTargetPd->Delete();
-    this->SourceOnTargetPd = NULL;
+    this->SourceOnTargetPd = nullptr;
   }
-  if (this->TargetBoundary != NULL)
+  if (this->TargetBoundary != nullptr)
   {
     this->TargetBoundary->Delete();
-    this->TargetBoundary = NULL;
+    this->TargetBoundary = nullptr;
   }
-  if (this->SourceBoundary != NULL)
+  if (this->SourceBoundary != nullptr)
   {
     this->SourceBoundary->Delete();
-    this->SourceBoundary = NULL;
+    this->SourceBoundary = nullptr;
   }
 
-  if (this->DataMatchingArrayName != NULL)
+  if (this->DataMatchingArrayName != nullptr)
   {
     delete [] this->DataMatchingArrayName;
-    this->DataMatchingArrayName = NULL;
+    this->DataMatchingArrayName = nullptr;
   }
   if (this->InternalIdsArrayName)
   {
     delete [] this->InternalIdsArrayName;
-    this->InternalIdsArrayName = NULL;
+    this->InternalIdsArrayName = nullptr;
   }
 }
 
@@ -142,9 +142,9 @@ vtkSVSurfaceMapper::~vtkSVSurfaceMapper()
 void vtkSVSurfaceMapper::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
-  if (this->InternalIdsArrayName != NULL)
+  if (this->InternalIdsArrayName != nullptr)
     os << indent << "Internal Ids array name: " << this->InternalIdsArrayName << "\n";
-  if (this->DataMatchingArrayName != NULL)
+  if (this->DataMatchingArrayName != nullptr)
     os << indent << "Data Matching array name: " << this->DataMatchingArrayName << "\n";
   os << indent << "Number of source subdivisions: " << this->NumSourceSubdivisions << "\n";
   os << indent << "Enable Data Matching: " << this->EnableDataMatching << "\n";
@@ -257,7 +257,7 @@ int vtkSVSurfaceMapper::PrepFilter()
 
   if (this->EnableDataMatching)
   {
-    if (this->DataMatchingArrayName == NULL)
+    if (this->DataMatchingArrayName == nullptr)
     {
       vtkErrorMacro("Must provide cell data array name if matching data");
       return SV_ERROR;
@@ -346,7 +346,8 @@ int vtkSVSurfaceMapper::MapSourceToTarget(vtkPolyData *sourceBaseDomainPd,
 
         if (pointCellsValues->IsId(firstCheckVal) == -1)
         {
-          vtkIdType npts, *pts;
+          vtkIdType npts;
+          const vtkIdType *pts;
           targetBaseDomainPd->GetCellPoints(closestCell, npts, pts);
 
           vtkNew(vtkIdList, cellCloseVals);
@@ -390,7 +391,8 @@ int vtkSVSurfaceMapper::MapSourceToTarget(vtkPolyData *sourceBaseDomainPd,
       }
     }
 
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     targetBaseDomainPd->GetCellPoints(closestCell, npts, pts);
     double pt0[3], pt1[3], pt2[3], a0, a1, a2;
     targetBaseDomainPd->GetPoint(pts[0], pt0);
@@ -534,7 +536,8 @@ int vtkSVSurfaceMapper::FindBoundary(vtkPolyData *pd, vtkIntArray *isBoundary, i
   for (int i=0; i<numCells; i++)
   {
     // Get cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    const vtkIdType *pts;
     pd->GetCellPoints(i, npts, pts);
     for (int j=0; j<npts; j++)
     {
@@ -673,7 +676,8 @@ int vtkSVSurfaceMapper::BoundaryPointsOnCell(vtkPolyData *pd, int targCellId, vt
   int numBounds = 0;
 
   // Get target cell points
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   pd->GetCellPoints(targCellId, npts, pts);
 
   // Initialize the boundaryPts

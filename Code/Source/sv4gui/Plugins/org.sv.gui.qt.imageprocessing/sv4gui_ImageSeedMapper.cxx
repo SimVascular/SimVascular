@@ -99,7 +99,7 @@ void sv4guiImageSeedMapper::GenerateDataForRenderer(mitk::BaseRenderer* renderer
 {
   //std::cout << "===================== sv4guiImageSeedMapper::GenerateDataForRenderer =====================" << std::endl;
   mitk::DataNode* node = GetDataNode();
-  if (node == NULL) {
+  if (node == nullptr) {
       return;
   }
 
@@ -112,7 +112,7 @@ void sv4guiImageSeedMapper::GenerateDataForRenderer(mitk::BaseRenderer* renderer
   }
 
   auto seeds = static_cast<sv4guiImageSeedContainer*>(GetDataNode()->GetData());
-  if (seeds == NULL) {
+  if (seeds == nullptr) {
       localStorage->m_PropAssembly->VisibilityOff();
       return;
   }

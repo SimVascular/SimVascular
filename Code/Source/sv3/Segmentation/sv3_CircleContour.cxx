@@ -177,7 +177,7 @@ void circleContour::SetControlPointByRadius(double radius, double* point)
     
     SegmentationUtils::getOrthogonalVector(normal,vec);
     
-    if (vec==NULL)
+    if (vec==nullptr)
         return;
 
     boundaryPoint[0]=centerPt[0]+radius*vec[0];
@@ -215,13 +215,13 @@ circleContour* circleContour::CreateByFitting(Contour* contour)
         normal = plane->GetNormal();
     }
     else
-        return NULL;
+        return nullptr;
         
     double vec[3];
     
     SegmentationUtils::getOrthogonalVector(normal,vec);
-    if (vec==NULL)
-        return NULL;
+    if (vec==nullptr)
+        return nullptr;
 
     
     boundaryPoint[0]=centerPoint[0]+radius*vec[0];
@@ -299,7 +299,7 @@ void circleContour::CreateContourPoints()
     double* normal=m_vtkPlaneGeometry->GetNormal();       
     double vec[3];
     SegmentationUtils::getOrthogonalVector(normal,vec);
-    if(vec==NULL)
+    if(vec==nullptr)
         return;
         
     double cross[3];

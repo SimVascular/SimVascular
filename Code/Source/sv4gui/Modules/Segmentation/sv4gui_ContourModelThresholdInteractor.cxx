@@ -47,12 +47,12 @@ using namespace std;
 
 sv4guiContourModelThresholdInteractor::sv4guiContourModelThresholdInteractor()
     : mitk::DataInteractor()
-    , m_Contour(NULL)
+    , m_Contour(nullptr)
     , m_TimeStep(0)
     , m_ScaleBase(100)
     , m_Method("Threshold")
-    , m_VtkImageData(NULL)
-    , m_ImageSlice(NULL)
+    , m_VtkImageData(nullptr)
+    , m_ImageSlice(nullptr)
     , m_ResliceSize(5.0)
 {
 }
@@ -96,12 +96,12 @@ bool sv4guiContourModelThresholdInteractor::OnCurrentContourPlane( const mitk::I
 
     m_TimeStep = renderer->GetTimeStep();
     sv4guiContourModel* model = dynamic_cast<sv4guiContourModel*>( GetDataNode()->GetData() );
-    if(model==NULL)
+    if(model==nullptr)
         return false;
 
     m_Contour=model->GetContour(m_TimeStep);
 
-    if(rendererPlaneGeometry==NULL||m_Contour==NULL)
+    if(rendererPlaneGeometry==nullptr||m_Contour==nullptr)
         return false;
 
     if(m_Contour->IsOnPlane(rendererPlaneGeometry,0.1))
@@ -127,17 +127,17 @@ void sv4guiContourModelThresholdInteractor::SetImageTransform(vtkTransform* imag
 
 void sv4guiContourModelThresholdInteractor::StartDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
-    m_Contour=NULL;
+    m_Contour=nullptr;
 
-    if(m_VtkImageData==NULL)
+    if(m_VtkImageData==nullptr)
         return;
 
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if (positionEvent == NULL)
+    if (positionEvent == nullptr)
         return;
 
     sv4guiContourModel* model = dynamic_cast<sv4guiContourModel*>( GetDataNode()->GetData() );
-    if(model==NULL)
+    if(model==nullptr)
         return;
 
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
@@ -147,7 +147,7 @@ void sv4guiContourModelThresholdInteractor::StartDrawing(mitk::StateMachineActio
     cvStrPts* strPts=sv4guiSegmentationUtils::GetSlicevtkImage(m_PathPoint, m_VtkImageData, m_ResliceSize, m_ImageTransformation);
     m_ImageSlice=strPts->GetVtkStructuredPoints();
     vtkImageData* imageSlice=m_ImageSlice;
-    if(imageSlice==NULL)
+    if(imageSlice==nullptr)
         return;
 
     m_Contour=new sv4guiContour();
@@ -193,7 +193,7 @@ void sv4guiContourModelThresholdInteractor::StartDrawing(mitk::StateMachineActio
     m_Contour->SetClosed(ifClosed||forceClosed);
     m_Contour->SetContourPoints(contourPoints);
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
 
 }
 
@@ -205,16 +205,16 @@ void sv4guiContourModelThresholdInteractor::StartDrawing(mitk::StateMachineActio
 void sv4guiContourModelThresholdInteractor::UpdateDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if (positionEvent == NULL) {
+    if (positionEvent == nullptr) {
         return;
     }
 
     sv4guiContourModel* model = dynamic_cast<sv4guiContourModel*>( GetDataNode()->GetData() );
-    if(model == NULL) {
+    if(model == nullptr) {
         return;
     }
 
-    if(m_Contour==NULL) {
+    if(m_Contour==nullptr) {
         return;
     }
 
@@ -243,7 +243,7 @@ void sv4guiContourModelThresholdInteractor::UpdateDrawing(mitk::StateMachineActi
 
     vtkImageData* imageSlice = m_ImageSlice;
 
-    if (imageSlice == NULL) {
+    if (imageSlice == nullptr) {
         return;
     }
 
@@ -272,39 +272,39 @@ void sv4guiContourModelThresholdInteractor::UpdateDrawing(mitk::StateMachineActi
 
     model->InvokeEvent( UpdateInteractionContourModelEvent() );
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
 }
 
 void sv4guiContourModelThresholdInteractor::FinishDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if ( positionEvent == nullptr )
         return;
 
     sv4guiContourModel* model = dynamic_cast<sv4guiContourModel*>( GetDataNode()->GetData() );
-    if(model==NULL)
+    if(model==nullptr)
         return;
 
-    if(m_Contour==NULL)
+    if(m_Contour==nullptr)
         return;
 
     m_Contour->SetFinished();
 
     model->InvokeEvent( EndInteractionContourModelEvent() );
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
 }
 
 void sv4guiContourModelThresholdInteractor::ClearDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
     sv4guiContourModel* model = dynamic_cast<sv4guiContourModel*>( GetDataNode()->GetData() );
     if(model)
-         model->SetContour(NULL);
+         model->SetContour(nullptr);
 
     if(m_Contour)
         delete m_Contour;
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
 }
 
 void sv4guiContourModelThresholdInteractor::SetScaleBase(double scaleBase)

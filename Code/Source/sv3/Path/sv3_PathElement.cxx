@@ -308,7 +308,7 @@ PathElement* PathElement::CreateSmoothedPathElement(int sampleRate, int numModes
         pts[i][1] = actualPoints[i][1];
         pts[i][2] = actualPoints[i][2];
     }
-    double **outPts = NULL;
+    double **outPts = nullptr;
     int isClosed=0;
     int rslt;
     rslt=cMath->smoothCurve(pts, actualNumPts, 0, numModes, 2*outputNumPts, &outPts);

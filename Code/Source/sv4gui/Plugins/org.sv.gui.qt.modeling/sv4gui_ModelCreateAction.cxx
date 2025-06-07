@@ -36,8 +36,8 @@
 //#include <QmitkDataManagerView.h>
 
 sv4guiModelCreateAction::sv4guiModelCreateAction()
-    : m_ModelCreateWidget(NULL)
-    , m_Functionality(NULL)
+    : m_ModelCreateWidget(nullptr)
+    , m_Functionality(nullptr)
 {
 }
 

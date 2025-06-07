@@ -110,9 +110,9 @@ vtkSVRenderer::vtkSVRenderer()
   this->TextInputActor->GetPosition2Coordinate()->SetCoordinateSystemToNormalizedViewport();
   this->TextInputActor->SetPosition(this->InputPosition);
 
-  this->ExitTextInputCallbackCommand = NULL;
-  this->TextInputQuery = NULL;
-  this->CurrentTextInput = NULL;
+  this->ExitTextInputCallbackCommand = nullptr;
+  this->TextInputQuery = nullptr;
+  this->CurrentTextInput = nullptr;
 }
 
 // ----------------------
@@ -120,50 +120,50 @@ vtkSVRenderer::vtkSVRenderer()
 // ----------------------
 vtkSVRenderer::~vtkSVRenderer()
 {
-  if (this->Renderer != NULL)
+  if (this->Renderer != nullptr)
   {
     this->Renderer->Delete();
-    this->Renderer = NULL;
+    this->Renderer = nullptr;
   }
-  if (this->RenderWindow != NULL)
+  if (this->RenderWindow != nullptr)
   {
     this->RenderWindow->Delete();
-    this->RenderWindow = NULL;
+    this->RenderWindow = nullptr;
   }
-  if (this->Renderer != NULL)
+  if (this->Renderer != nullptr)
   {
     this->RenderWindowInteractor->Delete();
-    this->RenderWindowInteractor = NULL;
+    this->RenderWindowInteractor = nullptr;
   }
-  if (this->TextActor != NULL)
+  if (this->TextActor != nullptr)
   {
     this->TextActor->Delete();
-    this->TextActor = NULL;
+    this->TextActor = nullptr;
   }
-  if (this->TextInputActor != NULL)
+  if (this->TextInputActor != nullptr)
   {
     this->TextInputActor->Delete();
-    this->TextInputActor = NULL;
+    this->TextInputActor = nullptr;
   }
-  if (this->TrackballCamera != NULL)
+  if (this->TrackballCamera != nullptr)
   {
     this->TrackballCamera->Delete();
-    this->TrackballCamera = NULL;
+    this->TrackballCamera = nullptr;
   }
-  if (this->ResetCameraCallbackCommand != NULL)
+  if (this->ResetCameraCallbackCommand != nullptr)
   {
     this->ResetCameraCallbackCommand->Delete();
-    this->ResetCameraCallbackCommand = NULL;
+    this->ResetCameraCallbackCommand = nullptr;
   }
-  if (this->QuitRendererCallbackCommand != NULL)
+  if (this->QuitRendererCallbackCommand != nullptr)
   {
     this->QuitRendererCallbackCommand->Delete();
-    this->QuitRendererCallbackCommand = NULL;
+    this->QuitRendererCallbackCommand = nullptr;
   }
-  if (this->ExitTextInputCallbackCommand != NULL)
+  if (this->ExitTextInputCallbackCommand != nullptr)
   {
     this->ExitTextInputCallbackCommand->Delete();
-    this->ExitTextInputCallbackCommand = NULL;
+    this->ExitTextInputCallbackCommand = nullptr;
   }
 }
 
@@ -274,7 +274,7 @@ int vtkSVRenderer::ExitTextInputMode()
   this->RenderWindow->Render();
   this->TextInputMode = 0;
 
-  //if (this->ExitTextInputCallbackCommand != NULL)
+  //if (this->ExitTextInputCallbackCommand != nullptr)
   //  this->ExitTextInputCallbackCommand(this->CurrentTextInput);
 
   if (this->ExitAfterTextInputMode)
@@ -381,7 +381,7 @@ void vtkSVRenderer::KeyPressCallback( vtkObject* caller, long unsigned int event
       isKey = i;
   }
 
-  if (isKey != -1 && parent->KeyBindings[isKey].callback != NULL)
+  if (isKey != -1 && parent->KeyBindings[isKey].callback != nullptr)
   {
     parent->KeyBindings[isKey].callback->Execute(caller, eventId, callData);
   }
@@ -400,7 +400,7 @@ void vtkSVRenderer::KeyPressCallback( vtkObject* caller, long unsigned int event
       if (parent->KeyBindings[i].key == key)
         isKey = i;
     }
-    if (isKey != -1 && parent->KeyBindings[isKey].callback != NULL)
+    if (isKey != -1 && parent->KeyBindings[isKey].callback != nullptr)
     {
       parent->KeyBindings[isKey].callback->Execute(caller, eventId, callData);
     }
@@ -412,11 +412,11 @@ void vtkSVRenderer::KeyPressCallback( vtkObject* caller, long unsigned int event
 // ----------------------
 void vtkSVRenderer::UpdateTextInput()
 {
-  if (this->TextInputQuery != NULL)
+  if (this->TextInputQuery != nullptr)
   {
     std::string inputText;
 
-    if (this->CurrentTextInput != NULL)
+    if (this->CurrentTextInput != nullptr)
     {
       std::string queryText   = this->TextInputQuery;
       std::string currentText = this->CurrentTextInput;

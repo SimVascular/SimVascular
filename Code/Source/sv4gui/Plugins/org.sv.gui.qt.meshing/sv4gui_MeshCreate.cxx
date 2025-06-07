@@ -56,8 +56,8 @@ sv4guiMeshCreate::sv4guiMeshCreate(mitk::DataStorage::Pointer dataStorage, mitk:
     , m_DataStorage(dataStorage)
     , m_SelecteNode(selectedNode)
     , m_TimeStep(timeStep)
-    , m_MeshFolderNode(NULL)
-    , m_ModelFolderNode(NULL)
+    , m_MeshFolderNode(nullptr)
+    , m_ModelFolderNode(nullptr)
 {
     m_Interface=new sv4guiDataNodeOperationInterface;
 
@@ -79,8 +79,8 @@ void sv4guiMeshCreate::Activated()
 {
     ui->comboBox->clear();
 
-    m_ModelFolderNode=NULL;
-    m_MeshFolderNode=NULL;
+    m_ModelFolderNode=nullptr;
+    m_MeshFolderNode=nullptr;
 
     if(m_SelecteNode.IsNull())
         return;
@@ -145,7 +145,7 @@ void sv4guiMeshCreate::SetupMeshType(int idx)
         }
 
         sv4guiModel* model=dynamic_cast<sv4guiModel*>(modelNode->GetData());
-        if(model==NULL)
+        if(model==nullptr)
         {
             ui->comboBoxMeshType->clear();
             return;
@@ -175,13 +175,13 @@ void sv4guiMeshCreate::CreateMesh()
     QString selectedModelName=ui->comboBox->currentText();
     if(selectedModelName=="")
     {
-        QMessageBox::warning(NULL,"No Model Selected","Please select a model!");
+        QMessageBox::warning(nullptr,"No Model Selected","Please select a model!");
         return;
     }
 
     if(ui->comboBoxMeshType->currentIndex()==-1)
     {
-        QMessageBox::warning(NULL,"No Type Selected","Please select a mesh type!");
+        QMessageBox::warning(nullptr,"No Type Selected","Please select a mesh type!");
         return;
     }
 
@@ -189,14 +189,14 @@ void sv4guiMeshCreate::CreateMesh()
 
     if(selectedModelNode.IsNull())
     {
-        QMessageBox::warning(NULL,"No Model Found!","Please select a existing model!");
+        QMessageBox::warning(nullptr,"No Model Found!","Please select a existing model!");
         return;
     }
 
     sv4guiModel* model=dynamic_cast<sv4guiModel*>(selectedModelNode->GetData());
-    if(model==NULL || model->GetModelElement()==NULL)
+    if(model==nullptr || model->GetModelElement()==nullptr)
     {
-        QMessageBox::warning(NULL,"Model is invalid or empty!","Please make sure the model has valid data!");
+        QMessageBox::warning(nullptr,"Model is invalid or empty!","Please make sure the model has valid data!");
         return;
     }
 
@@ -204,13 +204,13 @@ void sv4guiMeshCreate::CreateMesh()
     std::string meshType=ui->comboBoxMeshType->currentText().toStdString();
     if( meshType=="MeshSim" && (modelType=="PolyData" || modelType=="OpenCASCADE") )
     {
-        QMessageBox::warning(NULL,"Not Compatible!", QString::fromStdString(meshType)+ " doesn't work with " +QString::fromStdString(modelType) + " model.");
+        QMessageBox::warning(nullptr,"Not Compatible!", QString::fromStdString(meshType)+ " doesn't work with " +QString::fromStdString(modelType) + " model.");
         return;
     }
 
     if( meshType=="TetGen" && modelType!="PolyData")
     {
-        QMessageBox::warning(NULL,"Not Compatible!", QString::fromStdString(meshType)+ " only works with PolyData model.");
+        QMessageBox::warning(nullptr,"Not Compatible!", QString::fromStdString(meshType)+ " only works with PolyData model.");
         return;
     }
 
@@ -225,13 +225,13 @@ void sv4guiMeshCreate::CreateMesh()
         auto meshName = ui->lineEditMeshName->text().trimmed();
         QString msg = "The name '" +  meshName + "' is not valid.\n" +
                       "Mesh names " + validName + ".\n";
-        QMessageBox::warning(NULL, "Path", msg);
+        QMessageBox::warning(nullptr, "Path", msg);
         return;
     }
 
     mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(meshName.c_str(),m_MeshFolderNode);
     if(exitingNode){
-        QMessageBox::warning(NULL,"Mesh Already Created","Please use a different mesh name!");
+        QMessageBox::warning(nullptr,"Mesh Already Created","Please use a different mesh name!");
         return;
     }
 

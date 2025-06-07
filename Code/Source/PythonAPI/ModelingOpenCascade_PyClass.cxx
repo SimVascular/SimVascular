@@ -76,7 +76,7 @@ PyDoc_STRVAR(PyOcctSolidClass_doc,
 ");
 
 PyMethodDef PyOcctSolidMethods[] = {
-  {NULL, NULL}
+  {nullptr, nullptr}
 };
 
 //-----------------
@@ -105,7 +105,7 @@ PyOcctSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyOcctSolidNew] PyOcctSolidNew " << std::endl;
   auto self = (PyOcctSolid*)type->tp_alloc(type, 0);
-  if (self != NULL) {
+  if (self != nullptr) {
       //self->super.id = 2;
   }
   return (PyObject *) self;
@@ -132,7 +132,7 @@ PyOcctSolidDealloc(PyOcctSolid* self)
 // designated initializers.
 //
 PyTypeObject PyOcctSolidType = {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   // Dotted name that includes both the module name and
   // the name of the type within the module.
   MODELING_OCCT_MODULE_CLASS,
@@ -175,7 +175,7 @@ SetOcctSolidTypeFields(PyTypeObject& solidType)
 void
 InitOcct()
 {
-  Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
+  Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(cvOCCTSolidModel::gOCCTManager);
   OCCTManager = XCAFApp_Application::GetApplication();
   Handle(TDocStd_Document) doc;
   OCCTManager->NewDocument("MDTV-XCAF", doc);

@@ -36,8 +36,8 @@
 //#include <QmitkDataManagerView.h>
 
 sv4guiContourGroupCreateAction::sv4guiContourGroupCreateAction()
-    : m_ContourGroupCreateWidget(NULL)
-    , m_Functionality(NULL)
+    : m_ContourGroupCreateWidget(nullptr)
+    , m_Functionality(nullptr)
 {
 }
 

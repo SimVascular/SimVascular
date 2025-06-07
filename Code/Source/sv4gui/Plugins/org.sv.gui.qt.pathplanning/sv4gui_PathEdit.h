@@ -32,6 +32,8 @@
 #ifndef SV4GUI_PATHEDIT_H
 #define SV4GUI_PATHEDIT_H
 
+#include <mitkRenderingManager.h>
+
 #include "sv4gui_PathSmooth.h"
 #include "sv4gui_PathCreate.h"
 #include "sv4gui_Path.h"
@@ -39,8 +41,8 @@
 #include "sv4gui_PathCreate.h"
 #include "sv4gui_QmitkFunctionality.h"
 
+#include <mitkILifecycleAwarePart.h>
 #include <QmitkStdMultiWidget.h>
-
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
 #include <mitkDataInteractor.h>
@@ -52,6 +54,7 @@ namespace Ui {
 }
 
 class sv4guiPathEdit : public sv4guiQmitkFunctionality
+
 {
     Q_OBJECT
 
@@ -107,8 +110,8 @@ public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
-    //    virtual void OnSelectionChanged(const QList<mitk::DataNode::Pointer>& nodes ) override;
-    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
+    virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/,
+                                    const QList<mitk::DataNode::Pointer>&  nodes) override;
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -116,9 +119,9 @@ public:
 
     virtual void NodeRemoved(const mitk::DataNode* node) override;
 
-//    virtual void Activated() override;
+    virtual void Activated() override;
 
-//    virtual void Deactivated() override;
+    virtual void Deactivated() override;
 
     virtual void Visible() override;
 
@@ -157,7 +160,9 @@ protected:
 
     mitk::DataNode::Pointer m_ImageNode;
 
-    QmitkStdMultiWidget* m_DisplayWidget;
+    // [DaveP] added to replace m_DisplayWidget.
+    mitk::IRenderWindowPart* m_RenderWindow;
+    //QmitkStdMultiWidget* m_DisplayWidget;
 
     bool m_UpdatingGUI;
 };

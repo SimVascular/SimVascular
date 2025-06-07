@@ -32,7 +32,7 @@
 #ifndef sv4guisvFSIPREFERENCEPAGE_H
 #define sv4guisvFSIPREFERENCEPAGE_H
 
-#include <berryIPreferences.h>
+#include <mitkIPreferences.h>
 #include <berryIQtPreferencePage.h>
 
 namespace Ui {
@@ -59,7 +59,7 @@ private slots:
   void SetFlowsolverPath();
 
 private:
-  berry::IPreferences::Pointer m_Preferences;
+  mitk::IPreferences* m_Preferences;
   QScopedPointer<Ui::sv4guisvFSIPreferencePage> m_Ui;
   QWidget* m_Control;
 

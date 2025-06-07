@@ -72,22 +72,25 @@ sv4gui_MachineLearningUtils::sv4gui_MachineLearningUtils(std::string network_typ
   PyRun_SimpleString("print(sys.version)");
 
   py_wrapper_mod = PyImport_ImportModule("sv_ml.sv_wrapper");
-  if (py_wrapper_mod == NULL){
+  if (py_wrapper_mod == nullptr){
     std::cout << "error failed to import sv_wrapper module\n";
   }
 
   py_wrapper_class = PyObject_GetAttrString(py_wrapper_mod, "SVWrapper");
-  if (py_wrapper_class == NULL){
+  if (py_wrapper_class == nullptr){
     std::cout << "error SVWrapper class not loaded\n";
   }
 
   PyObject* pargs  = Py_BuildValue("(s)", network_type.c_str());
-  if (pargs == NULL){
+  if (pargs == nullptr){
     std::cout << "error SVWrapper args not loaded\n";
   }
 
-  py_wrapper_inst  = PyEval_CallObject(py_wrapper_class, pargs);
-  if (py_wrapper_inst == NULL){
+  // [DaveP] PyEval_CallObject has been removed from Python.
+  py_wrapper_inst  = PyObject_CallOneArg(py_wrapper_class, pargs);
+  //py_wrapper_inst  = PyEval_CallObject(py_wrapper_class, pargs);
+
+  if (py_wrapper_inst == nullptr){
     std::cout << "error SVWrapper instance not loaded\n";
   }
 
@@ -118,9 +121,9 @@ std::string sv4gui_MachineLearningUtils::setImage(std::string image_path){
   PyObject* py_res = PyObject_CallMethod(py_wrapper_inst, "set_image",
                         "s", image_path.c_str());
 
-  if (py_res == NULL){
+  if (py_res == nullptr){
     std::cout << "Error setting image, sv_wrapper returned null\n";
-    return NULL;
+    return nullptr;
   }
 
   char* cstr;
@@ -156,7 +159,7 @@ std::vector<std::vector<double>> sv4gui_MachineLearningUtils::segmentPathPoint(s
   PyObject* py_res = PyObject_CallMethod(py_wrapper_inst, "segment",
                         "s", msg_string.c_str());
 
-  if (py_res == NULL){
+  if (py_res == nullptr){
     std::cout << "Error calling sv_wrapper.segment\n";
     return empty_points;
   }
@@ -189,7 +192,7 @@ std::vector<std::vector<double>> sv4gui_MachineLearningUtils::segmentPathPoint(s
 void sv4gui_MachineLearningUtils::sampleNetwork(){
   PyObject* py_res = PyObject_CallMethod(py_wrapper_inst, "sample", "");
 
-  if (py_res == NULL){
+  if (py_res == nullptr){
     std::cout << "Error calling sv_wrapper.sample\n";
   }
 }

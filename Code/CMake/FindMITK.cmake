@@ -38,6 +38,13 @@
 
 set(proj MITK)
 
+set(msg "[Code/CMake/FindMITK.cmake] ")
+message(STATUS "${msg} ") 
+message(STATUS "${msg} ==========================================================")
+message(STATUS "${msg} =============== Code/CMake  FindMITK.cmake ===============")
+message(STATUS "${msg} ==========================================================")
+message(STATUS "${msg} MITK_DIR: ${MITK_DIR}") 
+
 include(CMakeFindFrameworks)
 include(FindPackageHandleStandardArgs)
 include(GetPrerequisites)
@@ -54,19 +61,19 @@ endif()
 #-----------------------------------------------------------------------------
 # Libraries
 set(${proj}_LIBNAMES CppMicroServices
-                     CTKCommandLineModulesBackendLocalProcess
-                     CTKCommandLineModulesCore
-                     CTKCommandLineModulesFrontendQtGui
-                     CTKCore
-                     CTKDICOMCore
-                     CTKDICOMWidgets
-                     CTKPluginFramework
-                     CTKScriptingPythonCore
-                     CTKScriptingPythonWidgets
-                     #CTKVisualizationVTKCore
-                     CTKWidgets
-                     CTKXNATCore
-                     mbilog
+                     # CTKCommandLineModulesBackendLocalProcess
+                     # CTKCommandLineModulesCore
+                     # CTKCommandLineModulesFrontendQtGui
+                     # CTKCore
+                     # CTKDICOMCore
+                     # CTKDICOMWidgets
+                     # CTKPluginFramework
+                     # CTKScriptingPythonCore
+                     # CTKScriptingPythonWidgets
+                     # CTKVisualizationVTKCore
+                     # CTKWidgets
+                     # CTKXNATCore
+                     # dp mbilog
                      MitkAlgorithmsExt
                      MitkAppUtil
                      MitkCore
@@ -80,9 +87,9 @@ set(${proj}_LIBNAMES CppMicroServices
                      MitkSegmentation
                      MitkSegmentationUI
                      MitkSurfaceInterpolation
-                     PythonQt
-                     tinyxml
-                     mbilog
+                     # dp PythonQt
+                     # tinyxml
+                     # dp mbilog
                      PocoFoundation
                      PocoUtil
                      dcmjpeg
@@ -112,7 +119,7 @@ set(${proj}_PLUGIN_LIBNAMES org_mitk_core_services
                             org_mitk_gui_common
                             org_mitk_gui_qt_application
                             org_mitk_gui_qt_common
-                            org_mitk_gui_qt_common_legacy
+                            # org_mitk_gui_qt_common_legacy
                             org_mitk_gui_qt_datamanager
                             org_mitk_gui_qt_stdmultiwidgeteditor
                             org_mitk_gui_qt_ext
@@ -122,11 +129,13 @@ set(${proj}_PLUGIN_LIBNAMES org_mitk_core_services
 # Add requestion components
 set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})
 
-#-----------------------------------------------------------------------------
-# Header
+# Set header file names. 
+#
+# [davep] not found
+#                    "signature_of_eigen3_matrix_library"             #eigen3
+#
 set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "ctkPluginFrameworkLauncher.h"                   #ctk/PluginFramework
-                    "signature_of_eigen3_matrix_library"             #eigen3
                     "mitkVersion.h"                                  #mitk
                     "usGlobalConfig.h"                               #mitk/configs
                     "MitkAlgorithmsExtExports.h"                     #mitk/exports
@@ -143,7 +152,8 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "ui_QmitkAboutDialogGUI.h"                       #mitk/QtWidgetsExt
                     "QmitkAboutDialog.h"                             #mitk/QtWidgetsExt/include
                     "mitkSceneIO.h"                                  #mitk/SceneSerialization/include
-                    "mbilog.h"                                       #mitk/Utilities/mbilog
+                    # dp "mbilog.h"                                       #mitk/Utilities/mbilog
+                    "mitkLog.h"  # dp
                     "mitkContourElement.h"                           #mitk/Modules/ContourModel/DataManagement
                     "usCoreModuleContext_p.h"                        #mitk/Modules/CppMicroServices/core/src/module
                     "usLDAPExpr_p.h"                                 #mitk/Modules/CppMicroServices/core/src/service
@@ -153,18 +163,18 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "mitkLabel.h"                                    #mitk/Modules/Multilabel
                     "itkAdaptiveThresholdIterator.h"                 #mitk/Modules/Segmentation/Algorithms
                     "mitkSegmentationInterpolationController.h"      #mitk/Modules/Segmentation/Controllers
-                    "mitkAdaptiveRegionGrowingTool.h"                #mitk/Modules/Segmentation/Interactions
-                    "ui_QmitkAdaptiveRegionGrowingToolGUIControls.h" #mitk/Modules/SegmentationUI
-                    "QmitkAdaptiveRegionGrowingToolGUI.h"            #mitk/Modules/SegmentationUI/Qmitk
+                    # "mitkAdaptiveRegionGrowingTool.h"                #mitk/Modules/Segmentation/Interactions
+                    # "ui_QmitkAdaptiveRegionGrowingToolGUIControls.h" #mitk/Modules/SegmentationUI
+                    # "QmitkAdaptiveRegionGrowingToolGUI.h"            #mitk/Modules/SegmentationUI/Qmitk
                     "mitkSurfaceInterpolationController.h"           #mitk/Modules/SurfaceInterpolation
                     "ui_QmitkFileReaderOptionsDialog.h"              #mitk/Modules/QtWidgets
-                    "PythonQt.h"                                     #PythonQt
-                    "tinyxml.h"                                      #tinyxml
+                    # dp "PythonQt.h"                                     #PythonQt
+                    # "tinyxml.h"                                      #tinyxml
                     "mitkIDataStorageService.h"                      #mitk/plugins/org.mitk.core.services
                     "mitkDataNodeSelection.h"                        #mitk/plugins/org.mitk.gui.common
                     "QmitkFileOpenAction.h"                          #mitk/plugins/org.mitk.gui.qt.application
                     "QmitkAbstractView.h"                            #mitk/plugins/org.mitk.gui.qt.common
-                    "QmitkFunctionality.h"                           #mitk/plugins/org.mitk.gui.qt.common.legacy
+                    # "QmitkFunctionality.h"                           #mitk/plugins/org.mitk.gui.qt.common.legacy
                     "mitkIContextMenuAction.h"                       #mitk/plugins/org.mitk.gui.qt.datamanager
                     "QmitkStdMultiWidgetEditor.h"                    #mitk/plugins/org.mitk.gui.qt.stdmultiwidgeteditor
                     "QmitkExtActionBarAdvisor.h"                     #mitk/plugins/org.mitk.gui.qt.ext
@@ -174,6 +184,12 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "berryQtViewPart.h"                              #mitk/plugins/org.blueberry.ui.qt
                     "berryQtWorkbenchAdvisor.h"                      #mitk/plugins/org.blueberry.ui.qt/application
                     "berryIntroPart.h"                               #mitk/plugins/org.blueberry.ui.qt/intro
+                    "QmitkSlicesInterpolator.h"
+                    "QmitkToolGUIArea.h"
+                    # "QmitkToolReferenceDataSelectionBox.h"
+                    "QmitkToolSelectionBox.h"
+                    "mitkTool.h"
+                    "QmitkNewSegmentationDialog.h"
                     )
 
 if(${proj}_VERSION STREQUAL "2016.03")
@@ -185,6 +201,7 @@ elseif(${proj}_VERSION VERSION_GREATER "2018.01")
     "mitkLogoAnnotation.h"                           #mitk/Modules/Annotation
     )
 endif()
+
 if(SV_USE_MITK_SEGMENTATION)
     list(APPEND ${proj}_HEADERS
         "mitkLabelSetImage.h"                            #mitk/Modules/Multilabel
@@ -192,9 +209,10 @@ if(SV_USE_MITK_SEGMENTATION)
         "mitkMorphologicalOperations.h"                  #mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations
         )
 endif()
-#-----------------------------------------------------------------------------
+
 # Find Libraries
-#-----------------------------------------------------------------------------
+#
+message(STATUS "${msg} Find libraries ... ") 
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
 set(lib_sub_path "lib")
 set(lib64_sub_path "lib64")
@@ -205,12 +223,12 @@ foreach(p ${${proj}_POSSIBLE_PATHS})
 endforeach()
 
 set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS}
-  ${${proj}_DIR}
-  ${${proj}_DIR}/shared_object
-  ${${proj}_DIR}/dll
-  ${${proj}_DIR}/lib/${CMAKE_BUILD_TYPE}
-  ${${proj}_DIR}/lib64
-  ${${proj}_DIR}/lib64/${CMAKE_BUILD_TYPE}
+  ${${proj}_DIR};
+  ${${proj}_DIR}/shared_object;
+  ${${proj}_DIR}/dll;
+  ${${proj}_DIR}/lib/${CMAKE_BUILD_TYPE};
+  ${${proj}_DIR}/lib64;
+  ${${proj}_DIR}/lib64/${CMAKE_BUILD_TYPE};
   )
 
 set(${proj}_LIBS_MISSING ${${proj}_LIBNAMES})
@@ -261,9 +279,11 @@ if(${proj}_LIBRARIES)
         get_filename_component(${proj}_LIBRARY_DIR ${temp_path} PATH)
 endif()
 
-#-----------------------------------------------------------------------------
+message(STATUS "${msg} ----- Done find libraries ") 
+
 # Find Plugins
-#-----------------------------------------------------------------------------
+#
+message(STATUS "${msg} Find plugins ... ") 
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
 set(lib_sub_path "lib")
 
@@ -333,10 +353,10 @@ if(${proj}_PLUGIN_LIBRARIES)
         get_filename_component(${proj}_PLUGIN_LIBRARY_DIR ${temp_path} PATH)
 endif()
 
-#-----------------------------------------------------------------------------
-# Find Include Directory
-#-----------------------------------------------------------------------------
+message(STATUS "${msg} ----- Done find plugins ") 
 
+# Find Include Directory
+#
 set(${proj}_POSSIBLE_INCLUDE_PATHS
   "${${proj}_DIR}/*"
   "${${proj}_DIR}/include/*"
@@ -347,13 +367,20 @@ set(${proj}_POSSIBLE_INCLUDE_PATHS
   "${${proj}_DIR}/include/*/*/*/*/*/*"
   )
 
-#-----------------------------------------------------------------------------
 # Search for header
+#
+message(STATUS "${msg} Find headers ...") 
+#message(STATUS "${msg} headers: ${${proj}_HEADERS}") 
+
 set(${proj}_HEADERS_MISSING ${${proj}_HEADERS})
 list(REMOVE_DUPLICATES ${proj}_HEADERS_MISSING)
 set(${proj}_HEADERS_WORK "")
+
 foreach(header ${${proj}_HEADERS})
   unset(${proj}_${header}_HEADER CACHE)
+  #message(STATUS "${msg} ------------------------") 
+  #message(STATUS "${msg} header: ${header}") 
+
   find_path(${proj}_${header}_HEADER
     NAMES
     ${header}
@@ -364,17 +391,27 @@ foreach(header ${${proj}_HEADERS})
 
   mark_as_advanced(${proj}_${header}_HEADER)
   set(${proj}_HEADER_FULLNAMES ${${proj}_HEADER_FULLNAMES} ${proj}_${header}_HEADER)
+
   if(${proj}_${header}_HEADER)
     set(${proj}_HEADERS_WORK ${${proj}_HEADERS_WORK} "${${proj}_${header}_HEADER}")
     list(REMOVE_ITEM ${proj}_HEADERS_MISSING ${header})
+    #message(STATUS "${msg} Found ${header}") 
+  else()
+    message(STATUS "${msg} ---------------------------------") 
+    message(STATUS "${msg} header: ${header}") 
+    message(FATAL_ERROR "${msg} *** Not found ${header}") 
   endif()
+
 endforeach()
 
 list(LENGTH ${proj}_HEADERS_WORK ${proj}_NUMHEADERS)
 list(LENGTH ${proj}_HEADERS ${proj}_NUMHEADERS_EXPECTED)
 #message("${${proj}_NUMHEADERS} ${${proj}_NUMHEADERS_EXPECTED}")
+
 if (NOT ${proj}_NUMHEADERS EQUAL ${proj}_NUMHEADERS_EXPECTED)
   set(${proj}_HEADERS_WORK "${proj}_HEADERS-NOTFOUND")
+  message("${msg} MITK_NUMHEADERS: ${MITK_NUMHEADERS}")
+  message("${msg} MITK_NUMHEADERS_EXPECTED: ${MITK_NUMHEADERS_EXPECTED}")
   message(FATAL_ERROR "${proj}_HEADERS_MISSING: ${${proj}_HEADERS_MISSING}")
 endif()
 
@@ -382,6 +419,8 @@ set(${proj}_HEADERS_WORK ${${proj}_DIR}/include ${${proj}_HEADERS_WORK})
 set(${proj}_INCLUDE_DIRS  ${${proj}_HEADERS_WORK} CACHE STRING
 	"${proj} include directories" FORCE)
 list(GET ${proj}_INCLUDE_DIRS 0 ${proj}_INCLUDE_DIR)
+
+message(STATUS "${msg} ----- Done find headers ") 
 
 #-----------------------------------------------------------------------------
 # Handle Standard Args
