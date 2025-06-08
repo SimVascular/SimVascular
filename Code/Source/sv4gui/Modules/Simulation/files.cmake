@@ -33,6 +33,7 @@ set(H_FILES
     sv4gui_MitkSimJob.h
     sv4gui_MitkSimJobIO.h
     sv4gui_SimulationUtils.h
+    sv4gui_SimXmlWriter.h
     sv4gui_MitkSimulationObjectFactory.h
 )
 
@@ -41,6 +42,7 @@ set(CPP_FILES
     sv4gui_MitkSimJob.cxx
     sv4gui_MitkSimJobIO.cxx
     sv4gui_SimulationUtils.cxx
+    sv4gui_SimXmlWriter.cxx
     sv4gui_MitkSimulationObjectFactory.cxx
 )
 

@@ -175,7 +175,7 @@ void sv4guiSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::Ex
         return;
     }
 
-    QString title = "SimVascular SV Simulation";
+    QString title = "SimVascular CFD Simulation";
     QMessageBox::Icon icon=QMessageBox::NoIcon;
     QMessageBox mb(nullptr); //svSimualtionView maybe doesn't exist.
     QString status="";

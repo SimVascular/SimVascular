@@ -30,6 +30,7 @@
  */
 
 #include "sv4gui_SimulationUtils.h"
+#include "sv4gui_SimXmlWriter.h"
 
 #include "sv4gui_StringUtils.h"
 #include "sv_integrate_surface.h"
@@ -45,6 +46,36 @@
 #include <vtkDoubleArray.h>
 #include <vtkAbstractArray.h>
 
+//-----------------------
+// CreateSolverInputFile
+//-----------------------
+//
+void sv4guiSimulationUtils::CreateSolverInputFile(sv4guiSimJob* job, const std::string& file_name)
+{
+  #define debug_CreateSolverInputFile
+  #ifdef debug_CreateSolverInputFile
+  std::string dmsg("[sv4guiSimulationUtils::CreateSolverInputFile] ");
+  std::cout << dmsg << "========== CreateSolverInputFile ==========" << std::endl;
+  #endif
+
+  std::ofstream file_stream(file_name);
+  if (!file_stream.is_open()) {
+    return;
+  }
+  file_stream.close(); 
+ 
+  Sv4GuiSimXmlWriter xml_writer;
+ 
+  xml_writer.create_document(job, file_name);
+}
+
+//----------------------------
+// CreatePreSolverFileContent
+//----------------------------
+// Create the .svpre file.
+//
+// Old svSolver code.
+//
 std::string sv4guiSimulationUtils::CreatePreSolverFileContent(sv4guiSimJob* job, std::string outputDir)
 {
     std::stringstream ss;
@@ -232,6 +263,11 @@ std::string sv4guiSimulationUtils::CreatePreSolverFileContent(sv4guiSimJob* job,
     return ss.str();
 }
 
+//-----------------------
+// CreateRCRTFileContent
+//-----------------------
+// Old svSolver code.
+//
 std::string sv4guiSimulationUtils::CreateRCRTFileContent(sv4guiSimJob* job)
 {
     std::stringstream ss;
@@ -268,6 +304,7 @@ std::string sv4guiSimulationUtils::CreateRCRTFileContent(sv4guiSimJob* job)
         return "2\n"+ss.str();
 }
 
+// Old svSolver code.
 std::string sv4guiSimulationUtils::CreateCORTFileContent(sv4guiSimJob* job)
 {
     std::stringstream ss;
@@ -373,248 +410,250 @@ std::string sv4guiSimulationUtils::CreateCORTFileContent(sv4guiSimJob* job)
     }
 }
 
+//-----------------------------
+// CreateFlowSolverFileContent
+//-----------------------------
+// Create the solver.xml file.
+//
 std::string sv4guiSimulationUtils::CreateFlowSolverFileContent(sv4guiSimJob* job)
 {
-    std::stringstream ss;
-    std::map<std::string,int> IDs=job->GetIDs();
+  #define debug_CreateFlowSolverFileContent
+  #ifdef debug_CreateFlowSolverFileContent
+  std::string dmsg("[sv4guiSimulationUtils::CreateFlowSolverFileContent] ");
+  std::cout << dmsg << "========== CreateFlowSolverFileContent ==========" << std::endl;
+  #endif
 
-    auto basicProps=job->GetBasicProps();
-    auto solverProps=job->GetSolverProps();
+  std::stringstream ss;
+  std::map<std::string,int> IDs = job->GetIDs();
 
-    //Fluid Properties
-    //======================================================
-    ss << "Density: " << basicProps["Fluid Density"] <<"\n";
-    ss << "Viscosity: " << basicProps["Fluid Viscosity"] <<"\n";
+  auto basicProps = job->GetBasicProps();
+  auto solverProps = job->GetSolverProps();
+
+  //Fluid Properties
+  //======================================================
+  ss << "Density: " << basicProps["Fluid Density"] <<"\n";
+  ss << "Viscosity: " << basicProps["Fluid Viscosity"] <<"\n";
+  ss << "\n";
+
+  //Time Steps
+  //======================================================
+  ss << "Number of Timesteps: " << solverProps["Number of Timesteps"] <<"\n";
+  ss << "Time Step Size: " << solverProps["Time Step Size"] <<"\n";
+  ss << "\n";
+
+  //Output Control
+  //======================================================
+  ss << "Number of Timesteps between Restarts: " << solverProps["Number of Timesteps between Restarts"] <<"\n";
+
+  if (solverProps["Output Surface Stress"] == "True") {
+    ss << "Number of Force Surfaces: 1\n";
+    ss << "Surface ID's for Force Calculation: 1\n";
+    ss << "Force Calculation Method: " << solverProps["Force Calculation Method"] <<"\n";
+  }
+
+  ss << "Print Average Solution: " << solverProps["Print Average Solution"] <<"\n";
+  ss << "Print Error Indicators: " << solverProps["Print Error Indicators"] <<"\n";
+  ss << "\n";
+
+  //BCT Prescribed Velocities
+  //======================================================
+
+  if (job->GetVelocityCapNumber() > 0) {
+    ss << "Time Varying Boundary Conditions From File: True\n";
+  } else {
+    ss << "Time Varying Boundary Conditions From File: False\n";
+  }
+  ss << "\n";
+
+  // Step Construction
+  //=====================================================
+  int stepNumber=std::stoi(solverProps["Step Construction"]);
+
+  if (stepNumber > 0) {
+    ss << "Step Construction:";
+    for(int i=0;i<stepNumber;i++) {
+      ss << " 0 1";
+    }
+
+    ss << "\n";
+  }
+  ss << "\n";
+
+  //BC: Resistance
+  //===================================================
+  auto capProps=job->GetCapProps();
+  std::vector<int> RIDs;
+  std::vector<std::string> RValues;
+  auto it = capProps.begin();
+
+  while(it != capProps.end()) {
+    if(it->first!="" && it->second["BC Type"]=="Resistance") {
+      RIDs.push_back(IDs[it->first]);
+      RValues.push_back(it->second["Values"]);
+    }
+    it++;
+  }
+
+  if (RIDs.size() > 0) {
+    ss << "Number of Resistance Surfaces: " << RIDs.size() <<"\n";
+    ss << "List of Resistance Surfaces:";
+
+    for(int i=0;i<RIDs.size();i++) {
+      ss << " " << RIDs[i];
+    }
     ss << "\n";
 
-    //Time Steps
-    //======================================================
-    ss << "Number of Timesteps: " << solverProps["Number of Timesteps"] <<"\n";
-    ss << "Time Step Size: " << solverProps["Time Step Size"] <<"\n";
-    ss << "\n";
-
-    //Output Control
-    //======================================================
-    ss << "Number of Timesteps between Restarts: " << solverProps["Number of Timesteps between Restarts"] <<"\n";
-    if(solverProps["Output Surface Stress"]=="True")
-    {
-        ss << "Number of Force Surfaces: 1\n";
-        ss << "Surface ID's for Force Calculation: 1\n";
-        ss << "Force Calculation Method: " << solverProps["Force Calculation Method"] <<"\n";
-    }
-    ss << "Print Average Solution: " << solverProps["Print Average Solution"] <<"\n";
-    ss << "Print Error Indicators: " << solverProps["Print Error Indicators"] <<"\n";
-    ss << "\n";
-
-    //BCT Prescribed Velocities
-    //======================================================
-    if(job->GetVelocityCapNumber()>0)
-        ss << "Time Varying Boundary Conditions From File: True\n";
-    else
-        ss << "Time Varying Boundary Conditions From File: False\n";
-
-    ss << "\n";
-
-    //Step Construction
-    //=====================================================
-    int stepNumber=std::stoi(solverProps["Step Construction"]);
-    if(stepNumber>0)
-    {
-        ss << "Step Construction:";
-        for(int i=0;i<stepNumber;i++)
-            ss << " 0 1";
-
-        ss << "\n";
+    ss << "Resistance Values:";
+    for(int i=0;i<RValues.size();i++) {
+      ss << " " << RValues[i];
     }
     ss << "\n";
 
-    //BC: Resistance
-    //===================================================
-    auto capProps=job->GetCapProps();
-    std::vector<int> RIDs;
-    std::vector<std::string> RValues;
-    auto it = capProps.begin();
-    while(it != capProps.end())
-    {
-        if(it->first!="" && it->second["BC Type"]=="Resistance")
-        {
-            RIDs.push_back(IDs[it->first]);
-            RValues.push_back(it->second["Values"]);
-        }
-        it++;
+    ss << "\n";
+  }
+
+  //BC: RCR
+  //===================================================
+  std::vector<int> RCRIDs;
+  it = capProps.begin();
+
+  while(it != capProps.end()) {
+    if(it->first!="" && it->second["BC Type"]=="RCR") {
+      RCRIDs.push_back(IDs[it->first]);
     }
-    if(RIDs.size()>0)
-    {
-        ss << "Number of Resistance Surfaces: " << RIDs.size() <<"\n";
+    it++;
+  }
 
-        ss << "List of Resistance Surfaces:";
-        for(int i=0;i<RIDs.size();i++)
-        {
-            ss << " " << RIDs[i];
-        }
-        ss << "\n";
-
-        ss << "Resistance Values:";
-        for(int i=0;i<RValues.size();i++)
-        {
-            ss << " " << RValues[i];
-        }
-        ss << "\n";
-
-        ss << "\n";
+  if (RCRIDs.size() > 0) {
+    ss << "Number of RCR Surfaces: " << RCRIDs.size() <<"\n";
+    ss << "List of RCR Surfaces:";
+    for(int i=0;i<RCRIDs.size();i++) {
+      ss << " " << RCRIDs[i];
     }
-
-    //BC: RCR
-    //===================================================
-    std::vector<int> RCRIDs;
-    it = capProps.begin();
-    while(it != capProps.end())
-    {
-        if(it->first!="" && it->second["BC Type"]=="RCR")
-        {
-            RCRIDs.push_back(IDs[it->first]);
-        }
-        it++;
-    }
-    if(RCRIDs.size()>0)
-    {
-        ss << "Number of RCR Surfaces: " << RCRIDs.size() <<"\n";
-
-        ss << "List of RCR Surfaces:";
-        for(int i=0;i<RCRIDs.size();i++)
-        {
-            ss << " " << RCRIDs[i];
-        }
-        ss << "\n";
-
-        ss << "RCR Values From File: True\n";
-
-        ss << "\n";
-    }
-
-    //BC: Impedance
-    //===================================================
-    std::vector<int> ImpIDs;
-    it = capProps.begin();
-    while(it != capProps.end())
-    {
-        if(it->first!="" && it->second["BC Type"]=="Impedance")
-        {
-            ImpIDs.push_back(IDs[it->first]);
-        }
-        it++;
-    }
-    if(ImpIDs.size()>0)
-    {
-        ss << "Number of Impedance Surfaces: " << ImpIDs.size() <<"\n";
-
-        ss << "List of Impedance Surfaces:";
-        for(int i=0;i<ImpIDs.size();i++)
-        {
-            ss << " " << ImpIDs[i];
-        }
-        ss << "\n";
-
-        ss << "Impedance From File: True\n";
-
-        ss << "\n";
-    }
-
-    //BC: Coronary
-    //===================================================
-    std::vector<int> CorIDs;
-    it = capProps.begin();
-    while(it != capProps.end())
-    {
-        if(it->first!="" && it->second["BC Type"]=="Coronary")
-        {
-            CorIDs.push_back(IDs[it->first]);
-        }
-        it++;
-    }
-    if(CorIDs.size()>0)
-    {
-        ss << "Number of COR Surfaces: " << CorIDs.size() <<"\n";
-
-        ss << "List of COR Surfaces:";
-        for(int i=0;i<CorIDs.size();i++)
-        {
-            ss << " " << CorIDs[i];
-        }
-        ss << "\n";
-
-        ss << "COR Values From File: True\n";
-
-        ss << "\n";
-    }
-
-    //BC: Closedloop
-    //===================================================
-    //to do
-
-    //Deformable
-    //==================================================
-    auto wallProps=job->GetWallProps();
-    if(wallProps["Type"]=="deformable")
-    {
-        ss << "Deformable Wall: True\n";
-        ss << "Thickness of Vessel Wall: " << wallProps["Thickness"] << "\n";
-        ss << "Young Mod of Vessel Wall: " << wallProps["Elastic Modulus"] << "\n";
-        ss << "Density of Vessel Wall: " << wallProps["Density"] <<"\n";
-        ss << "Poisson Ratio of Vessel Wall: " << wallProps["Poisson Ratio"] << "\n";
-        ss << "Shear Constant of Vessel Wall: " << wallProps["Shear Constant"] << "\n";
-    }
-    else if(wallProps["Type"]=="variable")
-    {
-        ss << "Deformable Wall: True\n";
-        ss << "Variable Wall Thickness and Young Mod: True\n";
-        ss << "Density of Vessel Wall: " << wallProps["Density"] <<"\n";
-        ss << "Poisson Ratio of Vessel Wall: " << wallProps["Poisson Ratio"] << "\n";
-        ss << "Shear Constant of Vessel Wall: " << wallProps["Shear Constant"] << "\n";
-    }
-
-    //Advanced
-    //======================================================
-
-    //BC: coupling
-    //==================================================
-    ss << "Pressure Coupling: " << solverProps["Pressure Coupling"] <<"\n";
-    ss << "Number of Coupled Surfaces: " << job->GetPressureCapNumber() <<"\n";
     ss << "\n";
 
-    //BC: Backflow Control
-    //===================================================
-    ss << "Backflow Stabilization Coefficient: " << solverProps["Backflow Stabilization Coefficient"] <<"\n";
+    ss << "RCR Values From File: True\n";
+    ss << "\n";
+  }
 
+  //BC: Impedance
+  //===================================================
+  std::vector<int> ImpIDs;
+  it = capProps.begin();
 
-    //Non-linear Iteration Control
-    //--------------------------------------------------
-    ss << "Residual Control: " << solverProps["Residual Control"] <<"\n";
-    ss << "Residual Criteria: " << solverProps["Residual Criteria"] <<"\n";
-    ss << "Minimum Required Iterations: " << solverProps["Minimum Required Iterations"] <<"\n";
-    //Linear Solver
-    //--------------------------------------------------
-    ss << "svLS Type: " << solverProps["svLS Type"] <<"\n";
-    ss << "Number of Krylov Vectors per GMRES Sweep: " << solverProps["Number of Krylov Vectors per GMRES Sweep"] <<"\n";
-    ss << "Number of Solves per Left-hand-side Formation: " << solverProps["Number of Solves per Left-hand-side Formation"] <<"\n";
-    ss << "Tolerance on Momentum Equations: " << solverProps["Tolerance on Momentum Equations"] <<"\n";
-    ss << "Tolerance on Continuity Equations: " << solverProps["Tolerance on Continuity Equations"] <<"\n";
-    ss << "Tolerance on svLS NS Solver: " << solverProps["Tolerance on svLS NS Solver"] <<"\n";
-    ss << "Maximum Number of Iterations for svLS NS Solver: " << solverProps["Maximum Number of Iterations for svLS NS Solver"] <<"\n";
-    ss << "Maximum Number of Iterations for svLS Momentum Loop: " << solverProps["Maximum Number of Iterations for svLS Momentum Loop"] <<"\n";
-    ss << "Maximum Number of Iterations for svLS Continuity Loop: " << solverProps["Maximum Number of Iterations for svLS Continuity Loop"] <<"\n";
-    //Discretization Control
-    //----------------------------------------------------
-    ss << "Time Integration Rule: " << solverProps["Time Integration Rule"] <<"\n";
-    ss << "Time Integration Rho Infinity: " << solverProps["Time Integration Rho Infinity"] <<"\n";
-    ss << "Flow Advection Form: " << solverProps["Flow Advection Form"] <<"\n";
-    ss << "Quadrature Rule on Interior: " << solverProps["Quadrature Rule on Interior"] <<"\n";
-    ss << "Quadrature Rule on Boundary: " << solverProps["Quadrature Rule on Boundary"] <<"\n";
+  while(it != capProps.end()) {
+    if(it->first!="" && it->second["BC Type"]=="Impedance") {
+      ImpIDs.push_back(IDs[it->first]);
+    }
+    it++;
+  }
 
+  if (ImpIDs.size()>0) {
+    ss << "Number of Impedance Surfaces: " << ImpIDs.size() <<"\n";
 
-    return ss.str();
+    ss << "List of Impedance Surfaces:";
+    for(int i=0;i<ImpIDs.size();i++) {
+      ss << " " << ImpIDs[i];
+    }
+    ss << "\n";
+
+    ss << "Impedance From File: True\n";
+
+    ss << "\n";
+  }
+
+  //BC: Coronary
+  //===================================================
+  std::vector<int> CorIDs;
+  it = capProps.begin();
+
+  while(it != capProps.end()) {
+    if(it->first!="" && it->second["BC Type"]=="Coronary") {
+      CorIDs.push_back(IDs[it->first]);
+    }
+    it++;
+  }
+
+  if(CorIDs.size()>0) {
+    ss << "Number of COR Surfaces: " << CorIDs.size() <<"\n";
+
+    ss << "List of COR Surfaces:";
+    for(int i=0;i<CorIDs.size();i++) {
+      ss << " " << CorIDs[i];
+    }
+    ss << "\n";
+    ss << "COR Values From File: True\n";
+    ss << "\n";
+  }
+
+  //Deformable
+  //==================================================
+  auto wallProps=job->GetWallProps();
+
+  if(wallProps["Type"]=="deformable") {
+    ss << "Deformable Wall: True\n";
+    ss << "Thickness of Vessel Wall: " << wallProps["Thickness"] << "\n";
+    ss << "Young Mod of Vessel Wall: " << wallProps["Elastic Modulus"] << "\n";
+    ss << "Density of Vessel Wall: " << wallProps["Density"] <<"\n";
+    ss << "Poisson Ratio of Vessel Wall: " << wallProps["Poisson Ratio"] << "\n";
+    ss << "Shear Constant of Vessel Wall: " << wallProps["Shear Constant"] << "\n";
+
+  } else if(wallProps["Type"]=="variable") {
+    ss << "Deformable Wall: True\n";
+    ss << "Variable Wall Thickness and Young Mod: True\n";
+    ss << "Density of Vessel Wall: " << wallProps["Density"] <<"\n";
+    ss << "Poisson Ratio of Vessel Wall: " << wallProps["Poisson Ratio"] << "\n";
+    ss << "Shear Constant of Vessel Wall: " << wallProps["Shear Constant"] << "\n";
+  }
+
+  //Advanced
+  //======================================================
+
+  //BC: coupling
+  //==================================================
+  ss << "Pressure Coupling: " << solverProps["Pressure Coupling"] <<"\n";
+  ss << "Number of Coupled Surfaces: " << job->GetPressureCapNumber() <<"\n";
+  ss << "\n";
+
+  //BC: Backflow Control
+  //===================================================
+  ss << "Backflow Stabilization Coefficient: " << solverProps["Backflow Stabilization Coefficient"] <<"\n";
+
+  //Non-linear Iteration Control
+  //--------------------------------------------------
+  ss << "Residual Control: " << solverProps["Residual Control"] <<"\n";
+  ss << "Residual Criteria: " << solverProps["Residual Criteria"] <<"\n";
+  ss << "Minimum Required Iterations: " << solverProps["Minimum Required Iterations"] <<"\n";
+
+  // Linear Solver
+  //--------------------------------------------------
+  ss << "svLS Type: " << solverProps["svLS Type"] <<"\n";
+  ss << "Number of Krylov Vectors per GMRES Sweep: " << solverProps["Number of Krylov Vectors per GMRES Sweep"] <<"\n";
+  ss << "Number of Solves per Left-hand-side Formation: " << solverProps["Number of Solves per Left-hand-side Formation"] <<"\n";
+  ss << "Tolerance on Momentum Equations: " << solverProps["Tolerance on Momentum Equations"] <<"\n";
+  ss << "Tolerance on Continuity Equations: " << solverProps["Tolerance on Continuity Equations"] <<"\n";
+  ss << "Tolerance on svLS NS Solver: " << solverProps["Tolerance on svLS NS Solver"] <<"\n";
+  ss << "Maximum Number of Iterations for svLS NS Solver: " << solverProps["Maximum Number of Iterations for svLS NS Solver"] <<"\n";
+  ss << "Maximum Number of Iterations for svLS Momentum Loop: " << solverProps["Maximum Number of Iterations for svLS Momentum Loop"] <<"\n";
+  ss << "Maximum Number of Iterations for svLS Continuity Loop: " << solverProps["Maximum Number of Iterations for svLS Continuity Loop"] <<"\n";
+
+  //Discretization Control
+  //----------------------------------------------------
+  ss << "Time Integration Rule: " << solverProps["Time Integration Rule"] <<"\n";
+  ss << "Time Integration Rho Infinity: " << solverProps["Time Integration Rho Infinity"] <<"\n";
+  ss << "Flow Advection Form: " << solverProps["Flow Advection Form"] <<"\n";
+  ss << "Quadrature Rule on Interior: " << solverProps["Quadrature Rule on Interior"] <<"\n";
+  ss << "Quadrature Rule on Boundary: " << solverProps["Quadrature Rule on Boundary"] <<"\n";
+
+  return ss.str();
 }
 
+//-----------------
+// CreateFlowFiles
+//-----------------
+//
+// Old svSolver code.
+//
 bool sv4guiSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::string outPressureFlePath
                                         , std::string outAverageFilePath, std::string outAverageUnitsFilePath
                                         , std::vector<std::string> vtxFilePaths, bool useComboFile
@@ -871,6 +910,10 @@ bool sv4guiSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::st
     return true;
 }
 
+//----------------------
+// VtpExtractSingleFace
+//----------------------
+//
 void sv4guiSimulationUtils::VtpExtractSingleFace(std::string step, vtkSmartPointer<vtkPolyData> simvtp,vtkSmartPointer<vtkPolyData> facevtp)
 {
     int faceNumPoint=facevtp->GetNumberOfPoints();

@@ -80,7 +80,7 @@ const QString sv4guiSimulationView::EXTENSION_ID = "org.sv.views.simulation";
 // Set the title for QMessageBox warnings.
 //
 // Note: On MacOS the window title is ignored (as required by the Mac OS X Guidelines). 
-const QString sv4guiSimulationView::MsgTitle = "SimVascular SV Simulation";
+const QString sv4guiSimulationView::MsgTitle = "SimVascular CFD Simulation";
 
 //----------------------
 // sv4guiSimulationView
@@ -320,7 +320,7 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 // Set solver binaries, mpiexec binary and the MPI implementation 
 // used to create and execute simulation jobs.
 //
-// This method is called when the SV Simulation plugin is activated or when values 
+// This method is called when the CFD Simulation plugin is activated or when values 
 // in the Preferences Page->SimVascular Simulation panel are changed. 
 //
 // If a SimVascular MITK database exists from previous SimVascular sessions then 
@@ -364,10 +364,10 @@ void sv4guiSimulationView::OnPreferencesChanged(const mitk::IPreferences* prefs)
 //--------------------
 // OnSelectionChanged
 //--------------------
-// Update the SV Simulation plugin panel when an SV Simulation plugin is selected from the
+// Update the CFD Simulation plugin panel when an CFD Simulation plugin is selected from the
 // SV Data Manager.
 //
-// This method is also called when SimVascular starts and there is a SV Simulation plugin 
+// This method is also called when SimVascular starts and there is a CFD Simulation plugin 
 // panel left over from a previous session. In this case nodes.size()==0.
 //
 void sv4guiSimulationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/,
@@ -1984,200 +1984,230 @@ void sv4guiSimulationView::CheckMpi()
     #endif
 }
 
+
+//-----------------
+// CreateDataFiles
+//-----------------
+// Create the files needed to run a simulation.
+//
 bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
 {
-    if(!m_MitkJob)
-        return false;
+  #define debug_CreateDataFiles
+  #ifdef debug_CreateDataFiles
+  std::string msg("[sv4guiSimulationView::CreateDataFiles] ");
+  std::cout << msg << "========== CreateDataFiles ==========" << std::endl;
+  #endif
 
-    if(outputDir=="")
-        return false;
+  if(!m_MitkJob) {
+    return false;
+  }
 
-    sv4guiModelElement* modelElement=nullptr;
+  if(outputDir == "") {
+    return false;
+  }
+  #ifdef debug_CreateDataFiles
+  std::cout << msg << "outputDir: " << outputDir.toStdString() << std::endl;
+  #endif
 
-    if(m_Model)
-        modelElement=m_Model->GetModelElement();
+  sv4guiModelElement* modelElement = nullptr;
 
-    if(modelElement==nullptr)
-    {
-        QMessageBox::warning(m_Parent,"Model Unavailable","Please make sure the model exists ans is valid.");
-        return false;
+  if (m_Model) {
+    modelElement=m_Model->GetModelElement();
+  }
+
+  if (modelElement == nullptr) {
+    QMessageBox::warning(m_Parent,"A model is not navailable","Please make sure that a model exists and is valid.");
+    return false;
+  }
+
+  mitk::StatusBar::GetInstance()->DisplayText("Creating svMultiPhysics simulation files");
+  std::string job_msg;
+
+  sv4guiSimJob* job = CreateJob(job_msg);
+
+  if (job == nullptr) {
+    QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(job_msg));
+    return false;
+  }
+
+  if (createFolder) {
+    outputDir=outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+"-files";
+  }
+
+  QDir dir(outputDir);
+  dir.mkpath(outputDir);
+
+  // Crteates .svpre file.
+  //
+  mitk::StatusBar::GetInstance()->DisplayText("Creating svpre file...");
+  QString svpreFielContent=QString::fromStdString(sv4guiSimulationUtils::CreatePreSolverFileContent(job));
+  QFile svpreFile(outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+".svpre");
+
+  if(svpreFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    QTextStream out(&svpreFile);
+    out << svpreFielContent;
+    svpreFile.close();
+  }
+
+  // Write inlet flow file.
+  //
+  auto capProps = job->GetCapProps();
+  auto it = capProps.begin();
+
+  while(it != capProps.end()) {
+    if (it->first != "" && it->second["BC Type"] == "Prescribed Velocities") {
+      auto props=it->second;
+      std::ofstream out(outputDir.toStdString()+"/"+it->first+".flow");
+      out << props["Flow Rate"];
+      out.close();
     }
+    it++;
+  }
 
-    mitk::StatusBar::GetInstance()->DisplayText("Creating Job");
-    std::string msg;
+  // Create solver XML file.
+  //
+  mitk::StatusBar::GetInstance()->DisplayText("Creating solver.xml");
+  std::string file_name = outputDir.toStdString() + "/solver.xml";
+  sv4guiSimulationUtils::CreateSolverInputFile(job, file_name);
 
-    sv4guiSimJob* job=CreateJob(msg);
+  /*
+  QString solverFileContent=QString::fromStdString(sv4guiSimulationUtils::CreateFlowSolverFileContent(job));
+  QFile solverFile(outputDir+"/solver.xml");
 
-    if(job==nullptr)
-    {
-        QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(msg));
-        return false;
+  if (solverFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    QTextStream out(&solverFile);
+    out << solverFileContent;
+    solverFile.close();
+  }
+  */
+
+  // ========== Old svsolver code ==========
+  //
+  #ifdef svsolver_old_code
+
+  QFile numStartFile(outputDir+"/numstart.dat");
+  if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    QTextStream out(&numStartFile);
+    out<<"0\n";
+    numStartFile.close();
+  }
+
+  QString rcrtFielContent=QString::fromStdString(sv4guiSimulationUtils::CreateRCRTFileContent(job));
+  if(rcrtFielContent!="") {
+    mitk::StatusBar::GetInstance()->DisplayText("Creating rcrt.dat");
+    QFile rcrtFile(outputDir+"/rcrt.dat");
+    if(rcrtFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+      QTextStream out(&rcrtFile);
+      out<<rcrtFielContent;
+      rcrtFile.close();
     }
+  }
 
-    if(createFolder)
-        outputDir=outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+"-files";
-
-    QDir dir(outputDir);
-    dir.mkpath(outputDir);
-
-    mitk::StatusBar::GetInstance()->DisplayText("Creating svpre file...");
-    QString svpreFielContent=QString::fromStdString(sv4guiSimulationUtils::CreatePreSolverFileContent(job));
-    QFile svpreFile(outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+".svpre");
-    if(svpreFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream out(&svpreFile);
-        out<<svpreFielContent;
-        svpreFile.close();
+  QString cortFielContent=QString::fromStdString(sv4guiSimulationUtils::CreateCORTFileContent(job));
+  if(cortFielContent!="") {
+    mitk::StatusBar::GetInstance()->DisplayText("Creating cort.dat");
+    QFile cortFile(outputDir+"/cort.dat");
+    if(cortFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+      QTextStream out(&cortFile);
+      out<<cortFielContent;
+      cortFile.close();
     }
+  }
+  #endif
 
-    auto capProps=job->GetCapProps();
-    auto it = capProps.begin();
-    while(it != capProps.end())
-    {
-        if(it->first!=""&&it->second["BC Type"]=="Prescribed Velocities")
-        {
-            auto props=it->second;
-            std::ofstream out(outputDir.toStdString()+"/"+it->first+".flow");
-            out << props["Flow Rate"];
-            out.close();
+  // Create mesh files.
+  //
+  std::string meshName = "";
+
+  if (outputAllFiles) {
+    meshName = ui->comboBoxMeshName->currentText().toStdString();
+
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs = GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+
+    sv4guiMesh* mesh = nullptr;
+    mitk::DataNode::Pointer projFolderNode = nullptr;
+    mitk::DataNode::Pointer meshNode = nullptr;
+
+    if (rs->size()>0) {
+      projFolderNode=rs->GetElement(0);
+      rs = GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
+
+      if (rs->size()>0) {
+        mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
+        meshNode=GetDataStorage()->GetNamedDerivedNode(meshName.c_str(),meshFolderNode);
+
+        if (meshNode.IsNotNull()) {
+          sv4guiMitkMesh* mitkMesh=dynamic_cast<sv4guiMitkMesh*>(meshNode->GetData());
+          if(mitkMesh) {
+            mesh=mitkMesh->GetMesh();
+          }
         }
-        it++;
+      }
     }
 
-    mitk::StatusBar::GetInstance()->DisplayText("Creating solver.inp");
-    QString solverFileContent=QString::fromStdString(sv4guiSimulationUtils::CreateFlowSolverFileContent(job));
-    QFile solverFile(outputDir+"/solver.inp");
-    if(solverFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream out(&solverFile);
-        out<<solverFileContent;
-        solverFile.close();
+    if (mesh == nullptr) {
+      QMessageBox::warning(m_Parent,"Mesh Unavailable","Please make sure the mesh exists and is valid.");
+      return false;
     }
 
-    QFile numStartFile(outputDir+"/numstart.dat");
-    if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream out(&numStartFile);
-        out<<"0\n";
-        numStartFile.close();
+    mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete files");
+    QString meshCompletePath=outputDir+"/mesh-complete";
+    dir.mkpath(meshCompletePath);
+    WaitCursorOn();
+    bool ok=sv4guiMeshLegacyIO::WriteFiles(meshNode,modelElement, meshCompletePath);
+    WaitCursorOff();
+
+    if (!ok) {
+      QMessageBox::warning(m_Parent,"Mesh info missing","Please make sure the mesh exists and is valid.");
+      return false;
     }
 
-    QString rcrtFielContent=QString::fromStdString(sv4guiSimulationUtils::CreateRCRTFileContent(job));
-    if(rcrtFielContent!="")
-    {
-        mitk::StatusBar::GetInstance()->DisplayText("Creating rcrt.dat");
-        QFile rcrtFile(outputDir+"/rcrt.dat");
-        if(rcrtFile.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            QTextStream out(&rcrtFile);
-            out<<rcrtFielContent;
-            rcrtFile.close();
-        }
+    // ========== Old svsolver code ==========
+    // Runs svpre program.
+    //
+    // Write restart file with initial conditions.
+    //
+    #ifdef svsolver_old_code
+    QString presolverPath = QString::fromStdString(m_PresolverPath);
+
+    if (presolverPath == "") {
+      presolverPath = QString::fromStdString(m_PresolverPath);
     }
 
-    QString cortFielContent=QString::fromStdString(sv4guiSimulationUtils::CreateCORTFileContent(job));
-    if(cortFielContent!="")
-    {
-        mitk::StatusBar::GetInstance()->DisplayText("Creating cort.dat");
-        QFile cortFile(outputDir+"/cort.dat");
-        if(cortFile.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            QTextStream out(&cortFile);
-            out<<cortFielContent;
-            cortFile.close();
-        }
-    }
+    if (presolverPath == "") {
+      QMessageBox::warning(m_Parent,"Presolver Missing","Please make sure presolver exists!");
+    } else {
+      QString icFile=(QString::fromStdString(job->GetBasicProp("IC File"))).trimmed();
 
-    std::string meshName="";
-    if(outputAllFiles)
-    {
-        meshName=ui->comboBoxMeshName->currentText().toStdString();
+      if(icFile!="" && QFile(icFile).exists()) {
+        QString newFilePath=outputDir+"/restart.0.1";
+        QFile::copy(icFile, newFilePath);
+      }
 
-        mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
-        mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+      mitk::StatusBar::GetInstance()->DisplayText("Creating Data files: bct, restart, geombc,etc.");
+      QProcess *presolverProcess = new QProcess(m_Parent);
+      presolverProcess->setWorkingDirectory(outputDir);
+      presolverProcess->setProgram(presolverPath);
+      QStringList arguments;
+      arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
+      presolverProcess->setArguments(arguments);
 
-        sv4guiMesh* mesh=nullptr;
-        mitk::DataNode::Pointer projFolderNode=nullptr;
-        mitk::DataNode::Pointer meshNode=nullptr;
-
-        if(rs->size()>0)
-        {
-            projFolderNode=rs->GetElement(0);
-
-            rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
-            if (rs->size()>0)
-            {
-                mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
-
-                meshNode=GetDataStorage()->GetNamedDerivedNode(meshName.c_str(),meshFolderNode);
-                if(meshNode.IsNotNull())
-                {
-                    sv4guiMitkMesh* mitkMesh=dynamic_cast<sv4guiMitkMesh*>(meshNode->GetData());
-                    if(mitkMesh)
-                    {
-                        mesh=mitkMesh->GetMesh();
-                    }
-                }
-            }
-        }
-
-        if(mesh==nullptr)
-        {
-            QMessageBox::warning(m_Parent,"Mesh Unavailable","Please make sure the mesh exists and is valid.");
-            return false;
-        }
-
-        mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete files");
-        QString meshCompletePath=outputDir+"/mesh-complete";
-        dir.mkpath(meshCompletePath);
-        WaitCursorOn();
-        bool ok=sv4guiMeshLegacyIO::WriteFiles(meshNode,modelElement, meshCompletePath);
-        WaitCursorOff();
-        if(!ok)
-        {
-            QMessageBox::warning(m_Parent,"Mesh info missing","Please make sure the mesh exists and is valid.");
-            return false;
-        }
-
-        QString presolverPath = QString::fromStdString(m_PresolverPath);
-        if(presolverPath=="")
-            presolverPath = QString::fromStdString(m_PresolverPath);
-
-//        if(presolverPath=="" || !QFile(presolverPath).exists())
-        if(presolverPath=="")
-        {
-            QMessageBox::warning(m_Parent,"Presolver Missing","Please make sure presolver exists!");
-        }
-        else
-        {
-            QString icFile=(QString::fromStdString(job->GetBasicProp("IC File"))).trimmed();
-            if(icFile!="" && QFile(icFile).exists())
-            {
-                QString newFilePath=outputDir+"/restart.0.1";
-                QFile::copy(icFile, newFilePath);
-            }
-
-            mitk::StatusBar::GetInstance()->DisplayText("Creating Data files: bct, restart, geombc,etc.");
-            QProcess *presolverProcess = new QProcess(m_Parent);
-            presolverProcess->setWorkingDirectory(outputDir);
-            presolverProcess->setProgram(presolverPath);
-            QStringList arguments;
-            arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
-            presolverProcess->setArguments(arguments);
 #if defined(Q_OS_MAC)
-            sv4guiProcessHandler* handler=new sv4guiProcessHandler(presolverProcess,m_JobNode,true,false,m_Parent);
+      sv4guiProcessHandler* handler=new sv4guiProcessHandler(presolverProcess,m_JobNode,true,false,m_Parent);
 #else
-            sv4guiProcessHandler* handler=new sv4guiProcessHandler(presolverProcess,m_JobNode,true,true,m_Parent);
+      sv4guiProcessHandler* handler=new sv4guiProcessHandler(presolverProcess,m_JobNode,true,true,m_Parent);
 #endif
-            handler->Start();
-        }
+      handler->Start();
     }
+    #endif
+  }
 
-    m_MitkJob->SetSimJob(job);
-    m_MitkJob->SetMeshName(meshName);
-    m_MitkJob->SetDataModified();
+  m_MitkJob->SetSimJob(job);
+  m_MitkJob->SetMeshName(meshName);
+  m_MitkJob->SetDataModified();
 
-    return true;
+  return true;
 }
 
 void sv4guiSimulationView::ImportFiles()
