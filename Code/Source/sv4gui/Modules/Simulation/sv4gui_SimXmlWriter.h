@@ -40,6 +40,8 @@
 
 #include "tinyxml2.h"
 
+using GuiProperties = std::map<std::string,std::string>;
+
 //------------------------------
 // Sv4GuiSimXmlWriterParameters
 //------------------------------
@@ -53,18 +55,27 @@ class Sv4GuiSimXmlWriterParameters
     int Min_iterations = 1;
     int Max_iterations = 10;
     double Tolerance = 1e-6;
+    bool Impose_flux = true;
+    char* Add_mesh_name = "fluid_mesh";
+    char* Mesh_file_path = "mesh-complete/mesh-complete.mesh.vtu";
+    std::string Face_file_path = "mesh-complete/mesh-surfaces";
+
+    // Map between GUI and svMultiphysics profile names.
+    std::map<std::string,std::string> profile_names;
+
+    char* Add_BC_type_Dirichlet = "Dirichlet";
 
     class Solver {
       public:
-        char* Preconditioner = "FSILS";
-        int Max_iterations = 100;
+        char* Preconditioner = "fsils";
+        int Max_iterations = 15;
         double Tolerance = 1e-5;
-        int Krylov_space_dimension = 50;
+        int Krylov_space_dimension = 250;
   
-        int NS_GM_max_iterations = 3; 
+        int NS_GM_max_iterations = 10; 
         double NS_GM_tolerance = 1e-3;
       
-        int NS_CG_max_iterations = 3;
+        int NS_CG_max_iterations = 300;
         double NS_CG_tolerance = 1e-3;
     };
 
@@ -89,12 +100,16 @@ class Sv4GuiSimXmlWriter
     Sv4GuiSimXmlWriter();
     ~Sv4GuiSimXmlWriter();
 
-    void create_document(sv4guiSimJob* job, const std::string& file_name);
+    void create_document(sv4guiSimJob* job, const std::map<std::string,std::string>& faces_name_type,
+        const std::string& output_dir, const std::string& file_name);
 
   private:
     
     // The XML document to create.
     tinyxml2::XMLDocument doc_;
+
+    std::string output_dir_;
+    std::map<std::string,std::string> faces_name_type_;  
 
     Sv4GuiSimXmlWriterParameters parameters;
 
@@ -110,9 +125,16 @@ class Sv4GuiSimXmlWriter
 
     void add_equation_bcs(sv4guiSimJob* job, tinyxml2::XMLElement* xml_equation);
 
-/*
+    void add_mesh(sv4guiSimJob* job);
 
-                        
+    void add_resistance_bc(GuiProperties& props, sv4guiSimJob* job, tinyxml2::XMLElement* xml_boundary_condition);
+
+    void add_velocity_bc(GuiProperties& props, sv4guiSimJob* job, const std::string& face_name,
+        tinyxml2::XMLElement* xml_boundary_condition);
+
+    void add_wall_bc(sv4guiSimJob* job, tinyxml2::XMLElement* boundary_condition);
+
+/*
     void add_equation_output(sv4guiSimJob* job, tinyxml2::XMLElement* xml_equation);
 
 */
@@ -121,8 +143,6 @@ class Sv4GuiSimXmlWriter
     void add_general(sv4guiSimJob* job);
 
 /*
-    void add_mesh(sv4guiSimJob* job, , const int domain_id);
-
     void add_projection(const sv4guisvFSIJob* job);
 
     void add_remeshing(const sv4guisvFSIJob* job, const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation);

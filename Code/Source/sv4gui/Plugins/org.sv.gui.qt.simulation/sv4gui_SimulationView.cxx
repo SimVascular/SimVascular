@@ -2064,11 +2064,19 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
     it++;
   }
 
+  // Set face names and typel.
+  std::map<std::string,std::string> faces_name_type;
+  auto faces = modelElement->GetFaces();
+  for (auto face : faces ) { 
+    std::cout << "#### face  name: " << face->name << "  type: " << face->type << std::endl;
+    faces_name_type[face->name] = face->type;
+  }
+
   // Create solver XML file.
   //
   mitk::StatusBar::GetInstance()->DisplayText("Creating solver.xml");
   std::string file_name = outputDir.toStdString() + "/solver.xml";
-  sv4guiSimulationUtils::CreateSolverInputFile(job, file_name);
+  sv4guiSimulationUtils::CreateSolverInputFile(job, faces_name_type, outputDir.toStdString(), file_name);
 
   /*
   QString solverFileContent=QString::fromStdString(sv4guiSimulationUtils::CreateFlowSolverFileContent(job));
@@ -2152,10 +2160,10 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
     }
 
     mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete files");
-    QString meshCompletePath=outputDir+"/mesh-complete";
+    QString meshCompletePath = outputDir+"/mesh-complete";
     dir.mkpath(meshCompletePath);
     WaitCursorOn();
-    bool ok=sv4guiMeshLegacyIO::WriteFiles(meshNode,modelElement, meshCompletePath);
+    bool ok = sv4guiMeshLegacyIO::WriteFiles(meshNode, modelElement, meshCompletePath);
     WaitCursorOff();
 
     if (!ok) {

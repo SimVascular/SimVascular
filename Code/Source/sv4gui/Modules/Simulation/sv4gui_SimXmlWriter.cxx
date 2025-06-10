@@ -43,6 +43,11 @@
 //
 Sv4GuiSimXmlWriter::Sv4GuiSimXmlWriter()
 {
+  // Map GUI names to svMultiPhysics supported profile types.
+  parameters.profile_names = { 
+    {"parabolic", "Parabolic"},
+    {"plug", "Flat"}
+  };
 }
 
 Sv4GuiSimXmlWriter::~Sv4GuiSimXmlWriter()
@@ -99,9 +104,10 @@ Sv4GuiSimXmlWriter::add_sub_child(tinyxml2::XMLElement* parent, const std::strin
 //
 void Sv4GuiSimXmlWriter::add_equation_bcs(sv4guiSimJob* job, tinyxml2::XMLElement* xml_equation)
 {
-  auto capProps=job->GetCapProps();
-  int velocityCapNumber=0;
-  int pressureCapNumber=0;
+  auto capProps = job->GetCapProps();
+
+  // Process surface faces (caps).
+  //
   auto it = capProps.begin();
 
   for (auto it = capProps.begin(); it != capProps.end(); ++it) {
@@ -121,14 +127,22 @@ void Sv4GuiSimXmlWriter::add_equation_bcs(sv4guiSimJob* job, tinyxml2::XMLElemen
     std::string bc_type; 
 
     if (bc_prop_type == "Prescribed Velocities") {
+      add_velocity_bc(props, job, face_name, boundary_condition);
 
     } else if (bc_prop_type == "Resistance") {
-      bc_type = "Neumann"; 
-      time_dependence = "Resistance"; 
+      add_resistance_bc(props, job, boundary_condition);
     }
 
-    add_child(boundary_condition, "Type", bc_type.c_str());
-    add_child(boundary_condition, "Time_dependence", time_dependence.c_str());
+  }
+
+  // Add no slip wall boundary conditions.
+  for (auto face : faces_name_type_) {
+    if (face.second != "wall") {
+      continue;
+    }
+    auto boundary_condition = add_sub_child(xml_equation, "Add_BC");
+    boundary_condition->SetAttribute("name", face.first.c_str());
+    add_wall_bc(job, boundary_condition);
   }
 
 /*
@@ -178,6 +192,74 @@ void Sv4GuiSimXmlWriter::add_equation_bcs(sv4guiSimJob* job, tinyxml2::XMLElemen
 
 }
 
+//-------------------
+// add_resistance_bc
+//-------------------
+//
+void Sv4GuiSimXmlWriter::add_resistance_bc(GuiProperties& props, sv4guiSimJob* job, 
+    tinyxml2::XMLElement* boundary_condition)
+{
+  add_child(boundary_condition, "Type", "Neumann");
+  add_child(boundary_condition, "Time_dependence", "Resistance");
+
+  std::string resistance_values = props["Values"];
+  add_child(boundary_condition, "Value", resistance_values);
+}
+
+//-----------------
+// add_velocity_bc
+//-----------------
+// Add a velocity boundary condition.
+//
+// Analytic Shape   value: parabolic
+// BC Type   value: Prescribed Velocities
+// Flip Normal   value: False
+// Flow Rate   values: values from flow file. 
+// prop: Fourier Modes   value: 10
+// prop: Original File   value: unsteady.flow
+// prop: Period   value: 1.0
+// prop: Point Number   value: 201
+//
+void Sv4GuiSimXmlWriter::add_velocity_bc(GuiProperties& props, sv4guiSimJob* 
+    job, const std::string& face_name, tinyxml2::XMLElement* boundary_condition)
+{
+  add_child(boundary_condition, "Type", "Dirichlet"); 
+  add_child(boundary_condition, "Time_dependence", "Unsteady"); 
+
+  // Write flow file.
+  //
+  std::string file_name = face_name + ".flow";
+  std::string flow_values = props["Flow Rate"];
+  auto num_fourier_modes = props["Fourier Modes"];
+  int num_lines = std::count(flow_values.begin(), flow_values.end(), '\n');
+
+  auto first_value = flow_values[0];
+  std::cout << "[add_velocity_bc] first_value: '" << first_value << "'" << std::endl;
+
+  std::ofstream out(output_dir_ + "/" + file_name);
+  out << num_lines+1 << " " << num_fourier_modes << '\n';
+  out << flow_values;
+  out.close();
+
+  add_child(boundary_condition, "Temporal_values_file_path", file_name); 
+
+  auto profile = parameters.profile_names[ props["Analytic Shape"] ];
+  add_child(boundary_condition, "Profile", profile ); 
+  add_child(boundary_condition, "Impose_flux", parameters.Impose_flux); 
+
+}
+
+//-------------
+// add_wall_bc
+//-------------
+//
+void Sv4GuiSimXmlWriter::add_wall_bc(sv4guiSimJob* job, tinyxml2::XMLElement* boundary_condition)
+{
+  add_child(boundary_condition, "Type", "Dirichlet");
+  add_child(boundary_condition, "Time_dependence", "Steady");
+  add_child(boundary_condition, "Value", 0.0);
+}
+
 //--------------
 // add_equation
 //--------------
@@ -196,28 +278,29 @@ void Sv4GuiSimXmlWriter::add_equation(sv4guiSimJob* job)
     eq_type = "cmm";
   }
 
-  auto xml_equation = add_sub_child(root_, "Add_equation");
-  xml_equation->SetAttribute("type", eq_type);
+  auto equation = add_sub_child(root_, "Add_equation");
+  equation->SetAttribute("type", eq_type);
 
-  add_child(xml_equation, "Coupled", parameters.Coupled);
-  add_child(xml_equation, "Min_iterations", parameters.Min_iterations);
-  add_child(xml_equation, "Max_iterations", parameters.Max_iterations);
-  add_child(xml_equation, "Tolerance", parameters.Tolerance);
+  add_child(equation, "Coupled", parameters.Coupled);
+  add_child(equation, "Min_iterations", parameters.Min_iterations);
+  add_child(equation, "Max_iterations", parameters.Max_iterations);
+  add_child(equation, "Tolerance", parameters.Tolerance);
 
-  add_child(xml_equation, "Backflow_stabilization_coefficient", solverProps["Backflow Stabilization Coefficient"]);
+  add_child(equation, "Backflow_stabilization_coefficient", solverProps["Backflow Stabilization Coefficient"]);
 
   // Add fluid properties.
   //
   auto basicProps = job->GetBasicProps();
-  add_child(xml_equation, "Density", basicProps["Fluid Density"]);
-  auto xml_viscosity = add_sub_child(xml_equation, "Viscosity");
-  xml_viscosity->SetAttribute("model", "Constant");
+  add_child(equation, "Density", basicProps["Fluid Density"]);
+  auto viscosity = add_sub_child(equation, "Viscosity");
+  viscosity->SetAttribute("model", "Constant");
+  add_child(viscosity, "Value", 0.4);
 
-  add_equation_solver(job, xml_equation);
+  add_equation_solver(job, equation);
 
-  //add_equation_output(job, xml_equation);
+  //add_equation_output(job, equation);
 
-  add_equation_bcs(job, xml_equation);
+  add_equation_bcs(job, equation);
 }
 
 //---------------------
@@ -254,7 +337,7 @@ void Sv4GuiSimXmlWriter::add_equation_solver(sv4guiSimJob* job, tinyxml2::XMLEle
   linear_algebra->SetAttribute("type", "fsils");
   add_child(linear_algebra, "Preconditioner", parameters.solver.Preconditioner);
 
-  add_child(linear_solver, "Max_iterations", solverProps["Maximum Number of Iterations for svLS NS Solver"]);
+  add_child(linear_solver, "Max_iterations", parameters.solver.Max_iterations);
   add_child(linear_solver, "Tolerance", parameters.solver.Tolerance);
   add_child(linear_solver, "Krylov_space_dimension", parameters.solver.Krylov_space_dimension);
 
@@ -324,15 +407,21 @@ void Sv4GuiSimXmlWriter::add_fsi_equation(sv4guisvFSIJob* job, const sv4guisvFSI
 //
 void Sv4GuiSimXmlWriter::add_general(sv4guiSimJob* job)
 {
-  auto general = add_sub_child(root_, "GeneralSimulationParameters");
-
   auto solverProps = job->GetSolverProps();
+
+  auto general = add_sub_child(root_, "GeneralSimulationParameters");
+  add_child(general, "Continue_previous_simulation", false);
   
   // Time stepping
   //
   add_child(general, "Number_of_spatial_dimensions", 3);
   add_child(general, "Number_of_time_steps", solverProps["Number of Timesteps"]);
   add_child(general, "Time_step_size", solverProps["Time Step Size"]);
+  add_child(general, "Spectral_radius_of_infinite_time_step", 0.5);
+
+  // Output options
+  add_child(general, "Save_results_to_VTK_format", true);
+  add_child(general, "Start_saving_after_time_step", 1);
 
 #ifdef use
 
@@ -366,14 +455,21 @@ void Sv4GuiSimXmlWriter::add_general(sv4guiSimJob* job)
 // add_mesh
 //----------
 //
-#ifdef Sv4GuiSimXmlWriter_use
-void Sv4GuiSimXmlWriter::add_mesh(const sv4guisvFSIJob* job, sv4guisvFSIDomain& domain, const int domain_id)
+void Sv4GuiSimXmlWriter::add_mesh(sv4guiSimJob* job)
 {
   auto mesh = add_sub_child(root_, "Add_mesh");
-  mesh->SetAttribute("name", domain.name.c_str());
+  mesh->SetAttribute("name", parameters.Add_mesh_name);
+  add_child(mesh, "Mesh_file_path", parameters.Mesh_file_path);
 
-  auto mesh_file = domain.folderName + path_sep_ + domain.fileName;
-  add_child(mesh, "Mesh_file_path", mesh_file);
+  for (const auto& pair : faces_name_type_) {
+    auto face = add_sub_child( mesh, "Add_face");
+    auto face_name = pair.first;
+    face->SetAttribute("name", face_name.c_str());
+    auto face_file = parameters.Face_file_path + "/" + face_name+".vtp";
+    add_child(face, "Face_file_path", face_file);
+  }
+
+/*
 
   for ( auto& face_name : domain.faceNames ) {
     auto face = add_sub_child( mesh, "Add_face");
@@ -383,8 +479,8 @@ void Sv4GuiSimXmlWriter::add_mesh(const sv4guisvFSIJob* job, sv4guisvFSIDomain& 
   }
 
   add_child( mesh, "Domain", domain_id);
+*/
 }
-#endif
 
 //----------------
 // add_projection
@@ -459,30 +555,19 @@ void Sv4GuiSimXmlWriter::add_single_physics_equation(const sv4guisvFSIeqClass& e
 //-----------------
 // Create an XML document from an sv4guiSimJob object.
 //
-void Sv4GuiSimXmlWriter::create_document(sv4guiSimJob* job, const std::string& file_name)
+void Sv4GuiSimXmlWriter::create_document(sv4guiSimJob* job, const std::map<std::string,std::string>& faces_name_type, 
+    const std::string& output_dir, const std::string& file_name)
 {
+  output_dir_ = output_dir;
+  faces_name_type_ = faces_name_type;
+
   root_ = doc_.NewElement("svMultiPhysicsFile");
   root_->SetAttribute("version", "1.0");
   doc_.InsertFirstChild(root_);
 
-  // Add data for the GeneralSimulationParameters section.
   add_general(job);
 
-#ifdef use
-  // If there are two domains set the first domain to the fluid domain.
-  auto domains = sort_domains(job);
-
-  // Add mesh data for the Add_mesh sections.
-  int domain_id = 0;
-  for (auto& domain : domains) {
-    add_mesh(job, domain, domain_id);
-    domain_id += 1;
-  }
-
-  // Add projection between fluid-solid surfaces.
-  add_projection(job);
-
-#endif
+  add_mesh(job);
 
   add_equation(job);
 

@@ -49,8 +49,15 @@
 //-----------------------
 // CreateSolverInputFile
 //-----------------------
+// Create an svMultiPhysics XML solver input file.
 //
-void sv4guiSimulationUtils::CreateSolverInputFile(sv4guiSimJob* job, const std::string& file_name)
+// input
+// -----
+// job - GUI parameters.
+//
+void sv4guiSimulationUtils::CreateSolverInputFile(sv4guiSimJob* job,  
+    const std::map<std::string,std::string>& faces_name_type, const std::string& output_dir, 
+    const std::string& file_name)
 {
   #define debug_CreateSolverInputFile
   #ifdef debug_CreateSolverInputFile
@@ -66,7 +73,7 @@ void sv4guiSimulationUtils::CreateSolverInputFile(sv4guiSimJob* job, const std::
  
   Sv4GuiSimXmlWriter xml_writer;
  
-  xml_writer.create_document(job, file_name);
+  xml_writer.create_document(job, faces_name_type, output_dir, file_name);
 }
 
 //----------------------------
