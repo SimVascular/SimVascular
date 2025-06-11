@@ -519,9 +519,9 @@ void sv4guiModelIO::WriteGroupToFile(sv4guiModel* model, std::string& fileName)
             mitkThrow() << "Failed to write model to " << dataFileName;
     }
 
-    if (document.SaveFile(fileName.c_str()) == false)
+    if (document.SaveFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
     {
-        mitkThrow() << "Could not write model to " << fileName;
+        mitkThrow() << "Could not write Model parameters to the file " << fileName;
 
     }
 }

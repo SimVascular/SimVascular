@@ -202,7 +202,7 @@ int PathIO::Write(std::string fileName, PathGroup* pathGrp)
         WritePath(document, pe, timeStepElem);
     }
 
-    if (document.SaveFile(fileName.c_str()) == false)
+    if (document.SaveFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
     {
         std::cout<< "Could not write path to " << fileName<<std::endl;
         return SV_ERROR;

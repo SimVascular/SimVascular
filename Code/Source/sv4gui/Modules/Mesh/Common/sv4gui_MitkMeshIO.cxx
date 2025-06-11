@@ -171,9 +171,9 @@ void sv4guiMitkMeshIO::WriteGroupToFile(sv4guiMitkMesh* mitkMesh, std::string& f
 
     }
 
-    if (document.SaveFile(fileName.c_str()) == false)
+    if (document.SaveFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
     {
-        mitkThrow() << "Could not write model to " << fileName;
+        mitkThrow() << "Could not write Mesh parameter file to " << fileName;
 
     }
 }

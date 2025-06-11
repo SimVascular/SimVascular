@@ -386,9 +386,9 @@ void sv4guiMitkROMSimJobIO::Write()
 
     }
 
-    if (document.SaveFile(fileName.c_str()) == false)
+    if (document.SaveFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
     {
-        mitkThrow() << "Could not write model to " << fileName;
+        mitkThrow() << "Could not write ROM Simulation parameters file to " << fileName;
     }
 }
 

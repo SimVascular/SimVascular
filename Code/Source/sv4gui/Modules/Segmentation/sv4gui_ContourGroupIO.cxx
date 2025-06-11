@@ -440,8 +440,8 @@ void sv4guiContourGroupIO::WriteToFile(const sv4guiContourGroup* group, const st
         }
     }
 
-    if (document.SaveFile(fileName.c_str()) == false) {
-        mitkThrow() << "Could not write contourgroup to " << fileName;
+    if (document.SaveFile(fileName.c_str()) != tinyxml2::XML_SUCCESS) {
+        mitkThrow() << "Could not write contourgroup to the file " << fileName;
     }
 }
 

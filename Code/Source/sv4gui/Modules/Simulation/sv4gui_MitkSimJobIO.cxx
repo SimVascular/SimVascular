@@ -266,142 +266,158 @@ mitk::IFileIO::ConfidenceLevel sv4guiMitkSimJobIO::GetReaderConfidenceLevel() co
     return Supported;
 }
 
+//-------
+// Write
+//-------
+//
 void sv4guiMitkSimJobIO::Write()
 {
-    ValidateOutputLocation();
+  #define debug_Write
+  #ifdef debug_Write
+  std::string dmsg("[sv4guiMitkSimJobIO::Write] ");
+  std::cout << dmsg << "========== Write ==========" << std::endl;
+  #endif
 
-    std::string fileName=GetOutputLocation();
+  ValidateOutputLocation();
+  std::string fileName = GetOutputLocation();
+  #ifdef debug_Write
+  std::cout << dmsg << "fileName: " << fileName << std::endl;
+  #endif
 
-    const sv4guiMitkSimJob* mitkSimJob = dynamic_cast<const sv4guiMitkSimJob*>(this->GetInput());
-    if(!mitkSimJob) return;
+  const sv4guiMitkSimJob* mitkSimJob = dynamic_cast<const sv4guiMitkSimJob*>(this->GetInput());
 
-    tinyxml2::XMLDocument document;
-    auto  decl = document.NewDeclaration();
-    document.LinkEndChild( decl );
+  if (!mitkSimJob) {
+    return;
+  }
 
-    auto mjElement = document.NewElement("mitk_job");
-    mjElement->SetAttribute("model_name", mitkSimJob->GetModelName().c_str());
-    mjElement->SetAttribute("mesh_name", mitkSimJob->GetMeshName().c_str());
-    mjElement->SetAttribute("status", mitkSimJob->GetStatus().c_str());
-    mjElement->SetAttribute("version",  "1.0" );
-    document.LinkEndChild(mjElement);
+  tinyxml2::XMLDocument document;
+  auto decl = document.NewDeclaration();
+  document.LinkEndChild( decl );
 
-    sv4guiSimJob* job=mitkSimJob->GetSimJob();
+  auto mjElement = document.NewElement("mitk_job");
+  mjElement->SetAttribute("model_name", mitkSimJob->GetModelName().c_str());
+  mjElement->SetAttribute("mesh_name", mitkSimJob->GetMeshName().c_str());
+  mjElement->SetAttribute("status", mitkSimJob->GetStatus().c_str());
+  mjElement->SetAttribute("version",  "1.0" );
+  document.LinkEndChild(mjElement);
 
-    if(job)
-    {
-        auto jobElement = document.NewElement("job");
-        mjElement->LinkEndChild(jobElement);
+  sv4guiSimJob* job = mitkSimJob->GetSimJob();
+  #ifdef debug_Write
+  std::cout << dmsg << "job: " << job << std::endl;
+  #endif
 
-        auto bpElement = document.NewElement("basic_props");
-        jobElement->LinkEndChild(bpElement);
-        std::map<std::string,std::string> basicProps=job->GetBasicProps();
-        std::map<std::string, std::string>::iterator it = basicProps.begin();
-        while(it != basicProps.end())
-        {
-            auto element = document.NewElement("prop");
-            bpElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first.c_str());
-            element->SetAttribute("value", it->second.c_str());
-            it++;
-        }
+  if (job) {
+    auto jobElement = document.NewElement("job");
+    mjElement->LinkEndChild(jobElement);
 
-        auto cpElement = document.NewElement("cap_props");
-        jobElement->LinkEndChild(cpElement);
-        std::map<std::string, std::map<std::string, std::string> > capProps=job->GetCapProps();
-        auto itit = capProps.begin();
-        while(itit != capProps.end())
-        {
-            auto celement = document.NewElement("cap");
-            cpElement->LinkEndChild(celement);
+    auto bpElement = document.NewElement("basic_props");
+    jobElement->LinkEndChild(bpElement);
+    std::map<std::string,std::string> basicProps=job->GetBasicProps();
+    std::map<std::string, std::string>::iterator it = basicProps.begin();
 
-            celement->SetAttribute("name", itit->first.c_str());
-            std::map<std::string, std::string> props=itit->second;
-
-            it = props.begin();
-            while(it != props.end())
-            {
-                auto element = document.NewElement("prop");
-                celement->LinkEndChild(element);
-                element->SetAttribute("key", it->first.c_str());
-                element->SetAttribute("value", it->second.c_str());
-                it++;
-            }
-
-            itit++;
-        }
-
-        auto wpElement = document.NewElement("wall_props");
-        jobElement->LinkEndChild(wpElement);
-        std::map<std::string,std::string> wallProps=job->GetWallProps();
-        it = wallProps.begin();
-        while(it != wallProps.end())
-        {
-            auto element = document.NewElement("prop");
-            wpElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first.c_str());
-            element->SetAttribute("value", it->second.c_str());
-            it++;
-        }
-
-        auto vpElement = document.NewElement("var_props");
-        jobElement->LinkEndChild(vpElement);
-        std::map<std::string, std::map<std::string, std::string> > varProps=job->GetVarProps();
-        itit = varProps.begin();
-        while(itit != varProps.end())
-        {
-            auto felement = document.NewElement("face");
-            vpElement->LinkEndChild(felement);
-
-            felement->SetAttribute("name", itit->first.c_str());
-
-            std::map<std::string, std::string> props=itit->second;
-
-            it = props.begin();
-            while(it != props.end())
-            {
-                auto element = document.NewElement("prop");
-                felement->LinkEndChild(element);
-                element->SetAttribute("key", it->first.c_str());
-                element->SetAttribute("value", it->second.c_str());
-                it++;
-            }
-
-            itit++;
-        }
-
-        auto spElement = document.NewElement("solver_props");
-        jobElement->LinkEndChild(spElement);
-        std::map<std::string,std::string> solverProps=job->GetSolverProps();
-        it = solverProps.begin();
-        while(it != solverProps.end())
-        {
-            auto element = document.NewElement("prop");
-            spElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first.c_str());
-            element->SetAttribute("value", it->second.c_str());
-            it++;
-        }
-
-        auto rpElement = document.NewElement("run_props");
-        jobElement->LinkEndChild(rpElement);
-        std::map<std::string,std::string> runProps=job->GetRunProps();
-        it = runProps.begin();
-        while(it != runProps.end())
-        {
-            auto element = document.NewElement("prop");
-            rpElement->LinkEndChild(element);
-            element->SetAttribute("key", it->first.c_str());
-            element->SetAttribute("value", it->second.c_str());
-            it++;
-        }
-
+    while(it != basicProps.end()) {
+      auto element = document.NewElement("prop");
+      bpElement->LinkEndChild(element);
+      element->SetAttribute("key", it->first.c_str());
+      element->SetAttribute("value", it->second.c_str());
+      it++;
     }
 
-    if (document.SaveFile(fileName.c_str()) == false)
-    {
-        mitkThrow() << "Could not write model to " << fileName;
+    auto cpElement = document.NewElement("cap_props");
+    jobElement->LinkEndChild(cpElement);
+    std::map<std::string, std::map<std::string, std::string> > capProps=job->GetCapProps();
+    auto itit = capProps.begin();
+
+    while(itit != capProps.end()) {
+      auto celement = document.NewElement("cap");
+      cpElement->LinkEndChild(celement);
+
+      celement->SetAttribute("name", itit->first.c_str());
+      std::map<std::string, std::string> props=itit->second;
+      it = props.begin();
+
+      while(it != props.end()) {
+        auto element = document.NewElement("prop");
+        celement->LinkEndChild(element);
+        element->SetAttribute("key", it->first.c_str());
+        element->SetAttribute("value", it->second.c_str());
+        it++;
+      }
+
+    itit++;
     }
+
+    auto wpElement = document.NewElement("wall_props");
+    jobElement->LinkEndChild(wpElement);
+    std::map<std::string,std::string> wallProps=job->GetWallProps();
+    it = wallProps.begin();
+
+    while (it != wallProps.end()) {
+      auto element = document.NewElement("prop");
+      wpElement->LinkEndChild(element);
+      element->SetAttribute("key", it->first.c_str());
+      element->SetAttribute("value", it->second.c_str());
+      it++;
+    }
+
+    auto vpElement = document.NewElement("var_props");
+    jobElement->LinkEndChild(vpElement);
+    std::map<std::string, std::map<std::string, std::string> > varProps=job->GetVarProps();
+    itit = varProps.begin();
+
+    while(itit != varProps.end()) {
+      auto felement = document.NewElement("face");
+      vpElement->LinkEndChild(felement);
+      felement->SetAttribute("name", itit->first.c_str());
+      std::map<std::string, std::string> props=itit->second;
+      it = props.begin();
+
+      while(it != props.end()) {
+        auto element = document.NewElement("prop");
+        felement->LinkEndChild(element);
+        element->SetAttribute("key", it->first.c_str());
+        element->SetAttribute("value", it->second.c_str());
+        it++;
+      }
+
+      itit++;
+    }
+
+    auto spElement = document.NewElement("solver_props");
+    jobElement->LinkEndChild(spElement);
+    std::map<std::string,std::string> solverProps=job->GetSolverProps();
+    it = solverProps.begin();
+
+    while(it != solverProps.end()) {
+      auto element = document.NewElement("prop");
+      spElement->LinkEndChild(element);
+      element->SetAttribute("key", it->first.c_str());
+      element->SetAttribute("value", it->second.c_str());
+      it++;
+    }
+
+    auto rpElement = document.NewElement("run_props");
+    jobElement->LinkEndChild(rpElement);
+    std::map<std::string,std::string> runProps=job->GetRunProps();
+    it = runProps.begin();
+
+    while(it != runProps.end()) {
+      auto element = document.NewElement("prop");
+      rpElement->LinkEndChild(element);
+      element->SetAttribute("key", it->first.c_str());
+      element->SetAttribute("value", it->second.c_str());
+      it++;
+    }
+
+  }
+
+  #ifdef debug_Write
+  std::cout << dmsg << "document.SaveFile ... " << std::endl;
+  #endif
+
+  if (document.SaveFile(fileName.c_str()) != tinyxml2::XML_SUCCESS) {
+    mitkThrow() << "Could not write CFD Simulation parameters to file '" << fileName << "'.";
+  }
 }
 
 mitk::IFileIO::ConfidenceLevel sv4guiMitkSimJobIO::GetWriterConfidenceLevel() const
