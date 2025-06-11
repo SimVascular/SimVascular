@@ -29,10 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The sv4guiMPIPreferences class is used to determine which default binaries,
-// (svsolver, svpre and svpost) are used by the SV Simulation plugin. The class also 
-// determines which mpiexec binary is used to execute solver jobs using MPI and what
-// its implementation is: MPICH or OpenMPI. 
+// The sv4guiMPIPreferences class is used to determine which the svmultiphysics binary
+// used by the SV Simulation plugin. The class also determines which mpiexec binary is 
+// used to execute solver jobs using MPI and what its implementation is: MPICH or OpenMPI. 
 //
 // An sv4guiMPIPreferences object is used by the sv4guiSimulationPreferencePage objectc
 // to display the full path to these binaries in the Preferences -> SimVascular Simulation panel.

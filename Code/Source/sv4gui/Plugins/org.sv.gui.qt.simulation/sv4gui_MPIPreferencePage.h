@@ -33,8 +33,7 @@
 // presented in the 'Preferences->SimVascular Simulation' panel. 
 //
 // The 'Preferences->SimVascular Simulation' panel is used to show and set
-// the location of the solver binaries (svpre, svsolver and svpost) and
-// mpiexec binary used to execute a simulation.
+// the location of the mpiexec binary used to execute a simulation.
 
 #ifndef SV4GUI_MPIPREFERENCEPAGE_H
 #define SV4GUI_MPIPREFERENCEPAGE_H

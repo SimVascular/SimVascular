@@ -128,10 +128,6 @@ public slots:
 
     void UpdateGUIRunDir();
 
-//    void ExportInputFiles();
-
-//    void ExportAllFiles();
-
     void CreateAllFiles();
 
     void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
@@ -139,8 +135,6 @@ public slots:
     void RunJob();
 
     void SetResultDir();
-
-    void ExportResults();
 
     void UpdateJobStatus();
 
@@ -237,10 +231,7 @@ private:
 
     sv4guiMPIPreferences::MpiImplementation m_MpiImplementation;
 
-    std::string m_PresolverPath;
-    std::string m_FlowsolverPath;
-    std::string m_FlowsolverNOMPIPath;
-    std::string m_PostsolverPath;
+    std::string m_SolverPath;
 
     std::string m_MPIExecPath;
     bool m_UseMPI;
@@ -253,7 +244,6 @@ private:
     sv4guiMPIPreferences m_DefaultMPIPrefs;
 
     void CheckSolver();
-    void CheckSolverNOMPI();
     void CheckMpi();
     int GetStartTimeStep(const QString& runPath, const QString& jobPath, const int numProcs);
 

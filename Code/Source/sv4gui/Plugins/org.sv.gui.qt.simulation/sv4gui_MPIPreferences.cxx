@@ -81,7 +81,7 @@ sv4guiMPIPreferences::~sv4guiMPIPreferences()
 void sv4guiMPIPreferences::InitializeMPILocation()
 {
   // Set the default install location of the solver.
-  QString solverInstallPath = "/usr/local/sv/svsolver";
+  QString solverInstallPath = "/usr/local/sv/svMultiPhysics";
   QStringList dirList = QDir(solverInstallPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
   if (dirList.size() != 0) {
     solverInstallPath += "/" + dirList.back();

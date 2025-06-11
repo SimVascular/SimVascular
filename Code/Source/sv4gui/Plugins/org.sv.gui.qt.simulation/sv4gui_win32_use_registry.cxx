@@ -122,13 +122,13 @@ void sv4guiQueryKey(HKEY hKey)
 }
 
 //------------------------------------
-// sv4gui_parse_registry_for_svsolver
+// sv4gui_parse_registry_for_solver
 //------------------------------------
 //
-int sv4gui_parse_registry_for_svsolver(char* keytofind, char* rtnval) 
+int sv4gui_parse_registry_for_solver(char* keytofind, char* rtnval) 
 {
-  //fprintf(stdout,"\n========== sv4gui_parse_registry_for_svsolver ==========\n");
-  //fprintf(stdout,"[sv4gui_parse_registry_for_svsolver] keytofind: %s \n", keytofind);
+  //fprintf(stdout,"\n========== sv4gui_parse_registry_for_solver ==========\n");
+  //fprintf(stdout,"[sv4gui_parse_registry_for_solver] keytofind: %s \n", keytofind);
 
   HKEY hKey[3];
   LONG returnStatus;
@@ -142,12 +142,12 @@ int sv4gui_parse_registry_for_svsolver(char* keytofind, char* rtnval)
   
   char mykey[3][1024];
   mykey[0][0]='\0';
-  sprintf(mykey[0],"%s\\%s\\%s\\%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,"Solvers","svSolver");
+  sprintf(mykey[0],"%s\\%s\\%s\\%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,"Solvers","svMultiPhysics");
   //fprintf(stdout,"%s\n\n",mykey[0]);
-  //fprintf(stdout,"[sv4gui_parse_registry_for_svsolver] mykey[0]: %s \n", mykey[0]);
+  //fprintf(stdout,"[sv4gui_parse_registry_for_solver] mykey[0]: %s \n", mykey[0]);
 
   returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey[0], 0L,  KEY_READ, &hKey[0]);
-  //fprintf(stdout, "[sv4gui_parse_registry_for_svsolver] returnStatus: %d \n", returnStatus);
+  //fprintf(stdout, "[sv4gui_parse_registry_for_solver] returnStatus: %d \n", returnStatus);
 
   if (returnStatus != ERROR_SUCCESS) {
     fprintf(stdout,"**** WARNING: No SimVascular svSolver found in registry.\n(%s)\n",mykey[0]);
@@ -196,10 +196,10 @@ int sv4gui_parse_registry_for_svsolver(char* keytofind, char* rtnval)
  
   // Enumerate the subkeys, until RegEnumKeyEx fails.
   if (cSubKeys[0]) {
-    //fprintf(stdout, "[sv4gui_parse_registry_for_svsolver] Number of subkeys: %d\n", cSubKeys[0]);
+    //fprintf(stdout, "[sv4gui_parse_registry_for_solver] Number of subkeys: %d\n", cSubKeys[0]);
 
     for (i=0; i<cSubKeys[0]; i++) {
-      //fprintf(stdout, "[sv4gui_parse_registry_for_svsolver] ----- subkey %d ----- \n", i);
+      //fprintf(stdout, "[sv4gui_parse_registry_for_solver] ----- subkey %d ----- \n", i);
       
       cbName[0] = MAX_KEY_LENGTH;
       retCode = RegEnumKeyEx(hKey[0], i,
@@ -211,12 +211,12 @@ int sv4gui_parse_registry_for_svsolver(char* keytofind, char* rtnval)
                      &ftLastWriteTime[0]);
       
        if (retCode == ERROR_SUCCESS) {
-         //fprintf(stdout, "[sv4gui_parse_registry_for_svsolver] achKey[0]: %s \n", achKey[0]);
+         //fprintf(stdout, "[sv4gui_parse_registry_for_solver] achKey[0]: %s \n", achKey[0]);
 
 	 _tprintf(TEXT("\nsvSolver %d: %s\n"), i+1, achKey[0]);
          mykey[1][0]='\0';
          sprintf(mykey[1],"%s\\%s",mykey[0],achKey[0]);
-         //fprintf(stdout, "[sv4gui_parse_registry_for_svsolver] mykey[1]: %s \n", mykey[0]);
+         //fprintf(stdout, "[sv4gui_parse_registry_for_solver] mykey[1]: %s \n", mykey[0]);
 	 returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey[1], 0L,  KEY_READ, &hKey[1]);
 
          if (returnStatus != ERROR_SUCCESS) {
@@ -224,7 +224,7 @@ int sv4gui_parse_registry_for_svsolver(char* keytofind, char* rtnval)
            return SV_ERROR;
 	 } else {
           //sv4guiQueryKey(hKey[1]);
-          sv4gui_parse_registry_for_svsolver_internal(mykey[1],keytofind,rtnval);
+          sv4gui_parse_registry_for_solver_internal(mykey[1],keytofind,rtnval);
 
          } // returnStatus
        } // retCode
@@ -238,11 +238,11 @@ int sv4gui_parse_registry_for_svsolver(char* keytofind, char* rtnval)
 }
 
 
-int sv4gui_parse_registry_for_svsolver_internal(char* toplevel_key, char* keytofind, char* rtnval) 
+int sv4gui_parse_registry_for_solver_internal(char* toplevel_key, char* keytofind, char* rtnval) 
 {
-  //fprintf(stdout,"\n========== sv4gui_parse_registry_for_svsolver_internal ==========\n");
-  //fprintf(stdout,"[sv4gui_parse_registry_for_svsolver_internal] toplevel_key: %s \n", toplevel_key);
-  //fprintf(stdout,"[sv4gui_parse_registry_for_svsolver_internal] keytofind: %s \n", keytofind);
+  //fprintf(stdout,"\n========== sv4gui_parse_registry_for_solver_internal ==========\n");
+  //fprintf(stdout,"[sv4gui_parse_registry_for_solver_internal] toplevel_key: %s \n", toplevel_key);
+  //fprintf(stdout,"[sv4gui_parse_registry_for_solver_internal] keytofind: %s \n", keytofind);
 
   HKEY hKey;
   LONG returnStatus;
@@ -252,11 +252,10 @@ int sv4gui_parse_registry_for_svsolver_internal(char* toplevel_key, char* keytof
   sprintf(append_env_var_key,"%s",toplevel_key);
   
   //fprintf(stdout,"parse for env vars (%s)\n\n",append_env_var_key);
-  //fprintf(stdout,"[sv4gui_parse_registry_for_svsolver_internal] Pparse for env vars: %s \n", append_env_var_key);
+  //fprintf(stdout,"[sv4gui_parse_registry_for_solver_internal] Pparse for env vars: %s \n", append_env_var_key);
   returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, append_env_var_key, 0L,  KEY_READ, &hKey);
 
   if (returnStatus != ERROR_SUCCESS) {
-    fprintf(stderr,"RegistryForSvsolver: SV registry error!\n(%s)\n",append_env_var_key);
     return SV_ERROR;
   }
 
@@ -300,14 +299,14 @@ int sv4gui_parse_registry_for_svsolver_internal(char* toplevel_key, char* keytof
     fprintf(stderr,"error reading hkey!\n\n");
   } else {
     //fprintf(stdout,"cSubKeys: %i\n",cSubKeys);
-    //fprintf(stdout,"[sv4gui_parse_registry_for_svsolver_internal] cSubKeys: %i \n", cSubKeys);
+    //fprintf(stdout,"[sv4gui_parse_registry_for_solver_internal] cSubKeys: %i \n", cSubKeys);
   }
 
   if (cValues) {
-    //fprintf(stdout, "[sv4gui_parse_registry_for_svsolver_internal] Number of values: %d\n", cValues);
+    //fprintf(stdout, "[sv4gui_parse_registry_for_solver_internal] Number of values: %d\n", cValues);
     
     for (i=0, retCode=ERROR_SUCCESS; i<cValues; i++) { 
-      //fprintf(stdout, "[sv4gui_parse_registry_for_svsolver_internal] ----- i %d -----\n", i);
+      //fprintf(stdout, "[sv4gui_parse_registry_for_solver_internal] ----- i %d -----\n", i);
       cchValue = MAX_VALUE_NAME;
       achValue[0] = '\0';
       DWORD dwType=REG_SZ;
@@ -322,12 +321,12 @@ int sv4gui_parse_registry_for_svsolver_internal(char* toplevel_key, char* keytof
 		(LPBYTE)&lszValue,
 		&dwSize);
 
-      //fprintf(stdout, "[sv4gui_parse_registry_for_svsolver_internal] retCode: %d\n", retCode);
-      //fprintf(stdout, "[sv4gui_parse_registry_for_svsolver_internal] achValue: %s\n", achValue);
+      //fprintf(stdout, "[sv4gui_parse_registry_for_solver_internal] retCode: %d\n", retCode);
+      //fprintf(stdout, "[sv4gui_parse_registry_for_solver_internal] achValue: %s\n", achValue);
 
       if (retCode == ERROR_SUCCESS) {
 	if (!strcmp(keytofind,achValue)) {
-	  //fprintf(stdout,"[sv4gui_parse_registry_for_svsolver_internal] Return lszValue: %s n",lszValue);
+	  //fprintf(stdout,"[sv4gui_parse_registry_for_solver_internal] Return lszValue: %s n",lszValue);
 	  sprintf(rtnval,"%s",lszValue);
 	  return SV_OK;
 	}

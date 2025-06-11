@@ -30,8 +30,8 @@
  */
 
 // The sv4guiSimulationPreferencePage class is used to process information 
-// about the location of the solver binaries (svpre, svsolver and svpost) 
-// and the mpiexec binary used to execute a simulation presented in the 
+// about the location of the solver binary svmultiphysics and the mpiexec 
+// binary used to execute a simulation presented in the 
 // 'Preferences->SimVascular Simulation' panel. 
 //
 // sv4guiSimulationPreferencePage methods are used to 
@@ -96,79 +96,24 @@ sv4guiSimulationPreferencePage::~sv4guiSimulationPreferencePage()
 //
 void sv4guiSimulationPreferencePage::InitializeSolverLocations()
 {
-  // Set the solver binaries.
-  SetPreSolver(); 
   SetSolver();
-  SetSolverNOMPI();
-  SetPostSolver();
-}
-
-//---------------
-// SetPostSolver
-//---------------
-// Set the post processing binary svpost.
-//
-void sv4guiSimulationPreferencePage::SetPostSolver()
-{
-  QString svPost = m_Ui->lineEditPostsolverPath->text().trimmed();
-
-  if (!svPost.isEmpty() && (svPost != m_DefaultPrefs.UnknownBinary)) {
-    return;
-  }
-
-  svPost = m_DefaultPrefs.GetPostSolver();
-  m_Ui->lineEditPostsolverPath->setText(svPost);
-}
-
-//------------------
-// SetPresolverPath
-//------------------
-// Set the location of the svpre binary.
-//
-void sv4guiSimulationPreferencePage::SetPreSolver()
-{
-  QString svPresolver = m_Ui->lineEditPresolverPath->text().trimmed();
-
-  if (!svPresolver.isEmpty() && (svPresolver != m_DefaultPrefs.UnknownBinary)) {
-    return;
-  }
-
-  svPresolver = m_DefaultPrefs.GetPreSolver();
-  m_Ui->lineEditPresolverPath->setText(svPresolver);
 }
 
 //-----------
 // SetSolver 
 //-----------
-// Set the svsolver binary, with or without mpi.
+// Set the svmultiphysics binary, with or without mpi.
 //
 void sv4guiSimulationPreferencePage::SetSolver()
 {
-  QString svSolver = m_Ui->lineEditFlowsolverPath->text().trimmed();
+  QString solver = m_Ui->lineEditSolverPath->text().trimmed();
 
-  if (!svSolver.isEmpty() && (svSolver != m_DefaultPrefs.UnknownBinary)) {
+  if (!solver.isEmpty() && (solver != m_DefaultPrefs.UnknownBinary)) {
     return;
   }
 
-  svSolver = m_DefaultPrefs.GetSolver();
-  m_Ui->lineEditFlowsolverPath->setText(svSolver);
-}
-
-//---------------
-// SetSolverNOMPI 
-//---------------
-// Set the svsolver binary, with or without mpi.
-//
-void sv4guiSimulationPreferencePage::SetSolverNOMPI()
-{
-  QString svSolverNOMPI = m_Ui->lineEditFlowsolverNOMPIPath->text().trimmed();
-
-  if (!svSolverNOMPI.isEmpty() && (svSolverNOMPI != m_DefaultPrefs.UnknownBinary)) {
-    return;
-  }
-
-  svSolverNOMPI = m_DefaultPrefs.GetSolverNOMPI();
-  m_Ui->lineEditFlowsolverNOMPIPath->setText(svSolverNOMPI);
+  solver = m_DefaultPrefs.GetSolver();
+  m_Ui->lineEditSolverPath->setText(solver);
 }
 
 //-----------------
@@ -186,11 +131,7 @@ void sv4guiSimulationPreferencePage::CreateQtControl(QWidget* parent)
 
     m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.simulation");
 
-    connect( m_Ui->toolButtonPresolver, SIGNAL(clicked()), this, SLOT(SetPresolverPath()) );
-    connect( m_Ui->toolButtonFlowsolver, SIGNAL(clicked()), this, SLOT(SetFlowsolverPath()) );
-    connect( m_Ui->toolButtonFlowsolverNOMPI, SIGNAL(clicked()), this, SLOT(SetFlowsolverNOMPIPath()) );
-    connect( m_Ui->toolButtonCustomTemplate, SIGNAL(clicked()), this, SLOT(SetCustomTemplatePath()) );
-    connect( m_Ui->toolButtonPostsolver, SIGNAL(clicked()), this, SLOT(SetPostsolverPath()) );
+    connect( m_Ui->toolButtonSolver, SIGNAL(clicked()), this, SLOT(SetSolverPath()) );
 
     this->Update();
 
@@ -198,79 +139,18 @@ void sv4guiSimulationPreferencePage::CreateQtControl(QWidget* parent)
     InitializeSolverLocations();
 }
 
-//------------------
-// SetPresolverPath
-//------------------
-// Process the GUI event to set the svpre path.
+//----------------
+// SetSolverPath
+//----------------
+// Process the GUI event to set the svmultiphysics path.
 //
-void sv4guiSimulationPreferencePage::SetPresolverPath()
+void sv4guiSimulationPreferencePage::SetSolverPath()
 {
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Presolver");
+  QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular svMultiPhysics solver");
 
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditPresolverPath->setText(filePath);
-    }
-}
-
-//-------------------
-// SetFlowsolverPath
-//-------------------
-// Process the GUI event to set the svsolver path.
-//
-void sv4guiSimulationPreferencePage::SetFlowsolverPath()
-{
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Flowsolver");
-
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditFlowsolverPath->setText(filePath);
-    }
-}
-
-//-----------------------
-// SetFlowsolverPathNOMPI
-//-----------------------
-// Process the GUI event to set the svsolver path.
-//
-void sv4guiSimulationPreferencePage::SetFlowsolverNOMPIPath()
-{
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Flowsolver NO MPI");
-
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditFlowsolverNOMPIPath->setText(filePath);
-    }
-}
-
-//-----------------------
-// SetCustomTemplatePath
-//-----------------------
-//
-
-void sv4guiSimulationPreferencePage::SetCustomTemplatePath()
-{
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose Solver Custom Template");
-
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditCustomTemplatePath->setText(filePath);
-    }
-}
-
-//-------------------
-// SetPostsolverPath 
-//-------------------
-// Process the GUI event to set the svpost path.
-//
-void sv4guiSimulationPreferencePage::SetPostsolverPath()
-{
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Postsolver");
-
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditPostsolverPath->setText(filePath);
-    }
+  if (!filePath.isEmpty()) {
+    m_Ui->lineEditSolverPath->setText(filePath);
+  }
 }
 
 QWidget* sv4guiSimulationPreferencePage::GetQtControl() const
@@ -293,26 +173,13 @@ void sv4guiSimulationPreferencePage::PerformCancel()
 //
 bool sv4guiSimulationPreferencePage::PerformOk()
 {
-    // Get the solver paths from the GUI.
-    QString presolverPath = m_Ui->lineEditPresolverPath->text().trimmed();
-    QString flowsolverPath = m_Ui->lineEditFlowsolverPath->text().trimmed();
-    QString flowsolverNOMPIPath = m_Ui->lineEditFlowsolverNOMPIPath->text().trimmed();
-    bool useCustom = m_Ui->checkBoxUseCustom->isChecked();
-    QString customTemplatePath = m_Ui->lineEditCustomTemplatePath->text().trimmed();
-    QString postsolverPath = m_Ui->lineEditPostsolverPath->text().trimmed();
+  // Get the solver paths from the GUI.
+  QString solverPath = m_Ui->lineEditSolverPath->text().trimmed();
 
-    // Set the values of the solver paths in the MITK database.
-    m_Preferences->Put(PRE_SOLVER_PATH, presolverPath.toStdString());
-    m_Preferences->Put(FLOW_SOLVER_PATH, flowsolverPath.toStdString());
-    m_Preferences->Put(FLOW_SOLVER_NO_MPI_PATH, flowsolverNOMPIPath.toStdString());
-    m_Preferences->PutBool(USE_CUSTOM, useCustom);
-    m_Preferences->Put(POST_SOLVER_PATH, postsolverPath.toStdString());
+  // Set the values of the solver paths in the MITK database.
+  m_Preferences->Put(SOLVER_PATH, solverPath.toStdString());
 
-    if (useCustom) {
-        m_Preferences->Put(SOLVER_TEMPLATE_PATH, customTemplatePath.toStdString());
-    }
-
-    return true;
+  return true;
 }
 
 //--------
@@ -323,18 +190,6 @@ bool sv4guiSimulationPreferencePage::PerformOk()
 //
 void sv4guiSimulationPreferencePage::Update()
 {
-    m_Ui->lineEditPresolverPath->setText(QString::fromStdString(m_Preferences->Get("presolver path","")));
-
-    m_Ui->lineEditFlowsolverPath->setText(QString::fromStdString(m_Preferences->Get("flowsolver path","")));
-
-    m_Ui->lineEditFlowsolverNOMPIPath->setText(QString::fromStdString(m_Preferences->Get("flowsolver nompi path","")));
-
-    //m_Ui->checkBoxUseMPI->setChecked(m_Preferences->GetBool("use mpi", true));
-
-    m_Ui->checkBoxUseCustom->setChecked(m_Preferences->GetBool("use custom", false));
-
-    m_Ui->lineEditCustomTemplatePath->setText(QString::fromStdString(m_Preferences->Get("solver template path","")));
-
-    m_Ui->lineEditPostsolverPath->setText(QString::fromStdString(m_Preferences->Get("postsolver path","")));
+  m_Ui->lineEditSolverPath->setText(QString::fromStdString(m_Preferences->Get("solver path","")));
 }
 

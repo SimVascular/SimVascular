@@ -29,10 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The sv4guiSimulationPreferences class is used to determine which default binaries,
-// (svsolver, svpre and svpost) are used by the SV Simulation plugin. The class also 
-// determines which mpiexec binary is used to execute solver jobs using MPI and what
-// its implementation is: MPICH or OpenMPI. 
+// The sv4guiSimulationPreferences class is used to determine which svmultiphysics binary
+// are used by the SV Simulation plugin. The class also determines which mpiexec binary 
+// is used to execute solver jobs using MPI and what its implementation is: MPICH or OpenMPI. 
 //
 // An sv4guiSimulationPreferences object is used by the sv4guiSimulationPreferencePage objectc
 // to display the full path to these binaries in the Preferences -> SimVascular Simulation panel.
@@ -64,23 +63,12 @@ public:
   ~sv4guiSimulationPreferences();
 
   void InitializeSolverLocations();
-  QString GetPostSolver();
-  QString GetPreSolver();
   QString GetSolver();
-  QString GetSolverNOMPI();
   static const QString UnknownBinary;
 
 private:
-  QString m_svPostBinary;
-  QString m_svPresolver;
-  QString m_svSolver;
-  QString m_svSolverNOMPI;
-
-  void SetPostSolver(const QString& solverInstallPath, const QString& applicationPath);
-  void SetPreSolver(const QString& solverInstallPath, const QString& applicationPath);
+  QString m_Solver;
   void SetSolver(const QString& solverInstallPath, const QString& applicationPath);
-  void SetSolverNOMPI(const QString& solverInstallPath, const QString& applicationPath);
-
 };
 
 #endif // SV4GUI_SIMULATIONPREFERENCES_H

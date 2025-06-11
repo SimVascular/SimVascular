@@ -109,10 +109,7 @@ sv4guiSimulationView::sv4guiSimulationView() :
 
     m_TableModelSolver=nullptr;
 
-    m_PresolverPath="";
-    m_FlowsolverPath="";
-    m_FlowsolverNOMPIPath="";
-    m_PostsolverPath="";
+    m_SolverPath="";
     m_MPIExecPath="";
 
     m_UseMPI=false;
@@ -304,7 +301,6 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
     // Widgets for exporting results.
     //
     connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()) );
-    connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()) );
 
 //    ui->widgetCalculateFlows->hide();
     connect(ui->checkBoxCalculateFlows, SIGNAL(clicked(bool)), this, SLOT(ShowCalculateFowsWidget(bool)) );
@@ -328,19 +324,16 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 // exist then set the values of the binaries to their default values, which
 // are the same values set for the SimVascular Simulation Preferences page.
 //
-// The solver binaries are: svpre, svsolver and svpost. The value for each binary
+// The svMultiPhysics binary is svmultiphysics. The value for the binary
 // contains the full path to the binary together with its name. For example, 
 //
-//     m_FlowsolverPath = "/usr/local/sv/bin/svsolver"
+//     m_SolverPath = "/usr/local/sv/svMultiPhysics/DATE/bin/svmultiphysics"
 //
 // Note that the 'binary' may actually be a shell script that sets up environment
 // variables and then executes the actual binary. In that case m_FlowsolverPath
 // is set to (on Linux) 
 //
-//     m_FlowsolverPath = "/usr/local/sv/svsolver"
-//
-// The 'prefs' Get() argument names (e.g. "presolver path") are set by the 
-// sv4guiSimulationPreferencePage object.
+//     m_FlowsolverPath = "/usr/local/sv/svMultiPhysics"
 //
 void sv4guiSimulationView::OnPreferencesChanged(const mitk::IPreferences* prefs)
 {
@@ -348,11 +341,8 @@ void sv4guiSimulationView::OnPreferencesChanged(const mitk::IPreferences* prefs)
         return;
     }
 
-    // Set the solver binaries.
-    m_PresolverPath = prefs->Get(PRE_SOLVER_PATH, m_DefaultPrefs.GetPreSolver().toStdString());
-    m_FlowsolverPath = prefs->Get(FLOW_SOLVER_PATH, m_DefaultPrefs.GetSolver().toStdString());
-    m_FlowsolverNOMPIPath = prefs->Get(FLOW_SOLVER_NO_MPI_PATH, m_DefaultPrefs.GetSolverNOMPI().toStdString());
-    m_PostsolverPath = prefs->Get(POST_SOLVER_PATH, m_DefaultPrefs.GetPostSolver().toStdString());
+    // Set the solver binary.
+    m_SolverPath = prefs->Get(SOLVER_PATH, m_DefaultPrefs.GetSolver().toStdString());
 
     // Set the mpiexec binary and mpi implementation.
     m_MPIExecPath = prefs->Get(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, m_DefaultMPIPrefs.GetMpiExec().toStdString()); 
@@ -1593,62 +1583,6 @@ void sv4guiSimulationView::UpdateGUIRunDir()
     ui->lineEditResultDir->setText(runDir);
 }
 
-//void sv4guiSimulationView::ExportInputFiles()
-//{
-//    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-//    berry::IPreferences::Pointer prefs;
-//    if (prefService)
-//    {
-//        prefs = prefService->GetSystemPreferences()->Node("/General");
-//    }
-//    else
-//    {
-//        prefs = berry::IPreferences::Pointer(0);
-//    }
-
-//    QString lastFileSavePath=QString();
-//    if(prefs.IsNotNull())
-//    {
-//        lastFileSavePath = prefs->Get("LastFileSavePath", "");
-//    }
-
-//    QString dir = QFileDialog::getExistingDirectory(m_Parent
-//                                                    , tr("Choose Directory")
-//                                                    , lastFileSavePath);
-
-//    if(dir.isEmpty()) return;
-
-//    CreateDataFiles(dir, false, true, true);
-//}
-
-//void sv4guiSimulationView::ExportAllFiles()
-//{
-//    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-//    berry::IPreferences::Pointer prefs;
-//    if (prefService)
-//    {
-//        prefs = prefService->GetSystemPreferences()->Node("/General");
-//    }
-//    else
-//    {
-//        prefs = berry::IPreferences::Pointer(0);
-//    }
-
-//    QString lastFileSavePath=QString();
-//    if(prefs.IsNotNull())
-//    {
-//        lastFileSavePath = prefs->Get("LastFileSavePath", "");
-//    }
-
-//    QString dir = QFileDialog::getExistingDirectory(m_Parent
-//                                                    , tr("Choose Directory")
-//                                                    , lastFileSavePath);
-
-//    if(dir.isEmpty()) return;
-
-//    CreateDataFiles(dir, true, true, true);
-//}
-
 QString sv4guiSimulationView::GetJobPath()
 {
     QString jobPath="";
@@ -1713,32 +1647,15 @@ void sv4guiSimulationView::RunJob()
 
     try {
 
-        if(m_UseMPI) {
-          // Check that the solver binaries are valid.
-          CheckSolver();
-          // Check that mpi is installed and that the implementation is OpenMPI or MSMPI.
-          CheckMpi();
-        } else {
-	  CheckSolverNOMPI();
-        }
+        CheckSolver();
+        CheckMpi();
 	
         // Set the solver output directory.
         QString runPath = jobPath;
         int numProcs = ui->sliderNumProcs->value();
 
-        /* [DaveP] sort of useless check.
-	if(!m_UseMPI && (numProcs > 1)) {
-            QMessageBox::warning(m_Parent, MsgTitle, "Cannot specify > 1 procs when not using MPI!");
-            throw std::string("Cannot specify > 1 procs when not using MPI");
-        }
-        */
-
-	if (!m_UseMPI) {
-            numProcs = 1;
-        }
-	
         if (numProcs > 1) {
-            runPath = jobPath+"/"+QString::number(numProcs)+"-procs_case";
+          runPath = jobPath+"/"+QString::number(numProcs)+"-procs_case";
         }
 
         // Get the simulation start time step and for numProcs=1
@@ -1759,20 +1676,15 @@ void sv4guiSimulationView::RunJob()
         totalSteps = QString::fromStdString(job->GetSolverProp("Number of Timesteps")).toInt();
         mitk::StatusBar::GetInstance()->DisplayText("Running simulation");
 
-        QProcess* flowsolverProcess = new QProcess(m_Parent);
-        flowsolverProcess->setWorkingDirectory(jobPath);
+        QProcess* solverProcess = new QProcess(m_Parent);
+        solverProcess->setWorkingDirectory(jobPath);
 
-        if (m_UseMPI) {
-            QStringList arguments;
-            arguments << "-n" << QString::number(numProcs) << QString::fromStdString(m_FlowsolverPath);
-            flowsolverProcess->setProgram(QString::fromStdString(m_MPIExecPath));
-            flowsolverProcess->setArguments(arguments);
-        } else {
-            flowsolverProcess->setProgram(QString::fromStdString(m_FlowsolverNOMPIPath));
-            flowsolverProcess->setArguments(QStringList());
-        }
+        QStringList arguments;
+        arguments << "-n" << QString::number(numProcs) << QString::fromStdString(m_SolverPath);
+        solverProcess->setProgram(QString::fromStdString(m_MPIExecPath));
+        solverProcess->setArguments(arguments);
 
-        sv4guiSolverProcessHandler* handler = new sv4guiSolverProcessHandler(flowsolverProcess, m_JobNode, 
+        sv4guiSolverProcessHandler* handler = new sv4guiSolverProcessHandler(solverProcess, m_JobNode, 
             startStep, totalSteps, runPath, m_Parent);
 
         handler->Start();
@@ -1880,56 +1792,7 @@ void sv4guiSimulationView::CheckSolver()
     // Set the name and path to check for the solver binaries.
     typedef std::tuple<QString,QString> binaryNamePath;
     std::vector<binaryNamePath> binariesToCheck = { 
-        std::make_tuple("FlowSolver", QString::fromStdString(m_FlowsolverPath)),
-        std::make_tuple("PreSolver", QString::fromStdString(m_PresolverPath)),
-        std::make_tuple("PostSolver", QString::fromStdString(m_PostsolverPath))
-    };
-
-    // Check the name and path for the solver binaries.
-    //
-    for (auto const& namePath : binariesToCheck) {
-        auto name = std::get<0>(namePath);
-        auto path = std::get<1>(namePath);
-
-        if ((path == "") || (path == m_DefaultPrefs.UnknownBinary)) {
-            auto msg1 = "The " + name + " executable cannot be found. \n";
-            auto msg2 = "Please install " + name + " and set its location in the Preferences->SimVascular Simulation page.";
-            QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
-            throw exception; 
-        }
-
-        QFileInfo check_file(path);
-        if (!check_file.exists()) {
-            auto msg1 = "The " + name + " executable '" + path + "' cannot be found. \n\n";
-            auto msg2 = "Please set the " + name + " executable in the Preferences->SimVascular Simulation page.";
-            QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
-            throw exception; 
-        }
-
-        if (!check_file.isFile()) {
-            auto msg1 = "The " + name + " executable '" + path + "' does not name a file. \n";
-            auto msg2 = "Please set the " + name + " executable in the Preferences->SimVascular Simulation page.";
-            QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
-            throw exception; 
-        }
-    }
-}
-
-//-----------------
-// CheckSolverNOMPI
-//-----------------
-// Check for valid solver binaries.
-//
-void sv4guiSimulationView::CheckSolverNOMPI()
-{
-    std::string exception("Check nompi solver");
-
-    // Set the name and path to check for the solver binaries.
-    typedef std::tuple<QString,QString> binaryNamePath;
-    std::vector<binaryNamePath> binariesToCheck = { 
-        std::make_tuple("FlowSolverNOMPI", QString::fromStdString(m_FlowsolverNOMPIPath)),
-        std::make_tuple("PreSolver", QString::fromStdString(m_PresolverPath)),
-        std::make_tuple("PostSolver", QString::fromStdString(m_PostsolverPath))
+        std::make_tuple("Solver", QString::fromStdString(m_SolverPath)),
     };
 
     // Check the name and path for the solver binaries.
@@ -2100,51 +1963,6 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
   std::string file_name = outputDir.toStdString() + "/solver.xml";
   sv4guiSimulationUtils::CreateSolverInputFile(job, faces_name_type, outputDir.toStdString(), file_name);
 
-  /*
-  QString solverFileContent=QString::fromStdString(sv4guiSimulationUtils::CreateFlowSolverFileContent(job));
-  QFile solverFile(outputDir+"/solver.xml");
-
-  if (solverFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-    QTextStream out(&solverFile);
-    out << solverFileContent;
-    solverFile.close();
-  }
-  */
-
-  // ========== Old svsolver code ==========
-  //
-  #ifdef svsolver_old_code
-
-  QFile numStartFile(outputDir+"/numstart.dat");
-  if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-    QTextStream out(&numStartFile);
-    out<<"0\n";
-    numStartFile.close();
-  }
-
-  QString rcrtFielContent=QString::fromStdString(sv4guiSimulationUtils::CreateRCRTFileContent(job));
-  if(rcrtFielContent!="") {
-    mitk::StatusBar::GetInstance()->DisplayText("Creating rcrt.dat");
-    QFile rcrtFile(outputDir+"/rcrt.dat");
-    if(rcrtFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-      QTextStream out(&rcrtFile);
-      out<<rcrtFielContent;
-      rcrtFile.close();
-    }
-  }
-
-  QString cortFielContent=QString::fromStdString(sv4guiSimulationUtils::CreateCORTFileContent(job));
-  if(cortFielContent!="") {
-    mitk::StatusBar::GetInstance()->DisplayText("Creating cort.dat");
-    QFile cortFile(outputDir+"/cort.dat");
-    if(cortFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-      QTextStream out(&cortFile);
-      out<<cortFielContent;
-      cortFile.close();
-    }
-  }
-  #endif
-
   // Create mesh files.
   //
   std::string meshName = "";
@@ -2192,45 +2010,6 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
       QMessageBox::warning(m_Parent,"Mesh info missing","Please make sure the mesh exists and is valid.");
       return false;
     }
-
-    // ========== Old svsolver code ==========
-    // Runs svpre program.
-    //
-    // Write restart file with initial conditions.
-    //
-    #ifdef svsolver_old_code
-    QString presolverPath = QString::fromStdString(m_PresolverPath);
-
-    if (presolverPath == "") {
-      presolverPath = QString::fromStdString(m_PresolverPath);
-    }
-
-    if (presolverPath == "") {
-      QMessageBox::warning(m_Parent,"Presolver Missing","Please make sure presolver exists!");
-    } else {
-      QString icFile=(QString::fromStdString(job->GetBasicProp("IC File"))).trimmed();
-
-      if(icFile!="" && QFile(icFile).exists()) {
-        QString newFilePath=outputDir+"/restart.0.1";
-        QFile::copy(icFile, newFilePath);
-      }
-
-      mitk::StatusBar::GetInstance()->DisplayText("Creating Data files: bct, restart, geombc,etc.");
-      QProcess *presolverProcess = new QProcess(m_Parent);
-      presolverProcess->setWorkingDirectory(outputDir);
-      presolverProcess->setProgram(presolverPath);
-      QStringList arguments;
-      arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
-      presolverProcess->setArguments(arguments);
-
-#if defined(Q_OS_MAC)
-      sv4guiProcessHandler* handler=new sv4guiProcessHandler(presolverProcess,m_JobNode,true,false,m_Parent);
-#else
-      sv4guiProcessHandler* handler=new sv4guiProcessHandler(presolverProcess,m_JobNode,true,true,m_Parent);
-#endif
-      handler->Start();
-    }
-    #endif
   }
 
   m_MitkJob->SetSimJob(job);
@@ -2742,248 +2521,6 @@ void sv4guiSimulationView::SetResultDir()
     }
 
     ui->lineEditResultDir->setText(dir);
-}
-
-//---------------
-// ExportResults
-//---------------
-//
-void sv4guiSimulationView::ExportResults()
-{
-    QString postsolverPath = QString::fromStdString(m_PostsolverPath);
-    if(postsolverPath=="")
-        postsolverPath = QString::fromStdString(m_PostsolverPath);
-
-    if(postsolverPath=="" || !QFile(postsolverPath).exists())
-    {
-        QMessageBox::warning(m_Parent,"Postsolver Missing","Please make sure postsolver exists!");
-        return;
-    }
-
-    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    mitk::IPreferences* prefs;
-
-    if (prefService)
-    {
-        prefs = prefService->GetSystemPreferences()->Node("/General");
-    }
-    else
-    {
-        prefs = nullptr;
-    }
-
-    QString lastFileSavePath="";
-    if(prefs != nullptr) 
-    {
-        lastFileSavePath = QString::fromStdString(prefs->Get("LastFileSavePath", ""));
-    }
-    if(lastFileSavePath=="")
-        lastFileSavePath=QDir::homePath();
-
-    QString exportDir = QFileDialog::getExistingDirectory(m_Parent
-                                                    , tr("Choose Export Directory")
-                                                    , lastFileSavePath);
-
-    exportDir=exportDir.trimmed();
-    if(exportDir.isEmpty())
-        return;
-
-    if(prefs !=  nullptr) 
-     {
-         prefs->Put("LastFileSavePath", exportDir.toStdString());
-         prefs->Flush();
-     }
-
-    QString jobName("");
-    if(m_JobNode.IsNotNull())
-        jobName=QString::fromStdString(m_JobNode->GetName())+"-";
-
-    exportDir=exportDir+"/"+jobName+"converted-results";
-    QDir exdir(exportDir);
-    exdir.mkpath(exportDir);
-
-    QString resultDir=ui->lineEditResultDir->text();
-    QDir rdir(resultDir);
-    if(!rdir.exists())
-    {
-        QMessageBox::warning(m_Parent,"Result dir not exists","Please provide valid result dir");
-        return;
-    }
-
-    QString startNo=ui->lineEditStart->text().trimmed();
-    if(!IsInt(startNo.toStdString()))
-    {
-        QMessageBox::warning(m_Parent,"Start Step Error","Please provide start step number in correct format.");
-        return;
-    }
-
-    QString stopNo=ui->lineEditStop->text().trimmed();
-    if(!IsInt(stopNo.toStdString()))
-    {
-        QMessageBox::warning(m_Parent,"Stop Step Error","Please provide stop step number in correct format.");
-        return;
-    }
-
-    QString increment=ui->lineEditIncrement->text().trimmed();
-    if(!IsInt(increment.toStdString()))
-    {
-        QMessageBox::warning(m_Parent,"Increment Error","Please provide increment in correct format.");
-        return;
-    }
-
-    QStringList arguments;
-    arguments << "-all";
-    arguments << "-indir" << resultDir;
-    arguments << "-outdir" << exportDir;
-    arguments << "-start" << startNo;
-    arguments << "-stop" << stopNo;
-    arguments << "-incr" << increment;
-    if(ui->checkBoxSingleFile->isChecked())
-        arguments << "-vtkcombo";
-
-    if(ui->checkBoxVolume->isChecked())
-    {
-       if(ui->checkBoxSingleFile->isChecked())
-           arguments << "-vtu" << "all_results.vtu";
-       else
-           arguments << "-vtu" << "all_results";
-    }
-
-    if(ui->checkBoxSurface->isChecked())
-    {
-       if(ui->checkBoxSingleFile->isChecked())
-           arguments << "-vtp" << "all_results.vtp";
-       else
-           arguments << "-vtp" << "all_results";
-    }
-
-    if(ui->checkBoxToRestart->isChecked())
-        arguments << "-ph" << "-laststep";
-
-    mitk::StatusBar::GetInstance()->DisplayText("Exporting results.");
-
-    QProcess *postsolverProcess = new QProcess(m_Parent);
-    postsolverProcess->setWorkingDirectory(exportDir);
-    postsolverProcess->setProgram(postsolverPath);
-    postsolverProcess->setArguments(arguments);
-
-    sv4guiProcessHandler* handler=new sv4guiProcessHandler(postsolverProcess,m_JobNode,false,false,m_Parent);
-    handler->Start();
-
-    QString detailedInfo=handler->GetMessage();
-    delete handler;
-
-    bool convertedFilesExit=true;
-    bool meshFaceDirExists=true;
-    bool meshFaceFilesExist=true;
-    bool calculateFlows=true;
-    QString meshFaceDir;
-
-    if(ui->checkBoxCalculateFlows->isChecked())
-    {
-        convertedFilesExit=false;
-        meshFaceDirExists=false;
-        meshFaceFilesExist=false;
-        calculateFlows=false;
-
-        meshFaceDir=GetJobPath()+"/mesh-complete/mesh-surfaces";
-        meshFaceDirExists=QDir(meshFaceDir).exists();
-        std::vector<std::string> meshFaceFileNames;
-        if(meshFaceDirExists)
-        {
-            QStringList filters;
-            filters<<"*.vtp";
-            QStringList fileList=QDir(meshFaceDir).entryList(filters, QDir::Files);
-            meshFaceFilesExist=(fileList.size()>0);
-            for(int i=0;i<fileList.size();i++)
-                meshFaceFileNames.push_back(fileList[i].toStdString());
-        }
-
-        std::vector<std::string> vtxFilePaths;
-
-        if(ui->checkBoxSingleFile->isChecked())
-        {
-            QString vtpResultFilePath=exportDir+"/all_results.vtp";
-            QString vtuResultFilePath=exportDir+"/all_results.vtu";
-
-            if(QFile(vtpResultFilePath).exists())
-                vtxFilePaths.push_back(vtpResultFilePath.toStdString());
-            else if(QFile(vtuResultFilePath).exists())
-                vtxFilePaths.push_back(vtuResultFilePath.toStdString());
-        }
-        else
-        {
-            QStringList filters;
-            filters<<"all_results_*.vtp";
-            QStringList fileList=QDir(exportDir).entryList(filters, QDir::Files, QDir::Name);
-
-            if(fileList.size()==0)
-            {
-                filters.clear();
-                filters<<"all_results_*.vtu";
-                fileList=QDir(exportDir).entryList(filters, QDir::Files, QDir::Name);
-            }
-
-            for(int i=0;i<fileList.size();i++)
-                vtxFilePaths.push_back((exportDir+"/"+fileList[i]).toStdString());
-
-        }
-
-        convertedFilesExit=(vtxFilePaths.size()>0);
-
-        if( convertedFilesExit && meshFaceDirExists && meshFaceFilesExist )
-        {
-
-
-            QString outPressureFlePath=exportDir+"/all_results-pressures.txt";
-            QString outFlowFilePath=exportDir+"/all_results-flows.txt";
-            QString outAverageFilePath=exportDir+"/all_results-averages.txt";
-            QString outAverageUnitsFilePath=exportDir+"/all_results-averages-from_cm-to-mmHg-L_per_min.txt";
-            QString unit=ui->comboBoxSimUnits->currentText();
-            bool skipWalls=ui->checkBoxSkipWalls->isChecked();
-
-            calculateFlows=sv4guiSimulationUtils::CreateFlowFiles(outFlowFilePath.toStdString(), outPressureFlePath.toStdString()
-                                                              , outAverageFilePath.toStdString(), outAverageUnitsFilePath.toStdString()
-                                                              , vtxFilePaths,ui->checkBoxSingleFile->isChecked()
-                                                              , meshFaceDir.toStdString(), meshFaceFileNames
-                                                              , unit.toStdString(), skipWalls);
-        }
-    }
-
-    QString msg="";
-
-    if (convertedFilesExit) {
-        msg = "Results have been converted.";
-        QString avg_msg = "\n\nWARNING: Results for flow averages across faces have not been converted.";
-        QString avg_check_msg = "\n\nCheck that there is a .sjb file with the same name as the simulation results directory.";
-
-        if (!meshFaceDirExists) {
-            QString avg_file_msg = "\n\nThe directory '" + meshFaceDir + "' containing face mesh files could not be opened.";
-            msg = msg + avg_msg + avg_file_msg + avg_check_msg; 
-
-        } else if (!meshFaceFilesExist) {
-            QString avg_file_msg = "\n\nNo face mesh files were found in the directory '" + meshFaceDir + "'.";
-            msg = msg + avg_msg + avg_file_msg; 
-
-        } else if (!calculateFlows) {
-            msg = msg + avg_msg + "\n\nAn error occured computing flow averages across faces.";
-        }
-
-    } else {
-        msg = "Results were not converted.";
-    }
-
-    msg=msg+"                                                                                        ";
-
-    QMessageBox mb(m_Parent);
-    mb.setWindowTitle("Finished");
-    mb.setText(msg);
-    mb.setIcon(QMessageBox::Information);
-    mb.setDetailedText(detailedInfo);
-    mb.setDefaultButton(QMessageBox::Ok);
-    mb.exec();
-
-    mitk::StatusBar::GetInstance()->DisplayText("Results converting finished.");
 }
 
 bool sv4guiSimulationView::IsInt(std::string value)
