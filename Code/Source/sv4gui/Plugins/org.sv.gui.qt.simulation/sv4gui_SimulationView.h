@@ -55,6 +55,8 @@
 #include <QMenu>
 #include <QmitkStdMultiWidget.h>
 
+#include <map>
+
 namespace Ui {
 class sv4guiSimulationView;
 }
@@ -231,6 +233,7 @@ private:
     sv4guiSplitBCWidget* m_SplitBCWidget;
 
     QStandardItemModel* m_TableModelSolver;
+    std::map<int,std::string>  m_TableModelSolverSections;
 
     sv4guiMPIPreferences::MpiImplementation m_MpiImplementation;
 

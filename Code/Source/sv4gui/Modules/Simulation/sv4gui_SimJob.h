@@ -74,7 +74,9 @@ public:
 
     void SetSolverProps(std::map<std::string,std::string> solverProps);
     std::map<std::string,std::string> GetSolverProps();
-    void SetSolverProp(const std::string& key, std::string value);
+    std::map<std::string,std::string> GetNonlinearSolverProps();
+    std::map<std::string,std::string> GetLinearSolverProps();
+    void SetSolverProp(const std::string& key, std::string value, const std::string& section);
     std::string GetSolverProp(const std::string& key);
 
     void SetRunProps(std::map<std::string,std::string> runProps);
@@ -97,7 +99,17 @@ public:
     std::map<std::string,std::map<std::string,std::string> > m_CapProps;
     std::map<std::string,std::string> m_WallProps;
     std::map<std::string,std::map<std::string,std::string> > m_VarProps;
+
+    // Stores parameter name/value pairs set from the GUI.
+    // 
+    // The m_NonlinearSolverProps and m_LinearSolverProps store parameters
+    // for those sections, allows having the same parameter name (e.g. Max iterations)
+    // to be used in different sections, otherwise they would be overwritten in 
+    // m_SolverProps.
     std::map<std::string,std::string> m_SolverProps;
+    std::map<std::string,std::string> m_NonlinearSolverProps;
+    std::map<std::string,std::string> m_LinearSolverProps;
+
     std::map<std::string,std::string> m_RunProps;
 
     std::map<std::string,int> m_IDs;

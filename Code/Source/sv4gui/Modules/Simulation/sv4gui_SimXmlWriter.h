@@ -46,40 +46,21 @@ using GuiProperties = std::map<std::string,std::string>;
 // Sv4GuiSimXmlWriterParameters
 //------------------------------
 // The Sv4GuiSimXmlWriterParameters class stores default values 
-// for the svMultiPhysics XML paramters.
+// for the svMultiPhysics XML paramters that are not set (yet)
+// from the GUI.
 //
 class Sv4GuiSimXmlWriterParameters
 {
   public:
     bool Coupled = true;
-    int Min_iterations = 1;
-    int Max_iterations = 10;
-    double Tolerance = 1e-6;
     bool Impose_flux = true;
     char* Add_mesh_name = "fluid_mesh";
     char* Mesh_file_path = "mesh-complete/mesh-complete.mesh.vtu";
     std::string Face_file_path = "mesh-complete/mesh-surfaces";
+    char* Preconditioner = "fsils";
 
     // Map between GUI and svMultiphysics profile names.
     std::map<std::string,std::string> profile_names;
-
-    char* Add_BC_type_Dirichlet = "Dirichlet";
-
-    class Solver {
-      public:
-        char* Preconditioner = "fsils";
-        int Max_iterations = 15;
-        double Tolerance = 1e-5;
-        int Krylov_space_dimension = 250;
-  
-        int NS_GM_max_iterations = 10; 
-        double NS_GM_tolerance = 1e-3;
-      
-        int NS_CG_max_iterations = 300;
-        double NS_CG_tolerance = 1e-3;
-    };
-
-    Solver solver;
 };
 
 //--------------------
@@ -127,6 +108,8 @@ class Sv4GuiSimXmlWriter
 
     void add_mesh(sv4guiSimJob* job);
 
+    void add_rcr_bc(GuiProperties& props, sv4guiSimJob* job, tinyxml2::XMLElement* boundary_condition);
+
     void add_resistance_bc(GuiProperties& props, sv4guiSimJob* job, tinyxml2::XMLElement* xml_boundary_condition);
 
     void add_velocity_bc(GuiProperties& props, sv4guiSimJob* job, const std::string& face_name,
@@ -134,23 +117,11 @@ class Sv4GuiSimXmlWriter
 
     void add_wall_bc(sv4guiSimJob* job, tinyxml2::XMLElement* boundary_condition);
 
-/*
     void add_equation_output(sv4guiSimJob* job, tinyxml2::XMLElement* xml_equation);
 
-*/
     void add_equation_solver(sv4guiSimJob* job, tinyxml2::XMLElement* xml_equation);
 
     void add_general(sv4guiSimJob* job);
-
-/*
-    void add_projection(const sv4guisvFSIJob* job);
-
-    void add_remeshing(const sv4guisvFSIJob* job, const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation);
-
-    void add_single_physics_equation(const sv4guisvFSIeqClass& eq, tinyxml2::XMLElement* xml_equation);
-
-    std::vector<sv4guisvFSIDomain> sort_domains(const sv4guisvFSIJob* job);
-*/
 
 };
 

@@ -609,9 +609,11 @@ void sv4guiSimulationView::UpdateGUIBasic()
 //    value=QString::fromStdString(job->GetBasicProp("Period"));
 //    valueList<<new QStandardItem(value==""?QString("1.0"):value);
 
+    /* davep
     parList<<new QStandardItem("IC File");
     value=QString::fromStdString(job->GetBasicProp("IC File"));
     valueList<<new QStandardItem(value);
+    */
 
     parList<<new QStandardItem("Initial Pressure");
     value=QString::fromStdString(job->GetBasicProp("Initial Pressure"));
@@ -1398,93 +1400,114 @@ void sv4guiSimulationView::UpdateGUIWall()
     ui->tableViewVar->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
 }
 
+//-----------------
+// UpdateGUISolver
+//-----------------
+//
 void sv4guiSimulationView::UpdateGUISolver()
 {
-    if(!m_MitkJob)
-        return;
+  if(!m_MitkJob) {
+    return;
+  }
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
-    if(job==nullptr)
-    {
-        job=new sv4guiSimJob();
+  sv4guiSimJob* job = m_MitkJob->GetSimJob();
+
+  if(job == nullptr) {
+    job = new sv4guiSimJob();
+  }
+
+  m_TableModelSolver->clear();
+
+  QStringList solverHeaders;
+  solverHeaders << "Parameter" << "Value" << "Type" << "Value List";
+  m_TableModelSolver->setHorizontalHeaderLabels(solverHeaders);
+  int colCount=solverHeaders.size();
+  m_TableModelSolver->setColumnCount(colCount);
+
+  QString templateFilePath=":solvertemplate.xml";
+
+  if(m_UseCustom) {
+    templateFilePath=m_SolverTemplatePath;
+  }
+
+  QFile xmlFile(templateFilePath);
+
+  if(!xmlFile.open(QIODevice::ReadOnly)) {
+    QMessageBox::warning(m_Parent,"Info Missing","Solver Parameter Table template file not found");
+    return;
+  }
+
+  QDomDocument doc("solvertemplate");
+  //    QString *em=nullptr;
+
+  if(!doc.setContent(&xmlFile)) {
+    QMessageBox::warning(m_Parent,"File Template Error","Format Error.");
+    return;
+  }
+  xmlFile.close();
+
+  QDomElement templateElement = doc.firstChildElement("template");
+  QDomNodeList sectionList = templateElement.elementsByTagName("section");
+  int rowIndex = -1;
+
+  for (int i = 0; i < sectionList.size(); i++) {
+    QDomNode sectionNode = sectionList.item(i);
+
+    if(sectionNode.isNull()) {
+      continue;
     }
 
-    m_TableModelSolver->clear();
-
-    QStringList solverHeaders;
-    solverHeaders << "Parameter" << "Value" << "Type" << "Value List";
-    m_TableModelSolver->setHorizontalHeaderLabels(solverHeaders);
-    int colCount=solverHeaders.size();
-    m_TableModelSolver->setColumnCount(colCount);
-
-    QString templateFilePath=":solvertemplate.xml";
-    if(m_UseCustom)
-        templateFilePath=m_SolverTemplatePath;
-
-    QFile xmlFile(templateFilePath);
-    if(!xmlFile.open(QIODevice::ReadOnly))
-    {
-        QMessageBox::warning(m_Parent,"Info Missing","Solver Parameter Table template file not found");
-        return;
+    QDomElement sectionElement=sectionNode.toElement();
+    if(sectionElement.isNull()) {
+      continue;
     }
+    
+    QString section_name = sectionElement.attribute("name");
+    QStandardItem* item = new QStandardItem(section_name);
+    item->setEditable(false);
+    QBrush brushGray(Qt::lightGray);
+    item->setBackground(brushGray);
 
-    QDomDocument doc("solvertemplate");
-    //    QString *em=nullptr;
-    if(!doc.setContent(&xmlFile))
-    {
-        QMessageBox::warning(m_Parent,"File Template Error","Format Error.");
-        return;
+    rowIndex += 1;
+    m_TableModelSolver->setItem(rowIndex, 0, item);
+    ui->tableViewSolver->setSpan(rowIndex, 0, 1, colCount);
+    QDomNodeList parList = sectionElement.elementsByTagName("param");
+
+    for (int j = 0; j < parList.size(); j++) {
+      QDomNode parNode = parList.item(j);
+
+      if(parNode.isNull()) {
+        continue;
+      }
+
+      QDomElement parElement = parNode.toElement();
+      if(parElement.isNull()) continue;
+      QString name = parElement.attribute("name");
+
+      QStandardItem* item = new QStandardItem(name);
+      item->setEditable(false);
+      item->setToolTip(parElement.attribute("name"));
+
+      rowIndex += 1;
+      m_TableModelSolver->setItem(rowIndex, 0, item);
+
+      // Save the section that this paramter is under, needed later to set parameter props
+      // based on section so duplicate parameter names can be used.
+      m_TableModelSolverSections[rowIndex] = section_name.toStdString();
+
+      std::string value = job->GetSolverProp(parElement.attribute("name").toStdString());
+      item = new QStandardItem(value == "" ? parElement.attribute("value"):QString::fromStdString(value));
+      m_TableModelSolver->setItem(rowIndex, 1, item);
+
+      item = new QStandardItem(parElement.attribute("type"));
+      item->setEditable(false);
+      m_TableModelSolver->setItem(rowIndex, 2, item);
+
+      item= new QStandardItem(parElement.attribute("enum_list"));
+      item->setEditable(false);
+      m_TableModelSolver->setItem(rowIndex, 3, item);
     }
-    xmlFile.close();
-
-    QDomElement templateElement = doc.firstChildElement("template");
-    QDomNodeList sectionList=templateElement.elementsByTagName("section");
-    int rowIndex=-1;
-    for(int i=0;i<sectionList.size();i++)
-    {
-        QDomNode sectionNode=sectionList.item(i);
-        if(sectionNode.isNull()) continue;
-
-        QDomElement sectionElement=sectionNode.toElement();
-        if(sectionElement.isNull()) continue;
-
-        QString name=sectionElement.attribute("name");
-        rowIndex++;
-        QStandardItem* item= new QStandardItem(name);
-        item->setEditable(false);
-        QBrush brushGray(Qt::lightGray);
-        item->setBackground(brushGray);
-        m_TableModelSolver->setItem(rowIndex, 0, item);
-        ui->tableViewSolver->setSpan(rowIndex,0,1,colCount);
-
-        QDomNodeList parList=sectionElement.elementsByTagName("param");
-        for(int j=0;j<parList.size();j++)
-        {
-            QDomNode parNode=parList.item(j);
-            if(parNode.isNull()) continue;
-
-            QDomElement parElement=parNode.toElement();
-            if(parElement.isNull()) continue;
-
-            rowIndex++;
-            QStandardItem* item= new QStandardItem(parElement.attribute("name"));
-            item->setEditable(false);
-            item->setToolTip(parElement.attribute("name"));
-            m_TableModelSolver->setItem(rowIndex, 0, item);
-
-            std::string value=job->GetSolverProp(parElement.attribute("name").toStdString());
-            item= new QStandardItem(value==""?parElement.attribute("value"):QString::fromStdString(value));
-            m_TableModelSolver->setItem(rowIndex, 1, item);
-
-            item= new QStandardItem(parElement.attribute("type"));
-            item->setEditable(false);
-            m_TableModelSolver->setItem(rowIndex, 2, item);
-
-            item= new QStandardItem(parElement.attribute("enum_list"));
-            item->setEditable(false);
-            m_TableModelSolver->setItem(rowIndex, 3, item);
-        }
-    }
+  }
 
     ui->tableViewSolver->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->tableViewSolver->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
@@ -2064,11 +2087,10 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
     it++;
   }
 
-  // Set face names and typel.
+  // Set face names and type.
   std::map<std::string,std::string> faces_name_type;
   auto faces = modelElement->GetFaces();
   for (auto face : faces ) { 
-    std::cout << "#### face  name: " << face->name << "  type: " << face->type << std::endl;
     faces_name_type[face->name] = face->type;
   }
 
@@ -2275,6 +2297,10 @@ void sv4guiSimulationView::ImportFiles()
     }
 }
 
+//-----------
+// CreateJob
+//-----------
+//
 sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidity)
 {
     sv4guiSimJob* job=new sv4guiSimJob();
@@ -2620,8 +2646,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
         }
     }
 
-    for(int i=0;i<m_TableModelSolver->rowCount();i++)
-    {
+    for (int i = 0; i < m_TableModelSolver->rowCount(); i++) {
         std::string parName=m_TableModelSolver->item(i,0)->text().trimmed().toStdString();
         QStandardItem* valueItem=m_TableModelSolver->item(i,1);
         if(valueItem==nullptr)
@@ -2652,7 +2677,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
             }
         }
 
-        job->SetSolverProp(parName, value);
+        job->SetSolverProp(parName, value, m_TableModelSolverSections[i]);
     }
 
 
