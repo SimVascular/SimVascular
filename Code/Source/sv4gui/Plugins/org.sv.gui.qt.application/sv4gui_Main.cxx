@@ -189,7 +189,7 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
          pluginsToStart.push_back("org_sv_gui_qt_simulation");
          pluginsToStart.push_back("org_sv_gui_qt_romsimulation");
          pluginsToStart.push_back("org_sv_gui_qt_imageprocessing");
-         pluginsToStart.push_back("org_sv_gui_qt_svfsi");
+         pluginsToStart.push_back("org_sv_gui_qt_multiphysics");
 #ifdef SV_USE_MITK_SEGMENTATION
          pluginsToStart.push_back("org_sv_gui_qt_mitksegmentation");
 #endif

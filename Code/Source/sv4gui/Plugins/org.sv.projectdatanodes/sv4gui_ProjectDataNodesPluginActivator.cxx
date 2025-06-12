@@ -35,7 +35,7 @@
 #include "sv4gui_ModelObjectFactory.h"
 #include "sv4gui_MitkMeshObjectFactory.h"
 #include "sv4gui_MitkSimulationObjectFactory.h"
-#include "sv4gui_MitksvFSIObjectFactory.h"
+#include "sv4gui_MitkMultiPhysicsObjectFactory.h"
 #include "sv4gui_MitkROMSimulationObjectFactory.h"
 
 #include <QmitkNodeDescriptorManager.h>
@@ -48,7 +48,7 @@ static Registersv4guiSegmentationObjectFactory registersv4guiSegmentationObjectF
 static Registersv4guiModelObjectFactory registersv4guiModelObjectFactory;
 static Registersv4guiMitkMeshObjectFactory registersv4guiMitkMeshObjectFactory;
 static Registersv4guiMitkSimulationObjectFactory registersv4guiMitkSimulationObjectFactory;
-static Registersv4guiMitksvFSIObjectFactory registersv4guiMitksvFSIObjectFactory;
+static Registersv4guiMitkMultiPhysicsObjectFactory registersv4guiMitkMultiPhysicsObjectFactory;
 static Registersv4guiMitkROMSimulationObjectFactory registersv4guiMitkROMSimulationObjectFactory;
 
 //ctkPluginContext* sv4guiProjectDataNodesPluginActivator::m_Context = nullptr;
@@ -140,12 +140,12 @@ void sv4guiProjectDataNodesPluginActivator::start(ctkPluginContext* context)
     descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiMitkSimJob"), QString(":svsimjob.png"), isSimJob, descriptorManager));
 
 
-    // svFSI
-    mitk::NodePredicateDataType::Pointer issvFSIFolder = mitk::NodePredicateDataType::New("sv4guisvFSIFolder");
-    descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guisvFSIFolder"), QString(":svfsifolder.png"), issvFSIFolder, descriptorManager));
+    // MultiPhysics
+    mitk::NodePredicateDataType::Pointer isMultiPhysicsFolder = mitk::NodePredicateDataType::New("sv4guiMultiPhysicsFolder");
+    descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiMultiPhysicsFolder"), QString(":multiphysicsfolder.png"), isMultiPhysicsFolder, descriptorManager));
 
-    mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitksvFSIJob");
-    descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiMitksvFSIJob"), QString(":svfsijob.png"), issvFSIJob, descriptorManager));
+    mitk::NodePredicateDataType::Pointer isMultiPhysicsJob = mitk::NodePredicateDataType::New("sv4guiMitkMultiPhysicsJob");
+    descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiMitkMultiPhysicsJob"), QString(":multiphysicsjob.png"), isMultiPhysicsJob, descriptorManager));
 
 
     // ROM Simulation

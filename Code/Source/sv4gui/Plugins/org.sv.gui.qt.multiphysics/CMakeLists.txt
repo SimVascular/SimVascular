@@ -28,9 +28,9 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-project(org_sv_gui_qt_application)
+project(org_sv_gui_qt_multiphysics)
 
-set(lib org_sv_gui_qt_application)
+set(lib org_sv_gui_qt_multiphysics)
 
 if(SV_USE_TINYXML)
   include_directories(${TINYXML_INCLUDE_DIR})
@@ -38,51 +38,16 @@ endif()
 
 if(SV_USE_MITK_CONFIG)
   mitk_create_plugin(
-    EXPORT_DIRECTIVE SV_QT_APPLICATION
+    EXPORT_DIRECTIVE SV_QT_MULTIPHYSICS 
     EXPORTED_INCLUDE_SUFFIXES src
-    MODULE_DEPENDS MitkQtWidgets MitkQtWidgetsExt org_mitk_gui_qt_datamanager ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME} 
-    ${SV_LIB_MODULE_SIMULATION_NAME}
-    ${SV_LIB_MODULE_ROM_SIMULATION_NAME}
-    ${SV_LIB_MODULE_MULTIPHYSICS_NAME}
-    ${SV_LIB_MODULE_MESH_NAME}
-    ${SV_LIB_MODULE_SEGMENTATION_NAME}
-    ${SV_LIB_MODULE_PATH_NAME}
-    ${SV_LIB_MODULE_MODEL_NAME}
-    ${SV_LIB_PATH_NAME}
+    MODULE_DEPENDS MitkQtWidgets org_sv_gui_qt_datamanager ${MITK_LIBRARIES} ${ITK_LIBRARIES} ${QT_LIBRARIES} ${SV_LIB_MODULE_MULTIPHYSICS_NAME} ${SV_LIB_MODULE_MODEL_NAME} ${SV_LIB_MODULE_MESH_NAME} ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME}
   )
 else()
-    if(SV_USE_MITK_SEGMENTATION)
-        simvascular_create_plugin(
-    EXPORT_DIRECTIVE SV_QT_APPLICATION
-    MODULE_DEPENDS MitkQtWidgets org_sv_gui_qt_datamanager ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME} 
-    ${SV_LIB_MODULE_SIMULATION_NAME}
-    ${SV_LIB_MODULE_ROM_SIMULATION_NAME}
-    ${SV_LIB_MODULE_MULTIPHYSICS_NAME}
-    ${SV_LIB_MODULE_MESH_NAME}
-    ${SV_LIB_MODULE_SEGMENTATION_NAME}
-    ${SV_LIB_MODULE_PATH_NAME}
-    ${SV_LIB_MODULE_MODEL_NAME}
-    ${SV_LIB_PATH_NAME}
-    ${SV_LIB_MODULE_MITKSEGMENTATION_NAME}
+  simvascular_create_plugin(
+    EXPORT_DIRECTIVE SV_QT_MULTIPHYSICS
+    MODULE_DEPENDS MitkQtWidgets org_sv_gui_qt_datamanager ${MITK_LIBRARIES} ${ITK_LIBRARIES} ${QT_LIBRARIES} ${SV_LIB_MODULE_MULTIPHYSICS_NAME} ${SV_LIB_MODULE_MODEL_NAME} ${SV_LIB_MODULE_MESH_NAME} ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME}
   )
-    else()
-        simvascular_create_plugin(
-    EXPORT_DIRECTIVE SV_QT_APPLICATION
-    MODULE_DEPENDS MitkQtWidgets org_sv_gui_qt_datamanager ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME} 
-    ${SV_LIB_MODULE_SIMULATION_NAME}
-    ${SV_LIB_MODULE_ROM_SIMULATION_NAME}
-    ${SV_LIB_MODULE_MULTIPHYSICS_NAME}
-    ${SV_LIB_MODULE_MESH_NAME}
-    ${SV_LIB_MODULE_SEGMENTATION_NAME}
-    ${SV_LIB_MODULE_PATH_NAME}
-    ${SV_LIB_MODULE_MODEL_NAME}
-    ${SV_LIB_PATH_NAME}
-  )
-  endif()
 endif()
-
-target_include_directories(${lib} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../org.sv.gui.qt.projectmanager")
-
 if(SV_INSTALL_LIBS)
     install(TARGETS ${lib}
         RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR}/plugins COMPONENT CoreExecutables
@@ -91,3 +56,11 @@ if(SV_INSTALL_LIBS)
     )
 endif()
 
+#-----------------------------------------------------------------------------
+# Include and link to SimVascular
+target_link_libraries(org_sv_gui_qt_multiphysics PRIVATE ${SimVascular_LIBRARIES})
+#-----------------------------------------------------------------------------
+foreach(so ${SimVascular_LIBRARIES})
+  message(WARNING ${so})
+  target_link_libraries(${lib} PRIVATE ${so})
+endforeach()

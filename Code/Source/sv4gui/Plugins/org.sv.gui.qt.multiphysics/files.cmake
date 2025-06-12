@@ -28,24 +28,51 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Plug-ins must be ordered according to their dependencies
+set(SRC_CPP_FILES
 
-set(SV_PLUGINS
-  org.sv.gui.qt.application:ON
-  org.sv.projectdatanodes:ON
-  org.sv.pythondatanodes:ON
-  org.sv.gui.qt.projectmanager:ON
-  org.sv.gui.qt.datamanager:ON
-  org.sv.gui.qt.pathplanning:ON
-  org.sv.gui.qt.segmentation:ON
-  org.sv.gui.qt.modeling:ON
-  org.sv.gui.qt.meshing:ON
-  org.sv.gui.qt.simulation:ON
-  org.sv.gui.qt.romsimulation:ON
-  org.sv.gui.qt.multiphysics:ON
-  org.sv.gui.qt.imageprocessing:ON
 )
 
-if(SV_USE_MITK_SEGMENTATION)
-    LIST(APPEND SV_PLUGINS org.sv.gui.qt.mitksegmentation:ON)
-endif()
+set(INTERNAL_CPP_FILES
+    sv4gui_MultiPhysicsJobCreate.cxx
+    sv4gui_MultiPhysicsJobCreateAction.cxx
+    sv4gui_MultiPhysicsView.cxx
+    sv4gui_MultiPhysicsBCWidget.cxx
+    sv4gui_MultiPhysicsPreferencePage.cxx
+    sv4gui_MultiPhysicsPluginActivator.cxx
+)
+
+set(MOC_H_FILES
+    sv4gui_MultiPhysicsJobCreate.h
+    sv4gui_MultiPhysicsJobCreateAction.h
+    sv4gui_MultiPhysicsUtil.h
+    sv4gui_MultiPhysicsView.h
+    sv4gui_MultiPhysicsBCWidget.h
+    sv4gui_MultiPhysicsPreferencePage.h
+    sv4gui_MultiPhysicsPluginActivator.h
+)
+
+set(UI_FILES
+    sv4gui_MultiPhysicsJobCreate.ui
+    sv4gui_MultiPhysicsView.ui
+    sv4gui_MultiPhysicsBCWidget.ui
+    sv4gui_MultiPhysicsPreferencePage.ui
+)
+
+set(CACHED_RESOURCE_FILES
+  plugin.xml
+  resources/MultiPhysics.png
+)
+
+set(QRC_FILES
+  resources/datanode.qrc
+)
+
+set(CPP_FILES )
+
+foreach(file ${SRC_CPP_FILES})
+  set(CPP_FILES ${CPP_FILES} ${file})
+endforeach(file ${SRC_CPP_FILES})
+
+foreach(file ${INTERNAL_CPP_FILES})
+  set(CPP_FILES ${CPP_FILES} ${file})
+endforeach(file ${INTERNAL_CPP_FILES})

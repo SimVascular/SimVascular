@@ -28,24 +28,28 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Plug-ins must be ordered according to their dependencies
-
-set(SV_PLUGINS
-  org.sv.gui.qt.application:ON
-  org.sv.projectdatanodes:ON
-  org.sv.pythondatanodes:ON
-  org.sv.gui.qt.projectmanager:ON
-  org.sv.gui.qt.datamanager:ON
-  org.sv.gui.qt.pathplanning:ON
-  org.sv.gui.qt.segmentation:ON
-  org.sv.gui.qt.modeling:ON
-  org.sv.gui.qt.meshing:ON
-  org.sv.gui.qt.simulation:ON
-  org.sv.gui.qt.romsimulation:ON
-  org.sv.gui.qt.multiphysics:ON
-  org.sv.gui.qt.imageprocessing:ON
+set(H_FILES
+    sv4gui_MultiPhysicsbcClass.h
+    sv4gui_MultiPhysicseqClass.h
+    sv4gui_MultiPhysicsJob.h
+    sv4gui_MultiPhysicsViscosity.h
+    sv4gui_MitkMultiPhysicsJob.h
+    sv4gui_MitkMultiPhysicsJobIO.h
+    sv4gui_MitkMultiPhysicsObjectFactory.h
+    sv4gui_XmlWriter.h
 )
 
-if(SV_USE_MITK_SEGMENTATION)
-    LIST(APPEND SV_PLUGINS org.sv.gui.qt.mitksegmentation:ON)
-endif()
+set(CPP_FILES
+    sv4gui_MultiPhysicsbcClass.cxx
+    sv4gui_MultiPhysicseqClass.cxx
+    sv4gui_MultiPhysicsJob.cxx
+    sv4gui_MultiPhysicsViscosity.cxx
+    sv4gui_MitkMultiPhysicsJob.cxx
+    sv4gui_MitkMultiPhysicsJobIO.cxx
+    sv4gui_MitkMultiPhysicsObjectFactory.cxx
+    sv4gui_XmlWriter.cxx
+)
+
+set(RESOURCE_FILES
+
+)

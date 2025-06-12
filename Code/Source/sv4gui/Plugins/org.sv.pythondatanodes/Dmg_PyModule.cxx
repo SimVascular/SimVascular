@@ -1271,7 +1271,7 @@ PyDoc_STRVAR(DmgModule_doc,
        5) Segmentations                                                    \n\
        6) Simulations                                                      \n\
        7) Simulations1d                                                    \n\
-       8) svFSI                                                            \n\
+       8) MultiPhysics                                                     \n\
    \n\
    When new data is added to the project a new data node is added under the\n\
    appropriate data node type with a user-defined name.                    \n\

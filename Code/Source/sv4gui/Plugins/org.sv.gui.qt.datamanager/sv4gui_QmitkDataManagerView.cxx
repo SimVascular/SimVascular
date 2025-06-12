@@ -1011,7 +1011,7 @@ void sv4guiQmitkDataManagerView::NodeChanged(const mitk::DataNode* node)
     predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guiModelFolder"));
     predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
     predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guiSimulationFolder"));
-    predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guisvFSIFolder"));
+    predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guiMultiPhysicsFolder"));
     predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guiROMSimulationFolder"));
 
     if(predicateTypes->CheckNode(node)){

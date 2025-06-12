@@ -52,7 +52,7 @@
 #include "sv4gui_Model.h"
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MitkSimJob.h"
-#include "sv4gui_MitksvFSIJob.h"
+#include "sv4gui_MitkMultiPhysicsJob.h"
 #include "sv4gui_MitkROMSimJob.h"
 
 #include <QMenu>
