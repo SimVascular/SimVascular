@@ -100,12 +100,12 @@ void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
   MITK_ERROR << "CFD Simulation job error = " << error;
   QString title = "";
   QString text = "";
-  QString status = "Simulation failed";
+  QString status = "CFD Simulation failed";
   QMessageBox::Icon icon = QMessageBox::Warning;
   QMessageBox messageBox(nullptr); 
 
   if (error == QProcess::FailedToStart) {
-    title = "Simulation cannot be started";
+    title = "CFD Simulation cannot be started";
     text = "Unable to start the mpiexec process. Either the mpiexec program is missing or you may have insufficient permissions to execute it.";
     MITK_ERROR << text; 
 
@@ -198,7 +198,7 @@ void sv4guiSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::Ex
     QString status="";
 
     auto jobName = QString::fromStdString(m_JobNode->GetName()); 
-    QString text = "Simulation job '" + jobName + "' ";
+    QString text = "CFD Simulation job '" + jobName + "' ";
 
     auto exitCodeString = QString::number(exitCode); 
     QString stdError = QString(m_Process->readAllStandardError());
@@ -209,19 +209,19 @@ void sv4guiSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::Ex
     if (exitCode != 0) {
         text += "has failed with non-zero exit code " + exitCodeString + ".";
         icon = QMessageBox::Warning;
-        status="Simulation failed";
-        MITK_WARN << "Simulation job '" + jobName + "' has failed with non-zero exit code.";
+        status="CFD Simulation failed";
+        MITK_WARN << "CFD Simulation job '" + jobName + "' has failed with non-zero exit code.";
         MITK_WARN << "Exit code: " + exitCodeString; 
         MITK_WARN << "Error: " + stdError; 
     } else if (exitStatus == QProcess::NormalExit) { 
         text += "has finished.";
         icon=QMessageBox::Information;
-        status="Simulation done";
+        status="CFD Simulation done";
         m_JobNode->SetBoolProperty("update rundir",true);
     } else {
         text += "has crashed.";
         icon=QMessageBox::Warning;
-        status="Simulation failed";
+        status="CFD Simulation failed";
     }
 
     mb.setWindowTitle(title);
