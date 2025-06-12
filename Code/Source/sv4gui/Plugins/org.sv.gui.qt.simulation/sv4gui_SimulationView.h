@@ -126,15 +126,15 @@ public slots:
 
     void UpdateGUIJob();
 
-    void UpdateGUIRunDir();
+    // davep void UpdateGUIRunDir();
 
     void CreateAllFiles();
 
-    void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
+    // davep void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
 
     void RunJob();
 
-    void SetResultDir();
+    // davep void SetResultDir();
 
     void UpdateJobStatus();
 
@@ -144,11 +144,11 @@ public slots:
 
     void UpdateSimJobNumProcs();
 
-    void ShowCalculateFowsWidget(bool checked = false);
+    // davep void ShowCalculateFowsWidget(bool checked = false);
 
     void ShowModel(bool checked = false);
 
-    void UseMpi(bool checked = false);
+    // davep void UseMpi(bool checked = false);
 
 public:
 
@@ -233,10 +233,12 @@ private:
 
     std::string m_SolverPath;
 
+    std::string m_SolverInputFileName = "solver.xml";
+
     std::string m_MPIExecPath;
-    bool m_UseMPI;
-    bool m_UseCustom;
-    QString m_SolverTemplatePath;
+    // davep bool m_UseMPI;
+    // davep bool m_UseCustom;
+    // davep QString m_SolverTemplatePath;
 
     bool m_ConnectionEnabled;
 
@@ -245,7 +247,7 @@ private:
 
     void CheckSolver();
     void CheckMpi();
-    int GetStartTimeStep(const QString& runPath, const QString& jobPath, const int numProcs);
+    // davep int GetStartTimeStep(const QString& runPath, const QString& jobPath, const int numProcs);
 
 };
 

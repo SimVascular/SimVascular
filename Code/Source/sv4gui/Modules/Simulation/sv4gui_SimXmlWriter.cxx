@@ -364,6 +364,7 @@ void Sv4GuiSimXmlWriter::add_general(sv4guiSimJob* job)
   add_child(general, "Increment_in_saving_restart_files", solverProps["Increment in saving restart files"]);
   add_child(general, "Start_saving_after_time_step", solverProps["Start saving after time step"]);
   add_child(general, "Save_results_to_VTK_format", solverProps["Save results to VTK format"]);
+  add_child(general, "Name_prefix_of_saved_VTK_files", parameters.Name_prefix_of_saved_VTK_files);
   add_child(general, "Increment_in_saving_VTK_files", solverProps["Increment in saving VTK files"]);
 
   // Misc 

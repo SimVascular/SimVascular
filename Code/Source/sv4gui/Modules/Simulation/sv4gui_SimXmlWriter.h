@@ -58,6 +58,7 @@ class Sv4GuiSimXmlWriterParameters
     char* Mesh_file_path = "mesh-complete/mesh-complete.mesh.vtu";
     std::string Face_file_path = "mesh-complete/mesh-surfaces";
     char* Preconditioner = "fsils";
+    char* Name_prefix_of_saved_VTK_files = "result";
 
     // Map between GUI and svMultiphysics profile names.
     std::map<std::string,std::string> profile_names;
