@@ -48,6 +48,10 @@ class SV4GUIMODULESIMULATION_EXPORT sv4guiSimulationUtils
 
 public:
 
+    static void CreateSolverInputFile(sv4guiSimJob* job, 
+        const std::map<std::string,std::string>& faces_name_type,
+        const std::string& output_dir, const std::string& file_name);
+
     static std::string CreatePreSolverFileContent(sv4guiSimJob* job, std::string outputDir="");
 
     static std::string CreateRCRTFileContent(sv4guiSimJob* job);

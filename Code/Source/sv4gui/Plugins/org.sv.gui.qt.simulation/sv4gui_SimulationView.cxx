@@ -80,7 +80,7 @@ const QString sv4guiSimulationView::EXTENSION_ID = "org.sv.views.simulation";
 // Set the title for QMessageBox warnings.
 //
 // Note: On MacOS the window title is ignored (as required by the Mac OS X Guidelines). 
-const QString sv4guiSimulationView::MsgTitle = "SimVascular SV Simulation";
+const QString sv4guiSimulationView::MsgTitle = "SimVascular CFD Simulation";
 
 //----------------------
 // sv4guiSimulationView
@@ -109,15 +109,8 @@ sv4guiSimulationView::sv4guiSimulationView() :
 
     m_TableModelSolver=nullptr;
 
-    m_PresolverPath="";
-    m_FlowsolverPath="";
-    m_FlowsolverNOMPIPath="";
-    m_PostsolverPath="";
+    m_SolverPath="";
     m_MPIExecPath="";
-
-    m_UseMPI=false;
-    m_UseCustom=false;
-    m_SolverTemplatePath="";
 
     m_ConnectionEnabled=false;
 
@@ -151,10 +144,13 @@ sv4guiSimulationView::~sv4guiSimulationView()
         delete m_CapBCWidget;
 }
 
+//------------------
+// EnableConnection
+//------------------
+//
 void sv4guiSimulationView::EnableConnection(bool able)
 {
-    if(able && !m_ConnectionEnabled)
-    {
+    if(able && !m_ConnectionEnabled) {
         connect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         connect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         connect(ui->comboBoxWallType,SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSimJob( )));
@@ -171,8 +167,7 @@ void sv4guiSimulationView::EnableConnection(bool able)
         m_ConnectionEnabled=able;
     }
 
-    if(!able && m_ConnectionEnabled)
-    {
+    if(!able && m_ConnectionEnabled) {
         disconnect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         disconnect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         disconnect(ui->comboBoxWallType,SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSimJob( )));
@@ -289,25 +284,10 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
     // Create Files and Run Simulation toolbox tab  //
     /////////////////////////////////////////////////
     //
-    // Don't use MPI by default so disable sliderNumProcs, etc.
-    //
     connect(ui->btnCreateAllFiles, SIGNAL(clicked()), this, SLOT(CreateAllFiles()) );
-    connect(ui->btnImportFiles, SIGNAL(clicked()), this, SLOT(ImportFiles()) );
     connect(ui->btnRunJob, SIGNAL(clicked()), this, SLOT(RunJob()) );
-    connect(ui->UseMpiCheckBox, SIGNAL(clicked(bool)), this, SLOT(UseMpi(bool)) );
-    ui->NumberProcessesLabel->setEnabled(false);
-    ui->sliderNumProcs->setEnabled(false);
-
-    ///////////////////////////////////////////////////
-    //           Convert Results toolbox tab        //
-    /////////////////////////////////////////////////
-    // Widgets for exporting results.
-    //
-    connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()) );
-    connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()) );
-
-//    ui->widgetCalculateFlows->hide();
-    connect(ui->checkBoxCalculateFlows, SIGNAL(clicked(bool)), this, SLOT(ShowCalculateFowsWidget(bool)) );
+    ui->NumberProcessesLabel->setEnabled(true);
+    ui->sliderNumProcs->setEnabled(true);
 
     // Set paths for the external solvers.
     mitk::IPreferences* prefs = this->GetPreferences();
@@ -320,7 +300,7 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 // Set solver binaries, mpiexec binary and the MPI implementation 
 // used to create and execute simulation jobs.
 //
-// This method is called when the SV Simulation plugin is activated or when values 
+// This method is called when the CFD Simulation plugin is activated or when values 
 // in the Preferences Page->SimVascular Simulation panel are changed. 
 //
 // If a SimVascular MITK database exists from previous SimVascular sessions then 
@@ -328,19 +308,16 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 // exist then set the values of the binaries to their default values, which
 // are the same values set for the SimVascular Simulation Preferences page.
 //
-// The solver binaries are: svpre, svsolver and svpost. The value for each binary
+// The svMultiPhysics binary is svmultiphysics. The value for the binary
 // contains the full path to the binary together with its name. For example, 
 //
-//     m_FlowsolverPath = "/usr/local/sv/bin/svsolver"
+//     m_SolverPath = "/usr/local/sv/svMultiPhysics/DATE/bin/svmultiphysics"
 //
 // Note that the 'binary' may actually be a shell script that sets up environment
 // variables and then executes the actual binary. In that case m_FlowsolverPath
 // is set to (on Linux) 
 //
-//     m_FlowsolverPath = "/usr/local/sv/svsolver"
-//
-// The 'prefs' Get() argument names (e.g. "presolver path") are set by the 
-// sv4guiSimulationPreferencePage object.
+//     m_FlowsolverPath = "/usr/local/sv/svMultiPhysics"
 //
 void sv4guiSimulationView::OnPreferencesChanged(const mitk::IPreferences* prefs)
 {
@@ -348,26 +325,22 @@ void sv4guiSimulationView::OnPreferencesChanged(const mitk::IPreferences* prefs)
         return;
     }
 
-    // Set the solver binaries.
-    m_PresolverPath = prefs->Get(PRE_SOLVER_PATH, m_DefaultPrefs.GetPreSolver().toStdString());
-    m_FlowsolverPath = prefs->Get(FLOW_SOLVER_PATH, m_DefaultPrefs.GetSolver().toStdString());
-    m_FlowsolverNOMPIPath = prefs->Get(FLOW_SOLVER_NO_MPI_PATH, m_DefaultPrefs.GetSolverNOMPI().toStdString());
-    m_PostsolverPath = prefs->Get(POST_SOLVER_PATH, m_DefaultPrefs.GetPostSolver().toStdString());
+    // Set the solver binary.
+    m_SolverPath = prefs->Get(SOLVER_PATH, m_DefaultPrefs.GetSolver().toStdString());
 
     // Set the mpiexec binary and mpi implementation.
     m_MPIExecPath = prefs->Get(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, m_DefaultMPIPrefs.GetMpiExec().toStdString()); 
     auto mpiName = prefs->Get(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, m_DefaultMPIPrefs.GetMpiImplementationName().toStdString());
     m_MpiImplementation = m_DefaultMPIPrefs.GetMpiImplementation(QString::fromStdString(mpiName));
-    // [DaveP] m_UseMPI = prefs->GetBool("use mpi",false);
 }
 
 //--------------------
 // OnSelectionChanged
 //--------------------
-// Update the SV Simulation plugin panel when an SV Simulation plugin is selected from the
+// Update the CFD Simulation plugin panel when an CFD Simulation plugin is selected from the
 // SV Data Manager.
 //
-// This method is also called when SimVascular starts and there is a SV Simulation plugin 
+// This method is also called when SimVascular starts and there is a CFD Simulation plugin 
 // panel left over from a previous session. In this case nodes.size()==0.
 //
 void sv4guiSimulationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/,
@@ -458,8 +431,6 @@ void sv4guiSimulationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*p
 
     UpdateGUIJob();
 
-    UpdateGUIRunDir();
-
     UpdateFaceListSelection();
 
     UpdateJobStatus();
@@ -480,7 +451,7 @@ void sv4guiSimulationView::NodeChanged(const mitk::DataNode* node)
         m_JobNode->GetBoolProperty("update rundir",updateRunDir);
         if(updateRunDir)
         {
-            UpdateGUIRunDir();
+            //davep UpdateGUIRunDir();
             m_JobNode->SetBoolProperty("update rundir",false);
         }
 
@@ -605,25 +576,15 @@ void sv4guiSimulationView::UpdateGUIBasic()
     value=QString::fromStdString(job->GetBasicProp("Fluid Viscosity"));
     valueList<<new QStandardItem(value==""?QString("0.04"):value);
 
-//    parList<<new QStandardItem("Period");
-//    value=QString::fromStdString(job->GetBasicProp("Period"));
-//    valueList<<new QStandardItem(value==""?QString("1.0"):value);
-
-    parList<<new QStandardItem("IC File");
-    value=QString::fromStdString(job->GetBasicProp("IC File"));
-    valueList<<new QStandardItem(value);
-
     parList<<new QStandardItem("Initial Pressure");
     value=QString::fromStdString(job->GetBasicProp("Initial Pressure"));
     valueList<<new QStandardItem(value==""?QString("0"):value);
 
     parList<<new QStandardItem("Initial Velocities");
     value=QString::fromStdString(job->GetBasicProp("Initial Velocities"));
-//    valueList<<new QStandardItem(value==""?QString("0 0 0"):value);
     valueList<<new QStandardItem(value==""?QString("0.0001 0.0001 0.0001"):value);
 
-    for(int i=0;i<parList.size();i++)
-    {
+    for(int i=0;i<parList.size();i++) {
         parList[i]->setEditable(false);
         m_TableModelBasic->setItem(i, 0, parList[i]);
         m_TableModelBasic->setItem(i, 1, valueList[i]);
@@ -1398,93 +1359,116 @@ void sv4guiSimulationView::UpdateGUIWall()
     ui->tableViewVar->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
 }
 
+//-----------------
+// UpdateGUISolver
+//-----------------
+//
 void sv4guiSimulationView::UpdateGUISolver()
 {
-    if(!m_MitkJob)
-        return;
+  if(!m_MitkJob) {
+    return;
+  }
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
-    if(job==nullptr)
-    {
-        job=new sv4guiSimJob();
+  sv4guiSimJob* job = m_MitkJob->GetSimJob();
+
+  if(job == nullptr) {
+    job = new sv4guiSimJob();
+  }
+
+  m_TableModelSolver->clear();
+
+  QStringList solverHeaders;
+  solverHeaders << "Parameter" << "Value" << "Type" << "Value List";
+  m_TableModelSolver->setHorizontalHeaderLabels(solverHeaders);
+  int colCount=solverHeaders.size();
+  m_TableModelSolver->setColumnCount(colCount);
+
+  QString templateFilePath=":solvertemplate.xml";
+
+  // davep 
+  /*if(m_UseCustom) {
+    // davep templateFilePath=m_SolverTemplatePath;
+  }
+  */
+
+  QFile xmlFile(templateFilePath);
+
+  if(!xmlFile.open(QIODevice::ReadOnly)) {
+    QMessageBox::warning(m_Parent,"Info Missing","Solver Parameter Table template file not found");
+    return;
+  }
+
+  QDomDocument doc("solvertemplate");
+  //    QString *em=nullptr;
+
+  if(!doc.setContent(&xmlFile)) {
+    QMessageBox::warning(m_Parent,"File Template Error","Format Error.");
+    return;
+  }
+  xmlFile.close();
+
+  QDomElement templateElement = doc.firstChildElement("template");
+  QDomNodeList sectionList = templateElement.elementsByTagName("section");
+  int rowIndex = -1;
+
+  for (int i = 0; i < sectionList.size(); i++) {
+    QDomNode sectionNode = sectionList.item(i);
+
+    if(sectionNode.isNull()) {
+      continue;
     }
 
-    m_TableModelSolver->clear();
-
-    QStringList solverHeaders;
-    solverHeaders << "Parameter" << "Value" << "Type" << "Value List";
-    m_TableModelSolver->setHorizontalHeaderLabels(solverHeaders);
-    int colCount=solverHeaders.size();
-    m_TableModelSolver->setColumnCount(colCount);
-
-    QString templateFilePath=":solvertemplate.xml";
-    if(m_UseCustom)
-        templateFilePath=m_SolverTemplatePath;
-
-    QFile xmlFile(templateFilePath);
-    if(!xmlFile.open(QIODevice::ReadOnly))
-    {
-        QMessageBox::warning(m_Parent,"Info Missing","Solver Parameter Table template file not found");
-        return;
+    QDomElement sectionElement=sectionNode.toElement();
+    if(sectionElement.isNull()) {
+      continue;
     }
+    
+    QString section_name = sectionElement.attribute("name");
+    QStandardItem* item = new QStandardItem(section_name);
+    item->setEditable(false);
+    QBrush brushGray(Qt::lightGray);
+    item->setBackground(brushGray);
 
-    QDomDocument doc("solvertemplate");
-    //    QString *em=nullptr;
-    if(!doc.setContent(&xmlFile))
-    {
-        QMessageBox::warning(m_Parent,"File Template Error","Format Error.");
-        return;
+    rowIndex += 1;
+    m_TableModelSolver->setItem(rowIndex, 0, item);
+    ui->tableViewSolver->setSpan(rowIndex, 0, 1, colCount);
+    QDomNodeList parList = sectionElement.elementsByTagName("param");
+
+    for (int j = 0; j < parList.size(); j++) {
+      QDomNode parNode = parList.item(j);
+
+      if(parNode.isNull()) {
+        continue;
+      }
+
+      QDomElement parElement = parNode.toElement();
+      if(parElement.isNull()) continue;
+      QString name = parElement.attribute("name");
+
+      QStandardItem* item = new QStandardItem(name);
+      item->setEditable(false);
+      item->setToolTip(parElement.attribute("name"));
+
+      rowIndex += 1;
+      m_TableModelSolver->setItem(rowIndex, 0, item);
+
+      // Save the section that this paramter is under, needed later to set parameter props
+      // based on section so duplicate parameter names can be used.
+      m_TableModelSolverSections[rowIndex] = section_name.toStdString();
+
+      std::string value = job->GetSolverProp(parElement.attribute("name").toStdString());
+      item = new QStandardItem(value == "" ? parElement.attribute("value"):QString::fromStdString(value));
+      m_TableModelSolver->setItem(rowIndex, 1, item);
+
+      item = new QStandardItem(parElement.attribute("type"));
+      item->setEditable(false);
+      m_TableModelSolver->setItem(rowIndex, 2, item);
+
+      item= new QStandardItem(parElement.attribute("enum_list"));
+      item->setEditable(false);
+      m_TableModelSolver->setItem(rowIndex, 3, item);
     }
-    xmlFile.close();
-
-    QDomElement templateElement = doc.firstChildElement("template");
-    QDomNodeList sectionList=templateElement.elementsByTagName("section");
-    int rowIndex=-1;
-    for(int i=0;i<sectionList.size();i++)
-    {
-        QDomNode sectionNode=sectionList.item(i);
-        if(sectionNode.isNull()) continue;
-
-        QDomElement sectionElement=sectionNode.toElement();
-        if(sectionElement.isNull()) continue;
-
-        QString name=sectionElement.attribute("name");
-        rowIndex++;
-        QStandardItem* item= new QStandardItem(name);
-        item->setEditable(false);
-        QBrush brushGray(Qt::lightGray);
-        item->setBackground(brushGray);
-        m_TableModelSolver->setItem(rowIndex, 0, item);
-        ui->tableViewSolver->setSpan(rowIndex,0,1,colCount);
-
-        QDomNodeList parList=sectionElement.elementsByTagName("param");
-        for(int j=0;j<parList.size();j++)
-        {
-            QDomNode parNode=parList.item(j);
-            if(parNode.isNull()) continue;
-
-            QDomElement parElement=parNode.toElement();
-            if(parElement.isNull()) continue;
-
-            rowIndex++;
-            QStandardItem* item= new QStandardItem(parElement.attribute("name"));
-            item->setEditable(false);
-            item->setToolTip(parElement.attribute("name"));
-            m_TableModelSolver->setItem(rowIndex, 0, item);
-
-            std::string value=job->GetSolverProp(parElement.attribute("name").toStdString());
-            item= new QStandardItem(value==""?parElement.attribute("value"):QString::fromStdString(value));
-            m_TableModelSolver->setItem(rowIndex, 1, item);
-
-            item= new QStandardItem(parElement.attribute("type"));
-            item->setEditable(false);
-            m_TableModelSolver->setItem(rowIndex, 2, item);
-
-            item= new QStandardItem(parElement.attribute("enum_list"));
-            item->setEditable(false);
-            m_TableModelSolver->setItem(rowIndex, 3, item);
-        }
-    }
+  }
 
     ui->tableViewSolver->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->tableViewSolver->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
@@ -1544,88 +1528,6 @@ void sv4guiSimulationView::UpdateGUIJob()
     ui->sliderNumProcs->setValue(pNum==""?1:QString::fromStdString(pNum).toInt());
 }
 
-void sv4guiSimulationView::UpdateGUIRunDir()
-{
-    ui->lineEditResultDir->clear();
-
-    if(m_JobNode.IsNull())
-        return;
-
-    QString jobPath=GetJobPath();
-    if(jobPath=="")
-        return;
-
-    if(!m_MitkJob)
-        return;
-
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
-    if(job==nullptr)
-        return;
-
-    std::string pNum=job->GetRunProp("Number of Processes");
-    if(pNum=="")
-        return;
-
-    QString runDir=pNum=="1"?jobPath:jobPath+"/"+QString::fromStdString(pNum)+"-procs_case";
-    ui->lineEditResultDir->setText(runDir);
-}
-
-//void sv4guiSimulationView::ExportInputFiles()
-//{
-//    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-//    berry::IPreferences::Pointer prefs;
-//    if (prefService)
-//    {
-//        prefs = prefService->GetSystemPreferences()->Node("/General");
-//    }
-//    else
-//    {
-//        prefs = berry::IPreferences::Pointer(0);
-//    }
-
-//    QString lastFileSavePath=QString();
-//    if(prefs.IsNotNull())
-//    {
-//        lastFileSavePath = prefs->Get("LastFileSavePath", "");
-//    }
-
-//    QString dir = QFileDialog::getExistingDirectory(m_Parent
-//                                                    , tr("Choose Directory")
-//                                                    , lastFileSavePath);
-
-//    if(dir.isEmpty()) return;
-
-//    CreateDataFiles(dir, false, true, true);
-//}
-
-//void sv4guiSimulationView::ExportAllFiles()
-//{
-//    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-//    berry::IPreferences::Pointer prefs;
-//    if (prefService)
-//    {
-//        prefs = prefService->GetSystemPreferences()->Node("/General");
-//    }
-//    else
-//    {
-//        prefs = berry::IPreferences::Pointer(0);
-//    }
-
-//    QString lastFileSavePath=QString();
-//    if(prefs.IsNotNull())
-//    {
-//        lastFileSavePath = prefs->Get("LastFileSavePath", "");
-//    }
-
-//    QString dir = QFileDialog::getExistingDirectory(m_Parent
-//                                                    , tr("Choose Directory")
-//                                                    , lastFileSavePath);
-
-//    if(dir.isEmpty()) return;
-
-//    CreateDataFiles(dir, true, true, true);
-//}
-
 QString sv4guiSimulationView::GetJobPath()
 {
     QString jobPath="";
@@ -1671,88 +1573,62 @@ void sv4guiSimulationView::CreateAllFiles()
 //
 void sv4guiSimulationView::RunJob()
 {
-    if (!m_MitkJob) {
-        return;
+  if (!m_MitkJob) {
+    return;
+  }
+
+  // Check that the directory for a job has been created.
+  //
+  QString jobPath = GetJobPath();
+
+  if ((jobPath == "") || !QDir(jobPath).exists()) {
+    QString msg1 = "The simulation job cannot be run.\n\n";
+    QString msg2 = "Please make sure that data files have been created for the simulation.";
+    QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
+    return;
+  }
+
+  try {
+
+    CheckSolver();
+    CheckMpi();
+	
+    // Set the solver output directory.
+    QString runPath = jobPath;
+    int numProcs = ui->sliderNumProcs->value();
+
+    if (numProcs > 1) {
+      runPath = jobPath+"/"+QString::number(numProcs)+"-procs_case";
     }
 
-    // Check that the directory for a job has been created.
+    // Execute the job.
     //
-    QString jobPath = GetJobPath();
+    int totalSteps=100;
+    sv4guiSimJob* job = m_MitkJob->GetSimJob();
 
-    if ((jobPath == "") || !QDir(jobPath).exists()) {
-        QString msg1 = "The simulation job cannot be run.\n\n";
-        QString msg2 = "Please make sure that data files have been created for the simulation.";
-        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
-        return;
+    if (!job) {
+      QMessageBox::warning(m_Parent, MsgTitle, "Cannot start job, simulation job does not exist.");
+      throw std::string("Job does not exist"); 
     }
 
-    // Checks throw exceptions if they fail.
+    job->SetRunProp("Number of Processes",QString::number(numProcs).toStdString());
+    totalSteps = QString::fromStdString(job->GetSolverProp("Number of Timesteps")).toInt();
+    mitk::StatusBar::GetInstance()->DisplayText("Running a CFD simulation");
 
-    try {
+    QProcess* solverProcess = new QProcess(m_Parent);
+    solverProcess->setWorkingDirectory(jobPath);
 
-        if(m_UseMPI) {
-          // Check that the solver binaries are valid.
-          CheckSolver();
-          // Check that mpi is installed and that the implementation is OpenMPI or MSMPI.
-          CheckMpi();
-        } else {
-	  CheckSolverNOMPI();
-        }
-	
-        // Set the solver output directory.
-        QString runPath = jobPath;
-        int numProcs = ui->sliderNumProcs->value();
+    QStringList arguments;
+    arguments << "-n" << QString::number(numProcs) 
+        << QString::fromStdString(m_SolverPath) 
+        << QString::fromStdString(m_SolverInputFileName);
+    solverProcess->setProgram(QString::fromStdString(m_MPIExecPath));
+    solverProcess->setArguments(arguments);
 
-        /* [DaveP] sort of useless check.
-	if(!m_UseMPI && (numProcs > 1)) {
-            QMessageBox::warning(m_Parent, MsgTitle, "Cannot specify > 1 procs when not using MPI!");
-            throw std::string("Cannot specify > 1 procs when not using MPI");
-        }
-        */
+    sv4guiSolverProcessHandler* handler = new sv4guiSolverProcessHandler(solverProcess, m_JobNode, 
+            0, totalSteps, runPath, m_Parent);
 
-	if (!m_UseMPI) {
-            numProcs = 1;
-        }
-	
-        if (numProcs > 1) {
-            runPath = jobPath+"/"+QString::number(numProcs)+"-procs_case";
-        }
-
-        // Get the simulation start time step and for numProcs=1
-        // write the numstart.dat file. 
-        auto startStep = GetStartTimeStep(runPath, jobPath, numProcs);
-
-        // Execute the job.
-        //
-        int totalSteps=100;
-        sv4guiSimJob* job = m_MitkJob->GetSimJob();
-
-        if (!job) {
-            QMessageBox::warning(m_Parent, MsgTitle, "Cannot start job, simulation job does not exist.");
-            throw std::string("Job does not exist"); 
-        }
-
-        job->SetRunProp("Number of Processes",QString::number(numProcs).toStdString());
-        totalSteps = QString::fromStdString(job->GetSolverProp("Number of Timesteps")).toInt();
-        mitk::StatusBar::GetInstance()->DisplayText("Running simulation");
-
-        QProcess* flowsolverProcess = new QProcess(m_Parent);
-        flowsolverProcess->setWorkingDirectory(jobPath);
-
-        if (m_UseMPI) {
-            QStringList arguments;
-            arguments << "-n" << QString::number(numProcs) << QString::fromStdString(m_FlowsolverPath);
-            flowsolverProcess->setProgram(QString::fromStdString(m_MPIExecPath));
-            flowsolverProcess->setArguments(arguments);
-        } else {
-            flowsolverProcess->setProgram(QString::fromStdString(m_FlowsolverNOMPIPath));
-            flowsolverProcess->setArguments(QStringList());
-        }
-
-        sv4guiSolverProcessHandler* handler = new sv4guiSolverProcessHandler(flowsolverProcess, m_JobNode, 
-            startStep, totalSteps, runPath, m_Parent);
-
-        handler->Start();
+    handler->Start();
 
   } catch (std::string exception) {
       std::cout << "Run job failed with: " <<  exception << std::endl; 
@@ -1786,22 +1662,11 @@ void sv4guiSimulationView::RunJob()
 //   startStepNumber: The simulation starting time step. 
 //   
 // 
+#ifdef old_svsolver
 int sv4guiSimulationView::GetStartTimeStep(const QString& runPath, const QString& jobPath, const int numProcs)
 {
     auto badValue = false;
     std::string exception("Write numstart file");
-
-    // Process start time step from the GUI.
-    //
-    auto startStep = ui->lineEditStartStepNum->text().trimmed();
-    auto startStepNumber = startStep.toInt();
-
-    if (startStep == "") { 
-        startStepNumber = 0;
-    } else if ((startStepNumber < 0) || !IsInt(startStep.toStdString())) {
-        QMessageBox::warning(m_Parent, MsgTitle, "The starting step number must be a positive integer.");
-        throw exception; 
-    }
 
     // Read / write the numstart.dat file to runPath.
     auto fileName = runPath + "/numstart.dat";
@@ -1844,6 +1709,7 @@ int sv4guiSimulationView::GetStartTimeStep(const QString& runPath, const QString
 
     return startStepNumber;
 }
+#endif
 
 //-------------
 // CheckSolver
@@ -1857,56 +1723,7 @@ void sv4guiSimulationView::CheckSolver()
     // Set the name and path to check for the solver binaries.
     typedef std::tuple<QString,QString> binaryNamePath;
     std::vector<binaryNamePath> binariesToCheck = { 
-        std::make_tuple("FlowSolver", QString::fromStdString(m_FlowsolverPath)),
-        std::make_tuple("PreSolver", QString::fromStdString(m_PresolverPath)),
-        std::make_tuple("PostSolver", QString::fromStdString(m_PostsolverPath))
-    };
-
-    // Check the name and path for the solver binaries.
-    //
-    for (auto const& namePath : binariesToCheck) {
-        auto name = std::get<0>(namePath);
-        auto path = std::get<1>(namePath);
-
-        if ((path == "") || (path == m_DefaultPrefs.UnknownBinary)) {
-            auto msg1 = "The " + name + " executable cannot be found. \n";
-            auto msg2 = "Please install " + name + " and set its location in the Preferences->SimVascular Simulation page.";
-            QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
-            throw exception; 
-        }
-
-        QFileInfo check_file(path);
-        if (!check_file.exists()) {
-            auto msg1 = "The " + name + " executable '" + path + "' cannot be found. \n\n";
-            auto msg2 = "Please set the " + name + " executable in the Preferences->SimVascular Simulation page.";
-            QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
-            throw exception; 
-        }
-
-        if (!check_file.isFile()) {
-            auto msg1 = "The " + name + " executable '" + path + "' does not name a file. \n";
-            auto msg2 = "Please set the " + name + " executable in the Preferences->SimVascular Simulation page.";
-            QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
-            throw exception; 
-        }
-    }
-}
-
-//-----------------
-// CheckSolverNOMPI
-//-----------------
-// Check for valid solver binaries.
-//
-void sv4guiSimulationView::CheckSolverNOMPI()
-{
-    std::string exception("Check nompi solver");
-
-    // Set the name and path to check for the solver binaries.
-    typedef std::tuple<QString,QString> binaryNamePath;
-    std::vector<binaryNamePath> binariesToCheck = { 
-        std::make_tuple("FlowSolverNOMPI", QString::fromStdString(m_FlowsolverNOMPIPath)),
-        std::make_tuple("PreSolver", QString::fromStdString(m_PresolverPath)),
-        std::make_tuple("PostSolver", QString::fromStdString(m_PostsolverPath))
+        std::make_tuple("Solver", QString::fromStdString(m_SolverPath)),
     };
 
     // Check the name and path for the solver binaries.
@@ -1984,643 +1801,464 @@ void sv4guiSimulationView::CheckMpi()
     #endif
 }
 
+
+//-----------------
+// CreateDataFiles
+//-----------------
+// Create the files needed to run a simulation.
+//
 bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
 {
-    if(!m_MitkJob)
-        return false;
+  #define debug_CreateDataFiles
+  #ifdef debug_CreateDataFiles
+  std::string msg("[sv4guiSimulationView::CreateDataFiles] ");
+  std::cout << msg << "========== CreateDataFiles ==========" << std::endl;
+  #endif
 
-    if(outputDir=="")
-        return false;
+  if(!m_MitkJob) {
+    return false;
+  }
 
-    sv4guiModelElement* modelElement=nullptr;
+  if(outputDir == "") {
+    return false;
+  }
+  #ifdef debug_CreateDataFiles
+  std::cout << msg << "outputDir: " << outputDir.toStdString() << std::endl;
+  #endif
 
-    if(m_Model)
-        modelElement=m_Model->GetModelElement();
+  sv4guiModelElement* modelElement = nullptr;
 
-    if(modelElement==nullptr)
-    {
-        QMessageBox::warning(m_Parent,"Model Unavailable","Please make sure the model exists ans is valid.");
-        return false;
-    }
+  if (m_Model) {
+    modelElement=m_Model->GetModelElement();
+  }
 
-    mitk::StatusBar::GetInstance()->DisplayText("Creating Job");
-    std::string msg;
+  if (modelElement == nullptr) {
+    QMessageBox::warning(m_Parent,"A model is not navailable","Please make sure that a model exists and is valid.");
+    return false;
+  }
 
-    sv4guiSimJob* job=CreateJob(msg);
+  mitk::StatusBar::GetInstance()->DisplayText("Creating svMultiPhysics simulation files");
+  std::string job_msg;
 
-    if(job==nullptr)
-    {
-        QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(msg));
-        return false;
-    }
+  sv4guiSimJob* job = CreateJob(job_msg);
 
-    if(createFolder)
-        outputDir=outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+"-files";
+  if (job == nullptr) {
+    QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(job_msg));
+    return false;
+  }
 
-    QDir dir(outputDir);
-    dir.mkpath(outputDir);
+  if (createFolder) {
+    outputDir=outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+"-files";
+  }
 
-    mitk::StatusBar::GetInstance()->DisplayText("Creating svpre file...");
-    QString svpreFielContent=QString::fromStdString(sv4guiSimulationUtils::CreatePreSolverFileContent(job));
-    QFile svpreFile(outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+".svpre");
-    if(svpreFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream out(&svpreFile);
-        out<<svpreFielContent;
-        svpreFile.close();
-    }
+  QDir dir(outputDir);
+  dir.mkpath(outputDir);
 
-    auto capProps=job->GetCapProps();
-    auto it = capProps.begin();
-    while(it != capProps.end())
-    {
-        if(it->first!=""&&it->second["BC Type"]=="Prescribed Velocities")
-        {
-            auto props=it->second;
-            std::ofstream out(outputDir.toStdString()+"/"+it->first+".flow");
-            out << props["Flow Rate"];
-            out.close();
+  // Set face names and type.
+  std::map<std::string,std::string> faces_name_type;
+  auto faces = modelElement->GetFaces();
+  for (auto face : faces ) { 
+    faces_name_type[face->name] = face->type;
+  }
+
+  // Create solver XML file.
+  //
+  mitk::StatusBar::GetInstance()->DisplayText("Creating solver.xml");
+  std::string file_name = outputDir.toStdString() + "/" + m_SolverInputFileName;
+  sv4guiSimulationUtils::CreateSolverInputFile(job, faces_name_type, outputDir.toStdString(), file_name);
+
+  // Create mesh files.
+  //
+  std::string meshName = "";
+
+  if (outputAllFiles) {
+    meshName = ui->comboBoxMeshName->currentText().toStdString();
+
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs = GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+
+    sv4guiMesh* mesh = nullptr;
+    mitk::DataNode::Pointer projFolderNode = nullptr;
+    mitk::DataNode::Pointer meshNode = nullptr;
+
+    if (rs->size()>0) {
+      projFolderNode=rs->GetElement(0);
+      rs = GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
+
+      if (rs->size()>0) {
+        mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
+        meshNode=GetDataStorage()->GetNamedDerivedNode(meshName.c_str(),meshFolderNode);
+
+        if (meshNode.IsNotNull()) {
+          sv4guiMitkMesh* mitkMesh=dynamic_cast<sv4guiMitkMesh*>(meshNode->GetData());
+          if(mitkMesh) {
+            mesh=mitkMesh->GetMesh();
+          }
         }
-        it++;
+      }
     }
 
-    mitk::StatusBar::GetInstance()->DisplayText("Creating solver.inp");
-    QString solverFileContent=QString::fromStdString(sv4guiSimulationUtils::CreateFlowSolverFileContent(job));
-    QFile solverFile(outputDir+"/solver.inp");
-    if(solverFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream out(&solverFile);
-        out<<solverFileContent;
-        solverFile.close();
+    if (mesh == nullptr) {
+      QMessageBox::warning(m_Parent,"Mesh Unavailable","Please make sure the mesh exists and is valid.");
+      return false;
     }
 
-    QFile numStartFile(outputDir+"/numstart.dat");
-    if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream out(&numStartFile);
-        out<<"0\n";
-        numStartFile.close();
+    mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete files");
+    QString meshCompletePath = outputDir+"/mesh-complete";
+    dir.mkpath(meshCompletePath);
+    WaitCursorOn();
+    bool ok = sv4guiMeshLegacyIO::WriteFiles(meshNode, modelElement, meshCompletePath);
+    WaitCursorOff();
+
+    if (!ok) {
+      QMessageBox::warning(m_Parent,"Mesh info missing","Please make sure the mesh exists and is valid.");
+      return false;
     }
+  }
 
-    QString rcrtFielContent=QString::fromStdString(sv4guiSimulationUtils::CreateRCRTFileContent(job));
-    if(rcrtFielContent!="")
-    {
-        mitk::StatusBar::GetInstance()->DisplayText("Creating rcrt.dat");
-        QFile rcrtFile(outputDir+"/rcrt.dat");
-        if(rcrtFile.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            QTextStream out(&rcrtFile);
-            out<<rcrtFielContent;
-            rcrtFile.close();
-        }
-    }
+  m_MitkJob->SetSimJob(job);
+  m_MitkJob->SetMeshName(meshName);
+  m_MitkJob->SetDataModified();
 
-    QString cortFielContent=QString::fromStdString(sv4guiSimulationUtils::CreateCORTFileContent(job));
-    if(cortFielContent!="")
-    {
-        mitk::StatusBar::GetInstance()->DisplayText("Creating cort.dat");
-        QFile cortFile(outputDir+"/cort.dat");
-        if(cortFile.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            QTextStream out(&cortFile);
-            out<<cortFielContent;
-            cortFile.close();
-        }
-    }
-
-    std::string meshName="";
-    if(outputAllFiles)
-    {
-        meshName=ui->comboBoxMeshName->currentText().toStdString();
-
-        mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
-        mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
-
-        sv4guiMesh* mesh=nullptr;
-        mitk::DataNode::Pointer projFolderNode=nullptr;
-        mitk::DataNode::Pointer meshNode=nullptr;
-
-        if(rs->size()>0)
-        {
-            projFolderNode=rs->GetElement(0);
-
-            rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
-            if (rs->size()>0)
-            {
-                mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
-
-                meshNode=GetDataStorage()->GetNamedDerivedNode(meshName.c_str(),meshFolderNode);
-                if(meshNode.IsNotNull())
-                {
-                    sv4guiMitkMesh* mitkMesh=dynamic_cast<sv4guiMitkMesh*>(meshNode->GetData());
-                    if(mitkMesh)
-                    {
-                        mesh=mitkMesh->GetMesh();
-                    }
-                }
-            }
-        }
-
-        if(mesh==nullptr)
-        {
-            QMessageBox::warning(m_Parent,"Mesh Unavailable","Please make sure the mesh exists and is valid.");
-            return false;
-        }
-
-        mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete files");
-        QString meshCompletePath=outputDir+"/mesh-complete";
-        dir.mkpath(meshCompletePath);
-        WaitCursorOn();
-        bool ok=sv4guiMeshLegacyIO::WriteFiles(meshNode,modelElement, meshCompletePath);
-        WaitCursorOff();
-        if(!ok)
-        {
-            QMessageBox::warning(m_Parent,"Mesh info missing","Please make sure the mesh exists and is valid.");
-            return false;
-        }
-
-        QString presolverPath = QString::fromStdString(m_PresolverPath);
-        if(presolverPath=="")
-            presolverPath = QString::fromStdString(m_PresolverPath);
-
-//        if(presolverPath=="" || !QFile(presolverPath).exists())
-        if(presolverPath=="")
-        {
-            QMessageBox::warning(m_Parent,"Presolver Missing","Please make sure presolver exists!");
-        }
-        else
-        {
-            QString icFile=(QString::fromStdString(job->GetBasicProp("IC File"))).trimmed();
-            if(icFile!="" && QFile(icFile).exists())
-            {
-                QString newFilePath=outputDir+"/restart.0.1";
-                QFile::copy(icFile, newFilePath);
-            }
-
-            mitk::StatusBar::GetInstance()->DisplayText("Creating Data files: bct, restart, geombc,etc.");
-            QProcess *presolverProcess = new QProcess(m_Parent);
-            presolverProcess->setWorkingDirectory(outputDir);
-            presolverProcess->setProgram(presolverPath);
-            QStringList arguments;
-            arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
-            presolverProcess->setArguments(arguments);
-#if defined(Q_OS_MAC)
-            sv4guiProcessHandler* handler=new sv4guiProcessHandler(presolverProcess,m_JobNode,true,false,m_Parent);
-#else
-            sv4guiProcessHandler* handler=new sv4guiProcessHandler(presolverProcess,m_JobNode,true,true,m_Parent);
-#endif
-            handler->Start();
-        }
-    }
-
-    m_MitkJob->SetSimJob(job);
-    m_MitkJob->SetMeshName(meshName);
-    m_MitkJob->SetDataModified();
-
-    return true;
+  return true;
 }
 
-void sv4guiSimulationView::ImportFiles()
-{
-    QString jobPath=GetJobPath();
-
-    if(jobPath=="")
-        return;
-
-    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    mitk::IPreferences* prefs;
-
-    if (prefService)
-    {
-        prefs = prefService->GetSystemPreferences()->Node("/General");
-    }
-    else
-    {
-        prefs = nullptr;
-    }
-
-    QString lastFilePath="";
-    if(prefs != nullptr)
-    {
-        lastFilePath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
-    }
-    if(lastFilePath=="")
-        lastFilePath=QDir::homePath();
-
-    QStringList filePaths = QFileDialog::getOpenFileNames(m_Parent, "Choose Files", lastFilePath, tr("All Files (*)"));
-
-    if(filePaths.size()>0)
-        if(prefs != nullptr) 
-         {
-             prefs->Put("LastFileOpenPath", filePaths.first().toStdString());
-             prefs->Flush();
-         }
-
-    for(int i=0;i<filePaths.size();i++)
-    {
-        QString filePath=filePaths[i];
-        QFileInfo fi(filePath);
-        QString fileName=fi.fileName();
-        QString newFilePath=jobPath+"/"+fileName;
-        if (QFile::exists(newFilePath))
-        {
-            if (QMessageBox::question(m_Parent, "Overwrite File?", "Do you want to overwrite the file (" +fileName +") in the job?",
-                                      QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
-            {
-                continue;
-            }
-
-            QFile::remove(newFilePath);
-        }
-
-        QFile::copy(filePath, newFilePath);
-    }
-}
-
+//-----------
+// CreateJob
+//-----------
+//
 sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidity)
 {
-    sv4guiSimJob* job=new sv4guiSimJob();
+  sv4guiSimJob* job = new sv4guiSimJob();
 
-    //for basic
-    for(int i=0;i<m_TableModelBasic->rowCount();i++)
-    {
-        std::string par=m_TableModelBasic->item(i,0)->text().toStdString();
-        std::string values=m_TableModelBasic->item(i,1)->text().trimmed().toStdString();
+  // Set basic properties values.
+  //
+  for(int i=0;i<m_TableModelBasic->rowCount();i++) {
+    std::string par=m_TableModelBasic->item(i,0)->text().toStdString();
+    std::string values=m_TableModelBasic->item(i,1)->text().trimmed().toStdString();
 
-        if(checkValidity)
-        {
-//            if(par=="Fluid Density" || par=="Fluid Viscosity" || par=="Period" || par=="Initial Pressure")
-            if(par=="Fluid Density" || par=="Fluid Viscosity" || par=="Initial Pressure")
-            {
-                if(!IsDouble(values))
-                {
-                    msg=par + " value error: " + values;
-                    delete job;
-                    return nullptr;
-                }
-            }
-            else if(par=="Initial Velocities")
-            {
-                int count=0;
+    if(checkValidity) {
 
-                QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
-                values=list.join(" ").toStdString();
-
-                if(!AreDouble(values,&count) || count!=3)
-                {
-                    msg=par + " value error: " + values;
-                    delete job;
-                    return nullptr;
-                }
-            }
+      if(par=="Fluid Density" || par=="Fluid Viscosity" || par=="Initial Pressure") {
+        if(!IsDouble(values)) {
+          msg=par + " value error: " + values;
+          delete job;
+          return nullptr;
         }
 
-        job->SetBasicProp(par,values);
+      } else if(par=="Initial Velocities") {
+        int count=0;
+
+        QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
+        values=list.join(" ").toStdString();
+
+        if(!AreDouble(values,&count) || count!=3) {
+          msg=par + " value error: " + values;
+          delete job;
+          return nullptr;
+        }
+      }
     }
 
-    //for cap bc
-    for(int i=0;i<m_TableModelCap->rowCount();i++)
-    {
-        std::string capName=m_TableModelCap->item(i,0)->text().toStdString();
-        std::string bcType=m_TableModelCap->item(i,1)->text().trimmed().toStdString();
+  job->SetBasicProp(par,values);
+  }
 
-        if(bcType=="Prescribed Velocities")
-        {
-            std::string flowrateContent=m_TableModelCap->item(i,9)->text().trimmed().toStdString();
-            std::string period=m_TableModelCap->item(i,5)->text().trimmed().toStdString();
+  // Set cap properties values.
+  //
+  for(int i=0;i<m_TableModelCap->rowCount();i++) {
+    std::string capName=m_TableModelCap->item(i,0)->text().toStdString();
+    std::string bcType=m_TableModelCap->item(i,1)->text().trimmed().toStdString();
 
-            if(checkValidity)
-            {
-                if(flowrateContent=="")
-                {
-                    msg=capName + ": no flowrate data";
-                    delete job;
-                    return nullptr;
-                }
+    if(bcType=="Prescribed Velocities") {
+      std::string flowrateContent=m_TableModelCap->item(i,9)->text().trimmed().toStdString();
+      std::string period=m_TableModelCap->item(i,5)->text().trimmed().toStdString();
 
-                if(period=="")
-                {
-                    msg=capName + ": no period for flowrate data";
-                    delete job;
-                    return nullptr;
-                }
-            }
-
-            std::string shape=m_TableModelCap->item(i,4)->text().trimmed().toStdString();
-            std::string pointNum=m_TableModelCap->item(i,6)->text().trimmed().toStdString();
-            std::string modeNum=m_TableModelCap->item(i,7)->text().trimmed().toStdString();
-            std::string flip=m_TableModelCap->item(i,8)->text().trimmed().toStdString();
-            std::string originalFile=m_TableModelCap->item(i,10)->text().trimmed().toStdString();
-
-            job->SetCapProp(capName,"BC Type", bcType);
-            job->SetCapProp(capName,"Analytic Shape", shape);
-            job->SetCapProp(capName,"Period", period);
-            job->SetCapProp(capName,"Point Number", pointNum);
-            job->SetCapProp(capName,"Fourier Modes", modeNum);
-            job->SetCapProp(capName,"Flip Normal", flip);
-            job->SetCapProp(capName,"Flow Rate", flowrateContent);
-            job->SetCapProp(capName,"Original File", originalFile);
+      if(checkValidity) {
+        if(flowrateContent=="") {
+          msg=capName + ": no flowrate data";
+          delete job;
+          return nullptr;
         }
-        else if(bcType!="")
-        {
-            std::string values=m_TableModelCap->item(i,2)->text().trimmed().toStdString();
-            std::string pressure=m_TableModelCap->item(i,3)->text().trimmed().toStdString();
-            std::string originalFile=m_TableModelCap->item(i,10)->text().trimmed().toStdString();
-            std::string timedPressure=m_TableModelCap->item(i,11)->text().trimmed().toStdString();
-            std::string pressurePeriod=m_TableModelCap->item(i,12)->text().trimmed().toStdString();
-            std::string pressureScaling=m_TableModelCap->item(i,13)->text().trimmed().toStdString();
-            std::string RValues=m_TableModelCap->item(i,14)->text().trimmed().toStdString();
-            std::string CValues=m_TableModelCap->item(i,15)->text().trimmed().toStdString();
 
-            if(checkValidity)
-            {
-                if(bcType=="Resistance")
-                {
-                    if(!IsDouble(values))
-                    {
-                        msg=capName + " R value error: " + values;
-                        delete job;
-                        return nullptr;
-                    }
-                }
-                else if(bcType=="RCR")
-                {
-                    int count=0;
-
-                    QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
-                    values=list.join(" ").toStdString();
-
-                    if(!AreDouble(values,&count)||count!=3)
-                    {
-                        msg=capName + " RCR values error: " + values;
-                        delete job;
-                        return nullptr;
-                    }
-                }
-                else if(bcType=="Coronary")
-                {
-                    int count=0;
-
-                    QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
-                    values=list.join(" ").toStdString();
-
-                    if(!AreDouble(values,&count)||count!=5)
-                    {
-                        msg=capName + " Coronary values error: " + values;
-                        delete job;
-                        return nullptr;
-                    }
-
-                    if(timedPressure=="")
-                    {
-                        msg=capName + ": no Pim data";
-                        delete job;
-                        return nullptr;
-                    }
-
-                    if(pressurePeriod=="" || !IsDouble(pressurePeriod))
-                    {
-                        msg=capName + " coronary period error: " + pressurePeriod;
-                        delete job;
-                        return nullptr;
-                    }
-
-                    if(pressureScaling=="" || !IsDouble(pressureScaling))
-                    {
-                        msg=capName + " coronary pressure scaling error: " + pressureScaling;
-                        delete job;
-                        return nullptr;
-                    }
-                }
-
-                if(pressure!="")
-                {
-                    if(!IsDouble(pressure))
-                    {
-                        msg=capName + " pressure error: " + pressure;
-                        delete job;
-                        return nullptr;
-                    }
-                }
-                else
-                {
-                    pressure="0";
-                }
-            }
-
-            job->SetCapProp(capName,"BC Type", bcType);
-            job->SetCapProp(capName,"Values", values);
-            job->SetCapProp(capName,"Pressure",pressure);
-
-            if(bcType=="Coronary")
-            {
-                job->SetCapProp(capName,"Timed Pressure", timedPressure);
-                job->SetCapProp(capName,"Pressure Period", pressurePeriod);
-                job->SetCapProp(capName,"Pressure Scaling",pressureScaling);
-                job->SetCapProp(capName,"Original File", originalFile);
-            }
-
-            if(bcType=="RCR" || bcType=="Coronary")
-            {
-                job->SetCapProp(capName,"R Values", RValues);
-                job->SetCapProp(capName,"C Values", CValues);
-            }
+        if(period=="") {
+          msg=capName + ": no period for flowrate data";
+          delete job;
+          return nullptr;
         }
+      }
+
+      std::string shape=m_TableModelCap->item(i,4)->text().trimmed().toStdString();
+      std::string pointNum=m_TableModelCap->item(i,6)->text().trimmed().toStdString();
+      std::string modeNum=m_TableModelCap->item(i,7)->text().trimmed().toStdString();
+      std::string flip=m_TableModelCap->item(i,8)->text().trimmed().toStdString();
+      std::string originalFile=m_TableModelCap->item(i,10)->text().trimmed().toStdString();
+
+      job->SetCapProp(capName,"BC Type", bcType);
+      job->SetCapProp(capName,"Analytic Shape", shape);
+      job->SetCapProp(capName,"Period", period);
+      job->SetCapProp(capName,"Point Number", pointNum);
+      job->SetCapProp(capName,"Fourier Modes", modeNum);
+      job->SetCapProp(capName,"Flip Normal", flip);
+      job->SetCapProp(capName,"Flow Rate", flowrateContent);
+      job->SetCapProp(capName,"Original File", originalFile);
+
+    } else if(bcType != "") {
+      std::string values=m_TableModelCap->item(i,2)->text().trimmed().toStdString();
+      std::string pressure=m_TableModelCap->item(i,3)->text().trimmed().toStdString();
+      std::string originalFile=m_TableModelCap->item(i,10)->text().trimmed().toStdString();
+      std::string timedPressure=m_TableModelCap->item(i,11)->text().trimmed().toStdString();
+      std::string pressurePeriod=m_TableModelCap->item(i,12)->text().trimmed().toStdString();
+      std::string pressureScaling=m_TableModelCap->item(i,13)->text().trimmed().toStdString();
+      std::string RValues=m_TableModelCap->item(i,14)->text().trimmed().toStdString();
+      std::string CValues=m_TableModelCap->item(i,15)->text().trimmed().toStdString();
+
+      if(checkValidity) {
+        if(bcType=="Resistance") {
+          if(!IsDouble(values)) {
+            msg=capName + " R value error: " + values;
+            delete job;
+            return nullptr;
+          }
+
+        } else if(bcType=="RCR") {
+          int count=0;
+          QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
+          values=list.join(" ").toStdString();
+
+          if(!AreDouble(values,&count)||count!=3) {
+            msg=capName + " RCR values error: " + values;
+            delete job;
+            return nullptr;
+          }
+
+        } else if(bcType=="Coronary") {
+          int count=0;
+          QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
+          values=list.join(" ").toStdString();
+
+          if(!AreDouble(values,&count)||count!=5) {
+            msg=capName + " Coronary values error: " + values;
+            delete job;
+            return nullptr;
+          }
+
+          if(timedPressure=="") {
+            msg=capName + ": no Pim data";
+            delete job;
+            return nullptr;
+          }
+
+          if(pressurePeriod=="" || !IsDouble(pressurePeriod)) {
+            msg=capName + " coronary period error: " + pressurePeriod;
+            delete job;
+            return nullptr;
+          }
+
+          if(pressureScaling=="" || !IsDouble(pressureScaling)) {
+            msg=capName + " coronary pressure scaling error: " + pressureScaling;
+            delete job;
+            return nullptr;
+          }
+        }
+
+        if(pressure!="") {
+          if(!IsDouble(pressure)) {
+            msg=capName + " pressure error: " + pressure;
+            delete job;
+            return nullptr;
+          }
+        } else {
+          pressure="0";
+        }
+      }
+
+      job->SetCapProp(capName,"BC Type", bcType);
+      job->SetCapProp(capName,"Values", values);
+      job->SetCapProp(capName,"Pressure",pressure);
+
+      if(bcType=="Coronary") {
+        job->SetCapProp(capName,"Timed Pressure", timedPressure);
+        job->SetCapProp(capName,"Pressure Period", pressurePeriod);
+        job->SetCapProp(capName,"Pressure Scaling",pressureScaling);
+        job->SetCapProp(capName,"Original File", originalFile);
+      }
+
+      if(bcType=="RCR" || bcType=="Coronary") {
+        job->SetCapProp(capName,"R Values", RValues);
+        job->SetCapProp(capName,"C Values", CValues);
+      }
+    }
+  }
+
+  // Set wall properties values.
+  int wallTypeIndex=ui->comboBoxWallType->currentIndex();
+
+  if(wallTypeIndex==0) {
+    job->SetWallProp("Type","rigid");
+
+  } else if(wallTypeIndex==1) {
+    std::string thickness=ui->lineEditThickness->text().trimmed().toStdString();
+    std::string modulus=ui->lineEditE->text().trimmed().toStdString();
+    std::string nu=ui->lineEditNu->text().trimmed().toStdString();
+    std::string kcons=ui->lineEditKcons->text().trimmed().toStdString();
+    std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
+    std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
+
+    if(checkValidity) {
+      if(!IsDouble(thickness)) {
+        msg="wall thickness error: " + thickness;
+        delete job;
+        return nullptr;
+      }
+
+      if(!IsDouble(modulus)) {
+        msg="wall elastic modulus error: " + modulus;
+        delete job;
+        return nullptr;
+      }
+
+      if(!IsDouble(nu)) {
+        msg="wall Poisson ratio error: " + nu;
+        delete job;
+        return nullptr;
+      }
+
+      if(!IsDouble(kcons)) {
+        msg="wall shear constant error: " + kcons;
+        delete job;
+        return nullptr;
+      }
+
+      if(wallDensity!="") {
+        if(!IsDouble(wallDensity)) {
+          msg="wall density error: " + wallDensity;
+          delete job;
+          return nullptr;
+        }
+      } else {
+        wallDensity=job->GetBasicProp("Fluid Density");
+      }
+
+      if(!IsDouble(pressure)) {
+        msg="wall pressure error: " + pressure;
+        delete job;
+        return nullptr;
+      }
     }
 
-    //for wall and var
-    int wallTypeIndex=ui->comboBoxWallType->currentIndex();
-    if(wallTypeIndex==0)
-    {
-        job->SetWallProp("Type","rigid");
-    }
-    else if(wallTypeIndex==1)
-    {
-        std::string thickness=ui->lineEditThickness->text().trimmed().toStdString();
-        std::string modulus=ui->lineEditE->text().trimmed().toStdString();
-        std::string nu=ui->lineEditNu->text().trimmed().toStdString();
-        std::string kcons=ui->lineEditKcons->text().trimmed().toStdString();
-        std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
-        std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
+    job->SetWallProp("Type","deformable");
+    job->SetWallProp("Thickness",thickness);
+    job->SetWallProp("Elastic Modulus",modulus);
+    job->SetWallProp("Poisson Ratio",nu);
+    job->SetWallProp("Shear Constant",kcons);
+    job->SetWallProp("Density",wallDensity);
+    job->SetWallProp("Pressure",pressure);
 
-        if(checkValidity)
-        {
-            if(!IsDouble(thickness))
-            {
-                msg="wall thickness error: " + thickness;
-                delete job;
-                return nullptr;
-            }
+  } else if(wallTypeIndex==2) {
+    std::string nu=ui->lineEditNu->text().trimmed().toStdString();
+    std::string kcons=ui->lineEditKcons->text().trimmed().toStdString();
+    std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
+    std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
 
-            if(!IsDouble(modulus))
-            {
-                msg="wall elastic modulus error: " + modulus;
-                delete job;
-                return nullptr;
-            }
+    if(checkValidity) {
+      if(!IsDouble(nu)) {
+        msg="wall Poisson ratio error: " + nu;
+        delete job;
+        return nullptr;
+      }
 
-            if(!IsDouble(nu))
-            {
-                msg="wall Poisson ratio error: " + nu;
-                delete job;
-                return nullptr;
-            }
+      if(!IsDouble(kcons)) {
+        msg="wall shear constant error: " + kcons;
+        delete job;
+        return nullptr;
+      }
 
-            if(!IsDouble(kcons))
-            {
-                msg="wall shear constant error: " + kcons;
-                delete job;
-                return nullptr;
-            }
-
-            if(wallDensity!="")
-            {
-                if(!IsDouble(wallDensity))
-                {
-                    msg="wall density error: " + wallDensity;
-                    delete job;
-                    return nullptr;
-                }
-            }
-            else
-            {
-                wallDensity=job->GetBasicProp("Fluid Density");
-            }
-
-            if(!IsDouble(pressure))
-            {
-                msg="wall pressure error: " + pressure;
-                delete job;
-                return nullptr;
-            }
+      if(wallDensity!="") {
+        if(!IsDouble(wallDensity)) {
+          msg="wall density error: " + wallDensity;
+          delete job;
+          return nullptr;
         }
+      } else {
+        wallDensity=job->GetBasicProp("Fluid Density");
+      }
 
-        job->SetWallProp("Type","deformable");
-        job->SetWallProp("Thickness",thickness);
-        job->SetWallProp("Elastic Modulus",modulus);
-        job->SetWallProp("Poisson Ratio",nu);
-        job->SetWallProp("Shear Constant",kcons);
-        job->SetWallProp("Density",wallDensity);
-        job->SetWallProp("Pressure",pressure);
-    }
-    else if(wallTypeIndex==2)
-    {
-        std::string nu=ui->lineEditNu->text().trimmed().toStdString();
-        std::string kcons=ui->lineEditKcons->text().trimmed().toStdString();
-        std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
-        std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
-
-        if(checkValidity)
-        {
-            if(!IsDouble(nu))
-            {
-                msg="wall Poisson ratio error: " + nu;
-                delete job;
-                return nullptr;
-            }
-
-            if(!IsDouble(kcons))
-            {
-                msg="wall shear constant error: " + kcons;
-                delete job;
-                return nullptr;
-            }
-
-            if(wallDensity!="")
-            {
-                if(!IsDouble(wallDensity))
-                {
-                    msg="wall density error: " + wallDensity;
-                    delete job;
-                    return nullptr;
-                }
-            }
-            else
-            {
-                wallDensity=job->GetBasicProp("Fluid Density");
-            }
-
-            if(!IsDouble(pressure))
-            {
-                msg="wall pressure error: " + pressure;
-                delete job;
-                return nullptr;
-            }
-        }
-
-        job->SetWallProp("Type","variable");
-        job->SetWallProp("Poisson Ratio",nu);
-        job->SetWallProp("Shear Constant",kcons);
-        job->SetWallProp("Density",wallDensity);
-        job->SetWallProp("Pressure",pressure);
-
-        for(int i=0;i<m_TableModelVar->rowCount();i++)
-        {
-            std::string faceName=m_TableModelVar->item(i,0)->text().toStdString();
-            std::string thickness=m_TableModelVar->item(i,2)->text().trimmed().toStdString();
-            std::string modulus=m_TableModelVar->item(i,3)->text().trimmed().toStdString();
-
-            if(checkValidity)
-            {
-                if(thickness!="" && !IsDouble(thickness))
-                {
-                    msg="wall thickness error: " + thickness;
-                    delete job;
-                    return nullptr;
-                }
-
-                if(modulus!="" && !IsDouble(modulus))
-                {
-                    msg="wall elastic modulus error: " + modulus;
-                    delete job;
-                    return nullptr;
-                }
-            }
-
-            job->SetVarProp(faceName,"Thickness", thickness);
-            job->SetVarProp(faceName,"Elastic Modulus", modulus);
-        }
+      if(!IsDouble(pressure)) {
+        msg="wall pressure error: " + pressure;
+        delete job;
+        return nullptr;
+      }
     }
 
-    for(int i=0;i<m_TableModelSolver->rowCount();i++)
-    {
-        std::string parName=m_TableModelSolver->item(i,0)->text().trimmed().toStdString();
-        QStandardItem* valueItem=m_TableModelSolver->item(i,1);
-        if(valueItem==nullptr)
-            continue;
+    job->SetWallProp("Type","variable");
+    job->SetWallProp("Poisson Ratio",nu);
+    job->SetWallProp("Shear Constant",kcons);
+    job->SetWallProp("Density",wallDensity);
+    job->SetWallProp("Pressure",pressure);
 
-        std::string value=valueItem->text().trimmed().toStdString();
-        std::string type=m_TableModelSolver->item(i,2)->text().trimmed().toStdString();
+    for(int i=0;i<m_TableModelVar->rowCount();i++) {
+      std::string faceName=m_TableModelVar->item(i,0)->text().toStdString();
+      std::string thickness=m_TableModelVar->item(i,2)->text().trimmed().toStdString();
+      std::string modulus=m_TableModelVar->item(i,3)->text().trimmed().toStdString();
 
-        if(checkValidity )
-        {
-            if(value=="")
-            {
-                msg=parName+ " missing value";
-                delete job;
-                return nullptr;
-            }
-            else if(type=="int"&&!IsInt(value))
-            {
-                msg=parName+ " value error: " + value;
-                delete job;
-                return nullptr;
-            }
-            else if(type=="double"&&!IsDouble(value))
-            {
-                msg=parName+ " value error: " + value;
-                delete job;
-                return nullptr;
-            }
+      if(checkValidity) {
+        if(thickness!="" && !IsDouble(thickness)) {
+          msg="wall thickness error: " + thickness;
+          delete job;
+          return nullptr;
         }
 
-        job->SetSolverProp(parName, value);
+        if(modulus!="" && !IsDouble(modulus)) {
+          msg="wall elastic modulus error: " + modulus;
+          delete job;
+          return nullptr;
+        }
+      }
+
+      job->SetVarProp(faceName,"Thickness", thickness);
+      job->SetVarProp(faceName,"Elastic Modulus", modulus);
+    }
+  }
+
+  for (int i = 0; i < m_TableModelSolver->rowCount(); i++) {
+    std::string parName=m_TableModelSolver->item(i,0)->text().trimmed().toStdString();
+    QStandardItem* valueItem=m_TableModelSolver->item(i,1);
+
+    if(valueItem==nullptr) {
+      continue;
     }
 
+    std::string value=valueItem->text().trimmed().toStdString();
+    std::string type=m_TableModelSolver->item(i,2)->text().trimmed().toStdString();
 
-    return job;
+    if(checkValidity ) {
+      if(value=="") {
+        msg=parName+ " missing value";
+        delete job;
+        return nullptr;
+
+      } else if(type=="int"&&!IsInt(value)) {
+        msg=parName+ " value error: " + value;
+        delete job;
+        return nullptr;
+
+      } else if(type=="double"&&!IsDouble(value)) {
+        msg=parName+ " value error: " + value;
+        delete job;
+        return nullptr;
+      }
+    }
+
+    job->SetSolverProp(parName, value, m_TableModelSolverSections[i]);
+  }
+
+  return job;
 }
 
+//---------------
+// SaveToManager
+//---------------
+//
 void sv4guiSimulationView::SaveToManager()
 {
     if(!m_MitkJob)
@@ -2638,289 +2276,6 @@ void sv4guiSimulationView::SaveToManager()
 
     m_MitkJob->SetSimJob(job);
     m_MitkJob->SetDataModified();
-}
-
-void sv4guiSimulationView::SetResultDir()
-{
-    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    mitk::IPreferences* prefs;
-
-    if (prefService)
-    {
-        prefs = prefService->GetSystemPreferences()->Node("/General");
-    }
-    else
-    {
-        prefs = nullptr; 
-    }
-
-    QString lastFileOpenPath="";
-    QString currentPath=ui->lineEditResultDir->text().trimmed();
-    if(currentPath!="" && QDir(currentPath).exists())
-        lastFileOpenPath=currentPath;
-    else if(prefs != nullptr) 
-    {
-        lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
-    }
-    if(lastFileOpenPath=="")
-        lastFileOpenPath=QDir::homePath();
-
-    QString dir = QFileDialog::getExistingDirectory(m_Parent
-                                                    , tr("Choose Result Directory")
-                                                    , lastFileOpenPath);
-
-    dir=dir.trimmed();
-    if(dir.isEmpty()) return;
-
-    if(prefs != nullptr)
-    {
-        prefs->Put("LastFileOpenPath", dir.toStdString());
-        prefs->Flush();
-    }
-
-    ui->lineEditResultDir->setText(dir);
-}
-
-//---------------
-// ExportResults
-//---------------
-//
-void sv4guiSimulationView::ExportResults()
-{
-    QString postsolverPath = QString::fromStdString(m_PostsolverPath);
-    if(postsolverPath=="")
-        postsolverPath = QString::fromStdString(m_PostsolverPath);
-
-    if(postsolverPath=="" || !QFile(postsolverPath).exists())
-    {
-        QMessageBox::warning(m_Parent,"Postsolver Missing","Please make sure postsolver exists!");
-        return;
-    }
-
-    mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    mitk::IPreferences* prefs;
-
-    if (prefService)
-    {
-        prefs = prefService->GetSystemPreferences()->Node("/General");
-    }
-    else
-    {
-        prefs = nullptr;
-    }
-
-    QString lastFileSavePath="";
-    if(prefs != nullptr) 
-    {
-        lastFileSavePath = QString::fromStdString(prefs->Get("LastFileSavePath", ""));
-    }
-    if(lastFileSavePath=="")
-        lastFileSavePath=QDir::homePath();
-
-    QString exportDir = QFileDialog::getExistingDirectory(m_Parent
-                                                    , tr("Choose Export Directory")
-                                                    , lastFileSavePath);
-
-    exportDir=exportDir.trimmed();
-    if(exportDir.isEmpty())
-        return;
-
-    if(prefs !=  nullptr) 
-     {
-         prefs->Put("LastFileSavePath", exportDir.toStdString());
-         prefs->Flush();
-     }
-
-    QString jobName("");
-    if(m_JobNode.IsNotNull())
-        jobName=QString::fromStdString(m_JobNode->GetName())+"-";
-
-    exportDir=exportDir+"/"+jobName+"converted-results";
-    QDir exdir(exportDir);
-    exdir.mkpath(exportDir);
-
-    QString resultDir=ui->lineEditResultDir->text();
-    QDir rdir(resultDir);
-    if(!rdir.exists())
-    {
-        QMessageBox::warning(m_Parent,"Result dir not exists","Please provide valid result dir");
-        return;
-    }
-
-    QString startNo=ui->lineEditStart->text().trimmed();
-    if(!IsInt(startNo.toStdString()))
-    {
-        QMessageBox::warning(m_Parent,"Start Step Error","Please provide start step number in correct format.");
-        return;
-    }
-
-    QString stopNo=ui->lineEditStop->text().trimmed();
-    if(!IsInt(stopNo.toStdString()))
-    {
-        QMessageBox::warning(m_Parent,"Stop Step Error","Please provide stop step number in correct format.");
-        return;
-    }
-
-    QString increment=ui->lineEditIncrement->text().trimmed();
-    if(!IsInt(increment.toStdString()))
-    {
-        QMessageBox::warning(m_Parent,"Increment Error","Please provide increment in correct format.");
-        return;
-    }
-
-    QStringList arguments;
-    arguments << "-all";
-    arguments << "-indir" << resultDir;
-    arguments << "-outdir" << exportDir;
-    arguments << "-start" << startNo;
-    arguments << "-stop" << stopNo;
-    arguments << "-incr" << increment;
-    if(ui->checkBoxSingleFile->isChecked())
-        arguments << "-vtkcombo";
-
-    if(ui->checkBoxVolume->isChecked())
-    {
-       if(ui->checkBoxSingleFile->isChecked())
-           arguments << "-vtu" << "all_results.vtu";
-       else
-           arguments << "-vtu" << "all_results";
-    }
-
-    if(ui->checkBoxSurface->isChecked())
-    {
-       if(ui->checkBoxSingleFile->isChecked())
-           arguments << "-vtp" << "all_results.vtp";
-       else
-           arguments << "-vtp" << "all_results";
-    }
-
-    if(ui->checkBoxToRestart->isChecked())
-        arguments << "-ph" << "-laststep";
-
-    mitk::StatusBar::GetInstance()->DisplayText("Exporting results.");
-
-    QProcess *postsolverProcess = new QProcess(m_Parent);
-    postsolverProcess->setWorkingDirectory(exportDir);
-    postsolverProcess->setProgram(postsolverPath);
-    postsolverProcess->setArguments(arguments);
-
-    sv4guiProcessHandler* handler=new sv4guiProcessHandler(postsolverProcess,m_JobNode,false,false,m_Parent);
-    handler->Start();
-
-    QString detailedInfo=handler->GetMessage();
-    delete handler;
-
-    bool convertedFilesExit=true;
-    bool meshFaceDirExists=true;
-    bool meshFaceFilesExist=true;
-    bool calculateFlows=true;
-    QString meshFaceDir;
-
-    if(ui->checkBoxCalculateFlows->isChecked())
-    {
-        convertedFilesExit=false;
-        meshFaceDirExists=false;
-        meshFaceFilesExist=false;
-        calculateFlows=false;
-
-        meshFaceDir=GetJobPath()+"/mesh-complete/mesh-surfaces";
-        meshFaceDirExists=QDir(meshFaceDir).exists();
-        std::vector<std::string> meshFaceFileNames;
-        if(meshFaceDirExists)
-        {
-            QStringList filters;
-            filters<<"*.vtp";
-            QStringList fileList=QDir(meshFaceDir).entryList(filters, QDir::Files);
-            meshFaceFilesExist=(fileList.size()>0);
-            for(int i=0;i<fileList.size();i++)
-                meshFaceFileNames.push_back(fileList[i].toStdString());
-        }
-
-        std::vector<std::string> vtxFilePaths;
-
-        if(ui->checkBoxSingleFile->isChecked())
-        {
-            QString vtpResultFilePath=exportDir+"/all_results.vtp";
-            QString vtuResultFilePath=exportDir+"/all_results.vtu";
-
-            if(QFile(vtpResultFilePath).exists())
-                vtxFilePaths.push_back(vtpResultFilePath.toStdString());
-            else if(QFile(vtuResultFilePath).exists())
-                vtxFilePaths.push_back(vtuResultFilePath.toStdString());
-        }
-        else
-        {
-            QStringList filters;
-            filters<<"all_results_*.vtp";
-            QStringList fileList=QDir(exportDir).entryList(filters, QDir::Files, QDir::Name);
-
-            if(fileList.size()==0)
-            {
-                filters.clear();
-                filters<<"all_results_*.vtu";
-                fileList=QDir(exportDir).entryList(filters, QDir::Files, QDir::Name);
-            }
-
-            for(int i=0;i<fileList.size();i++)
-                vtxFilePaths.push_back((exportDir+"/"+fileList[i]).toStdString());
-
-        }
-
-        convertedFilesExit=(vtxFilePaths.size()>0);
-
-        if( convertedFilesExit && meshFaceDirExists && meshFaceFilesExist )
-        {
-
-
-            QString outPressureFlePath=exportDir+"/all_results-pressures.txt";
-            QString outFlowFilePath=exportDir+"/all_results-flows.txt";
-            QString outAverageFilePath=exportDir+"/all_results-averages.txt";
-            QString outAverageUnitsFilePath=exportDir+"/all_results-averages-from_cm-to-mmHg-L_per_min.txt";
-            QString unit=ui->comboBoxSimUnits->currentText();
-            bool skipWalls=ui->checkBoxSkipWalls->isChecked();
-
-            calculateFlows=sv4guiSimulationUtils::CreateFlowFiles(outFlowFilePath.toStdString(), outPressureFlePath.toStdString()
-                                                              , outAverageFilePath.toStdString(), outAverageUnitsFilePath.toStdString()
-                                                              , vtxFilePaths,ui->checkBoxSingleFile->isChecked()
-                                                              , meshFaceDir.toStdString(), meshFaceFileNames
-                                                              , unit.toStdString(), skipWalls);
-        }
-    }
-
-    QString msg="";
-
-    if (convertedFilesExit) {
-        msg = "Results have been converted.";
-        QString avg_msg = "\n\nWARNING: Results for flow averages across faces have not been converted.";
-        QString avg_check_msg = "\n\nCheck that there is a .sjb file with the same name as the simulation results directory.";
-
-        if (!meshFaceDirExists) {
-            QString avg_file_msg = "\n\nThe directory '" + meshFaceDir + "' containing face mesh files could not be opened.";
-            msg = msg + avg_msg + avg_file_msg + avg_check_msg; 
-
-        } else if (!meshFaceFilesExist) {
-            QString avg_file_msg = "\n\nNo face mesh files were found in the directory '" + meshFaceDir + "'.";
-            msg = msg + avg_msg + avg_file_msg; 
-
-        } else if (!calculateFlows) {
-            msg = msg + avg_msg + "\n\nAn error occured computing flow averages across faces.";
-        }
-
-    } else {
-        msg = "Results were not converted.";
-    }
-
-    msg=msg+"                                                                                        ";
-
-    QMessageBox mb(m_Parent);
-    mb.setWindowTitle("Finished");
-    mb.setText(msg);
-    mb.setIcon(QMessageBox::Information);
-    mb.setDetailedText(detailedInfo);
-    mb.setDefaultButton(QMessageBox::Ok);
-    mb.exec();
-
-    mitk::StatusBar::GetInstance()->DisplayText("Results converting finished.");
 }
 
 bool sv4guiSimulationView::IsInt(std::string value)
@@ -2963,22 +2318,29 @@ void sv4guiSimulationView::EnableTool(bool able)
     ui->page_5->setEnabled(able);
 }
 
+//---------------
+// UpdateSimJob
+//---------------
+//
 void sv4guiSimulationView::UpdateSimJob()
 {
-    if(!m_MitkJob)
+    if (!m_MitkJob) {
         return;
+    }
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
-    std::string numProcsStr="";
-    if(job)
-    {
-        numProcsStr=job->GetRunProp("Number of Processes");
+    sv4guiSimJob* job = m_MitkJob->GetSimJob();
+    std::string numProcsStr = "";
+
+    if (job) {
+      numProcsStr = job->GetRunProp("Number of Processes");
     }
 
     std::string msg="";
-    sv4guiSimJob* newJob=CreateJob(msg,false);
-    if(newJob==nullptr)
+    sv4guiSimJob* newJob = CreateJob(msg,false);
+
+    if (newJob==nullptr) {
         return;
+    }
 
     newJob->SetRunProp("Number of Processes",numProcsStr);
     m_MitkJob->SetSimJob(newJob);
@@ -2995,23 +2357,23 @@ void sv4guiSimulationView::UdpateSimJobMeshName()
     m_MitkJob->SetDataModified();
 }
 
+//----------------------
+// UpdateSimJobNumProcs
+//----------------------
+//
 void sv4guiSimulationView::UpdateSimJobNumProcs()
 {
-    if(!m_MitkJob)
-        return;
+  if(!m_MitkJob) {
+    return;
+  }
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
-    if(job)
-    {
-        std::string numProcsStr=QString::number((int)(ui->sliderNumProcs->value())).toStdString();
-        job->SetRunProp("Number of Processes",numProcsStr);
-        m_MitkJob->SetDataModified();
-    }
-}
+  sv4guiSimJob* job=m_MitkJob->GetSimJob();
 
-void sv4guiSimulationView::ShowCalculateFowsWidget(bool checked)
-{
-    ui->widgetCalculateFlows->setVisible(checked);
+  if (job) {
+    std::string numProcsStr=QString::number((int)(ui->sliderNumProcs->value())).toStdString();
+    job->SetRunProp("Number of Processes",numProcsStr);
+    m_MitkJob->SetDataModified();
+  }
 }
 
 #if defined(Q_OS_WIN)
@@ -3097,21 +2459,6 @@ void sv4guiSimulationView::ShowModel(bool checked)
         m_ModelNode->SetVisibility(checked);
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
-}
-
-//--------
-// UseMpi
-//--------
-// Process 'Use MPI' check box selection.
-//
-// Disable number of processors if MPI is not selected. Use disable rather 
-// than show/hide, which does not work for labels.
-//
-void sv4guiSimulationView::UseMpi(bool checked)
-{
-    ui->sliderNumProcs->setEnabled(checked);
-    ui->NumberProcessesLabel->setEnabled(checked);
-    m_UseMPI = checked;
 }
 
 

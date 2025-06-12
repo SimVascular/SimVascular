@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The code here is used to execute a solver process.
+
 #include "sv4gui_SolverProcessHandler.h"
 
 #include "sv4gui_TableCapDelegate.h"
@@ -67,41 +69,48 @@
 #include <QTimer>
 #include <QRegularExpression>
 
-sv4guiSolverProcessHandler::sv4guiSolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent)
-    : m_Process(process)
-    , m_JobNode(jobNode)
-    , m_StartStep(startStep)
-    , m_TotalSteps(totalSteps)
-    , m_RunDir(runDir)
-    , m_Parent(parent)
-    , m_Timer(nullptr)
+//----------------------------
+// sv4guiSolverProcessHandler
+//----------------------------
+//
+sv4guiSolverProcessHandler::sv4guiSolverProcessHandler(QProcess* process, 
+    mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, 
+    QWidget* parent) : m_Process(process), m_JobNode(jobNode), m_StartStep(startStep),
+     m_TotalSteps(totalSteps), m_RunDir(runDir), m_Parent(parent), m_Timer(nullptr)
 {
 }
 
 sv4guiSolverProcessHandler::~sv4guiSolverProcessHandler()
 {
-    if(m_Process)
-        delete m_Process;
+  if(m_Process) {
+    delete m_Process;
+  }
 
-    if(m_Timer)
-        delete m_Timer;
+  if(m_Timer) {
+    delete m_Timer;
+  }
 }
 
+//--------------
+// ProcessError
+//--------------
+//
 void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
 {
-  MITK_ERROR << "Simulation job error = " << error;
+  MITK_ERROR << "CFD Simulation job error = " << error;
   QString title = "";
   QString text = "";
-  QString status = "Simulation failed";
+  QString status = "CFD Simulation failed";
   QMessageBox::Icon icon = QMessageBox::Warning;
   QMessageBox messageBox(nullptr); 
 
   if (error == QProcess::FailedToStart) {
-    title = "Simulation cannot be started";
+    title = "CFD Simulation cannot be started";
     text = "Unable to start the mpiexec process. Either the mpiexec program is missing or you may have insufficient permissions to execute it.";
     MITK_ERROR << text; 
+
   } else {
-    title = "Simulation failed";
+    title = "CFD Simulation failed";
     text = "Unknown error return code " + error; 
     MITK_ERROR << text; 
   }
@@ -118,6 +127,7 @@ void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
   messageBox.exec();
 
   sv4guiMitkSimJob* mitkJob = dynamic_cast<sv4guiMitkSimJob*>(m_JobNode->GetData());
+
   if(mitkJob) {
     mitkJob->SetStatus(status.toStdString());
   }
@@ -131,27 +141,34 @@ void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
 
 }
 
+//-------
+// Start
+//-------
+//
 void sv4guiSolverProcessHandler::Start()
 {
-    if(m_Process==nullptr)
-        return;
+  if(m_Process==nullptr) {
+    return;
+  }
 
-    if(m_JobNode.IsNull())
-        return;
+  if(m_JobNode.IsNull()) {
+    return;
+  }
 
-    connect(m_Process, &QProcess::errorOccurred, this, &sv4guiSolverProcessHandler::ProcessError);
-    connect(m_Process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(AfterProcessFinished(int,QProcess::ExitStatus)));
+  connect(m_Process, &QProcess::errorOccurred, this, &sv4guiSolverProcessHandler::ProcessError);
+  connect(m_Process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(AfterProcessFinished(int,QProcess::ExitStatus)));
 
-    m_JobNode->SetBoolProperty("running", true);
-    m_JobNode->SetDoubleProperty("running progress", 0);
-    mitk::GenericProperty<sv4guiSolverProcessHandler*>::Pointer solverProcessProp=mitk::GenericProperty<sv4guiSolverProcessHandler*>::New(this);
-    m_JobNode->SetProperty("process handler",solverProcessProp);
+  m_JobNode->SetBoolProperty("running", true);
+  m_JobNode->SetDoubleProperty("running progress", 0);
+  mitk::GenericProperty<sv4guiSolverProcessHandler*>::Pointer solverProcessProp =
+      mitk::GenericProperty<sv4guiSolverProcessHandler*>::New(this);
+  m_JobNode->SetProperty("process handler",solverProcessProp);
 
-    m_Process->start();
+  m_Process->start();
 
-    m_Timer = new QTimer(this);
-    connect(m_Timer, SIGNAL(timeout()), this, SLOT(UpdateStatus()));
-    m_Timer->start(3000);
+  m_Timer = new QTimer(this);
+  connect(m_Timer, SIGNAL(timeout()), this, SLOT(UpdateStatus()));
+  m_Timer->start(3000);
 }
 
 void sv4guiSolverProcessHandler::KillProcess()
@@ -175,13 +192,13 @@ void sv4guiSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::Ex
         return;
     }
 
-    QString title = "SimVascular SV Simulation";
+    QString title = "SimVascular CFD Simulation";
     QMessageBox::Icon icon=QMessageBox::NoIcon;
     QMessageBox mb(nullptr); //svSimualtionView maybe doesn't exist.
     QString status="";
 
     auto jobName = QString::fromStdString(m_JobNode->GetName()); 
-    QString text = "Simulation job '" + jobName + "' ";
+    QString text = "CFD Simulation job '" + jobName + "' ";
 
     auto exitCodeString = QString::number(exitCode); 
     QString stdError = QString(m_Process->readAllStandardError());
@@ -192,19 +209,19 @@ void sv4guiSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::Ex
     if (exitCode != 0) {
         text += "has failed with non-zero exit code " + exitCodeString + ".";
         icon = QMessageBox::Warning;
-        status="Simulation failed";
-        MITK_WARN << "Simulation job '" + jobName + "' has failed with non-zero exit code.";
+        status="CFD Simulation failed";
+        MITK_WARN << "CFD Simulation job '" + jobName + "' has failed with non-zero exit code.";
         MITK_WARN << "Exit code: " + exitCodeString; 
         MITK_WARN << "Error: " + stdError; 
     } else if (exitStatus == QProcess::NormalExit) { 
         text += "has finished.";
         icon=QMessageBox::Information;
-        status="Simulation done";
+        status="CFD Simulation done";
         m_JobNode->SetBoolProperty("update rundir",true);
     } else {
         text += "has crashed.";
         icon=QMessageBox::Warning;
-        status="Simulation failed";
+        status="CFD Simulation failed";
     }
 
     mb.setWindowTitle(title);

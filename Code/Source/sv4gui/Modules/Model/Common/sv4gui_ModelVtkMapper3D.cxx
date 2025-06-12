@@ -262,13 +262,13 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
 
       faceActor->GetProperty()->SetOpacity(face->opacity);
 
-      
+      /* debug
       std::string file_name = "face_" + std::to_string(i) + ".vtp";
       vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
       writer->SetFileName(file_name.c_str());
       writer->SetInputData(facePolyData);
       writer->Write();
-
+      */
 
       if (showEdges) {
         faceActor->GetProperty()->SetEdgeColor(edgeColor[0], edgeColor[1], edgeColor[2]);

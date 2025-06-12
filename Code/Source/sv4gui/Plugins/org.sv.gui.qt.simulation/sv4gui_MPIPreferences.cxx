@@ -69,6 +69,36 @@ sv4guiMPIPreferences::~sv4guiMPIPreferences()
 {
 }
 
+//----------
+// find_mpi
+//----------
+// Find the location of mpiexec.
+//
+// On MacOS mpiexec may a link so use realpath to
+// get an absolute path.
+//
+static QString find_mpi(const std::string& mpiExecName)
+{
+  std::string result;
+  char buffer[128];
+  std::string cmd = "realpath \`which mpiexec\`";
+  FILE* pipe = popen(cmd.c_str(), "r");
+
+  if (!pipe) {
+    return ""; 
+  }
+
+  while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+    result += buffer;
+  }
+
+  pclose(pipe);
+
+  result.erase(std::find_if(result.rbegin(), result.rend(), [](int ch) { return !std::isspace(ch); }).base(), result.end());
+
+  return QString::fromStdString(result);
+}
+
 //-----------------------
 // InitializeMPILocation
 //-----------------------
@@ -81,7 +111,7 @@ sv4guiMPIPreferences::~sv4guiMPIPreferences()
 void sv4guiMPIPreferences::InitializeMPILocation()
 {
   // Set the default install location of the solver.
-  QString solverInstallPath = "/usr/local/sv/svsolver";
+  QString solverInstallPath = "/usr/local/sv/svMultiPhysics";
   QStringList dirList = QDir(solverInstallPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
   if (dirList.size() != 0) {
     solverInstallPath += "/" + dirList.back();
@@ -161,35 +191,35 @@ void sv4guiMPIPreferences::SetMpiExec(const QString& solverPath, const QString& 
   QString mpiExec = UnknownBinary;
   QString mpiExecPath;
   QString filePath = "";
-  QString mpiExecName = "mpiexec";
+  std::string mpiExecName = "mpiexec";
 
 #if defined(Q_OS_LINUX)
 
-  mpiExecPath = "/usr/bin/";
+  auto mpiexec_path = find_mpi(mpiExecName);
 
-  if (QFile(filePath = mpiExecPath + mpiExecName).exists()) {
+  if (mpiexec_path != "") { 
     mpiExec = filePath;
   }
 
 #elif defined(Q_OS_MAC)
 
-  mpiExecPath = "/usr/local/bin/";
+  auto mpiexec_path = find_mpi(mpiExecName);
 
-  if (QFile(filePath = mpiExecPath + mpiExecName).exists()) {
-    mpiExec = filePath;
+  if (mpiexec_path != "") { 
+    mpiExec = mpiexec_path;
   }
 
 #elif defined(Q_OS_WIN)
   
   QString msmpiDir = GetRegistryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\MPI","InstallRoot");
 
-    if (msmpiDir != "") {
-      if (msmpiDir.endsWith("\\")) {
-        mpiExec = msmpiDir+"Bin\\mpiexec.exe";
-      } else {
-        mpiExec = msmpiDir+"\\Bin\\mpiexec.exe";
-      }
+  if (msmpiDir != "") {
+    if (msmpiDir.endsWith("\\")) {
+      mpiExec = msmpiDir+"Bin\\mpiexec.exe";
+    } else {
+      mpiExec = msmpiDir+"\\Bin\\mpiexec.exe";
     }
+ }
 
 #endif
 
@@ -249,29 +279,36 @@ void sv4guiMPIPreferences::SetMpiImplementation()
 sv4guiMPIPreferences::MpiImplementation sv4guiMPIPreferences::DetermineMpiImplementation(const QString& mpiExecName)
 {
   MpiImplementation implementation = MpiImplementation::Unknown;
-
   QFileInfo fileInfo(mpiExecName);
   QString mpiExecPath = fileInfo.path();
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
   QProcess *checkMpi = new QProcess();
+  //QString program("/opt/homebrew/Cellar/open-mpi/5.0.7/bin/mpiexec");
   QString program(mpiExecName);
 
   if (QFile(program).exists()) {
     QStringList arguments;
-    arguments << "-version";
+    arguments << "--version";
     checkMpi->setProgram(program);
     checkMpi->setArguments(arguments);
     checkMpi->start(program, arguments);
     checkMpi->waitForFinished();
     QString output(checkMpi->readAllStandardOutput());
+
     if (output.contains("mpich")) {
       implementation = MpiImplementation::MPICH;
-    } else if (output.contains("OpenRTE")) {
+
+    } else if (output.contains("OpenRTE") || 
+               output.contains("Open MPI")) {
       implementation = MpiImplementation::OpenMPI;
+
     } else {
       implementation = MpiImplementation::Unknown;
     }
+
+  } else {
+    std::cout << "Error: The mpiexec program '" << mpiExecName.toStdString() << "' does not exist." << std::endl;
   }
 
 #elif defined(Q_OS_WIN)

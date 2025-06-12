@@ -166,9 +166,10 @@ void sv4guiPathIO::Write()
     }
 
     std::string fileName=GetOutputLocation();
-    if (document.SaveFile(fileName.c_str()) == false)
+
+    if (document.SaveFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
     {
-        mitkThrow() << "Could not write path to " << fileName;
+        mitkThrow() << "Could not write Path parameters to the file " << fileName;
 
     }
 }

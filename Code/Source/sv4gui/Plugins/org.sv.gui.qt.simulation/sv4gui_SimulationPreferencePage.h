@@ -33,8 +33,8 @@
 // presented in the 'Preferences->SimVascular Simulation' panel. 
 //
 // The 'Preferences->SimVascular Simulation' panel is used to show and set
-// the location of the solver binaries (svpre, svsolver and svpost) and
-// mpiexec binary used to execute a simulation.
+// the location of the svmultiphysics binaries and mpiexec binary used to 
+// execute a simulation.
 
 #ifndef SV4GUI_SIMULATIONPREFERENCEPAGE_H
 #define SV4GUI_SIMULATIONPREFERENCEPAGE_H
@@ -53,11 +53,7 @@ class sv4guiSimulationPreferencePage;
 // The keys are used to store property values in a MITK database.
 //
 namespace sv4guiSimulationPreferenceDBKey {
-    const std::string FLOW_SOLVER_NO_MPI_PATH = "flowsolver nompi path";
-    const std::string FLOW_SOLVER_PATH = "flowsolver path";
-    const std::string POST_SOLVER_PATH = "postsolver path";
-    const std::string PRE_SOLVER_PATH = "presolver path";
-    const std::string SOLVER_TEMPLATE_PATH = "solver template path";
+    const std::string SOLVER_PATH = "solver path";
     const std::string USE_CUSTOM = "use custom";
 };
 
@@ -79,17 +75,10 @@ public:
     void InitializeSolverLocations();
 
 private slots:
-  void SetPresolverPath();
-  void SetFlowsolverPath();
-  void SetFlowsolverNOMPIPath();
-  void SetCustomTemplatePath();
-  void SetPostsolverPath();
+  void SetSolverPath();
 
 private:
-  void SetPreSolver();
   void SetSolver();
-  void SetSolverNOMPI();
-  void SetPostSolver();
 
   mitk::IPreferences* m_Preferences;
   QScopedPointer<Ui::sv4guiSimulationPreferencePage> m_Ui;

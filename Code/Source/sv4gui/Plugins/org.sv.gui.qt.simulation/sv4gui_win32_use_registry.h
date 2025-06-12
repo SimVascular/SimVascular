@@ -68,8 +68,8 @@
 #ifdef SV_USE_WIN32_REGISTRY
 
 void sv4guiQueryKey(HKEY hKey);
-int sv4gui_parse_registry_for_svsolver(char* keytofind, char* rtnval);
-int sv4gui_parse_registry_for_svsolver_internal(char* toplevel_key, char* keytofind, char* rtnval);
+int sv4gui_parse_registry_for_solver(char* keytofind, char* rtnval);
+int sv4gui_parse_registry_for_solver_internal(char* toplevel_key, char* keytofind, char* rtnval);
 
 #endif
 #endif

@@ -590,9 +590,9 @@ void sv4guiMitksvFSIJobIO::Write()
 
     }
 
-    if (document.SaveFile(fileName.c_str()) == false)
+    if (document.SaveFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
     {
-        mitkThrow() << "Could not write model to " << fileName;
+        mitkThrow() << "Could not write svFSI parameters to file " << fileName;
     }
 }
 

@@ -248,17 +248,17 @@ void sv4guiMPIPreferencePage::PerformCancel()
 //
 bool sv4guiMPIPreferencePage::PerformOk()
 {
-    // Get the MPI information from the GUI.
-    auto mpiExecPath = m_Ui->lineEditMPIExecPath->text().trimmed();
-    auto mpiImpl = m_Ui->MpiImplementationLineEdit->text().trimmed();
+  // Get the MPI information from the GUI.
+  auto mpiExecPath = m_Ui->lineEditMPIExecPath->text().trimmed();
+  auto mpiImpl = m_Ui->MpiImplementationLineEdit->text().trimmed();
 
-    // Set MPI implementation.
-    m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, mpiImpl.toStdString()); 
+  // Set MPI implementation.
+  m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, mpiImpl.toStdString()); 
 
-    // Set mpiexec path.
-    m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, mpiExecPath.toStdString());
+  // Set mpiexec path.
+  m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, mpiExecPath.toStdString());
 
-    return true;
+  return true;
 }
 
 

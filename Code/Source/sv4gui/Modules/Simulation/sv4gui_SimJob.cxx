@@ -138,7 +138,7 @@ std::string sv4guiSimJob::GetVarProp(const std::string& faceName, const std::str
 
 void sv4guiSimJob::SetSolverProps(std::map<std::string,std::string> solverProps)
 {
-    m_SolverProps=solverProps;
+    m_SolverProps = solverProps;
 }
 
 std::map<std::string,std::string> sv4guiSimJob::GetSolverProps()
@@ -146,9 +146,35 @@ std::map<std::string,std::string> sv4guiSimJob::GetSolverProps()
     return m_SolverProps;
 }
 
-void sv4guiSimJob::SetSolverProp(const std::string& key, std::string value)
+std::map<std::string,std::string> sv4guiSimJob::GetLinearSolverProps()
 {
-    m_SolverProps[key]=value;
+    return m_LinearSolverProps;
+}
+
+std::map<std::string,std::string> sv4guiSimJob::GetNonlinearSolverProps()
+{
+    return m_NonlinearSolverProps;
+}
+
+//---------------
+// SetSolverProp
+//---------------
+// Add solver propertiers.
+//
+// The 'section' parameter defines the section in the solvertemplate.xml file
+// the parameter name is under. These are stored in separate maps so the
+// same parameter name can be used in differenct sections.
+//
+void sv4guiSimJob::SetSolverProp(const std::string& name, std::string value, const std::string& section)
+{
+  m_SolverProps[name] = value;
+
+  if (section == "Nonlinear Solver") {
+    m_NonlinearSolverProps[name] = value;
+
+  } else if (section == "Linear Solver") {
+    m_LinearSolverProps[name] = value;
+  }
 }
 
 std::string sv4guiSimJob::GetSolverProp(const std::string& key)
