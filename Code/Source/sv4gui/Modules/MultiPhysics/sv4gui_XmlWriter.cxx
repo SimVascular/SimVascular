@@ -220,10 +220,6 @@ void Sv4GuiXmlWriter::add_equation_solver(const sv4guiMultiPhysicseqClass& eq, t
   auto linear_solver = add_sub_child(xml_equation, "LS");
   linear_solver->SetAttribute("type", eq.lsType.toStdString().c_str());
 
-  if ((eq.lsPreconditioner != "") && (eq.lsPreconditioner != "Default")) {
-    add_child(linear_solver, "Preconditioner", eq.lsPreconditioner); 
-  }
-
   add_child(linear_solver, "Max_iterations", eq.lsMaxItr); 
   add_child(linear_solver, "Tolerance", eq.tol);
   add_child(linear_solver, "Krylov_space_dimension", eq.lsKrylovDim);
@@ -236,6 +232,9 @@ void Sv4GuiXmlWriter::add_equation_solver(const sv4guiMultiPhysicseqClass& eq, t
     add_child(linear_solver, "NS_CG_tolerance", eq.lsNSCGTol); 
   }
 
+  auto linear_algebra = add_sub_child(linear_solver, "Linear_algebra");
+  linear_algebra->SetAttribute("type", "fsils");
+  add_child(linear_algebra, "Preconditioner", "fsils");
 }
 
 //------------------
@@ -404,8 +403,14 @@ void Sv4GuiXmlWriter::add_single_physics_equation(const sv4guiMultiPhysicseqClas
 {
   for (int i = 0; i < eq.getPropCount(); i++) {
     auto name = eq.getPropName(i).toStdString();
-    std::replace(name.begin(), name.end(), ' ', '_');
-    add_child(xml_equation, name, eq.getPropValue(i));
+    if (name == "Viscosity") {
+      auto viscosity = add_sub_child(xml_equation, "Viscosity");
+      viscosity->SetAttribute("model", "Constant");
+      add_child(viscosity, "Value", eq.getPropValue(i));
+    } else {
+      std::replace(name.begin(), name.end(), ' ', '_');
+      add_child(xml_equation, name, eq.getPropValue(i));
+    }
   }
 }
 
@@ -416,7 +421,7 @@ void Sv4GuiXmlWriter::add_single_physics_equation(const sv4guiMultiPhysicseqClas
 //
 void Sv4GuiXmlWriter::create_document(const sv4guiMultiPhysicsJob* job, const std::string& file_name)
 {
-  root_ = doc_.NewElement("MultiPhysicsFile");
+  root_ = doc_.NewElement("svMultiPhysicsFile");
   root_->SetAttribute("version", "1.0");
   doc_.InsertFirstChild(root_);
 

@@ -1112,23 +1112,26 @@ void sv4guiMultiPhysicsView::SelectEquation()
 //
 void sv4guiMultiPhysicsView::SaveProps()
 {
-    if(!m_Job)
-        return;
+  if(!m_Job) {
+    return;
+  }
 
-    QList<QListWidgetItem*> items = ui->listEqs->selectedItems();
-    if ( items.isEmpty() )
-        return;
+  QList<QListWidgetItem*> items = ui->listEqs->selectedItems();
 
-    int row=ui->listEqs->row(items.first());
-    sv4guiMultiPhysicseqClass& eq=m_Job->m_Eqs[row];
+  if (items.isEmpty()) {
+    return;
+  }
 
-    for ( int i=0 ; i < eq.getPropCount() ; i++ ) {
-        eq.setPropValue(propB.at(i)->text().toDouble(),i);
-    }
+  int row = ui->listEqs->row(items.first());
+  sv4guiMultiPhysicseqClass& eq = m_Job->m_Eqs[row];
 
-    eq.constitutiveModel=ui->comboBoxConstitutive->currentText();
+  for (int i = 0; i < eq.getPropCount(); i++) {
+    eq.setPropValue(propB.at(i)->text().toDouble(),i);
+  }
 
-    DataChanged();
+  eq.constitutiveModel = ui->comboBoxConstitutive->currentText();
+
+  DataChanged();
 }
 
 void sv4guiMultiPhysicsView::AddOutput()
@@ -1417,7 +1420,7 @@ void sv4guiMultiPhysicsView::SaveRemesher()
 //-----------------
 // CreateInputFile
 //-----------------
-// Create a text or XML input file of solver commands.
+// Create an XML input file of solver commands.
 //
 void sv4guiMultiPhysicsView::CreateInputFile()
 {
@@ -1432,33 +1435,13 @@ void sv4guiMultiPhysicsView::CreateInputFile()
         return;
     }
 
+    std::string mfsFileName=m_JobNode->GetName()+".xml";
+    std::string mfsFullFilePath=jobPath.toStdString()+"/"+mfsFileName;
 
-    // If the 'xml_format_radioButton' is selected then write
-    // out an XML format file for MultiPhysicsplus.
-    //
-    bool xml_format = ui->xml_format_radioButton->isChecked();
-
-    if (xml_format) { 
-      std::string mfsFileName=m_JobNode->GetName()+".xml";
-      std::string mfsFullFilePath=jobPath.toStdString()+"/"+mfsFileName;
-
-      if (m_Job->WriteXmlFile(mfsFullFilePath)) {
-          m_MitkJob->SetStatus("Input XML file created");
-          m_JobNode->SetBoolProperty("dummy",true);//trigger NodeChanged to update job status
-          mitk::StatusBar::GetInstance()->DisplayText("Input file (.msf) have been created.");
-      }
-
-    // Write out a plain text format file for MultiPhysics.
-    //
-    } else {
-      std::string mfsFileName=m_JobNode->GetName()+".txt";
-      std::string mfsFullFilePath=jobPath.toStdString()+"/"+mfsFileName;
-
-      if (m_Job->WriteFile(mfsFullFilePath)) {
-          m_MitkJob->SetStatus("Input file created");
-          m_JobNode->SetBoolProperty("dummy",true);//trigger NodeChanged to update job status
-          mitk::StatusBar::GetInstance()->DisplayText("Input file (.msf) have been created.");
-      }
+    if (m_Job->WriteXmlFile(mfsFullFilePath)) {
+      m_MitkJob->SetStatus("Input XML file created");
+      m_JobNode->SetBoolProperty("dummy",true);//trigger NodeChanged to update job status
+      mitk::StatusBar::GetInstance()->DisplayText("Input file (.msf) have been created.");
     }
 }
 
@@ -1679,7 +1662,7 @@ void sv4guiMultiPhysicsView::SaveJob()
         return;
 
     QDir dir(QString::fromStdString(path));
-    QString	filePath=dir.absoluteFilePath(QString::fromStdString(m_JobNode->GetName())+".fsijob");
+    QString	filePath=dir.absoluteFilePath(QString::fromStdString(m_JobNode->GetName())+".multiphysicsjob");
     mitk::IOUtil::Save(m_JobNode->GetData(),filePath.toStdString());
 }
 
@@ -1687,9 +1670,9 @@ void sv4guiMultiPhysicsView::LoadJob()
 {
     auto sv4guiMultiPhysics_dir = sv4guiMultiPhysicsUtil.getsv4guiMultiPhysicsDir();
     QString dir = QFileDialog::getOpenFileName(nullptr
-                                                    , tr("Choose .fsijob file")
+                                                    , tr("Choose .multiphysicsjob file")
                                                     , sv4guiMultiPhysics_dir.absolutePath()
-                                                    , tr("Job file (*.fsijob)"));
+                                                    , tr("Job file (*.multiphysicsjob)"));
 
     dir=dir.trimmed();
     if(dir.isEmpty())

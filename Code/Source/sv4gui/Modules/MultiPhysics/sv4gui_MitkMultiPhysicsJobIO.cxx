@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The methods defined here are used to read/write SV XML FSI project .fsijob files.
+// The methods defined here are used to read/write MultiPhysics XML project .multiphysicsjob files.
 
 #include "sv4gui_MitkMultiPhysicsJobIO.h"
 
@@ -44,9 +44,9 @@
 
 static mitk::CustomMimeType CreatesvSimJobMimeType()
 {
-    mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".fsijob");
+    mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".multiphysicsjob");
     mimeType.SetCategory("SimVascular Files");
-    mimeType.AddExtension("fsijob");
+    mimeType.AddExtension("multiphysicsjob");
     mimeType.SetComment("MultiPhysics Job");
 
     return mimeType;
@@ -84,18 +84,18 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkMultiPhysicsJobIO::DoRead()
     }
 
     sv4guiMitkMultiPhysicsJob::Pointer mitkSimJob = sv4guiMitkMultiPhysicsJob::New();
-    const char** modelName;
-    const char** meshName;
-    const char** status;
+    const char* modelName;
+    const char* meshName;
+    const char* status;
     int procNum=1;
-    mjElement->QueryStringAttribute("model_name",modelName);
-    mjElement->QueryStringAttribute("mesh_name",meshName);
-    mjElement->QueryStringAttribute("status",status);
+    mjElement->QueryStringAttribute("model_name", &modelName);
+    mjElement->QueryStringAttribute("mesh_name", &meshName);
+    mjElement->QueryStringAttribute("status", &status);
     mjElement->QueryIntAttribute("process_number",&procNum);
 
-    mitkSimJob->SetModelName(*modelName);
-    mitkSimJob->SetMeshName(*meshName);
-    mitkSimJob->SetStatus(*status);
+    mitkSimJob->SetModelName(modelName);
+    mitkSimJob->SetMeshName(meshName);
+    mitkSimJob->SetStatus(status);
     mitkSimJob->SetProcessNumber(procNum);
 
     const char* strValue;
@@ -399,6 +399,9 @@ mitk::IFileIO::ConfidenceLevel sv4guiMitkMultiPhysicsJobIO::GetReaderConfidenceL
 
 void sv4guiMitkMultiPhysicsJobIO::Write()
 {
+    //std::string dmsg("[sv4guiMitkMultiPhysicsJobIO::Write] ");
+    //std::cout << dmsg << "========= Write ==========" << std::endl;
+
     ValidateOutputLocation();
 
     std::string fileName=GetOutputLocation();
@@ -439,7 +442,7 @@ void sv4guiMitkMultiPhysicsJobIO::Write()
 
         jobElement->SetAttribute("startSavingStep",job->startSavingStep);
         jobElement->SetAttribute("saveAvgResult",job->saveAvgResult?"true":"false");
-        jobElement->DoubleAttribute("rhoInf",job->rhoInf);
+        jobElement->SetAttribute("rhoInf",job->rhoInf);
         jobElement->SetAttribute("stopFileName",job->stopFileName.c_str());
         jobElement->SetAttribute("remeshing",job->remeshing?"true":"false");
         jobElement->SetAttribute("verbose",job->verbose?"true":"false");
@@ -483,17 +486,16 @@ void sv4guiMitkMultiPhysicsJobIO::Write()
             eqElement->SetAttribute("maxItr",eq.maxItr);
             eqElement->SetAttribute("tol",eq.tol.toStdString().c_str());
             eqElement->SetAttribute("dBr",eq.dBr);
-            eqElement->DoubleAttribute("backflow",eq.backflowStab);
+            eqElement->SetAttribute("backflow",eq.backflowStab);
 
             tinyxml2::XMLElement* propsElement = document.NewElement("props");
             eqElement->LinkEndChild(propsElement);
-            for(int i=0;i<eq.getPropCount();++i)
-            {
+
+            for(int i=0;i<eq.getPropCount();++i) {
                 tinyxml2::XMLElement* propElement = document.NewElement("prop");
                 propsElement->LinkEndChild(propElement);
-
                 propElement->SetAttribute("name",eq.getPropName(i).toStdString().c_str());
-                propElement->DoubleAttribute("value",eq.getPropValue(i));
+                propElement->SetAttribute("value", eq.getPropValue(i));
             }
 
             if(eq.physName=="FSI" || eq.physName=="struct")
@@ -523,8 +525,8 @@ void sv4guiMitkMultiPhysicsJobIO::Write()
                 tinyxml2::XMLElement* rmElement = document.NewElement("remesher");
                 eqElement->LinkEndChild(rmElement);
                 rmElement->SetAttribute("name",eq.remesher.toStdString().c_str());
-                rmElement->DoubleAttribute("angle",eq.rmMinAngle);
-                rmElement->DoubleAttribute("ratio",eq.rmMaxRadiusRatio);
+                rmElement->SetAttribute("angle",eq.rmMinAngle);
+                rmElement->SetAttribute("ratio",eq.rmMaxRadiusRatio);
                 rmElement->SetAttribute("frequency",eq.rmFrequency);
                 rmElement->SetAttribute("copy_frequency",eq.rmCopyFrequency);
 
@@ -536,7 +538,7 @@ void sv4guiMitkMultiPhysicsJobIO::Write()
                     tinyxml2::XMLElement* sizeElement = document.NewElement("edge_size");
                     rmElement->LinkEndChild(sizeElement);
                     sizeElement->SetAttribute("domain",domainName.c_str());
-                    sizeElement->DoubleAttribute("size",domain.edgeSize);
+                    sizeElement->SetAttribute("size",domain.edgeSize);
                 }
             }
 
@@ -565,11 +567,11 @@ void sv4guiMitkMultiPhysicsJobIO::Write()
                 faceElement->SetAttribute("type",bc.bcType.toStdString().c_str());
 
                 if ( bc.bcType == "Steady" )
-                    faceElement->DoubleAttribute("value",bc.g);
+                    faceElement->SetAttribute("value",bc.g);
                 else if ( bc.bcType == "Unsteady" )
                     faceElement->SetAttribute("file",bc.gtFile.toStdString().c_str());
                 else if ( bc.bcType == "Resistance" )
-                    faceElement->DoubleAttribute("value",bc.r);
+                    faceElement->SetAttribute("value",bc.r);
                 else if ( bc.bcType == "General" )
                     faceElement->SetAttribute("file",bc.gmFile.toStdString().c_str());
                 else if ( bc.bcType == "Projection" )

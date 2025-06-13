@@ -60,7 +60,7 @@
 //     Segmentations: .ctgr
 //     Simulations: .sjb
 //     ROMSimulations: .romsimjob
-//     MultiPhysics: .fsijob
+//     MultiPhysics: .multiphysicsjob
 
 #include "sv4gui_ProjectManager.h"
 
@@ -159,7 +159,7 @@ namespace sv4gui_project_manager {
   const QString FileExtension::SEGMENTATIONS3D = ".s3d";
   const QString FileExtension::SIMULATIONS = ".sjb";
   const QString FileExtension::ROMSIMULATIONS = ".romsimjob";
-  const QString FileExtension::MULTIPHYSICS = ".fsijob";
+  const QString FileExtension::MULTIPHYSICS = ".multiphysicsjob";
 
   // image file extensions
   const QString FileExtension::IMAGE_VTI = ".vti";
@@ -1595,10 +1595,10 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
         }
 
         sv4guiMitkMultiPhysicsJob *mitkJob=dynamic_cast<sv4guiMitkMultiPhysicsJob*>(node->GetData());
-        if(mitkJob==nullptr || (!mitkJob->IsDataModified() && dirFSI.exists(QString::fromStdString(node->GetName())+".fsijob")) )
+        if(mitkJob==nullptr || (!mitkJob->IsDataModified() && dirFSI.exists(QString::fromStdString(node->GetName())+".multiphysicsjob")) )
             continue;
 
-        QString	filePath=dirFSI.absoluteFilePath(QString::fromStdString(node->GetName())+".fsijob");
+        QString	filePath=dirFSI.absoluteFilePath(QString::fromStdString(node->GetName())+".multiphysicsjob");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
         node->SetStringProperty("path",dirFSI.absolutePath().toStdString().c_str());
@@ -1608,7 +1608,7 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
 
     for(int i=0;i<removeList.size();i++)
     {
-        dirFSI.remove(QString::fromStdString(removeList[i])+".fsijob");
+        dirFSI.remove(QString::fromStdString(removeList[i])+".multiphysicsjob");
     }
     MultiPhysicsFolder->ClearRemoveList();
 }
