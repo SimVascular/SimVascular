@@ -55,7 +55,7 @@ static Registersv4guiMitkROMSimulationObjectFactory registersv4guiMitkROMSimulat
 
 sv4guiProjectDataNodesPluginActivator::sv4guiProjectDataNodesPluginActivator()
 {
-    std::cout << "sv4guiProjectDataNodesPluginActivator::sv4guiProjectDataNodesPluginActivator()" << std::endl << std::flush;
+    //std::cout << "sv4guiProjectDataNodesPluginActivator::sv4guiProjectDataNodesPluginActivator()" << std::endl << std::flush;
 }
 
 sv4guiProjectDataNodesPluginActivator::~sv4guiProjectDataNodesPluginActivator()

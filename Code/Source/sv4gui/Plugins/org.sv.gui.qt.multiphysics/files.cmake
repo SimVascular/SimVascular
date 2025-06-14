@@ -38,6 +38,7 @@ set(INTERNAL_CPP_FILES
     sv4gui_MultiPhysicsView.cxx
     sv4gui_MultiPhysicsBCWidget.cxx
     sv4gui_MultiPhysicsPreferencePage.cxx
+    sv4gui_MultiPhysicsPreferences.cxx
     sv4gui_MultiPhysicsPluginActivator.cxx
 )
 
@@ -48,6 +49,7 @@ set(MOC_H_FILES
     sv4gui_MultiPhysicsView.h
     sv4gui_MultiPhysicsBCWidget.h
     sv4gui_MultiPhysicsPreferencePage.h
+    sv4gui_MultiPhysicsPreferences.h
     sv4gui_MultiPhysicsPluginActivator.h
 )
 

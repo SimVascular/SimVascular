@@ -127,7 +127,7 @@ sv4guiQmitkDataManagerView::sv4guiQmitkDataManagerView()
     : m_GlobalReinitOnNodeDelete(true),
       m_ItemDelegate(nullptr)
 {
-  std::cout << "sv4guiQmitkDataManagerView" << std::endl << std::flush;
+  //std::cout << "sv4guiQmitkDataManagerView" << std::endl << std::flush;
 }
 
 sv4guiQmitkDataManagerView::~sv4guiQmitkDataManagerView()

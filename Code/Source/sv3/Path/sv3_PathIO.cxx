@@ -42,9 +42,9 @@ using sv3::XmlIOUtil;
 
 PathGroup* PathIO::ReadFile(std::string fileName)
 {
-    std::string msg("PathIO::ReadFile");
-    std::cout << msg << "=================== PathIO::ReadFile =========" << std::endl;
-    std::cout << msg << "fileName: " << fileName << std::endl;
+    //std::string msg("PathIO::ReadFile");
+    //std::cout << msg << "=================== PathIO::ReadFile =========" << std::endl;
+    //std::cout << msg << "fileName: " << fileName << std::endl;
     tinyxml2::XMLDocument document;
 
     if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)

@@ -82,10 +82,9 @@ sv4guiMitkApp::~sv4guiMitkApp()
 {
 }
 
-void sv4guiMitkApp::initializeLibraryPaths() {
-
+void sv4guiMitkApp::initializeLibraryPaths() 
+{
   //std::cout << "\n\n *** sv4guiMitkApp: initializeLibraryPaths! *** \n\n" << std::endl << std::flush;
-
   bool found_sv_plugin_path = false;
 
   //
@@ -120,7 +119,9 @@ void sv4guiMitkApp::initializeLibraryPaths() {
       //printf( " %s\n", token );
       QString pluginPath = token;
       ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
+      #ifdef debug_initializeLibraryPaths
       std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
+      #endif
       // Get next token
       token = strtok( nullptr, seps );
     }
@@ -139,7 +140,9 @@ void sv4guiMitkApp::initializeLibraryPaths() {
       //printf( " %s\n", token );
       QString pluginPath = token;
       ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
+      #ifdef debug_initializeLibraryPaths
       std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
+      #endif
       // Get next token
       token = strtok( nullptr, seps );
     }
@@ -194,7 +197,9 @@ void sv4guiMitkApp::initializeLibraryPaths() {
     foreach(QString suffix, suffixes)
     {
       ctkPluginFrameworkLauncher::addSearchPath(appDir.absoluteFilePath(suffix));
+      #ifdef debug_initializeLibraryPaths
       std::cout << "Adding to plugin search path (" << appDir.absoluteFilePath(suffix).toStdString() <<  ")" << std::endl << std::flush;
+      #endif
     }
 
   }
@@ -203,6 +208,7 @@ void sv4guiMitkApp::initializeLibraryPaths() {
   //  This code is a debugging check to make sure that all of the dll's
   //  can be found in the search path.
   //
+  #ifdef debug_initializeLibraryPaths
   fprintf(stdout,"Checking all plugin paths...\n");
   fprintf(stdout,"\n");
   fflush(stdout);
@@ -219,6 +225,7 @@ void sv4guiMitkApp::initializeLibraryPaths() {
   }
   fprintf(stdout,"\n");
   fflush(stdout);
+  #endif
 
   return;
 }

@@ -29,48 +29,47 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef sv4guiMultiPhysicsPREFERENCEPAGE_H
-#define sv4guiMultiPhysicsPREFERENCEPAGE_H
+// The sv4guiMultiPhysicsPreferences class is used to determine which svmultiphysics binary
+// are used by the SV MultiPhysics plugin. The class also determines which mpiexec binary 
+// is used to execute solver jobs using MPI and what its implementation is: MPICH or OpenMPI. 
+//
+// An sv4guiMultiPhysicsPreferences object is used by the sv4guiMultiPhysicsPreferencePage objectc
+// to display the full path to these binaries in the Preferences -> SimVascular MultiPhysics panel.
+//
+// The sv4guiMultiPhysicsView object, used to lauch simulation jobs, only reads values from 
+// the sv4guiMultiPhysicsPreferencePage object when a value is changed. Because of this the 
+// sv4guiMultiPhysicsView object must also use a sv4guiMultiPhysicsPreferences object to set
+// the default solver binaries.
 
-#include <sv4gui_MultiPhysicsPreferences.h>
+#ifndef SV4GUI_MULTIPHYSICS_PREFERENCES_H
+#define SV4GUI_MULTIPHYSICS_PREFERENCES_H
 
-#include <mitkIPreferences.h>
-#include <berryIQtPreferencePage.h>
+#include <iostream>
+#include <map>
+#include <QString>
 
-namespace Ui {
-class sv4guiMultiPhysicsPreferencePage;
-}
+#ifdef WIN32
+  #include "sv4gui_win32_use_registry.h"
+#endif
 
-namespace sv4guiMultiPhysicsPreferenceDBKey {
-  const std::string SOLVER_PATH = "multiphysics solver path";
-};
-
-class sv4guiMultiPhysicsPreferencePage : public QObject, public berry::IQtPreferencePage
+//-------------------------------
+// sv4guiMultiPhysicsPreferences 
+//-------------------------------
+//
+class sv4guiMultiPhysicsPreferences 
 {
-    Q_OBJECT
-    Q_INTERFACES(berry::IPreferencePage)
 
 public:
-    sv4guiMultiPhysicsPreferencePage();
-    ~sv4guiMultiPhysicsPreferencePage();
+  sv4guiMultiPhysicsPreferences();
+  ~sv4guiMultiPhysicsPreferences();
 
-    void CreateQtControl(QWidget* parent) override;
-    QWidget* GetQtControl() const override;
-    void Init(berry::IWorkbench::Pointer) override;
-    void PerformCancel() override;
-    bool PerformOk() override;
-    void Update() override;
-
-private slots:
-  void SetFlowsolverPath();
+  void InitializeSolverLocations();
+  QString GetSolver();
+  static const QString UnknownBinary;
 
 private:
-  mitk::IPreferences* m_Preferences;
-  QScopedPointer<Ui::sv4guiMultiPhysicsPreferencePage> m_Ui;
-  QWidget* m_Control;
-  sv4guiMultiPhysicsPreferences m_DefaultPrefs;
-  void InitializeSolverLocations();
-  void SetSolver();
+  QString m_Solver;
+  void SetSolver(const QString& solverInstallPath, const QString& applicationPath);
 };
 
-#endif // sv4guiMultiPhysicsPREFERENCEPAGE_H
+#endif 

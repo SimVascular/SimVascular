@@ -38,6 +38,10 @@
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_Mesh.h"
 
+#include "sv4gui_MultiPhysicsPreferencePage.h"
+#include "sv4gui_MultiPhysicsPreferences.h"
+#include "sv4gui_MPIPreferencePage.h"
+
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
 #include <mitkNodePredicateDataType.h>
@@ -60,6 +64,8 @@
 #include <iostream>
 
 const QString sv4guiMultiPhysicsView::EXTENSION_ID = "org.sv.views.multiphysics";
+
+using namespace sv4guiMultiPhysicsPreferenceDBKey;
 
 sv4guiMultiPhysicsView::sv4guiMultiPhysicsView() : ui(new Ui::sv4guiMultiPhysicsView)
 {
@@ -137,13 +143,11 @@ void sv4guiMultiPhysicsView::CreateQtPartControl( QWidget *parent )
     ui->Subpanel_Widget->setEnabled(false);
     ui->btnSave->setEnabled(false);
 
+    ui->comboBoxRemesher->setEnabled(false);
+
     // Get paths for the external solvers
     mitk::IPreferences* prefs = this->GetPreferences();
     this->OnPreferencesChanged(prefs);
-    //dp mitk::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
-    //dp this->OnPreferencesChanged(berryprefs);
-
-    ui->comboBoxRemesher->setEnabled(false);
 }
 
 //--------------------
@@ -208,17 +212,15 @@ void sv4guiMultiPhysicsView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /
 //
 void sv4guiMultiPhysicsView::SetupRunSimulationPanel()
 {
-    SetupInternalSolverPaths();
+  // Set the number of MPI processors.
+  ui->sliderNumProcs->setDecimals(0);
+  ui->sliderNumProcs->setMinimum(1);
+  int coreNum = QThread::idealThreadCount();
+  ui->sliderNumProcs->setMaximum(coreNum);
 
-    // Set the number of MPI processors.
-    ui->sliderNumProcs->setDecimals(0);
-    ui->sliderNumProcs->setMinimum(1);
-    int coreNum = QThread::idealThreadCount();
-    ui->sliderNumProcs->setMaximum(coreNum);
-
-    connect(ui->btnCreateInputFile, SIGNAL(clicked()), this, SLOT(CreateInputFile()));
-    connect(ui->btnRunSim, SIGNAL(clicked()), this, SLOT(RunSimulation()));
-    connect(ui->btnStopSim, SIGNAL(clicked()), this, SLOT(StopSimulation()));
+  connect(ui->btnCreateInputFile, SIGNAL(clicked()), this, SLOT(CreateInputFile()));
+  connect(ui->btnRunSim, SIGNAL(clicked()), this, SLOT(RunSimulation()));
+  connect(ui->btnStopSim, SIGNAL(clicked()), this, SLOT(StopSimulation()));
 }
 
 //-------------------
@@ -535,18 +537,75 @@ void sv4guiMultiPhysicsView::Hidden()
     m_isVisible = false;
 }
 
+//----------------------
+// OnPreferencesChanged
+//----------------------
+//
 void sv4guiMultiPhysicsView::OnPreferencesChanged(const mitk::IPreferences* prefs)
 {
-    if(prefs==nullptr)
-        return;
+  if (prefs == nullptr) {
+    return;
+  }
 
-    m_ExternalSolverPath = QString::fromStdString(prefs->Get("MultiPhysics solver path",""));
+  m_InternalSolverPath = QString::fromStdString(prefs->Get(SOLVER_PATH, m_DefaultPrefs.GetSolver().toStdString()));
+
+  SetMpiExec();
+
+}
+
+//------------
+// SetMpiExec
+//------------
+// Set mpiexec to its platform-dependent default location.
+//
+void sv4guiMultiPhysicsView::SetMpiExec()
+{
+  m_InternalMPIExecPath = "mpiexec";
+
+#if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
+
+  // Look for the installed mpiexec using the `which` command.
+  //
+  std::string mpiexec_path = "";
+  char buffer[128];
+  std::string cmd = "realpath \`which mpiexec\`";
+  FILE* pipe = popen(cmd.c_str(), "r");
+ 
+  if (pipe) {
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+      mpiexec_path += buffer;
+    }
+    pclose(pipe);
+    mpiexec_path.erase(std::find_if(mpiexec_path.rbegin(), mpiexec_path.rend(), [](int ch) { 
+        return !std::isspace(ch); }).base(), mpiexec_path.end());
+  }
+
+  if (mpiexec_path != "") { 
+    m_InternalMPIExecPath = QString::fromStdString(mpiexec_path);
+  }
+
+  //std::cout << "[sv4guiMultiPhysicsView::SetMpiExec] m_InternalMPIExecPath: " << m_InternalMPIExecPath << std::endl;
+
+#elif defined(Q_OS_WIN)
+  
+  QString msmpiDir = GetRegistryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\MPI","InstallRoot");
+
+  if (msmpiDir != "") {
+    if (msmpiDir.endsWith("\\")) {
+      mpiExec = msmpiDir+"Bin\\mpiexec.exe";
+    } else {
+      mpiExec = msmpiDir+"\\Bin\\mpiexec.exe";
+    }
+ }
+
+#endif
 }
 
 void sv4guiMultiPhysicsView::DataChanged()
 {
-    if(m_MitkJob)
-        m_MitkJob->SetDataModified();
+  if(m_MitkJob) {
+    m_MitkJob->SetDataModified();
+  }
 }
 
 //------------
@@ -564,65 +623,6 @@ QString sv4guiMultiPhysicsView::GetJobPath()
     m_JobNode->GetStringProperty("path",path);
     jobPath=QString::fromStdString(path+"/"+m_JobNode->GetName());
     return jobPath;
-}
-
-//--------------------------
-// SetupInternalSolverPaths
-//--------------------------
-//
-void sv4guiMultiPhysicsView::SetupInternalSolverPaths()
-{
-    m_InternalMPIExecPath="mpiexec";
-
-    //get path for the internal solvers
-    QString solverPath="/usr/local/sv/MultiPhysics";
-    QStringList dirList=QDir(solverPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
-    if(dirList.size()!=0)
-        solverPath+="/"+dirList.back();
-
-    QString solverPathBin=solverPath+"/bin";
-
-    QString applicationPath=QCoreApplication::applicationDirPath();
-    QString sv4guiMultiPhysicsSolverName="/MultiPhysics";
-
-    QString filePath="";
-
-#if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
-    //flowsolver with mpi, prefer to the script one which sets some lib paths for the mpi libs from svsolver
-    //Those libs are needed in Ubuntu 16, intead of using the system ones
-    if(QFile(filePath=solverPathBin+"/.."+sv4guiMultiPhysicsSolverName).exists())
-        m_InternalSolverPath=filePath;
-    else if(QFile(filePath=solverPathBin+sv4guiMultiPhysicsSolverName).exists())
-        m_InternalSolverPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+sv4guiMultiPhysicsSolverName).exists())
-        m_InternalSolverPath=filePath;
-    else if(QFile(filePath=applicationPath+sv4guiMultiPhysicsSolverName).exists())
-        m_InternalSolverPath=filePath;
-
-#endif
-
-#if defined(Q_OS_MAC)
-    //mpiexec
-    QString mpiexecName="/mpiexec";
-    if(QFile(filePath=solverPathBin+mpiexecName).exists())
-        m_InternalMPIExecPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+mpiexecName).exists())
-        m_InternalMPIExecPath=filePath;
-    else if(QFile(filePath=applicationPath+mpiexecName).exists())
-        m_InternalMPIExecPath=filePath;
-#endif
-
-#if defined(Q_OS_WIN)
-    m_InternalSolverPath=GetRegistryValue("SimVascular\\svSolver","MultiPhysics_MSMPI_EXE");
-    QString msmpiDir=GetRegistryValue("Microsoft\\MPI","InstallRoot");
-    if(msmpiDir!="")
-    {
-        if(msmpiDir.endsWith("\\"))
-            m_InternalMPIExecPath=msmpiDir+"Bin\\mpiexec";
-        else
-            m_InternalMPIExecPath=msmpiDir+"\\Bin\\mpiexec";
-    }
-#endif
 }
 
 void sv4guiMultiPhysicsView::SetNsd(const QString &text)
@@ -770,8 +770,6 @@ void sv4guiMultiPhysicsView::loadMesh()
     auto folderName = dom.folderName;
     auto surfaceName = dom.surfaceName;
     auto path = (jobPath+"/"+QString::fromStdString(folderName)+ "/" + QString::fromStdString(surfaceName)).toStdString();
-
-    std::cout << "Reading mesh file " << path << "\n";
 
     sv4guiMesh* mesh = new sv4guiMesh();
     mesh->ReadSurfaceFile(path);
@@ -1425,117 +1423,98 @@ void sv4guiMultiPhysicsView::SaveRemesher()
 void sv4guiMultiPhysicsView::CreateInputFile()
 {
     if (!m_MitkJob) {
-        return;
-    }
-
-    QString jobPath=GetJobPath();
-    if(jobPath=="" || !QDir(jobPath).exists())
-    {
-        QMessageBox::warning(m_Parent,"Unable to run","Please make sure mesh files have been added!");
-        return;
-    }
-
-    std::string mfsFileName=m_JobNode->GetName()+".xml";
-    std::string mfsFullFilePath=jobPath.toStdString()+"/"+mfsFileName;
-
-    if (m_Job->WriteXmlFile(mfsFullFilePath)) {
-      m_MitkJob->SetStatus("Input XML file created");
-      m_JobNode->SetBoolProperty("dummy",true);//trigger NodeChanged to update job status
-      mitk::StatusBar::GetInstance()->DisplayText("Input file (.msf) have been created.");
-    }
-}
-
-void sv4guiMultiPhysicsView::RunSimulation()
-{
-    if (QMessageBox::question(m_Parent, "Run Job", "Are you sure to run the job? It may take a while to finish.",
-                              QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
-    {
       return;
     }
 
-    if(!m_MitkJob)
-        return;
-
     QString jobPath=GetJobPath();
-    if(jobPath=="" || !QDir(jobPath).exists())
-    {
-        QMessageBox::warning(m_Parent,"Unable to run","Please make sure mesh files have been added!");
-        return;
+    if (jobPath == "" || !QDir(jobPath).exists()) {
+      QMessageBox::warning(m_Parent,"Unable to run","Please make sure mesh files have been added!");
+      return;
     }
 
-    std::string mfsFileName=m_JobNode->GetName()+".txt";
-    std::string mfsFullFilePath=jobPath.toStdString()+"/"+mfsFileName;
+    std::string solverFileName = m_JobNode->GetName()+".xml";
+    std::string solverFullFilePath = jobPath.toStdString() + "/" + solverFileName;
 
-    int procNum=ui->sliderNumProcs->value();
-    if(m_MitkJob->GetProcessNumber()!=procNum)
-    {
-        m_MitkJob->SetProcessNumber(procNum);
-        DataChanged();
+    if (m_Job->WriteXmlFile(solverFullFilePath)) {
+      m_MitkJob->SetStatus("Creating the solver input XML file ...");
+      m_JobNode->SetBoolProperty("dummy",true);
+      mitk::StatusBar::GetInstance()->DisplayText("The solver input XML file has been created.");
     }
+}
 
-//    m_Job->WriteFile(mfsFullFilePath);
+//---------------
+// RunSimulation
+//---------------
+//
+void sv4guiMultiPhysicsView::RunSimulation()
+{
+  if(!m_MitkJob) {
+    return;
+  }
 
+  QString jobPath=GetJobPath();
 
-    if(!QFile(QString::fromStdString(mfsFullFilePath)).exists())
-    {
-        QMessageBox::warning(m_Parent,"Unable to run","Please make sure input file exists!");
-        return;
-    }
+  if(jobPath == "" || !QDir(jobPath).exists()) {
+    QMessageBox::warning(m_Parent,"Unable to run","Please make sure mesh files have been added!");
+    return;
+  }
 
+  std::string mfsFileName = m_JobNode->GetName() + ".xml";
+  std::string mfsFullFilePath = jobPath.toStdString() + "/" + mfsFileName;
 
-    QString flowsolverPath=m_ExternalSolverPath;
-    if(flowsolverPath=="")
-        flowsolverPath=m_InternalSolverPath;
+  int num_proc = ui->sliderNumProcs->value();
+  if(m_MitkJob->GetProcessNumber()!= num_proc) {
+    m_MitkJob->SetProcessNumber(num_proc);
+    DataChanged();
+  }
 
-    if(flowsolverPath=="")
-    {
-        QMessageBox::warning(m_Parent,"Flowsolver Missing","Please make sure flowsolver exists!");
-        return;
-    }
+  if(!QFile(QString::fromStdString(mfsFullFilePath)).exists()) {
+    QMessageBox::warning(m_Parent,"Unable to run","Please make sure input file exists!");
+    return;
+  }
 
-    QString mpiExecPath=m_InternalMPIExecPath;
+  QString flowsolverPath = m_ExternalSolverPath;
 
-//        if(mpiExecPath=="")
-//        {
-//            QMessageBox::warning(m_Parent,"MPIExec Missing","Please make sure mpiexec exists!");
-//            return;
-//        }
+  if (flowsolverPath == "") {
+    flowsolverPath = m_InternalSolverPath;
+  }
 
+  if (flowsolverPath == "") {
+    QMessageBox::warning(m_Parent,"The svMultiPhysics solver can't be found.",
+        "Use the SimVascular Preferences panel to set its location.");
+    return;
+  }
 
-    QString runPath=jobPath;
-    int numProcs=ui->sliderNumProcs->value();
-    runPath=jobPath+"/"+QString::number(numProcs)+"-procs";
+  QString mpiExecPath = m_InternalMPIExecPath;
 
-    int totalSteps=100;//initial none zero value
-    if(m_Job)
-    {
-//        job->SetRunProp("Number of Processes",QString::number(numProcs).toStdString());
-//        QString tstr=QString::fromStdString(job->GetSolverProp("Number of Timesteps"));
-        totalSteps=m_Job->timeSteps;
-    }
+  QString runPath = jobPath;
+  int numProcs = ui->sliderNumProcs->value();
+  runPath = jobPath + "/" + QString::number(numProcs) + "-procs";
+  int totalSteps = 100;
 
-    mitk::StatusBar::GetInstance()->DisplayText("Running simulation");
+  if (m_Job) {
+    totalSteps = m_Job->timeSteps;
+  }
 
-    QProcess *flowsolverProcess = new QProcess(m_Parent);
-    flowsolverProcess->setWorkingDirectory(jobPath);
+  mitk::StatusBar::GetInstance()->DisplayText("Running simulation");
+  QProcess *flowsolverProcess = new QProcess(m_Parent);
+  flowsolverProcess->setWorkingDirectory(jobPath);
 
-    if(numProcs>1)
-    {
-        QStringList arguments;
-        arguments << "-n" << QString::number(numProcs)<< flowsolverPath<<QString::fromStdString(mfsFileName);
-        flowsolverProcess->setProgram(mpiExecPath);
-        flowsolverProcess->setArguments(arguments);
-    }
-    else
-    {
-        QStringList arguments;
-        arguments <<QString::fromStdString(mfsFileName);
-        flowsolverProcess->setProgram(flowsolverPath);
-        flowsolverProcess->setArguments(arguments);
-    }
+  if(numProcs > 1) {
+    QStringList arguments;
+    arguments << "-n" << QString::number(numProcs)<< flowsolverPath<<QString::fromStdString(mfsFileName);
+    flowsolverProcess->setProgram(mpiExecPath);
+    flowsolverProcess->setArguments(arguments);
 
-    sv4guiMultiPhysicsSolverProcessHandler* handler=new sv4guiMultiPhysicsSolverProcessHandler(flowsolverProcess,m_JobNode,0,totalSteps,runPath,m_Parent);
-    handler->Start();
+  } else {
+    QStringList arguments;
+    arguments <<QString::fromStdString(mfsFileName);
+    flowsolverProcess->setProgram(flowsolverPath);
+    flowsolverProcess->setArguments(arguments);
+  }
+
+  auto handler = new sv4guiMultiPhysicsSolverProcessHandler(flowsolverProcess,m_JobNode,0,totalSteps,runPath,m_Parent);
+  handler->Start();
 }
 
 void sv4guiMultiPhysicsView::StopSimulation()

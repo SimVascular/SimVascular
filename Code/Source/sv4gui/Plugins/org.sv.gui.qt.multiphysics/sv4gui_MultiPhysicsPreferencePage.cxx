@@ -40,6 +40,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+using namespace sv4guiMultiPhysicsPreferenceDBKey;
+
 sv4guiMultiPhysicsPreferencePage::sv4guiMultiPhysicsPreferencePage()
     : m_Preferences(nullptr)
     , m_Ui(new Ui::sv4guiMultiPhysicsPreferencePage)
@@ -51,6 +53,10 @@ sv4guiMultiPhysicsPreferencePage::~sv4guiMultiPhysicsPreferencePage()
 {
 }
 
+//-----------------
+// CreateQtControl
+//-----------------
+//
 void sv4guiMultiPhysicsPreferencePage::CreateQtControl(QWidget* parent)
 {
     m_Control = new QWidget(parent);
@@ -65,16 +71,40 @@ void sv4guiMultiPhysicsPreferencePage::CreateQtControl(QWidget* parent)
     connect( m_Ui->toolButtonFlowsolver, SIGNAL(clicked()), this, SLOT(SetFlowsolverPath()) );
 
     this->Update();
+
+    InitializeSolverLocations();
+}
+
+void sv4guiMultiPhysicsPreferencePage::InitializeSolverLocations()
+{
+  SetSolver();
+}
+
+//-----------
+// SetSolver
+//-----------
+// Set the solver executable.
+//
+void sv4guiMultiPhysicsPreferencePage::SetSolver()
+{
+  QString solver = m_Ui->lineEditFlowsolverPath->text().trimmed();
+  
+  if (!solver.isEmpty() && (solver != m_DefaultPrefs.UnknownBinary)) {
+    return;
+  }
+  
+  solver = m_DefaultPrefs.GetSolver();
+
+  m_Ui->lineEditFlowsolverPath->setText(solver);
 }
 
 void sv4guiMultiPhysicsPreferencePage::SetFlowsolverPath()
 {
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose MultiPhysics Solver");
+  QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose MultiPhysics Solver");
 
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditFlowsolverPath->setText(filePath);
-    }
+  if (!filePath.isEmpty()) {
+    m_Ui->lineEditFlowsolverPath->setText(filePath);
+  }
 }
 
 QWidget* sv4guiMultiPhysicsPreferencePage::GetQtControl() const

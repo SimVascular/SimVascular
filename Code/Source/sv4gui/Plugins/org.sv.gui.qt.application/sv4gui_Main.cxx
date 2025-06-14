@@ -111,8 +111,8 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
      app.setOrganizationName("SimVascular");
 
      if (use_workbench) {
-       fprintf(stdout,"Note: Using WorkBench App.\n");
-       fflush(stdout);
+       //fprintf(stdout,"Note: Using WorkBench App.\n");
+       //fflush(stdout);
        app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "org.mitk.gui.qt.extapplication.workbench");
      } else {
        app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "org.sv.gui.qt.application.svworkbench");
@@ -124,9 +124,9 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
 
      if (use_provisioning_file == false) {
 
-       fprintf(stdout,"Note: Not using the provisioning file. To use a provisioning file, provide --use-pro flag\n");
-       fprintf(stdout,"\n");
-       fflush(stdout);
+       //fprintf(stdout,"Note: Not using the provisioning file. To use a provisioning file, provide --use-pro flag\n");
+       //fprintf(stdout,"\n");
+       //fflush(stdout);
 
        // can set a provisioning file here, but we hard code the plugins below
        QString provisioningFilePath = "";
@@ -199,8 +199,8 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
        }
 
         // read environment variables for custom plugins
-  fprintf(stdout,"Reading custom plugins SV_CUSTOM_PLUGINS environment variable...\n");
-  fprintf(stdout,"\n");
+  //fprintf(stdout,"Reading custom plugins SV_CUSTOM_PLUGINS environment variable...\n");
+  //fprintf(stdout,"\n");
 #ifdef WIN32
        char custom_plugins[_MAX_ENV];
        size_t requiredSize;
@@ -243,7 +243,7 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
          }
        }
 #endif
-       fprintf(stdout,"\n");
+       //fprintf(stdout,"\n");
 
        app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS, pluginsToStart);
 

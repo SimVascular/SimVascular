@@ -29,7 +29,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #ifndef sv4guiMultiPhysicsVIEW_H
 #define sv4guiMultiPhysicsVIEW_H
 
@@ -37,6 +36,7 @@
 #include "sv4gui_MultiPhysicsBCWidget.h"
 #include "sv4gui_QmitkFunctionality.h"
 #include "sv4gui_MultiPhysicsUtil.h"
+#include "sv4gui_MultiPhysicsPreferences.h"
 
 #include <sv4gui_QmitkFunctionality.h>
 #include <mitkIPreferences.h>
@@ -71,8 +71,6 @@ public slots:
     void LoadJob();
 
     void LoadJob(std::string jobPath, std::string jobName);
-
-    void SetupInternalSolverPaths();
 
     void SetNsd(const QString &text);
 
@@ -203,6 +201,10 @@ private:
     bool m_EnableSave;
 
     sv4guiMultiPhysicsUtil sv4guiMultiPhysicsUtil;
+
+    sv4guiMultiPhysicsPreferences m_DefaultPrefs;
+
+    void SetMpiExec();
 };
 
 class sv4guiMultiPhysicsSolverProcessHandler : public QObject
@@ -240,6 +242,7 @@ private:
     int m_TotalSteps;
 
     QString m_RunDir;
+
 };
 
 #endif // sv4guiMultiPhysicsVIEW_H
