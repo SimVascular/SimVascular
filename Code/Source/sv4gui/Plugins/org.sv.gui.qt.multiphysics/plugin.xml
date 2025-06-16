@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+  <extension point="org.blueberry.ui.views">
+    <view id="org.sv.views.multiphysics"
+          name="MultiPhysics"
+          class="sv4guiMultiPhysicsView"
+          icon="resources/MultiPhysics.png" />
+  </extension>
+
+ <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
+    <contextMenuAction nodeDescriptorName="sv4guiMultiPhysicsFolder" label="Create MultiPhysics Job" icon="" class="sv4guiMultiPhysicsJobCreateAction" />
+  </extension>
+
+  <extension point="org.blueberry.ui.preferencePages">
+    <page id="org.sv.gui.qt.sv4guiMultiPhysicsPreferencePage" name="MultiPhysics Simulation" class="sv4guiMultiPhysicsPreferencePage">
+      <keywordreference id="org.sv.gui.qt.sv4guiMultiPhysicsPreferencePageKeywords"></keywordreference>
+<!--  <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
+    <page id="org.svsv.gui.qt.datamanager.contextMenuActions" name="sv4guiMultiPhysics Simulation" class="sv4guiMultiPhysicsPreferencePage">
+      <keywordreference id="org.sv.gui.qt.sv.gui.qt.datamanager.contextMenuActions"></keywordreference>-->
+    </page>
+  </extension>
+
+</plugin>

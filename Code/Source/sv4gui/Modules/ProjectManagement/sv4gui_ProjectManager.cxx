@@ -60,7 +60,7 @@
 //     Segmentations: .ctgr
 //     Simulations: .sjb
 //     ROMSimulations: .romsimjob
-//     svFSI: .fsijob
+//     MultiPhysics: .multiphysicsjob
 
 #include "sv4gui_ProjectManager.h"
 
@@ -71,10 +71,10 @@
 #include "sv4gui_ModelFolder.h"
 #include "sv4gui_MeshFolder.h"
 #include "sv4gui_SimulationFolder.h"
-#include "sv4gui_svFSIFolder.h"
+#include "sv4gui_MultiPhysicsFolder.h"
 #include "sv4gui_ROMSimulationFolder.h"
 #include "sv4gui_RepositoryFolder.h"
-#include "sv4gui_svFSIFolder.h"
+#include "sv4gui_MultiPhysicsFolder.h"
 
 #include "sv4gui_Path.h"
 #include "sv4gui_ContourGroup.h"
@@ -82,7 +82,7 @@
 #include "sv4gui_Model.h"
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MitkSimJob.h"
-#include "sv4gui_MitksvFSIJob.h"
+#include "sv4gui_MitkMultiPhysicsJob.h"
 #include "sv4gui_MitkROMSimJob.h"
 #include "sv4gui_MitkMeshIO.h"
 #include "sv4gui_VtkUtils.h"
@@ -139,7 +139,7 @@ namespace sv4gui_project_manager {
   const QString PluginNames::SEGMENTATIONS = "Segmentations";
   const QString PluginNames::SIMULATIONS = "Simulations";
   const QString PluginNames::ROMSIMULATIONS = "ROMSimulations";
-  const QString PluginNames::SVFSI = "svFSI";
+  const QString PluginNames::MULTIPHYSICS = "MultiPhysics";
   const QStringList PluginNames::NAMES_LIST = {
     PluginNames::IMAGES,
     PluginNames::MESHES,
@@ -148,7 +148,7 @@ namespace sv4gui_project_manager {
     PluginNames::SEGMENTATIONS,
     PluginNames::SIMULATIONS,
     PluginNames::ROMSIMULATIONS,
-    PluginNames::SVFSI 
+    PluginNames::MULTIPHYSICS 
   };
 
   // Set plugin file extensions.
@@ -159,7 +159,7 @@ namespace sv4gui_project_manager {
   const QString FileExtension::SEGMENTATIONS3D = ".s3d";
   const QString FileExtension::SIMULATIONS = ".sjb";
   const QString FileExtension::ROMSIMULATIONS = ".romsimjob";
-  const QString FileExtension::SVFSI = ".fsijob";
+  const QString FileExtension::MULTIPHYSICS = ".multiphysicsjob";
 
   // image file extensions
   const QString FileExtension::IMAGE_VTI = ".vti";
@@ -307,9 +307,9 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     auto simFolderNode = CreateDataFolder<sv4guiSimulationFolder>(dataStorage, simFolderName, projectFolderNode);
     simFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
-    QString svFSIFolderName = PluginNames::SVFSI;
-    auto svFSIFolderNode = CreateDataFolder<sv4guisvFSIFolder>(dataStorage, svFSIFolderName, projectFolderNode);
-    svFSIFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    QString MultiPhysicsFolderName = PluginNames::MULTIPHYSICS;
+    auto MultiPhysicsFolderNode = CreateDataFolder<sv4guiMultiPhysicsFolder>(dataStorage, MultiPhysicsFolderName, projectFolderNode);
+    MultiPhysicsFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
     QString romSimFolderName = PluginNames::ROMSIMULATIONS;
     auto romSimFolderNode = CreateDataFolder<sv4guiROMSimulationFolder>(dataStorage, romSimFolderName, projectFolderNode);
@@ -344,8 +344,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     // Create Simulations plugin data nodes.
     CreatePlugin(dataStorage, projPath, simFolderNode, simFolderName, FileExtension::SIMULATIONS);
 
-    // Create svFSI plugin data nodes.
-    CreatePlugin(dataStorage, projPath, svFSIFolderNode, svFSIFolderName, FileExtension::SVFSI);
+    // Create MultiPhysics plugin data nodes.
+    CreatePlugin(dataStorage, projPath, MultiPhysicsFolderNode, MultiPhysicsFolderName, FileExtension::MULTIPHYSICS);
 
     // Create ROMSimulations plugin data nodes.
     UpdateSimulations1dFolder(projPath, romSimFolderName);
@@ -1569,20 +1569,20 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
     romSimFolder->ClearRemoveList();
 
 
-    //svFSI Jobs
-    rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guisvFSIFolder"));
+    //MultiPhysics Jobs
+    rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiMultiPhysicsFolder"));
 
-    mitk::DataNode::Pointer svFSIFolderNode=rs->GetElement(0);
-    std::string svFSIFolderName=svFSIFolderNode->GetName();
-    sv4guisvFSIFolder* svFSIFolder=dynamic_cast<sv4guisvFSIFolder*>(svFSIFolderNode->GetData());
+    mitk::DataNode::Pointer MultiPhysicsFolderNode=rs->GetElement(0);
+    std::string MultiPhysicsFolderName=MultiPhysicsFolderNode->GetName();
+    sv4guiMultiPhysicsFolder* MultiPhysicsFolder=dynamic_cast<sv4guiMultiPhysicsFolder*>(MultiPhysicsFolderNode->GetData());
     removeList.clear();
-    if(svFSIFolder)
-        removeList=svFSIFolder->GetNodeNamesToRemove();
+    if(MultiPhysicsFolder)
+        removeList=MultiPhysicsFolder->GetNodeNamesToRemove();
 
-    rs=dataStorage->GetDerivations(svFSIFolderNode,mitk::NodePredicateDataType::New("sv4guiMitksvFSIJob"));
+    rs=dataStorage->GetDerivations(MultiPhysicsFolderNode,mitk::NodePredicateDataType::New("sv4guiMitkMultiPhysicsJob"));
 
     QDir dirFSI(QString::fromStdString(projPath));
-    dirFSI.cd(QString::fromStdString(svFSIFolderName));
+    dirFSI.cd(QString::fromStdString(MultiPhysicsFolderName));
 
     for(int i=0;i<rs->size();i++)
     {
@@ -1594,11 +1594,11 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
                 removeList.erase(removeList.begin()+j);
         }
 
-        sv4guiMitksvFSIJob *mitkJob=dynamic_cast<sv4guiMitksvFSIJob*>(node->GetData());
-        if(mitkJob==nullptr || (!mitkJob->IsDataModified() && dirFSI.exists(QString::fromStdString(node->GetName())+".fsijob")) )
+        sv4guiMitkMultiPhysicsJob *mitkJob=dynamic_cast<sv4guiMitkMultiPhysicsJob*>(node->GetData());
+        if(mitkJob==nullptr || (!mitkJob->IsDataModified() && dirFSI.exists(QString::fromStdString(node->GetName())+".multiphysicsjob")) )
             continue;
 
-        QString	filePath=dirFSI.absoluteFilePath(QString::fromStdString(node->GetName())+".fsijob");
+        QString	filePath=dirFSI.absoluteFilePath(QString::fromStdString(node->GetName())+".multiphysicsjob");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
         node->SetStringProperty("path",dirFSI.absolutePath().toStdString().c_str());
@@ -1608,9 +1608,9 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
 
     for(int i=0;i<removeList.size();i++)
     {
-        dirFSI.remove(QString::fromStdString(removeList[i])+".fsijob");
+        dirFSI.remove(QString::fromStdString(removeList[i])+".multiphysicsjob");
     }
-    svFSIFolder->ClearRemoveList();
+    MultiPhysicsFolder->ClearRemoveList();
 }
 
 //-----------------
@@ -1653,7 +1653,7 @@ void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("sv4guiModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("sv4guiMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
-    mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitksvFSIJob");
+    mitk::NodePredicateDataType::Pointer isMultiPhysicsJob = mitk::NodePredicateDataType::New("sv4guiMitkMultiPhysicsJob");
     mitk::NodePredicateDataType::Pointer isROMSimJob = mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob");
 
     // Determine data node file extension.
@@ -1673,8 +1673,8 @@ void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
         extension = FileExtension::SIMULATIONS;
     } else if(isROMSimJob->CheckNode(dataNode)) {
         extension = FileExtension::ROMSIMULATIONS;
-    } else if(issvFSIJob->CheckNode(dataNode)) {
-        extension = FileExtension::SVFSI;
+    } else if(isMultiPhysicsJob->CheckNode(dataNode)) {
+        extension = FileExtension::MULTIPHYSICS;
     }
 
     std::vector<mitk::BaseData::Pointer> vdata = mitk::IOUtil::Load(path+"/"+dataNode->GetName()+ extension.toStdString());
@@ -1806,9 +1806,9 @@ void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("sv4guiModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("sv4guiMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
-    mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitksvFSIJob");
+    mitk::NodePredicateDataType::Pointer isMultiPhysicsJob = mitk::NodePredicateDataType::New("sv4guiMitkMultiPhysicsJob");
     mitk::NodePredicateDataType::Pointer isROMSimJob = mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob");
-    // fix???    mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
+    // fix???    mitk::NodePredicateDataType::Pointer isMultiPhysicsJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
 
     std::vector<QString> extensions;
 
@@ -1835,8 +1835,8 @@ void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage
     } else if(isROMSimJob->CheckNode(dataNode)) {
         extensions.push_back(FileExtension::ROMSIMULATIONS);
         extensions.push_back("");//for folder
-    } else if(issvFSIJob->CheckNode(dataNode)) {
-        extensions.push_back(FileExtension::SVFSI);
+    } else if(isMultiPhysicsJob->CheckNode(dataNode)) {
+        extensions.push_back(FileExtension::MULTIPHYSICS);
         extensions.push_back("");//for folder
     } else {
         return;

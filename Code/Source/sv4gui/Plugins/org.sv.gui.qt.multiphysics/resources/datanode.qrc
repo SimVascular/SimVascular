@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="MultiPhysics.png">MultiPhysics.png</file>
+    </qresource>
+</RCC>

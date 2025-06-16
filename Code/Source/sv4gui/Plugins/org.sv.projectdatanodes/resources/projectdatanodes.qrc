@@ -12,6 +12,6 @@
         <file alias="remove.png">remove.png</file>
         <file alias="svcontourgroup.png">svcontourgroup.png</file>
         <file alias="svseg3d.png">svseg3d.png</file>
-        <file alias="svFSI.png">svFSI.png</file>
+        <file alias="MultiPhysics.png">MultiPhysics.png</file>
     </qresource>
 </RCC>

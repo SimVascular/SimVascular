@@ -197,9 +197,9 @@ sv4guiMitkMeshIO* sv4guiMitkMeshIO::IOClone() const
 
 sv4guiMitkMesh::Pointer sv4guiMitkMeshIO::ReadFromFile(std::string fileName, bool readSurfaceMesh, bool readVolumeMesh)
 {
-    std::string msg("sv4guiMitkMeshIO::ReadFromFile");
-    std::cout << msg << "=================== sv4guiMitkMeshIO::ReadFromFile =========" << std::endl;
-    std::cout << msg << "fileName: " << fileName << std::endl;
+    //std::string msg("sv4guiMitkMeshIO::ReadFromFile");
+    //std::cout << msg << "=================== sv4guiMitkMeshIO::ReadFromFile =========" << std::endl;
+    //std::cout << msg << "fileName: " << fileName << std::endl;
 
     tinyxml2::XMLDocument document;
 

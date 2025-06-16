@@ -34,7 +34,7 @@ set(H_FILES
     sv4gui_ImageFolder.h
     sv4gui_PathFolder.h
     sv4gui_SegmentationFolder.h
-    sv4gui_svFSIFolder.h
+    sv4gui_MultiPhysicsFolder.h
     sv4gui_ModelFolder.h
     sv4gui_MeshFolder.h
     sv4gui_SimulationFolder.h
@@ -60,6 +60,6 @@ set(CPP_FILES
     sv4gui_SegmentationFolder.cxx
     sv4gui_SimulationFolder.cxx
     sv4gui_ROMSimulationFolder.cxx
-    sv4gui_svFSIFolder.cxx
+    sv4gui_MultiPhysicsFolder.cxx
 )
 

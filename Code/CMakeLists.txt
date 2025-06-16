@@ -260,7 +260,7 @@ if(SV_USE_SV4_GUI)
     "Source/sv4gui/Modules/ProjectManagement"
     "Source/sv4gui/Modules/QtWidgets"
     "Source/sv4gui/Modules/ImageProcessing"
-    "Source/sv4gui/Modules/svFSI"
+    "Source/sv4gui/Modules/MultiPhysics"
     "Source/sv4gui/Modules/MachineLearning"
   )
 
@@ -298,7 +298,7 @@ if(SV_USE_SV4_GUI)
       "Source/sv4gui/Plugins/org.sv.gui.qt.simulation"
       "Source/sv4gui/Plugins/org.sv.gui.qt.application"
       "Source/sv4gui/Plugins/org.sv.gui.qt.imageprocessing"
-      "Source/sv4gui/Plugins/org.sv.gui.qt.svfsi")
+      "Source/sv4gui/Plugins/org.sv.gui.qt.multiphysics")
       if(SV_USE_PYTHON)
         LIST(APPEND SV_PLUGIN_DIRS "Source/sv4gui/Plugins/org.sv.pythondatanodes")
       endif()

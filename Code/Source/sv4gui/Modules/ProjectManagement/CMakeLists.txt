@@ -52,7 +52,7 @@ simvascular_create_module(
   ${SV_LIB_MODULE_MESH_NAME}
   ${SV_LIB_MODULE_SIMULATION_NAME}
   ${SV_LIB_MODULE_ROM_SIMULATION_NAME}
-  ${SV_LIB_MODULE_SVFSI_NAME})
+  ${SV_LIB_MODULE_MULTIPHYSICS_NAME})
 #-----------------------------------------------------------------------------
 
 include_directories(${TINYXML_INCLUDE_DIR})

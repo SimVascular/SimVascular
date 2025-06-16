@@ -50,7 +50,7 @@
 #include "sv4gui_Model.h"
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MitkSimJob.h"
-#include "sv4gui_MitksvFSIJob.h"
+#include "sv4gui_MitkMultiPhysicsJob.h"
 #include "sv4gui_MitkROMSimJob.h"
 
 #include <QMenu>
@@ -699,7 +699,7 @@ void sv4guiWorkbenchWindowAdvisor::PostWindowCreate()
                 idx=6;
             else if(viewID=="org.sv.views.romsimulation")
                 idx=7;
-            else if(viewID=="org.sv.views.svfsi")
+            else if(viewID=="org.sv.views.multiphysics")
                 idx=8;
             else
             {
@@ -1195,7 +1195,7 @@ void sv4guiWorkbenchWindowAdvisor::ShowSVView()
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("sv4guiModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("sv4guiMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
-    mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitksvFSIJob");
+    mitk::NodePredicateDataType::Pointer isMultiPhysicsJob = mitk::NodePredicateDataType::New("sv4guiMitkMultiPhysicsJob");
     mitk::NodePredicateDataType::Pointer isROMSimJob = mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob");
 
     if( selectedNode.IsNotNull() && dynamic_cast<mitk::Image*>(selectedNode->GetData()) )
@@ -1231,9 +1231,9 @@ void sv4guiWorkbenchWindowAdvisor::ShowSVView()
     {
        page->ShowView("org.sv.views.simulation");
     }
-    else if(issvFSIJob->CheckNode(selectedNode))
+    else if(isMultiPhysicsJob->CheckNode(selectedNode))
     {
-       page->ShowView("org.sv.views.svfsi");
+       page->ShowView("org.sv.views.multiphysics");
     }
     else if(isROMSimJob->CheckNode(selectedNode))
     {
@@ -1762,7 +1762,7 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
     mitk::NodePredicateDataType::Pointer isModelFolder = mitk::NodePredicateDataType::New("sv4guiModelFolder");
     mitk::NodePredicateDataType::Pointer isMeshFolder = mitk::NodePredicateDataType::New("sv4guiMeshFolder");
     mitk::NodePredicateDataType::Pointer isSimFolder = mitk::NodePredicateDataType::New("sv4guiSimulationFolder");
-    mitk::NodePredicateDataType::Pointer issvFSIFolder = mitk::NodePredicateDataType::New("sv4guisvFSIFolder");
+    mitk::NodePredicateDataType::Pointer isMultiPhysicsFolder = mitk::NodePredicateDataType::New("sv4guiMultiPhysicsFolder");
     mitk::NodePredicateDataType::Pointer isROMSimFolder = mitk::NodePredicateDataType::New("sv4guiROMSimulationFolder");
 
     mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("sv4guiPath");
@@ -1771,7 +1771,7 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("sv4guiModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("sv4guiMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
-    mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitksvFSIJob");
+    mitk::NodePredicateDataType::Pointer isMultiPhysicsJob = mitk::NodePredicateDataType::New("sv4guiMitkMultiPhysicsJob");
     mitk::NodePredicateDataType::Pointer isROMSimJob = mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob");
 
     mitk::DataNode::Pointer parentNode=nullptr;
@@ -1843,11 +1843,11 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
             return;
     }
 
-    else if(issvFSIJob->CheckNode(m_CopyDataNode))
+    else if(isMultiPhysicsJob->CheckNode(m_CopyDataNode))
     {   
-        if(issvFSIFolder->CheckNode(node)) {
+        if(isMultiPhysicsFolder->CheckNode(node)) {
             parentNode=node;
-        } else if(issvFSIJob->CheckNode(node)) {   
+        } else if(isMultiPhysicsJob->CheckNode(node)) {   
             mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources(node);
             if(rs->size()>0) {
                 parentNode=rs->GetElement(0);
@@ -1929,10 +1929,10 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
         newNode->SetData(copyJob);
     }
 
-    sv4guiMitksvFSIJob* svFSIJob=dynamic_cast<sv4guiMitksvFSIJob*>(m_CopyDataNode->GetData());
-    if(svFSIJob)
+    sv4guiMitkMultiPhysicsJob* MultiPhysicsJob=dynamic_cast<sv4guiMitkMultiPhysicsJob*>(m_CopyDataNode->GetData());
+    if(MultiPhysicsJob)
     {
-        sv4guiMitksvFSIJob::Pointer copyJob=svFSIJob->Clone();
+        sv4guiMitkMultiPhysicsJob::Pointer copyJob=MultiPhysicsJob->Clone();
         copyJob->SetStatus("No Data Files");
         newNode->SetData(copyJob);
     }

@@ -66,9 +66,9 @@ std::vector<mitk::BaseData::Pointer> sv4guiPathIO::Read()
 std::vector<mitk::BaseData::Pointer> 
 sv4guiPathIO::ReadFile(std::string fileName)
 {
-    std::string msg("sv4guiPathIO::ReadFile");
-    std::cout << msg << "=================== sv4guiPathIO::ReadFile =========" << std::endl;
-    std::cout << msg << "fileName: " << fileName << std::endl;
+    //std::string msg("sv4guiPathIO::ReadFile");
+    //std::cout << msg << "=================== sv4guiPathIO::ReadFile =========" << std::endl;
+    //std::cout << msg << "fileName: " << fileName << std::endl;
 
     tinyxml2::XMLDocument document;
 

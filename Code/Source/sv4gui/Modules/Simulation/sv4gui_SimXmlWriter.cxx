@@ -46,6 +46,7 @@
 #include "sv4gui_SimXmlWriter.h"
 
 #include <fstream>
+#include <sstream>
 #include <type_traits>
 
 #include <QString>
@@ -224,14 +225,7 @@ void Sv4GuiSimXmlWriter::add_velocity_bc(GuiProperties& props, sv4guiSimJob*
   //
   std::string file_name = face_name + ".flow";
   std::string flow_values = props["Flow Rate"];
-  auto num_fourier_modes = props["Fourier Modes"];
-  int num_lines = std::count(flow_values.begin(), flow_values.end(), '\n');
-
-  auto first_value = flow_values[0];
-  std::cout << "[add_velocity_bc] first_value: '" << first_value << "'" << std::endl;
-
   std::ofstream out(output_dir_ + "/" + file_name);
-  out << num_lines+1 << " " << num_fourier_modes << '\n';
   out << flow_values;
   out.close();
 

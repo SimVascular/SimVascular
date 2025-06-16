@@ -64,7 +64,7 @@ class PluginNames
     static const QString SEGMENTATIONS3D;
     static const QString SIMULATIONS;
     static const QString ROMSIMULATIONS;
-    static const QString SVFSI;
+    static const QString MULTIPHYSICS;
     static const QStringList NAMES_LIST;
 };
 
@@ -124,7 +124,7 @@ class FileExtension
     static const QString SEGMENTATIONS3D;
     static const QString SIMULATIONS;
     static const QString ROMSIMULATIONS;
-    static const QString SVFSI;
+    static const QString MULTIPHYSICS;
     static const QString IMAGE_VTI;
     static const QString IMAGE_HEADER;  
 };

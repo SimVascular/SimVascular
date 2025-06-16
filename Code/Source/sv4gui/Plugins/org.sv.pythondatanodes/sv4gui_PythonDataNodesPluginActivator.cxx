@@ -47,7 +47,7 @@ sv4guiPythonDataNodesPluginActivator* sv4guiPythonDataNodesPluginActivator::m_In
 
 sv4guiPythonDataNodesPluginActivator::sv4guiPythonDataNodesPluginActivator()
 {
-  std::cout << "sv4guiPythonDataNodesPluginActivator::sv4guiPythonDataNodesPluginActivator()" << std::endl << std::flush;
+  //std::cout << "sv4guiPythonDataNodesPluginActivator::sv4guiPythonDataNodesPluginActivator()" << std::endl << std::flush;
   m_Inst = this;
 }
 
