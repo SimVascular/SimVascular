@@ -47,8 +47,6 @@ QWidget* sv4guiTableCapDelegate::createEditor(QWidget *parent, const QStyleOptio
         cb->addItem("Prescribed Velocities");
         cb->addItem("Resistance");
         cb->addItem("RCR");
-        cb->addItem("Coronary");
-//        cb->addItem("Impedance");
         return cb;
     }
     default:
