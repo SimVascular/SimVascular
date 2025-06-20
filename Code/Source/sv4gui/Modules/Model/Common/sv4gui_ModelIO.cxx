@@ -102,10 +102,8 @@ sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
     }
 
     sv4guiModel::Pointer model = sv4guiModel::New();
-    //std::string modelType="";
-    //modelElement->QueryStringAttribute("type", &modelType);
-    const char* modelType="";
-    //modelElement->QueryStringAttribute("type", &modelType);
+    const char* modelType = "";
+    modelElement->QueryStringAttribute("type", &modelType);
     model->SetType(modelType);
 
     int timestep=-1;
