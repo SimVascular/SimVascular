@@ -106,11 +106,6 @@
           <string>RCR</string>
          </property>
         </item>
-        <item>
-         <property name="text">
-          <string>Coronary</string>
-         </property>
-        </item>
        </widget>
       </item>
      </layout>
