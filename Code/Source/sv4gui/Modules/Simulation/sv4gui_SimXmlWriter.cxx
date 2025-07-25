@@ -280,7 +280,7 @@ void Sv4GuiSimXmlWriter::add_equation(sv4guiSimJob* job)
   add_child(equation, "Density", basicProps["Fluid Density"]);
   auto viscosity = add_sub_child(equation, "Viscosity");
   viscosity->SetAttribute("model", "Constant");
-  add_child(viscosity, "Value", 0.4);
+  add_child(viscosity, "Value", basicProps["Fluid Viscosity"]);
 
   add_equation_solver(job, equation);
 
