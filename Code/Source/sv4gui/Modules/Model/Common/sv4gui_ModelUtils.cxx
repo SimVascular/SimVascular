@@ -57,15 +57,42 @@
 
 #include "vtkXMLPolyDataWriter.h"
 
-vtkPolyData* sv4guiModelUtils::CreatePolyData(std::vector<sv4guiContourGroup*> groups, std::vector<vtkPolyData*> vtps, int numSamplingPts, svLoftingParam *param, unsigned int t, int noInterOut, double tol)
+//----------------
+// CreatePolyData
+//----------------
+//
+vtkPolyData* 
+sv4guiModelUtils::CreatePolyData(std::vector<sv4guiContourGroup*> groups, std::vector<vtkPolyData*> vtps, 
+    int numSamplingPts, svLoftingParam *param, unsigned int t, int noInterOut, double tol)
 {
-    int groupNumber=groups.size();
-    int vtpNumber=vtps.size();
-    cvPolyData **srcs=new cvPolyData* [groupNumber+vtpNumber];
+    #define n_debugCreatePolyData_
+    #ifdef debug_CreatePolyData_
+    std::string msg("[sv4guiModelUtils::CreatePolyData] ");
+    std::cout << msg << std::endl;
+    std::cout << msg << "========== CreatePolyData ==========" << std::endl;
+    std::cout << msg << "param: " << param << std::endl;
+    #endif
+
+    int groupNumber = groups.size();
+    int vtpNumber = vtps.size();
+    cvPolyData **srcs = new cvPolyData* [groupNumber+vtpNumber];
+    #ifdef debug_CreatePolyData_
+    std::cout << msg << "groupNumber: " << groupNumber << std::endl;
+    std::cout << msg << "vtpNumber: " << vtpNumber << std::endl;
+    std::cout << msg << "Create lofted surfaces ... " << std::endl;
+    #endif
+
     for(int i=0;i<groupNumber;i++)
     {
-      sv4guiContourGroup* group=groups[i];
-      vtkPolyData *vtkpd = CreateLoftSurface(group,numSamplingPts,1,param,t);
+      #ifdef debug_CreatePolyData_
+      std::cout << msg << "----- i " << i << " -----" << std::endl;
+      #endif
+      sv4guiContourGroup* group = groups[i];
+      vtkPolyData *vtkpd = CreateLoftSurface(group, numSamplingPts, 1, param, t);
+      #ifdef debug_CreatePolyData_
+      std::cout << msg << "vtkpd: " << vtkpd << std::endl;
+      #endif
+
       if (vtkpd == nullptr)
       {
         for (int j=0; j< i-1; j++)
@@ -73,7 +100,7 @@ vtkPolyData* sv4guiModelUtils::CreatePolyData(std::vector<sv4guiContourGroup*> g
         delete [] srcs;
         return nullptr;
       }
-      srcs[i]=new cvPolyData(vtkpd);
+      srcs[i] = new cvPolyData(vtkpd);
       vtkpd->Delete();
     }
 
@@ -106,7 +133,10 @@ vtkPolyData* sv4guiModelUtils::CreatePolyData(std::vector<sv4guiContourGroup*> g
 
     cvPolyData *dst=nullptr;
 
-    int status=sys_geom_all_union(srcs, groupNumber+vtpNumber, noInterOut, tol, &dst);
+    #ifdef debug_CreatePolyData_
+    std::cout << msg << "sys_geom_all_union ... " << std::endl;
+    #endif
+    int status = sys_geom_all_union(srcs, groupNumber+vtpNumber, noInterOut, tol, &dst);
 
     for(int i=0;i<groupNumber+vtpNumber;i++)
     {
@@ -128,6 +158,7 @@ sv4guiModelElementPolyData*
 sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, 
     int numSamplingPts, int stats[], svLoftingParam *param, unsigned int t, int noInterOut, double tol)
 {
+  #define n_debug_CreateModelElementPolyData
   #ifdef debug_CreateModelElementPolyData
   std::string msg("[sv4guiModelUtils::CreateModelElementPolyData] ");
   std::cout << msg << std::endl;
@@ -168,6 +199,7 @@ sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer
     return nullptr;
   }
 
+
   cvPolyData *src=new cvPolyData(solidvpd);
   cvPolyData *dst = nullptr;
 
@@ -183,6 +215,9 @@ sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer
     solidvpd->Delete();
     return nullptr;
   }
+  #ifdef debug_CreateModelElementPolyData
+  std::cout << msg << "numfaces: " << numfaces << std::endl;
+  #endif
 
   vtkSmartPointer<vtkPolyData> forClean = vtkSmartPointer<vtkPolyData>::New();
   forClean->DeepCopy(dst->GetVtkPolyData());
@@ -190,6 +225,14 @@ sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer
   nowClean = sv4guiModelUtils::OrientVtkPolyData(forClean);
 
   solidvpd->DeepCopy(nowClean);;
+
+  // Write the file.
+  /* Keep around for debugging.
+  vtkSmartPointer<vtkXMLPolyDataWriter> writer  = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  writer->SetFileName("CreateModelElementPolyData_solidvpd.vtp");
+  writer->SetInputData(solidvpd);
+  writer->Write();
+  */
 
   int numSeg=segNames.size();
   int numCap2=0;
@@ -346,15 +389,40 @@ sv4guiModelElementPolyData* sv4guiModelUtils::CreateModelElementPolyDataByBlend(
     return mepddst;
 }
 
-vtkPolyData* sv4guiModelUtils::CreateLoftSurface(sv4guiContourGroup* contourGroup, int numSamplingPts, int addCaps, svLoftingParam* param, unsigned int t)
+//-------------------
+// CreateLoftSurface
+//-------------------
+//
+vtkPolyData* 
+sv4guiModelUtils::CreateLoftSurface(sv4guiContourGroup* contourGroup, int numSamplingPts, int addCaps, 
+    svLoftingParam* param, unsigned int t)
 {
+    #define n_debug_CreateLoftSurface_1
+    #ifdef debug_CreateLoftSurface_1
+    std::string msg("[sv4guiModelUtils::CreateLoftSurface_1] ");
+    std::cout << msg << std::endl;
+    std::cout << msg << "========== CreateLoftSurface_1 ==========" << std::endl;
+    std::cout << msg << "numSamplingPts: " << numSamplingPts << std::endl;
+    std::cout << msg << "addCaps: " << addCaps << std::endl;
+    std::cout << msg << "param: " << param << std::endl;
+    std::cout << msg << "t: " << t << std::endl;
+    #endif
 
-    svLoftingParam* usedParam= contourGroup->GetLoftingParam();
-    if(param!=nullptr) usedParam=param;
+    svLoftingParam* usedParam = contourGroup->GetLoftingParam();
+    #ifdef debug_CreateLoftSurface_1
+    std::cout << msg << "usedParam->method: " << usedParam->method << std::endl;
+    #endif
 
-    std::vector<sv4guiContour*> contourSet=contourGroup->GetValidContourSet(t);
+    if (param != nullptr) {
+        usedParam = param;
+        #ifdef debug_CreateLoftSurface_1
+        std::cout << msg << "param->method: " << param->method << std::endl;
+        #endif
+    }
 
-    return CreateLoftSurface(contourSet,numSamplingPts,usedParam,addCaps);
+    std::vector<sv4guiContour*> contourSet = contourGroup->GetValidContourSet(t);
+
+    return CreateLoftSurface(contourSet, numSamplingPts, usedParam, addCaps);
 }
 
 //-------------------
@@ -363,10 +431,17 @@ vtkPolyData* sv4guiModelUtils::CreateLoftSurface(sv4guiContourGroup* contourGrou
 //
 vtkPolyData* sv4guiModelUtils::CreateLoftSurface(std::vector<sv4guiContour*> contourSet, int numSamplingPts, svLoftingParam* param, int addCaps)
 {
-  #ifdef debug_CreateLoftSurface
-  std::string msg("[sv4guiModelUtils::CreateLoftSurface] ");
+  #define n_debug_CreateLoftSurface_2
+  #ifdef debug_CreateLoftSurface_2
+  std::string msg("[sv4guiModelUtils::CreateLoftSurface_2] ");
   std::cout << msg << std::endl;
-  std::cout << msg << "========== CreateLoftSurface ==========" << std::endl;
+  std::cout << msg << "========== CreateLoftSurface_2 ==========" << std::endl;
+  std::cout << msg << "numSamplingPts: " << numSamplingPts << std::endl;
+  std::cout << msg << "param: " << param << std::endl;
+  std::cout << msg << "addCaps: " << addCaps << std::endl;
+  if (param != nullptr) {
+    std::cout << msg << "param->method: " << param->method << std::endl;
+  }
   #endif
 
   int contourNumber = contourSet.size();

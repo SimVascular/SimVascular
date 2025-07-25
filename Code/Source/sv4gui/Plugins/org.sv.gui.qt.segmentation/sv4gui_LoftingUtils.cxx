@@ -41,6 +41,7 @@
 
 void sv4guiLoftingUtils::SetPreferencedValues(svLoftingParam* param)
 {
+    //std::cout << "[sv4guiLoftingUtils::SetPreferencedValues] ================ SetPreferencedValues =========== " << std::endl;
     mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     //berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     Q_ASSERT(prefService);
@@ -57,6 +58,7 @@ void sv4guiLoftingUtils::SetPreferencedValues(svLoftingParam* param)
 
      param->method = preferences->Get("Lofting Method", param->method);
      //dp param->method= preferences->Get("Lofting Method", QString::fromStdString(param->method)).toStdString();
+     //std::cout << "[sv4guiLoftingUtils::SetPreferencedValues] param->method: " << param->method << std::endl;
 
      param->uDegree= preferences->GetInt("NURBS Lofting U Degree", param->uDegree);
      param->vDegree= preferences->GetInt("NURBS Lofting V Degree", param->vDegree);
