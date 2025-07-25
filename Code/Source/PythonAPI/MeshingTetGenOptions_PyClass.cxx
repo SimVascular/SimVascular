@@ -1644,7 +1644,7 @@ PyTetGenOptions_get_radius_meshing_centerlines(PyMeshingTetGenOptions* self, voi
 static int
 PyTetGenOptions_set_radius_meshing_centerlines(PyMeshingTetGenOptions* self, PyObject* object, void* closure)
 {
-  static std::string errorMsg = "The radius_meshing_centerlines option must be a vtkPolyData object.";
+  static std::string errorMsg = "The radius_meshing_centerlines option does not contain centerline data.";
 
   if (!PyVTKObject_Check(object)) {
       PyErr_SetString(PyExc_ValueError, errorMsg.c_str());
