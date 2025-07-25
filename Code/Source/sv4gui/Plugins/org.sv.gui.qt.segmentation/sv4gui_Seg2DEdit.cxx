@@ -1927,6 +1927,9 @@ void sv4guiSeg2DEdit::setupMLui(){
 
   connect(ui->btnML, SIGNAL(clicked()), this, SLOT(CreateMLContour()) );
 
+  // [TODO] Enable this when Tnesorflow is replaced by PyTorch.
+  ui->btnML->setEnabled(false);
+
   updatePaths();
 
 }
