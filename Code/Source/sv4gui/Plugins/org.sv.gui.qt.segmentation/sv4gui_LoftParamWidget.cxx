@@ -46,10 +46,33 @@ sv4guiLoftParamWidget::~sv4guiLoftParamWidget()
     delete ui;
 }
 
+//-----------
+// UpdateGUI
+//-----------
+// Update the Lofting Parameters popup with the values
+// contained in 'param'.
+//
 void sv4guiLoftParamWidget::UpdateGUI(svLoftingParam* param)
 {
-    if(param==nullptr)
+    #define n_debug_UpdateGUI
+    #ifdef debug_UpdateGUI
+    std::string msg("[sv4guiLoftParamWidget::UpdateGUI] ");
+    std::cout << msg << "========== UpdateGUI ==========" << std::endl;
+    std::cout << msg << "param: " << param << std::endl;
+    #endif
+
+    if(param==nullptr) {
         return;
+    }
+
+    #ifdef debug_UpdateGUI
+    std::cout << msg << "param->method: " << param->method << std::endl;
+    std::cout << msg << "param->uDegree: " << param->uDegree << std::endl;
+    std::cout << msg << "param->vDegree: " << param->vDegree << std::endl;
+    std::cout << msg << "param->uKnotSpanType: " << param->uKnotSpanType << std::endl;
+    std::cout << msg << "param->vKnotSpanType: " << param->vKnotSpanType << std::endl;
+    std::cout << msg << "param->uParametricSpanType: " << param->uParametricSpanType << std::endl;
+    #endif
 
     ui->comboBoxMethod->setCurrentText(QString::fromStdString(param->method));
 
@@ -78,8 +101,16 @@ void sv4guiLoftParamWidget::UpdateGUI(svLoftingParam* param)
 
 void sv4guiLoftParamWidget::UpdateParam(svLoftingParam* param)
 {
-    if(param==nullptr)
+    #define n_debug_UpdateParam 
+    #ifdef debug_UpdateParam
+    std::string msg("[sv4guiLoftParamWidget::UpdateParam] ");
+    std::cout << msg << "========== UpdateParam ==========" << std::endl;
+    std::cout << msg << "param: " << param << std::endl;
+    #endif
+
+    if(param==nullptr) {
         return;
+    }
 
     param->method=ui->comboBoxMethod->currentText().toStdString();
 

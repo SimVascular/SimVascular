@@ -139,8 +139,8 @@ sv4guiSeg2DEdit::~sv4guiSeg2DEdit()
 //
 void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
 {
-    std::string msg("[sv4guiSeg2DEdit::CreateQtPartControl] ");
-    std::cout << msg << "========== CreateQtPartControl ==========" << std::endl;
+    //std::string msg("[sv4guiSeg2DEdit::CreateQtPartControl] ");
+    //std::cout << msg << "========== CreateQtPartControl ==========" << std::endl;
 
     m_Parent=parent;
     ui->setupUi(parent);
@@ -294,9 +294,9 @@ return 0;
 void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
                                          const QList<mitk::DataNode::Pointer>& nodes)
 {
-    std::string msg("[sv4guiSeg2DEdit::OnSelectionChanged] ");
-    std::cout << msg << "========== OnSelectionChanged ==========" << std::endl;
-    std::cout << msg << "nodes.size(): " << nodes.size() << std::endl;
+    //std::string msg("[sv4guiSeg2DEdit::OnSelectionChanged] ");
+    //std::cout << msg << "========== OnSelectionChanged ==========" << std::endl;
+    //std::cout << msg << "nodes.size(): " << nodes.size() << std::endl;
 
     if (!m_isVisible) return;
 
@@ -322,7 +322,7 @@ void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
     m_ContourGroup=dynamic_cast<sv4guiContourGroup*>(groupNode->GetData());
     if(!m_ContourGroup)
     {
-        std::cout << msg << "No contour group selected." << std::endl;
+        //std::cout << msg << "No contour group selected." << std::endl;
         ui->resliceSlider->turnOnReslice(false);
         ClearAll();
         ui->SinglePathTab->setEnabled(false);
@@ -478,10 +478,10 @@ void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
         m_ContourGroup->SetResliceSize(resliceSize);
     }
 
-    std::cout << msg << "resliceSize: " << resliceSize << std::endl;
+    //std::cout << msg << "resliceSize: " << resliceSize << std::endl;
     ui->resliceSlider->setResliceSize(resliceSize);
 
-    std::cout << msg << "resliceSlider->updateReslic ... " << std::endl;
+    //std::cout << msg << "resliceSlider->updateReslic ... " << std::endl;
     ui->resliceSlider->updateReslice();
 
     m_DataInteractor = sv4guiContourGroupDataInteractor::New();
@@ -1325,6 +1325,11 @@ void sv4guiSeg2DEdit::LoftContourGroup()
 
 }
 
+//----------------
+// ShowLoftWidget
+//----------------
+// Display the Lofting Parameters popup.
+//
 void sv4guiSeg2DEdit::ShowLoftWidget()
 {
     svLoftingParam *param = m_ContourGroup->GetLoftingParam();
@@ -1332,21 +1337,27 @@ void sv4guiSeg2DEdit::ShowLoftWidget()
     m_LoftWidget->show();
 }
 
+//--------------------------------
+// UpdateContourGroupLoftingParam
+//--------------------------------
+//
 void sv4guiSeg2DEdit::UpdateContourGroupLoftingParam()
 {
-    svLoftingParam *param=m_ContourGroup->GetLoftingParam();
+    #define n_debug_UpdateContourGroupLoftingParam 
+    #ifdef debug_UpdateContourGroupLoftingParam 
+    std::string msg("[sv4guiSeg2DEdit::UpdateContourGroupLoftingParam] ");
+    std::cout << msg << "========== UpdateContourGroupLoftingParam ==========" << std::endl;
+    std::cout << msg << "m_LoftWidget: " << m_LoftWidget << std::endl;
+    #endif
+
+    svLoftingParam *param = m_ContourGroup->GetLoftingParam();
+
     if(m_LoftWidget)
     {
         m_LoftWidget->UpdateParam(param);
         m_ContourGroup->SetDataModified();
     }
 
-//    param->numOutPtsInSegs=m_LoftWidget->ui->spinBoxSampling->value();
-//    param->samplePerSegment=m_LoftWidget->ui->spinBoxNumPerSeg->value();
-//    param->useLinearSampleAlongLength=m_LoftWidget->ui->checkBoxUseLinearSample->isChecked()?1:0;
-//    param->linearMuliplier=m_LoftWidget->ui->spinBoxLinearFactor->value();
-//    param->useFFT=m_LoftWidget->ui->checkBoxUseFFT->isChecked()?1:0;
-//    param->numModes=m_LoftWidget->ui->spinBoxNumModes->value();
 }
 
 void sv4guiSeg2DEdit::OKLofting()

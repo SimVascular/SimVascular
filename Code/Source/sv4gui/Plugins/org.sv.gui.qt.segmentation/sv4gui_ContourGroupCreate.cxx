@@ -131,9 +131,16 @@ void sv4guiContourGroupCreate::SetFocus( )
 //-------------
 // CreateGroup
 //-------------
+// Create a contour group from the GUI.
 //
 void sv4guiContourGroupCreate::CreateGroup()
 {
+    #define n_debug_CreateGroup
+    #ifdef debug_CreateGroup
+    std::string msg("[sv4guiContourGroupCreate::CreateGroup] ");
+    std::cout << msg << "========== CreateGroup ==========" << std::endl;
+    #endif
+
     QString selectedPathName=ui->comboBox->currentText();
     if(selectedPathName=="") {
         QMessageBox::warning(nullptr,"No Path Selected","Please select a path!");

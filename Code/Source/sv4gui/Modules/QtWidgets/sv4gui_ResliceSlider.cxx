@@ -199,9 +199,11 @@ void sv4guiResliceSlider::setPathPoints(std::vector<sv4guiPathElement::sv4guiPat
 //
 sv4guiPathElement::sv4guiPathPoint sv4guiResliceSlider::getPathPoint(int index)
 {
+  #ifdef debug_getPathPoint
   std::string msg("[sv4guiResliceSlider::getPathPoint] ");
   std::cout << msg << "========== getPathPoint ==========" << std::endl;
   std::cout << msg << "index: " << index << std::endl;
+  #endif
 
   sv4guiPathElement::sv4guiPathPoint pathPoint;
 
@@ -500,8 +502,8 @@ void sv4guiResliceSlider::potentialOnRefetch()
 //
 void sv4guiResliceSlider::restoreDisplayWidget()
 {
-   std::cout << "[sv4guiResliceSlider::restoreDisplayWidget] " << std::endl;
-   std::cout << "[sv4guiResliceSlider::restoreDisplayWidget] ========== restoreDisplayWidget ==========" << std::endl;
+   //std::cout << "[sv4guiResliceSlider::restoreDisplayWidget] " << std::endl;
+   //std::cout << "[sv4guiResliceSlider::restoreDisplayWidget] ========== restoreDisplayWidget ==========" << std::endl;
 
    if(currentDataNode.IsNull()) {
       return;

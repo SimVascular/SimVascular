@@ -402,6 +402,7 @@ sv4guiModelUtils::CreateLoftSurface(sv4guiContourGroup* contourGroup, int numSam
     std::string msg("[sv4guiModelUtils::CreateLoftSurface_1] ");
     std::cout << msg << std::endl;
     std::cout << msg << "========== CreateLoftSurface_1 ==========" << std::endl;
+    std::cout << msg << "contourGroup: " << contourGroup << std::endl;
     std::cout << msg << "numSamplingPts: " << numSamplingPts << std::endl;
     std::cout << msg << "addCaps: " << addCaps << std::endl;
     std::cout << msg << "param: " << param << std::endl;
