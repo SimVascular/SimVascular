@@ -15,7 +15,7 @@
     <section name="Nonlinear Solver">
         <param name="Min iterations" value="3" type="int" />
         <param name="Max iterations" value="12" type="int" />
-        <param name="Tolerance" value="1e-11" type="double" />
+        <param name="Tolerance" value="1e-5" type="double" />
         <param name="Backflow stabilization coefficient" value="0.2" type="double" />
     </section>
     <section name="Linear Solver">
@@ -27,6 +27,6 @@
         <param name="NS CG tolerance" value="1e-3" type="double" />
         <param name="Krylov space dimension" value="200" type="int" />
         <param name="Tolerance" value="1e-4" type="double" />
-        <param name="Absolute tolerance" value="1e-4" type="double" />
+        <param name="Absolute tolerance" value="1e-10" type="double" />
     </section>
 </template>

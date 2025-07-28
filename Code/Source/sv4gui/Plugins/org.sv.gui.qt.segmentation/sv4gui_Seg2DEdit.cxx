@@ -49,6 +49,7 @@
 #include "sv4gui_ContourModelThresholdInteractor.h"
 
 #include "sv4gui_ModelUtils.h"
+#include "sv4gui_LoftingUtils.h"
 
 #include <QmitkStdMultiWidgetEditor.h>
 #include <mitkOperationEvent.h>
@@ -89,6 +90,12 @@ const QString sv4guiSeg2DEdit::EXTENSION_ID = "org.sv.views.segmentation2d";
 //
 sv4guiSeg2DEdit::sv4guiSeg2DEdit() : ui(new Ui::sv4guiSeg2DEdit)
 {
+    #define n_debug_sv4guiSeg2DEdit
+    #ifdef debug_sv4guiSeg2DEdit 
+    std::string msg("[sv4guiSeg2DEdit::sv4guiSeg2DEdit] ");
+    std::cout << msg << "========== sv4guiSeg2DEdit ==========" << std::endl;
+    #endif
+
     m_ContourGroupChangeObserverTag=-1;
     m_ContourGroup=nullptr;
     m_ContourGroupNode=nullptr;
@@ -139,6 +146,12 @@ sv4guiSeg2DEdit::~sv4guiSeg2DEdit()
 //
 void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
 {
+    #define n_debug_CreateQtPartControl 
+    #ifdef debug_CreateQtPartControl 
+    std::string msg("[sv4guiSeg2DEdit::CreateQtPartControl] ");
+    std::cout << msg << "========== CreateQtPartControl ==========" << std::endl;
+    #endif
+
     //std::string msg("[sv4guiSeg2DEdit::CreateQtPartControl] ");
     //std::cout << msg << "========== CreateQtPartControl ==========" << std::endl;
 
@@ -238,6 +251,7 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
         ui->SinglePathTab->setEnabled(true);
     }
 
+
 }
 
 void sv4guiSeg2DEdit::Activated()
@@ -294,9 +308,11 @@ return 0;
 void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
                                          const QList<mitk::DataNode::Pointer>& nodes)
 {
-    //std::string msg("[sv4guiSeg2DEdit::OnSelectionChanged] ");
-    //std::cout << msg << "========== OnSelectionChanged ==========" << std::endl;
-    //std::cout << msg << "nodes.size(): " << nodes.size() << std::endl;
+    #define n_debug_OnSelectionChanged
+    #ifdef debug_OnSelectionChanged
+    std::string msg("[sv4guiSeg2DEdit::OnSelectionChanged] ");
+    std::cout << msg << "========== OnSelectionChanged ==========" << std::endl;
+    #endif
 
     if (!m_isVisible) return;
 
@@ -318,15 +334,34 @@ void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
 
     ClearAll();
 
-    m_ContourGroupNode=groupNode;
-    m_ContourGroup=dynamic_cast<sv4guiContourGroup*>(groupNode->GetData());
+    m_ContourGroupNode = groupNode;
+    m_ContourGroup = dynamic_cast<sv4guiContourGroup*>(groupNode->GetData());
+
     if(!m_ContourGroup)
     {
-        //std::cout << msg << "No contour group selected." << std::endl;
         ui->resliceSlider->turnOnReslice(false);
         ClearAll();
         ui->SinglePathTab->setEnabled(false);
         return;
+    }
+
+    // Check to make sure that the contour group lofting parameters have been 
+    // set from the .ctgr file. This should never be the case but saw this once.
+    //
+    // [TODO] Getting values using SetPreferencedValues does not work
+    //
+    svLoftingParam *param = m_ContourGroup->GetLoftingParam();
+    #ifdef debug_OnSelectionChanged
+    std::cout << msg << "param: " << param << std::endl;
+    #endif
+    if (param != nullptr) {
+        #ifdef debug_OnSelectionChanged
+        std::cout << msg << "param->method: " << param->method << std::endl;
+        #endif
+        if (param->method == "") {
+            sv4guiLoftingUtils::SetPreferencedValues(param);
+            m_LoftWidget->UpdateGUI(param);
+        }
     }
 
     m_Parent->setEnabled(true);
