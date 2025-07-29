@@ -7,9 +7,11 @@
         <param name="Spectral radius of infinite time step" value="0.5" type="double" />
     </section>
     <section name="Output">
+        <param name="Save results in folder" value="N-procs" type="text"/>
         <param name="Increment in saving restart files" value="10" type="int" />
         <param name="Start saving after time step" value="1" type="int" />
         <param name="Save results to VTK format" value="true" type="enum" enum_list="true;false"/>
+        <param name="Name prefix of saved VTK files" value="result" type="text"/>
         <param name="Increment in saving VTK files" value="10" type="int" />
     </section>
     <section name="Nonlinear Solver">
