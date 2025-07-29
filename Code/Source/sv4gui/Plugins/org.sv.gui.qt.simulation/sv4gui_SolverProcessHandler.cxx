@@ -94,6 +94,8 @@ sv4guiSolverProcessHandler::~sv4guiSolverProcessHandler()
 //--------------
 // ProcessError
 //--------------
+// Display an error message and failure information if the solver
+// fails.
 //
 void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
 {
@@ -111,12 +113,13 @@ void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
 
   } else {
     title = "CFD Simulation failed";
-    text = "Unknown error return code " + error; 
+    // Need a space befor U else it is not displayed.
+    text = " Unknown error return code: " + error; 
     MITK_ERROR << text; 
   }
 
   messageBox.setWindowTitle(title);
-  messageBox.setText(text+"                                                                                         ");
+  messageBox.setText(text);
   messageBox.setIcon(icon);
 
   if (m_Process) {
@@ -133,12 +136,10 @@ void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
   }
 
   m_JobNode->SetBoolProperty("running",false);
-  m_JobNode->SetDoubleProperty("running progress", 0);
-
+  m_JobNode->SetDoubleProperty("running progress", 0.0);
   mitk::StatusBar::GetInstance()->DisplayText(status.toStdString().c_str());
 
   deleteLater();
-
 }
 
 //-------
@@ -159,7 +160,7 @@ void sv4guiSolverProcessHandler::Start()
   connect(m_Process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(AfterProcessFinished(int,QProcess::ExitStatus)));
 
   m_JobNode->SetBoolProperty("running", true);
-  m_JobNode->SetDoubleProperty("running progress", 0);
+  m_JobNode->SetDoubleProperty("running progress", 0.0);
   mitk::GenericProperty<sv4guiSolverProcessHandler*>::Pointer solverProcessProp =
       mitk::GenericProperty<sv4guiSolverProcessHandler*>::New(this);
   m_JobNode->SetProperty("process handler",solverProcessProp);
@@ -171,16 +172,30 @@ void sv4guiSolverProcessHandler::Start()
   m_Timer->start(3000);
 }
 
+//-------------
+// KillProcess
+//-------------
+//
 void sv4guiSolverProcessHandler::KillProcess()
 {
-    if(m_Process)
+    if (m_Process == nullptr) {
+        return;
+    }
+
+    m_Process->terminate();
+    m_Process->waitForFinished(5000); 
+
+    if (m_Process->state() != QProcess::NotRunning) {
         m_Process->kill();
+    }
 }
 
 //----------------------
 // AfterProcessFinished
 //----------------------
+// Display the solver information after it has finished.
 //
+// It seems that this also handles solver failure ?
 //
 void sv4guiSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
@@ -239,41 +254,79 @@ void sv4guiSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::Ex
 
     // Set job progress. 
     m_JobNode->SetBoolProperty("running",false);
-    m_JobNode->SetDoubleProperty("running progress", 0);
+    m_JobNode->SetDoubleProperty("running progress", 0.0);
 
     deleteLater();
 }
 
+//--------------
+// UpdateStatus
+//--------------
+// Show the solver history information for the current time step.
+//
 void sv4guiSolverProcessHandler::UpdateStatus()
 {
-    int currentStep=0;
-    QString info="";
+    #define n_debug_UpdateStatus
+    #ifdef debug_UpdateStatus
+    std::string msg("[sv4guiSolverProcessHandler::UpdateStatus] ");
+    std::cout << msg << "========== UpdateStatus ==========" << std::endl;
+    std::cout << msg << "m_RunDir: " << m_RunDir << std::endl;
+    #endif
 
-    QFile historFile(m_RunDir+"/histor.dat");
+    int currentStep = 0;
+    QString info = "";
+
+    QFile historFile(m_RunDir + "/histor.dat");
+
+    // Compute the simulation progress from the simulation time step read 
+    // from the last line of the history file.
+    //
+    // Format:  'NS 11-2  5.891e+01  [-62 7.478e-04 2.473e-04 4.065e-05]  [5 -17 83]'
+    //
     if (historFile.open(QIODevice::ReadOnly))
     {
         QTextStream in(&historFile);
-        QString content=in.readAll();
+        QString content = in.readAll();
 
-        QStringList list=content.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
-        info=list.last();
+        QStringList list = content.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
+        info = list.last();
 
-        list=info.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
-        QString stepStr=list.first();
-        bool ok;
-        int step=stepStr.toInt(&ok);
-        if(ok)
-            currentStep=step;
+        list = info.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+        auto stepStr = list[1].toStdString();
+        auto pos = stepStr.find("-");  
+        auto sub_step = stepStr.substr(0,pos);
+        int time_step = 0;
+        try {
+          time_step = std::stoi(sub_step);
+        } catch (const std::invalid_argument& e) {
+          time_step = 0;
+        }
 
+        #ifdef debug_UpdateStatus
+        std::cout << msg << "info: " << info << std::endl;
+        std::cout << msg << "stepStr: " << stepStr << std::endl;
+        std::cout << msg << "sub_step: " << sub_step << std::endl;
+        std::cout << msg << "time_step: " << time_step << std::endl;
+        #endif
+
+        currentStep = time_step;
         historFile.close();
     }
 
-    double progress=0;
-    if(currentStep>m_StartStep && m_TotalSteps>0)
-        progress=(currentStep-m_StartStep)*1.0/m_TotalSteps;
+    double progress = 0.0;
+
+    if (currentStep > m_StartStep && m_TotalSteps > 0) {
+        progress = (currentStep - m_StartStep) * 1.0 / m_TotalSteps;
+    }
+
+    #ifdef debug_UpdateStatus
+    std::cout << msg << "m_StartStep: " << m_StartStep << std::endl;
+    std::cout << msg << "m_TotalSteps: " << m_TotalSteps << std::endl;
+    std::cout << msg << "currentStep: " << currentStep << std::endl;
+    std::cout << msg << "progress: " << progress << std::endl;
+    #endif
 
     m_JobNode->SetDoubleProperty("running progress", progress);
-
     QString status=QString::fromStdString(m_JobNode->GetName())+": running, " +QString::number((int)(progress*100))+"% completed. Info: "+info;
     mitk::StatusBar::GetInstance()->DisplayText(status.toStdString().c_str());
 }

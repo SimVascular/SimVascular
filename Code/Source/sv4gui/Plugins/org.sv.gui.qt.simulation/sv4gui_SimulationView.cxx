@@ -1577,6 +1577,12 @@ void sv4guiSimulationView::CreateAllFiles()
 //
 void sv4guiSimulationView::RunJob()
 {
+  #define n_debug_RunJob
+  #ifdef debug_RunJob
+  std::string msg("[sv4guiSimulationView::RunJob] ");
+  std::cout << msg << "========== RunJob ==========" << std::endl;
+  #endif
+
   if (!m_MitkJob) {
     return;
   }
@@ -1596,24 +1602,35 @@ void sv4guiSimulationView::RunJob()
 
     CheckSolver();
     CheckMpi();
-	
-    // Set the solver output directory.
-    QString runPath = jobPath;
-    int numProcs = ui->sliderNumProcs->value();
-
-    if (numProcs > 1) {
-      runPath = jobPath+"/"+QString::number(numProcs)+"-procs_case";
-    }
-
-    // Execute the job.
-    //
-    int totalSteps=100;
-    sv4guiSimJob* job = m_MitkJob->GetSimJob();
+    auto job = m_MitkJob->GetSimJob();
 
     if (!job) {
       QMessageBox::warning(m_Parent, MsgTitle, "Cannot start job, simulation job does not exist.");
       throw std::string("Job does not exist"); 
     }
+	
+    // Set the solver output directory.
+    QString runPath = jobPath;
+    int numProcs = ui->sliderNumProcs->value();
+    auto results_dir = QString::fromStdString(job->GetSolverProp("Save results in folder"));
+
+    // The 'Save results in folder' defualt value is 'N-procs' which means
+    // results will be saved in the numProcs//"-procs' directory. 
+    //
+    if (results_dir == "N-procs") {
+      runPath = jobPath + "/" + QString::number(numProcs)+"-procs";
+    } else {
+      runPath = jobPath + "/" + results_dir;
+    }
+    #ifdef debug_RunJob
+    std::cout << msg << "results_dir: " << results_dir << std::endl;
+    std::cout << msg << "runPath: " << runPath << std::endl;
+    #endif
+
+    // Execute the job.
+    //
+    int totalSteps = 100;
+
 
     job->SetRunProp("Number of Processes",QString::number(numProcs).toStdString());
     totalSteps = QString::fromStdString(job->GetSolverProp("Number of Timesteps")).toInt();
@@ -1923,6 +1940,9 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
   m_MitkJob->SetSimJob(job);
   m_MitkJob->SetMeshName(meshName);
   m_MitkJob->SetDataModified();
+
+  QMessageBox::information(m_Parent, "Information", "The svMultiPhysics mesh files and the solver.xml input file have been created in " + 
+      outputDir + ".");
 
   return true;
 }
@@ -2434,26 +2454,31 @@ QString sv4guiSimulationView::GetRegistryValue(QString category, QString key)
 }
 #endif
 
+//-----------------
+// UpdateJobStatus
+//-----------------
+// Update the the current simulation time step information in the 
+// SV window bottom frame.
+//
 void sv4guiSimulationView::UpdateJobStatus()
 {
-    if(m_JobNode.IsNull())
+    if (m_JobNode.IsNull()) {
         return;
+    }
 
     bool running=false;
     double runningProgress=0;
     m_JobNode->GetBoolProperty("running",running);
     m_JobNode->GetDoubleProperty("running progress",runningProgress);
-    if(running)
-    {
+
+    if (running) {
         ui->labelJobStatus->setText("Running: "+QString::number((int)(runningProgress*100))+"% completed");
         ui->widgetRun->setEnabled(false);
-    }
-    else
-    {
+
+    } else {
         ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
         ui->widgetRun->setEnabled(true);
     }
-
 }
 
 void sv4guiSimulationView::ShowModel(bool checked)
