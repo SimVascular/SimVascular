@@ -1362,6 +1362,10 @@ void sv4guiSimulationView::UpdateGUIWall()
 //-----------------
 // UpdateGUISolver
 //-----------------
+// Read in the entries in the 'Solver Parameters' table from the 
+// resources/solvertemplate.xml file.
+//
+// Parameter names are used in Sv4GuiSimXmlWriter to create the solver.xml file.
 //
 void sv4guiSimulationView::UpdateGUISolver()
 {

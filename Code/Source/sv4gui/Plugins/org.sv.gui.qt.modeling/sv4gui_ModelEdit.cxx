@@ -1618,10 +1618,24 @@ void sv4guiModelEdit::ShowCapSelectionWidget()
     m_CapSelectionWidget->show();
 }
 
+//-------------
+// CreateModel
+//-------------
+//
 void sv4guiModelEdit::CreateModel()
 {
+    #define n_debug_CreateModel_
+    #ifdef debug_CreateModel_
+    std::string msg("[sv4guiModelEdit::CreateModel] ");
+    std::cout << msg << std::endl;
+    std::cout << msg << "========== CreateModel ==========" << std::endl;
+    #endif
+
     std::vector<std::string> segNames=m_SegSelectionWidget->GetUsedSegNames();
     int numSampling=m_SegSelectionWidget->GetNumSampling();
+    #ifdef debug_CreateModel_
+    std::cout << msg << "numSampling: " << numSampling << std::endl;
+    #endif
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSubset(isProjFolder);
@@ -1688,6 +1702,10 @@ void sv4guiModelEdit::CreateModel()
 
     svLoftingParam* param=nullptr;
     int useUniform=m_SegSelectionWidget->IfUseUniform();
+    #ifdef debug_CreateModel_
+    std::cout << msg << "useUniform: " << useUniform << std::endl;
+    #endif
+
     if(useUniform)
         param=new svLoftingParam(m_SegSelectionWidget->GetLoftingParam());
 
@@ -1695,8 +1713,15 @@ void sv4guiModelEdit::CreateModel()
     QString statusText="Model has been created.";
 
     sv4guiModelElement* tempElement=sv4guiModelElementFactory::CreateModelElement(m_ModelType);
+    #ifdef debug_CreateModel_
+    std::cout << msg << "tempElement: " << tempElement << std::endl;
+    #endif
+
     if(tempElement)
     {
+        #ifdef debug_CreateModel_
+        std::cout << msg << "CreateModelElement ... " << std::endl;
+        #endif
         int stats[2]={0};
         if(m_ModelType=="PolyData")
         {
@@ -1710,6 +1735,10 @@ void sv4guiModelEdit::CreateModel()
         {
             newModelElement=tempElement->CreateModelElement(segNodes,numSampling,nullptr,nullptr,1.0);
         }
+
+        #ifdef debug_CreateModel_
+        std::cout << msg << "newModelElement: " << newModelElement << std::endl;
+        #endif
 
         if(newModelElement==nullptr)
         {
@@ -1774,14 +1803,28 @@ void sv4guiModelEdit::CreateModel()
 
         for(int i=0;i<segNames.size();++i)
         {
+            #ifdef debug_CreateModel_
+            std::cout << msg << "---------- seg " << i << " ----------" << std::endl;
+            std::cout << msg << "segNames[i]: " << segNames[i] << std::endl;
+            #endif
+
             int capNumber=0;
             int wallNumber=0;
 
-            QString wallName=QString::fromStdString(wallPrefix+segNames[i]);
-            QString capName=QString::fromStdString(capPrefix+segNames[i]);
+            QString wallName = QString::fromStdString(wallPrefix+segNames[i]);
+            QString capName = QString::fromStdString(capPrefix+segNames[i]);
+            #ifdef debug_CreateModel_
+            std::cout << msg << "wallName: " << wallName << std::endl;
+            std::cout << msg << "capName: " << capName << std::endl;
+            #endif
 
             for(int j=0;j<faceNames.size();j++)
             {
+                #ifdef debug_CreateModel_
+                std::cout << msg << "----- face " << j << " -----" << std::endl;
+                std::cout << msg << "faceNames[j]: " << faceNames[j] << std::endl;
+                #endif
+
                 QString faceName=QString::fromStdString(faceNames[j]);
 
                 if(faceName.contains(wallName))
@@ -1814,13 +1857,19 @@ void sv4guiModelEdit::CreateModel()
                 }
             }
 
+            #ifdef debug_CreateModel_
+            std::cout << msg << "capNumber: " << capNumber << std::endl;
+            std::cout << msg << "wallNumber: " << wallNumber << std::endl;
+            #endif
+
             if(capNumber>1)
             {
                 for(int j=0;j<capNumber;++j)
                 {
                     QString suffix="";
-                    if(j>0)
+                    if(j>0) {
                         suffix="_"+QString::number(j+1);
+                    }
 
                     faceNamesToCheck.push_back((capName+suffix).toStdString());
                 }

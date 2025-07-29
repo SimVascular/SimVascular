@@ -118,7 +118,7 @@ VtkUtils_ThresholdSurface(const double lower, const double upper, const std::str
   auto threshold_ugrid = VtkUtils_ThresholdUgrid(lower, upper, data_name, vtk_data);
 
   auto surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-  surfacer->SetInputData(vtk_data);
+  surfacer->SetInputData(threshold_ugrid);
   surfacer->Update();
   return surfacer->GetOutput();
 }

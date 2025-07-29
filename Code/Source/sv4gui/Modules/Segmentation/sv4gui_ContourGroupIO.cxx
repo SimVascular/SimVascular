@@ -72,12 +72,24 @@ sv4guiContourGroupIO::sv4guiContourGroupIO()
 
 std::vector<mitk::BaseData::Pointer> sv4guiContourGroupIO::Read()
 {
-    std::string fileName=GetInputLocation();
+    std::string fileName = GetInputLocation();
     return ReadFile(fileName);
 }
 
+//----------
+// ReadFile
+//----------
+//
 std::vector<mitk::BaseData::Pointer> sv4guiContourGroupIO::ReadFile(std::string fileName)
 {
+    #define n_debug_ReadFile 
+    #ifdef debug_ReadFile 
+    std::string msg("[sv4guiContourGroupIO::ReadFile] ");
+    std::cout << msg << "========== ReadFile ==========" << std::endl;
+    std::cout << msg << "fileName: " << fileName << std::endl;
+    #endif
+
+    tinyxml2::XMLDocument document;
     auto group = CreateGroupFromFile(fileName);
     std::vector<mitk::BaseData::Pointer> result;
     result.push_back(group.GetPointer());
@@ -87,27 +99,34 @@ std::vector<mitk::BaseData::Pointer> sv4guiContourGroupIO::ReadFile(std::string 
 //---------------------
 // CreateGroupFromFile
 //---------------------
+// Create a group of contours (segmentations) from an XML format .ctgr file.
+//
+// This will set svLoftingParam parameters from the .ctgr file. The parameters 
+// used for contour spline fitting, not lofting.
 //
 sv4guiContourGroup::Pointer
 sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
 {
+    #define n_debug_CreateGroupFromFile
+    #ifdef debug_CreateGroupFromFile
+    std::string msg("[sv4guiContourGroupIO::CreateGroupFromFile] ");
+    std::cout << msg << "========== CreateGroupFromFile ==========" << std::endl;
+    std::cout << msg << "fileName: " << fileName << std::endl;
+    #endif
+
     tinyxml2::XMLDocument document;
     sv4guiContourGroup::Pointer group = sv4guiContourGroup::New();
 
     if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
-        //        MITK_ERROR << "Could not open/read/parse " << fileName;
         std::vector<mitk::BaseData::Pointer> empty;
         return group;
     }
 
-    //    TiXmlElement* version = document.FirstChildElement("format");
-
     auto groupElement = document.FirstChildElement("contourgroup");
 
     if(!groupElement){
-//        MITK_ERROR << "No ContourGroup data in "<< fileName;
         mitkThrow() << "No ContourGroup data in "<< fileName;
     }
 
@@ -128,23 +147,28 @@ sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
     group->SetProp("point size",point3dsize);
 
     int timestep=-1;
+
     for( auto timestepElement = groupElement->FirstChildElement("timestep"); timestepElement != nullptr;
          timestepElement = timestepElement->NextSiblingElement("timestep") )
     {
-        if (timestepElement == nullptr)
+        if (timestepElement == nullptr) {
             continue;
+        }
 
-//        timestepElement->QueryIntAttribute("id",&timestep);
         timestep++;
         group->Expand(timestep+1);
+        #ifdef debug_CreateGroupFromFile
+        std::cout << msg << "timestep: " << timestep << std::endl;
+        #endif
 
-        //lofting parameters
+        // Set lofting parameters.
+        //
         if(timestep==0)
         {
             auto loftParamElement = timestepElement->FirstChildElement("lofting_parameters");
             if(loftParamElement!=nullptr)
             {
-                svLoftingParam* param=group->GetLoftingParam();
+                svLoftingParam* param = group->GetLoftingParam();
 
                 set_string_from_attribute(loftParamElement, "method", param->method);
                 // davep loftParamElement->QueryStringAttribute("method", &param->method);
@@ -170,6 +194,10 @@ sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
 
                 set_string_from_attribute(loftParamElement, "v_parametric_type", param->vParametricSpanType);
                 // davep loftParamElement->QueryStringAttribute("v_parametric_type",&param->vParametricSpanType);
+                #ifdef debug_CreateGroupFromFile
+                std::cout << msg << "method: " << param->method << std::endl;
+                std::cout << msg << "u_knot_type: " << param->uKnotSpanType << std::endl;
+                #endif
             }
         }
 
@@ -337,6 +365,12 @@ mitk::IFileIO::ConfidenceLevel sv4guiContourGroupIO::GetReaderConfidenceLevel() 
 //
 void sv4guiContourGroupIO::WriteToFile(const sv4guiContourGroup* group, const std::string& fileName)
 {
+    #define n_debug_WriteToFile 
+    #ifdef debug_WriteToFile
+    std::string msg("[sv4guiContourGroupIO::WriteToFile] ");
+    std::cout << msg << "========== WriteToFile ==========" << std::endl;
+    #endif
+
     tinyxml2::XMLDocument document;
     auto decl = document.NewDeclaration();
     document.LinkEndChild( decl );

@@ -373,35 +373,49 @@ int sys_geom_union( cvPolyData *srcA, cvPolyData *srcB, double tolerance, cvPoly
   return SV_OK;
 }
 
-/* -------------- */
-/* sys_geom_all_union */
-/* -------------- */
-
+//--------------------
+// sys_geom_all_union
+//--------------------
+//
 int sys_geom_all_union( cvPolyData **srcs,int numSrcs,int nointerbool,double tolerance,cvPolyData **dst )
 {
+  #define n_debug_CreatePolyData_
+  #ifdef debug_CreatePolyData_
+  std::string msg("[sys_geom_all_union] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== sys_geom_all_union ==========" << std::endl;
+  std::cout << msg << "numSrcs: " << numSrcs << std::endl;
+  std::cout << msg << "nointerbool: " << nointerbool << std::endl;
+  #endif
+
   cvPolyData *result = nullptr;
   *dst = nullptr;
 
   vtkNew(vtkSVMultiplePolyDataIntersectionFilter,vesselInter);
+
   for (int i=0;i<numSrcs;i++)
   {
     vtkPolyData *newPd = srcs[i]->GetVtkPolyData();
     vesselInter->AddInputData(newPd);
   }
+
   vesselInter->SetPassInfoAsGlobal(1);
   vesselInter->SetAssignSurfaceIds(1);
   vesselInter->SetNoIntersectionOutput(nointerbool);
   vesselInter->SetTolerance(tolerance);
+
   try {
     vesselInter->Update();
     result = new cvPolyData(vesselInter->GetOutput());
     *dst = result;
   }
+
   catch (...) {
     fprintf(stderr,"ERROR in boolean operation.\n");
     fflush(stderr);
     return SV_ERROR;
   }
+
   if (vesselInter->GetStatus() == 0)
   {
     return SV_ERROR;

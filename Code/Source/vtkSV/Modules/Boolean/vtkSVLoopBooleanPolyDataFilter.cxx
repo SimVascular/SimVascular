@@ -53,6 +53,7 @@
 #include "vtkThreshold.h"
 #include "vtkTriangle.h"
 #include "vtkUnstructuredGrid.h"
+#include "vtkXMLPolyDataWriter.h"
 
 #include <string>
 #include <sstream>
@@ -1441,10 +1442,18 @@ int vtkSVLoopBooleanPolyDataFilter::Impl::RunLoopTest(
 // ----------------------
 // Impl::PerformBoolean
 // ----------------------
-/// \brief Combine the correct regions for output boolean
-void vtkSVLoopBooleanPolyDataFilter::Impl::PerformBoolean(
-    vtkPolyData *output, int booleanOperation)
+// Combine the correct regions for output boolean.
+//
+void vtkSVLoopBooleanPolyDataFilter::Impl::PerformBoolean( vtkPolyData *output, int booleanOperation)
 {
+  #define n_debug_vtkSVLoopBooleanPolyDataFilter_PerformBoolean 
+  #ifdef debug_vtkSVLoopBooleanPolyDataFilter_PerformBoolean
+  std::string msg("[vtkSVLoopBooleanPolyDataFilter::PerformBoolean] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== PerformBoolean ==========" << std::endl;
+  std::cout << msg << "booleanOperation: " << booleanOperation << std::endl;
+  #endif
+
   //// Four surfaces
   //vtkPolyData *surfaces[4];
   //for (int i=0;i<4;i++)
@@ -1510,6 +1519,8 @@ void vtkSVLoopBooleanPolyDataFilter::Impl::PerformBoolean(
   //  surfaces[i]->Delete();
   //  }
 
+  vtkSmartPointer<vtkXMLPolyDataWriter> writer  = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+
   auto threshold_surface_a = VtkUtils_ThresholdSurface(-1.0, -1.0, "BooleanRegion", this->Mesh[0]); 
   vtkSmartPointer<vtkPolyData> surface1_A = vtkSmartPointer<vtkPolyData>::New();
   surface1_A->DeepCopy(threshold_surface_a);
@@ -1559,6 +1570,13 @@ void vtkSVLoopBooleanPolyDataFilter::Impl::PerformBoolean(
   thresholder->Update();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
+  */
+
+  /* Keep this around for further testing.
+  writer->SetFileName("PerformBoolean_surface1_A.vtp");
+  writer->SetInputData(surface1_A);
+  writer->Update();
+  writer->Write();
   */
 
   auto appender = vtkSmartPointer<vtkAppendPolyData>::New();

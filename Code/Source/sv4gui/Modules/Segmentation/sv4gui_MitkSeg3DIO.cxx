@@ -70,6 +70,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSeg3DIO::Read()
 
 std::vector<mitk::BaseData::Pointer> sv4guiMitkSeg3DIO::ReadFile(std::string fileName)
 {
+    //std::cout << "[sv4guiMitkSeg3DIO::ReadFile] ================ ReadFile =========== " << std::endl;
     std::vector<mitk::BaseData::Pointer> result;
 
     tinyxml2::XMLDocument document;
@@ -99,6 +100,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSeg3DIO::ReadFile(std::string fil
     {
          set_string_from_attribute(paramElement, "method", param.method);
         // davep paramElement->QueryStringAttribute("method",&param.method);
+
 
         if(param.method!="")
         {

@@ -39,8 +39,19 @@
 
 #include <berryPlatform.h>
 
+//----------------------
+// SetPreferencedValues
+//----------------------
+// Set the values in `svLoftingParam* param' from values in the Lofting Preferences panel.
+//
 void sv4guiLoftingUtils::SetPreferencedValues(svLoftingParam* param)
 {
+    #define n_debug_SetPreferencedValues
+    #ifdef debug_SetPreferencedValues
+    std::string msg("[sv4guiLoftingUtils::SetPreferencedValues] ");
+    std::cout << msg << "========== SetPreferencedValues ==========" << std::endl;
+    std::cout << msg << "param: " << param << std::endl;
+    #endif
     mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     //berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     Q_ASSERT(prefService);
@@ -49,14 +60,19 @@ void sv4guiLoftingUtils::SetPreferencedValues(svLoftingParam* param)
     //berry::IPreferences::Pointer preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.lofting");
 
     if(preferences != nullptr) {
+        #ifdef debug_SetPreferencedValues
+        std::cout << msg << "**** preferences != nullptr" << std::endl;
+        #endif
         return;
     }
 
-    if(param==nullptr)
+    if (param == nullptr) {
         return;
+    }
 
      param->method = preferences->Get("Lofting Method", param->method);
      //dp param->method= preferences->Get("Lofting Method", QString::fromStdString(param->method)).toStdString();
+     //std::cout << "[sv4guiLoftingUtils::SetPreferencedValues] param->method: " << param->method << std::endl;
 
      param->uDegree= preferences->GetInt("NURBS Lofting U Degree", param->uDegree);
      param->vDegree= preferences->GetInt("NURBS Lofting V Degree", param->vDegree);
