@@ -716,6 +716,7 @@ void sv4guiMeshEdit::RunCommands(bool fromGUI)
   int timeStep = GetTimeStep();
   sv4guiMesh* originalMesh = m_MitkMesh->GetMesh(timeStep);
 
+  /* [DaveP] Remove these tedious popups.
   if(originalMesh&&originalMesh->GetSurfaceMesh() == nullptr) {
     std::string path = "";
     m_MeshNode->GetStringProperty("path",path);
@@ -737,6 +738,7 @@ void sv4guiMeshEdit::RunCommands(bool fromGUI)
         QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes) {
     return;
   }
+  */
 
   if(!m_MitkMesh) return;
 
