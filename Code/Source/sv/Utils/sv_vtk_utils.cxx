@@ -42,6 +42,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkThreshold.h>
 #include <vtkUnstructuredGrid.h>
+#include <vtkXMLUnstructuredGridWriter.h>
+#include <vtkXMLPolyDataWriter.h>
 
 #define START  -1
 #define INTERMED  0
@@ -1777,3 +1779,23 @@ int VtkUtils_UGCheckArrayName(vtkUnstructuredGrid *object,int datatype,std::stri
     return SV_ERROR;
   }
 }
+
+void VtkUtils_write_vtu(vtkUnstructuredGrid *ugrid, const std::string file_name)
+{
+  auto writer = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+  writer->SetInputData(ugrid);
+  writer->SetFileName(file_name.c_str());
+  writer->Write();
+}
+
+void VtkUtils_write_vtp(vtkPolyData* polydata, const std::string file_name)
+{
+  auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  writer->SetInputData(polydata);
+  writer->SetFileName(file_name.c_str());
+  writer->Write();
+}
+
+
+
+

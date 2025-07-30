@@ -32,11 +32,6 @@
 /** @file sv_vmtk_utils.cxx
  *  @brief These functions are utilities that implement vtkvmtk classes
  *  @details Provides boundary layer and surface remeshing.
- *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
  */
 
 #include "sv_vmtk_utils.h"
@@ -1232,6 +1227,13 @@ int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen, vtkUnstructuredGri
                          vtkUnstructuredGrid *surfaceWithSize, vtkUnstructuredGrid *newMeshVolume, 
                          vtkPolyData *newMeshSurface, int newRegionBoundaryLayer)
 {
+  #define n_debug_VMTKUtils_AppendData
+  #ifdef debug_VMTKUtils_AppendData 
+  std::string msg("[VMTKUtils_AppendData] ");
+  std::cout << msg << "========== VMTKUtils_AppendData ==========" << std::endl;
+  std::cout << msg << "newRegionBoundaryLayer: " << newRegionBoundaryLayer << std::endl;
+  #endif
+
   // Mesh the 'boundaryMesh' mesh with tetrahedra.
   //
   auto tetrahedralizer = vtkSmartPointer<vtkvmtkUnstructuredGridTetraFilter>::New();
@@ -1260,6 +1262,10 @@ int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen, vtkUnstructuredGri
     return SV_ERROR;
   }
   int modelId = minmax[0];
+  #ifdef debug_VMTKUtils_AppendData 
+  std::cout << msg << "minmax[1]: " << minmax[1] << std::endl;
+  std::cout << msg << "modelId: " << modelId << std::endl;
+  #endif
 
   // Add a 'ModelRegionID' array to the 'surfaceWithSize' surface mesh.
   //
@@ -1294,8 +1300,6 @@ int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen, vtkUnstructuredGri
   // This is used for FSI to define the outer boundary layer as a solid. 
   //
   if (newRegionBoundaryLayer) {
-    //std::cout << "Create new region boundary layer ... " << std::endl; 
-
     VMTKUtils_CreateNewBoundaryLayerRegion(meshFromTetGen, surfaceWithSize, newMeshVolume, newMeshSurface, boundaryMeshVolume, 
       boundaryMeshSurface);
 
@@ -1355,26 +1359,6 @@ int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen, vtkUnstructuredGri
       return SV_ERROR;
     }
   }
-
-  /* [TODO:DaveP] Remove when we fully understand what is going on here.
-  std::string dir("/home/");
-  auto uwriter = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
-  uwriter->SetInputData(newMeshVolume);
-  uwriter->SetFileName(std::string(dir+"newMeshVolume.vtu").c_str());
-  uwriter->Update();
-  uwriter->Write();
-
-  uwriter->SetInputData(boundaryMesh);
-  uwriter->SetFileName(std::string(dir+"boundaryMesh.vtu").c_str());
-  uwriter->Update();
-  uwriter->Write();
-
-  auto pwriter = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-  pwriter->SetInputData(newMeshSurface);
-  pwriter->SetFileName(std::string(dir+"newMeshSurface.vtp").c_str());
-  pwriter->Update();
-  pwriter->Write();
-  */
 
   fprintf(stdout,"Mesh Appended\n");
   return SV_OK;
@@ -1573,8 +1557,19 @@ int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMes
   vtkSmartPointer<vtkPolyData>& boundaryMeshSurface, vtkSmartPointer<vtkPolyData>& surfaceMeshCaps, 
   vtkSmartPointer<vtkUnstructuredGrid>& boundaryMeshVolume)
 {
+  #define n_debug_VMTKUtils_CreateBoundaryLayerSurfaceAndCaps 
+  #ifdef debug_VMTKUtils_CreateBoundaryLayerSurfaceAndCaps
+  std::string msg("[VMTKUtils_CreateBoundaryLayerSurfaceAndCaps] ");
+  std::cout << msg << "========== VMTKUtils_CreateBoundaryLayerSurfaceAndCaps ==========" << std::endl;
+  std::cout << msg << "modelID: " << modelID << std::endl;
+  std::cout << msg << "surfaceWithSize num cells: " << surfaceWithSize->GetNumberOfCells() << std::endl;
+  #endif
+
   // Add a 'isSurface' array with values 1 for tri and quad cells.
   //
+  #ifdef debug_VMTKUtils_CreateBoundaryLayerSurfaceAndCaps
+  std::cout << msg << "Create isSurface ... " << std::endl;
+  #endif
   auto isSurface = vtkSmartPointer<vtkIntArray>::New();
   isSurface->SetNumberOfComponents(1);
   isSurface->SetNumberOfTuples(boundaryMesh->GetNumberOfCells());
@@ -1590,17 +1585,18 @@ int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMes
 
   // Create boundary layer surface mesh from cells with 'isSurface' array value 1. 
   //
+  #ifdef debug_VMTKUtils_CreateBoundaryLayerSurfaceAndCaps
+  std::cout << msg << "Create boundary layer surface mesh ... " << std::endl;
+  #endif
   /* dp
   auto thresholder = vtkSmartPointer<vtkThreshold>::New();
   thresholder->SetInputData(boundaryMesh);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, "isSurface");
   thresholder->ThresholdBetween(1, 1);
   thresholder->Update();
-
   auto surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
-
   boundaryMeshSurface->DeepCopy(surfacer->GetOutput());
   */
   auto threshold_surface = VtkUtils_ThresholdSurface(1.0, 1.0, "isSurface", boundaryMesh);
@@ -1608,6 +1604,9 @@ int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMes
 
   // Create boundary layer volume mesh from cells with 'isSurface' array value 0. 
   //
+  #ifdef debug_VMTKUtils_CreateBoundaryLayerSurfaceAndCaps
+  std::cout << msg << "Create boundary layer volume mesh ... " << std::endl;
+  #endif
   /* dp
   thresholder->SetInputData(boundaryMesh);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, "isSurface");
@@ -1620,10 +1619,13 @@ int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMes
 
   // Create boundary layer mesh caps from cells with 'WallID' array value 0. 
   //
+  #ifdef debug_VMTKUtils_CreateBoundaryLayerSurfaceAndCaps
+  std::cout << msg << "Create boundary mesh caps ... " << std::endl;
+  #endif
   /* dp
   thresholder->SetInputData(surfaceWithSize);
   thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
-  dp thresholder->ThresholdBetween(0,0);
+  thresholder->ThresholdBetween(0,0);
   thresholder->Update();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
@@ -1631,6 +1633,9 @@ int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMes
   */
   auto threshold_caps = VtkUtils_ThresholdSurface(0.0, 0.0, "WallID", surfaceWithSize);
   surfaceMeshCaps->DeepCopy(threshold_caps);
+
+  VtkUtils_write_vtu(surfaceWithSize, "VMTKUtils_CreateBoundaryLayerSurfaceAndCaps_surfaceWithSize.vtu");
+  VtkUtils_write_vtp(surfaceMeshCaps, "VMTKUtils_CreateBoundaryLayerSurfaceAndCaps_surfaceMeshCaps.vtp");
 
   // Set the values of the 'ModelFaceID' array for the caps to 9999(?). 
   //
@@ -1855,7 +1860,7 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom, vtkPolyData *originalge
   originalCopy->DeepCopy(originalgeom);
 
   if (VtkUtils_PDCheckArrayName(originalCopy,1, regionName) != SV_OK) {
-    fprintf(stderr,"Array name %s does not exist. Regions must be identified \
+    fprintf(stderr,"1: Array name %s does not exist. Regions must be identified \
 		    and named 'ModelFaceID' prior to this function call\n",  regionName.c_str());
     return SV_ERROR;
   }
@@ -1863,7 +1868,7 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom, vtkPolyData *originalge
   vtkDataArray *testRegions = originalCopy->GetCellData()->GetScalars( regionName.c_str());
 
   if (VtkUtils_PDCheckArrayName(newgeom,1, regionName.c_str()) != SV_OK) {
-    fprintf(stderr,"Array name %s does not exist. Regions must be identified \
+    fprintf(stderr,"2: Array name %s does not exist. Regions must be identified \
           and named 'ModelFaceID' prior to this function call\n", regionName.c_str());
     return SV_ERROR;
   }
@@ -1913,12 +1918,20 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom, vtkPolyData *originalge
   return SV_OK;
 }
 
-int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
-    vtkPolyData *originalgeom,
-    std::string regionName,
-    vtkIdList *onlyList,
-    int dummy)
+//--------------------------------
+// VMTKUtils_ResetOriginalRegions
+//--------------------------------
+//
+int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom, vtkPolyData *originalgeom,
+    std::string regionName, vtkIdList *onlyList, int dummy)
 {
+  #define n_debug_VMTKUtils_ResetOriginalRegions
+  #ifdef debug_VMTKUtils_ResetOriginalRegions
+  std::string msg("[VMTKUtils_ResetOriginalRegions] ");
+  std::cout << msg << "========== VMTKUtils_ResetOriginalRegions ==========" << std::endl;
+  std::cout << msg << "regionName: '" << regionName << "'" << std::endl;
+  #endif
+
   int i,j,k;
   int subId;
   int region;
@@ -1933,16 +1946,15 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   double tolerance = 1.0;
   double centroid[3];
   int range;
+
   vtkIdType closestCell;
   vtkIdType cellId;
   vtkIdType currentValue;
   vtkIdType realValue;
-  vtkSmartPointer<vtkCellLocator> locator =
-    vtkSmartPointer<vtkCellLocator>::New();
-  vtkSmartPointer<vtkGenericCell> genericCell =
-    vtkSmartPointer<vtkGenericCell>::New();
-  vtkSmartPointer<vtkPolyData> originalCopy =
-    vtkSmartPointer<vtkPolyData>::New();
+
+  vtkSmartPointer<vtkCellLocator> locator = vtkSmartPointer<vtkCellLocator>::New();
+  vtkSmartPointer<vtkGenericCell> genericCell = vtkSmartPointer<vtkGenericCell>::New();
+  vtkSmartPointer<vtkPolyData> originalCopy = vtkSmartPointer<vtkPolyData>::New();
 
   if (onlyList == nullptr)
   {
@@ -1954,9 +1966,11 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   originalgeom->BuildLinks();
   originalCopy->DeepCopy(originalgeom);
 
+  VtkUtils_write_vtp(originalgeom, "VMTKUtils_ResetOriginalRegions_originalgeom.vtp");
+
   if (VtkUtils_PDCheckArrayName(originalCopy,1, regionName) != SV_OK)
   {
-    fprintf(stderr,"Array name %s does not exist. Regions must be identified \
+    fprintf(stderr,"3: Array name %s does not exist. Regions must be identified \
 		    and named 'ModelFaceID' prior to this function call\n",  regionName.c_str());
     return SV_ERROR;
   }
@@ -1965,7 +1979,7 @@ int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
 
   if (VtkUtils_PDCheckArrayName(newgeom,1, regionName.c_str()) != SV_OK)
   {
-    fprintf(stderr,"Array name %s does not exist. Regions must be identified \
+    fprintf(stderr,"4: Array name %s does not exist. Regions must be identified \
         and named 'ModelFaceID' prior to this function call\n", regionName.c_str());
     return SV_ERROR;
   }

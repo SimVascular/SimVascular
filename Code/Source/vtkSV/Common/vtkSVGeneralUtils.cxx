@@ -71,6 +71,8 @@
 #include "vtkSVGlobals.h"
 #include "vtkSVMathUtils.h"
 
+#include "sv_vtk_utils.h"
+
 #include <algorithm>
 #include <iterator>
 
@@ -519,12 +521,19 @@ int vtkSVGeneralUtils::ThresholdPd(vtkPolyData *pd, int minVal,
                                    int maxVal, int dataType,
                                    std::string arrayName)
 {
-  // Set up threshold filter
+  auto threshold_surface = VtkUtils_ThresholdSurface(minVal, maxVal, arrayName, pd);
+
+  if (threshold_surface->GetNumberOfPoints() == 0) {
+    return SV_ERROR;
+  }
+
+  pd->DeepCopy(threshold_surface);
+
+  /* dp 
   vtkNew(vtkThreshold, thresholder);
   thresholder->SetInputData(pd);
-  //Set Input Array to 0 port,0 connection, dataType (0 - point, 1 - cell, and Regions is the type name
   thresholder->SetInputArrayToProcess(0, 0, 0, dataType, arrayName.c_str());
-  // dp thresholder->ThresholdBetween(minVal, maxVal);
+  thresholder->ThresholdBetween(minVal, maxVal);
   thresholder->Update();
 
   // Check to see if the result has points, don't run surface filter
@@ -538,6 +547,7 @@ int vtkSVGeneralUtils::ThresholdPd(vtkPolyData *pd, int minVal,
 
   // Set the final pd
   pd->DeepCopy(surfacer->GetOutput());
+  */
 
   return SV_OK;
 }
@@ -563,20 +573,26 @@ int vtkSVGeneralUtils::ThresholdUg(vtkUnstructuredGrid *ug, int minVal,
                                    int maxVal, int dataType,
                                    std::string arrayName)
 {
-  // Set up threshold filter
+  auto threshold_volume = VtkUtils_ThresholdUgrid(minVal, maxVal, arrayName, ug);
+
+  if (threshold_volume->GetNumberOfPoints() == 0) {
+    return SV_ERROR;
+  }
+
+  ug->DeepCopy(threshold_volume);
+
+  /* dp
   vtkNew(vtkThreshold, thresholder);
   thresholder->SetInputData(ug);
-  //Set Input Array to 0 port,0 connection, dataType (0 - point, 1 - cell, and Regions is the type name
   thresholder->SetInputArrayToProcess(0, 0, 0, dataType, arrayName.c_str());
-  // dp thresholder->ThresholdBetween(minVal, maxVal);
+  thresholder->ThresholdBetween(minVal, maxVal);
   thresholder->Update();
 
-  // Check to see if the result has points, don't run surface filter
   if (thresholder->GetOutput()->GetNumberOfPoints() == 0)
     return SV_ERROR;
 
-  // Set the final ug
   ug->DeepCopy(thresholder->GetOutput());
+  */
 
   return SV_OK;
 }

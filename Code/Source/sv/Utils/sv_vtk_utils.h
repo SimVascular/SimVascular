@@ -113,4 +113,9 @@ int SV_EXPORT_UTILS VtkUtils_ReversePtList( int num, double ptsIn[], double *pts
 int SV_EXPORT_UTILS VtkUtils_PDCheckArrayName( vtkPolyData *object, int datatype,std::string arrayname);
 
 int SV_EXPORT_UTILS VtkUtils_UGCheckArrayName( vtkUnstructuredGrid *object, int datatype,std::string arrayname);
+
+void VtkUtils_write_vtu(vtkUnstructuredGrid *ugrid, const std::string file_name);
+
+void VtkUtils_write_vtp(vtkPolyData* polydata, const std::string file_name);
+
 #endif // __CVVTKUTILS_H

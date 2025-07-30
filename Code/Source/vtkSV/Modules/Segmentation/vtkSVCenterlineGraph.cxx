@@ -404,7 +404,7 @@ int vtkSVCenterlineGraph::ComputeGlobalReferenceVectors(vtkSVCenterlineGCell *pa
   vtkNew(vtkThreshold, thresholder);
   thresholder->SetInputData(this->Lines);
   thresholder->SetInputArrayToProcess(0, 0, 0, 1, this->GroupIdsArrayName);
-  //dp thresholder->ThresholdBetween(parent->GroupId, parent->GroupId);
+  thresholder->ThresholdBetween(parent->GroupId, parent->GroupId);
   thresholder->Update();
   int numPts = thresholder->GetOutput()->GetNumberOfPoints();
   */
