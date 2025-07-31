@@ -32,10 +32,6 @@
 /** @file sv_PolyDataSolid.cxx
  *  @brief The implementations of functions in cvPolyDataSolid
  *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
  *  @note Most functions in class call functions in cv_polydatasolid_utils.
  */
 
@@ -204,6 +200,13 @@ int cvPolyDataSolid::ReadNative( char *filename )
   if ( geom_ != nullptr ) {
     return SV_ERROR;
   }
+
+  std::ifstream file(filename);
+
+  if (!file.is_open()) {
+    return SV_ERROR;
+  }
+
   geom_ = vtkPolyData::New();
 
   if ( PlyDtaUtils_ReadNative( filename, geom_) != SV_OK) {
