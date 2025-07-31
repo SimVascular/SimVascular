@@ -570,9 +570,11 @@ void sv4guiPathEdit::ChangePath()
 //
 void sv4guiPathEdit::AddPoint(mitk::Point3D point)
 {
+  #ifdef debug_AddPoint
   std::string msg("[sv4guiPathEdit::AddPoint] ");
   std::cout << msg << "========= AddPoint ===========" << std::endl;
   std::cout << msg << "Point: " << point[0] << "  " << point[1] << "  " << point[2] << std::endl;
+  #endif
 
   if (m_Path == nullptr) {
     QMessageBox::information(nullptr,"No Path Selected","Please select a path in data manager!");
@@ -593,7 +595,9 @@ void sv4guiPathEdit::AddPoint(mitk::Point3D point)
 
   int index = -2;
   int selectedModeIndex = ui->comboBoxAddingMode->currentIndex();
+  #ifdef debug_AddPoint
   std::cout << msg << "selectedModeIndex: " << selectedModeIndex << std::endl;
+  #endif
 
   switch(selectedModeIndex) {
     case sv4guiPath::SMART: {
@@ -645,7 +649,9 @@ void sv4guiPathEdit::AddPoint(mitk::Point3D point)
       break;
   }
 
+  #ifdef debug_AddPoint
   std::cout << msg << "index: " << index << std::endl;
+  #endif
 
   if (index != -2){
     mitk::OperationEvent::IncCurrObjectEventId();
@@ -755,9 +761,11 @@ void sv4guiPathEdit::DeleteSelected(){
 //
 void sv4guiPathEdit::SelectPoint(int index)
 {
-  std::string msg("[sv4guiPathEdit::SelectPoint] ");
-  std::cout << msg << "========== SelectPoint(index) ===========" << std::endl;
-  std::cout << msg << "index: " << index << std::endl;
+   #ifdef debug_SelectPoint
+   std::string msg("[sv4guiPathEdit::SelectPoint] ");
+   std::cout << msg << "========== SelectPoint(index) ===========" << std::endl;
+   std::cout << msg << "index: " << index << std::endl;
+   #endif
 
    if (m_UpdatingGUI) {
      return;
@@ -794,8 +802,10 @@ void sv4guiPathEdit::SelectPoint(int index)
 //
 void sv4guiPathEdit::SelectPoint()
 {
+  #ifdef debug_SelectPoint
   std::string msg("[sv4guiPathEdit::SelectPoint()] ");
   std::cout << msg << "========== SelectPoint() ===========" << std::endl;
+  #endif
 
   int index=-1;
   QModelIndexList selectedRows=ui->listWidget->selectionModel()->selectedRows();
