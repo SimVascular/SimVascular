@@ -80,11 +80,11 @@ void sv4guiROMSimulationPreferences::InitializeSolverLocations()
   // Set the solver binaries.
   SetOneDSolver(solverInstallPath, applicationPath);
 
-
   // Set the default install location of the 0D solver.
   //
-  solverInstallPath = "/usr/local/sv/ZeroDSolver";
+  solverInstallPath = "/usr/local/sv/svZeroDSolver";
   dirList = QDir(solverInstallPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
+
   if (dirList.size() != 0) {
     solverInstallPath += "/" + dirList.back();
   }
@@ -144,7 +144,6 @@ void sv4guiROMSimulationPreferences::SetOneDSolver(const QString& solverInstallP
 #endif
 
   m_svOneDSolver = svOneDSolver;
-  std::cout << "svOneDSolver executable: '" << m_svOneDSolver.toStdString() << "'" << std::endl;
 }
 
 QString sv4guiROMSimulationPreferences::GetOneDSolver()
@@ -159,6 +158,13 @@ QString sv4guiROMSimulationPreferences::GetOneDSolver()
 //
 void sv4guiROMSimulationPreferences::SetZeroDSolver(const QString& solverInstallPath, const QString& applicationPath)
 {
+  #define n_debug_SetZeroDSolver
+  #ifdef debug_SetZeroDSolver
+  std::string msg("[sv4guiROMSimulationPreferences::SetZeroDSolver] ");
+  std::cout << msg << "========= SetZeroDSolver =========" << std::endl;
+  std::cout << msg << "solverInstallPath: " << solverInstallPath.toStdString() << std::endl;
+  #endif
+
   QString svZeroDSolver = UnknownBinary;
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
@@ -199,7 +205,9 @@ void sv4guiROMSimulationPreferences::SetZeroDSolver(const QString& solverInstall
 #endif
 
   m_svZeroDSolver = svZeroDSolver;
-  std::cout << "svZeroDSolver executable: '" << m_svZeroDSolver.toStdString() << "'" << std::endl;
+  #ifdef debug_SetZeroDSolver
+  std::cout << msg << "m_svZeroDSolver: '" << m_svZeroDSolver.toStdString() << "'" << std::endl;
+  #endif
 }
 
 QString sv4guiROMSimulationPreferences::GetZeroDSolver()
