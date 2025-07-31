@@ -126,9 +126,14 @@ void sv4guiROMSimJobCreate::SetFocus( )
     ui->comboBox->setFocus();
 }
 
+//-----------
+// CreateJob
+//-----------
+//
 void sv4guiROMSimJobCreate::CreateJob()
 {
     QString selectedModelName=ui->comboBox->currentText();
+
     if(selectedModelName=="")
     {
         QMessageBox::warning(nullptr,"No Model Selected","Please select a model!");
@@ -165,7 +170,6 @@ void sv4guiROMSimJobCreate::CreateJob()
         QMessageBox::warning(nullptr, "Simulation 1D", msg);
         return;
     }
-
 
     mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(jobName.c_str(),m_SimulationFolderNode);
     if(exitingNode){

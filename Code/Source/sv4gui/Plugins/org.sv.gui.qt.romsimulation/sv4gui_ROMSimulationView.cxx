@@ -1680,7 +1680,7 @@ void sv4guiROMSimulationView::ReadMesh()
 //----------------------
 // OnPreferencesChanged
 //----------------------
-// Get the path to the 1d solver executable.
+// Get the paths to the 0d and 1d solver executables.
 //
 void sv4guiROMSimulationView::OnPreferencesChanged(const mitk::IPreferences* prefs)
 {
@@ -1694,11 +1694,8 @@ void sv4guiROMSimulationView::OnPreferencesChanged(const mitk::IPreferences* pre
         return;
     }
 
-    // Set the 1D solver binary. 
     m_SolverExecutable = QString::fromStdString(prefs->Get(ONED_SOLVER_PATH, m_DefaultPrefs.GetOneDSolver().toStdString()));
-    m_ZeroDSolverExecutable = QString::fromStdString(prefs->Get(ZEROD_SOLVER_PATH, m_DefaultPrefs.GetOneDSolver().toStdString()));
-    // davep m_SolverExecutable = prefs->Get(ONED_SOLVER_PATH, m_DefaultPrefs.GetOneDSolver());
-    // davep m_ZeroDSolverExecutable = prefs->Get(ZEROD_SOLVER_PATH, m_DefaultPrefs.GetZeroDSolver());
+    m_ZeroDSolverExecutable = QString::fromStdString(prefs->Get(ZEROD_SOLVER_PATH, m_DefaultPrefs.GetZeroDSolver().toStdString()));
 }
 
 //--------------------
@@ -3348,11 +3345,22 @@ void sv4guiROMSimulationView::RunJob()
 //
 void sv4guiROMSimulationView::RunZeroDSimulationJob(const QString& jobPath)
 {
+    #define n_debug_RunZeroDSimulationJob
+    #ifdef debug_RunZeroDSimulationJob
+    std::string msg("[sv4guiROMSimulationView::RunZeroDSimulationJob] ");
+    std::cout << msg << "========== RunZeroDSimulationJob ==========" << std::endl;
+    std::cout << msg << "jobPath: " << jobPath << std::endl;
+    std::cout << msg << "m_ZeroDSolverExecutable: " << m_ZeroDSolverExecutable << std::endl;
+    #endif
+
     // Get the solver executable.
     auto solverExecutable = GetZeroDSolverExecutable();
     if (solverExecutable == nullptr) {
         return;
     }
+    #ifdef debug_RunZeroDSimulationJob
+    std::cout << msg << "solverExecutable: " << solverExecutable << std::endl;
+    #endif
 
     // Set job properties used to write solver log.
     //
