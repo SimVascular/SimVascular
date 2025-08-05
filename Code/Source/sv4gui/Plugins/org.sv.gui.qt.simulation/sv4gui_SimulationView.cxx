@@ -266,10 +266,14 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
     // Wall properties toolbox page
     //
     connect(ui->WallProps_type, SIGNAL(currentIndexChanged(int)), this, SLOT(WallTypeSelectionChanged(int)));
+    ui->WallProps_density->setText("1.0");
 
     ui->WallProps_constant_props->hide();
     ui->WallProps_elastic_props->hide();
     ui->WallProps_variable_props->hide();
+
+    connect(ui->WallsProps_set_variable_props_file, SIGNAL(clicked()), this, SLOT(SetVariableWallPropsFile()));
+    ui->WallsProps_variable_props_file->setText("none");
 
 /* [davep] not used
     ui->widgetConstant->hide();
@@ -1248,6 +1252,94 @@ void sv4guiSimulationView::UpdateGUICap()
 }
 
 //--------------------------
+// SetVariableWallPropsFile
+//--------------------------
+//
+void sv4guiSimulationView::SetVariableWallPropsFile()
+{
+  #define debug_SetVariableWallPropsFile
+  #ifdef debug_SetVariableWallPropsFile
+  std::string msg("[sv4guiSimulationView::SetVariableWallPropsFile] ");
+  std::cout << msg << "========== SetVariableWallPropsFile ==========" << std::endl;
+  #endif
+
+  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  mitk::IPreferences* prefs;
+
+  if (prefService) {
+    prefs = prefService->GetSystemPreferences()->Node("/General");
+  } else {
+    prefs = nullptr; 
+  }
+
+  QString lastFileOpenPath = "";
+
+  if (prefs != nullptr) {
+    lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
+  }
+
+  if (lastFileOpenPath == "") {
+    lastFileOpenPath = QDir::homePath();
+  }
+
+  QString file_path = QFileDialog::getOpenFileName(ui->WallsProps_variable_props_file, 
+      tr("Set variable wall properties file"), lastFileOpenPath, tr("VTK VTP Files (*.vtp)"));
+
+  file_path = file_path.trimmed();
+
+  if (file_path.isEmpty()) {
+    return;
+  }
+
+  if (prefs != nullptr) {
+    prefs->Put("LastFileOpenPath", file_path.toStdString());
+    prefs->Flush();
+  }
+
+#if 0
+  QFile inputFile(file_path);
+
+  if (inputFile.open(QIODevice::ReadOnly)) {
+        QTextStream in(&inputFile);
+
+        QFileInfo fi(pressureFilePath);
+        ui->labelLoadPressureFile->setText(fi.fileName());
+
+        std::stringstream ss;
+        QString line;
+        while (1) {
+            line=in.readLine();
+            if(line.isNull())
+                break;
+
+            if(line.contains("#"))
+                continue;
+
+            QStringList list = line.split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
+            if(list.size()!=2)
+                continue;
+
+            ss << list[0].toStdString() << " " << list[1].toStdString() <<"\n";
+
+            pressurePeriod=list[0];
+        }
+
+        m_TimedPressureContent=ss.str();
+        inputFile.close();
+    }
+
+#endif
+
+  #ifdef debug_SetVariableWallPropsFile
+  std::cout << msg << "file_path: " << file_path << std::endl;
+  #endif
+
+  ui->WallsProps_variable_props_file->setText(file_path);
+
+  UpdateSimJob();
+}
+
+//--------------------------
 // WallTypeSelectionChanged
 //--------------------------
 //
@@ -1286,9 +1378,9 @@ void sv4guiSimulationView::WallTypeSelectionChanged(int index)
 // TableVarSelectionChanged
 //--------------------------
 //
+#ifdef use_TableVarSelectionChanged
 void sv4guiSimulationView::TableVarSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
 {
-#ifdef use_TableVarSelectionChanged
     if(!m_Model)
         return;
 
@@ -1308,21 +1400,21 @@ void sv4guiSimulationView::TableVarSelectionChanged( const QItemSelection & /*se
     }
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
-#endif
 }
 
 void sv4guiSimulationView::TableViewVarContextMenuRequested( const QPoint & pos )
 {
     //m_WallPropsPage_variable_props->popup(QCursor::pos());
 }
+#endif
 
 //-----------------
 // SetVarThickness
 //-----------------
 //
+#ifdef use_SetVarThickness
 void sv4guiSimulationView::SetVarThickness(bool)
 {
-#ifdef use_SetVarThickness
     QModelIndexList indexesOfSelectedRows = ui->WallProps_variable_props->selectionModel()->selectedRows();
     if(indexesOfSelectedRows.size() < 1)
     {
@@ -1341,12 +1433,12 @@ void sv4guiSimulationView::SetVarThickness(bool)
         int row=(*it).row();
         m_WallPropsPage->item(row,2)->setText(thickness);
     }
-#endif
 }
+#endif
 
+#ifdef use_SetVarE
 void sv4guiSimulationView::SetVarE(bool)
 {
-#ifdef use_SetVarE
     QModelIndexList indexesOfSelectedRows = ui->WallProps_variable_props->selectionModel()->selectedRows();
     if(indexesOfSelectedRows.size() < 1)
     {
@@ -1365,8 +1457,8 @@ void sv4guiSimulationView::SetVarE(bool)
         int row=(*it).row();
         m_WallPropsPage->item(row,3)->setText(modulus);
     }
-#endif
 }
+#endif
 
 //---------------
 // UpdateGUIWall
@@ -1374,7 +1466,7 @@ void sv4guiSimulationView::SetVarE(bool)
 //
 void sv4guiSimulationView::UpdateGUIWall()
 {
-    if(!m_MitkJob) {
+    if (!m_MitkJob) {
         return;
     }
 
@@ -1405,11 +1497,13 @@ void sv4guiSimulationView::UpdateGUIWall()
     if (pratio == "") {
         pratio = "0.5";
     }
-
     ui->WallProps_poisson_ratio->setText(pratio);
+
     ui->WallProps_density->setText(QString::fromStdString(job->GetWallProp("Density")));
 
-    if(!m_Model) {
+    ui->WallsProps_variable_props_file->setText(QString::fromStdString(job->GetWallProp("Wall Properities File")));
+
+    if (!m_Model) {
         return;
     }
 
@@ -2306,78 +2400,32 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
   #endif
 
   if (wallTypeIndex == 0) {
-    job->SetWallProp("Type","rigid");
+    job->SetWallProp("Type", "rigid");
 
   } else if(wallTypeIndex == 1) {
-
-/*
     std::string thickness = ui->WallProps_thickness->text().trimmed().toStdString();
     std::string modulus = ui->WallProps_elastic_modulus->text().trimmed().toStdString();
     std::string nu = ui->WallProps_poisson_ratio->text().trimmed().toStdString();
     std::string wallDensity = ui->WallProps_density->text().trimmed().toStdString();
 
-    if(checkValidity) {
-      if(!IsDouble(thickness)) {
-        msg="wall thickness error: " + thickness;
-        delete job;
-        return nullptr;
-      }
-
-      if(!IsDouble(modulus)) {
-        msg="wall elastic modulus error: " + modulus;
-        delete job;
-        return nullptr;
-      }
-
-      if(!IsDouble(nu)) {
-        msg="wall Poisson ratio error: " + nu;
-        delete job;
-        return nullptr;
-      }
-
-      if(wallDensity!="") {
-        if(!IsDouble(wallDensity)) {
-          msg="wall density error: " + wallDensity;
-          delete job;
-          return nullptr;
-        }
-      } else {
-        wallDensity=job->GetBasicProp("Fluid Density");
-      }
-    }
-
-    job->SetWallProp("Type","constant");
-    job->SetWallProp("Thickness",thickness);
-    job->SetWallProp("Elastic Modulus",modulus);
-    job->SetWallProp("Poisson Ratio",nu);
-    job->SetWallProp("Density",wallDensity);
-*/
+    job->SetWallProp("Type", "constant");
+    job->SetWallProp("Thickness", thickness);
+    job->SetWallProp("Elastic Modulus", modulus);
+    job->SetWallProp("Poisson Ratio", nu);
+    job->SetWallProp("Density", wallDensity);
 
   } else if (wallTypeIndex == 2) {
     std::string nu = ui->WallProps_poisson_ratio->text().trimmed().toStdString();
     std::string wallDensity = ui->WallProps_density->text().trimmed().toStdString();
+    std::string wallPropsFile = ui->WallsProps_variable_props_file->text().trimmed().toStdString();
 
-    if(checkValidity) {
-      if(!IsDouble(nu)) {
-        msg="wall Poisson ratio error: " + nu;
-        delete job;
-        return nullptr;
-      }
-
-      if(wallDensity!="") {
-        if(!IsDouble(wallDensity)) {
-          msg="wall density error: " + wallDensity;
-          delete job;
-          return nullptr;
-        }
-      } else {
-        wallDensity=job->GetBasicProp("Fluid Density");
-      }
-    }
-
-    job->SetWallProp("Type","variable");
-    job->SetWallProp("Poisson Ratio",nu);
-    job->SetWallProp("Density",wallDensity);
+    job->SetWallProp("Type", "variable");
+    job->SetWallProp("Poisson Ratio", nu);
+    job->SetWallProp("Density", wallDensity);
+    job->SetWallProp("Wall Properities File", wallPropsFile);
+    #ifdef debug_CreateJob
+    std::cout << pmsg << "wallPropsFile: " << wallPropsFile << std::endl;
+    #endif
   }
 
   // Set Coupled Momentum Method parameters.

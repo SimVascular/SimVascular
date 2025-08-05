@@ -118,13 +118,12 @@ public slots:
 
     void WallTypeSelectionChanged(int index);
 
-    void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+    void SetVariableWallPropsFile();
 
-    void TableViewVarContextMenuRequested(const QPoint& pos);
-
-    void SetVarE( bool checked = false );
-
-    void SetVarThickness( bool checked = false );
+    //void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+    //void TableViewVarContextMenuRequested(const QPoint& pos);
+    //void SetVarE( bool checked = false );
+    //void SetVarThickness( bool checked = false );
 
     // Coupled Momentum Method
     //
