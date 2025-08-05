@@ -72,6 +72,11 @@ public:
     void SetVarProp(const std::string& faceName, const std::string& key, std::string value);
     std::string GetVarProp(const std::string& faceName, const std::string& key);
 
+    void SetCmmProps(std::map<std::string,std::string> cmmProps);
+    std::map<std::string,std::string> GetCmmProps();
+    void SetCmmProp(const std::string& key, std::string value);
+    std::string GetCmmProp(const std::string& key);
+
     void SetSolverProps(std::map<std::string,std::string> solverProps);
     std::map<std::string,std::string> GetSolverProps();
     std::map<std::string,std::string> GetNonlinearSolverProps();
@@ -98,6 +103,7 @@ public:
     std::map<std::string,std::string> m_BasicProps;
     std::map<std::string,std::map<std::string,std::string> > m_CapProps;
     std::map<std::string,std::string> m_WallProps;
+    std::map<std::string,std::string> m_CmmProps;
     std::map<std::string,std::map<std::string,std::string> > m_VarProps;
 
     // Stores parameter name/value pairs set from the GUI.

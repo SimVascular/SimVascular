@@ -48,6 +48,8 @@
 #include <mitkIPreferences.h>
 
 #include <QWidget>
+#include <QButtonGroup>
+#include <QRadioButton>
 #include <QStandardItemModel>
 #include <QProcess>
 #include <QMessageBox>
@@ -110,6 +112,10 @@ public slots:
 
     void UpdateGUICap();
 
+    // Wall properties.
+    //
+    void UpdateGUIWall();
+
     void WallTypeSelectionChanged(int index);
 
     void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
@@ -120,8 +126,13 @@ public slots:
 
     void SetVarThickness( bool checked = false );
 
-    void UpdateGUIWall();
+    // Coupled Momentum Method
+    //
+    void UpdateGUICmm();
+    void CmmSimType_changed(bool checked);
 
+    // Solver paramters 
+    //
     void UpdateGUISolver();
 
     void UpdateGUIJob();
@@ -214,20 +225,22 @@ private:
 
     QmitkStdMultiWidget* m_DisplayWidget;
 
-    QStandardItemModel* m_TableModelBasic;
+    QStandardItemModel* m_BasicParametersPage;
 
-    QStandardItemModel* m_TableModelCap;
-    QMenu* m_TableMenuCap;
+    QStandardItemModel*  m_InletOutletBCsPage;
+    QMenu* m_InletOutletBCs_caps_table;
 
-    QStandardItemModel* m_TableModelVar;
-    QMenu* m_TableMenuVar;
+    QStandardItemModel* m_WallPropertiesPage;
+    QMenu* m_WallPropertiesPage_variable_props;
 
     sv4guiCapBCWidget* m_CapBCWidget;
 
     sv4guiSplitBCWidget* m_SplitBCWidget;
 
-    QStandardItemModel* m_TableModelSolver;
-    std::map<int,std::string>  m_TableModelSolverSections;
+    QButtonGroup* m_CmmSimType_group;
+
+    QStandardItemModel* m_SolverParametersPage;
+    std::map<int,std::string>  m_SolverParametersPageSections;
 
     sv4guiMPIPreferences::MpiImplementation m_MpiImplementation;
 
@@ -248,6 +261,8 @@ private:
     void CheckSolver();
     void CheckMpi();
     // davep int GetStartTimeStep(const QString& runPath, const QString& jobPath, const int numProcs);
+
+    std::string m_CmmSimulationType;
 
 };
 

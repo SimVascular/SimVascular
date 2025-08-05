@@ -42,6 +42,7 @@ sv4guiSimJob::sv4guiSimJob(const sv4guiSimJob &other)
     , m_CapProps(other.m_CapProps)
     , m_WallProps(other.m_WallProps)
     , m_VarProps(other.m_VarProps)
+    , m_CmmProps(other.m_CmmProps)
     , m_SolverProps(other.m_SolverProps)
     , m_RunProps(other.m_RunProps)
 {
@@ -96,9 +97,11 @@ std::string sv4guiSimJob::GetCapProp(const std::string& capName, const std::stri
     return m_CapProps[capName][key];
 }
 
+// Wall properties
+//
 void sv4guiSimJob::SetWallProps(std::map<std::string,std::string> wallProps)
 {
-    m_WallProps=wallProps;
+    m_WallProps = wallProps;
 }
 
 std::map<std::string,std::string> sv4guiSimJob::GetWallProps()
@@ -114,6 +117,28 @@ void sv4guiSimJob::SetWallProp(const std::string& key, std::string value)
 std::string sv4guiSimJob::GetWallProp(const std::string& key)
 {
     return m_WallProps[key];
+}
+
+// Cmm properties
+//
+void sv4guiSimJob::SetCmmProps(std::map<std::string,std::string> cmmProps)
+{
+    m_CmmProps = cmmProps;
+}
+ 
+std::map<std::string,std::string> sv4guiSimJob::GetCmmProps() 
+{
+    return m_CmmProps;
+}
+ 
+void sv4guiSimJob::SetCmmProp(const std::string& key, std::string value)
+{
+    m_CmmProps[key]=value;
+}
+ 
+std::string sv4guiSimJob::GetCmmProp(const std::string& key)
+{
+    return m_CmmProps[key];
 }
 
 void sv4guiSimJob::SetVarProps(std::map<std::string,std::map<std::string,std::string> > varProps)
