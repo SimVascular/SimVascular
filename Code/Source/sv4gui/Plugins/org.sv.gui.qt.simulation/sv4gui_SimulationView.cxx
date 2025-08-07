@@ -218,9 +218,12 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
     // Basic Parameters toolbox page 
     //
     m_BasicParametersPage = new QStandardItemModel(this);
-    ui->BasicParameters_page->setModel(m_BasicParametersPage);
-    connect( ui->BasicParameters_page, SIGNAL(doubleClicked(const QModelIndex&)), this, 
+    ui->BasicParameters_table->setModel(m_BasicParametersPage);
+    connect( ui->BasicParameters_table, SIGNAL(doubleClicked(const QModelIndex&)), this, 
         SLOT(TableViewBasicDoubleClicked(const QModelIndex&)) );
+
+    connect(ui->BasicParameters_pressure_ic_set_file_name, SIGNAL(clicked()), this, SLOT(SetPressureICFile()));
+    connect(ui->BasicParameters_velocity_ic_set_file_name, SIGNAL(clicked()), this, SLOT(SetVelocityICFile()));
 
     // Inlet and outlet BCS toolbox page 
     //
@@ -595,11 +598,18 @@ void sv4guiSimulationView::UpdateGUIBasic()
 
     m_BasicParametersPage->clear();
 
+    // Set the table headers.
+    //
     QStringList basicHeaders;
     basicHeaders << "Parameter" << "Value";
     m_BasicParametersPage->setHorizontalHeaderLabels(basicHeaders);
     m_BasicParametersPage->setColumnCount(2);
 
+    // Set the table parameter names.
+    //
+    // Note: the names are used as the parameter name in 
+    // sv4guiSimJob->SetBasicProp() calls.
+    //
     QList<QStandardItem*> parList;
     QList<QStandardItem*> valueList;
     QString value;
@@ -608,26 +618,29 @@ void sv4guiSimulationView::UpdateGUIBasic()
     value = QString::fromStdString(job->GetBasicProp("Fluid Density"));
     valueList<<new QStandardItem(value == "" ? QString("1.06"):value);
 
-    parList<<new QStandardItem("Fluid Viscosity");
-    value=QString::fromStdString(job->GetBasicProp("Fluid Viscosity"));
+    parList << new QStandardItem("Fluid Viscosity");
+    value = QString::fromStdString(job->GetBasicProp("Fluid Viscosity"));
     valueList<<new QStandardItem(value==""?QString("0.04"):value);
 
     parList<<new QStandardItem("Initial Pressure");
-    value=QString::fromStdString(job->GetBasicProp("Initial Pressure"));
-    valueList<<new QStandardItem(value==""?QString("0"):value);
+    value = QString::fromStdString(job->GetBasicProp("Initial Pressure"));
+    valueList << new QStandardItem(value == "" ? QString("0"):value);
 
-    parList<<new QStandardItem("Initial Velocities");
-    value=QString::fromStdString(job->GetBasicProp("Initial Velocities"));
-    valueList<<new QStandardItem(value==""?QString("0.0001 0.0001 0.0001"):value);
+    parList << new QStandardItem("Initial Velocities");
+    value = QString::fromStdString(job->GetBasicProp("Initial Velocities"));
+    valueList << new QStandardItem(value == "" ? QString("0.0001 0.0001 0.0001"):value);
 
-    for(int i=0;i<parList.size();i++) {
+    for (int i = 0; i < parList.size(); i++) {
         parList[i]->setEditable(false);
         m_BasicParametersPage->setItem(i, 0, parList[i]);
         m_BasicParametersPage->setItem(i, 1, valueList[i]);
     }
 
-    ui->BasicParameters_page->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    ui->BasicParameters_page->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    ui->BasicParameters_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->BasicParameters_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+
+    ui->BasicParameters_pressure_ic_file_name->setText(QString::fromStdString(job->GetBasicProp("Pressure IC File")));
+    ui->BasicParameters_velocity_ic_file_name->setText(QString::fromStdString(job->GetBasicProp("Velocity IC File")));
 }
 
 //-----------------------------
@@ -643,7 +656,7 @@ void sv4guiSimulationView::TableViewBasicDoubleClicked(const QModelIndex& index)
         return;
     }
 
-    QModelIndexList indexesOfSelectedRows = ui->BasicParameters_page->selectionModel()->selectedRows();
+    QModelIndexList indexesOfSelectedRows = ui->BasicParameters_table->selectionModel()->selectedRows();
 
     if (indexesOfSelectedRows.size() < 1) {
         return;
@@ -1321,6 +1334,94 @@ void sv4guiSimulationView::SetVariableWallPropsFile()
   #endif
 
   ui->WallsProps_variable_props_file->setText(file_path);
+
+  UpdateSimJob();
+}
+
+//-------------------
+// SetPressureICFile
+//-------------------
+//
+void sv4guiSimulationView::SetPressureICFile()
+{
+  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  mitk::IPreferences* prefs;
+
+  if (prefService) {
+    prefs = prefService->GetSystemPreferences()->Node("/General");
+  } else {
+    prefs = nullptr; 
+  }
+
+  QString lastFileOpenPath = "";
+
+  if (prefs != nullptr) {
+    lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
+  }
+
+  if (lastFileOpenPath == "") {
+    lastFileOpenPath = QDir::homePath();
+  }
+
+  QString file_path = QFileDialog::getOpenFileName(ui->BasicParameters_pressure_ic_set_file_name, 
+      tr("Set pressure IC file"), lastFileOpenPath, tr("VTK VTU Files (*.vtu)"));
+
+  file_path = file_path.trimmed();
+
+  if (file_path.isEmpty()) {
+    return;
+  }
+
+  if (prefs != nullptr) {
+    prefs->Put("LastFileOpenPath", file_path.toStdString());
+    prefs->Flush();
+  }
+
+  ui->BasicParameters_pressure_ic_file_name->setText(file_path);
+
+  UpdateSimJob();
+}
+
+//-------------------
+// SetVelocityICFile
+//-------------------
+//
+void sv4guiSimulationView::SetVelocityICFile()
+{
+  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  mitk::IPreferences* prefs;
+
+  if (prefService) {
+    prefs = prefService->GetSystemPreferences()->Node("/General");
+  } else {
+    prefs = nullptr; 
+  }
+
+  QString lastFileOpenPath = "";
+
+  if (prefs != nullptr) {
+    lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
+  }
+
+  if (lastFileOpenPath == "") {
+    lastFileOpenPath = QDir::homePath();
+  }
+
+  QString file_path = QFileDialog::getOpenFileName(ui->BasicParameters_velocity_ic_set_file_name, 
+      tr("Set velocity IC file"), lastFileOpenPath, tr("VTK VTU Files (*.vtu)"));
+
+  file_path = file_path.trimmed();
+
+  if (file_path.isEmpty()) {
+    return;
+  }
+
+  if (prefs != nullptr) {
+    prefs->Put("LastFileOpenPath", file_path.toStdString());
+    prefs->Flush();
+  }
+
+  ui->BasicParameters_velocity_ic_file_name->setText(file_path);
 
   UpdateSimJob();
 }
@@ -2100,7 +2201,7 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
   mitk::StatusBar::GetInstance()->DisplayText("Creating svMultiPhysics simulation files");
   std::string job_msg;
 
-  sv4guiSimJob* job = CreateJob(job_msg);
+  sv4guiSimJob* job = CreateSimJob(job_msg);
 
   if (job == nullptr) {
     QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(job_msg));
@@ -2187,19 +2288,19 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
 }
 
 //-----------
-// CreateJob
+// CreateSimJob
 //-----------
 // Create a sv4guiSimJob object and set its parameter values from the GUI.
 //
 // The sv4guiSimJob object is used to write GUI values to the .sjb XML file
 // and create a solver.xml file.
 //
-sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidity)
+sv4guiSimJob* sv4guiSimulationView::CreateSimJob(std::string& msg, bool checkValidity)
 {
-  #define debug_CreateJob
-  #ifdef debug_CreateJob 
-  std::string pmsg("[sv4guiSimulationView::CreateJob] ");
-  std::cout << pmsg << "========== CreateJob ==========" << std::endl;
+  #define debug_CreateSimJob
+  #ifdef debug_CreateSimJob 
+  std::string pmsg("[sv4guiSimulationView::CreateSimJob] ");
+  std::cout << pmsg << "========== CreateSimJob ==========" << std::endl;
   std::cout << pmsg << "checkValidity: " << checkValidity << std::endl;
   #endif
 
@@ -2301,19 +2402,21 @@ bool sv4guiSimulationView::SetJobBasicProps(sv4guiSimJob* job, std::string& msg,
   std::cout << pmsg << "Set basic properties values ... " << std::endl;
   #endif
 
+  // Get values from the basic parameters table.
+  //
   for (int i = 0; i < m_BasicParametersPage->rowCount(); i++) {
     std::string par = m_BasicParametersPage->item(i,0)->text().toStdString();
     std::string values = m_BasicParametersPage->item(i,1)->text().trimmed().toStdString();
 
     if (checkValidity) {
-      if(par=="Fluid Density" || par=="Fluid Viscosity" || par=="Initial Pressure") {
+      if (par == "Fluid Density" || par == "Fluid Viscosity" || par == "Initial Pressure") {
         if(!IsDouble(values)) {
           msg = par + " value error: " + values;
           delete job;
           return false;
         }
 
-      } else if(par=="Initial Velocities") {
+      } else if (par == "Initial Velocities") {
         int count = 0;
 
         QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
@@ -2327,8 +2430,11 @@ bool sv4guiSimulationView::SetJobBasicProps(sv4guiSimJob* job, std::string& msg,
       }
     }
 
-  job->SetBasicProp(par,values);
+  job->SetBasicProp(par, values);
   }
+
+  job->SetBasicProp("Pressuee IC File", ui->BasicParameters_pressure_ic_file_name->text().toStdString());
+  job->SetBasicProp("Velocity IC File", ui->BasicParameters_velocity_ic_file_name->text().toStdString());
 
   return true;
 }
@@ -2535,7 +2641,7 @@ void sv4guiSimulationView::SaveToManager()
 
     std::string msg;
 
-    sv4guiSimJob* job = CreateJob(msg);
+    sv4guiSimJob* job = CreateSimJob(msg);
 
     if (job == nullptr) {
         QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(msg));
@@ -2616,9 +2722,9 @@ void sv4guiSimulationView::UpdateSimJob()
     }
 
     std::string msg = "";
-    sv4guiSimJob* newJob = CreateJob(msg,false);
+    sv4guiSimJob* newJob = CreateSimJob(msg,false);
     #ifdef debug_UpdateSimJob  
-    std::cout << pmsg << "CreateJob ... " << std::endl;
+    std::cout << pmsg << "CreateSimJob ... " << std::endl;
     std::cout << pmsg << "newJob: " << newJob << std::endl;
     #endif
 
@@ -2627,10 +2733,8 @@ void sv4guiSimulationView::UpdateSimJob()
     }
 
     #ifdef debug_UpdateSimJob  
-    std::cout << pmsg << "###############################################################" << std::endl;
     std::cout << pmsg << "newJob: " << newJob << std::endl;
     std::cout << pmsg << "newJob->GetCmmProp: " << newJob->GetCmmProp("Enable cmm simulation") << std::endl;
-    std::cout << pmsg << "###############################################################" << std::endl;
     #endif
 
     newJob->SetRunProp("Number of Processes",numProcsStr);

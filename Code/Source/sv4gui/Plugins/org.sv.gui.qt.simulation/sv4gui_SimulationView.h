@@ -88,20 +88,21 @@ public slots:
 
     void UpdateFaceListSelection();
 
+    // Basic parameters.
+    //
     void UpdateGUIBasic();
+    void SetPressureICFile();
+    void SetVelocityICFile();
 
     void TableViewBasicDoubleClicked(const QModelIndex& index);
-
     void TableCapSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
 
+    // Inlet/outlet BCs.
+    //
     void TableViewCapDoubleClicked(const QModelIndex& index);
-
     void TableViewCapContextMenuRequested(const QPoint& pos);
-
     void ShowCapBCWidget( bool checked = false );
-
     void SetDistalPressure( bool checked = false );
-
     void SetCapBC();
 
     void ShowSplitBCWidget(QString splitTarget);
@@ -181,7 +182,7 @@ public:
 
     virtual void OnPreferencesChanged(const mitk::IPreferences* prefs) override;
 
-    sv4guiSimJob* CreateJob(std::string& msg, bool checkValidity = true);
+    sv4guiSimJob* CreateSimJob(std::string& msg, bool checkValidity = true);
 
     bool SetJobBasicProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
     bool SetJobCapProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
