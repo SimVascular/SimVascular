@@ -120,15 +120,13 @@ public slots:
 
     void SetVariableWallPropsFile();
 
-    //void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
-    //void TableViewVarContextMenuRequested(const QPoint& pos);
-    //void SetVarE( bool checked = false );
-    //void SetVarThickness( bool checked = false );
-
     // Coupled Momentum Method
     //
     void UpdateGUICmm();
     void CmmSimType_changed(bool checked);
+    void CmmSim_enable_cmm_simulation_changed(bool checked);
+    void SetCmmSimWallFile();
+    void SetCmmSimTractionFile();
 
     // Solver paramters 
     //
@@ -184,6 +182,12 @@ public:
     virtual void OnPreferencesChanged(const mitk::IPreferences* prefs) override;
 
     sv4guiSimJob* CreateJob(std::string& msg, bool checkValidity = true);
+
+    bool SetJobBasicProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
+    bool SetJobCapProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
+    void SetJobCmmProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
+    bool SetJobSolverProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
+    void SetJobWallProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
 
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
 

@@ -325,6 +325,7 @@ void sv4guiMitkSimJobIO::Write()
   #define debug_Write
   #ifdef debug_Write
   std::string dmsg("[sv4guiMitkSimJobIO::Write] ");
+  std::cout << dmsg << std::endl;
   std::cout << dmsg << "========== Write ==========" << std::endl;
   #endif
 
@@ -416,31 +417,6 @@ void sv4guiMitkSimJobIO::Write()
       it++;
     }
 
-/* [davep] not used ? 
-    auto vpElement = document.NewElement("var_props");
-    jobElement->LinkEndChild(vpElement);
-    std::map<std::string, std::map<std::string, std::string> > varProps=job->GetVarProps();
-    itit = varProps.begin();
-
-    while(itit != varProps.end()) {
-      auto felement = document.NewElement("face");
-      vpElement->LinkEndChild(felement);
-      felement->SetAttribute("name", itit->first.c_str());
-      std::map<std::string, std::string> props=itit->second;
-      it = props.begin();
-
-      while(it != props.end()) {
-        auto element = document.NewElement("prop");
-        felement->LinkEndChild(element);
-        element->SetAttribute("key", it->first.c_str());
-        element->SetAttribute("value", it->second.c_str());
-        it++;
-      }
-
-      itit++;
-    }
-*/
-
     // Write Coupled Momentum Method data.
     //
     #ifdef debug_Write
@@ -457,7 +433,7 @@ void sv4guiMitkSimJobIO::Write()
       element->SetAttribute("key", it->first.c_str());
       element->SetAttribute("value", it->second.c_str());
       #ifdef debug_Write
-      std::cout << dmsg << it->first << ": " << it->second << std::endl;
+      std::cout << dmsg << it->first << ": '" << it->second << "'" << std::endl;
       #endif
       it++;      
     }       

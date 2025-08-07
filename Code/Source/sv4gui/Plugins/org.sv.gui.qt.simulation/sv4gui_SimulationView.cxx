@@ -161,9 +161,9 @@ sv4guiSimulationView::~sv4guiSimulationView()
 // [TODO] It is not clear why this is needed, most other tools don't
 // have this method.
 //
-void sv4guiSimulationView::EnableConnection(bool able)
+void sv4guiSimulationView::EnableConnection(bool enable)
 {
-    if (able && !m_ConnectionEnabled) {
+    if (enable && !m_ConnectionEnabled) {
         connect(m_BasicParametersPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         connect(m_InletOutletBCsPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
 
@@ -177,22 +177,24 @@ void sv4guiSimulationView::EnableConnection(bool able)
         connect(m_SolverParametersPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
         connect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
-        m_ConnectionEnabled=able;
+        m_ConnectionEnabled = enable;
     }
 
-    if (!able && m_ConnectionEnabled) {
+    if (!enable && m_ConnectionEnabled) {
         disconnect(m_BasicParametersPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         disconnect(m_InletOutletBCsPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+
         disconnect(ui->WallProps_type,SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSimJob( )));
         disconnect(ui->WallProps_thickness, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         disconnect(ui->WallProps_elastic_modulus, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         disconnect(ui->WallProps_poisson_ratio, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         disconnect(ui->WallProps_density, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+
         //disconnect(m_WallPropsPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         disconnect(m_SolverParametersPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         disconnect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
         disconnect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
-        m_ConnectionEnabled=able;
+        m_ConnectionEnabled = enable;
     }
 }
 
@@ -231,25 +233,26 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
         SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) ), this, 
         SLOT( TableCapSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
-    connect( ui->InletOutletBCs_page, SIGNAL(doubleClicked(const QModelIndex&))
-             , this, SLOT(TableViewCapDoubleClicked(const QModelIndex&)) );
+    connect( ui->InletOutletBCs_page, SIGNAL(doubleClicked(const QModelIndex&)), this, 
+        SLOT(TableViewCapDoubleClicked(const QModelIndex&)) );
 
-    connect( ui->InletOutletBCs_page, SIGNAL(customContextMenuRequested(const QPoint&))
-             , this, SLOT(TableViewCapContextMenuRequested(const QPoint&)) );
+    connect( ui->InletOutletBCs_page, SIGNAL(customContextMenuRequested(const QPoint&)), this, 
+        SLOT(TableViewCapContextMenuRequested(const QPoint&)) );
 
-    // Table listing mesh inlet/outlet faces.
+    // Table listing mesh inlet/outlet faces (aka caps).
+    //
     m_InletOutletBCs_caps_table = new QMenu(ui->InletOutletBCs_page);
     QAction* setBCAction = m_InletOutletBCs_caps_table->addAction("Set BC");
     QAction* setPressureAction = m_InletOutletBCs_caps_table->addAction("Set Distal Pressure");
     connect( setBCAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowCapBCWidget(bool) ) );
     connect( setPressureAction, SIGNAL( triggered(bool) ) , this, SLOT( SetDistalPressure(bool) ) );
 
-    QAction* splitBCRAction=m_InletOutletBCs_caps_table->addAction("Split Resistance");
-    QAction* splitBCCAction=m_InletOutletBCs_caps_table->addAction("Split Capacitance");
+    QAction* splitBCRAction = m_InletOutletBCs_caps_table->addAction("Split Resistance");
+    QAction* splitBCCAction = m_InletOutletBCs_caps_table->addAction("Split Capacitance");
     connect( splitBCRAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowSplitBCWidgetR(bool) ) );
     connect( splitBCCAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowSplitBCWidgetC(bool) ) );
 
-    m_CapBCWidget=new sv4guiCapBCWidget();
+    m_CapBCWidget = new sv4guiCapBCWidget();
     m_CapBCWidget->move(400,400);
     m_CapBCWidget->hide();
     m_CapBCWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
@@ -275,39 +278,18 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
     connect(ui->WallsProps_set_variable_props_file, SIGNAL(clicked()), this, SLOT(SetVariableWallPropsFile()));
     ui->WallsProps_variable_props_file->setText("none");
 
-/* [davep] not used
-    ui->widgetConstant->hide();
-    ui->widgetVariable->hide();
-
-    m_WallPropsPage = new QStandardItemModel(this);
-    ui->WallProps_variable_props->setModel(m_WallPropsPage);
-
-    connect( ui->WallProps_variable_props->selectionModel(), 
-        SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) ), this, 
-        SLOT( TableVarSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
-
-    connect( ui->WallProps_variable_props, SIGNAL(customContextMenuRequested(const QPoint&))
-             , this, SLOT(TableViewVarContextMenuRequested(const QPoint&)) );
-
-    m_WallPropsPage_variable_props = new QMenu(ui->WallProps_variable_props);
-    QAction* setVarThicknessAction = m_WallPropsPage_variable_props->addAction("Set Thickness");
-    QAction* setVarEAction = m_WallPropsPage_variable_props->addAction("Set Elastic Modulus ");
-    connect( setVarThicknessAction, SIGNAL( triggered(bool) ) , this, SLOT( SetVarThickness(bool) ) );
-    connect( setVarEAction, SIGNAL( triggered(bool) ) , this, SLOT( SetVarE(bool) ) );
-*/
-
     // Coupled Momentum Method toolbox page
     //
-    /* buttonGroup does not work for some reason.
-    ui->buttonGroup->setId(ui->CmmSimType_cmm, 0);
-    ui->buttonGroup->setId(ui->CmmSimType_inflate, 1);
-    ui->buttonGroup->setId(ui->CmmSimType_prestress, 2);
-    connect(ui->buttonGroup, SIGNAL(buttonClicked(int)), this, SLOT(CmmSimTypeChanged_group(int)));
-    */
-    connect(ui->CmmSimType_cmm, SIGNAL(toggled(bool)), this, SLOT(CmmSimType_changed(bool)));
-    ui->CmmSimType_cmm->setChecked(true);
+    connect(ui->CmmSim_enable_cmm_simulation, SIGNAL(toggled(bool)), this, SLOT(UpdateSimJob()));
+    //connect(ui->CmmSim_enable_cmm_simulation, SIGNAL(toggled(bool)), this, SLOT(CmmSim_enable_cmm_simulation_changed(bool)));
+
     connect(ui->CmmSimType_inflate, SIGNAL(toggled(bool)), this, SLOT(CmmSimType_changed(bool)));
+    //ui->CmmSimType_inflate->setChecked(true);
     connect(ui->CmmSimType_prestress, SIGNAL(toggled(bool)), this, SLOT(CmmSimType_changed(bool)));
+
+    connect(ui->CmmSim_Initialize, SIGNAL(toggled(bool)), this, SLOT(UpdateSimJob()));
+    connect(ui->CmmSim_WallFile_set_file_name, SIGNAL(clicked()), this, SLOT(SetCmmSimWallFile()));
+    connect(ui->CmmSim_TractionFile_set_file_name, SIGNAL(clicked()), this, SLOT(SetCmmSimTractionFile()));
 
     // Solver Parameters toolbox page
     //
@@ -432,12 +414,9 @@ void sv4guiSimulationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*p
     m_JobNode=jobNode;
     m_MitkJob=mitkJob;
 
-    if(m_Model==nullptr)
-    {
+    if (m_Model == nullptr) {
         EnableTool(false);
-    }
-    else
-    {
+    } else {
         EnableTool(true);
         AddObservers();
     }
@@ -448,8 +427,7 @@ void sv4guiSimulationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*p
     ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
     ui->checkBoxShowModel->setChecked(false);
 
-    if(m_ModelNode.IsNotNull())
-    {
+    if(m_ModelNode.IsNotNull()) {
         ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
         if(m_ModelNode->IsVisible(nullptr))
             ui->checkBoxShowModel->setChecked(true);
@@ -597,18 +575,22 @@ void sv4guiSimulationView::ClearAll()
 //----------------
 // UpdateGUIBasic
 //----------------
+// Update the GUI basic parameters with the values
+// read in from a .sjb file.
+//
+// If there no sv4guiSimJob had been defined then it seems
+// that default values are set here.
 //
 void sv4guiSimulationView::UpdateGUIBasic()
 {
-    if(!m_MitkJob) {
+    if (!m_MitkJob) {
         return;
     }
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
+    sv4guiSimJob* job = m_MitkJob->GetSimJob();
 
-    if(job==nullptr)
-    {
-        job=new sv4guiSimJob();
+    if (job == nullptr) {
+        job = new sv4guiSimJob();
     }
 
     m_BasicParametersPage->clear();
@@ -622,9 +604,9 @@ void sv4guiSimulationView::UpdateGUIBasic()
     QList<QStandardItem*> valueList;
     QString value;
 
-    parList<<new QStandardItem("Fluid Density");
-    value=QString::fromStdString(job->GetBasicProp("Fluid Density"));
-    valueList<<new QStandardItem(value==""?QString("1.06"):value);
+    parList << new QStandardItem("Fluid Density");
+    value = QString::fromStdString(job->GetBasicProp("Fluid Density"));
+    valueList<<new QStandardItem(value == "" ? QString("1.06"):value);
 
     parList<<new QStandardItem("Fluid Viscosity");
     value=QString::fromStdString(job->GetBasicProp("Fluid Viscosity"));
@@ -651,23 +633,26 @@ void sv4guiSimulationView::UpdateGUIBasic()
 //-----------------------------
 // TableViewBasicDoubleClicked
 //-----------------------------
+// Process input of basic parameter values.
+//
+// Parameters (even IC files) are displayed in a table.
 //
 void sv4guiSimulationView::TableViewBasicDoubleClicked(const QModelIndex& index)
 {
-    if(index.column()!=0) {
+    if (index.column() != 0) {
         return;
     }
 
     QModelIndexList indexesOfSelectedRows = ui->BasicParameters_page->selectionModel()->selectedRows();
 
-    if(indexesOfSelectedRows.size() < 1) {
+    if (indexesOfSelectedRows.size() < 1) {
         return;
     }
 
-    int row=indexesOfSelectedRows[0].row();
-    QStandardItem* itemName= m_BasicParametersPage->item(row,0);
+    int row = indexesOfSelectedRows[0].row();
+    QStandardItem* itemName = m_BasicParametersPage->item(row,0);
 
-    if(itemName->text()!="IC File") {
+    if (itemName->text() != "IC File") {
         return;
     }
 
@@ -677,35 +662,32 @@ void sv4guiSimulationView::TableViewBasicDoubleClicked(const QModelIndex& index)
     mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     mitk::IPreferences* prefs;
 
-    if (prefService)
-    {
+    if (prefService) {
         prefs = prefService->GetSystemPreferences()->Node("/General");
-    }
-    else
-    {
+    } else {
         prefs = nullptr;
     }
 
-    if(lastFileOpenPath=="" || !QFile(lastFileOpenPath).exists())
-    {
-        if(prefs != nullptr) 
-        {
+    if(lastFileOpenPath=="" || !QFile(lastFileOpenPath).exists()) {
+        if(prefs != nullptr) {
             lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
         }
-        if(lastFileOpenPath=="")
+        if(lastFileOpenPath=="") {
             lastFileOpenPath=QDir::homePath();
+        }
     }
 
     QString icFilePath = QFileDialog::getOpenFileName(m_Parent, tr("Select IC File (Restart)")
                                                             , lastFileOpenPath
                                                             , tr("All Files (*)"));
 
-    icFilePath=icFilePath.trimmed();
-    if (icFilePath.isEmpty())
-        return;
+    icFilePath = icFilePath.trimmed();
 
-    if(prefs != nullptr) 
-     {
+    if (icFilePath.isEmpty()) {
+        return;
+    }
+
+    if(prefs != nullptr) {
          prefs->Put("LastFileOpenPath", icFilePath.toStdString());
          prefs->Flush();
      }
@@ -719,12 +701,15 @@ void sv4guiSimulationView::TableViewBasicDoubleClicked(const QModelIndex& index)
 //
 void sv4guiSimulationView::UpdateFaceListSelection()
 {
-    if(!m_Model)
+    if(!m_Model) {
         return;
+    }
 
-    sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==nullptr) return;
+    sv4guiModelElement* modelElement = m_Model->GetModelElement();
 
+    if (modelElement == nullptr) {
+        return;
+    }
 
     //for InletOutletBCs_page
     disconnect( ui->InletOutletBCs_page->selectionModel()
@@ -736,13 +721,11 @@ void sv4guiSimulationView::UpdateFaceListSelection()
 
     int count=m_InletOutletBCsPage->rowCount();
 
-    for(int i=0;i<count;i++)
-    {
+    for(int i=0;i<count;i++) {
         QStandardItem* itemName= m_InletOutletBCsPage->item(i,0);
         std::string name=itemName->text().toStdString();
 
-        if(modelElement->IsFaceSelected(name))
-        {
+        if(modelElement->IsFaceSelected(name)) {
             QModelIndex mIndex=m_InletOutletBCsPage->index(i,1);
             ui->InletOutletBCs_page->selectionModel()->select(mIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
         }
@@ -753,60 +736,37 @@ void sv4guiSimulationView::UpdateFaceListSelection()
              , this
              , SLOT( TableCapSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
-
-    //for WallProps_variable_props
-
-/* [davep] not used
-    disconnect( ui->WallProps_variable_props->selectionModel()
-                , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
-                , this
-                , SLOT( TableVarSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
-
-    ui->WallProps_variable_props->clearSelection();
-
-    count=m_WallPropsPage->rowCount();
-
-    for(int i=0;i<count;i++)
-    {
-        QStandardItem* itemName= m_WallPropsPage->item(i,0);
-        std::string name=itemName->text().toStdString();
-
-        if(modelElement->IsFaceSelected(name))
-        {
-            QModelIndex mIndex=m_WallPropsPage->index(i,1);
-            ui->WallProps_variable_props->selectionModel()->select(mIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
-        }
-    }
-
-    connect( ui->WallProps_variable_props->selectionModel()
-             , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
-             , this
-             , SLOT( TableVarSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
-*/
 }
 
+//--------------------------
+// TableCapSelectionChanged
+//--------------------------
+//
 void sv4guiSimulationView::TableCapSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
 {
     mitk::StatusBar::GetInstance()->DisplayText("");
 
-    if(!m_Model)
+    if (!m_Model) {
         return;
+    }
 
-    sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==nullptr) return;
+    sv4guiModelElement* modelElement = m_Model->GetModelElement();
+
+    if (modelElement == nullptr) {
+        return;
+    }
 
     QModelIndexList indexesOfSelectedRows = ui->InletOutletBCs_page->selectionModel()->selectedRows();
 
     modelElement->ClearFaceSelection();
 
-    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-         ; it != indexesOfSelectedRows.end(); it++)
-    {
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin(); 
+         it != indexesOfSelectedRows.end(); it++) {
         int row=(*it).row();
         std::string name= m_InletOutletBCsPage->item(row,0)->text().toStdString();
         modelElement->SelectFace(name);
 
-        if(it==indexesOfSelectedRows.begin()){
+        if (it==indexesOfSelectedRows.begin()) {
             double faceArea=modelElement->GetFaceArea(modelElement->GetFaceID(name));
             QString info="Face "+QString::fromStdString(name)+": Area="+QString::number(faceArea);
             mitk::StatusBar::GetInstance()->DisplayText(info.toStdString().c_str());
@@ -819,8 +779,9 @@ void sv4guiSimulationView::TableCapSelectionChanged( const QItemSelection & /*se
 
 void sv4guiSimulationView::TableViewCapDoubleClicked(const QModelIndex& index)
 {
-    if(index.column()==0)
+    if(index.column()==0) {
         ShowCapBCWidget();
+    }
 }
 
 void sv4guiSimulationView::TableViewCapContextMenuRequested( const QPoint & pos )
@@ -835,20 +796,20 @@ void sv4guiSimulationView::TableViewCapContextMenuRequested( const QPoint & pos 
 void sv4guiSimulationView::ShowCapBCWidget(bool)
 {
     QModelIndexList indexesOfSelectedRows = ui->InletOutletBCs_page->selectionModel()->selectedRows();
-    if(indexesOfSelectedRows.size() < 1)
-    {
+
+    if (indexesOfSelectedRows.size() < 1) {
         return;
     }
 
     std::map<std::string,std::string> props;
     std::string capName;
+    int row = indexesOfSelectedRows[0].row();
 
-    int row=indexesOfSelectedRows[0].row();
-
-    if(indexesOfSelectedRows.size() == 1)
+    if(indexesOfSelectedRows.size() == 1) {
         capName=m_InletOutletBCsPage->item(row,0)->text().toStdString();
-    else
+    } else {
         capName="multiple faces";
+    }
 
     props["BC Type"]=m_InletOutletBCsPage->item(row,1)->text().toStdString();
     props["Values"]=m_InletOutletBCsPage->item(row,2)->text().toStdString();
@@ -872,11 +833,15 @@ void sv4guiSimulationView::ShowCapBCWidget(bool)
     m_CapBCWidget->show();
 }
 
+//-------------------
+// SetDistalPressure
+//-------------------
+//
 void sv4guiSimulationView::SetDistalPressure(bool)
 {
     QModelIndexList indexesOfSelectedRows = ui->InletOutletBCs_page->selectionModel()->selectedRows();
-    if(indexesOfSelectedRows.size() < 1)
-    {
+
+    if(indexesOfSelectedRows.size() < 1) {
         return;
     }
 
@@ -884,12 +849,12 @@ void sv4guiSimulationView::SetDistalPressure(bool)
     double pressure=QInputDialog::getDouble(m_Parent, "Set Distal Pressure", "Distal Pressure:", 0.0, 0, 1000000, 2, &ok);
     QString str=QString::number(pressure);
 
-    if(!ok)
+    if(!ok) {
         return;
+    }
 
-    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-         ; it != indexesOfSelectedRows.end(); it++)
-    {
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin(); 
+         it != indexesOfSelectedRows.end(); it++) {
         int row=(*it).row();
 
         QStandardItem* itemBCType= m_InletOutletBCsPage->item(row,1);
@@ -901,11 +866,15 @@ void sv4guiSimulationView::SetDistalPressure(bool)
     }
 }
 
+//----------
+// SetCapBC
+//----------
+//
 void  sv4guiSimulationView::SetCapBC()
 {
     QModelIndexList indexesOfSelectedRows = ui->InletOutletBCs_page->selectionModel()->selectedRows();
-    if(indexesOfSelectedRows.size() < 1)
-    {
+
+    if(indexesOfSelectedRows.size() < 1) {
         return;
     }
 
@@ -948,11 +917,15 @@ void  sv4guiSimulationView::SetCapBC()
     }
 }
 
+//-------------------
+// ShowSplitBCWidget
+//-------------------
+//
 void sv4guiSimulationView::ShowSplitBCWidget(QString splitTarget)
 {
     QModelIndexList indexesOfSelectedRows = ui->InletOutletBCs_page->selectionModel()->selectedRows();
-    if(indexesOfSelectedRows.size() < 1)
-    {
+
+    if(indexesOfSelectedRows.size() < 1) {
         return;
     }
 
@@ -999,18 +972,22 @@ void sv4guiSimulationView::ShowSplitBCWidgetC(bool)
 
 void  sv4guiSimulationView::SplitCapBC()
 {
-    if(!m_MitkJob)
+    if(!m_MitkJob) {
         return;
+    }
 
-    if(!m_Model)
+    if(!m_Model) {
         return;
+    }
 
-    if(!m_SplitBCWidget)
+    if(!m_SplitBCWidget) {
         return;
+    }
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==nullptr)
+    if(modelElement==nullptr) {
         return;
+    }
 
     QModelIndexList indexesOfSelectedRows = ui->InletOutletBCs_page->selectionModel()->selectedRows();
     if(indexesOfSelectedRows.size() < 1)
@@ -1122,20 +1099,28 @@ void  sv4guiSimulationView::SplitCapBC()
     }
 }
 
+//--------------
+// UpdateGUICap
+//--------------
+//
 void sv4guiSimulationView::UpdateGUICap()
 {
-    if(!m_MitkJob)
+    if(!m_MitkJob) {
         return;
+    }
 
-    if(!m_Model)
+    if(!m_Model) {
         return;
+    }
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==nullptr) return;
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
-    if(job==nullptr)
-    {
+    if(modelElement == nullptr) {
+        return;
+    }
+
+    sv4guiSimJob* job = m_MitkJob->GetSimJob();
+    if(job==nullptr) {
         job=new sv4guiSimJob();
     }
 
@@ -1254,6 +1239,7 @@ void sv4guiSimulationView::UpdateGUICap()
 //--------------------------
 // SetVariableWallPropsFile
 //--------------------------
+// Set the name of the VTK file used for variable wall properties.
 //
 void sv4guiSimulationView::SetVariableWallPropsFile()
 {
@@ -1339,13 +1325,114 @@ void sv4guiSimulationView::SetVariableWallPropsFile()
   UpdateSimJob();
 }
 
+//-------------------
+// SetCmmSimWallFile 
+//-------------------
+// Set the name of the VTK file used for a shell wall.
+//
+void sv4guiSimulationView::SetCmmSimWallFile()
+{
+  #define debug_SetCmmSimWallFile
+  #ifdef debug_SetCmmSimWallFile
+  std::string msg("[sv4guiSimulationView::SetCmmSimWallFile] ");
+  std::cout << msg << "========== SetCmmSimWallFile ==========" << std::endl;
+  #endif
+
+  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  mitk::IPreferences* prefs;
+
+  if (prefService) {
+    prefs = prefService->GetSystemPreferences()->Node("/General");
+  } else {
+    prefs = nullptr; 
+  }
+
+  QString lastFileOpenPath = "";
+
+  if (prefs != nullptr) {
+    lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
+  }
+
+  if (lastFileOpenPath == "") {
+    lastFileOpenPath = QDir::homePath();
+  }
+
+  QString file_path = QFileDialog::getOpenFileName(ui->CmmSim_WallFile_set_file_name, 
+      tr("Set wall shell file"), lastFileOpenPath, tr("VTK VTP Files (*.vtp)"));
+
+  file_path = file_path.trimmed();
+
+  if (file_path.isEmpty()) {
+    return;
+  }
+
+  if (prefs != nullptr) {
+    prefs->Put("LastFileOpenPath", file_path.toStdString());
+    prefs->Flush();
+  }
+
+  ui->CmmSim_WallFile_file_name->setText(file_path);
+
+  UpdateSimJob();
+}
+
+//-----------------------
+// SetCmmSimTractionFile 
+//-----------------------
+// Set the name of the VTK file used for traction values.
+//
+void sv4guiSimulationView::SetCmmSimTractionFile()
+{
+  #define debug_SetCmmSimTractionFile
+  #ifdef debug_SetCmmSimTractionFile
+  std::string msg("[sv4guiSimulationView::SetCmmSimTractionFile] ");
+  std::cout << msg << "========== SetCmmSimTractionFile ==========" << std::endl;
+  #endif
+
+  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  mitk::IPreferences* prefs;
+
+  if (prefService) {
+    prefs = prefService->GetSystemPreferences()->Node("/General");
+  } else {
+    prefs = nullptr; 
+  }
+
+  QString lastFileOpenPath = "";
+
+  if (prefs != nullptr) {
+    lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
+  }
+
+  if (lastFileOpenPath == "") {
+    lastFileOpenPath = QDir::homePath();
+  }
+
+  QString file_path = QFileDialog::getOpenFileName(ui->CmmSim_TractionFile_set_file_name, 
+      tr("Set traction values file"), lastFileOpenPath, tr("VTK VTU Files (*.vtU)"));
+
+  file_path = file_path.trimmed();
+
+  if (file_path.isEmpty()) {
+    return;
+  }
+
+  if (prefs != nullptr) {
+    prefs->Put("LastFileOpenPath", file_path.toStdString());
+    prefs->Flush();
+  }
+
+  ui->CmmSim_TractionFile_file_name->setText(file_path);
+
+  UpdateSimJob();
+}
+
 //--------------------------
 // WallTypeSelectionChanged
 //--------------------------
 //
 void sv4guiSimulationView::WallTypeSelectionChanged(int index)
 {
-
     switch(index) {
 
       // Rigid
@@ -1374,95 +1461,10 @@ void sv4guiSimulationView::WallTypeSelectionChanged(int index)
     }
 }
 
-//--------------------------
-// TableVarSelectionChanged
-//--------------------------
-//
-#ifdef use_TableVarSelectionChanged
-void sv4guiSimulationView::TableVarSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
-{
-    if(!m_Model)
-        return;
-
-    sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==nullptr) return;
-
-    QModelIndexList indexesOfSelectedRows = ui->WallProps_variable_props->selectionModel()->selectedRows();
-
-    modelElement->ClearFaceSelection();
-
-    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-         ; it != indexesOfSelectedRows.end(); it++)
-    {
-        int row=(*it).row();
-        std::string name= m_WallPropsPage->item(row,0)->text().toStdString();
-        modelElement->SelectFace(name);
-    }
-
-    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
-}
-
-void sv4guiSimulationView::TableViewVarContextMenuRequested( const QPoint & pos )
-{
-    //m_WallPropsPage_variable_props->popup(QCursor::pos());
-}
-#endif
-
-//-----------------
-// SetVarThickness
-//-----------------
-//
-#ifdef use_SetVarThickness
-void sv4guiSimulationView::SetVarThickness(bool)
-{
-    QModelIndexList indexesOfSelectedRows = ui->WallProps_variable_props->selectionModel()->selectedRows();
-    if(indexesOfSelectedRows.size() < 1)
-    {
-        return;
-    }
-
-    bool ok=false;
-    QString thickness=QInputDialog::getText(m_Parent, "Set Thickness", "Thickness:", QLineEdit::Normal, "", &ok);
-
-    if(!ok)
-        return;
-
-    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-         ; it != indexesOfSelectedRows.end(); it++)
-    {
-        int row=(*it).row();
-        m_WallPropsPage->item(row,2)->setText(thickness);
-    }
-}
-#endif
-
-#ifdef use_SetVarE
-void sv4guiSimulationView::SetVarE(bool)
-{
-    QModelIndexList indexesOfSelectedRows = ui->WallProps_variable_props->selectionModel()->selectedRows();
-    if(indexesOfSelectedRows.size() < 1)
-    {
-        return;
-    }
-
-    bool ok=false;
-    QString modulus=QInputDialog::getText(m_Parent, "Set Elastic Modulus", "Elastic Modulus:", QLineEdit::Normal, "", &ok);
-
-    if(!ok)
-        return;
-
-    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-         ; it != indexesOfSelectedRows.end(); it++)
-    {
-        int row=(*it).row();
-        m_WallPropsPage->item(row,3)->setText(modulus);
-    }
-}
-#endif
-
 //---------------
 // UpdateGUIWall
 //---------------
+// Update the GUI controls for the Wall Properties tab from a .sjb file.
 //
 void sv4guiSimulationView::UpdateGUIWall()
 {
@@ -1480,7 +1482,7 @@ void sv4guiSimulationView::UpdateGUIWall()
     if (job->GetWallProp("Type") == "rigid") {
         ui->WallProps_type->setCurrentIndex(0);
 
-    } else if(job->GetWallProp("Type") == "cmm") {
+    } else if(job->GetWallProp("Type") == "constant") {
         ui->WallProps_type->setCurrentIndex(1);
 
     } else if(job->GetWallProp("Type")=="variable") {
@@ -1511,59 +1513,12 @@ void sv4guiSimulationView::UpdateGUIWall()
     if (modelElement == nullptr) {
         return;
     }
-
-/* [davep] not used
-    m_WallPropsPage->clear();
-
-    QStringList varHeaders;
-    varHeaders << "Name" << "Type" << "Thickness" << "E. Modulus";
-    m_WallPropsPage->setHorizontalHeaderLabels(varHeaders);
-    m_WallPropsPage->setColumnCount(4);
-
-    std::vector<sv4guiModelElement::svFace*> faces = modelElement->GetFaces();
-    int rowIndex = -1;
-
-    for(int i=0;i<faces.size();i++)
-    {
-        sv4guiModelElement::svFace* face=faces[i];
-
-        if(face==nullptr ) {
-            continue;
-        }
-
-        rowIndex++;
-        m_WallPropsPage->insertRow(rowIndex);
-
-        QStandardItem* item;
-
-        item= new QStandardItem(QString::fromStdString(face->name));
-        item->setEditable(false);
-        m_WallPropsPage->setItem(rowIndex, 0, item);
-
-        item= new QStandardItem(QString::fromStdString(face->type));
-        item->setEditable(false);
-        m_WallPropsPage->setItem(rowIndex, 1, item);
-
-        item= new QStandardItem(QString::fromStdString(job->GetVarProp(face->name,"Thickness")));
-        m_WallPropsPage->setItem(rowIndex, 2, item);
-
-        item= new QStandardItem(QString::fromStdString(job->GetVarProp(face->name,"Elastic Modulus")));
-        m_WallPropsPage->setItem(rowIndex, 3, item);
-    }
-
-    ui->WallProps_variable_props->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    ui->WallProps_variable_props->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
-    ui->WallProps_variable_props->horizontalHeader()->resizeSection(1,60);
-    ui->WallProps_variable_props->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
-    ui->WallProps_variable_props->horizontalHeader()->resizeSection(2,80);
-    ui->WallProps_variable_props->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
-*/
 }
 
 //--------------
 // UpdateGUICmm
 //--------------
-// Update the GUI controls for the Coupled Momentum Method tab.
+// Update the GUI controls for the Coupled Momentum Method tab from a .sjb file.
 //
 void sv4guiSimulationView::UpdateGUICmm()
 {
@@ -1577,13 +1532,33 @@ void sv4guiSimulationView::UpdateGUICmm()
         job = new sv4guiSimJob();
     }
 
-    if (job->GetCmmProp("Simulation Type") == "cmm") {
-        ui->CmmSimType_cmm->setChecked(true);
-    } else if (job->GetCmmProp("Simulation Type") == "inflate") {
+    if (job->GetCmmProp("Simulation Type") == "inflate") {
         ui->CmmSimType_inflate->setChecked(true);
     } else if (job->GetCmmProp("Simulation Type") == "prestress") {
         ui->CmmSimType_prestress->setChecked(true);
     }
+
+    ui->CmmSim_enable_cmm_simulation->setChecked(job->GetCmmProp("Enable cmm simulation") == "true");
+
+    ui->CmmSim_Initialize->setChecked(job->GetCmmProp("Initialize simulation") == "true");
+    ui->CmmSim_WallFile_file_name->setText(QString::fromStdString(job->GetCmmProp("Wall file")));
+    ui->CmmSim_TractionFile_file_name->setText(QString::fromStdString(job->GetCmmProp("Traction file")));
+}
+
+//--------------------------------------
+// CmmSim_enable_cmm_simulation_changed 
+//--------------------------------------
+//
+void sv4guiSimulationView::CmmSim_enable_cmm_simulation_changed(bool checked)
+{
+  #define debug_CmmSim_enable_cmm_simulation_changed
+  #ifdef debug_CmmSim_enable_cmm_simulation_changed
+  std::string msg("[sv4guiSimulationView::CmmSim_enable_cmm_simulation_changed] ");
+  std::cout << msg << "========== CmmSim_enable_cmm_simulation_changed ==========" << std::endl;
+  std::cout << msg << "checked: " << checked << std::endl;
+  #endif
+
+  UpdateSimJob();
 }
 
 //--------------------
@@ -1597,31 +1572,30 @@ void sv4guiSimulationView::UpdateGUICmm()
 //
 void sv4guiSimulationView::CmmSimType_changed(bool checked)
 {
-  std::cout << "[sv4guiSimulationView::CmmSimType_cmm_changed] ========== CmmSimType_cmm_changed ==========" << std::endl;
+  #define debug_CmmSimType_changed 
+  #ifdef debug_CmmSimType_changed 
+  std::string msg("[sv4guiSimulationView::CmmSimType_changed] ");
+  std::cout << msg << "========== CmmSimType_cmm_changed ==========" << std::endl;
+  #endif
+
   auto sender = qobject_cast<QRadioButton*>(QObject::sender());
-  std::cout << "[sv4guiSimulationView::CmmSimType_cmm_changed] sender: '" << sender->text() << "'" << std::endl;
   int page_index = 0;
   
-  if (sender->text() == ui->CmmSimType_cmm->text()) {
-    std::cout << "[sv4guiSimulationView::CmmSimType_cmm_changed] #### select cmm " << std::endl;
-  }
-
-  else if (sender->text() == ui->CmmSimType_inflate->text()) {
-    std::cout << "[sv4guiSimulationView::CmmSimType_cmm_changed] #### select inflate " << std::endl;
+  if (sender->text() == ui->CmmSimType_inflate->text()) {
     page_index = 1;
-  }
 
-  else if (sender->text() == ui->CmmSimType_prestress->text()) {
-    std::cout << "[sv4guiSimulationView::CmmSimType_cmm_changed] #### select prestress " << std::endl;
+  } else if (sender->text() == ui->CmmSimType_prestress->text()) {
     page_index = 2;
   }
+
+  #ifdef debug_CmmSimType_changed 
+  std::cout << msg << "page_index: " << page_index << std::endl;
+  #endif
 
   m_CmmSimulationType = sender->text().toStdString();
 
   //ui->CmmSimulation_pages->setCurrentIndex(page_index);
-
   UpdateSimJob();
-
 }
 
 //-----------------
@@ -2215,6 +2189,10 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
 //-----------
 // CreateJob
 //-----------
+// Create a sv4guiSimJob object and set its parameter values from the GUI.
+//
+// The sv4guiSimJob object is used to write GUI values to the .sjb XML file
+// and create a solver.xml file.
 //
 sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidity)
 {
@@ -2222,12 +2200,104 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
   #ifdef debug_CreateJob 
   std::string pmsg("[sv4guiSimulationView::CreateJob] ");
   std::cout << pmsg << "========== CreateJob ==========" << std::endl;
+  std::cout << pmsg << "checkValidity: " << checkValidity << std::endl;
   #endif
+
   sv4guiSimJob* job = new sv4guiSimJob();
 
-  // Set basic properties values.
-  //
-  #ifdef debug_CreateJob
+  if (!SetJobBasicProps(job, msg, checkValidity)) {
+    return nullptr;
+  }
+
+  if (!SetJobCapProps(job, msg, checkValidity)) {
+    return nullptr;
+  }
+
+  SetJobWallProps(job, msg, checkValidity);
+
+  SetJobCmmProps(job, msg, checkValidity);
+
+  if (!SetJobSolverProps(job, msg, checkValidity)) {
+    return nullptr;
+  }
+
+  return job;
+}
+
+//-------------------
+// SetJobSolverProps
+//-------------------
+//
+bool sv4guiSimulationView::SetJobSolverProps(sv4guiSimJob* job, std::string& msg, bool checkValidity)
+{
+  for (int i = 0; i < m_SolverParametersPage->rowCount(); i++) {
+    std::string parName=m_SolverParametersPage->item(i,0)->text().trimmed().toStdString();
+    QStandardItem* valueItem=m_SolverParametersPage->item(i,1);
+
+    if(valueItem==nullptr) {
+      continue;
+    }
+
+    std::string value=valueItem->text().trimmed().toStdString();
+    std::string type=m_SolverParametersPage->item(i,2)->text().trimmed().toStdString();
+
+    if(checkValidity ) {
+      if(value=="") {
+        msg=parName+ " missing value";
+        delete job;
+        return false;
+
+      } else if(type=="int"&&!IsInt(value)) {
+        msg=parName+ " value error: " + value;
+        delete job;
+        return false;
+
+      } else if(type=="double"&&!IsDouble(value)) {
+        msg=parName+ " value error: " + value;
+        delete job;
+        return false;
+      }
+    }
+
+    job->SetSolverProp(parName, value, m_SolverParametersPageSections[i]);
+
+    return true;
+  }
+}
+
+//----------------
+// SetJobCmmProps
+//----------------
+// Set Coupled Momentum Method parameters.
+//
+void sv4guiSimulationView::SetJobCmmProps(sv4guiSimJob* job, std::string& msg, bool checkValidity)
+{
+  job->SetCmmProp("Simulation Type", m_CmmSimulationType);
+  #define debug_SetJobCmmProps 
+  #ifdef debug_SetJobCmmProps 
+  std::string pmsg("[sv4guiSimulationView::SetJobCmmProps] ");
+  std::cout << pmsg << "========== SetJobCmmProps ========== " << std::endl;
+  std::cout << pmsg << "m_CmmSimulationType: " << m_CmmSimulationType << std::endl;
+  std::cout << pmsg << "CmmSim_enable_cmm_simulation: " << ui->CmmSim_enable_cmm_simulation->isChecked() << std::endl;
+  #endif
+
+  std::map<bool,std::string> bool_to_str{{true,"true"}, {false,"false"}};
+
+  job->SetCmmProp("Enable cmm simulation", bool_to_str[ui->CmmSim_enable_cmm_simulation->isChecked()]);
+  job->SetCmmProp("Initialize simulation", bool_to_str[ui->CmmSim_Initialize->isChecked()]);
+  job->SetCmmProp("Wall file",ui->CmmSim_WallFile_file_name->text().trimmed().toStdString());
+  job->SetCmmProp("Traction file",ui->CmmSim_TractionFile_file_name->text().trimmed().toStdString());
+}
+
+//------------------
+// SetJobBasicProps
+//------------------
+// Set basic properties values.
+//
+bool sv4guiSimulationView::SetJobBasicProps(sv4guiSimJob* job, std::string& msg, bool checkValidity)
+{
+  #ifdef debug_SetJobBasicProps
+  std::string pmsg("[sv4guiSimulationView::SetJobBasicProps] ");
   std::cout << pmsg << "Set basic properties values ... " << std::endl;
   #endif
 
@@ -2238,21 +2308,21 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
     if (checkValidity) {
       if(par=="Fluid Density" || par=="Fluid Viscosity" || par=="Initial Pressure") {
         if(!IsDouble(values)) {
-          msg=par + " value error: " + values;
+          msg = par + " value error: " + values;
           delete job;
-          return nullptr;
+          return false;
         }
 
       } else if(par=="Initial Velocities") {
-        int count=0;
+        int count = 0;
 
         QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
         values=list.join(" ").toStdString();
 
         if(!AreDouble(values,&count) || count!=3) {
-          msg=par + " value error: " + values;
+          msg = par + " value error: " + values;
           delete job;
-          return nullptr;
+          return false;
         }
       }
     }
@@ -2260,9 +2330,17 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
   job->SetBasicProp(par,values);
   }
 
-  // Set cap properties values.
-  //
-  #ifdef debug_CreateJob
+  return true;
+}
+
+//----------------
+// SetJobCapProps
+//----------------
+//
+bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, bool checkValidity)
+{
+  #ifdef debug_SetJobCapProps
+  std::string pmsg("[sv4guiSimulationView::SetJobCapProps] ");
   std::cout << pmsg << "Set cap properties values ... " << std::endl;
   #endif
 
@@ -2276,15 +2354,15 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
 
       if(checkValidity) {
         if(flowrateContent=="") {
-          msg=capName + ": no flowrate data";
+          msg = capName + ": no flowrate data";
           delete job;
-          return nullptr;
+          return false;
         }
 
         if(period=="") {
           msg=capName + ": no period for flowrate data";
           delete job;
-          return nullptr;
+          return false;
         }
       }
 
@@ -2318,7 +2396,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
           if(!IsDouble(values)) {
             msg=capName + " R value error: " + values;
             delete job;
-            return nullptr;
+            return false;
           }
 
         } else if(bcType=="RCR") {
@@ -2329,7 +2407,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
           if(!AreDouble(values,&count)||count!=3) {
             msg=capName + " RCR values error: " + values;
             delete job;
-            return nullptr;
+            return false;
           }
 
         } else if(bcType=="Coronary") {
@@ -2340,25 +2418,25 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
           if(!AreDouble(values,&count)||count!=5) {
             msg=capName + " Coronary values error: " + values;
             delete job;
-            return nullptr;
+            return false;
           }
 
           if(timedPressure=="") {
             msg=capName + ": no Pim data";
             delete job;
-            return nullptr;
+            return false;
           }
 
           if(pressurePeriod=="" || !IsDouble(pressurePeriod)) {
             msg=capName + " coronary period error: " + pressurePeriod;
             delete job;
-            return nullptr;
+            return false;
           }
 
           if(pressureScaling=="" || !IsDouble(pressureScaling)) {
             msg=capName + " coronary pressure scaling error: " + pressureScaling;
             delete job;
-            return nullptr;
+            return false;
           }
         }
 
@@ -2366,7 +2444,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
           if(!IsDouble(pressure)) {
             msg=capName + " pressure error: " + pressure;
             delete job;
-            return nullptr;
+            return false;
           }
         } else {
           pressure="0";
@@ -2391,13 +2469,22 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
     }
   }
 
-  // Set wall properties values.
-  //
-  int wallTypeIndex = ui->WallProps_type->currentIndex();
-  #ifdef debug_CreateJob
+  return true;
+}
+
+//-----------------
+// SetJobWallProps
+//-----------------
+//
+void sv4guiSimulationView::SetJobWallProps(sv4guiSimJob* job, std::string& msg, bool checkValidity)
+{
+  #ifdef debug_SetJobWallProps
+  std::string pmsg("[sv4guiSimulationView::SetJobWallProps] ");
   std::cout << pmsg << "Set wall properties values ... " << std::endl;
   std::cout << pmsg << "wallTypeIndex: " << wallTypeIndex << std::endl;
   #endif
+
+  int wallTypeIndex = ui->WallProps_type->currentIndex();
 
   if (wallTypeIndex == 0) {
     job->SetWallProp("Type", "rigid");
@@ -2423,53 +2510,11 @@ sv4guiSimJob* sv4guiSimulationView::CreateJob(std::string& msg, bool checkValidi
     job->SetWallProp("Poisson Ratio", nu);
     job->SetWallProp("Density", wallDensity);
     job->SetWallProp("Wall Properities File", wallPropsFile);
-    #ifdef debug_CreateJob
+    #ifdef debug_SetJobWallProps
     std::cout << pmsg << "wallPropsFile: " << wallPropsFile << std::endl;
     #endif
   }
 
-  // Set Coupled Momentum Method parameters.
-  //
-  job->SetCmmProp("Simulation Type", m_CmmSimulationType);
-  #ifdef debug_CreateJob 
-  std::cout << pmsg << "m_CmmSimulationType: " << m_CmmSimulationType << std::endl;
-  #endif
-
-  // Set solver parameters.
-  //
-  for (int i = 0; i < m_SolverParametersPage->rowCount(); i++) {
-    std::string parName=m_SolverParametersPage->item(i,0)->text().trimmed().toStdString();
-    QStandardItem* valueItem=m_SolverParametersPage->item(i,1);
-
-    if(valueItem==nullptr) {
-      continue;
-    }
-
-    std::string value=valueItem->text().trimmed().toStdString();
-    std::string type=m_SolverParametersPage->item(i,2)->text().trimmed().toStdString();
-
-    if(checkValidity ) {
-      if(value=="") {
-        msg=parName+ " missing value";
-        delete job;
-        return nullptr;
-
-      } else if(type=="int"&&!IsInt(value)) {
-        msg=parName+ " value error: " + value;
-        delete job;
-        return nullptr;
-
-      } else if(type=="double"&&!IsDouble(value)) {
-        msg=parName+ " value error: " + value;
-        delete job;
-        return nullptr;
-      }
-    }
-
-    job->SetSolverProp(parName, value, m_SolverParametersPageSections[i]);
-  }
-
-  return job;
 }
 
 //---------------
@@ -2484,15 +2529,15 @@ void sv4guiSimulationView::SaveToManager()
     std::cout << pmsg << "========== SaveToManager ==========" << std::endl;
     #endif
 
-    if(!m_MitkJob)
+    if (!m_MitkJob) {
         return;
+    }
 
     std::string msg;
 
-    sv4guiSimJob* job=CreateJob(msg);
+    sv4guiSimJob* job = CreateJob(msg);
 
-    if(job==nullptr)
-    {
+    if (job == nullptr) {
         QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(msg));
         return;
     }
@@ -2570,12 +2615,23 @@ void sv4guiSimulationView::UpdateSimJob()
       numProcsStr = job->GetRunProp("Number of Processes");
     }
 
-    std::string msg="";
+    std::string msg = "";
     sv4guiSimJob* newJob = CreateJob(msg,false);
+    #ifdef debug_UpdateSimJob  
+    std::cout << pmsg << "CreateJob ... " << std::endl;
+    std::cout << pmsg << "newJob: " << newJob << std::endl;
+    #endif
 
-    if (newJob==nullptr) {
+    if (newJob == nullptr) {
         return;
     }
+
+    #ifdef debug_UpdateSimJob  
+    std::cout << pmsg << "###############################################################" << std::endl;
+    std::cout << pmsg << "newJob: " << newJob << std::endl;
+    std::cout << pmsg << "newJob->GetCmmProp: " << newJob->GetCmmProp("Enable cmm simulation") << std::endl;
+    std::cout << pmsg << "###############################################################" << std::endl;
+    #endif
 
     newJob->SetRunProp("Number of Processes",numProcsStr);
     m_MitkJob->SetSimJob(newJob);
