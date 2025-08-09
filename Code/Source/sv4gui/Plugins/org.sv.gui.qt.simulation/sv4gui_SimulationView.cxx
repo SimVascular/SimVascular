@@ -148,13 +148,30 @@ sv4guiSimulationView::~sv4guiSimulationView()
 //------------------
 // EnableConnection
 //------------------
+// Set slots for changed parameter values to be written the the .sjb file.
+//
 // [TODO] It is not clear why this is needed, most other tools don't
 // have this method.
 //
 void sv4guiSimulationView::EnableConnection(bool enable)
 {
+    #define n_debug_EnableConnection
+    #ifdef debug_EnableConnection 
+    std::string msg("[sv4guiSimulationView::EnableConnection] ");
+    std::cout << msg << "========== EnableConnection ==========" << std::endl;
+    std::cout << msg << "enable: " << enable << std::endl;
+    std::cout << msg << "m_ConnectionEnabled: " << m_ConnectionEnabled << std::endl;
+    #endif
+    auto slot = SLOT(UpdateSimJob());
+
     if (enable && !m_ConnectionEnabled) {
+
+        #ifdef debug_EnableConnection 
+        std::cout << msg << "++++ connect " << std::endl;
+        #endif
+
         connect(m_BasicParametersPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+
         connect(m_InletOutletBCsPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
 
         connect(ui->WallProps_type,SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSimJob( )));
@@ -162,16 +179,26 @@ void sv4guiSimulationView::EnableConnection(bool enable)
         connect(ui->WallProps_elastic_modulus, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         connect(ui->WallProps_poisson_ratio, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         connect(ui->WallProps_density, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-
         //connect(m_WallPropsPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+
+        // Solver paraemters 
         connect(m_SolverParametersPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+
         connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
+
         connect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
+
         m_ConnectionEnabled = enable;
     }
 
     if (!enable && m_ConnectionEnabled) {
+
+        #ifdef debug_EnableConnection 
+        std::cout << msg << "---- disconnect " << std::endl;
+        #endif
+
         disconnect(m_BasicParametersPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+
         disconnect(m_InletOutletBCsPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
 
         disconnect(ui->WallProps_type,SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSimJob( )));
@@ -179,13 +206,16 @@ void sv4guiSimulationView::EnableConnection(bool enable)
         disconnect(ui->WallProps_elastic_modulus, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         disconnect(ui->WallProps_poisson_ratio, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         disconnect(ui->WallProps_density, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-
         //disconnect(m_WallPropsPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+
+        // Solver parameters 
         disconnect(m_SolverParametersPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+
         disconnect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
         disconnect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
         m_ConnectionEnabled = enable;
     }
+
 }
 
 //---------------------
@@ -273,16 +303,13 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 
     // Coupled Momentum Method toolbox page
     //
-    //connect(ui->CmmSim_enable_cmm_simulation, SIGNAL(toggled(bool)), this, SLOT(UpdateSimJob()));
-    connect(ui->CmmSim_enable_cmm_simulation, SIGNAL(toggled(bool)), this, SLOT(CmmSim_enable_cmm_simulation_changed(bool)));
+    connect(ui->CmmSim_enable_cmm_simulation, SIGNAL(toggled(bool)), this, 
+        SLOT(CmmSim_enable_cmm_simulation_changed(bool)));
 
     connect(ui->CmmSimType_inflate, SIGNAL(toggled(bool)), this, SLOT(CmmSimType_changed(bool)));
-    //ui->CmmSimType_inflate->setChecked(true);
     connect(ui->CmmSimType_prestress, SIGNAL(toggled(bool)), this, SLOT(CmmSimType_changed(bool)));
 
     connect(ui->CmmSim_Initialize, SIGNAL(toggled(bool)), this, SLOT(CmmSim_Initialize_changed()));
-    //connect(ui->CmmSim_Initialize, SIGNAL(toggled(bool)), this, SLOT(UpdateSimJob()));
-
     connect(ui->CmmSim_WallFile_set_file_name, SIGNAL(clicked()), this, SLOT(SetCmmSimWallFile()));
     connect(ui->CmmSim_TractionFile_set_file_name, SIGNAL(clicked()), this, SLOT(SetCmmSimTractionFile()));
 
@@ -303,6 +330,8 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
     // Set paths for the external solvers.
     mitk::IPreferences* prefs = this->GetPreferences();
     this->OnPreferencesChanged(prefs);
+
+    //UpdateSimJob();
 }
 
 //----------------------
@@ -357,57 +386,70 @@ void sv4guiSimulationView::OnPreferencesChanged(const mitk::IPreferences* prefs)
 void sv4guiSimulationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/,
                                               const QList<mitk::DataNode::Pointer>& nodes)
 {
+    #define n_debug_OnSelectionChanged 
+    #ifdef debug_OnSelectionChanged 
+    std::string msg("[sv4guiSimulationView::OnSelectionChanged] ");
+    std::cout << msg << "========== OnSelectionChanged ==========" << std::endl;
+    std::cout << msg << "nodes.size(): " << nodes.size() << std::endl;
+    #endif
+
     if (!m_isVisible) {
         return;
     }
 
-    if(nodes.size()==0) {
+    if (nodes.size() == 0) {
         RemoveObservers();
         EnableTool(false);
         return;
     }
 
-    mitk::DataNode::Pointer jobNode=nodes.front();
-    sv4guiMitkSimJob* mitkJob=dynamic_cast<sv4guiMitkSimJob*>(jobNode->GetData());
+    mitk::DataNode::Pointer jobNode = nodes.front();
+    sv4guiMitkSimJob* mitkJob = dynamic_cast<sv4guiMitkSimJob*>(jobNode->GetData());
 
-    if(!mitkJob)
-    {
+    if (!mitkJob) {
         RemoveObservers();
         EnableTool(false);
         return;
     }
 
-    std::string modelName=mitkJob->GetModelName();
-    mitk::DataNode::Pointer modelNode=nullptr;
+    #ifdef debug_OnSelectionChanged 
+    std::cout << msg << "Create sv4guiMitkSimJob " << std::endl;
+    #endif
+
+    std::string modelName = mitkJob->GetModelName();
+    mitk::DataNode::Pointer modelNode = nullptr;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (jobNode,isProjFolder,false);
 
-    if(rs->size()>0)
-    {
-        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+    if (rs->size() > 0) {
+        mitk::DataNode::Pointer projFolderNode = rs->GetElement(0);
+        rs = GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiModelFolder"));
 
-        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiModelFolder"));
-        if (rs->size()>0)
-        {
-            mitk::DataNode::Pointer modelFolderNode=rs->GetElement(0);
-            modelNode=GetDataStorage()->GetNamedDerivedNode(modelName.c_str(),modelFolderNode);
+        if (rs->size() > 0) {
+            mitk::DataNode::Pointer modelFolderNode = rs->GetElement(0);
+            modelNode = GetDataStorage()->GetNamedDerivedNode(modelName.c_str(),modelFolderNode);
         }
     }
 
-    sv4guiModel* model=nullptr;
-    if(modelNode.IsNotNull())
-    {
-        model=dynamic_cast<sv4guiModel*>(modelNode->GetData());
+    sv4guiModel* model = nullptr;
+
+    if (modelNode.IsNotNull()) {
+        model = dynamic_cast<sv4guiModel*>(modelNode->GetData());
     }
 
-    if(m_JobNode.IsNotNull()) {
+    if (m_JobNode.IsNotNull()) {
         RemoveObservers();
     }
 
-    m_ModelNode=modelNode;
-    m_Model=model;
-    m_JobNode=jobNode;
-    m_MitkJob=mitkJob;
+    m_ModelNode = modelNode;
+    m_Model = model;
+    m_JobNode = jobNode;
+    m_MitkJob = mitkJob;
+
+    #ifdef debug_OnSelectionChanged 
+    std::cout << msg << "Create m_MitkJob " << std::endl;
+    std::cout << msg << "Create m_JobNode " << std::endl;
+    #endif
 
     if (m_Model == nullptr) {
         EnableTool(false);
@@ -430,6 +472,11 @@ void sv4guiSimulationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*p
         ui->labelModelName->setText("No model found");
     }
 
+    #ifdef debug_OnSelectionChanged 
+    std::cout << msg << "EnableConnection(false) ... " << std::endl;
+    std::cout << msg << "Update GUI Basic Solver ..." << std::endl;
+    #endif
+
     EnableConnection(false);
 
     UpdateGUIBasic();
@@ -447,6 +494,10 @@ void sv4guiSimulationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*p
     UpdateFaceListSelection();
 
     UpdateJobStatus();
+
+    #ifdef debug_OnSelectionChanged 
+    std::cout << msg << "EnableConnection(true) " << std::endl;
+    #endif
 
     EnableConnection(true);
 
@@ -1615,15 +1666,29 @@ void sv4guiSimulationView::UpdateGUIWall()
 //
 void sv4guiSimulationView::UpdateGUICmm()
 {
+    #define n_debug_UpdateGUICmm
+    #ifdef debug_UpdateGUICmm 
+    std::string msg("[sv4guiSimulationView::UpdateGUICmm] ");
+    std::cout << msg << "========== UpdateGUICmm ==========" << std::endl;
+    #endif
+
     if (!m_MitkJob) {
         return;
     }
 
     sv4guiSimJob* job = m_MitkJob->GetSimJob();
 
+    #ifdef debug_UpdateGUICmm 
+    std::cout << msg << "job: " << job << std::endl;
+    #endif
+
     if (job == nullptr) {
         job = new sv4guiSimJob();
     }
+
+    #ifdef debug_UpdateGUICmm 
+    std::cout << msg << "Set type checked ... " << std::endl;
+    #endif
 
     if (job->GetCmmProp("Simulation Type") == "inflate") {
         ui->CmmSimType_inflate->setChecked(true);
@@ -1631,11 +1696,24 @@ void sv4guiSimulationView::UpdateGUICmm()
         ui->CmmSimType_prestress->setChecked(true);
     }
 
+    #ifdef debug_UpdateGUICmm 
+    std::cout << msg << "Set enable checked ... " << std::endl;
+    #endif
+
     ui->CmmSim_enable_cmm_simulation->setChecked(job->GetCmmProp("Enable cmm simulation") == "true");
+
+    #ifdef debug_UpdateGUICmm 
+    std::cout << msg << "Set init checked ... " << std::endl;
+    #endif
+
     ui->CmmSim_Initialize->setChecked(job->GetCmmProp("Initialize simulation") == "true");
 
     ui->CmmSim_WallFile_file_name->setText(QString::fromStdString(job->GetCmmProp("Wall file")));
     ui->CmmSim_TractionFile_file_name->setText(QString::fromStdString(job->GetCmmProp("Traction file")));
+
+    #ifdef debug_UpdateGUICmm 
+    std::cout << msg << "Done " << std::endl;
+    #endif
 }
 
 //---------------------------
@@ -1673,7 +1751,7 @@ void sv4guiSimulationView::CmmSim_enable_cmm_simulation_changed(bool checked)
 //
 void sv4guiSimulationView::CmmSimType_changed(bool checked)
 {
-  #define debug_CmmSimType_changed 
+  #define n_debug_CmmSimType_changed 
   #ifdef debug_CmmSimType_changed 
   std::string msg("[sv4guiSimulationView::CmmSimType_changed] ");
   std::cout << msg << "========== CmmSimType_changed ==========" << std::endl;
@@ -1700,7 +1778,11 @@ void sv4guiSimulationView::CmmSimType_changed(bool checked)
   #endif
 
   //ui->CmmSimulation_pages->setCurrentIndex(page_index);
-  //UpdateSimJob();
+
+  #ifdef debug_CmmSimType_changed 
+  std::cout << msg << "Done " << std::endl;
+  std::cout << msg << std::endl;
+  #endif
 }
 
 //-----------------
@@ -1716,6 +1798,8 @@ void sv4guiSimulationView::UpdateGUISolver()
   #define n_debug_UpdateGUISolver
   #ifdef debug_UpdateGUISolver 
   std::string msg("[sv4guiSimulationView::UpdateGUISolver] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "######################################" << std::endl;
   std::cout << msg << "==========  UpdateGUISolver ==========" << std::endl;
   #endif
 
@@ -1724,6 +1808,9 @@ void sv4guiSimulationView::UpdateGUISolver()
   }
 
   sv4guiSimJob* job = m_MitkJob->GetSimJob();
+  #ifdef debug_UpdateGUISolver 
+  std::cout << msg << "sv4guiSimJob* job: " << job << std::endl;
+  #endif
 
   if (job == nullptr) {
     job = new sv4guiSimJob();
@@ -1755,6 +1842,10 @@ void sv4guiSimulationView::UpdateGUISolver()
   QDomElement templateElement = doc.firstChildElement("template");
   QDomNodeList sectionList = templateElement.elementsByTagName("section");
   int rowIndex = -1;
+
+  #ifdef debug_UpdateGUISolver 
+  std::cout << msg << "sectionList.size(): " << sectionList.size() << std::endl;
+  #endif
 
   for (int i = 0; i < sectionList.size(); i++) {
     #ifdef debug_UpdateGUISolver 
@@ -2319,9 +2410,9 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
   return true;
 }
 
-//-----------
+//--------------
 // CreateSimJob
-//-----------
+//--------------
 // Create a sv4guiSimJob object and set its parameter values from the GUI.
 //
 // The sv4guiSimJob object is used to write GUI values to the .sjb XML file
@@ -2329,7 +2420,7 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
 //
 sv4guiSimJob* sv4guiSimulationView::CreateSimJob(std::string& msg, bool checkValidity)
 {
-  #define debug_CreateSimJob
+  #define n_debug_CreateSimJob
   #ifdef debug_CreateSimJob 
   std::string pmsg("[sv4guiSimulationView::CreateSimJob] ");
   std::cout << pmsg << "========== CreateSimJob ==========" << std::endl;
@@ -2340,12 +2431,12 @@ sv4guiSimJob* sv4guiSimulationView::CreateSimJob(std::string& msg, bool checkVal
   checkValidity = false;
 
   if (!SetJobBasicProps(job, msg, checkValidity)) {
-    //throw std::string("[sv4guiSimulationView::CreateSimJob] SetJobBasicProps failed"); 
+    delete job;
     return nullptr;
   }
 
   if (!SetJobCapProps(job, msg, checkValidity)) {
-    //throw std::string("[sv4guiSimulationView::CreateSimJob] SetJobCapProps failed"); 
+    delete job;
     return nullptr;
   }
 
@@ -2354,7 +2445,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateSimJob(std::string& msg, bool checkVal
   SetJobCmmProps(job, msg, checkValidity);
 
   if (!SetJobSolverProps(job, msg, checkValidity)) {
-    //throw std::string("[sv4guiSimulationView::CreateSimJob] SetJobSolverProps failed"); 
+    delete job;
     return nullptr;
   }
 
@@ -2367,7 +2458,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateSimJob(std::string& msg, bool checkVal
 //
 bool sv4guiSimulationView::SetJobSolverProps(sv4guiSimJob* job, std::string& msg, bool checkValidity)
 {
-  #define debug_SetJobSolverProps 
+  #define n_debug_SetJobSolverProps 
   #ifdef debug_SetJobSolverProps 
   std::string pmsg("[sv4guiSimulationView::SetJobSolverProps] ");
   std::cout << pmsg << std::endl;
@@ -2407,17 +2498,14 @@ bool sv4guiSimulationView::SetJobSolverProps(sv4guiSimJob* job, std::string& msg
     if (checkValidity ) {
       if (value == "") {
         msg = parName + " missing value";
-        delete job;
         return false;
 
       } else if (type == "int" && !IsInt(value)) {
         msg = parName + " value error: " + value;
-        delete job;
         return false;
 
       } else if (type == "double" && !IsDouble(value)) {
         msg = parName + " value error: " + value;
-        delete job;
         return false;
       }
     }
@@ -2480,7 +2568,6 @@ bool sv4guiSimulationView::SetJobBasicProps(sv4guiSimJob* job, std::string& msg,
       if (par == "Fluid Density" || par == "Fluid Viscosity" || par == "Initial Pressure") {
         if(!IsDouble(values)) {
           msg = par + " value error: " + values;
-          delete job;
           return false;
         }
 
@@ -2492,7 +2579,6 @@ bool sv4guiSimulationView::SetJobBasicProps(sv4guiSimJob* job, std::string& msg,
 
         if(!AreDouble(values,&count) || count!=3) {
           msg = par + " value error: " + values;
-          delete job;
           return false;
         }
       }
@@ -2529,13 +2615,11 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
       if(checkValidity) {
         if(flowrateContent=="") {
           msg = capName + ": no flowrate data";
-          delete job;
           return false;
         }
 
         if(period=="") {
           msg=capName + ": no period for flowrate data";
-          delete job;
           return false;
         }
       }
@@ -2569,7 +2653,6 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
         if(bcType=="Resistance") {
           if(!IsDouble(values)) {
             msg=capName + " R value error: " + values;
-            delete job;
             return false;
           }
 
@@ -2580,7 +2663,6 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
 
           if(!AreDouble(values,&count)||count!=3) {
             msg=capName + " RCR values error: " + values;
-            delete job;
             return false;
           }
 
@@ -2591,25 +2673,21 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
 
           if(!AreDouble(values,&count)||count!=5) {
             msg=capName + " Coronary values error: " + values;
-            delete job;
             return false;
           }
 
           if(timedPressure=="") {
             msg=capName + ": no Pim data";
-            delete job;
             return false;
           }
 
           if(pressurePeriod=="" || !IsDouble(pressurePeriod)) {
             msg=capName + " coronary period error: " + pressurePeriod;
-            delete job;
             return false;
           }
 
           if(pressureScaling=="" || !IsDouble(pressureScaling)) {
             msg=capName + " coronary pressure scaling error: " + pressureScaling;
-            delete job;
             return false;
           }
         }
@@ -2617,7 +2695,6 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
         if(pressure!="") {
           if(!IsDouble(pressure)) {
             msg=capName + " pressure error: " + pressure;
-            delete job;
             return false;
           }
         } else {
@@ -2694,6 +2771,7 @@ void sv4guiSimulationView::SetJobWallProps(sv4guiSimJob* job, std::string& msg, 
 //---------------
 // SaveToManager
 //---------------
+// Save the simulation GUI data to .sjb files.
 //
 void sv4guiSimulationView::SaveToManager()
 {
@@ -2766,9 +2844,14 @@ void sv4guiSimulationView::EnableTool(bool able)
     ui->Toolbox_create_files_page->setEnabled(able);
 }
 
-//---------------
+//--------------
 // UpdateSimJob
-//---------------
+//--------------
+// Update the m_MitkJob sv4guiSimJob with GUI data.
+//
+// Note: It is not clear when this should be called. 
+// Calling it from a GUI event seems to mess up
+// the 'SolverParameters_table' table.
 //
 void sv4guiSimulationView::UpdateSimJob()
 {
@@ -2776,12 +2859,25 @@ void sv4guiSimulationView::UpdateSimJob()
     #ifdef debug_UpdateSimJob  
     std::string pmsg("[sv4guiSimulationView::UpdateSimJob] ");
     std::cout << pmsg << "========== UpdateSimJob ==========" << std::endl;
-    std::cout << pmsg << "m_JobNode: " << m_JobNode->GetName() << std::endl;
     #endif
 
-    if (!m_MitkJob) {
+    if (m_JobNode == nullptr) {
+        #ifdef debug_UpdateSimJob  
+        std::cout << pmsg << "m_JobNode is nullptr " << std::endl;
+        #endif
         return;
     }
+
+    if (!m_MitkJob) {
+        #ifdef debug_UpdateSimJob  
+        std::cout << pmsg << "m_MitkJob is nullptr " << std::endl;
+        #endif
+        return;
+    }
+
+    #ifdef debug_UpdateSimJob  
+    std::cout << pmsg << "m_JobNode: " << m_JobNode->GetName() << std::endl;
+    #endif
 
     sv4guiSimJob* job = m_MitkJob->GetSimJob();
     std::string numProcsStr = "";
@@ -2790,21 +2886,26 @@ void sv4guiSimulationView::UpdateSimJob()
       numProcsStr = job->GetRunProp("Number of Processes");
     }
 
-    std::string msg = "";
-    sv4guiSimJob* newJob = CreateSimJob(msg,false);
+    // Set the sv4guiSimJob values (key/value pairs) from
+    // the GUI controls.
+    //
+    std::string error_msg = "";
+
+    sv4guiSimJob* newJob = CreateSimJob(error_msg, false);
+
     #ifdef debug_UpdateSimJob  
     std::cout << pmsg << "CreateSimJob ... " << std::endl;
     std::cout << pmsg << "newJob: " << newJob << std::endl;
     #endif
 
     if (newJob == nullptr) {
+        #ifdef debug_UpdateSimJob  
+        std::cout << pmsg << "##############################" << std::endl;
+        std::cout << pmsg << "ERROR: Update failed: " << error_msg << std::endl;
+        std::cout << pmsg << "##############################" << std::endl;
+        #endif
         return;
     }
-
-    #ifdef debug_UpdateSimJob  
-    std::cout << pmsg << "newJob: " << newJob << std::endl;
-    std::cout << pmsg << "newJob->GetCmmProp: " << newJob->GetCmmProp("Enable cmm simulation") << std::endl;
-    #endif
 
     newJob->SetRunProp("Number of Processes",numProcsStr);
     m_MitkJob->SetSimJob(newJob);
