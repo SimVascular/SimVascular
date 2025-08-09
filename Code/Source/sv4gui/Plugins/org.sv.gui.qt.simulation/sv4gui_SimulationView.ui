@@ -160,7 +160,7 @@
       <item>
        <widget class="QToolBox" name="toolBox">
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="Toolbox_basic_params_page">
          <property name="geometry">
@@ -631,6 +631,9 @@
                      <property name="text">
                       <string>prestress</string>
                      </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -746,7 +749,7 @@
            <number>5</number>
           </property>
           <item>
-           <widget class="QTableView" name="tableViewSolver">
+           <widget class="QTableView" name="SolverParameters_table">
             <property name="selectionBehavior">
              <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
             </property>

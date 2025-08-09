@@ -118,6 +118,8 @@ class Sv4GuiSimXmlWriter
 
     void add_wall_bc(sv4guiSimJob* job, tinyxml2::XMLElement* boundary_condition);
 
+    void add_equation_nl_solver(sv4guiSimJob* job, tinyxml2::XMLElement* xml_equation);
+
     void add_equation_output(sv4guiSimJob* job, tinyxml2::XMLElement* xml_equation);
 
     void add_equation_solver(sv4guiSimJob* job, tinyxml2::XMLElement* xml_equation);

@@ -29,9 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The code here is used to write an svMultiPhysics XML solver input file.
+// Sv4GuiSimXmlWriter is used to write an svMultiPhysics XML solver input file.
 //
-// Parameters are set in the 'Solver Paramters' GUI section of the CFD Simulation Tool. 
+// Solver parameters are set in the 'Solver Paramters' GUI section of the CFD Simulation Tool. 
 //
 // The parameter names and types (int, double, enum) are defined in the 
 // SimVascular/Code/Source/sv4gui/Plugins/org.sv.gui.qt.simulation/resources/solvertemplate.xml
@@ -258,23 +258,21 @@ void Sv4GuiSimXmlWriter::add_equation(sv4guiSimJob* job)
   bool cmm_equation = false;
   char* eq_type = "fluid";
   
+  auto cmmProps = job->GetCmmProps();
   auto wallProps = job->GetWallProps();
-  auto nonlinearSolverProps = job->GetNonlinearSolverProps();
 
-  if (wallProps["Type"] == "deformable") {
+/*
+  if (cmmProps["Enable cmm simulation"] == "true") {
     cmm_equation = true;
     eq_type = "cmm";
   }
+*/
 
   auto equation = add_sub_child(root_, "Add_equation");
   equation->SetAttribute("type", eq_type);
 
   // Nonlinear solver paramters.
-  add_child(equation, "Coupled", parameters.Coupled);
-  add_child(equation, "Min_iterations", nonlinearSolverProps["Min iterations"]);
-  add_child(equation, "Max_iterations", nonlinearSolverProps["Max iterations"]);
-  add_child(equation, "Tolerance", nonlinearSolverProps["Tolerance"]); 
-  add_child(equation, "Backflow_stabilization_coefficient", nonlinearSolverProps["Backflow stabilization coefficient"]);
+  add_equation_nl_solver(job, equation);
 
   auto basicProps = job->GetBasicProps();
   add_child(equation, "Density", basicProps["Fluid Density"]);
@@ -300,9 +298,26 @@ void Sv4GuiSimXmlWriter::add_equation_output(sv4guiSimJob* job, tinyxml2::XMLEle
   output->SetAttribute("type", "Spatial");
   add_child(output, "Divergence", true); 
   add_child(output, "Pressure", true); 
+  add_child(output, "Traction", true); 
   add_child(output, "Velocity", true); 
   add_child(output, "Vorticity", true); 
   add_child(output, "WSS", true); 
+}
+
+//-------------------------
+// add_equation_nl_solver
+//-------------------------
+// Add nonlinear solver paramters section under `Add_equation`..
+//
+void Sv4GuiSimXmlWriter::add_equation_nl_solver(sv4guiSimJob* job, tinyxml2::XMLElement* equation)
+{
+  auto nonlinearSolverProps = job->GetNonlinearSolverProps();
+
+  add_child(equation, "Coupled", parameters.Coupled);
+  add_child(equation, "Min_iterations", nonlinearSolverProps["Min iterations"]);
+  add_child(equation, "Max_iterations", nonlinearSolverProps["Max iterations"]);
+  add_child(equation, "Tolerance", nonlinearSolverProps["Tolerance"]); 
+  add_child(equation, "Backflow_stabilization_coefficient", nonlinearSolverProps["Backflow stabilization coefficient"]);
 }
 
 //---------------------

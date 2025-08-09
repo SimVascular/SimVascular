@@ -117,7 +117,7 @@ sv4guiSimulationView::sv4guiSimulationView() :
     // Get the default solver binaries.
     //m_DefaultPrefs = sv4guiSimulationPreferences();
 
-    m_CmmSimulationType = "cmm";
+    m_CmmSimulationType = "inflate";
 }
 
 sv4guiSimulationView::~sv4guiSimulationView()
@@ -135,16 +135,6 @@ sv4guiSimulationView::~sv4guiSimulationView()
     if(m_InletOutletBCs_caps_table) {
         delete m_InletOutletBCs_caps_table;
     }
-
-/*
-    if(m_WallPropsPage) {
-        delete m_WallPropsPage;
-    }
-
-    if(m_WallPropsPage_variable_props) {
-        delete m_WallPropsPage_variable_props;
-    }
-*/
 
     if(m_SolverParametersPage) {
         delete m_SolverParametersPage;
@@ -283,23 +273,25 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 
     // Coupled Momentum Method toolbox page
     //
-    connect(ui->CmmSim_enable_cmm_simulation, SIGNAL(toggled(bool)), this, SLOT(UpdateSimJob()));
-    //connect(ui->CmmSim_enable_cmm_simulation, SIGNAL(toggled(bool)), this, SLOT(CmmSim_enable_cmm_simulation_changed(bool)));
+    //connect(ui->CmmSim_enable_cmm_simulation, SIGNAL(toggled(bool)), this, SLOT(UpdateSimJob()));
+    connect(ui->CmmSim_enable_cmm_simulation, SIGNAL(toggled(bool)), this, SLOT(CmmSim_enable_cmm_simulation_changed(bool)));
 
     connect(ui->CmmSimType_inflate, SIGNAL(toggled(bool)), this, SLOT(CmmSimType_changed(bool)));
     //ui->CmmSimType_inflate->setChecked(true);
     connect(ui->CmmSimType_prestress, SIGNAL(toggled(bool)), this, SLOT(CmmSimType_changed(bool)));
 
-    connect(ui->CmmSim_Initialize, SIGNAL(toggled(bool)), this, SLOT(UpdateSimJob()));
+    connect(ui->CmmSim_Initialize, SIGNAL(toggled(bool)), this, SLOT(CmmSim_Initialize_changed()));
+    //connect(ui->CmmSim_Initialize, SIGNAL(toggled(bool)), this, SLOT(UpdateSimJob()));
+
     connect(ui->CmmSim_WallFile_set_file_name, SIGNAL(clicked()), this, SLOT(SetCmmSimWallFile()));
     connect(ui->CmmSim_TractionFile_set_file_name, SIGNAL(clicked()), this, SLOT(SetCmmSimTractionFile()));
 
     // Solver Parameters toolbox page
     //
     m_SolverParametersPage = new QStandardItemModel(this);
-    ui->tableViewSolver->setModel(m_SolverParametersPage);
-    sv4guiTableSolverDelegate* itemSolverDelegate=new sv4guiTableSolverDelegate(this);
-    ui->tableViewSolver->setItemDelegateForColumn(1,itemSolverDelegate);
+    ui->SolverParameters_table->setModel(m_SolverParametersPage);
+    sv4guiTableSolverDelegate* itemSolverDelegate = new sv4guiTableSolverDelegate(this);
+    ui->SolverParameters_table->setItemDelegateForColumn(1,itemSolverDelegate);
 
     // Create Files and Run Simulation toolbox page //
     //
@@ -596,7 +588,7 @@ void sv4guiSimulationView::UpdateGUIBasic()
         job = new sv4guiSimJob();
     }
 
-    m_BasicParametersPage->clear();
+    //m_BasicParametersPage->clear();
 
     // Set the table headers.
     //
@@ -1256,7 +1248,7 @@ void sv4guiSimulationView::UpdateGUICap()
 //
 void sv4guiSimulationView::SetVariableWallPropsFile()
 {
-  #define debug_SetVariableWallPropsFile
+  #define n_debug_SetVariableWallPropsFile
   #ifdef debug_SetVariableWallPropsFile
   std::string msg("[sv4guiSimulationView::SetVariableWallPropsFile] ");
   std::cout << msg << "========== SetVariableWallPropsFile ==========" << std::endl;
@@ -1335,7 +1327,7 @@ void sv4guiSimulationView::SetVariableWallPropsFile()
 
   ui->WallsProps_variable_props_file->setText(file_path);
 
-  UpdateSimJob();
+  //UpdateSimJob();
 }
 
 //-------------------
@@ -1379,7 +1371,7 @@ void sv4guiSimulationView::SetPressureICFile()
 
   ui->BasicParameters_pressure_ic_file_name->setText(file_path);
 
-  UpdateSimJob();
+  //UpdateSimJob();
 }
 
 //-------------------
@@ -1423,7 +1415,7 @@ void sv4guiSimulationView::SetVelocityICFile()
 
   ui->BasicParameters_velocity_ic_file_name->setText(file_path);
 
-  UpdateSimJob();
+  //UpdateSimJob();
 }
 
 //-------------------
@@ -1433,7 +1425,7 @@ void sv4guiSimulationView::SetVelocityICFile()
 //
 void sv4guiSimulationView::SetCmmSimWallFile()
 {
-  #define debug_SetCmmSimWallFile
+  #define n_debug_SetCmmSimWallFile
   #ifdef debug_SetCmmSimWallFile
   std::string msg("[sv4guiSimulationView::SetCmmSimWallFile] ");
   std::cout << msg << "========== SetCmmSimWallFile ==========" << std::endl;
@@ -1474,7 +1466,7 @@ void sv4guiSimulationView::SetCmmSimWallFile()
 
   ui->CmmSim_WallFile_file_name->setText(file_path);
 
-  UpdateSimJob();
+  //UpdateSimJob();
 }
 
 //-----------------------
@@ -1484,7 +1476,7 @@ void sv4guiSimulationView::SetCmmSimWallFile()
 //
 void sv4guiSimulationView::SetCmmSimTractionFile()
 {
-  #define debug_SetCmmSimTractionFile
+  #define n_debug_SetCmmSimTractionFile
   #ifdef debug_SetCmmSimTractionFile
   std::string msg("[sv4guiSimulationView::SetCmmSimTractionFile] ");
   std::cout << msg << "========== SetCmmSimTractionFile ==========" << std::endl;
@@ -1510,7 +1502,7 @@ void sv4guiSimulationView::SetCmmSimTractionFile()
   }
 
   QString file_path = QFileDialog::getOpenFileName(ui->CmmSim_TractionFile_set_file_name, 
-      tr("Set traction values file"), lastFileOpenPath, tr("VTK VTU Files (*.vtU)"));
+      tr("Set traction values file"), lastFileOpenPath, tr("VTK VTP Files (*.vtp)"));
 
   file_path = file_path.trimmed();
 
@@ -1525,7 +1517,7 @@ void sv4guiSimulationView::SetCmmSimTractionFile()
 
   ui->CmmSim_TractionFile_file_name->setText(file_path);
 
-  UpdateSimJob();
+  //UpdateSimJob();
 }
 
 //--------------------------
@@ -1640,10 +1632,18 @@ void sv4guiSimulationView::UpdateGUICmm()
     }
 
     ui->CmmSim_enable_cmm_simulation->setChecked(job->GetCmmProp("Enable cmm simulation") == "true");
-
     ui->CmmSim_Initialize->setChecked(job->GetCmmProp("Initialize simulation") == "true");
+
     ui->CmmSim_WallFile_file_name->setText(QString::fromStdString(job->GetCmmProp("Wall file")));
     ui->CmmSim_TractionFile_file_name->setText(QString::fromStdString(job->GetCmmProp("Traction file")));
+}
+
+//---------------------------
+// CmmSim_Initialize_changed
+//---------------------------
+//
+void sv4guiSimulationView::CmmSim_Initialize_changed(bool checked)
+{
 }
 
 //--------------------------------------
@@ -1652,14 +1652,14 @@ void sv4guiSimulationView::UpdateGUICmm()
 //
 void sv4guiSimulationView::CmmSim_enable_cmm_simulation_changed(bool checked)
 {
-  #define debug_CmmSim_enable_cmm_simulation_changed
+  #define n_debug_CmmSim_enable_cmm_simulation_changed
   #ifdef debug_CmmSim_enable_cmm_simulation_changed
   std::string msg("[sv4guiSimulationView::CmmSim_enable_cmm_simulation_changed] ");
   std::cout << msg << "========== CmmSim_enable_cmm_simulation_changed ==========" << std::endl;
   std::cout << msg << "checked: " << checked << std::endl;
   #endif
 
-  UpdateSimJob();
+  //UpdateSimJob();
 }
 
 //--------------------
@@ -1676,7 +1676,7 @@ void sv4guiSimulationView::CmmSimType_changed(bool checked)
   #define debug_CmmSimType_changed 
   #ifdef debug_CmmSimType_changed 
   std::string msg("[sv4guiSimulationView::CmmSimType_changed] ");
-  std::cout << msg << "========== CmmSimType_cmm_changed ==========" << std::endl;
+  std::cout << msg << "========== CmmSimType_changed ==========" << std::endl;
   #endif
 
   auto sender = qobject_cast<QRadioButton*>(QObject::sender());
@@ -1695,27 +1695,37 @@ void sv4guiSimulationView::CmmSimType_changed(bool checked)
 
   m_CmmSimulationType = sender->text().toStdString();
 
+  #ifdef debug_CmmSimType_changed 
+  std::cout << msg << "m_CmmSimulationType: " << m_CmmSimulationType << std::endl;
+  #endif
+
   //ui->CmmSimulation_pages->setCurrentIndex(page_index);
-  UpdateSimJob();
+  //UpdateSimJob();
 }
 
 //-----------------
 // UpdateGUISolver
 //-----------------
-// Read in the entries in the 'Solver Parameters' table from the 
-// resources/solvertemplate.xml file.
+// Update the GUI solver parameters with the values read in from a .sjb file.
 //
-// Parameter names are used in Sv4GuiSimXmlWriter to create the solver.xml file.
+// The rows of the 'Solver Parameters' table are taken from the resources/solvertemplate.xml file.
+// Note that these are used as parameter names in the sv4guiSimJob object.
 //
 void sv4guiSimulationView::UpdateGUISolver()
 {
-  if(!m_MitkJob) {
+  #define n_debug_UpdateGUISolver
+  #ifdef debug_UpdateGUISolver 
+  std::string msg("[sv4guiSimulationView::UpdateGUISolver] ");
+  std::cout << msg << "==========  UpdateGUISolver ==========" << std::endl;
+  #endif
+
+  if (!m_MitkJob) {
     return;
   }
 
   sv4guiSimJob* job = m_MitkJob->GetSimJob();
 
-  if(job == nullptr) {
+  if (job == nullptr) {
     job = new sv4guiSimJob();
   }
 
@@ -1724,28 +1734,19 @@ void sv4guiSimulationView::UpdateGUISolver()
   QStringList solverHeaders;
   solverHeaders << "Parameter" << "Value" << "Type" << "Value List";
   m_SolverParametersPage->setHorizontalHeaderLabels(solverHeaders);
-  int colCount=solverHeaders.size();
+  int colCount = solverHeaders.size();
   m_SolverParametersPage->setColumnCount(colCount);
 
-  QString templateFilePath=":solvertemplate.xml";
-
-  // davep 
-  /*if(m_UseCustom) {
-    // davep templateFilePath=m_SolverTemplatePath;
-  }
-  */
-
+  QString templateFilePath = ":solvertemplate.xml";
   QFile xmlFile(templateFilePath);
 
-  if(!xmlFile.open(QIODevice::ReadOnly)) {
+  if (!xmlFile.open(QIODevice::ReadOnly)) {
     QMessageBox::warning(m_Parent,"Info Missing","Solver Parameter Table template file not found");
     return;
   }
 
   QDomDocument doc("solvertemplate");
-  //    QString *em=nullptr;
-
-  if(!doc.setContent(&xmlFile)) {
+  if (!doc.setContent(&xmlFile)) {
     QMessageBox::warning(m_Parent,"File Template Error","Format Error.");
     return;
   }
@@ -1756,14 +1757,17 @@ void sv4guiSimulationView::UpdateGUISolver()
   int rowIndex = -1;
 
   for (int i = 0; i < sectionList.size(); i++) {
+    #ifdef debug_UpdateGUISolver 
+    std::cout << msg << "----------- i " << i << " ---------- " << std::endl;
+    #endif
     QDomNode sectionNode = sectionList.item(i);
 
-    if(sectionNode.isNull()) {
+    if (sectionNode.isNull()) {
       continue;
     }
 
-    QDomElement sectionElement=sectionNode.toElement();
-    if(sectionElement.isNull()) {
+    QDomElement sectionElement = sectionNode.toElement();
+    if (sectionElement.isNull()) {
       continue;
     }
     
@@ -1773,12 +1777,19 @@ void sv4guiSimulationView::UpdateGUISolver()
     QBrush brushGray(Qt::lightGray);
     item->setBackground(brushGray);
 
+    #ifdef debug_UpdateGUISolver 
+    std::cout << msg << "section_name: " << section_name << std::endl;
+    #endif
+
     rowIndex += 1;
     m_SolverParametersPage->setItem(rowIndex, 0, item);
-    ui->tableViewSolver->setSpan(rowIndex, 0, 1, colCount);
+    ui->SolverParameters_table->setSpan(rowIndex, 0, 1, colCount);
     QDomNodeList parList = sectionElement.elementsByTagName("param");
 
     for (int j = 0; j < parList.size(); j++) {
+      #ifdef debug_UpdateGUISolver 
+      std::cout << msg << "------ j " << j << " -----" << std::endl;
+      #endif
       QDomNode parNode = parList.item(j);
 
       if(parNode.isNull()) {
@@ -1786,7 +1797,11 @@ void sv4guiSimulationView::UpdateGUISolver()
       }
 
       QDomElement parElement = parNode.toElement();
-      if(parElement.isNull()) continue;
+
+      if (parElement.isNull()) {
+        continue;
+      }
+
       QString name = parElement.attribute("name");
 
       QStandardItem* item = new QStandardItem(name);
@@ -1800,26 +1815,43 @@ void sv4guiSimulationView::UpdateGUISolver()
       // based on section so duplicate parameter names can be used.
       m_SolverParametersPageSections[rowIndex] = section_name.toStdString();
 
-      std::string value = job->GetSolverProp(parElement.attribute("name").toStdString());
-      item = new QStandardItem(value == "" ? parElement.attribute("value"):QString::fromStdString(value));
+      QString qvalue;
+      auto att_name = parElement.attribute("name").toStdString();
+      std::string value = job->GetSolverProp(att_name);
+      auto par_value = parElement.attribute("value");
+      if (value == "") {
+        qvalue = par_value;
+      } else {
+        qvalue = QString::fromStdString(value);
+      }
+
+      item = new QStandardItem(qvalue);
+      //item = new QStandardItem(value == "" ? parElement.attribute("value"):QString::fromStdString(value));
       m_SolverParametersPage->setItem(rowIndex, 1, item);
+
+      #ifdef debug_UpdateGUISolver 
+      std::cout << msg << "name: '" << name << "'" << std::endl;
+      std::cout << msg << "att_name: '" << att_name << "'" << std::endl;
+      std::cout << msg << "value: " << value << std::endl;
+      std::cout << msg << "qvalue: " << qvalue << std::endl;
+      #endif
 
       item = new QStandardItem(parElement.attribute("type"));
       item->setEditable(false);
       m_SolverParametersPage->setItem(rowIndex, 2, item);
 
-      item= new QStandardItem(parElement.attribute("enum_list"));
+      item = new QStandardItem(parElement.attribute("enum_list"));
       item->setEditable(false);
       m_SolverParametersPage->setItem(rowIndex, 3, item);
     }
   }
 
-    ui->tableViewSolver->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    ui->tableViewSolver->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
-    ui->tableViewSolver->horizontalHeader()->resizeSection(1,120);
+  ui->SolverParameters_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+  ui->SolverParameters_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
+  ui->SolverParameters_table->horizontalHeader()->resizeSection(1,120);
 
-    ui->tableViewSolver->setColumnHidden(2,true);
-    ui->tableViewSolver->setColumnHidden(3,true);
+  ui->SolverParameters_table->setColumnHidden(2,true);
+  ui->SolverParameters_table->setColumnHidden(3,true);
 }
 
 void sv4guiSimulationView::UpdateGUIJob()
@@ -2170,7 +2202,7 @@ void sv4guiSimulationView::CheckMpi()
 //
 bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
 {
-  #define debug_CreateDataFiles
+  #define n_debug_CreateDataFiles
   #ifdef debug_CreateDataFiles
   std::string msg("[sv4guiSimulationView::CreateDataFiles] ");
   std::cout << msg << "========== CreateDataFiles ==========" << std::endl;
@@ -2305,12 +2337,15 @@ sv4guiSimJob* sv4guiSimulationView::CreateSimJob(std::string& msg, bool checkVal
   #endif
 
   sv4guiSimJob* job = new sv4guiSimJob();
+  checkValidity = false;
 
   if (!SetJobBasicProps(job, msg, checkValidity)) {
+    //throw std::string("[sv4guiSimulationView::CreateSimJob] SetJobBasicProps failed"); 
     return nullptr;
   }
 
   if (!SetJobCapProps(job, msg, checkValidity)) {
+    //throw std::string("[sv4guiSimulationView::CreateSimJob] SetJobCapProps failed"); 
     return nullptr;
   }
 
@@ -2319,6 +2354,7 @@ sv4guiSimJob* sv4guiSimulationView::CreateSimJob(std::string& msg, bool checkVal
   SetJobCmmProps(job, msg, checkValidity);
 
   if (!SetJobSolverProps(job, msg, checkValidity)) {
+    //throw std::string("[sv4guiSimulationView::CreateSimJob] SetJobSolverProps failed"); 
     return nullptr;
   }
 
@@ -2331,39 +2367,69 @@ sv4guiSimJob* sv4guiSimulationView::CreateSimJob(std::string& msg, bool checkVal
 //
 bool sv4guiSimulationView::SetJobSolverProps(sv4guiSimJob* job, std::string& msg, bool checkValidity)
 {
-  for (int i = 0; i < m_SolverParametersPage->rowCount(); i++) {
-    std::string parName=m_SolverParametersPage->item(i,0)->text().trimmed().toStdString();
-    QStandardItem* valueItem=m_SolverParametersPage->item(i,1);
+  #define debug_SetJobSolverProps 
+  #ifdef debug_SetJobSolverProps 
+  std::string pmsg("[sv4guiSimulationView::SetJobSolverProps] ");
+  std::cout << pmsg << std::endl;
+  std::cout << pmsg << "========== SetJobSolverProps ========== " << std::endl;
+  std::cout << pmsg << "m_JobNode: " << m_JobNode->GetName() << std::endl;
+  std::cout << pmsg << "m_SolverParametersPage->rowCount(): " << m_SolverParametersPage->rowCount() << std::endl;
+  #endif
 
-    if(valueItem==nullptr) {
+  #ifdef debug_SetJobSolverProps 
+  std::cout << pmsg << "Process parameters ... " << std::endl;
+  #endif
+
+  for (int i = 0; i < m_SolverParametersPage->rowCount(); i++) {
+    std::string parName = m_SolverParametersPage->item(i,0)->text().trimmed().toStdString();
+    QStandardItem* valueItem = m_SolverParametersPage->item(i,1);
+
+    #ifdef debug_SetJobSolverProps 
+    std::cout << pmsg << "----- i " << i << " -----" << std::endl;
+    std::cout << pmsg << "parName: " << parName << std::endl;
+    #endif
+
+    if (valueItem == nullptr) {
+        #ifdef debug_SetJobSolverProps 
+        std::cout << pmsg << "parName item is nullptr " << std::endl;
+        #endif
       continue;
     }
 
-    std::string value=valueItem->text().trimmed().toStdString();
-    std::string type=m_SolverParametersPage->item(i,2)->text().trimmed().toStdString();
+    std::string value = valueItem->text().trimmed().toStdString();
+    std::string type = m_SolverParametersPage->item(i,2)->text().trimmed().toStdString();
 
-    if(checkValidity ) {
-      if(value=="") {
-        msg=parName+ " missing value";
+    #ifdef debug_SetJobSolverProps 
+    std::cout << pmsg << "value: " << value << std::endl;
+    std::cout << pmsg << "type: " << type << std::endl;
+    #endif
+
+    if (checkValidity ) {
+      if (value == "") {
+        msg = parName + " missing value";
         delete job;
         return false;
 
-      } else if(type=="int"&&!IsInt(value)) {
-        msg=parName+ " value error: " + value;
+      } else if (type == "int" && !IsInt(value)) {
+        msg = parName + " value error: " + value;
         delete job;
         return false;
 
-      } else if(type=="double"&&!IsDouble(value)) {
-        msg=parName+ " value error: " + value;
+      } else if (type == "double" && !IsDouble(value)) {
+        msg = parName + " value error: " + value;
         delete job;
         return false;
       }
     }
 
-    job->SetSolverProp(parName, value, m_SolverParametersPageSections[i]);
+    #ifdef debug_SetJobSolverProps 
+    std::cout << pmsg << "Set prop " << parName << " to section " << m_SolverParametersPageSections[i] << std::endl;
+    #endif
 
-    return true;
+    job->SetSolverProp(parName, value, m_SolverParametersPageSections[i]);
   }
+
+  return true;
 }
 
 //----------------
@@ -2373,8 +2439,7 @@ bool sv4guiSimulationView::SetJobSolverProps(sv4guiSimJob* job, std::string& msg
 //
 void sv4guiSimulationView::SetJobCmmProps(sv4guiSimJob* job, std::string& msg, bool checkValidity)
 {
-  job->SetCmmProp("Simulation Type", m_CmmSimulationType);
-  #define debug_SetJobCmmProps 
+  #define n_debug_SetJobCmmProps 
   #ifdef debug_SetJobCmmProps 
   std::string pmsg("[sv4guiSimulationView::SetJobCmmProps] ");
   std::cout << pmsg << "========== SetJobCmmProps ========== " << std::endl;
@@ -2382,11 +2447,14 @@ void sv4guiSimulationView::SetJobCmmProps(sv4guiSimJob* job, std::string& msg, b
   std::cout << pmsg << "CmmSim_enable_cmm_simulation: " << ui->CmmSim_enable_cmm_simulation->isChecked() << std::endl;
   #endif
 
+  job->SetCmmProp("Simulation Type", m_CmmSimulationType);
+
   std::map<bool,std::string> bool_to_str{{true,"true"}, {false,"false"}};
 
   job->SetCmmProp("Enable cmm simulation", bool_to_str[ui->CmmSim_enable_cmm_simulation->isChecked()]);
   job->SetCmmProp("Initialize simulation", bool_to_str[ui->CmmSim_Initialize->isChecked()]);
-  job->SetCmmProp("Wall file",ui->CmmSim_WallFile_file_name->text().trimmed().toStdString());
+
+  job->SetCmmProp("Wall file", ui->CmmSim_WallFile_file_name->text().trimmed().toStdString());
   job->SetCmmProp("Traction file",ui->CmmSim_TractionFile_file_name->text().trimmed().toStdString());
 }
 
@@ -2629,7 +2697,7 @@ void sv4guiSimulationView::SetJobWallProps(sv4guiSimJob* job, std::string& msg, 
 //
 void sv4guiSimulationView::SaveToManager()
 {
-    #define debug_SaveToManager
+    #define n_debug_SaveToManager
     #ifdef debug_SaveToManager 
     std::string pmsg("[sv4guiSimulationView::SaveToManager] ");
     std::cout << pmsg << "========== SaveToManager ==========" << std::endl;
@@ -2704,10 +2772,11 @@ void sv4guiSimulationView::EnableTool(bool able)
 //
 void sv4guiSimulationView::UpdateSimJob()
 {
-    #define debug_UpdateSimJob 
+    #define n_debug_UpdateSimJob 
     #ifdef debug_UpdateSimJob  
     std::string pmsg("[sv4guiSimulationView::UpdateSimJob] ");
     std::cout << pmsg << "========== UpdateSimJob ==========" << std::endl;
+    std::cout << pmsg << "m_JobNode: " << m_JobNode->GetName() << std::endl;
     #endif
 
     if (!m_MitkJob) {

@@ -128,6 +128,7 @@ public slots:
     void CmmSim_enable_cmm_simulation_changed(bool checked);
     void SetCmmSimWallFile();
     void SetCmmSimTractionFile();
+    void CmmSim_Initialize_changed(bool checked);
 
     // Solver paramters 
     //
