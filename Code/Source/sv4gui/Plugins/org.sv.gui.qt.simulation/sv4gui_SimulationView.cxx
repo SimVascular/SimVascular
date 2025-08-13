@@ -29,6 +29,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The sv4guiSimulationView class provides an interface to the CFD Simulation Tool 
+// Qt GUI widgets used to create the input files needed to run a svMultiPhysics CFD 
+// simulation. GUI widget values are stored in an sv4guiSimJob object as key/value
+// pairs stored in an std::map. These values are later used to write a solver.xml
+// file using the Sv4GuiSimXmlWriter class.
+//
+// Solver job data are organized into sections (e.g. Basic Parameters) using a 
+// QToolBox widget.
+//
+// Most ToolBox Tabs (e.g. Basic Parameters) use a QTableView object to input and
+// store GUI values as rows in a table. 
+//
+// The Wall Properties and Coupled Momentum Method tabs do not use QTableView widgets. 
+//
+// The QTableView and non-QTableView widgets process events differently to update the
+// values in the current sv4guiSimJob object using the EnableConnection() method.
+//
+//   - QTableView widgets set connections in CreateQtPartControl()
+//
+//   - non-QTableView widgets set connections in EnableConnection()
+
 #include <sstream>
 #include <tuple>
 
@@ -181,7 +202,19 @@ void sv4guiSimulationView::EnableConnection(bool enable)
         connect(ui->WallProps_density, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         //connect(m_WallPropsPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
 
-        // Solver paraemters 
+        // CMM parameters 
+        connect(ui->CmmSim_enable_cmm_simulation, SIGNAL(toggled(bool)), this, slot);
+        connect(ui->CmmSimType_inflate, SIGNAL(toggled(bool)), this, slot);
+        connect(ui->CmmSimType_prestress, SIGNAL(toggled(bool)), this, slot);
+
+        connect(ui->CmmSim_Initialize, SIGNAL(toggled(bool)), this, slot);
+
+        connect(ui->CmmSim_wall_name, SIGNAL(textChanged(QString)), this, slot);
+        connect(ui->CmmSim_WallFile_set_file_name, SIGNAL(clicked()), this, SLOT(SetCmmSimWallFile()));
+
+        connect(ui->CmmSim_TractionFile_set_file_name, SIGNAL(clicked()), this, SLOT(SetCmmSimTractionFile()));
+
+        // Solver parameters 
         connect(m_SolverParametersPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
 
         connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
@@ -303,15 +336,17 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 
     // Coupled Momentum Method toolbox page
     //
+#if 0
     connect(ui->CmmSim_enable_cmm_simulation, SIGNAL(toggled(bool)), this, 
         SLOT(CmmSim_enable_cmm_simulation_changed(bool)));
 
     connect(ui->CmmSimType_inflate, SIGNAL(toggled(bool)), this, SLOT(CmmSimType_changed(bool)));
     connect(ui->CmmSimType_prestress, SIGNAL(toggled(bool)), this, SLOT(CmmSimType_changed(bool)));
 
-    connect(ui->CmmSim_Initialize, SIGNAL(toggled(bool)), this, SLOT(CmmSim_Initialize_changed()));
+    //connect(ui->CmmSim_Initialize, SIGNAL(toggled(bool)), this, SLOT(CmmSim_Initialize_changed()));
     connect(ui->CmmSim_WallFile_set_file_name, SIGNAL(clicked()), this, SLOT(SetCmmSimWallFile()));
     connect(ui->CmmSim_TractionFile_set_file_name, SIGNAL(clicked()), this, SLOT(SetCmmSimTractionFile()));
+#endif
 
     // Solver Parameters toolbox page
     //
@@ -1466,7 +1501,7 @@ void sv4guiSimulationView::SetVelocityICFile()
 
   ui->BasicParameters_velocity_ic_file_name->setText(file_path);
 
-  //UpdateSimJob();
+//UpdateSimJob();
 }
 
 //-------------------
@@ -1515,9 +1550,13 @@ void sv4guiSimulationView::SetCmmSimWallFile()
     prefs->Flush();
   }
 
+  #ifdef debug_SetCmmSimWallFile
+  std::cout << msg << "file_path: " << file_path << std::endl;
+  #endif
+
   ui->CmmSim_WallFile_file_name->setText(file_path);
 
-  //UpdateSimJob();
+  UpdateSimJob();
 }
 
 //-----------------------
@@ -1568,7 +1607,7 @@ void sv4guiSimulationView::SetCmmSimTractionFile()
 
   ui->CmmSim_TractionFile_file_name->setText(file_path);
 
-  //UpdateSimJob();
+  UpdateSimJob();
 }
 
 //--------------------------
@@ -1708,7 +1747,9 @@ void sv4guiSimulationView::UpdateGUICmm()
 
     ui->CmmSim_Initialize->setChecked(job->GetCmmProp("Initialize simulation") == "true");
 
+    ui->CmmSim_wall_name->setText(QString::fromStdString(job->GetCmmProp("Wall name")));
     ui->CmmSim_WallFile_file_name->setText(QString::fromStdString(job->GetCmmProp("Wall file")));
+
     ui->CmmSim_TractionFile_file_name->setText(QString::fromStdString(job->GetCmmProp("Traction file")));
 
     #ifdef debug_UpdateGUICmm 
@@ -1737,7 +1778,7 @@ void sv4guiSimulationView::CmmSim_enable_cmm_simulation_changed(bool checked)
   std::cout << msg << "checked: " << checked << std::endl;
   #endif
 
-  //UpdateSimJob();
+  UpdateSimJob();
 }
 
 //--------------------
@@ -1778,6 +1819,8 @@ void sv4guiSimulationView::CmmSimType_changed(bool checked)
   #endif
 
   //ui->CmmSimulation_pages->setCurrentIndex(page_index);
+
+  UpdateSimJob();
 
   #ifdef debug_CmmSimType_changed 
   std::cout << msg << "Done " << std::endl;
@@ -2349,7 +2392,14 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
   //
   mitk::StatusBar::GetInstance()->DisplayText("Creating solver.xml");
   std::string file_name = outputDir.toStdString() + "/" + m_SolverInputFileName;
-  sv4guiSimulationUtils::CreateSolverInputFile(job, faces_name_type, outputDir.toStdString(), file_name);
+
+  try {
+    sv4guiSimulationUtils::CreateSolverInputFile(job, faces_name_type, outputDir.toStdString(), file_name);
+
+  } catch (const std::runtime_error& error) {
+    QMessageBox::warning(m_Parent, "Error writing solver.xml file", QString(error.what())); 
+    return false;
+  }
 
   // Create mesh files.
   //
@@ -2533,6 +2583,8 @@ void sv4guiSimulationView::SetJobCmmProps(sv4guiSimJob* job, std::string& msg, b
   std::cout << pmsg << "========== SetJobCmmProps ========== " << std::endl;
   std::cout << pmsg << "m_CmmSimulationType: " << m_CmmSimulationType << std::endl;
   std::cout << pmsg << "CmmSim_enable_cmm_simulation: " << ui->CmmSim_enable_cmm_simulation->isChecked() << std::endl;
+  std::cout << pmsg << "CmmSim_WallFile_file_name: " << 
+      ui->CmmSim_WallFile_file_name->text().trimmed().toStdString() << std::endl;
   #endif
 
   job->SetCmmProp("Simulation Type", m_CmmSimulationType);
@@ -2542,7 +2594,9 @@ void sv4guiSimulationView::SetJobCmmProps(sv4guiSimJob* job, std::string& msg, b
   job->SetCmmProp("Enable cmm simulation", bool_to_str[ui->CmmSim_enable_cmm_simulation->isChecked()]);
   job->SetCmmProp("Initialize simulation", bool_to_str[ui->CmmSim_Initialize->isChecked()]);
 
+  job->SetCmmProp("Wall name", ui->CmmSim_wall_name->text().trimmed().toStdString());
   job->SetCmmProp("Wall file", ui->CmmSim_WallFile_file_name->text().trimmed().toStdString());
+
   job->SetCmmProp("Traction file",ui->CmmSim_TractionFile_file_name->text().trimmed().toStdString());
 }
 
@@ -2773,12 +2827,15 @@ void sv4guiSimulationView::SetJobWallProps(sv4guiSimJob* job, std::string& msg, 
 //---------------
 // Save the simulation GUI data to .sjb files.
 //
+// [TODO] This is never called ?
+//
 void sv4guiSimulationView::SaveToManager()
 {
     #define n_debug_SaveToManager
     #ifdef debug_SaveToManager 
     std::string pmsg("[sv4guiSimulationView::SaveToManager] ");
     std::cout << pmsg << "========== SaveToManager ==========" << std::endl;
+    std::cout << pmsg << "m_MitkJob: " << m_MitkJob << std::endl;
     #endif
 
     if (!m_MitkJob) {

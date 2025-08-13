@@ -63,6 +63,7 @@ Sv4GuiSimXmlWriter::Sv4GuiSimXmlWriter()
     {"parabolic", "Parabolic"},
     {"plug", "Flat"}
   };
+
 }
 
 Sv4GuiSimXmlWriter::~Sv4GuiSimXmlWriter()
@@ -255,18 +256,15 @@ void Sv4GuiSimXmlWriter::add_wall_bc(sv4guiSimJob* job, tinyxml2::XMLElement* bo
 //
 void Sv4GuiSimXmlWriter::add_equation(sv4guiSimJob* job)
 {
-  bool cmm_equation = false;
-  char* eq_type = "fluid";
-  
-  auto cmmProps = job->GetCmmProps();
-  auto wallProps = job->GetWallProps();
+  #define debug_add_equation
+  #ifdef debug_add_equation
+  std::string msg("[Sv4GuiSimXmlWriter::add_equation] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== add_equation ==========" << std::endl;
+  #endif
 
-/*
-  if (cmmProps["Enable cmm simulation"] == "true") {
-    cmm_equation = true;
-    eq_type = "cmm";
-  }
-*/
+  char* eq_type = "fluid";
+  auto wallProps = job->GetWallProps();
 
   auto equation = add_sub_child(root_, "Add_equation");
   equation->SetAttribute("type", eq_type);
@@ -285,6 +283,99 @@ void Sv4GuiSimXmlWriter::add_equation(sv4guiSimJob* job)
   add_equation_output(job, equation);
 
   add_equation_bcs(job, equation);
+}
+
+//-------------------------
+// add_cmm_wall_properties
+//-------------------------
+// Add wall properties for a cmm simulation under the Add_equation section.
+//
+void Sv4GuiSimXmlWriter::add_cmm_wall_properties(sv4guiSimJob*job, tinyxml2::XMLElement* equation)
+{
+  auto wall_props = job->GetWallProps();
+
+  auto density = wall_props["Density"];
+  add_child(equation, "Solid_density", density);
+
+  auto elastic_modulus = wall_props["Elastic Modulus"];
+  add_child(equation, "Elasticity_modulus", elastic_modulus);
+
+  auto poisson_ratio = wall_props["Poisson Ratio"];
+  add_child(equation, "Poisson_ratio", poisson_ratio);
+}
+
+//------------------
+// add_cmm_equation
+//------------------
+// Add an `Add_equation` section of type cmm.
+//
+void Sv4GuiSimXmlWriter::add_cmm_equation(sv4guiSimJob* job)
+{
+  #define debug_add_cmm_equation
+  #ifdef debug_add_cmm_equation
+  std::string msg("[Sv4GuiSimXmlWriter::add_cmm_equation] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== add_cmm_equation ==========" << std::endl;
+  #endif
+
+  char* eq_type = "cmm";
+  auto wallProps = job->GetWallProps();
+
+  auto equation = add_sub_child(root_, "Add_equation");
+  equation->SetAttribute("type", eq_type);
+
+  // Nonlinear solver paramters.
+  add_equation_nl_solver(job, equation);
+
+  // Add physical properties.
+  //
+  auto basicProps = job->GetBasicProps();
+  add_child(equation, "Density", basicProps["Fluid Density"]);
+  auto viscosity = add_sub_child(equation, "Viscosity");
+  viscosity->SetAttribute("model", "Constant");
+  add_child(viscosity, "Value", basicProps["Fluid Viscosity"]);
+
+  if (cmm_simulation_initialization_) {
+    if (cmm_prestress_simulation_) {
+      add_child(equation, "Prestress", "true");
+      add_child(equation, "Initialize", "prestress");
+    } else {
+      add_child(equation, "Initialize", "inflate");
+    }
+  }
+
+  add_cmm_wall_properties(job, equation);
+
+  add_equation_solver(job, equation);
+
+  add_equation_output(job, equation);
+
+  add_cmm_equation_bf_bc(job, equation);
+}
+
+//------------------------
+// add_cmm_equation_bf_bc
+//------------------------
+// Add a body force 'Add_BF' boundary condition for a cmm equation.
+//
+void Sv4GuiSimXmlWriter::add_cmm_equation_bf_bc(sv4guiSimJob* job, tinyxml2::XMLElement* equation)
+{
+  auto cmmProps = job->GetCmmProps();
+
+  auto boundary_condition = add_sub_child(equation, "Add_BF");
+
+  boundary_condition->SetAttribute("name", cmm_wall_name_.c_str());
+  
+  add_child(boundary_condition, "Type", "traction");
+  add_child(boundary_condition, "Time_dependence", "spatial");
+
+  auto traction_file_name = cmmProps["Traction file"];
+
+  if (traction_file_name == "") {
+    throw std::runtime_error("Coupled Momentum Method: No traction file has been set.");
+  }
+
+  add_child(boundary_condition, "Spatial_values_file_path", traction_file_name);
 }
 
 //---------------------
@@ -405,6 +496,91 @@ void Sv4GuiSimXmlWriter::add_mesh(sv4guiSimJob* job)
   }
 }
 
+//--------------------
+// add_cmm_init_mesh
+//--------------------
+// Add a 'Add_mesh' section for a cmm initializaion stage.
+// 
+// For the cmm initializaion stage shells are used to model just the mesh surface.
+//
+void Sv4GuiSimXmlWriter::add_cmm_init_mesh(sv4guiSimJob* job)
+{
+  #define debug_add_cmm_init_mesh
+  #ifdef debug_add_cmm_init_mesh
+  std::string msg("[Sv4GuiSimXmlWriter::add_cmm_init_mesh] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== add_cmm_init_mesh ==========" << std::endl;
+  #endif
+  auto cmmProps = job->GetCmmProps();
+
+  auto mesh = add_sub_child(root_, "Add_mesh");
+  mesh->SetAttribute("name", cmm_wall_name_.c_str());
+
+  auto wall_file_name = cmmProps["Wall file"];
+  #ifdef debug_add_cmm_init_mesh
+  std::cout << msg << "wall_file_name: " << wall_file_name << std::endl;
+  #endif
+
+  if (wall_file_name == "") {
+    throw std::runtime_error("Coupled Momentum Method: No wall file has been set.");
+  }
+
+  add_child(mesh, "Mesh_file_path", wall_file_name); 
+  add_child(mesh, "Set_mesh_as_shell", "true"); 
+}
+
+//--------------------
+// add_cmm_simulation
+//--------------------
+//
+void Sv4GuiSimXmlWriter::add_cmm_simulation(sv4guiSimJob* job)
+{
+  auto cmmProps = job->GetCmmProps();
+
+  if (cmmProps["Initialize simulation"] == "true") {
+    cmm_simulation_initialization_ = true;
+
+    if (cmmProps["Simulation Type"] == "prestress") {
+      cmm_prestress_simulation_ = true;
+    } else if (cmmProps["Simulation Type"] == "prestress") {
+      cmm_prestress_simulation_ = false;
+    }
+  }
+
+  cmm_wall_name_ = cmmProps["Wall name"];
+
+  if (cmm_wall_name_ == "") {
+    throw std::runtime_error("Coupled Momentum Method: No wall name has been set.");
+  }
+
+  if (cmm_simulation_initialization_) { 
+    add_cmm_init_mesh(job);
+  } else {
+    add_mesh(job);
+  }
+
+  add_cmm_equation(job);
+  
+}
+
+//----------------------
+// check_cmm_simulation
+//----------------------
+// Check if an CMM simulation is enabled.
+//
+bool Sv4GuiSimXmlWriter::cmm_simulation_enabled(sv4guiSimJob* job)
+{
+  auto cmmProps = job->GetCmmProps();
+    
+  if (cmmProps["Enable cmm simulation"] == "false") {
+    cmm_simulation_enabled_ = false;
+    return false;
+  }
+
+  cmm_simulation_enabled_ = true;
+  return true;
+}
+
 //-----------------
 // create_document
 //-----------------
@@ -424,9 +600,16 @@ void Sv4GuiSimXmlWriter::create_document(sv4guiSimJob* job, const std::map<std::
 
   add_general(job);
 
-  add_mesh(job);
+  if (cmm_simulation_enabled(job)) { 
 
-  add_equation(job);
+    add_cmm_simulation(job); 
+
+  } else {
+
+    add_mesh(job);
+  
+    add_equation(job);
+  }
 
   doc_.SaveFile(file_name.c_str());
 }

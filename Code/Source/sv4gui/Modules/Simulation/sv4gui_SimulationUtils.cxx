@@ -59,7 +59,7 @@ void sv4guiSimulationUtils::CreateSolverInputFile(sv4guiSimJob* job,
     const std::map<std::string,std::string>& faces_name_type, const std::string& output_dir, 
     const std::string& file_name)
 {
-  #define debug_CreateSolverInputFile
+  #define n_debug_CreateSolverInputFile
   #ifdef debug_CreateSolverInputFile
   std::string dmsg("[sv4guiSimulationUtils::CreateSolverInputFile] ");
   std::cout << dmsg << "========== CreateSolverInputFile ==========" << std::endl;
@@ -424,7 +424,7 @@ std::string sv4guiSimulationUtils::CreateCORTFileContent(sv4guiSimJob* job)
 //
 std::string sv4guiSimulationUtils::CreateFlowSolverFileContent(sv4guiSimJob* job)
 {
-  #define debug_CreateFlowSolverFileContent
+  #define n_debug_CreateFlowSolverFileContent
   #ifdef debug_CreateFlowSolverFileContent
   std::string dmsg("[sv4guiSimulationUtils::CreateFlowSolverFileContent] ");
   std::cout << dmsg << "========== CreateFlowSolverFileContent ==========" << std::endl;

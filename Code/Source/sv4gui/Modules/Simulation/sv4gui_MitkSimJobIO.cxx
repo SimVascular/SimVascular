@@ -322,7 +322,7 @@ mitk::IFileIO::ConfidenceLevel sv4guiMitkSimJobIO::GetReaderConfidenceLevel() co
 //
 void sv4guiMitkSimJobIO::Write()
 {
-  #define debug_Write
+  #define n_debug_Write
   #ifdef debug_Write
   std::string dmsg("[sv4guiMitkSimJobIO::Write] ");
   std::cout << dmsg << std::endl;

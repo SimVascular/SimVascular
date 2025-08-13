@@ -62,6 +62,7 @@ class Sv4GuiSimXmlWriterParameters
 
     // Map between GUI and svMultiphysics profile names.
     std::map<std::string,std::string> profile_names;
+
 };
 
 //--------------------
@@ -92,6 +93,18 @@ class Sv4GuiSimXmlWriter
 
     std::string output_dir_;
     std::map<std::string,std::string> faces_name_type_;  
+
+    // If true then write cmm simulation parameters.
+    bool cmm_simulation_enabled_ = false;
+
+    // If true then write parameters for cmm prestress or inflate initialization simulation.
+    bool cmm_simulation_initialization_ = false;
+
+    // If true then write parameters for a cmm prestress initialization simulation,
+    // else write parameters for a inflate initialization simulation.
+    bool cmm_prestress_simulation_ = false;
+
+    std::string cmm_wall_name_ = "";
 
     Sv4GuiSimXmlWriterParameters parameters;
 
@@ -125,6 +138,13 @@ class Sv4GuiSimXmlWriter
     void add_equation_solver(sv4guiSimJob* job, tinyxml2::XMLElement* xml_equation);
 
     void add_general(sv4guiSimJob* job);
+
+    void add_cmm_init_mesh(sv4guiSimJob* job);
+    void add_cmm_equation(sv4guiSimJob* job);
+    void add_cmm_equation_bf_bc(sv4guiSimJob* job, tinyxml2::XMLElement* equation);
+    void add_cmm_simulation(sv4guiSimJob* job);
+    void add_cmm_wall_properties(sv4guiSimJob* job, tinyxml2::XMLElement* equation);
+    bool cmm_simulation_enabled(sv4guiSimJob* job);
 
 };
 
