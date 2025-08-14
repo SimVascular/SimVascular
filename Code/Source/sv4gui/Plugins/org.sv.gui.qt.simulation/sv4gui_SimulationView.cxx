@@ -693,19 +693,19 @@ void sv4guiSimulationView::UpdateGUIBasic()
     QString value;
 
     parList << new QStandardItem("Fluid Density");
-    value = QString::fromStdString(job->GetBasicProp("Fluid Density"));
+    value = QString::fromStdString(job->basic_props.Get("Fluid Density"));
     valueList<<new QStandardItem(value == "" ? QString("1.06"):value);
 
     parList << new QStandardItem("Fluid Viscosity");
-    value = QString::fromStdString(job->GetBasicProp("Fluid Viscosity"));
+    value = QString::fromStdString(job->basic_props.Get("Fluid Viscosity"));
     valueList<<new QStandardItem(value==""?QString("0.04"):value);
 
     parList<<new QStandardItem("Initial Pressure");
-    value = QString::fromStdString(job->GetBasicProp("Initial Pressure"));
+    value = QString::fromStdString(job->basic_props.Get("Initial Pressure"));
     valueList << new QStandardItem(value == "" ? QString("0"):value);
 
     parList << new QStandardItem("Initial Velocities");
-    value = QString::fromStdString(job->GetBasicProp("Initial Velocities"));
+    value = QString::fromStdString(job->basic_props.Get("Initial Velocities"));
     valueList << new QStandardItem(value == "" ? QString("0.0001 0.0001 0.0001"):value);
 
     for (int i = 0; i < parList.size(); i++) {
@@ -717,8 +717,8 @@ void sv4guiSimulationView::UpdateGUIBasic()
     ui->BasicParameters_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     ui->BasicParameters_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
-    ui->BasicParameters_pressure_ic_file_name->setText(QString::fromStdString(job->GetBasicProp("Pressure IC File")));
-    ui->BasicParameters_velocity_ic_file_name->setText(QString::fromStdString(job->GetBasicProp("Velocity IC File")));
+    ui->BasicParameters_pressure_ic_file_name->setText(QString::fromStdString(job->basic_props.Get("Pressure IC File")));
+    ui->BasicParameters_velocity_ic_file_name->setText(QString::fromStdString(job->basic_props.Get("Velocity IC File")));
 }
 
 //-----------------------------
@@ -1242,54 +1242,54 @@ void sv4guiSimulationView::UpdateGUICap()
         item->setEditable(false);
         m_InletOutletBCsPage->setItem(rowIndex, 0, item);
 
-        std::string bcType=job->GetCapProp(face->name,"BC Type");
+        std::string bcType=job->cap_props.Get(face->name,"BC Type");
         item= new QStandardItem(QString::fromStdString(bcType));
         m_InletOutletBCsPage->setItem(rowIndex, 1, item);
 
-        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Values")));
+        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Values")));
         m_InletOutletBCsPage->setItem(rowIndex, 2, item);
-        if(bcType=="Prescribed Velocities" && job->GetCapProp(face->name,"Flow Rate")!="")
+        if(bcType=="Prescribed Velocities" && job->cap_props.Get(face->name,"Flow Rate")!="")
         {
             item= new QStandardItem(QString::fromStdString("Assigned"));
             m_InletOutletBCsPage->setItem(rowIndex, 2, item);
         }
 
-        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Pressure")));
+        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Pressure")));
         m_InletOutletBCsPage->setItem(rowIndex, 3, item);
 
-        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Analytic Shape")));
+        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Analytic Shape")));
         m_InletOutletBCsPage->setItem(rowIndex, 4, item);
 
-        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Period")));
+        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Period")));
         m_InletOutletBCsPage->setItem(rowIndex, 5, item);
 
-        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Point Number")));
+        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Point Number")));
         m_InletOutletBCsPage->setItem(rowIndex, 6, item);
 
-        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Fourier Modes")));
+        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Fourier Modes")));
         m_InletOutletBCsPage->setItem(rowIndex, 7, item);
 
-        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Flip Normal")));
+        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Flip Normal")));
         m_InletOutletBCsPage->setItem(rowIndex, 8, item);
 
-        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Flow Rate")));
+        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Flow Rate")));
         m_InletOutletBCsPage->setItem(rowIndex, 9, item);
 
-        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Original File")));
+        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Original File")));
         m_InletOutletBCsPage->setItem(rowIndex, 10, item);
 
-        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Timed Pressure")));
+        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Timed Pressure")));
         m_InletOutletBCsPage->setItem(rowIndex, 11, item);
 
-        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Pressure Period")));
+        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Pressure Period")));
         m_InletOutletBCsPage->setItem(rowIndex, 12, item);
 
-        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Pressure Scaling")));
+        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Pressure Scaling")));
         m_InletOutletBCsPage->setItem(rowIndex, 13, item);
 
         QString RValues="";
         QString CValues="";
-        QStringList list =QString::fromStdString(job->GetCapProp(face->name,"Values")).split(QRegularExpression("[(),{}\\s+]"), 
+        QStringList list = QString::fromStdString(job->cap_props.Get(face->name,"Values")).split(QRegularExpression("[(),{}\\s+]"), 
             Qt::SkipEmptyParts);
 
         if(bcType=="RCR")
@@ -1662,31 +1662,31 @@ void sv4guiSimulationView::UpdateGUIWall()
         job = new sv4guiSimJob();
     }
 
-    if (job->GetWallProp("Type") == "rigid") {
+    if (job->wall_props.Get("Type") == "rigid") {
         ui->WallProps_type->setCurrentIndex(0);
 
-    } else if(job->GetWallProp("Type") == "constant") {
+    } else if(job->wall_props.Get("Type") == "constant") {
         ui->WallProps_type->setCurrentIndex(1);
 
-    } else if(job->GetWallProp("Type")=="variable") {
+    } else if(job->wall_props.Get("Type")=="variable") {
         ui->WallProps_type->setCurrentIndex(2);
 
     } else {
         ui->WallProps_type->setCurrentIndex(0);
     }
 
-    ui->WallProps_thickness->setText(QString::fromStdString(job->GetWallProp("Thickness")));
-    ui->WallProps_elastic_modulus->setText(QString::fromStdString(job->GetWallProp("Elastic Modulus")));
+    ui->WallProps_thickness->setText(QString::fromStdString(job->wall_props.Get("Thickness")));
+    ui->WallProps_elastic_modulus->setText(QString::fromStdString(job->wall_props.Get("Elastic Modulus")));
 
-    QString pratio = QString::fromStdString(job->GetWallProp("Poisson Ratio"));
+    QString pratio = QString::fromStdString(job->wall_props.Get("Poisson Ratio"));
     if (pratio == "") {
         pratio = "0.5";
     }
     ui->WallProps_poisson_ratio->setText(pratio);
 
-    ui->WallProps_density->setText(QString::fromStdString(job->GetWallProp("Density")));
+    ui->WallProps_density->setText(QString::fromStdString(job->wall_props.Get("Density")));
 
-    ui->WallsProps_variable_props_file->setText(QString::fromStdString(job->GetWallProp("Wall Properities File")));
+    ui->WallsProps_variable_props_file->setText(QString::fromStdString(job->wall_props.Get("Wall Properities File")));
 
     if (!m_Model) {
         return;
@@ -1729,9 +1729,9 @@ void sv4guiSimulationView::UpdateGUICmm()
     std::cout << msg << "Set type checked ... " << std::endl;
     #endif
 
-    if (job->GetCmmProp("Simulation Type") == "inflate") {
+    if (job->cmm_props.Get("Simulation Type") == "inflate") {
         ui->CmmSimType_inflate->setChecked(true);
-    } else if (job->GetCmmProp("Simulation Type") == "prestress") {
+    } else if (job->cmm_props.Get("Simulation Type") == "prestress") {
         ui->CmmSimType_prestress->setChecked(true);
     }
 
@@ -1739,18 +1739,18 @@ void sv4guiSimulationView::UpdateGUICmm()
     std::cout << msg << "Set enable checked ... " << std::endl;
     #endif
 
-    ui->CmmSim_enable_cmm_simulation->setChecked(job->GetCmmProp("Enable cmm simulation") == "true");
+    ui->CmmSim_enable_cmm_simulation->setChecked(job->cmm_props.Get("Enable cmm simulation") == "true");
 
     #ifdef debug_UpdateGUICmm 
     std::cout << msg << "Set init checked ... " << std::endl;
     #endif
 
-    ui->CmmSim_Initialize->setChecked(job->GetCmmProp("Initialize simulation") == "true");
+    ui->CmmSim_Initialize->setChecked(job->cmm_props.Get("Initialize simulation") == "true");
 
-    ui->CmmSim_wall_name->setText(QString::fromStdString(job->GetCmmProp("Wall name")));
-    ui->CmmSim_WallFile_file_name->setText(QString::fromStdString(job->GetCmmProp("Wall file")));
+    ui->CmmSim_wall_name->setText(QString::fromStdString(job->cmm_props.Get("Wall name")));
+    ui->CmmSim_WallFile_file_name->setText(QString::fromStdString(job->cmm_props.Get("Wall file")));
 
-    ui->CmmSim_TractionFile_file_name->setText(QString::fromStdString(job->GetCmmProp("Traction file")));
+    ui->CmmSim_TractionFile_file_name->setText(QString::fromStdString(job->cmm_props.Get("Traction file")));
 
     #ifdef debug_UpdateGUICmm 
     std::cout << msg << "Done " << std::endl;
@@ -1951,7 +1951,11 @@ void sv4guiSimulationView::UpdateGUISolver()
 
       QString qvalue;
       auto att_name = parElement.attribute("name").toStdString();
-      std::string value = job->GetSolverProp(att_name);
+      std::string value;
+
+      // Get a solver property for the given section name.
+      value = job->GetSolverProp(m_SolverParametersPageSections[rowIndex], att_name);
+
       auto par_value = parElement.attribute("value");
       if (value == "") {
         qvalue = par_value;
@@ -2034,7 +2038,7 @@ void sv4guiSimulationView::UpdateGUIJob()
     if(job==nullptr)
         return;
 
-    std::string pNum=job->GetRunProp("Number of Processes");
+    std::string pNum=job->run_props.Get("Number of Processes");
     ui->sliderNumProcs->setValue(pNum==""?1:QString::fromStdString(pNum).toInt());
 }
 
@@ -2118,7 +2122,7 @@ void sv4guiSimulationView::RunJob()
     // Set the solver output directory.
     QString runPath = jobPath;
     int numProcs = ui->sliderNumProcs->value();
-    auto results_dir = QString::fromStdString(job->GetSolverProp("Save results in folder"));
+    auto results_dir = QString::fromStdString(job->solver_output_props.Get("Save results in folder"));
 
     // The 'Save results in folder' defualt value is 'N-procs' which means
     // results will be saved in the numProcs//"-procs' directory. 
@@ -2137,9 +2141,8 @@ void sv4guiSimulationView::RunJob()
     //
     int totalSteps = 100;
 
-
-    job->SetRunProp("Number of Processes",QString::number(numProcs).toStdString());
-    totalSteps = QString::fromStdString(job->GetSolverProp("Number of Timesteps")).toInt();
+    job->run_props.Set("Number of Processes",QString::number(numProcs).toStdString());
+    totalSteps = QString::fromStdString(job->solver_time_props.Get("Number of Timesteps")).toInt();
     mitk::StatusBar::GetInstance()->DisplayText("Running a CFD simulation");
 
     QProcess* solverProcess = new QProcess(m_Parent);
@@ -2564,7 +2567,8 @@ bool sv4guiSimulationView::SetJobSolverProps(sv4guiSimJob* job, std::string& msg
     std::cout << pmsg << "Set prop " << parName << " to section " << m_SolverParametersPageSections[i] << std::endl;
     #endif
 
-    job->SetSolverProp(parName, value, m_SolverParametersPageSections[i]);
+    // Set a solver property for the given section name.
+    job->SetSolverProp(m_SolverParametersPageSections[i], parName, value);
   }
 
   return true;
@@ -2587,17 +2591,17 @@ void sv4guiSimulationView::SetJobCmmProps(sv4guiSimJob* job, std::string& msg, b
       ui->CmmSim_WallFile_file_name->text().trimmed().toStdString() << std::endl;
   #endif
 
-  job->SetCmmProp("Simulation Type", m_CmmSimulationType);
+  job->cmm_props.Set("Simulation Type", m_CmmSimulationType);
 
   std::map<bool,std::string> bool_to_str{{true,"true"}, {false,"false"}};
 
-  job->SetCmmProp("Enable cmm simulation", bool_to_str[ui->CmmSim_enable_cmm_simulation->isChecked()]);
-  job->SetCmmProp("Initialize simulation", bool_to_str[ui->CmmSim_Initialize->isChecked()]);
+  job->cmm_props.Set("Enable cmm simulation", bool_to_str[ui->CmmSim_enable_cmm_simulation->isChecked()]);
+  job->cmm_props.Set("Initialize simulation", bool_to_str[ui->CmmSim_Initialize->isChecked()]);
 
-  job->SetCmmProp("Wall name", ui->CmmSim_wall_name->text().trimmed().toStdString());
-  job->SetCmmProp("Wall file", ui->CmmSim_WallFile_file_name->text().trimmed().toStdString());
+  job->cmm_props.Set("Wall name", ui->CmmSim_wall_name->text().trimmed().toStdString());
+  job->cmm_props.Set("Wall file", ui->CmmSim_WallFile_file_name->text().trimmed().toStdString());
 
-  job->SetCmmProp("Traction file",ui->CmmSim_TractionFile_file_name->text().trimmed().toStdString());
+  job->cmm_props.Set("Traction file",ui->CmmSim_TractionFile_file_name->text().trimmed().toStdString());
 }
 
 //------------------
@@ -2638,11 +2642,11 @@ bool sv4guiSimulationView::SetJobBasicProps(sv4guiSimJob* job, std::string& msg,
       }
     }
 
-  job->SetBasicProp(par, values);
+  job->basic_props.Set(par, values);
   }
 
-  job->SetBasicProp("Pressuee IC File", ui->BasicParameters_pressure_ic_file_name->text().toStdString());
-  job->SetBasicProp("Velocity IC File", ui->BasicParameters_velocity_ic_file_name->text().toStdString());
+  job->basic_props.Set("Pressuee IC File", ui->BasicParameters_pressure_ic_file_name->text().toStdString());
+  job->basic_props.Set("Velocity IC File", ui->BasicParameters_velocity_ic_file_name->text().toStdString());
 
   return true;
 }
@@ -2684,14 +2688,14 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
       std::string flip=m_InletOutletBCsPage->item(i,8)->text().trimmed().toStdString();
       std::string originalFile=m_InletOutletBCsPage->item(i,10)->text().trimmed().toStdString();
 
-      job->SetCapProp(capName,"BC Type", bcType);
-      job->SetCapProp(capName,"Analytic Shape", shape);
-      job->SetCapProp(capName,"Period", period);
-      job->SetCapProp(capName,"Point Number", pointNum);
-      job->SetCapProp(capName,"Fourier Modes", modeNum);
-      job->SetCapProp(capName,"Flip Normal", flip);
-      job->SetCapProp(capName,"Flow Rate", flowrateContent);
-      job->SetCapProp(capName,"Original File", originalFile);
+      job->cap_props.Set(capName,"BC Type", bcType);
+      job->cap_props.Set(capName,"Analytic Shape", shape);
+      job->cap_props.Set(capName,"Period", period);
+      job->cap_props.Set(capName,"Point Number", pointNum);
+      job->cap_props.Set(capName,"Fourier Modes", modeNum);
+      job->cap_props.Set(capName,"Flip Normal", flip);
+      job->cap_props.Set(capName,"Flow Rate", flowrateContent);
+      job->cap_props.Set(capName,"Original File", originalFile);
 
     } else if(bcType != "") {
       std::string values=m_InletOutletBCsPage->item(i,2)->text().trimmed().toStdString();
@@ -2756,20 +2760,20 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
         }
       }
 
-      job->SetCapProp(capName,"BC Type", bcType);
-      job->SetCapProp(capName,"Values", values);
-      job->SetCapProp(capName,"Pressure",pressure);
+      job->cap_props.Set(capName,"BC Type", bcType);
+      job->cap_props.Set(capName,"Values", values);
+      job->cap_props.Set(capName,"Pressure",pressure);
 
       if(bcType=="Coronary") {
-        job->SetCapProp(capName,"Timed Pressure", timedPressure);
-        job->SetCapProp(capName,"Pressure Period", pressurePeriod);
-        job->SetCapProp(capName,"Pressure Scaling",pressureScaling);
-        job->SetCapProp(capName,"Original File", originalFile);
+        job->cap_props.Set(capName,"Timed Pressure", timedPressure);
+        job->cap_props.Set(capName,"Pressure Period", pressurePeriod);
+        job->cap_props.Set(capName,"Pressure Scaling",pressureScaling);
+        job->cap_props.Set(capName,"Original File", originalFile);
       }
 
       if(bcType=="RCR" || bcType=="Coronary") {
-        job->SetCapProp(capName,"R Values", RValues);
-        job->SetCapProp(capName,"C Values", CValues);
+        job->cap_props.Set(capName,"R Values", RValues);
+        job->cap_props.Set(capName,"C Values", CValues);
       }
     }
   }
@@ -2792,7 +2796,7 @@ void sv4guiSimulationView::SetJobWallProps(sv4guiSimJob* job, std::string& msg, 
   int wallTypeIndex = ui->WallProps_type->currentIndex();
 
   if (wallTypeIndex == 0) {
-    job->SetWallProp("Type", "rigid");
+    job->wall_props.Set("Type", "rigid");
 
   } else if(wallTypeIndex == 1) {
     std::string thickness = ui->WallProps_thickness->text().trimmed().toStdString();
@@ -2800,21 +2804,21 @@ void sv4guiSimulationView::SetJobWallProps(sv4guiSimJob* job, std::string& msg, 
     std::string nu = ui->WallProps_poisson_ratio->text().trimmed().toStdString();
     std::string wallDensity = ui->WallProps_density->text().trimmed().toStdString();
 
-    job->SetWallProp("Type", "constant");
-    job->SetWallProp("Thickness", thickness);
-    job->SetWallProp("Elastic Modulus", modulus);
-    job->SetWallProp("Poisson Ratio", nu);
-    job->SetWallProp("Density", wallDensity);
+    job->wall_props.Set("Type", "constant");
+    job->wall_props.Set("Thickness", thickness);
+    job->wall_props.Set("Elastic Modulus", modulus);
+    job->wall_props.Set("Poisson Ratio", nu);
+    job->wall_props.Set("Density", wallDensity);
 
   } else if (wallTypeIndex == 2) {
     std::string nu = ui->WallProps_poisson_ratio->text().trimmed().toStdString();
     std::string wallDensity = ui->WallProps_density->text().trimmed().toStdString();
     std::string wallPropsFile = ui->WallsProps_variable_props_file->text().trimmed().toStdString();
 
-    job->SetWallProp("Type", "variable");
-    job->SetWallProp("Poisson Ratio", nu);
-    job->SetWallProp("Density", wallDensity);
-    job->SetWallProp("Wall Properities File", wallPropsFile);
+    job->wall_props.Set("Type", "variable");
+    job->wall_props.Set("Poisson Ratio", nu);
+    job->wall_props.Set("Density", wallDensity);
+    job->wall_props.Set("Wall Properities File", wallPropsFile);
     #ifdef debug_SetJobWallProps
     std::cout << pmsg << "wallPropsFile: " << wallPropsFile << std::endl;
     #endif
@@ -2940,7 +2944,7 @@ void sv4guiSimulationView::UpdateSimJob()
     std::string numProcsStr = "";
 
     if (job) {
-      numProcsStr = job->GetRunProp("Number of Processes");
+      numProcsStr = job->run_props.Get("Number of Processes");
     }
 
     // Set the sv4guiSimJob values (key/value pairs) from
@@ -2964,7 +2968,7 @@ void sv4guiSimulationView::UpdateSimJob()
         return;
     }
 
-    newJob->SetRunProp("Number of Processes",numProcsStr);
+    newJob->run_props.Set("Number of Processes",numProcsStr);
     m_MitkJob->SetSimJob(newJob);
     m_MitkJob->SetDataModified();
 }
@@ -2993,7 +2997,7 @@ void sv4guiSimulationView::UpdateSimJobNumProcs()
 
   if (job) {
     std::string numProcsStr=QString::number((int)(ui->sliderNumProcs->value())).toStdString();
-    job->SetRunProp("Number of Processes",numProcsStr);
+    job->run_props.Set("Number of Processes",numProcsStr);
     m_MitkJob->SetDataModified();
   }
 }

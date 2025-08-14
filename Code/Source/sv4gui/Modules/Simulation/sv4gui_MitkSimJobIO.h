@@ -35,6 +35,8 @@
 #include <sv4guiModuleSimulationExports.h>
 
 #include "mitkAbstractFileIO.h"
+#include <tinyxml2.h>
+#include "sv4gui_SimJob.h"
 
 class SV4GUIMODULESIMULATION_EXPORT sv4guiMitkSimJobIO : public mitk::AbstractFileIO
 {
@@ -51,6 +53,16 @@ public:
 
     void Write() override;
     mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
+
+    void ReadProperties(tinyxml2::XMLElement* job_element, sv4guiSimJobProperties& properties, 
+        const std::string& section_name);
+    void ReadCapProperties(tinyxml2::XMLElement* job_element, sv4guiSimJobCapProperties& properties,
+        const std::string& section_name);
+
+    void WriteProperties(tinyxml2::XMLDocument& document, tinyxml2::XMLElement* job_element, 
+        sv4guiSimJobProperties& properties, const std::string& section_name);
+
+    void WriteCapProperties(tinyxml2::XMLDocument& document, tinyxml2::XMLElement* job_element, sv4guiSimJobCapProperties& properties);
 
 private:
     sv4guiMitkSimJobIO* IOClone() const override;

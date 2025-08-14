@@ -125,7 +125,7 @@ Sv4GuiSimXmlWriter::add_sub_child(tinyxml2::XMLElement* parent, const std::strin
 //
 void Sv4GuiSimXmlWriter::add_equation_bcs(sv4guiSimJob* job, tinyxml2::XMLElement* equation)
 {
-  auto capProps = job->GetCapProps();
+  auto capProps = job->cap_props.GetAll();
 
   // Process surface faces representing inlet and outlet
   // mesh boundaries (caps).
@@ -264,15 +264,14 @@ void Sv4GuiSimXmlWriter::add_equation(sv4guiSimJob* job)
   #endif
 
   char* eq_type = "fluid";
-  auto wallProps = job->GetWallProps();
+  //auto wallProps = job->GetWallProps();
 
   auto equation = add_sub_child(root_, "Add_equation");
   equation->SetAttribute("type", eq_type);
 
-  // Nonlinear solver paramters.
   add_equation_nl_solver(job, equation);
 
-  auto basicProps = job->GetBasicProps();
+  auto basicProps = job->basic_props.GetAll();
   add_child(equation, "Density", basicProps["Fluid Density"]);
   auto viscosity = add_sub_child(equation, "Viscosity");
   viscosity->SetAttribute("model", "Constant");
@@ -292,7 +291,7 @@ void Sv4GuiSimXmlWriter::add_equation(sv4guiSimJob* job)
 //
 void Sv4GuiSimXmlWriter::add_cmm_wall_properties(sv4guiSimJob*job, tinyxml2::XMLElement* equation)
 {
-  auto wall_props = job->GetWallProps();
+  auto wall_props = job->wall_props.GetAll();
 
   auto density = wall_props["Density"];
   add_child(equation, "Solid_density", density);
@@ -318,8 +317,8 @@ void Sv4GuiSimXmlWriter::add_cmm_equation(sv4guiSimJob* job)
   std::cout << msg << "========== add_cmm_equation ==========" << std::endl;
   #endif
 
-  char* eq_type = "cmm";
-  auto wallProps = job->GetWallProps();
+  char* eq_type = "CMM";
+  auto wallProps = job->wall_props.GetAll();
 
   auto equation = add_sub_child(root_, "Add_equation");
   equation->SetAttribute("type", eq_type);
@@ -329,7 +328,7 @@ void Sv4GuiSimXmlWriter::add_cmm_equation(sv4guiSimJob* job)
 
   // Add physical properties.
   //
-  auto basicProps = job->GetBasicProps();
+  auto basicProps = job->basic_props.GetAll();
   add_child(equation, "Density", basicProps["Fluid Density"]);
   auto viscosity = add_sub_child(equation, "Viscosity");
   viscosity->SetAttribute("model", "Constant");
@@ -360,11 +359,11 @@ void Sv4GuiSimXmlWriter::add_cmm_equation(sv4guiSimJob* job)
 //
 void Sv4GuiSimXmlWriter::add_cmm_equation_bf_bc(sv4guiSimJob* job, tinyxml2::XMLElement* equation)
 {
-  auto cmmProps = job->GetCmmProps();
+  auto cmmProps = job->cmm_props.GetAll();
 
   auto boundary_condition = add_sub_child(equation, "Add_BF");
 
-  boundary_condition->SetAttribute("name", cmm_wall_name_.c_str());
+  boundary_condition->SetAttribute("mesh", cmm_wall_name_.c_str());
   
   add_child(boundary_condition, "Type", "traction");
   add_child(boundary_condition, "Time_dependence", "spatial");
@@ -402,7 +401,7 @@ void Sv4GuiSimXmlWriter::add_equation_output(sv4guiSimJob* job, tinyxml2::XMLEle
 //
 void Sv4GuiSimXmlWriter::add_equation_nl_solver(sv4guiSimJob* job, tinyxml2::XMLElement* equation)
 {
-  auto nonlinearSolverProps = job->GetNonlinearSolverProps();
+  auto nonlinearSolverProps = job->nonlinear_solver_props.GetAll();
 
   add_child(equation, "Coupled", parameters.Coupled);
   add_child(equation, "Min_iterations", nonlinearSolverProps["Min iterations"]);
@@ -418,9 +417,9 @@ void Sv4GuiSimXmlWriter::add_equation_nl_solver(sv4guiSimJob* job, tinyxml2::XML
 //
 void Sv4GuiSimXmlWriter::add_equation_solver(sv4guiSimJob* job, tinyxml2::XMLElement* equation)
 {
-  //auto solverProps = job->GetSolverProps();
+  //auto solverProps = job->linear_solver_props.GetAll();
   //auto nonlinearSolverProps = job->GetNonlinearSolverProps();
-  auto linearSolverProps = job->GetLinearSolverProps();
+  auto linearSolverProps = job->linear_solver_props.GetAll();
 
   auto linear_solver = add_sub_child(equation, "LS");
   auto solver_type = linearSolverProps["Solver"];
@@ -454,26 +453,27 @@ void Sv4GuiSimXmlWriter::add_general(sv4guiSimJob* job)
   add_child(general, "Continue_previous_simulation", false);
   
   // Time stepping
-  auto solverProps = job->GetSolverProps();
+  auto solverTimeProps = job->solver_time_props.GetAll();
   add_child(general, "Number_of_spatial_dimensions", 3);
-  add_child(general, "Number_of_time_steps", solverProps["Number of Timesteps"]);
-  add_child(general, "Time_step_size", solverProps["Time Step Size"]);
-  add_child(general, "Spectral_radius_of_infinite_time_step", solverProps["Spectral radius of infinite time step"]);
+  add_child(general, "Number_of_time_steps", solverTimeProps["Number of Timesteps"]);
+  add_child(general, "Time_step_size", solverTimeProps["Time Step Size"]);
+  add_child(general, "Spectral_radius_of_infinite_time_step", solverTimeProps["Spectral radius of infinite time step"]);
 
   // Output options
-  add_child(general, "Increment_in_saving_restart_files", solverProps["Increment in saving restart files"]);
-  add_child(general, "Start_saving_after_time_step", solverProps["Start saving after time step"]);
+  auto outputProps = job->solver_output_props.GetAll();
+  add_child(general, "Increment_in_saving_restart_files", outputProps["Increment in saving restart files"]);
+  add_child(general, "Start_saving_after_time_step", outputProps["Start saving after time step"]);
 
-  if (solverProps["Save results in folder"] != "N-procs") {
-    add_child(general, "Save_results_in_folder", solverProps["Save results in folder"]);
+  if (outputProps["Save results in folder"] != "N-procs") {
+    add_child(general, "Save_results_in_folder", outputProps["Save results in folder"]);
   }
 
-  add_child(general, "Save_results_to_VTK_format", solverProps["Save results to VTK format"]);
-  add_child(general, "Name_prefix_of_saved_VTK_files", solverProps["Name prefix of saved VTK files"]);
-  add_child(general, "Increment_in_saving_VTK_files", solverProps["Increment in saving VTK files"]);
+  add_child(general, "Save_results_to_VTK_format", outputProps["Save results to VTK format"]);
+  add_child(general, "Name_prefix_of_saved_VTK_files", outputProps["Name prefix of saved VTK files"]);
+  add_child(general, "Increment_in_saving_VTK_files", outputProps["Increment in saving VTK files"]);
 
   // Misc 
-  add_child(general, "Spectral_radius_of_infinite_time_step", solverProps["Spectral radius of infinite time step"]);
+  add_child(general, "Spectral_radius_of_infinite_time_step", solverTimeProps["Spectral radius of infinite time step"]);
 }
 
 //----------
@@ -511,7 +511,7 @@ void Sv4GuiSimXmlWriter::add_cmm_init_mesh(sv4guiSimJob* job)
   std::cout << msg << std::endl;
   std::cout << msg << "========== add_cmm_init_mesh ==========" << std::endl;
   #endif
-  auto cmmProps = job->GetCmmProps();
+  auto cmmProps = job->cmm_props.GetAll();
 
   auto mesh = add_sub_child(root_, "Add_mesh");
   mesh->SetAttribute("name", cmm_wall_name_.c_str());
@@ -535,7 +535,7 @@ void Sv4GuiSimXmlWriter::add_cmm_init_mesh(sv4guiSimJob* job)
 //
 void Sv4GuiSimXmlWriter::add_cmm_simulation(sv4guiSimJob* job)
 {
-  auto cmmProps = job->GetCmmProps();
+  auto cmmProps = job->cmm_props.GetAll();
 
   if (cmmProps["Initialize simulation"] == "true") {
     cmm_simulation_initialization_ = true;
@@ -570,7 +570,7 @@ void Sv4GuiSimXmlWriter::add_cmm_simulation(sv4guiSimJob* job)
 //
 bool Sv4GuiSimXmlWriter::cmm_simulation_enabled(sv4guiSimJob* job)
 {
-  auto cmmProps = job->GetCmmProps();
+  auto cmmProps = job->cmm_props.GetAll();
     
   if (cmmProps["Enable cmm simulation"] == "false") {
     cmm_simulation_enabled_ = false;
