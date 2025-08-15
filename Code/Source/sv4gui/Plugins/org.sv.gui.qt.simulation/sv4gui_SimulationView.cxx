@@ -93,6 +93,7 @@
 #include <QVBoxLayout>
 #include <QApplication>
 #include <QRegularExpression>
+#include <QToolButton>
 
 using namespace sv4guiSimulationPreferenceDBKey;
 
@@ -176,7 +177,7 @@ sv4guiSimulationView::~sv4guiSimulationView()
 //
 void sv4guiSimulationView::EnableConnection(bool enable)
 {
-    #define n_debug_EnableConnection
+    #define debug_EnableConnection
     #ifdef debug_EnableConnection 
     std::string msg("[sv4guiSimulationView::EnableConnection] ");
     std::cout << msg << "========== EnableConnection ==========" << std::endl;
@@ -203,18 +204,28 @@ void sv4guiSimulationView::EnableConnection(bool enable)
         //connect(m_WallPropsPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
 
         // CMM parameters 
+        //
         connect(ui->CmmSim_enable_cmm_simulation, SIGNAL(toggled(bool)), this, slot);
-        connect(ui->CmmSimType_inflate, SIGNAL(toggled(bool)), this, slot);
-        connect(ui->CmmSimType_prestress, SIGNAL(toggled(bool)), this, slot);
 
-        connect(ui->CmmSim_Initialize, SIGNAL(toggled(bool)), this, slot);
+        connect(ui->CmmSimType_inflate, SIGNAL(toggled(bool)), this, SLOT(CmmSimType_changed(bool)));
+        connect(ui->CmmSimType_prestress, SIGNAL(toggled(bool)), this, SLOT(CmmSimType_changed(bool)));
+        //connect(ui->CmmSimType_inflate, SIGNAL(toggled(bool)), this, slot);
+        //connect(ui->CmmSimType_prestress, SIGNAL(toggled(bool)), this, slot);
 
+        connect(ui->CmmSim_Initialize, SIGNAL(toggled(bool)), this, SLOT(CmmSim_Initialize_changed(bool)));
+        //connect(ui->CmmSim_Initialize, SIGNAL(toggled(bool)), this, slot);
         connect(ui->CmmSim_wall_name, SIGNAL(textChanged(QString)), this, slot);
         connect(ui->CmmSim_WallFile_set_file_name, SIGNAL(clicked()), this, SLOT(SetCmmSimWallFile()));
-
         connect(ui->CmmSim_TractionFile_set_file_name, SIGNAL(clicked()), this, SLOT(SetCmmSimTractionFile()));
 
+        connect(ui->CmmSim_files_displacements_file_select, SIGNAL(clicked()), this, 
+            SLOT(SetCmmSimDisplacementsFile()));
+
+        connect(ui->CmmSim_files_prestress_file_select, SIGNAL(clicked()), this, 
+            SLOT(SetCmmSimPrestressFile()));
+
         // Solver parameters 
+        //
         connect(m_SolverParametersPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
 
         connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
@@ -561,6 +572,45 @@ void sv4guiSimulationView::NodeChanged(const mitk::DataNode* node)
     }
 }
 
+//-------------
+// GetFilePath
+//-------------
+//
+QString sv4guiSimulationView::GetFilePath(QToolButton* tool_button, const char* description, 
+    const char* file_type)
+{
+  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+  mitk::IPreferences* prefs;
+
+  if (prefService) {
+    prefs = prefService->GetSystemPreferences()->Node("/General");
+  } else {
+    prefs = nullptr;
+  }
+
+  QString lastFileOpenPath = "";
+
+  if (prefs != nullptr) {
+    lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
+  }
+
+  if (lastFileOpenPath == "") {
+    lastFileOpenPath = QDir::homePath();
+  }
+
+  QString file_path = QFileDialog::getOpenFileName(tool_button, tr(description), 
+      lastFileOpenPath, tr(file_type));
+
+  file_path = file_path.trimmed();
+
+  if (prefs != nullptr) {
+    prefs->Put("LastFileOpenPath", file_path.toStdString());
+    prefs->Flush();
+  }         
+
+  return file_path;
+}
+
 void sv4guiSimulationView::NodeAdded(const mitk::DataNode* node)
 {
 
@@ -717,8 +767,11 @@ void sv4guiSimulationView::UpdateGUIBasic()
     ui->BasicParameters_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     ui->BasicParameters_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
-    ui->BasicParameters_pressure_ic_file_name->setText(QString::fromStdString(job->basic_props.Get("Pressure IC File")));
-    ui->BasicParameters_velocity_ic_file_name->setText(QString::fromStdString(job->basic_props.Get("Velocity IC File")));
+    auto pressure_ic = QString::fromStdString(job->basic_props.Get("Pressure IC File"));
+    ui->BasicParameters_pressure_ic_file_name->setText(pressure_ic);
+
+    auto velocity_ic = QString::fromStdString(job->basic_props.Get("Velocity IC File"));
+    ui->BasicParameters_velocity_ic_file_name->setText(velocity_ic);
 }
 
 //-----------------------------
@@ -1340,72 +1393,8 @@ void sv4guiSimulationView::SetVariableWallPropsFile()
   std::cout << msg << "========== SetVariableWallPropsFile ==========" << std::endl;
   #endif
 
-  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-  mitk::IPreferences* prefs;
-
-  if (prefService) {
-    prefs = prefService->GetSystemPreferences()->Node("/General");
-  } else {
-    prefs = nullptr; 
-  }
-
-  QString lastFileOpenPath = "";
-
-  if (prefs != nullptr) {
-    lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
-  }
-
-  if (lastFileOpenPath == "") {
-    lastFileOpenPath = QDir::homePath();
-  }
-
-  QString file_path = QFileDialog::getOpenFileName(ui->WallsProps_variable_props_file, 
-      tr("Set variable wall properties file"), lastFileOpenPath, tr("VTK VTP Files (*.vtp)"));
-
-  file_path = file_path.trimmed();
-
-  if (file_path.isEmpty()) {
-    return;
-  }
-
-  if (prefs != nullptr) {
-    prefs->Put("LastFileOpenPath", file_path.toStdString());
-    prefs->Flush();
-  }
-
-#if 0
-  QFile inputFile(file_path);
-
-  if (inputFile.open(QIODevice::ReadOnly)) {
-        QTextStream in(&inputFile);
-
-        QFileInfo fi(pressureFilePath);
-        ui->labelLoadPressureFile->setText(fi.fileName());
-
-        std::stringstream ss;
-        QString line;
-        while (1) {
-            line=in.readLine();
-            if(line.isNull())
-                break;
-
-            if(line.contains("#"))
-                continue;
-
-            QStringList list = line.split(QRegularExpression("[(),{}\\s]"), Qt::SkipEmptyParts);
-            if(list.size()!=2)
-                continue;
-
-            ss << list[0].toStdString() << " " << list[1].toStdString() <<"\n";
-
-            pressurePeriod=list[0];
-        }
-
-        m_TimedPressureContent=ss.str();
-        inputFile.close();
-    }
-
-#endif
+  auto file_path = GetFilePath(ui->WallsProps_set_variable_props_file, "Set variable wall properties file", 
+      "VTK VTP Files (*.vtp)");
 
   #ifdef debug_SetVariableWallPropsFile
   std::cout << msg << "file_path: " << file_path << std::endl;
@@ -1413,7 +1402,7 @@ void sv4guiSimulationView::SetVariableWallPropsFile()
 
   ui->WallsProps_variable_props_file->setText(file_path);
 
-  //UpdateSimJob();
+  UpdateSimJob();
 }
 
 //-------------------
@@ -1422,42 +1411,12 @@ void sv4guiSimulationView::SetVariableWallPropsFile()
 //
 void sv4guiSimulationView::SetPressureICFile()
 {
-  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-  mitk::IPreferences* prefs;
-
-  if (prefService) {
-    prefs = prefService->GetSystemPreferences()->Node("/General");
-  } else {
-    prefs = nullptr; 
-  }
-
-  QString lastFileOpenPath = "";
-
-  if (prefs != nullptr) {
-    lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
-  }
-
-  if (lastFileOpenPath == "") {
-    lastFileOpenPath = QDir::homePath();
-  }
-
-  QString file_path = QFileDialog::getOpenFileName(ui->BasicParameters_pressure_ic_set_file_name, 
-      tr("Set pressure IC file"), lastFileOpenPath, tr("VTK VTU Files (*.vtu)"));
-
-  file_path = file_path.trimmed();
-
-  if (file_path.isEmpty()) {
-    return;
-  }
-
-  if (prefs != nullptr) {
-    prefs->Put("LastFileOpenPath", file_path.toStdString());
-    prefs->Flush();
-  }
+  auto file_path = GetFilePath(ui->BasicParameters_pressure_ic_set_file_name,
+      "Set pressure IC file", "VTK VTU Files (*.vtU)");
 
   ui->BasicParameters_pressure_ic_file_name->setText(file_path);
 
-  //UpdateSimJob();
+  UpdateSimJob();
 }
 
 //-------------------
@@ -1466,42 +1425,50 @@ void sv4guiSimulationView::SetPressureICFile()
 //
 void sv4guiSimulationView::SetVelocityICFile()
 {
-  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-  mitk::IPreferences* prefs;
-
-  if (prefService) {
-    prefs = prefService->GetSystemPreferences()->Node("/General");
-  } else {
-    prefs = nullptr; 
-  }
-
-  QString lastFileOpenPath = "";
-
-  if (prefs != nullptr) {
-    lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
-  }
-
-  if (lastFileOpenPath == "") {
-    lastFileOpenPath = QDir::homePath();
-  }
-
-  QString file_path = QFileDialog::getOpenFileName(ui->BasicParameters_velocity_ic_set_file_name, 
-      tr("Set velocity IC file"), lastFileOpenPath, tr("VTK VTU Files (*.vtu)"));
-
-  file_path = file_path.trimmed();
-
-  if (file_path.isEmpty()) {
-    return;
-  }
-
-  if (prefs != nullptr) {
-    prefs->Put("LastFileOpenPath", file_path.toStdString());
-    prefs->Flush();
-  }
+  auto file_path = GetFilePath(ui->BasicParameters_velocity_ic_set_file_name,
+      "Set velocity IC file", "VTK VTU Files (*.vtU)");
 
   ui->BasicParameters_velocity_ic_file_name->setText(file_path);
 
-//UpdateSimJob();
+  UpdateSimJob();
+}
+
+//----------------------------
+// SetCmmSimDisplacementsFile
+//----------------------------
+// Set the file used for the CMM displacements boundary condition.
+//
+void sv4guiSimulationView::SetCmmSimDisplacementsFile()
+{
+  auto file_path = GetFilePath(ui->CmmSim_files_displacements_file_select, "Set displacement BC file",
+      "VTK VTU Files (*.vtU)");
+            
+  if (file_path.isEmpty()) {
+    return;
+  }
+    
+  ui->CmmSim_files_displacements_file_name->setText(file_path);
+
+  UpdateSimJob();
+}
+
+//------------------------
+// SetCmmSimPrestressFile
+//------------------------
+// Set the file used for the CMM prestress boundary condition.
+//
+void sv4guiSimulationView::SetCmmSimPrestressFile()
+{ 
+  auto file_path = GetFilePath(ui->CmmSim_files_displacements_file_select, "Set prestress BC file",
+      "VTK VTU Files (*.vtU)");
+            
+  if (file_path.isEmpty()) {
+    return;
+  }
+    
+  ui->CmmSim_files_prestress_file_name->setText(file_path);
+
+  UpdateSimJob();
 }
 
 //-------------------
@@ -1517,37 +1484,11 @@ void sv4guiSimulationView::SetCmmSimWallFile()
   std::cout << msg << "========== SetCmmSimWallFile ==========" << std::endl;
   #endif
 
-  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-  mitk::IPreferences* prefs;
-
-  if (prefService) {
-    prefs = prefService->GetSystemPreferences()->Node("/General");
-  } else {
-    prefs = nullptr; 
-  }
-
-  QString lastFileOpenPath = "";
-
-  if (prefs != nullptr) {
-    lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
-  }
-
-  if (lastFileOpenPath == "") {
-    lastFileOpenPath = QDir::homePath();
-  }
-
-  QString file_path = QFileDialog::getOpenFileName(ui->CmmSim_WallFile_set_file_name, 
-      tr("Set wall shell file"), lastFileOpenPath, tr("VTK VTP Files (*.vtp)"));
-
-  file_path = file_path.trimmed();
+  auto file_path = GetFilePath(ui->CmmSim_WallFile_set_file_name, "Set wall shell file", 
+      "VTK VTP Files (*.vtp)");
 
   if (file_path.isEmpty()) {
     return;
-  }
-
-  if (prefs != nullptr) {
-    prefs->Put("LastFileOpenPath", file_path.toStdString());
-    prefs->Flush();
   }
 
   #ifdef debug_SetCmmSimWallFile
@@ -1572,38 +1513,8 @@ void sv4guiSimulationView::SetCmmSimTractionFile()
   std::cout << msg << "========== SetCmmSimTractionFile ==========" << std::endl;
   #endif
 
-  mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-  mitk::IPreferences* prefs;
-
-  if (prefService) {
-    prefs = prefService->GetSystemPreferences()->Node("/General");
-  } else {
-    prefs = nullptr; 
-  }
-
-  QString lastFileOpenPath = "";
-
-  if (prefs != nullptr) {
-    lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
-  }
-
-  if (lastFileOpenPath == "") {
-    lastFileOpenPath = QDir::homePath();
-  }
-
-  QString file_path = QFileDialog::getOpenFileName(ui->CmmSim_TractionFile_set_file_name, 
-      tr("Set traction values file"), lastFileOpenPath, tr("VTK VTP Files (*.vtp)"));
-
-  file_path = file_path.trimmed();
-
-  if (file_path.isEmpty()) {
-    return;
-  }
-
-  if (prefs != nullptr) {
-    prefs->Put("LastFileOpenPath", file_path.toStdString());
-    prefs->Flush();
-  }
+  auto file_path = GetFilePath(ui->CmmSim_TractionFile_set_file_name, "Set traction values file",
+      "VTK VTP Files (*.vtp)");
 
   ui->CmmSim_TractionFile_file_name->setText(file_path);
 
@@ -1745,12 +1656,19 @@ void sv4guiSimulationView::UpdateGUICmm()
     std::cout << msg << "Set init checked ... " << std::endl;
     #endif
 
-    ui->CmmSim_Initialize->setChecked(job->cmm_props.Get("Initialize simulation") == "true");
+    if (job->cmm_props.Get("Initialize simulation") == "true") { 
+      ui->CmmSim_Initialize->setChecked(true);
+      Update_CmmSim_files_panel(true);
+    } else {
+      Update_CmmSim_files_panel(false);
+    }
 
     ui->CmmSim_wall_name->setText(QString::fromStdString(job->cmm_props.Get("Wall name")));
     ui->CmmSim_WallFile_file_name->setText(QString::fromStdString(job->cmm_props.Get("Wall file")));
-
     ui->CmmSim_TractionFile_file_name->setText(QString::fromStdString(job->cmm_props.Get("Traction file")));
+
+    ui->CmmSim_files_displacements_file_name->setText(QString::fromStdString(job->cmm_props.Get("Displacements file")));
+    ui->CmmSim_files_prestress_file_name->setText(QString::fromStdString(job->cmm_props.Get("Prestress file")));
 
     #ifdef debug_UpdateGUICmm 
     std::cout << msg << "Done " << std::endl;
@@ -1763,6 +1681,34 @@ void sv4guiSimulationView::UpdateGUICmm()
 //
 void sv4guiSimulationView::CmmSim_Initialize_changed(bool checked)
 {
+  #define debug_CmmSim_Initialize_changed
+  #ifdef debug_CmmSim_Initialize_changed
+  std::string msg("[sv4guiSimulationView::CmmSim_Initialize_changed] ");
+  std::cout << msg << "==========  CmmSim_Initialize_changed ==========" << std::endl;
+  std::cout << msg << "checked: " << checked << std::endl;
+  #endif
+
+  Update_CmmSim_files_panel(checked);
+
+  UpdateSimJob();
+}
+
+//---------------------------
+// Update_CmmSim_files_panel
+//---------------------------
+// Update the CmmSim_files QStackedWidget to show the widgets
+// associated with cmm initialization or prestress/inflate simulation.
+//
+void sv4guiSimulationView::Update_CmmSim_files_panel(bool checked)
+{
+  if (checked) {
+    ui->CmmSim_files->setCurrentIndex(0);
+  } else if (ui->CmmSimType_prestress->isChecked()) {
+    ui->CmmSim_files->setCurrentIndex(1);
+  } else {
+    ui->CmmSim_files->setCurrentIndex(2);
+  }
+
 }
 
 //--------------------------------------
@@ -1799,14 +1745,6 @@ void sv4guiSimulationView::CmmSimType_changed(bool checked)
   #endif
 
   auto sender = qobject_cast<QRadioButton*>(QObject::sender());
-  int page_index = 0;
-  
-  if (sender->text() == ui->CmmSimType_inflate->text()) {
-    page_index = 1;
-
-  } else if (sender->text() == ui->CmmSimType_prestress->text()) {
-    page_index = 2;
-  }
 
   #ifdef debug_CmmSimType_changed 
   std::cout << msg << "page_index: " << page_index << std::endl;
@@ -1814,11 +1752,11 @@ void sv4guiSimulationView::CmmSimType_changed(bool checked)
 
   m_CmmSimulationType = sender->text().toStdString();
 
+  Update_CmmSim_files_panel( ui->CmmSim_Initialize->isChecked() );
+
   #ifdef debug_CmmSimType_changed 
   std::cout << msg << "m_CmmSimulationType: " << m_CmmSimulationType << std::endl;
   #endif
-
-  //ui->CmmSimulation_pages->setCurrentIndex(page_index);
 
   UpdateSimJob();
 
@@ -2600,8 +2538,13 @@ void sv4guiSimulationView::SetJobCmmProps(sv4guiSimJob* job, std::string& msg, b
 
   job->cmm_props.Set("Wall name", ui->CmmSim_wall_name->text().trimmed().toStdString());
   job->cmm_props.Set("Wall file", ui->CmmSim_WallFile_file_name->text().trimmed().toStdString());
-
   job->cmm_props.Set("Traction file",ui->CmmSim_TractionFile_file_name->text().trimmed().toStdString());
+
+  job->cmm_props.Set("Displacements file", 
+      ui->CmmSim_files_displacements_file_name->text().trimmed().toStdString());
+
+  job->cmm_props.Set("Prestress file", 
+      ui->CmmSim_files_prestress_file_name->text().trimmed().toStdString());
 }
 
 //------------------
@@ -2645,7 +2588,7 @@ bool sv4guiSimulationView::SetJobBasicProps(sv4guiSimJob* job, std::string& msg,
   job->basic_props.Set(par, values);
   }
 
-  job->basic_props.Set("Pressuee IC File", ui->BasicParameters_pressure_ic_file_name->text().toStdString());
+  job->basic_props.Set("Pressure IC File", ui->BasicParameters_pressure_ic_file_name->text().toStdString());
   job->basic_props.Set("Velocity IC File", ui->BasicParameters_velocity_ic_file_name->text().toStdString());
 
   return true;

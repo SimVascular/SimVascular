@@ -56,6 +56,7 @@
 #include <QItemSelection>
 #include <QMenu>
 #include <QmitkStdMultiWidget.h>
+#include <QToolButton>
 
 #include <map>
 
@@ -126,9 +127,14 @@ public slots:
     void UpdateGUICmm();
     void CmmSimType_changed(bool checked);
     void CmmSim_enable_cmm_simulation_changed(bool checked);
-    void SetCmmSimWallFile();
+
+    void SetCmmSimDisplacementsFile();
+    void SetCmmSimPrestressFile();
     void SetCmmSimTractionFile();
+    void SetCmmSimWallFile();
+
     void CmmSim_Initialize_changed(bool checked);
+    void Update_CmmSim_files_panel(bool checked);
 
     // Solver paramters 
     //
@@ -209,6 +215,8 @@ public:
     QString FindLatestKey(QString key, QStringList keys);
     QString GetRegistryValue(QString category, QString key);
 #endif
+
+    QString GetFilePath(QToolButton* button_tool, const char* description, const char* file_type);
 
 private:
 
