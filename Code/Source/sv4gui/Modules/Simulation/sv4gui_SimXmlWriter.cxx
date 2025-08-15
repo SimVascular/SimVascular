@@ -155,14 +155,19 @@ void Sv4GuiSimXmlWriter::add_equation_bcs(sv4guiSimJob* job, tinyxml2::XMLElemen
     }
   }
 
-  // Add no slip wall boundary conditions.
+  // Add wall boundary conditions.
   for (auto face : faces_name_type_) {
     if (face.second != "wall") {
       continue;
     }
     auto boundary_condition = add_sub_child(equation, "Add_BC");
     boundary_condition->SetAttribute("name", face.first.c_str());
-    add_wall_bc(job, boundary_condition);
+
+    if (cmm_simulation_enabled_) { 
+      add_cmm_equation_wall_bc(job, boundary_condition);
+    } else {
+      add_wall_bc(job, boundary_condition);
+    }
   }
 }
 
@@ -175,7 +180,7 @@ void Sv4GuiSimXmlWriter::add_rcr_bc(GuiProperties& props, sv4guiSimJob* job,
     tinyxml2::XMLElement* boundary_condition)
 {
   add_child(boundary_condition, "Type", "Neumann");
-  add_child(boundary_condition, "Time_dependence", "Resistance");
+  add_child(boundary_condition, "Time_dependence", "RCR");
 
   std::string str_values = props["Values"];
   std::vector<double> values;
@@ -186,9 +191,9 @@ void Sv4GuiSimXmlWriter::add_rcr_bc(GuiProperties& props, sv4guiSimJob* job,
   }
 
   auto rcr_values = add_sub_child(boundary_condition, "RCR_values");
-  add_child(rcr_values, "Distal_resistance", values[0]);
+  add_child(rcr_values, "Proximal_resistance", values[0]);
   add_child(rcr_values, "Capacitance", values[1]);
-  add_child(rcr_values, "Proximal_resistance", values[2]);
+  add_child(rcr_values, "Distal_resistance", values[2]);
 
   add_child(rcr_values, "Distal_pressure", 0.0);
   add_child(rcr_values, "Initial_pressure", 0.0);
@@ -301,6 +306,9 @@ void Sv4GuiSimXmlWriter::add_cmm_wall_properties(sv4guiSimJob*job, tinyxml2::XML
 
   auto poisson_ratio = wall_props["Poisson Ratio"];
   add_child(equation, "Poisson_ratio", poisson_ratio);
+
+  auto shell_thickness = wall_props["Thickness"];
+  add_child(equation, "Shell_thickness", shell_thickness);
 }
 
 //------------------
@@ -349,15 +357,45 @@ void Sv4GuiSimXmlWriter::add_cmm_equation(sv4guiSimJob* job)
 
   add_equation_output(job, equation);
 
-  add_cmm_equation_bf_bc(job, equation);
+  if (cmm_simulation_initialization_) {
+    add_cmm_equation_bf(job, equation);
+  } else {
+    add_equation_bcs(job, equation);
+  }
+
 }
 
-//------------------------
-// add_cmm_equation_bf_bc
-//------------------------
-// Add a body force 'Add_BF' boundary condition for a cmm equation.
+//--------------------------
+// add_cmm_equation_wall_bc
+//--------------------------
+// For a cmm initialization simulation just add 
+// a body force on the wall.
 //
-void Sv4GuiSimXmlWriter::add_cmm_equation_bf_bc(sv4guiSimJob* job, tinyxml2::XMLElement* equation)
+void Sv4GuiSimXmlWriter::add_cmm_equation_wall_bc(sv4guiSimJob* job, tinyxml2::XMLElement* boundary_condition)
+{
+  auto cmmProps = job->cmm_props.GetAll();
+
+  add_child(boundary_condition, "Type", "CMM");
+
+  if (cmm_prestress_simulation_) {
+    auto prestress_file = cmmProps["Prestress file"];
+    add_child(boundary_condition, "Prestress_file_path", prestress_file);
+
+  } else {
+    auto disp_file = cmmProps["Displacements file"];
+    add_child(boundary_condition, "Initial_displacements_file_path", disp_file);
+
+  }
+
+}
+
+//---------------------
+// add_cmm_equation_bf
+//---------------------
+// Add a body force 'Add_BF' boundary condition for a cmm equation for an 
+// initialization simulation.
+//
+void Sv4GuiSimXmlWriter::add_cmm_equation_bf(sv4guiSimJob* job, tinyxml2::XMLElement* equation)
 {
   auto cmmProps = job->cmm_props.GetAll();
 
@@ -392,6 +430,11 @@ void Sv4GuiSimXmlWriter::add_equation_output(sv4guiSimJob* job, tinyxml2::XMLEle
   add_child(output, "Velocity", true); 
   add_child(output, "Vorticity", true); 
   add_child(output, "WSS", true); 
+
+  if (cmm_simulation_enabled_) {
+    add_child(output, "Displacement", true); 
+    add_child(output, "Stress", true); 
+  }
 }
 
 //-------------------------

@@ -49,6 +49,24 @@ solver_section_names = {
 
 }
 
+// Copy method.
+//
+sv4guiSimJob::sv4guiSimJob(const sv4guiSimJob &other)
+{
+    basic_props = other.basic_props;
+    cap_props = other.cap_props;
+    wall_props = other.wall_props;
+    cmm_props = other.cmm_props;
+    run_props = other.run_props;
+
+    solver_output_props = other.solver_output_props;
+    solver_time_props = other.solver_time_props;
+    linear_solver_props = other.linear_solver_props;
+    nonlinear_solver_props = other.nonlinear_solver_props;
+
+   solver_section_names = other.solver_section_names;
+}
+
 sv4guiSimJob::~sv4guiSimJob()
 {
 }

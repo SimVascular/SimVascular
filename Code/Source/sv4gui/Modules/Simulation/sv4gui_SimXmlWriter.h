@@ -141,7 +141,8 @@ class Sv4GuiSimXmlWriter
 
     void add_cmm_init_mesh(sv4guiSimJob* job);
     void add_cmm_equation(sv4guiSimJob* job);
-    void add_cmm_equation_bf_bc(sv4guiSimJob* job, tinyxml2::XMLElement* equation);
+    void add_cmm_equation_wall_bc(sv4guiSimJob* job, tinyxml2::XMLElement* equation);
+    void add_cmm_equation_bf(sv4guiSimJob* job, tinyxml2::XMLElement* equation);
     void add_cmm_simulation(sv4guiSimJob* job);
     void add_cmm_wall_properties(sv4guiSimJob* job, tinyxml2::XMLElement* equation);
     bool cmm_simulation_enabled(sv4guiSimJob* job);
