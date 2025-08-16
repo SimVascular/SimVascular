@@ -1459,7 +1459,7 @@ void sv4guiSimulationView::SetCmmSimDisplacementsFile()
 //
 void sv4guiSimulationView::SetCmmSimPrestressFile()
 { 
-  auto file_path = GetFilePath(ui->CmmSim_files_displacements_file_select, "Set prestress BC file",
+  auto file_path = GetFilePath(ui->CmmSim_files_prestress_file_select, "Set prestress BC file",
       "VTK VTU Files (*.vtU)");
             
   if (file_path.isEmpty()) {
