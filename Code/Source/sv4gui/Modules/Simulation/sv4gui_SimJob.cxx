@@ -35,16 +35,36 @@ sv4guiSimJob::sv4guiSimJob()
     : m_VelocityCapNumber(0)
     , m_PressureCapNumber(0)
 {
+
+// Map the section names in 
+// org.sv.gui.qt.simulation/resources/solvertemplate.xml file
+// to the appropriate class.
+//
+solver_section_names = { 
+  { "Output",           &solver_output_props},
+  { "Time Step",        &solver_time_props},
+  { "Nonlinear Solver", &nonlinear_solver_props},
+  { "Linear Solver",    &linear_solver_props}
+};
+
 }
 
+// Copy method.
+//
 sv4guiSimJob::sv4guiSimJob(const sv4guiSimJob &other)
-    : m_BasicProps(other.m_BasicProps)
-    , m_CapProps(other.m_CapProps)
-    , m_WallProps(other.m_WallProps)
-    , m_VarProps(other.m_VarProps)
-    , m_SolverProps(other.m_SolverProps)
-    , m_RunProps(other.m_RunProps)
 {
+    basic_props = other.basic_props;
+    cap_props = other.cap_props;
+    wall_props = other.wall_props;
+    cmm_props = other.cmm_props;
+    run_props = other.run_props;
+
+    solver_output_props = other.solver_output_props;
+    solver_time_props = other.solver_time_props;
+    linear_solver_props = other.linear_solver_props;
+    nonlinear_solver_props = other.nonlinear_solver_props;
+
+   solver_section_names = other.solver_section_names;
 }
 
 sv4guiSimJob::~sv4guiSimJob()
@@ -56,157 +76,52 @@ sv4guiSimJob* sv4guiSimJob::Clone()
     return new sv4guiSimJob(*this);
 }
 
-void sv4guiSimJob::SetBasicProps(std::map<std::string,std::string> basicProps)
-{
-    m_BasicProps=basicProps;
-}
-
-std::map<std::string,std::string> sv4guiSimJob::GetBasicProps()
-{
-    return m_BasicProps;
-}
-
-void sv4guiSimJob::SetBasicProp(const std::string& key, std::string value)
-{
-    m_BasicProps[key]=value;
-}
-
-std::string sv4guiSimJob::GetBasicProp(const std::string& key)
-{
-    return m_BasicProps[key];
-}
-
-void sv4guiSimJob::SetCapProps(std::map<std::string,std::map<std::string,std::string> > capProps)
-{
-    m_CapProps=capProps;
-}
-
-std::map<std::string,std::map<std::string,std::string> > sv4guiSimJob::GetCapProps()
-{
-    return m_CapProps;
-}
-
-void sv4guiSimJob::SetCapProp(const std::string& capName, const std::string& key, std::string value)
-{
-    m_CapProps[capName][key]=value;
-}
-
-std::string sv4guiSimJob::GetCapProp(const std::string& capName, const std::string& key)
-{
-    return m_CapProps[capName][key];
-}
-
-void sv4guiSimJob::SetWallProps(std::map<std::string,std::string> wallProps)
-{
-    m_WallProps=wallProps;
-}
-
-std::map<std::string,std::string> sv4guiSimJob::GetWallProps()
-{
-    return m_WallProps;
-}
-
-void sv4guiSimJob::SetWallProp(const std::string& key, std::string value)
-{
-    m_WallProps[key]=value;
-}
-
-std::string sv4guiSimJob::GetWallProp(const std::string& key)
-{
-    return m_WallProps[key];
-}
-
-void sv4guiSimJob::SetVarProps(std::map<std::string,std::map<std::string,std::string> > varProps)
-{
-    m_VarProps=varProps;
-}
-
-std::map<std::string,std::map<std::string,std::string> > sv4guiSimJob::GetVarProps()
-{
-    return m_VarProps;
-}
-
-void sv4guiSimJob::SetVarProp(const std::string& faceName, const std::string& key, std::string value)
-{
-    m_VarProps[faceName][key]=value;
-}
-
-std::string sv4guiSimJob::GetVarProp(const std::string& faceName, const std::string& key)
-{
-    return m_VarProps[faceName][key];
-}
-
-void sv4guiSimJob::SetSolverProps(std::map<std::string,std::string> solverProps)
-{
-    m_SolverProps = solverProps;
-}
-
-std::map<std::string,std::string> sv4guiSimJob::GetSolverProps()
-{
-    return m_SolverProps;
-}
-
-std::map<std::string,std::string> sv4guiSimJob::GetLinearSolverProps()
-{
-    return m_LinearSolverProps;
-}
-
-std::map<std::string,std::string> sv4guiSimJob::GetNonlinearSolverProps()
-{
-    return m_NonlinearSolverProps;
-}
-
 //---------------
 // SetSolverProp
 //---------------
-// Add solver propertiers.
+// Set the property value for the solver section given by 'section_name'.
 //
-// The 'section' parameter defines the section in the solvertemplate.xml file
-// the parameter name is under. These are stored in separate maps so the
-// same parameter name can be used in differenct sections.
-//
-void sv4guiSimJob::SetSolverProp(const std::string& name, std::string value, const std::string& section)
+// This is used to store solver properties for each section in the 
+// org.sv.gui.qt.simulation/resources/solvertemplate.xml file.
+
+void sv4guiSimJob::SetSolverProp(const std::string& section_name, const std::string& key, const std::string& value) 
 {
-  m_SolverProps[name] = value;
-
-  if (section == "Nonlinear Solver") {
-    m_NonlinearSolverProps[name] = value;
-
-  } else if (section == "Linear Solver") {
-    m_LinearSolverProps[name] = value;
+  if (solver_section_names.count(section_name) == 0) {
+    throw std::runtime_error("[sv4guiSimJob::SetSolverProp] Internal error: no known solver property section name '" + 
+        section_name + ".");
   }
+  auto props = solver_section_names[section_name];
+  props->Set(key, value);
 }
 
-std::string sv4guiSimJob::GetSolverProp(const std::string& key)
+//---------------
+// GetSolverProp
+//---------------
+// Get the property value for the solver section given by 'section_name'.
+//
+std::string sv4guiSimJob::GetSolverProp(const std::string& section_name, const std::string& key)
 {
-    return m_SolverProps[key];
+  if (solver_section_names.count(section_name) == 0) {
+    throw std::runtime_error("[sv4guiSimJob::SetSolverProp] Internal error: no known solver property section name '" +
+        section_name + ".");
+  }
+  auto props = solver_section_names[section_name];
+  return props->Get(key);
 }
 
-void sv4guiSimJob::SetRunProps(std::map<std::string,std::string> runProps)
-{
-    m_RunProps=runProps;
-}
-
-std::map<std::string,std::string> sv4guiSimJob::GetRunProps()
-{
-    return m_RunProps;
-}
-
-void sv4guiSimJob::SetRunProp(const std::string& key, std::string value)
-{
-    m_RunProps[key]=value;
-}
-
-std::string sv4guiSimJob::GetRunProp(const std::string& key)
-{
-    return m_RunProps[key];
-}
-
+//--------
+// SetIDs
+//--------
+//
 void sv4guiSimJob::SetIDs(std::map<std::string,int> IDs)
 {
     m_IDs=IDs;
 }
 
+//--------
+// GetIDs
+//--------
+//
 std::map<std::string,int> sv4guiSimJob::GetIDs()
 {
     return m_IDs;

@@ -39,51 +39,53 @@
 #include <iostream>
 #include <string>
 
+using SimJobPropertyMap = std::map<std::string,std::string>;
+using SimJobCapPropertyMap = std::map<std::string,std::map<std::string,std::string>> ;
+
+class SV4GUIMODULESIMULATION_EXPORT sv4guiSimJobCapProperties
+{
+  public:
+    SimJobCapPropertyMap properties; 
+    void SetAll(SimJobCapPropertyMap props) { properties = props; };
+    SimJobCapPropertyMap GetAll() { return properties; };
+    void Set(const std::string& capName, const std::string& key, std::string value) { properties[capName][key] = value; };
+    std::string Get(const std::string& capName, const std::string& key) { return properties[capName][key]; };
+};
+
+class SV4GUIMODULESIMULATION_EXPORT sv4guiSimJobProperties
+{
+  public:
+    SimJobPropertyMap properties; 
+    SimJobPropertyMap GetAll() { return properties; };
+    std::string Get(const std::string& key) { return properties[key]; };
+    void Set(const std::string& key, const std::string& value) { properties[key] = value; };
+    void SetAll(SimJobPropertyMap props) { properties = props; };
+};
+
 class SV4GUIMODULESIMULATION_EXPORT sv4guiSimJob
 {
-
-public:
-
+  public:
     sv4guiSimJob();
-
     sv4guiSimJob(const sv4guiSimJob &other);
-
     virtual ~sv4guiSimJob();
-
     virtual sv4guiSimJob* Clone();
 
-    void SetBasicProps(std::map<std::string,std::string> basicProps);
-    std::map<std::string,std::string> GetBasicProps();
-    void SetBasicProp(const std::string& key, std::string value);
-    std::string GetBasicProp(const std::string& key);
+    sv4guiSimJobProperties basic_props;
+    sv4guiSimJobCapProperties cap_props;
+    sv4guiSimJobProperties wall_props;
+    sv4guiSimJobProperties cmm_props;
+    sv4guiSimJobProperties run_props;
 
-    void SetCapProps(std::map<std::string,std::map<std::string,std::string> > capProps);
-    std::map<std::string,std::map<std::string,std::string> > GetCapProps();
-    void SetCapProp(const std::string& capName, const std::string& key, std::string value);
-    std::string GetCapProp(const std::string& capName, const std::string& key);
+    sv4guiSimJobProperties solver_output_props;
+    sv4guiSimJobProperties solver_time_props;
+    sv4guiSimJobProperties linear_solver_props;
+    sv4guiSimJobProperties nonlinear_solver_props;
 
-    void SetWallProps(std::map<std::string,std::string> wallProps);
-    std::map<std::string,std::string> GetWallProps();
-    void SetWallProp(const std::string& key, std::string value);
-    std::string GetWallProp(const std::string& key);
+    std::map<std::string, sv4guiSimJobProperties*> solver_section_names;
 
-    void SetVarProps(std::map<std::string,std::map<std::string,std::string> > varProps);
-    std::map<std::string,std::map<std::string,std::string> > GetVarProps();
-    void SetVarProp(const std::string& faceName, const std::string& key, std::string value);
-    std::string GetVarProp(const std::string& faceName, const std::string& key);
-
-    void SetSolverProps(std::map<std::string,std::string> solverProps);
-    std::map<std::string,std::string> GetSolverProps();
-    std::map<std::string,std::string> GetNonlinearSolverProps();
-    std::map<std::string,std::string> GetLinearSolverProps();
-    void SetSolverProp(const std::string& key, std::string value, const std::string& section);
-    std::string GetSolverProp(const std::string& key);
-
-    void SetRunProps(std::map<std::string,std::string> runProps);
-    std::map<std::string,std::string> GetRunProps();
-    void SetRunProp(const std::string& key, std::string value);
-    std::string GetRunProp(const std::string& key);
-
+    std::string GetSolverProp(const std::string& section_name, const std::string& key);
+    void SetSolverProp(const std::string& section_name, const std::string& key, const std::string& value);
+                   
     void SetIDs(std::map<std::string,int> IDs);
     std::map<std::string,int> GetIDs();
 
@@ -95,25 +97,7 @@ public:
 
   protected:
 
-    std::map<std::string,std::string> m_BasicProps;
-    std::map<std::string,std::map<std::string,std::string> > m_CapProps;
-    std::map<std::string,std::string> m_WallProps;
-    std::map<std::string,std::map<std::string,std::string> > m_VarProps;
-
-    // Stores parameter name/value pairs set from the GUI.
-    // 
-    // The m_NonlinearSolverProps and m_LinearSolverProps store parameters
-    // for those sections, allows having the same parameter name (e.g. Max iterations)
-    // to be used in different sections, otherwise they would be overwritten in 
-    // m_SolverProps.
-    std::map<std::string,std::string> m_SolverProps;
-    std::map<std::string,std::string> m_NonlinearSolverProps;
-    std::map<std::string,std::string> m_LinearSolverProps;
-
-    std::map<std::string,std::string> m_RunProps;
-
     std::map<std::string,int> m_IDs;
-
     int m_VelocityCapNumber; //for caps with prescribed velosities
     int m_PressureCapNumber; //for caps with prescribed velosities
 

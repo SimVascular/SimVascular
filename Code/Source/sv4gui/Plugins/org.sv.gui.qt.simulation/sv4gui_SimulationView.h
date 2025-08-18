@@ -48,12 +48,15 @@
 #include <mitkIPreferences.h>
 
 #include <QWidget>
+#include <QButtonGroup>
+#include <QRadioButton>
 #include <QStandardItemModel>
 #include <QProcess>
 #include <QMessageBox>
 #include <QItemSelection>
 #include <QMenu>
 #include <QmitkStdMultiWidget.h>
+#include <QToolButton>
 
 #include <map>
 
@@ -86,20 +89,21 @@ public slots:
 
     void UpdateFaceListSelection();
 
+    // Basic parameters.
+    //
     void UpdateGUIBasic();
+    void SetPressureICFile();
+    void SetVelocityICFile();
 
     void TableViewBasicDoubleClicked(const QModelIndex& index);
-
     void TableCapSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
 
+    // Inlet/outlet BCs.
+    //
     void TableViewCapDoubleClicked(const QModelIndex& index);
-
     void TableViewCapContextMenuRequested(const QPoint& pos);
-
     void ShowCapBCWidget( bool checked = false );
-
     void SetDistalPressure( bool checked = false );
-
     void SetCapBC();
 
     void ShowSplitBCWidget(QString splitTarget);
@@ -110,18 +114,30 @@ public slots:
 
     void UpdateGUICap();
 
-    void WallTypeSelectionChanged(int index);
-
-    void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
-
-    void TableViewVarContextMenuRequested(const QPoint& pos);
-
-    void SetVarE( bool checked = false );
-
-    void SetVarThickness( bool checked = false );
-
+    // Wall properties.
+    //
     void UpdateGUIWall();
 
+    void WallTypeSelectionChanged(int index);
+
+    void SetVariableWallPropsFile();
+
+    // Coupled Momentum Method
+    //
+    void UpdateGUICmm();
+    void CmmSimType_changed(bool checked);
+    void CmmSim_enable_cmm_simulation_changed(bool checked);
+
+    void SetCmmSimDisplacementsFile();
+    void SetCmmSimPrestressFile();
+    void SetCmmSimTractionFile();
+    void SetCmmSimWallFile();
+
+    void CmmSim_Initialize_changed(bool checked);
+    void Update_CmmSim_files_panel(bool checked);
+
+    // Solver paramters 
+    //
     void UpdateGUISolver();
 
     void UpdateGUIJob();
@@ -173,7 +189,13 @@ public:
 
     virtual void OnPreferencesChanged(const mitk::IPreferences* prefs) override;
 
-    sv4guiSimJob* CreateJob(std::string& msg, bool checkValidity = true);
+    sv4guiSimJob* CreateSimJob(std::string& msg, bool checkValidity = true);
+
+    bool SetJobBasicProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
+    bool SetJobCapProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
+    void SetJobCmmProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
+    bool SetJobSolverProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
+    void SetJobWallProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
 
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
 
@@ -193,6 +215,8 @@ public:
     QString FindLatestKey(QString key, QStringList keys);
     QString GetRegistryValue(QString category, QString key);
 #endif
+
+    QString GetFilePath(QToolButton* button_tool, const char* description, const char* file_type);
 
 private:
 
@@ -214,20 +238,22 @@ private:
 
     QmitkStdMultiWidget* m_DisplayWidget;
 
-    QStandardItemModel* m_TableModelBasic;
+    QStandardItemModel* m_BasicParametersPage;
 
-    QStandardItemModel* m_TableModelCap;
-    QMenu* m_TableMenuCap;
+    QStandardItemModel*  m_InletOutletBCsPage;
+    QMenu* m_InletOutletBCs_caps_table;
 
-    QStandardItemModel* m_TableModelVar;
-    QMenu* m_TableMenuVar;
+    QStandardItemModel* m_WallPropertiesPage;
+    QMenu* m_WallPropertiesPage_variable_props;
 
     sv4guiCapBCWidget* m_CapBCWidget;
 
     sv4guiSplitBCWidget* m_SplitBCWidget;
 
-    QStandardItemModel* m_TableModelSolver;
-    std::map<int,std::string>  m_TableModelSolverSections;
+    QButtonGroup* m_CmmSimType_group;
+
+    QStandardItemModel* m_SolverParametersPage;
+    std::map<int,std::string>  m_SolverParametersPageSections;
 
     sv4guiMPIPreferences::MpiImplementation m_MpiImplementation;
 
@@ -248,6 +274,8 @@ private:
     void CheckSolver();
     void CheckMpi();
     // davep int GetStartTimeStep(const QString& runPath, const QString& jobPath, const int numProcs);
+
+    std::string m_CmmSimulationType;
 
 };
 

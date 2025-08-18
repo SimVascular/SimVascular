@@ -191,71 +191,10 @@
            <number>5</number>
           </property>
           <item>
-           <widget class="QWidget" name="BasicParameters_page" native="true">
-            <layout class="QVBoxLayout" name="verticalLayout_15">
-             <item>
-              <widget class="QTableView" name="BasicParameters_table"/>
-             </item>
-             <item>
-              <widget class="QWidget" name="BasicParameters_pressure_ic_group" native="true">
-               <layout class="QHBoxLayout" name="horizontalLayout_12">
-                <item>
-                 <widget class="QLabel" name="BasicParameters_pressure_ic_label">
-                  <property name="text">
-                   <string>Pressure IC file</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="BasicParameters_pressure_ic_file_name"/>
-                </item>
-                <item>
-                 <widget class="QToolButton" name="BasicParameters_pressure_ic_set_file_name">
-                  <property name="text">
-                   <string>...</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QWidget" name="BasicParameters_velocity_ic_group" native="true">
-               <layout class="QHBoxLayout" name="horizontalLayout_11">
-                <item>
-                 <widget class="QLabel" name="BasicParameters_velocity_ic_label">
-                  <property name="text">
-                   <string>Velocity IC file</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="BasicParameters_velocity_ic_file_name"/>
-                </item>
-                <item>
-                 <widget class="QToolButton" name="BasicParameters_velocity_ic_set_file_name">
-                  <property name="text">
-                   <string>...</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <spacer name="verticalSpacer_4">
-               <property name="orientation">
-                <enum>Qt::Orientation::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>214</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
+           <widget class="QTableView" name="BasicParameters_page">
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+            </property>
            </widget>
           </item>
          </layout>
@@ -329,7 +268,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>451</width>
+           <width>407</width>
            <height>586</height>
           </rect>
          </property>
@@ -631,9 +570,6 @@
                      <property name="text">
                       <string>prestress</string>
                      </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
                     </widget>
                    </item>
                    <item>
@@ -657,130 +593,49 @@
               </widget>
              </item>
              <item>
-              <widget class="QStackedWidget" name="CmmSim_files">
-               <property name="currentIndex">
-                <number>1</number>
-               </property>
-               <widget class="QWidget" name="CmmSim_init_files">
-                <layout class="QVBoxLayout" name="verticalLayout_18">
-                 <item>
-                  <widget class="QWidget" name="CmmSim_wall_name_widget" native="true">
-                   <layout class="QHBoxLayout" name="horizontalLayout_13">
-                    <item>
-                     <widget class="QLabel" name="CmmSim_wall_name_label">
-                      <property name="text">
-                       <string>Wall Name</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="CmmSim_wall_name"/>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QWidget" name="CmmSim_WallFile_group" native="true">
-                   <layout class="QHBoxLayout" name="horizontalLayout_9">
-                    <item>
-                     <widget class="QLabel" name="CmmSIm_WallFile_label">
-                      <property name="text">
-                       <string>Wall file</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="CmmSim_WallFile_file_name"/>
-                    </item>
-                    <item>
-                     <widget class="QToolButton" name="CmmSim_WallFile_set_file_name">
-                      <property name="text">
-                       <string>...</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QWidget" name="Cmm_TractionFile_group" native="true">
-                   <layout class="QHBoxLayout" name="horizontalLayout_10">
-                    <item>
-                     <widget class="QLabel" name="CmmSim_TractionFile_label">
-                      <property name="text">
-                       <string>Traction file</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="CmmSim_TractionFile_file_name"/>
-                    </item>
-                    <item>
-                     <widget class="QToolButton" name="CmmSim_TractionFile_set_file_name">
-                      <property name="text">
-                       <string>...</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-               <widget class="QWidget" name="CmmSim_prestress_files">
-                <layout class="QVBoxLayout" name="verticalLayout_17">
-                 <item>
-                  <widget class="QWidget" name="widget" native="true">
-                   <layout class="QHBoxLayout" name="horizontalLayout_14">
-                    <item>
-                     <widget class="QLabel" name="CmmSim_files_prestress_label">
-                      <property name="text">
-                       <string>Prestress file</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="CmmSim_files_prestress_file_name"/>
-                    </item>
-                    <item>
-                     <widget class="QToolButton" name="CmmSim_files_prestress_file_select">
-                      <property name="text">
-                       <string>...</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-               <widget class="QWidget" name="CmmSim_inflate_files">
-                <layout class="QVBoxLayout" name="verticalLayout_16">
-                 <item>
-                  <widget class="QWidget" name="widget_3" native="true">
-                   <layout class="QHBoxLayout" name="horizontalLayout_15">
-                    <item>
-                     <widget class="QLabel" name="CmmSim_files_displacements_label">
-                      <property name="text">
-                       <string>Displacements file</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="CmmSim_files_displacements_file_name"/>
-                    </item>
-                    <item>
-                     <widget class="QToolButton" name="CmmSim_files_displacements_file_select">
-                      <property name="text">
-                       <string>...</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
+              <widget class="QWidget" name="CmmSim_WallFile_group" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_9">
+                <item>
+                 <widget class="QLabel" name="CmmSIm_WallFile_label">
+                  <property name="text">
+                   <string>Wall file</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="CmmSIm_WallFile_file_name"/>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="CmmSIm_WallFile_select_file_name">
+                  <property name="text">
+                   <string>...</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="Cmm_TractionFile_group" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_10">
+                <item>
+                 <widget class="QLabel" name="CmmSim_TractionFile_label">
+                  <property name="text">
+                   <string>Traction file</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="CmmSim_TractionFile_file_name"/>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="CmmSIm_TractionFile_select_file_name">
+                  <property name="text">
+                   <string>...</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </item>
              <item>
@@ -830,7 +685,7 @@
            <number>5</number>
           </property>
           <item>
-           <widget class="QTableView" name="SolverParameters_table">
+           <widget class="QTableView" name="tableViewSolver">
             <property name="selectionBehavior">
              <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
             </property>

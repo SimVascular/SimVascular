@@ -35,6 +35,7 @@
 
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
+#include "sv4gui_SimJob.h"
 
 #include <tinyxml2.h>
 
@@ -59,202 +60,163 @@ sv4guiMitkSimJobIO::sv4guiMitkSimJobIO()
     this->RegisterService();
 }
 
+//------
+// Read
+//------
+// Read in a Simulations .sjb XML file.
+//
+// Values are read in from the XML file and stored in std::maps defined
+// in a sv4guiSimJob object. 
+//
 std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
 {
+    #define n_debug_Read
+    #ifdef debug_Read
+    std::string msg("[sv4guiMitkSimJobIO::Read] ");
+    std::cout << msg << std::endl;
+    std::cout << msg << "========== Read =========" << std::endl;
+    #endif
+
     std::vector<mitk::BaseData::Pointer> result;
 
     tinyxml2::XMLDocument document;
 
-    std::string fileName=GetInputLocation();
+    std::string fileName = GetInputLocation();
+    #ifdef debug_Read
+    std::cout << msg << "fileName: " <<  fileName << std::endl;
+    #endif
 
-    if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
-    {
+    if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS) {
         mitkThrow() << "Could not open/read/parse " << fileName;
-        //        MITK_ERROR << "Could not open/read/parse " << fileName;
         return result;
     }
 
-    //    TiXmlElement* version = document.FirstChildElement("format");
-
     auto mjElement = document.FirstChildElement("mitk_job");
 
-    if(!mjElement){
-        //        MITK_ERROR << "No job data in "<< fileName;
+    if (!mjElement) {
         mitkThrow() << "No job data in "<< fileName;
         return result;
     }
 
     sv4guiMitkSimJob::Pointer mitkSimJob = sv4guiMitkSimJob::New();
-    std::string modelName="";
-    std::string meshName="";
-    std::string status="";
+    std::string modelName = "";
+    std::string meshName = "";
+    std::string status = "";
+
     set_string_from_attribute(mjElement,"model_name",modelName);
     set_string_from_attribute(mjElement,"mesh_name",meshName);
     set_string_from_attribute(mjElement,"status",status);
+
     mitkSimJob->SetModelName(modelName);
     mitkSimJob->SetMeshName(meshName);
     mitkSimJob->SetStatus(status);
 
     auto jobElement = mjElement->FirstChildElement("job");
-    if(jobElement != nullptr)
-    {
-        sv4guiSimJob* job=new sv4guiSimJob();
 
-        auto bpElement = jobElement->FirstChildElement("basic_props");
-        if(bpElement != nullptr)
-        {
-            std::map<std::string,std::string> basicProps;
-            for( auto element = bpElement->FirstChildElement("prop");
-                 element != nullptr;
-                 element =element->NextSiblingElement("prop") )
-            {
-                if (element == nullptr)
-                    continue;
+    if (jobElement != nullptr) {
+        sv4guiSimJob* job = new sv4guiSimJob();
 
-                std::string key="";
-                std::string value="";
-                set_string_from_attribute(element, "key", key);
-                set_string_from_attribute(element, "value", value);
+        ReadProperties(jobElement, job->basic_props, "basic_props");  
 
-                basicProps[key]=value;
-            }
-            job->SetBasicProps(basicProps);
-        }
+        ReadCapProperties(jobElement, job->cap_props, "cap_props");
 
-        auto cpElement = jobElement->FirstChildElement("cap_props");
-        if(cpElement != nullptr)
-        {
-            std::map<std::string,std::map<std::string,std::string> > capProps;
-            for( auto celement = cpElement->FirstChildElement("cap");
-                 celement != nullptr;
-                 celement =celement->NextSiblingElement("cap") )
-            {
-                if (celement == nullptr)
-                    continue;
+        ReadProperties(jobElement, job->wall_props, "wall_props");  
 
-                std::string name="";
-                set_string_from_attribute(celement, "name", name);
+        ReadProperties(jobElement, job->cmm_props, "cmm_props");  
 
-                for( auto element = celement->FirstChildElement("prop");
-                     element != nullptr;
-                     element =element->NextSiblingElement("prop") )
-                {
-                    if (element == nullptr)
-                        continue;
+        ReadProperties(jobElement, job->solver_time_props, "solver_time_props");  
 
-                    std::string key="";
-                    std::string value="";
-                    set_string_from_attribute(element, "key", key);
-                    set_string_from_attribute(element, "value", value);
+        ReadProperties(jobElement, job->solver_output_props, "solver_output_props");  
 
-                    capProps[name][key]=value;
-                }
+        ReadProperties(jobElement, job->nonlinear_solver_props, "nonlinear_solver_props");  
 
-            }
-            job->SetCapProps(capProps);
-        }
+        ReadProperties(jobElement, job->linear_solver_props, "linear_solver_props");  
 
-        auto wpElement = jobElement->FirstChildElement("wall_props");
-        if(wpElement != nullptr)
-        {
-            std::map<std::string,std::string> wallProps;
-            for( auto element = wpElement->FirstChildElement("prop");
-                 element != nullptr;
-                 element =element->NextSiblingElement("prop") )
-            {
-                if (element == nullptr)
-                    continue;
-
-                std::string key="";
-                std::string value="";
-                set_string_from_attribute(element, "key", key);
-                set_string_from_attribute(element, "value", value);
-
-                wallProps[key]=value;
-            }
-            job->SetWallProps(wallProps);
-        }
-
-        auto vpElement = jobElement->FirstChildElement("var_props");
-        if(vpElement != nullptr)
-        {
-            std::map<std::string,std::map<std::string,std::string> > varProps;
-            for( auto felement = vpElement->FirstChildElement("face");
-                 felement != nullptr;
-                 felement =felement->NextSiblingElement("face") )
-            {
-                if (felement == nullptr)
-                    continue;
-
-                std::string name="";
-                set_string_from_attribute(felement, "name", name);
-
-                for( auto element = felement->FirstChildElement("prop");
-                     element != nullptr;
-                     element =element->NextSiblingElement("prop") )
-                {
-                    if (element == nullptr)
-                        continue;
-
-                    std::string key="";
-                    std::string value="";
-                    set_string_from_attribute(element, "key", key);
-                    set_string_from_attribute(element, "value", value);
-
-                    varProps[name][key]=value;
-                }
-
-            }
-            job->SetVarProps(varProps);
-        }
-
-        auto spElement = jobElement->FirstChildElement("solver_props");
-        if(spElement != nullptr)
-        {
-            std::map<std::string,std::string> solverProps;
-            for( auto element = spElement->FirstChildElement("prop");
-                 element != nullptr;
-                 element =element->NextSiblingElement("prop") )
-            {
-                if (element == nullptr)
-                    continue;
-
-                std::string key="";
-                std::string value="";
-                set_string_from_attribute(element, "key", key);
-                set_string_from_attribute(element, "value", value);
-
-                solverProps[key]=value;
-            }
-            job->SetSolverProps(solverProps);
-        }
-
-        auto rpElement = jobElement->FirstChildElement("run_props");
-        if(rpElement != nullptr)
-        {
-            std::map<std::string,std::string> runProps;
-            for( auto element = rpElement->FirstChildElement("prop");
-                 element != nullptr;
-                 element =element->NextSiblingElement("prop") )
-            {
-                if (element == nullptr)
-                    continue;
-
-                std::string key="";
-                std::string value="";
-                set_string_from_attribute(element, "key", key);
-                set_string_from_attribute(element, "value", value);
-
-                runProps[key]=value;
-            }
-            job->SetRunProps(runProps);
-        }
+        ReadProperties(jobElement, job->run_props, "run_props");  
 
         mitkSimJob->SetSimJob(job);
-    } //job
+    } 
 
     result.push_back(mitkSimJob.GetPointer());
     return result;
+}
+
+//----------------
+// ReadProperties
+//----------------
+// Read job properties form an .sjb xml file and store them 
+// in the sv4guiSimJobProperties object.
+//
+void sv4guiMitkSimJobIO::ReadProperties(tinyxml2::XMLElement* job_element, sv4guiSimJobProperties& properties, 
+    const std::string& section_name)
+{
+  auto section_element = job_element->FirstChildElement(section_name.c_str());
+
+  if (section_element == nullptr) {
+    return;
+  }
+
+  std::map<std::string,std::string> props;
+
+  for (auto element = section_element->FirstChildElement("prop"); element != nullptr;
+      element =element->NextSiblingElement("prop") ) {
+
+    if (element == nullptr) {
+      continue;
+    }
+
+    std::string key = "";
+    std::string value = "";
+    set_string_from_attribute(element, "key", key);
+    set_string_from_attribute(element, "value", value);
+
+    props[key] = value;
+    }
+
+  properties.SetAll(props);
+}
+
+//-------------------
+// ReadCapProperties
+//-------------------
+// Read in cap properties from an .sjb xml file.
+//
+void sv4guiMitkSimJobIO::ReadCapProperties(tinyxml2::XMLElement* job_element, sv4guiSimJobCapProperties& properties, 
+    const std::string& section_name)
+{
+  auto section_element = job_element->FirstChildElement(section_name.c_str());
+
+  if (section_element == nullptr) {
+    return;
+  }
+
+  std::map<std::string,std::map<std::string,std::string> > capProps;
+
+  for (auto celement = section_element->FirstChildElement("cap"); celement != nullptr;
+       celement = celement->NextSiblingElement("cap") ) {
+    if (celement == nullptr) {
+      continue;
+    }
+
+    std::string name="";
+    set_string_from_attribute(celement, "name", name);
+
+    for (auto element = celement->FirstChildElement("prop"); element != nullptr;
+         element =element->NextSiblingElement("prop") ) {
+      if (element == nullptr) {
+        continue;
+      }
+
+      std::string key="";
+      std::string value="";
+      set_string_from_attribute(element, "key", key);
+      set_string_from_attribute(element, "value", value);
+
+      capProps[name][key]=value;
+    }
+  }
+
+  properties.SetAll(capProps);
 }
 
 mitk::IFileIO::ConfidenceLevel sv4guiMitkSimJobIO::GetReaderConfidenceLevel() const
@@ -269,12 +231,17 @@ mitk::IFileIO::ConfidenceLevel sv4guiMitkSimJobIO::GetReaderConfidenceLevel() co
 //-------
 // Write
 //-------
+// Write a Simulations .sjb XML file.
+//
+// Values written to an XML file from std::maps defined 
+// in a sv4guiSimJob object. 
 //
 void sv4guiMitkSimJobIO::Write()
 {
   #define n_debug_Write
   #ifdef debug_Write
   std::string dmsg("[sv4guiMitkSimJobIO::Write] ");
+  std::cout << dmsg << std::endl;
   std::cout << dmsg << "========== Write ==========" << std::endl;
   #endif
 
@@ -310,105 +277,23 @@ void sv4guiMitkSimJobIO::Write()
     auto jobElement = document.NewElement("job");
     mjElement->LinkEndChild(jobElement);
 
-    auto bpElement = document.NewElement("basic_props");
-    jobElement->LinkEndChild(bpElement);
-    std::map<std::string,std::string> basicProps=job->GetBasicProps();
-    std::map<std::string, std::string>::iterator it = basicProps.begin();
+    WriteProperties(document, jobElement, job->basic_props, "basic_props"); 
 
-    while(it != basicProps.end()) {
-      auto element = document.NewElement("prop");
-      bpElement->LinkEndChild(element);
-      element->SetAttribute("key", it->first.c_str());
-      element->SetAttribute("value", it->second.c_str());
-      it++;
-    }
+    WriteCapProperties(document, jobElement, job->cap_props);
 
-    auto cpElement = document.NewElement("cap_props");
-    jobElement->LinkEndChild(cpElement);
-    std::map<std::string, std::map<std::string, std::string> > capProps=job->GetCapProps();
-    auto itit = capProps.begin();
+    WriteProperties(document, jobElement, job->wall_props, "wall_props"); 
 
-    while(itit != capProps.end()) {
-      auto celement = document.NewElement("cap");
-      cpElement->LinkEndChild(celement);
+    WriteProperties(document, jobElement, job->cmm_props, "cmm_props"); 
 
-      celement->SetAttribute("name", itit->first.c_str());
-      std::map<std::string, std::string> props=itit->second;
-      it = props.begin();
+    WriteProperties(document, jobElement, job->solver_output_props, "solver_output_props"); 
 
-      while(it != props.end()) {
-        auto element = document.NewElement("prop");
-        celement->LinkEndChild(element);
-        element->SetAttribute("key", it->first.c_str());
-        element->SetAttribute("value", it->second.c_str());
-        it++;
-      }
+    WriteProperties(document, jobElement, job->solver_time_props, "solver_time_props"); 
 
-    itit++;
-    }
+    WriteProperties(document, jobElement, job->nonlinear_solver_props, "nonlinear_solver_props"); 
 
-    auto wpElement = document.NewElement("wall_props");
-    jobElement->LinkEndChild(wpElement);
-    std::map<std::string,std::string> wallProps=job->GetWallProps();
-    it = wallProps.begin();
+    WriteProperties(document, jobElement, job->linear_solver_props, "linear_solver_props"); 
 
-    while (it != wallProps.end()) {
-      auto element = document.NewElement("prop");
-      wpElement->LinkEndChild(element);
-      element->SetAttribute("key", it->first.c_str());
-      element->SetAttribute("value", it->second.c_str());
-      it++;
-    }
-
-    auto vpElement = document.NewElement("var_props");
-    jobElement->LinkEndChild(vpElement);
-    std::map<std::string, std::map<std::string, std::string> > varProps=job->GetVarProps();
-    itit = varProps.begin();
-
-    while(itit != varProps.end()) {
-      auto felement = document.NewElement("face");
-      vpElement->LinkEndChild(felement);
-      felement->SetAttribute("name", itit->first.c_str());
-      std::map<std::string, std::string> props=itit->second;
-      it = props.begin();
-
-      while(it != props.end()) {
-        auto element = document.NewElement("prop");
-        felement->LinkEndChild(element);
-        element->SetAttribute("key", it->first.c_str());
-        element->SetAttribute("value", it->second.c_str());
-        it++;
-      }
-
-      itit++;
-    }
-
-    auto spElement = document.NewElement("solver_props");
-    jobElement->LinkEndChild(spElement);
-    std::map<std::string,std::string> solverProps=job->GetSolverProps();
-    it = solverProps.begin();
-
-    while(it != solverProps.end()) {
-      auto element = document.NewElement("prop");
-      spElement->LinkEndChild(element);
-      element->SetAttribute("key", it->first.c_str());
-      element->SetAttribute("value", it->second.c_str());
-      it++;
-    }
-
-    auto rpElement = document.NewElement("run_props");
-    jobElement->LinkEndChild(rpElement);
-    std::map<std::string,std::string> runProps=job->GetRunProps();
-    it = runProps.begin();
-
-    while(it != runProps.end()) {
-      auto element = document.NewElement("prop");
-      rpElement->LinkEndChild(element);
-      element->SetAttribute("key", it->first.c_str());
-      element->SetAttribute("value", it->second.c_str());
-      it++;
-    }
-
+    WriteProperties(document, jobElement, job->run_props, "run_props"); 
   }
 
   #ifdef debug_Write
@@ -417,6 +302,61 @@ void sv4guiMitkSimJobIO::Write()
 
   if (document.SaveFile(fileName.c_str()) != tinyxml2::XML_SUCCESS) {
     mitkThrow() << "Could not write CFD Simulation parameters to file '" << fileName << "'.";
+  }
+}
+
+//-----------------
+// WriteProperties
+//-----------------
+// Write Basic properties data
+//
+void sv4guiMitkSimJobIO::WriteProperties(tinyxml2::XMLDocument& document, tinyxml2::XMLElement* job_element, 
+    sv4guiSimJobProperties& properties, const std::string& section_name)
+{
+  auto section_element = document.NewElement(section_name.c_str());
+  job_element->LinkEndChild(section_element);
+  auto props_data = properties.GetAll();
+  std::map<std::string, std::string>::iterator it = props_data.begin();
+
+  while(it != props_data.end()) {
+    auto element = document.NewElement("prop");
+    section_element->LinkEndChild(element);
+    element->SetAttribute("key", it->first.c_str());
+    element->SetAttribute("value", it->second.c_str());
+    it++;
+  }
+}
+
+//--------------------
+// WriteCapProperties
+//--------------------
+// Write Inlet and Outlet BCs data.
+//
+void sv4guiMitkSimJobIO::WriteCapProperties(tinyxml2::XMLDocument& document, tinyxml2::XMLElement* job_element, 
+    sv4guiSimJobCapProperties& properties)
+{
+  auto cpElement = document.NewElement("cap_props");
+  job_element->LinkEndChild(cpElement);
+  auto capProps = properties.GetAll();
+  auto itit = capProps.begin();
+
+  while(itit != capProps.end()) {
+    auto celement = document.NewElement("cap");
+    cpElement->LinkEndChild(celement);
+
+    celement->SetAttribute("name", itit->first.c_str());
+    std::map<std::string, std::string> props=itit->second;
+    auto it = props.begin();
+
+    while (it != props.end()) {
+      auto element = document.NewElement("prop");
+      celement->LinkEndChild(element);
+      element->SetAttribute("key", it->first.c_str());
+      element->SetAttribute("value", it->second.c_str());
+      it++;
+    }
+
+  itit++;
   }
 }
 

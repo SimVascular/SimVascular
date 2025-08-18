@@ -59,7 +59,7 @@ void sv4guiSimulationUtils::CreateSolverInputFile(sv4guiSimJob* job,
     const std::map<std::string,std::string>& faces_name_type, const std::string& output_dir, 
     const std::string& file_name)
 {
-  #define debug_CreateSolverInputFile
+  #define n_debug_CreateSolverInputFile
   #ifdef debug_CreateSolverInputFile
   std::string dmsg("[sv4guiSimulationUtils::CreateSolverInputFile] ");
   std::cout << dmsg << "========== CreateSolverInputFile ==========" << std::endl;
@@ -85,6 +85,7 @@ void sv4guiSimulationUtils::CreateSolverInputFile(sv4guiSimJob* job,
 //
 std::string sv4guiSimulationUtils::CreatePreSolverFileContent(sv4guiSimJob* job, std::string outputDir)
 {
+#ifdef use_CreatePreSolverFileContent
     std::stringstream ss;
     std::map<std::string,int> IDs;
 
@@ -100,10 +101,11 @@ std::string sv4guiSimulationUtils::CreatePreSolverFileContent(sv4guiSimJob* job,
     ss << "set_surface_id_vtp mesh-complete/mesh-complete.exterior.vtp 1\n";
 
     std::string setIDPrefix="set_surface_id_vtp mesh-complete/mesh-surfaces/";
-    auto capProps=job->GetCapProps();
+    auto capProps = job->cap_props.GetAll();
     int velocityCapNumber=0;
     int pressureCapNumber=0;
     auto it = capProps.begin();
+
     while(it != capProps.end())
     {
         if(it->first!="")
@@ -129,7 +131,8 @@ std::string sv4guiSimulationUtils::CreatePreSolverFileContent(sv4guiSimJob* job,
 
     //set bct for prescribed velocity cap
     //=================================================================
-    auto basicProps=job->GetBasicProps();
+    auto basicProps = job->basic_props.GetAll();
+
     if(velocityCapNumber>0)
     {
         ss << "fluid_density " << basicProps["Fluid Density"] <<"\n";
@@ -191,7 +194,8 @@ std::string sv4guiSimulationUtils::CreatePreSolverFileContent(sv4guiSimJob* job,
     //set wall properties
     //====================================================================
     bool deformable=false;
-    auto wallProps=job->GetWallProps();
+    auto wallProps = job->wall_props.GetAll();
+
     if(wallProps["Type"]=="rigid")
     {
         ss << "noslip_vtp mesh-complete/walls_combined.vtp\n";
@@ -268,6 +272,9 @@ std::string sv4guiSimulationUtils::CreatePreSolverFileContent(sv4guiSimJob* job,
     //    ss << "write_numstart " << outputDir <<"numstart.dat" << "\n";
 
     return ss.str();
+
+#endif 
+    return "";
 }
 
 //-----------------------
@@ -277,6 +284,7 @@ std::string sv4guiSimulationUtils::CreatePreSolverFileContent(sv4guiSimJob* job,
 //
 std::string sv4guiSimulationUtils::CreateRCRTFileContent(sv4guiSimJob* job)
 {
+#ifdef use_CreateRCRTFileContent
     std::stringstream ss;
     //    auto basicProps=job->GetBasicProps();
 
@@ -415,6 +423,9 @@ std::string sv4guiSimulationUtils::CreateCORTFileContent(sv4guiSimJob* job)
         newss<<maxStepNumber << "\n" <<ss.str();
         return newss.str();
     }
+#endif
+
+return "";
 }
 
 //-----------------------------
@@ -422,9 +433,12 @@ std::string sv4guiSimulationUtils::CreateCORTFileContent(sv4guiSimJob* job)
 //-----------------------------
 // Create the solver.xml file.
 //
+// old code ?
+//
 std::string sv4guiSimulationUtils::CreateFlowSolverFileContent(sv4guiSimJob* job)
 {
-  #define debug_CreateFlowSolverFileContent
+#if use_CreateFlowSolverFileContent
+  #define n_debug_CreateFlowSolverFileContent
   #ifdef debug_CreateFlowSolverFileContent
   std::string dmsg("[sv4guiSimulationUtils::CreateFlowSolverFileContent] ");
   std::cout << dmsg << "========== CreateFlowSolverFileContent ==========" << std::endl;
@@ -433,8 +447,8 @@ std::string sv4guiSimulationUtils::CreateFlowSolverFileContent(sv4guiSimJob* job
   std::stringstream ss;
   std::map<std::string,int> IDs = job->GetIDs();
 
-  auto basicProps = job->GetBasicProps();
-  auto solverProps = job->GetSolverProps();
+  auto basicProps = job->basic_props.GetAll();
+  auto linearSolverProps = job->linear_solver_props.GetAll();
 
   //Fluid Properties
   //======================================================
@@ -653,6 +667,9 @@ std::string sv4guiSimulationUtils::CreateFlowSolverFileContent(sv4guiSimJob* job
   ss << "Quadrature Rule on Boundary: " << solverProps["Quadrature Rule on Boundary"] <<"\n";
 
   return ss.str();
+#endif
+
+  return "";
 }
 
 //-----------------
@@ -667,6 +684,7 @@ bool sv4guiSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::st
                                         , std::string meshFaceDir, std::vector<std::string> meshFaceFileNames
                                         , std::string unit, bool skipWalls)
 {
+#ifdef use_CreateFlowFiles
     std::map<std::string,vtkSmartPointer<vtkPolyData>> vtpMap;
 
     for(int i=0;i<meshFaceFileNames.size();++i)
@@ -913,6 +931,7 @@ bool sv4guiSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::st
 
     averagefs.close();
     averageunitsfs.close();
+#endif
 
     return true;
 }

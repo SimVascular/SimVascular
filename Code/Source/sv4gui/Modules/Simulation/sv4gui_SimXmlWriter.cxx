@@ -29,9 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The code here is used to write an svMultiPhysics XML solver input file.
+// Sv4GuiSimXmlWriter is used to write an svMultiPhysics XML solver input file.
 //
-// Parameters are set in the 'Solver Paramters' GUI section of the CFD Simulation Tool. 
+// Solver parameters are set in the 'Solver Paramters' GUI section of the CFD Simulation Tool. 
 //
 // The parameter names and types (int, double, enum) are defined in the 
 // SimVascular/Code/Source/sv4gui/Plugins/org.sv.gui.qt.simulation/resources/solvertemplate.xml
@@ -63,6 +63,7 @@ Sv4GuiSimXmlWriter::Sv4GuiSimXmlWriter()
     {"parabolic", "Parabolic"},
     {"plug", "Flat"}
   };
+
 }
 
 Sv4GuiSimXmlWriter::~Sv4GuiSimXmlWriter()
@@ -124,7 +125,7 @@ Sv4GuiSimXmlWriter::add_sub_child(tinyxml2::XMLElement* parent, const std::strin
 //
 void Sv4GuiSimXmlWriter::add_equation_bcs(sv4guiSimJob* job, tinyxml2::XMLElement* equation)
 {
-  auto capProps = job->GetCapProps();
+  auto capProps = job->cap_props.GetAll();
 
   // Process surface faces representing inlet and outlet
   // mesh boundaries (caps).
@@ -154,14 +155,19 @@ void Sv4GuiSimXmlWriter::add_equation_bcs(sv4guiSimJob* job, tinyxml2::XMLElemen
     }
   }
 
-  // Add no slip wall boundary conditions.
+  // Add wall boundary conditions.
   for (auto face : faces_name_type_) {
     if (face.second != "wall") {
       continue;
     }
     auto boundary_condition = add_sub_child(equation, "Add_BC");
     boundary_condition->SetAttribute("name", face.first.c_str());
-    add_wall_bc(job, boundary_condition);
+
+    if (cmm_simulation_enabled_) { 
+      add_cmm_equation_wall_bc(job, boundary_condition);
+    } else {
+      add_wall_bc(job, boundary_condition);
+    }
   }
 }
 
@@ -174,7 +180,7 @@ void Sv4GuiSimXmlWriter::add_rcr_bc(GuiProperties& props, sv4guiSimJob* job,
     tinyxml2::XMLElement* boundary_condition)
 {
   add_child(boundary_condition, "Type", "Neumann");
-  add_child(boundary_condition, "Time_dependence", "Resistance");
+  add_child(boundary_condition, "Time_dependence", "RCR");
 
   std::string str_values = props["Values"];
   std::vector<double> values;
@@ -185,9 +191,9 @@ void Sv4GuiSimXmlWriter::add_rcr_bc(GuiProperties& props, sv4guiSimJob* job,
   }
 
   auto rcr_values = add_sub_child(boundary_condition, "RCR_values");
-  add_child(rcr_values, "Distal_resistance", values[0]);
+  add_child(rcr_values, "Proximal_resistance", values[0]);
   add_child(rcr_values, "Capacitance", values[1]);
-  add_child(rcr_values, "Proximal_resistance", values[2]);
+  add_child(rcr_values, "Distal_resistance", values[2]);
 
   add_child(rcr_values, "Distal_pressure", 0.0);
   add_child(rcr_values, "Initial_pressure", 0.0);
@@ -255,28 +261,22 @@ void Sv4GuiSimXmlWriter::add_wall_bc(sv4guiSimJob* job, tinyxml2::XMLElement* bo
 //
 void Sv4GuiSimXmlWriter::add_equation(sv4guiSimJob* job)
 {
-  bool cmm_equation = false;
-  char* eq_type = "fluid";
-  
-  auto wallProps = job->GetWallProps();
-  auto nonlinearSolverProps = job->GetNonlinearSolverProps();
+  #define debug_add_equation
+  #ifdef debug_add_equation
+  std::string msg("[Sv4GuiSimXmlWriter::add_equation] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== add_equation ==========" << std::endl;
+  #endif
 
-  if (wallProps["Type"] == "deformable") {
-    cmm_equation = true;
-    eq_type = "cmm";
-  }
+  char* eq_type = "fluid";
+  //auto wallProps = job->GetWallProps();
 
   auto equation = add_sub_child(root_, "Add_equation");
   equation->SetAttribute("type", eq_type);
 
-  // Nonlinear solver paramters.
-  add_child(equation, "Coupled", parameters.Coupled);
-  add_child(equation, "Min_iterations", nonlinearSolverProps["Min iterations"]);
-  add_child(equation, "Max_iterations", nonlinearSolverProps["Max iterations"]);
-  add_child(equation, "Tolerance", nonlinearSolverProps["Tolerance"]); 
-  add_child(equation, "Backflow_stabilization_coefficient", nonlinearSolverProps["Backflow stabilization coefficient"]);
+  add_equation_nl_solver(job, equation);
 
-  auto basicProps = job->GetBasicProps();
+  auto basicProps = job->basic_props.GetAll();
   add_child(equation, "Density", basicProps["Fluid Density"]);
   auto viscosity = add_sub_child(equation, "Viscosity");
   viscosity->SetAttribute("model", "Constant");
@@ -287,6 +287,132 @@ void Sv4GuiSimXmlWriter::add_equation(sv4guiSimJob* job)
   add_equation_output(job, equation);
 
   add_equation_bcs(job, equation);
+}
+
+//-------------------------
+// add_cmm_wall_properties
+//-------------------------
+// Add wall properties for a cmm simulation under the Add_equation section.
+//
+void Sv4GuiSimXmlWriter::add_cmm_wall_properties(sv4guiSimJob*job, tinyxml2::XMLElement* equation)
+{
+  auto wall_props = job->wall_props.GetAll();
+
+  auto density = wall_props["Density"];
+  add_child(equation, "Solid_density", density);
+
+  auto elastic_modulus = wall_props["Elastic Modulus"];
+  add_child(equation, "Elasticity_modulus", elastic_modulus);
+
+  auto poisson_ratio = wall_props["Poisson Ratio"];
+  add_child(equation, "Poisson_ratio", poisson_ratio);
+
+  auto shell_thickness = wall_props["Thickness"];
+  add_child(equation, "Shell_thickness", shell_thickness);
+}
+
+//------------------
+// add_cmm_equation
+//------------------
+// Add an `Add_equation` section of type cmm.
+//
+void Sv4GuiSimXmlWriter::add_cmm_equation(sv4guiSimJob* job)
+{
+  #define debug_add_cmm_equation
+  #ifdef debug_add_cmm_equation
+  std::string msg("[Sv4GuiSimXmlWriter::add_cmm_equation] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== add_cmm_equation ==========" << std::endl;
+  #endif
+
+  char* eq_type = "CMM";
+  auto wallProps = job->wall_props.GetAll();
+
+  auto equation = add_sub_child(root_, "Add_equation");
+  equation->SetAttribute("type", eq_type);
+
+  // Nonlinear solver paramters.
+  add_equation_nl_solver(job, equation);
+
+  // Add physical properties.
+  //
+  auto basicProps = job->basic_props.GetAll();
+  add_child(equation, "Density", basicProps["Fluid Density"]);
+  auto viscosity = add_sub_child(equation, "Viscosity");
+  viscosity->SetAttribute("model", "Constant");
+  add_child(viscosity, "Value", basicProps["Fluid Viscosity"]);
+
+  if (cmm_simulation_initialization_) {
+    if (cmm_prestress_simulation_) {
+      add_child(equation, "Prestress", "true");
+      add_child(equation, "Initialize", "prestress");
+    } else {
+      add_child(equation, "Initialize", "inflate");
+    }
+  }
+
+  add_cmm_wall_properties(job, equation);
+
+  add_equation_solver(job, equation);
+
+  add_equation_output(job, equation);
+
+  if (cmm_simulation_initialization_) {
+    add_cmm_equation_bf(job, equation);
+  } else {
+    add_equation_bcs(job, equation);
+  }
+
+}
+
+//--------------------------
+// add_cmm_equation_wall_bc
+//--------------------------
+// For a cmm initialization simulation just add 
+// a body force on the wall.
+//
+void Sv4GuiSimXmlWriter::add_cmm_equation_wall_bc(sv4guiSimJob* job, tinyxml2::XMLElement* boundary_condition)
+{
+  auto cmmProps = job->cmm_props.GetAll();
+
+  add_child(boundary_condition, "Type", "CMM");
+
+  if (cmm_prestress_simulation_) {
+    auto prestress_file = cmmProps["Prestress file"];
+    add_child(boundary_condition, "Prestress_file_path", prestress_file);
+
+  } else {
+    auto disp_file = cmmProps["Displacements file"];
+    add_child(boundary_condition, "Initial_displacements_file_path", disp_file);
+
+  }
+
+}
+
+//---------------------
+// add_cmm_equation_bf
+//---------------------
+// Add a body force 'Add_BF' boundary condition for a cmm equation for an 
+// initialization simulation.
+//
+void Sv4GuiSimXmlWriter::add_cmm_equation_bf(sv4guiSimJob* job, tinyxml2::XMLElement* equation)
+{
+  auto cmmProps = job->cmm_props.GetAll();
+
+  auto boundary_condition = add_sub_child(equation, "Add_BF");
+
+  boundary_condition->SetAttribute("mesh", cmm_wall_name_.c_str());
+  
+  add_child(boundary_condition, "Type", "traction");
+  add_child(boundary_condition, "Time_dependence", "spatial");
+
+  auto traction_file_name = cmmProps["Traction file"];
+
+  if (traction_file_name == "") {
+    throw std::runtime_error("Coupled Momentum Method: No traction file has been set.");
+  }
+
+  add_child(boundary_condition, "Spatial_values_file_path", traction_file_name);
 }
 
 //---------------------
@@ -300,9 +426,31 @@ void Sv4GuiSimXmlWriter::add_equation_output(sv4guiSimJob* job, tinyxml2::XMLEle
   output->SetAttribute("type", "Spatial");
   add_child(output, "Divergence", true); 
   add_child(output, "Pressure", true); 
+  add_child(output, "Traction", true); 
   add_child(output, "Velocity", true); 
   add_child(output, "Vorticity", true); 
   add_child(output, "WSS", true); 
+
+  if (cmm_simulation_enabled_) {
+    add_child(output, "Displacement", true); 
+    add_child(output, "Stress", true); 
+  }
+}
+
+//-------------------------
+// add_equation_nl_solver
+//-------------------------
+// Add nonlinear solver paramters section under `Add_equation`..
+//
+void Sv4GuiSimXmlWriter::add_equation_nl_solver(sv4guiSimJob* job, tinyxml2::XMLElement* equation)
+{
+  auto nonlinearSolverProps = job->nonlinear_solver_props.GetAll();
+
+  add_child(equation, "Coupled", parameters.Coupled);
+  add_child(equation, "Min_iterations", nonlinearSolverProps["Min iterations"]);
+  add_child(equation, "Max_iterations", nonlinearSolverProps["Max iterations"]);
+  add_child(equation, "Tolerance", nonlinearSolverProps["Tolerance"]); 
+  add_child(equation, "Backflow_stabilization_coefficient", nonlinearSolverProps["Backflow stabilization coefficient"]);
 }
 
 //---------------------
@@ -312,9 +460,9 @@ void Sv4GuiSimXmlWriter::add_equation_output(sv4guiSimJob* job, tinyxml2::XMLEle
 //
 void Sv4GuiSimXmlWriter::add_equation_solver(sv4guiSimJob* job, tinyxml2::XMLElement* equation)
 {
-  //auto solverProps = job->GetSolverProps();
+  //auto solverProps = job->linear_solver_props.GetAll();
   //auto nonlinearSolverProps = job->GetNonlinearSolverProps();
-  auto linearSolverProps = job->GetLinearSolverProps();
+  auto linearSolverProps = job->linear_solver_props.GetAll();
 
   auto linear_solver = add_sub_child(equation, "LS");
   auto solver_type = linearSolverProps["Solver"];
@@ -348,26 +496,27 @@ void Sv4GuiSimXmlWriter::add_general(sv4guiSimJob* job)
   add_child(general, "Continue_previous_simulation", false);
   
   // Time stepping
-  auto solverProps = job->GetSolverProps();
+  auto solverTimeProps = job->solver_time_props.GetAll();
   add_child(general, "Number_of_spatial_dimensions", 3);
-  add_child(general, "Number_of_time_steps", solverProps["Number of Timesteps"]);
-  add_child(general, "Time_step_size", solverProps["Time Step Size"]);
-  add_child(general, "Spectral_radius_of_infinite_time_step", solverProps["Spectral radius of infinite time step"]);
+  add_child(general, "Number_of_time_steps", solverTimeProps["Number of Timesteps"]);
+  add_child(general, "Time_step_size", solverTimeProps["Time Step Size"]);
+  add_child(general, "Spectral_radius_of_infinite_time_step", solverTimeProps["Spectral radius of infinite time step"]);
 
   // Output options
-  add_child(general, "Increment_in_saving_restart_files", solverProps["Increment in saving restart files"]);
-  add_child(general, "Start_saving_after_time_step", solverProps["Start saving after time step"]);
+  auto outputProps = job->solver_output_props.GetAll();
+  add_child(general, "Increment_in_saving_restart_files", outputProps["Increment in saving restart files"]);
+  add_child(general, "Start_saving_after_time_step", outputProps["Start saving after time step"]);
 
-  if (solverProps["Save results in folder"] != "N-procs") {
-    add_child(general, "Save_results_in_folder", solverProps["Save results in folder"]);
+  if (outputProps["Save results in folder"] != "N-procs") {
+    add_child(general, "Save_results_in_folder", outputProps["Save results in folder"]);
   }
 
-  add_child(general, "Save_results_to_VTK_format", solverProps["Save results to VTK format"]);
-  add_child(general, "Name_prefix_of_saved_VTK_files", solverProps["Name prefix of saved VTK files"]);
-  add_child(general, "Increment_in_saving_VTK_files", solverProps["Increment in saving VTK files"]);
+  add_child(general, "Save_results_to_VTK_format", outputProps["Save results to VTK format"]);
+  add_child(general, "Name_prefix_of_saved_VTK_files", outputProps["Name prefix of saved VTK files"]);
+  add_child(general, "Increment_in_saving_VTK_files", outputProps["Increment in saving VTK files"]);
 
   // Misc 
-  add_child(general, "Spectral_radius_of_infinite_time_step", solverProps["Spectral radius of infinite time step"]);
+  add_child(general, "Spectral_radius_of_infinite_time_step", solverTimeProps["Spectral radius of infinite time step"]);
 }
 
 //----------
@@ -390,6 +539,91 @@ void Sv4GuiSimXmlWriter::add_mesh(sv4guiSimJob* job)
   }
 }
 
+//--------------------
+// add_cmm_init_mesh
+//--------------------
+// Add a 'Add_mesh' section for a cmm initializaion stage.
+// 
+// For the cmm initializaion stage shells are used to model just the mesh surface.
+//
+void Sv4GuiSimXmlWriter::add_cmm_init_mesh(sv4guiSimJob* job)
+{
+  #define debug_add_cmm_init_mesh
+  #ifdef debug_add_cmm_init_mesh
+  std::string msg("[Sv4GuiSimXmlWriter::add_cmm_init_mesh] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== add_cmm_init_mesh ==========" << std::endl;
+  #endif
+  auto cmmProps = job->cmm_props.GetAll();
+
+  auto mesh = add_sub_child(root_, "Add_mesh");
+  mesh->SetAttribute("name", cmm_wall_name_.c_str());
+
+  auto wall_file_name = cmmProps["Wall file"];
+  #ifdef debug_add_cmm_init_mesh
+  std::cout << msg << "wall_file_name: " << wall_file_name << std::endl;
+  #endif
+
+  if (wall_file_name == "") {
+    throw std::runtime_error("Coupled Momentum Method: No wall file has been set.");
+  }
+
+  add_child(mesh, "Mesh_file_path", wall_file_name); 
+  add_child(mesh, "Set_mesh_as_shell", "true"); 
+}
+
+//--------------------
+// add_cmm_simulation
+//--------------------
+//
+void Sv4GuiSimXmlWriter::add_cmm_simulation(sv4guiSimJob* job)
+{
+  auto cmmProps = job->cmm_props.GetAll();
+
+  if (cmmProps["Initialize simulation"] == "true") {
+    cmm_simulation_initialization_ = true;
+
+    if (cmmProps["Simulation Type"] == "prestress") {
+      cmm_prestress_simulation_ = true;
+    } else if (cmmProps["Simulation Type"] == "prestress") {
+      cmm_prestress_simulation_ = false;
+    }
+  }
+
+  cmm_wall_name_ = cmmProps["Wall name"];
+
+  if (cmm_wall_name_ == "") {
+    throw std::runtime_error("Coupled Momentum Method: No wall name has been set.");
+  }
+
+  if (cmm_simulation_initialization_) { 
+    add_cmm_init_mesh(job);
+  } else {
+    add_mesh(job);
+  }
+
+  add_cmm_equation(job);
+  
+}
+
+//----------------------
+// check_cmm_simulation
+//----------------------
+// Check if an CMM simulation is enabled.
+//
+bool Sv4GuiSimXmlWriter::cmm_simulation_enabled(sv4guiSimJob* job)
+{
+  auto cmmProps = job->cmm_props.GetAll();
+    
+  if (cmmProps["Enable cmm simulation"] == "false") {
+    cmm_simulation_enabled_ = false;
+    return false;
+  }
+
+  cmm_simulation_enabled_ = true;
+  return true;
+}
+
 //-----------------
 // create_document
 //-----------------
@@ -409,9 +643,16 @@ void Sv4GuiSimXmlWriter::create_document(sv4guiSimJob* job, const std::map<std::
 
   add_general(job);
 
-  add_mesh(job);
+  if (cmm_simulation_enabled(job)) { 
 
-  add_equation(job);
+    add_cmm_simulation(job); 
+
+  } else {
+
+    add_mesh(job);
+  
+    add_equation(job);
+  }
 
   doc_.SaveFile(file_name.c_str());
 }
