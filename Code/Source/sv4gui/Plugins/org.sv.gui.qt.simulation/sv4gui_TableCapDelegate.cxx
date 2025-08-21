@@ -30,7 +30,7 @@
  */
 
 #include "sv4gui_TableCapDelegate.h"
-#include "sv4gui_CapBCWidget.h"
+#include "sv4gui_SimJob.h"
 
 sv4guiTableCapDelegate::sv4guiTableCapDelegate(QObject *parent) :
     QItemDelegate(parent)
@@ -53,10 +53,10 @@ QWidget* sv4guiTableCapDelegate::createEditor(QWidget *parent, const QStyleOptio
 
       case 1: {
         QComboBox* cb = new QComboBox(parent);
-        cb->addItem( QString::fromStdString(sv4guiCapBCType::flow) );
-        cb->addItem( QString::fromStdString(sv4guiCapBCType::resistance) );
-        cb->addItem( QString::fromStdString(sv4guiCapBCType::rcr) );
-        cb->addItem( QString::fromStdString(sv4guiCapBCType::lpm) );
+        cb->addItem( QString::fromStdString(sv4guiSimJobBCType::flow) );
+        cb->addItem( QString::fromStdString(sv4guiSimJobBCType::resistance) );
+        cb->addItem( QString::fromStdString(sv4guiSimJobBCType::rcr) );
+        cb->addItem( QString::fromStdString(sv4guiSimJobBCType::lpm) );
         return cb;
       }
 

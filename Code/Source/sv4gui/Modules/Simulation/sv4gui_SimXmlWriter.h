@@ -122,6 +122,8 @@ class Sv4GuiSimXmlWriter
 
     void add_mesh(sv4guiSimJob* job);
 
+    void add_lpm_bc(GuiProperties& props, sv4guiSimJob* job, tinyxml2::XMLElement* boundary_condition);
+
     void add_rcr_bc(GuiProperties& props, sv4guiSimJob* job, tinyxml2::XMLElement* boundary_condition);
 
     void add_resistance_bc(GuiProperties& props, sv4guiSimJob* job, tinyxml2::XMLElement* xml_boundary_condition);

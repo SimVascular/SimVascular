@@ -31,6 +31,12 @@
 
 #include "sv4gui_SimJob.h"
 
+// These values must match those set for the Qt 'comboBoxBCType' widget.
+std::string sv4guiSimJobBCType::lpm = "LPM";
+std::string sv4guiSimJobBCType::flow = "Prescribed Velocities";
+std::string sv4guiSimJobBCType::rcr = "RCR";
+std::string sv4guiSimJobBCType::resistance = "Resistance";
+
 sv4guiSimJob::sv4guiSimJob()
     : m_VelocityCapNumber(0)
     , m_PressureCapNumber(0)
@@ -54,6 +60,7 @@ solver_section_names = {
 sv4guiSimJob::sv4guiSimJob(const sv4guiSimJob &other)
 {
     basic_props = other.basic_props;
+    zerod_interface_props = other.zerod_interface_props;
     cap_props = other.cap_props;
     wall_props = other.wall_props;
     cmm_props = other.cmm_props;

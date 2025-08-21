@@ -211,6 +211,11 @@ void sv4guiSimulationView::EnableConnection(bool enable)
         connect(ui->WallProps_density, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         //connect(m_WallPropsPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
 
+        // ZeroD Solver parameters
+        //
+        connect(ui->ZeroDSolver_Interface_file_select, SIGNAL(clicked()), this, SLOT(SetZeroDSolverConfigFile()));
+        connect(ui->ZeroDSolver_Interface_lib_select, SIGNAL(clicked()), this, SLOT(SetZeroDSolverLibraryFile()));
+
         // CMM parameters 
         //
         connect(ui->CmmSim_enable_cmm_simulation, SIGNAL(toggled(bool)), this, slot);
@@ -536,6 +541,8 @@ void sv4guiSimulationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*p
     UpdateGUIBasic();
 
     UpdateGUICap();
+
+    UpdateGUIZeroDSolverInterface();
 
     UpdateGUIWall();
 
@@ -1001,17 +1008,7 @@ void sv4guiSimulationView::ShowCapBCWidget(bool)
     props["C Values"] = m_InletOutletBCsPage->item(row,15)->text().toStdString();
 
     // Lumped parameter model BCs.
-    #ifdef debug_ShowCapBCWidget
-    std::cout << msg << "Set Lpm_coupling_type ... " << std::endl;
-    std::cout << msg << "row: " << row << std::endl;
-    std::cout << msg << "item 16: " << m_InletOutletBCsPage->item(row,16) << std::endl;
-    std::cout << msg << "item 17: " << m_InletOutletBCsPage->item(row,17) << std::endl;
-    #endif
-    props["Lpm_coupling_type"] = m_InletOutletBCsPage->item(row,16)->text().toStdString();
-    props["Lpm_file_name"] = m_InletOutletBCsPage->item(row,17)->text().toStdString();
-    props["Lpm_lib_name"] = m_InletOutletBCsPage->item(row,18)->text().toStdString();
-    props["Lpm_initial_flow_value"] = m_InletOutletBCsPage->item(row,19)->text().toStdString();
-    props["Lpm_initial_pres_value"] = m_InletOutletBCsPage->item(row,20)->text().toStdString();
+    props["lpm_bc_type"] = m_InletOutletBCsPage->item(row,2)->text().toStdString();
 
     #ifdef debug_ShowCapBCWidget
     std::cout << msg << "UpdateGUI ... " << std::endl;
@@ -1087,21 +1084,17 @@ void  sv4guiSimulationView::SetCapBC()
     int row = (*it).row();
     m_InletOutletBCsPage->item(row,1)->setText(QString::fromStdString(bc_type));
 
-    if (bc_type == sv4guiCapBCType::resistance || 
-        bc_type == sv4guiCapBCType::rcr ) {
+    if (bc_type == sv4guiSimJobBCType::resistance || 
+        bc_type == sv4guiSimJobBCType::rcr ) {
       m_InletOutletBCsPage->item(row,2)->setText(QString::fromStdString(props["Values"]));
 
-    } else if (bc_type == sv4guiCapBCType::flow) {
+    } else if (bc_type == sv4guiSimJobBCType::flow) {
       if (props["Flow Rate"] != "") {
         m_InletOutletBCsPage->item(row,2)->setText("Assigned");
       }
 
-    } else if (bc_type == sv4guiCapBCType::lpm) {
-      if ((props["Lpm_file_name"] != "") && (props["Lpm_lib_name"] != "")) {
-        m_InletOutletBCsPage->item(row,2)->setText("Setup");
-      } else {
-        m_InletOutletBCsPage->item(row,2)->setText("Not setup");
-      }
+    } else if (bc_type == sv4guiSimJobBCType::lpm) {
+      m_InletOutletBCsPage->item(row,2)->setText(QString::fromStdString(props["lpm_bc_type"]));
     }
 
     m_InletOutletBCsPage->item(row,3)->setText(QString::fromStdString(props["Pressure"]));
@@ -1118,12 +1111,6 @@ void  sv4guiSimulationView::SetCapBC()
     m_InletOutletBCsPage->item(row,13)->setText(QString::fromStdString(props["Pressure Scaling"]));
     m_InletOutletBCsPage->item(row,14)->setText(QString::fromStdString(props["R Values"]));
     m_InletOutletBCsPage->item(row,15)->setText(QString::fromStdString(props["C Values"]));
-
-    m_InletOutletBCsPage->item(row,16)->setText(QString::fromStdString(props["Lpm_coupling_type"]));
-    m_InletOutletBCsPage->item(row,17)->setText(QString::fromStdString(props["Lpm_file_name"]));
-    m_InletOutletBCsPage->item(row,18)->setText(QString::fromStdString(props["Lpm_lib_name"]));
-    m_InletOutletBCsPage->item(row,19)->setText(QString::fromStdString(props["Lpm_initial_flow_value"]));
-    m_InletOutletBCsPage->item(row,20)->setText(QString::fromStdString(props["Lpm_initial_pres_value"]));
   }
 }
 
@@ -1367,12 +1354,7 @@ void sv4guiSimulationView::UpdateGUICap()
                << "Pressure Period"   // 12
                << "Pressure Scaling"  // 13
                << "R Values"          // 14
-               << "C Values"          // 15
-               << "Lpm_coupling_type"         // 16
-               << "Lpm_file_name"             // 17
-               << "Lpm_lib_name"              // 18
-               << "Lpm_initial_flow_value"    // 19
-               << "Lpm_initial_pres_value";   // 20
+               << "C Values";         // 15
 
     m_InletOutletBCsPage->setHorizontalHeaderLabels(capHeaders);
     m_InletOutletBCsPage->setColumnCount(capHeaders.size());
@@ -1410,7 +1392,7 @@ void sv4guiSimulationView::UpdateGUICap()
         item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Values")));
         m_InletOutletBCsPage->setItem(rowIndex, 2, item);
 
-        if (bcType == sv4guiCapBCType::flow && job->cap_props.Get(face->name,"Flow Rate") != "") {
+        if (bcType == sv4guiSimJobBCType::flow && job->cap_props.Get(face->name,"Flow Rate") != "") {
             item = new QStandardItem(QString::fromStdString("Assigned"));
             m_InletOutletBCsPage->setItem(rowIndex, 2, item);
         }
@@ -1453,7 +1435,7 @@ void sv4guiSimulationView::UpdateGUICap()
         QStringList list = QString::fromStdString(job->cap_props.Get(face->name,"Values")).split(QRegularExpression("[(),{}\\s+]"), 
             Qt::SkipEmptyParts);
 
-        if (bcType == sv4guiCapBCType::rcr) { 
+        if (bcType == sv4guiSimJobBCType::rcr) { 
             if (list.size() == 3) {
                 RValues = list[0] + " " + list[2];
                 CValues = list[1];
@@ -1466,30 +1448,9 @@ void sv4guiSimulationView::UpdateGUICap()
         item = new QStandardItem(CValues);
         m_InletOutletBCsPage->setItem(rowIndex, 15, item);
 
-        if (bcType == sv4guiCapBCType::lpm) {
-            item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name, "Lpm_coupling_type")));
-            m_InletOutletBCsPage->setItem(rowIndex, 16, item);
-
-            auto file_name = job->cap_props.Get(face->name, "Lpm_file_name");
-            item = new QStandardItem(QString::fromStdString(file_name));
-            m_InletOutletBCsPage->setItem(rowIndex, 17, item);
-
-            auto lib_name = job->cap_props.Get(face->name, "Lpm_lib_name");
-            item = new QStandardItem(QString::fromStdString(lib_name));
-            m_InletOutletBCsPage->setItem(rowIndex, 18, item);
-
-            item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name, "Lpm_initial_flow_value")));
-            m_InletOutletBCsPage->setItem(rowIndex, 19, item);
-
-            item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name, "Lpm_initial_pres_value")));
-            m_InletOutletBCsPage->setItem(rowIndex, 20, item);
-
-            if ((file_name != "") && (lib_name != "")) {
-              item = new QStandardItem(QString::fromStdString("Setup"));
-            } else {
-              item = new QStandardItem(QString::fromStdString("Not Setup"));
-            }
-            m_InletOutletBCsPage->setItem(rowIndex, 2, item);
+        if (bcType == sv4guiSimJobBCType::lpm) {
+          item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name, "lpm_bc_type")));
+          m_InletOutletBCsPage->setItem(rowIndex, 2, item);
         }
     }
 
@@ -1731,6 +1692,32 @@ void sv4guiSimulationView::UpdateGUIWall()
     if (modelElement == nullptr) {
         return;
     }
+}
+
+//-------------------------------
+// UpdateGUIZeroDSolverInterface
+//-------------------------------
+// Update the GUI controls for the ZeroDSolver Interface data tab from a .sjb file.
+//      
+void sv4guiSimulationView::UpdateGUIZeroDSolverInterface()
+{
+    if (!m_MitkJob) {
+        return;
+    }
+ 
+    sv4guiSimJob* job = m_MitkJob->GetSimJob(); 
+ 
+    if (job == nullptr) { 
+        job = new sv4guiSimJob();
+    }
+ 
+    ui->ZeroDSolver_Interface_coupling_type->setCurrentText(QString::fromStdString(job->zerod_interface_props.Get("coupling_type")));
+
+    ui->ZeroDSolver_Interface_file_name->setText(QString::fromStdString(job->zerod_interface_props.Get("config_file_name")));
+    ui->ZeroDSolver_Interface_lib_name->setText(QString::fromStdString(job->zerod_interface_props.Get("library_name")));
+
+    ui->ZeroDSolver_Interface_pressure_value->setText(QString::fromStdString(job->zerod_interface_props.Get("initial_pressure_value")));
+    ui->ZeroDSolver_Interface_velocity_value->setText(QString::fromStdString(job->zerod_interface_props.Get("initial_velocity_value")));
 }
 
 //--------------
@@ -2560,6 +2547,8 @@ sv4guiSimJob* sv4guiSimulationView::CreateSimJob(std::string& msg, bool checkVal
     return nullptr;
   }
 
+  SetJobZeroDSolverInterfacProps(job, msg, checkValidity);
+
   SetJobWallProps(job, msg, checkValidity);
 
   SetJobCmmProps(job, msg, checkValidity);
@@ -2747,7 +2736,7 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
     std::cout << pmsg << ">bcType: " << bcType << std::endl;
     #endif
 
-    if (bcType == sv4guiCapBCType::flow) {
+    if (bcType == sv4guiSimJobBCType::flow) {
       std::string flowrateContent = m_InletOutletBCsPage->item(i,9)->text().trimmed().toStdString();
       std::string period = m_InletOutletBCsPage->item(i,5)->text().trimmed().toStdString();
 
@@ -2780,23 +2769,11 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
 
     // Lumped parameter model properties.
     //
-    } else if (bcType == sv4guiCapBCType::lpm) {
+    } else if (bcType == sv4guiSimJobBCType::lpm) {
       job->cap_props.Set(capName, "BC Type", bcType);
 
-      auto coupling_type = m_InletOutletBCsPage->item(i,16)->text().trimmed().toStdString();
-      job->cap_props.Set(capName, "Lpm_coupling_type", coupling_type);
-
-      auto file_name = m_InletOutletBCsPage->item(i,17)->text().trimmed().toStdString();
-      job->cap_props.Set(capName, "Lpm_file_name", file_name);
-
-      auto lib_name = m_InletOutletBCsPage->item(i,18)->text().trimmed().toStdString();
-      job->cap_props.Set(capName, "Lpm_lib_name", lib_name);
-
-      auto initial_flow_value = m_InletOutletBCsPage->item(i,19)->text().trimmed().toStdString();
-      job->cap_props.Set(capName, "Lpm_initial_flow_value", initial_flow_value);
-
-      auto initial_pres_value = m_InletOutletBCsPage->item(i,20)->text().trimmed().toStdString();
-      job->cap_props.Set(capName, "Lpm_initial_pres_value", initial_pres_value);
+      auto lpm_bc_type = m_InletOutletBCsPage->item(i,2)->text().trimmed().toStdString();
+      job->cap_props.Set(capName, "lpm_bc_type", lpm_bc_type);
 
     // It seems that the other BC types share the same columns.
     //
@@ -2811,13 +2788,13 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
       std::string CValues = m_InletOutletBCsPage->item(i,15)->text().trimmed().toStdString();
 
       if (checkValidity) {
-        if (bcType == sv4guiCapBCType::resistance) {
+        if (bcType == sv4guiSimJobBCType::resistance) {
           if (!IsDouble(values)) {
             msg = capName + " R value error: " + values;
             return false;
           }
 
-        } else if (bcType == sv4guiCapBCType::rcr) {
+        } else if (bcType == sv4guiSimJobBCType::rcr) {
           int count = 0;
           QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
           values=list.join(" ").toStdString();
@@ -2833,7 +2810,7 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
       job->cap_props.Set(capName,"Values", values);
       job->cap_props.Set(capName,"Pressure",pressure);
 
-      if (bcType == sv4guiCapBCType::rcr) {
+      if (bcType == sv4guiSimJobBCType::rcr) {
         job->cap_props.Set(capName,"R Values", RValues);
         job->cap_props.Set(capName,"C Values", CValues);
       }
@@ -2887,6 +2864,31 @@ void sv4guiSimulationView::SetJobWallProps(sv4guiSimJob* job, std::string& msg, 
     #endif
   }
 
+}
+
+//--------------------------------
+// SetJobZeroDSolverInterfacProps
+//--------------------------------
+// Set the job ZeroDSolver Interface properties.
+//
+// This updates the values in the job zerod_interface_props map.
+//
+void sv4guiSimulationView::SetJobZeroDSolverInterfacProps(sv4guiSimJob* job, std::string& msg, bool checkValidity)
+{
+    auto coupling_type = ui->ZeroDSolver_Interface_coupling_type->currentText().toStdString();
+    job->zerod_interface_props.Set("coupling_type", coupling_type);
+
+    auto config_file_name = ui->ZeroDSolver_Interface_file_name->text().toStdString();
+    job->zerod_interface_props.Set("config_file_name", config_file_name);
+
+    auto library_name = ui->ZeroDSolver_Interface_lib_name->text().toStdString();
+    job->zerod_interface_props.Set("library_name", library_name);
+
+    auto initial_pressure_value = ui->ZeroDSolver_Interface_pressure_value->text().toStdString();
+    job->zerod_interface_props.Set("initial_pressure_value", initial_pressure_value);
+
+    auto initial_velocity_value = ui->ZeroDSolver_Interface_velocity_value->text().toStdString();
+    job->zerod_interface_props.Set("initial_velocity_value", initial_velocity_value);
 }
 
 //---------------
@@ -3154,5 +3156,68 @@ void sv4guiSimulationView::ShowModel(bool checked)
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
 }
+
+//--------------------------
+// SetZeroDSolverConfigFile 
+//--------------------------
+// Set the ZeroDSolver JSON configuration file.
+//      
+void sv4guiSimulationView::SetZeroDSolverConfigFile()
+{   
+  #define n_debug_SetZeroDSolverConfigFile
+  #ifdef debug_SetZeroDSolverConfigFile
+  std::string msg("[sv4guiSimulationView::SetZeroDSolverConfigFile] ");
+  std::cout << msg << "========== SetZeroDSolverConfigFile ==========" << std::endl;
+  #endif
+    
+  auto file_path = GetFilePath(ui->ZeroDSolver_Interface_file_select, "Set the svZeroDSolver JSON configuration file",
+      "JSON Files (*.json)");
+    
+  if (file_path.isEmpty()) {
+    return;
+  }
+
+  #ifdef debug_SetCmmSimWallFile
+  std::cout << msg << "file_path: " << file_path << std::endl;
+  #endif
+
+  ui->ZeroDSolver_Interface_file_name->setText(file_path);
+
+  UpdateSimJob();
+}
+
+//--------------------------
+// SetZeroDSolverLibraryFile
+//--------------------------
+// Set the ZeroDSolver share library file.
+//      
+void sv4guiSimulationView::SetZeroDSolverLibraryFile()
+{       
+  std::string file_type("The svZeroDSOlver shared library file ");
+  std::string lib_name;
+ 
+  #if defined(Q_OS_LINUX)
+    lib_name = "(libsvzero_interface.so)";
+  #elif defined(Q_OS_MAC)
+    lib_name = "(libsvzero_interface.dylib)"; 
+  #endif
+ 
+  file_type += lib_name;
+ 
+  auto file_path = GetFilePath(ui->ZeroDSolver_Interface_file_select, 
+      "Select the svZeroDSolver shared library.", file_type.c_str() );
+        
+  if (file_path.isEmpty()) {
+    return;
+  }
+        
+  #ifdef debug_SetCmmSimWallFile
+  std::cout << msg << "file_path: " << file_path << std::endl;
+  #endif
+
+  ui->ZeroDSolver_Interface_lib_name->setText(file_path);
+        
+  UpdateSimJob();
+}       
 
 

@@ -137,7 +137,7 @@
       <item>
        <widget class="QStackedWidget" name="stackedWidget">
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="page">
          <layout class="QGridLayout" name="gridLayout_2">
@@ -444,124 +444,29 @@
          </layout>
         </widget>
         <widget class="QWidget" name="BcTypeLpm_page">
-         <layout class="QVBoxLayout" name="verticalLayout_4">
+         <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QWidget" name="BcTypeLpm_coupling_group" native="true">
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
-             <item>
-              <widget class="QLabel" name="BcTypeLpm_coupling_label">
-               <property name="text">
-                <string>Coupling type</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="BcTypeLpm_coupling_type">
-               <item>
-                <property name="text">
-                 <string>semi-implicit</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QWidget" name="BcTypeLpm_file_group" native="true">
+           <widget class="QWidget" name="BcTypeLpm_bc_group" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <item>
-              <widget class="QLabel" name="BcTypeLpm_label">
+              <widget class="QLabel" name="BcTypeLpm_type_label">
                <property name="text">
-                <string>Solver JSON file</string>
+                <string>Boundary condition</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="BcTypeLpm_file_name">
-               <property name="whatsThis">
-                <string>The svZeroDSolver JSON configuration file.</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QToolButton" name="BcTypeLpm_file_select">
-               <property name="text">
-                <string>...</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QWidget" name="BcTypeLpm_lib_group" native="true">
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
-             <item>
-              <widget class="QLabel" name="BcTypeLpm_lib_label">
-               <property name="text">
-                <string>Solver library</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="BcTypeLpm_lib_name">
-               <property name="whatsThis">
-                <string>The svZeroDSolver shared library used to interface to the svMultiPhysics solver.</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QToolButton" name="BcTypeLpm_lib_select">
-               <property name="text">
-                <string>...</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QWidget" name="BcTypeLpm_initial_group" native="true">
-            <layout class="QVBoxLayout" name="verticalLayout_3">
-             <item>
-              <widget class="QWidget" name="BcTypeLpm_initial_flow_group" native="true">
-               <layout class="QHBoxLayout" name="horizontalLayout_9">
-                <item>
-                 <widget class="QLabel" name="BcTypeLpm_initial_flow_label">
-                  <property name="text">
-                   <string>Initial flow </string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="BcTypeLpm_initial_flow_value">
-                  <property name="text">
-                   <string>0.0</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QWidget" name="BcTypeLpm_initial_pres_group" native="true">
-               <layout class="QHBoxLayout" name="horizontalLayout_8">
-                <item>
-                 <widget class="QLabel" name="BcTypeLpm_initial_pres_label">
-                  <property name="text">
-                   <string>Initial pressure</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="BcTypeLpm_initial_pres_value">
-                  <property name="text">
-                   <string>0.0</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+              <widget class="QComboBox" name="BcTypeLpm_bc_type">
+               <item>
+                <property name="text">
+                 <string>RCR</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>RESISTANCE</string>
+                </property>
+               </item>
               </widget>
              </item>
             </layout>

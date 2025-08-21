@@ -89,6 +89,7 @@ public slots:
 
     void UpdateFaceListSelection();
 
+   
     // Basic parameters.
     //
     void UpdateGUIBasic();
@@ -114,6 +115,11 @@ public slots:
 
     void UpdateGUICap();
 
+    // ZeroDSolver interface.
+    //
+    void SetZeroDSolverConfigFile();
+    void SetZeroDSolverLibraryFile();
+
     // Wall properties.
     //
     void UpdateGUIWall();
@@ -121,6 +127,10 @@ public slots:
     void WallTypeSelectionChanged(int index);
 
     void SetVariableWallPropsFile();
+
+    // ZeroDSolver Interface properties.
+    //
+    void UpdateGUIZeroDSolverInterface();
 
     // Coupled Momentum Method
     //
@@ -193,6 +203,7 @@ public:
 
     bool SetJobBasicProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
     bool SetJobCapProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
+    void SetJobZeroDSolverInterfacProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
     void SetJobCmmProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
     bool SetJobSolverProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);
     void SetJobWallProps(sv4guiSimJob* job, std::string& msg, bool checkValidity);

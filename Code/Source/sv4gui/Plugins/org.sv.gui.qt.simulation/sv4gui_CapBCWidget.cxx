@@ -31,6 +31,7 @@
 
 #include "sv4gui_CapBCWidget.h"
 #include "ui_sv4gui_CapBCWidget.h"
+#include "sv4gui_SimJob.h"
 
 #include <mitkIPreferencesService.h>
 #include <mitkIPreferences.h>
@@ -42,14 +43,6 @@
 #include <QRegularExpression>
 
 #include <sstream>
-
-
-// These values must match those set for the Qt 
-
-std::string sv4guiCapBCType::lpm = "LPM";
-std::string sv4guiCapBCType::flow = "Prescribed Velocities";
-std::string sv4guiCapBCType::rcr = "RCR";
-std::string sv4guiCapBCType::resistance = "Resistance";
 
 sv4guiCapBCWidget::sv4guiCapBCWidget(QWidget *parent)
     : QWidget(parent)
@@ -63,9 +56,7 @@ sv4guiCapBCWidget::sv4guiCapBCWidget(QWidget *parent)
     connect(ui->toolButtonBrowse,SIGNAL(clicked()), this, SLOT(LoadFlowrateFromFile()));
 
     // Lumped parameter model widgets.
-    //
-    connect(ui->BcTypeLpm_file_select, SIGNAL(clicked()), this, SLOT(SelectLpmSolverFile()));
-    connect(ui->BcTypeLpm_lib_select, SIGNAL(clicked()), this, SLOT(SelectLpmLibraryFile()));
+    connect(ui->BcTypeLpm_bc_type,SIGNAL(currentTextChanged(const QString &)), this, SLOT(BcTypeLpm_bc_type_changed(const QString &)));
 
     connect(ui->buttonBox,SIGNAL(accepted()), this, SLOT(Confirm()));
     connect(ui->buttonBox,SIGNAL(rejected()), this, SLOT(Cancel()));
@@ -157,12 +148,7 @@ void sv4guiCapBCWidget::UpdateGUI(std::string capName, std::map<std::string, std
     ui->lineEditPressurePeriod->setText(pressurePeriod);
 
     // Lumped parameter model (lpm) properties.
-    //
-    ui->BcTypeLpm_coupling_type->setCurrentText( QString::fromStdString(props["Lpm_coupling_type"]) );
-    ui->BcTypeLpm_file_name->setText( QString::fromStdString(props["Lpm_file_name"]) );
-    ui->BcTypeLpm_lib_name->setText( QString::fromStdString(props["Lpm_lib_name"]) );
-    ui->BcTypeLpm_initial_flow_value->setText( QString::fromStdString(props["Lpm_initial_flow_value"]) );
-    ui->BcTypeLpm_initial_pres_value->setText( QString::fromStdString(props["Lpm_initial_pres_value"]) );
+    ui->BcTypeLpm_bc_type->setCurrentText( QString::fromStdString(props["lpm_bc_type"]) );
 }
 
 //-------------
@@ -175,19 +161,19 @@ bool sv4guiCapBCWidget::CreateProps()
   std::string bcType = ui->comboBoxBCType->currentText().toStdString();
   bool success = true;
 
-  if (bcType == sv4guiCapBCType::flow) {
+  if (bcType == sv4guiSimJobBCType::flow) {
     success = AddFlowProps(props);
 
   } else {
     AddPressueProps(props);
 
-    if (bcType == sv4guiCapBCType::resistance) {
+    if (bcType == sv4guiSimJobBCType::resistance) {
       success = AddResistanceProps(props);
 
-    } else if (bcType == sv4guiCapBCType::rcr) {
+    } else if (bcType == sv4guiSimJobBCType::rcr) {
       success = AddRcrProps(props);
 
-    } else if (bcType == sv4guiCapBCType::lpm) {
+    } else if (bcType == sv4guiSimJobBCType::lpm) {
       success = AddLpmProps(props);
 
     }
@@ -203,7 +189,7 @@ bool sv4guiCapBCWidget::CreateProps()
 //
 bool sv4guiCapBCWidget::AddFlowProps(std::map<std::string,std::string>& props)
 {
-  props["BC Type"] = sv4guiCapBCType::flow;
+  props["BC Type"] = sv4guiSimJobBCType::flow;
   props["Analytic Shape"] = ui->comboBoxShape->currentText().toStdString();
 
   QString pointNum = ui->lineEditPointNumber->text().trimmed();
@@ -276,7 +262,7 @@ bool sv4guiCapBCWidget::AddPressueProps(std::map<std::string,std::string>& props
 //
 bool sv4guiCapBCWidget::AddResistanceProps(std::map<std::string,std::string>& props)
 {
-  props["BC Type"] = sv4guiCapBCType::resistance;
+  props["BC Type"] = sv4guiSimJobBCType::resistance;
   QString values = ui->lineEditBCValues->text().trimmed();
 
   if (!IsDouble(values)) {
@@ -293,7 +279,7 @@ bool sv4guiCapBCWidget::AddResistanceProps(std::map<std::string,std::string>& pr
 //
 bool sv4guiCapBCWidget::AddRcrProps(std::map<std::string,std::string>& props)
 {
-  props["BC Type"] = sv4guiCapBCType::rcr;
+  props["BC Type"] = sv4guiSimJobBCType::rcr;
   QString values = ui->lineEditBCValues->text().trimmed();
   int count = 0;
 
@@ -315,13 +301,9 @@ bool sv4guiCapBCWidget::AddRcrProps(std::map<std::string,std::string>& props)
 //
 bool sv4guiCapBCWidget::AddLpmProps(std::map<std::string,std::string>& props)
 {
-  props["BC Type"] = sv4guiCapBCType::lpm;
+  props["BC Type"] = sv4guiSimJobBCType::lpm;
 
-  props["Lpm_coupling_type"] = ui->BcTypeLpm_coupling_type->currentText().toStdString();
-  props["Lpm_file_name"] = ui->BcTypeLpm_file_name->text().toStdString();
-  props["Lpm_lib_name"] = ui->BcTypeLpm_lib_name->text().toStdString();
-  props["Lpm_initial_flow_value"] = ui->BcTypeLpm_initial_flow_value->text().toStdString();
-  props["Lpm_initial_pres_value"] = ui->BcTypeLpm_initial_pres_value->text().toStdString();
+  props["lpm_bc_type"] = ui->BcTypeLpm_bc_type->currentText().toStdString();
 
   return true;
 }
@@ -351,70 +333,31 @@ void sv4guiCapBCWidget::SelectionChanged(const QString &text)
 {
     std::string value = text.toStdString(); 
 
-    if (value == sv4guiCapBCType::flow) {
+    if (value == sv4guiSimJobBCType::flow) {
         ui->stackedWidget->setCurrentIndex(0);
 
-    } else if (value == sv4guiCapBCType::resistance) {
+    } else if (value == sv4guiSimJobBCType::resistance) {
         ui->stackedWidget->setCurrentIndex(1);
         ui->labelBCValues->setText("Resistance:");
         ui->widgetPressure->hide();
 
-    } else if (value == sv4guiCapBCType::rcr) {
+    } else if (value == sv4guiSimJobBCType::rcr) {
         ui->stackedWidget->setCurrentIndex(1);
         ui->labelBCValues->setText("R<sub>p</sub>, C, R<sub>d</sub>:");
         ui->widgetPressure->hide();
 
-    } else if (value == sv4guiCapBCType::lpm) {
+    } else if (value == sv4guiSimJobBCType::lpm) {
         ui->stackedWidget->setCurrentIndex(2);
     }
 }
 
-//---------------------
-// SelectLpmSolverFile
-//---------------------
-// Select the svZeroDSolver JSON configuration file.
+//---------------------------
+// BcTypeLpm_bc_type_changed
+//---------------------------
+// Process a change in the BcTypeLpm_bc_type combo box.
 //
-void sv4guiCapBCWidget::SelectLpmSolverFile()
+void sv4guiCapBCWidget::BcTypeLpm_bc_type_changed(const QString &text)
 {
-  auto solver_json_file = GetFilePath(ui->BcTypeLpm_file_select, 
-      "Select the svZeroDSolver JSON configuration file.", 
-      "svZeroDSolver configuration JSON file (*.json)");
-
-  if (solver_json_file.isEmpty()) {
-      return;
-  }
-
-  ui->BcTypeLpm_file_name->setText(solver_json_file);
-
-  std::cout << "[ sv4guiCapBCWidget::SelectLpmSolverFile] solver_json_file: " << solver_json_file.toStdString() << std::endl;
-}
-
-//----------------------
-// SelectLpmLibraryFile
-//----------------------
-// Select the svZeroDSolver shared library used to interface to the svMultiPhysics solver.
-//
-void sv4guiCapBCWidget::SelectLpmLibraryFile()
-{
-  std::string file_type("The svZeroDSOlver shared library file ");
-  std::string lib_name;
-
-  #if defined(Q_OS_LINUX)
-    lib_name = "(libsvzero_interface.so)";
-  #elif defined(Q_OS_MAC)
-    lib_name = "(libsvzero_interface.dylib)";
-  #endif
-
-  file_type += lib_name;
-
-  auto solver_lib = GetFilePath(ui->BcTypeLpm_lib_select, 
-      "Select the vZeroDSolver shared library.", file_type.c_str() );
-
-  if (solver_lib.isEmpty()) {
-    return;
-  }
-
-  ui->BcTypeLpm_lib_name->setText(solver_lib);
 }
 
 //----------------------

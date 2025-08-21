@@ -44,6 +44,7 @@
 // sections.
 
 #include "sv4gui_SimXmlWriter.h"
+#include "sv4gui_CapBCWidget.h"
 
 #include <fstream>
 #include <sstream>
@@ -144,15 +145,19 @@ void Sv4GuiSimXmlWriter::add_equation_bcs(sv4guiSimJob* job, tinyxml2::XMLElemen
     auto boundary_condition = add_sub_child(equation, "Add_BC");
     boundary_condition->SetAttribute("name", face_name.c_str());
 
-    if (bc_prop_type == "Prescribed Velocities") {
+    if (bc_prop_type == sv4guiSimJobBCType::flow) {
       add_velocity_bc(props, job, face_name, boundary_condition);
 
-    } else if (bc_prop_type == "RCR") {
+    } else if (bc_prop_type == sv4guiSimJobBCType::rcr) {
       add_rcr_bc(props, job, boundary_condition);
 
-    } else if (bc_prop_type == "Resistance") {
+    } else if (bc_prop_type == sv4guiSimJobBCType::resistance) {
       add_resistance_bc(props, job, boundary_condition);
+
+    } else if (bc_prop_type == sv4guiSimJobBCType::lpm) {
+      add_lpm_bc(props, job, boundary_condition);
     }
+
   }
 
   // Add wall boundary conditions.
@@ -169,6 +174,15 @@ void Sv4GuiSimXmlWriter::add_equation_bcs(sv4guiSimJob* job, tinyxml2::XMLElemen
       add_wall_bc(job, boundary_condition);
     }
   }
+}
+
+//------------
+// add_lpm_bc
+//------------
+//
+void Sv4GuiSimXmlWriter::add_lpm_bc(GuiProperties& props, sv4guiSimJob* job, 
+    tinyxml2::XMLElement* boundary_condition)
+{
 }
 
 //------------

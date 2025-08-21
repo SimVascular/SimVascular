@@ -118,6 +118,8 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO::Read()
 
         ReadProperties(jobElement, job->basic_props, "basic_props");  
 
+        ReadProperties(jobElement, job->zerod_interface_props, "zerod_interface_props");  
+
         ReadCapProperties(jobElement, job->cap_props, "cap_props");
 
         ReadProperties(jobElement, job->wall_props, "wall_props");  
@@ -278,6 +280,8 @@ void sv4guiMitkSimJobIO::Write()
     mjElement->LinkEndChild(jobElement);
 
     WriteProperties(document, jobElement, job->basic_props, "basic_props"); 
+
+    WriteProperties(document, jobElement, job->zerod_interface_props, "zerod_interface_props"); 
 
     WriteCapProperties(document, jobElement, job->cap_props);
 

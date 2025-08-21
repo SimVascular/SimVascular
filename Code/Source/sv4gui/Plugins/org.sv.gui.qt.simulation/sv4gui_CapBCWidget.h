@@ -39,14 +39,6 @@ namespace Ui {
 class sv4guiCapBCWidget;
 }
 
-class sv4guiCapBCType { 
-  public:
-    static std::string lpm;
-    static std::string flow;
-    static std::string rcr;
-    static std::string resistance;
-};
-
 class sv4guiCapBCWidget : public QWidget
 {
     Q_OBJECT
@@ -82,8 +74,7 @@ public slots:
 
     void LoadFlowrateFromFile();
 
-    void SelectLpmSolverFile();
-    void SelectLpmLibraryFile();
+    void BcTypeLpm_bc_type_changed(const QString &text);
 
     void LoadTimedPressureFromFile();
 
