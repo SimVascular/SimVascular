@@ -74,8 +74,6 @@ public slots:
 
     void LoadFlowrateFromFile();
 
-    void BcTypeLpm_bc_type_changed(const QString &text);
-
     void LoadTimedPressureFromFile();
 
 signals:

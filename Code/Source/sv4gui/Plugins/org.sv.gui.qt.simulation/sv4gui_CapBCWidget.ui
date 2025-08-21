@@ -449,25 +449,14 @@
            <widget class="QWidget" name="BcTypeLpm_bc_group" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <item>
-              <widget class="QLabel" name="BcTypeLpm_type_label">
+              <widget class="QLabel" name="BcTypeLpm_block_label">
                <property name="text">
-                <string>Boundary condition</string>
+                <string>Block name</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="BcTypeLpm_bc_type">
-               <item>
-                <property name="text">
-                 <string>RCR</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>RESISTANCE</string>
-                </property>
-               </item>
-              </widget>
+              <widget class="QLineEdit" name="BcTypeLpm_block_name"/>
              </item>
             </layout>
            </widget>

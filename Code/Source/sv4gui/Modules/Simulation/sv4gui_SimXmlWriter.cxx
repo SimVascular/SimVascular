@@ -183,6 +183,26 @@ void Sv4GuiSimXmlWriter::add_equation_bcs(sv4guiSimJob* job, tinyxml2::XMLElemen
 void Sv4GuiSimXmlWriter::add_lpm_bc(GuiProperties& props, sv4guiSimJob* job, 
     tinyxml2::XMLElement* boundary_condition)
 {
+  if (!zerod_interface_defined_) {
+    const char* name;
+    boundary_condition->QueryStringAttribute("name", &name);
+    auto zerod_interface_props = job->zerod_interface_props.GetAll();
+    auto config_file = zerod_interface_props["config_file_name"];
+    auto lib_file = zerod_interface_props["library_name"];
+    std::string msg = "svZeroDSolver coupled boundary condition for face '" + std::string(name) + "': ";
+
+    if (lib_file == "") {
+      throw std::runtime_error(msg + " The svZeroDSolver shared library has not been set."); 
+
+   } else if (config_file == "") {
+      throw std::runtime_error(msg + " The svZeroDSolver configuration JSON file has not been set."); 
+   }
+
+  }
+
+  add_child(boundary_condition, "Type", "Neumann");
+  add_child(boundary_condition, "Time_dependence", "Coupled");
+  add_child(boundary_condition, "svZeroDSolver_block", props["lpm_block_name"]);
 }
 
 //------------
@@ -275,7 +295,7 @@ void Sv4GuiSimXmlWriter::add_wall_bc(sv4guiSimJob* job, tinyxml2::XMLElement* bo
 //
 void Sv4GuiSimXmlWriter::add_equation(sv4guiSimJob* job)
 {
-  #define debug_add_equation
+  #define n_debug_add_equation
   #ifdef debug_add_equation
   std::string msg("[Sv4GuiSimXmlWriter::add_equation] ");
   std::cout << msg << std::endl;
@@ -287,6 +307,8 @@ void Sv4GuiSimXmlWriter::add_equation(sv4guiSimJob* job)
 
   auto equation = add_sub_child(root_, "Add_equation");
   equation->SetAttribute("type", eq_type);
+
+  add_equation_zerod_interface(job, equation);
 
   add_equation_nl_solver(job, equation);
 
@@ -332,7 +354,7 @@ void Sv4GuiSimXmlWriter::add_cmm_wall_properties(sv4guiSimJob*job, tinyxml2::XML
 //
 void Sv4GuiSimXmlWriter::add_cmm_equation(sv4guiSimJob* job)
 {
-  #define debug_add_cmm_equation
+  #define n_debug_add_cmm_equation
   #ifdef debug_add_cmm_equation
   std::string msg("[Sv4GuiSimXmlWriter::add_cmm_equation] ");
   std::cout << msg << std::endl;
@@ -344,6 +366,8 @@ void Sv4GuiSimXmlWriter::add_cmm_equation(sv4guiSimJob* job)
 
   auto equation = add_sub_child(root_, "Add_equation");
   equation->SetAttribute("type", eq_type);
+
+  add_equation_zerod_interface(job, equation);
 
   // Nonlinear solver paramters.
   add_equation_nl_solver(job, equation);
@@ -449,6 +473,35 @@ void Sv4GuiSimXmlWriter::add_equation_output(sv4guiSimJob* job, tinyxml2::XMLEle
     add_child(output, "Displacement", true); 
     add_child(output, "Stress", true); 
   }
+}
+
+//------------------------------
+// add_equation_zerod_interface
+//------------------------------
+// Add the 'svZeroDSolver_interface' section under the equation.
+//
+void Sv4GuiSimXmlWriter::add_equation_zerod_interface(sv4guiSimJob* job, tinyxml2::XMLElement* equation)
+{
+  auto zerod_interface_props = job->zerod_interface_props.GetAll();
+  auto config_file = zerod_interface_props["config_file_name"];
+  auto lib_file = zerod_interface_props["library_name"];
+
+  if ((config_file == "" || lib_file == "")) {
+    return;
+  }
+
+  auto coupling_type = zerod_interface_props["coupling_type"];
+  auto initial_pressure = zerod_interface_props["initial_pressure_value"];
+  auto initial_velocity = zerod_interface_props["initial_velocity_value"];
+
+  auto zerod_interface = add_sub_child(equation, "svZeroDSolver_interface");
+  add_child(zerod_interface, "Coupling_type", coupling_type); 
+  add_child(zerod_interface, "Configuration_file", config_file); 
+  add_child(zerod_interface, "Shared_library", lib_file); 
+  add_child(zerod_interface, "Initial_flows", initial_velocity); 
+  add_child(zerod_interface, "Initial_pressures", initial_pressure); 
+
+  zerod_interface_defined_ = true;
 }
 
 //-------------------------
@@ -562,7 +615,7 @@ void Sv4GuiSimXmlWriter::add_mesh(sv4guiSimJob* job)
 //
 void Sv4GuiSimXmlWriter::add_cmm_init_mesh(sv4guiSimJob* job)
 {
-  #define debug_add_cmm_init_mesh
+  #define n_debug_add_cmm_init_mesh
   #ifdef debug_add_cmm_init_mesh
   std::string msg("[Sv4GuiSimXmlWriter::add_cmm_init_mesh] ");
   std::cout << msg << std::endl;

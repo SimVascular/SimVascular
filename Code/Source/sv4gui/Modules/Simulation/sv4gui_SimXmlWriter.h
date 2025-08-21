@@ -106,6 +106,9 @@ class Sv4GuiSimXmlWriter
 
     std::string cmm_wall_name_ = "";
 
+    // If true then the zerod interface props have beem defined.
+    bool zerod_interface_defined_ = false;
+
     Sv4GuiSimXmlWriterParameters parameters;
 
     // The root element of the document.
@@ -132,6 +135,8 @@ class Sv4GuiSimXmlWriter
         tinyxml2::XMLElement* xml_boundary_condition);
 
     void add_wall_bc(sv4guiSimJob* job, tinyxml2::XMLElement* boundary_condition);
+
+    void add_equation_zerod_interface(sv4guiSimJob* job, tinyxml2::XMLElement* xml_equation);
 
     void add_equation_nl_solver(sv4guiSimJob* job, tinyxml2::XMLElement* xml_equation);
 

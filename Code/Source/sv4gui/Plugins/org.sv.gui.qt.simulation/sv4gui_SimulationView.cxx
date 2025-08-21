@@ -185,7 +185,7 @@ sv4guiSimulationView::~sv4guiSimulationView()
 //
 void sv4guiSimulationView::EnableConnection(bool enable)
 {
-    #define debug_EnableConnection
+    #define n_debug_EnableConnection
     #ifdef debug_EnableConnection 
     std::string msg("[sv4guiSimulationView::EnableConnection] ");
     std::cout << msg << "========== EnableConnection ==========" << std::endl;
@@ -956,7 +956,7 @@ void sv4guiSimulationView::TableViewCapContextMenuRequested( const QPoint & pos 
 //
 void sv4guiSimulationView::ShowCapBCWidget(bool)
 {
-    #define debug_ShowCapBCWidget
+    #define n_debug_ShowCapBCWidget
     #ifdef debug_ShowCapBCWidget
     std::string msg("[sv4guiSimulationView::ShowCapBCWidget] ");
     std::cout << msg << "========== ShowCapBCWidget ==========" << std::endl;
@@ -1008,7 +1008,7 @@ void sv4guiSimulationView::ShowCapBCWidget(bool)
     props["C Values"] = m_InletOutletBCsPage->item(row,15)->text().toStdString();
 
     // Lumped parameter model BCs.
-    props["lpm_bc_type"] = m_InletOutletBCsPage->item(row,2)->text().toStdString();
+    props["lpm_block_name"] = m_InletOutletBCsPage->item(row,2)->text().toStdString();
 
     #ifdef debug_ShowCapBCWidget
     std::cout << msg << "UpdateGUI ... " << std::endl;
@@ -1062,7 +1062,7 @@ void sv4guiSimulationView::SetDistalPressure(bool)
 //
 void  sv4guiSimulationView::SetCapBC()
 {
-  #define debug_SetCapBC
+  #define n_debug_SetCapBC
   #ifdef debug_SetCapBC
   std::string msg("[sv4guiSimulationView::SetCapBC] ");
   std::cout << msg << "========== SetCapBC ==========" << std::endl;
@@ -1094,7 +1094,7 @@ void  sv4guiSimulationView::SetCapBC()
       }
 
     } else if (bc_type == sv4guiSimJobBCType::lpm) {
-      m_InletOutletBCsPage->item(row,2)->setText(QString::fromStdString(props["lpm_bc_type"]));
+      m_InletOutletBCsPage->item(row,2)->setText(QString::fromStdString(props["lpm_block_name"]));
     }
 
     m_InletOutletBCsPage->item(row,3)->setText(QString::fromStdString(props["Pressure"]));
@@ -1305,7 +1305,7 @@ void  sv4guiSimulationView::SplitCapBC()
 //
 void sv4guiSimulationView::UpdateGUICap()
 {
-    #define debug_UpdateGUICap 
+    #define n_debug_UpdateGUICap 
     #ifdef debug_UpdateGUICap
     std::string msg("[sv4guiSimulationView::UpdateGUICap] ");
     std::cout << msg << "========== UpdateGUICap ==========" << std::endl;
@@ -1449,7 +1449,7 @@ void sv4guiSimulationView::UpdateGUICap()
         m_InletOutletBCsPage->setItem(rowIndex, 15, item);
 
         if (bcType == sv4guiSimJobBCType::lpm) {
-          item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name, "lpm_bc_type")));
+          item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name, "lpm_block_name")));
           m_InletOutletBCsPage->setItem(rowIndex, 2, item);
         }
     }
@@ -1792,7 +1792,7 @@ void sv4guiSimulationView::UpdateGUICmm()
 //
 void sv4guiSimulationView::CmmSim_Initialize_changed(bool checked)
 {
-  #define debug_CmmSim_Initialize_changed
+  #define n_debug_CmmSim_Initialize_changed
   #ifdef debug_CmmSim_Initialize_changed
   std::string msg("[sv4guiSimulationView::CmmSim_Initialize_changed] ");
   std::cout << msg << "==========  CmmSim_Initialize_changed ==========" << std::endl;
@@ -2721,7 +2721,7 @@ bool sv4guiSimulationView::SetJobBasicProps(sv4guiSimJob* job, std::string& msg,
 //
 bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, bool checkValidity)
 {
-  #define debug_SetJobCapProps
+  #define n_debug_SetJobCapProps
   #ifdef debug_SetJobCapProps
   std::string pmsg("[sv4guiSimulationView::SetJobCapProps] ");
   std::cout << pmsg << "========= SetJobCapProps ========== " << std::endl;
@@ -2772,8 +2772,8 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
     } else if (bcType == sv4guiSimJobBCType::lpm) {
       job->cap_props.Set(capName, "BC Type", bcType);
 
-      auto lpm_bc_type = m_InletOutletBCsPage->item(i,2)->text().trimmed().toStdString();
-      job->cap_props.Set(capName, "lpm_bc_type", lpm_bc_type);
+      auto lpm_block_name = m_InletOutletBCsPage->item(i,2)->text().trimmed().toStdString();
+      job->cap_props.Set(capName, "lpm_block_name", lpm_block_name);
 
     // It seems that the other BC types share the same columns.
     //

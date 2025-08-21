@@ -56,7 +56,7 @@ sv4guiCapBCWidget::sv4guiCapBCWidget(QWidget *parent)
     connect(ui->toolButtonBrowse,SIGNAL(clicked()), this, SLOT(LoadFlowrateFromFile()));
 
     // Lumped parameter model widgets.
-    connect(ui->BcTypeLpm_bc_type,SIGNAL(currentTextChanged(const QString &)), this, SLOT(BcTypeLpm_bc_type_changed(const QString &)));
+    //connect(ui->BcTypeLpm_bc_type,SIGNAL(currentTextChanged(const QString &)), this, SLOT(BcTypeLpm_bc_type_changed(const QString &)));
 
     connect(ui->buttonBox,SIGNAL(accepted()), this, SLOT(Confirm()));
     connect(ui->buttonBox,SIGNAL(rejected()), this, SLOT(Cancel()));
@@ -148,7 +148,7 @@ void sv4guiCapBCWidget::UpdateGUI(std::string capName, std::map<std::string, std
     ui->lineEditPressurePeriod->setText(pressurePeriod);
 
     // Lumped parameter model (lpm) properties.
-    ui->BcTypeLpm_bc_type->setCurrentText( QString::fromStdString(props["lpm_bc_type"]) );
+    ui->BcTypeLpm_block_name->setText( QString::fromStdString(props["lpm_block_name"]) );
 }
 
 //-------------
@@ -303,7 +303,7 @@ bool sv4guiCapBCWidget::AddLpmProps(std::map<std::string,std::string>& props)
 {
   props["BC Type"] = sv4guiSimJobBCType::lpm;
 
-  props["lpm_bc_type"] = ui->BcTypeLpm_bc_type->currentText().toStdString();
+  props["lpm_block_name"] = ui->BcTypeLpm_block_name->text().toStdString();
 
   return true;
 }
@@ -349,15 +349,6 @@ void sv4guiCapBCWidget::SelectionChanged(const QString &text)
     } else if (value == sv4guiSimJobBCType::lpm) {
         ui->stackedWidget->setCurrentIndex(2);
     }
-}
-
-//---------------------------
-// BcTypeLpm_bc_type_changed
-//---------------------------
-// Process a change in the BcTypeLpm_bc_type combo box.
-//
-void sv4guiCapBCWidget::BcTypeLpm_bc_type_changed(const QString &text)
-{
 }
 
 //----------------------
