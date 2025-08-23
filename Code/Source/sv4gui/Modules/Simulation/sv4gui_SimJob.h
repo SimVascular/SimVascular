@@ -42,6 +42,15 @@
 using SimJobPropertyMap = std::map<std::string,std::string>;
 using SimJobCapPropertyMap = std::map<std::string,std::map<std::string,std::string>> ;
 
+class sv4guiSimJobBCType {
+  public:
+    static std::string lpm;
+    static std::string flow;
+    static std::string rcr;
+    static std::string resistance;
+};
+
+
 class SV4GUIMODULESIMULATION_EXPORT sv4guiSimJobCapProperties
 {
   public:
@@ -75,6 +84,7 @@ class SV4GUIMODULESIMULATION_EXPORT sv4guiSimJob
     sv4guiSimJobProperties wall_props;
     sv4guiSimJobProperties cmm_props;
     sv4guiSimJobProperties run_props;
+    sv4guiSimJobProperties zerod_interface_props;
 
     sv4guiSimJobProperties solver_output_props;
     sv4guiSimJobProperties solver_time_props;

@@ -160,7 +160,7 @@
       <item>
        <widget class="QToolBox" name="toolBox">
         <property name="currentIndex">
-         <number>3</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="Toolbox_basic_params_page">
          <property name="geometry">
@@ -168,7 +168,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>586</height>
+           <height>552</height>
           </rect>
          </property>
          <attribute name="label">
@@ -266,7 +266,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>586</height>
+           <height>552</height>
           </rect>
          </property>
          <attribute name="label">
@@ -324,13 +324,146 @@
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="ToolBox_ZeroDSolver_Interface_page">
+         <attribute name="label">
+          <string>ZeroDSolver Interface</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_20">
+          <item>
+           <widget class="QWidget" name="ZeroDSolver_Interface_page_group" native="true">
+            <layout class="QVBoxLayout" name="verticalLayout_19">
+             <item>
+              <widget class="QWidget" name="ZeroDSolver_Interface_coupling" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_17">
+                <item>
+                 <widget class="QLabel" name="ZeroDSolver_Interface_coupling_label">
+                  <property name="text">
+                   <string>Coupling type</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="ZeroDSolver_Interface_coupling_type">
+                  <item>
+                   <property name="text">
+                    <string>semi-implicit</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="ZeroDSolver_Interface_file" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_16">
+                <property name="leftMargin">
+                 <number>1</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="ZeroDSolver_Interface_file_label">
+                  <property name="text">
+                   <string>Solver JSON file</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="ZeroDSolver_Interface_file_name"/>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="ZeroDSolver_Interface_file_select">
+                  <property name="text">
+                   <string>...</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="ZeroDSolver_Interface_lib" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_18">
+                <property name="leftMargin">
+                 <number>1</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="ZeroDSolver_Interface_file_label_2">
+                  <property name="text">
+                   <string>Solver library</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="ZeroDSolver_Interface_lib_name"/>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="ZeroDSolver_Interface_lib_select">
+                  <property name="text">
+                   <string>...</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="ZeroDSolver_Interface_pressure" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_19">
+                <property name="leftMargin">
+                 <number>1</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="ZeroDSolver_Interface_pressure_label">
+                  <property name="text">
+                   <string>Initial pressure</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="ZeroDSolver_Interface_pressure_value">
+                  <property name="text">
+                   <string>0.0</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="ZeroDSolver_Interface_velocity" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_20">
+                <property name="leftMargin">
+                 <number>1</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="ZeroDSolver_Interface_velocity_label">
+                  <property name="text">
+                   <string>Initial velocity</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="ZeroDSolver_Interface_velocity_value">
+                  <property name="text">
+                   <string>0.0</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
         <widget class="QWidget" name="Toolbox_wall_props_page">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>0</y>
            <width>451</width>
-           <height>586</height>
+           <height>552</height>
           </rect>
          </property>
          <attribute name="label">
@@ -574,7 +707,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>586</height>
+           <height>552</height>
           </rect>
          </property>
          <attribute name="label">
@@ -807,7 +940,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>586</height>
+           <height>552</height>
           </rect>
          </property>
          <attribute name="label">
@@ -844,7 +977,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>586</height>
+           <height>552</height>
           </rect>
          </property>
          <attribute name="label">

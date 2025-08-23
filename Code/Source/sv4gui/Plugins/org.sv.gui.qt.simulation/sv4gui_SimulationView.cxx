@@ -49,6 +49,14 @@
 //   - QTableView widgets set connections in CreateQtPartControl()
 //
 //   - non-QTableView widgets set connections in EnableConnection()
+//
+// Inlet and Outlet BCs are stored in the m_InletOutletBCsPage using a row for
+// each face (cap) and columns for all the widget values that can be set in the 
+// sv4guiCapBCWidget popup. 
+// 
+// The number of columns and thus data is set in UpdateGUICap(). The data is 
+// assigned an explicit integer index used to later access that data. This
+// data is then stored for each cap in a props map.
 
 #include <sstream>
 #include <tuple>
@@ -177,7 +185,7 @@ sv4guiSimulationView::~sv4guiSimulationView()
 //
 void sv4guiSimulationView::EnableConnection(bool enable)
 {
-    #define debug_EnableConnection
+    #define n_debug_EnableConnection
     #ifdef debug_EnableConnection 
     std::string msg("[sv4guiSimulationView::EnableConnection] ");
     std::cout << msg << "========== EnableConnection ==========" << std::endl;
@@ -202,6 +210,11 @@ void sv4guiSimulationView::EnableConnection(bool enable)
         connect(ui->WallProps_poisson_ratio, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         connect(ui->WallProps_density, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         //connect(m_WallPropsPage, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+
+        // ZeroD Solver parameters
+        //
+        connect(ui->ZeroDSolver_Interface_file_select, SIGNAL(clicked()), this, SLOT(SetZeroDSolverConfigFile()));
+        connect(ui->ZeroDSolver_Interface_lib_select, SIGNAL(clicked()), this, SLOT(SetZeroDSolverLibraryFile()));
 
         // CMM parameters 
         //
@@ -529,6 +542,8 @@ void sv4guiSimulationView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*p
 
     UpdateGUICap();
 
+    UpdateGUIZeroDSolverInterface();
+
     UpdateGUIWall();
 
     UpdateGUICmm();
@@ -842,10 +857,11 @@ void sv4guiSimulationView::TableViewBasicDoubleClicked(const QModelIndex& index)
 //-------------------------
 // UpdateFaceListSelection
 //-------------------------
+// Update the gui face (cap) lists from the data stored in m_InletOutletBCsPage.
 //
 void sv4guiSimulationView::UpdateFaceListSelection()
 {
-    if(!m_Model) {
+    if (!m_Model) {
         return;
     }
 
@@ -855,7 +871,6 @@ void sv4guiSimulationView::UpdateFaceListSelection()
         return;
     }
 
-    //for InletOutletBCs_page
     disconnect( ui->InletOutletBCs_page->selectionModel()
                 , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
                 , this
@@ -863,14 +878,14 @@ void sv4guiSimulationView::UpdateFaceListSelection()
 
     ui->InletOutletBCs_page->clearSelection();
 
-    int count=m_InletOutletBCsPage->rowCount();
+    int count = m_InletOutletBCsPage->rowCount();
 
-    for(int i=0;i<count;i++) {
-        QStandardItem* itemName= m_InletOutletBCsPage->item(i,0);
-        std::string name=itemName->text().toStdString();
+    for (int i = 0; i < count; i++) {
+        QStandardItem* itemName = m_InletOutletBCsPage->item(i,0);
+        std::string name = itemName->text().toStdString();
 
-        if(modelElement->IsFaceSelected(name)) {
-            QModelIndex mIndex=m_InletOutletBCsPage->index(i,1);
+        if (modelElement->IsFaceSelected(name)) {
+            QModelIndex mIndex = m_InletOutletBCsPage->index(i,1);
             ui->InletOutletBCs_page->selectionModel()->select(mIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
         }
     }
@@ -885,6 +900,7 @@ void sv4guiSimulationView::UpdateFaceListSelection()
 //--------------------------
 // TableCapSelectionChanged
 //--------------------------
+// [TODO] I'm not sure what this does.
 //
 void sv4guiSimulationView::TableCapSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
 {
@@ -936,9 +952,16 @@ void sv4guiSimulationView::TableViewCapContextMenuRequested( const QPoint & pos 
 //-----------------
 // ShowCapBCWidget
 //-----------------
+// Display the cap BC popup.
 //
 void sv4guiSimulationView::ShowCapBCWidget(bool)
 {
+    #define n_debug_ShowCapBCWidget
+    #ifdef debug_ShowCapBCWidget
+    std::string msg("[sv4guiSimulationView::ShowCapBCWidget] ");
+    std::cout << msg << "========== ShowCapBCWidget ==========" << std::endl;
+    #endif
+
     QModelIndexList indexesOfSelectedRows = ui->InletOutletBCs_page->selectionModel()->selectedRows();
 
     if (indexesOfSelectedRows.size() < 1) {
@@ -949,61 +972,83 @@ void sv4guiSimulationView::ShowCapBCWidget(bool)
     std::string capName;
     int row = indexesOfSelectedRows[0].row();
 
-    if(indexesOfSelectedRows.size() == 1) {
-        capName=m_InletOutletBCsPage->item(row,0)->text().toStdString();
+    if (indexesOfSelectedRows.size() == 1) {
+        capName = m_InletOutletBCsPage->item(row,0)->text().toStdString();
     } else {
         capName="multiple faces";
     }
 
-    props["BC Type"]=m_InletOutletBCsPage->item(row,1)->text().toStdString();
-    props["Values"]=m_InletOutletBCsPage->item(row,2)->text().toStdString();
-    props["Pressure"]=m_InletOutletBCsPage->item(row,3)->text().toStdString();
-    props["Analytic Shape"]=m_InletOutletBCsPage->item(row,4)->text().toStdString();
-    props["Period"]=m_InletOutletBCsPage->item(row,5)->text().toStdString();
-    props["Point Number"]=m_InletOutletBCsPage->item(row,6)->text().toStdString();
-    props["Fourier Modes"]=m_InletOutletBCsPage->item(row,7)->text().toStdString();
-    props["Flip Normal"]=m_InletOutletBCsPage->item(row,8)->text().toStdString();
-    props["Flow Rate"]=m_InletOutletBCsPage->item(row,9)->text().toStdString();
-    props["File"]=m_InletOutletBCsPage->item(row,10)->text().toStdString();
-    props["Original File"]=m_InletOutletBCsPage->item(row,10)->text().toStdString();
-    props["Timed Pressure"]=m_InletOutletBCsPage->item(row,11)->text().toStdString();
-    props["Pressure Period"]=m_InletOutletBCsPage->item(row,12)->text().toStdString();
-    props["Pressure Scaling"]=m_InletOutletBCsPage->item(row,13)->text().toStdString();
-    props["R Values"]=m_InletOutletBCsPage->item(row,14)->text().toStdString();
-    props["C Values"]=m_InletOutletBCsPage->item(row,15)->text().toStdString();
+    // The cap popup widget values are set using 'props'.
+    //
+    props["BC Type"] = m_InletOutletBCsPage->item(row,1)->text().toStdString();
+    #ifdef debug_ShowCapBCWidget
+    std::cout << msg << "---------- cap name " << capName << " ----------" << std::endl;
+    std::cout << msg << "props[BC Type]: " << props["BC Type"] << std::endl;
+    #endif
 
-    m_CapBCWidget->UpdateGUI(capName,props);
+    // RCR and resistance BCs.
+    props["Values"] = m_InletOutletBCsPage->item(row,2)->text().toStdString();
+    props["Pressure"] = m_InletOutletBCsPage->item(row,3)->text().toStdString();
 
+    // Prescribed velocities BCs.
+    props["Analytic Shape"] = m_InletOutletBCsPage->item(row,4)->text().toStdString();
+    props["Period"] = m_InletOutletBCsPage->item(row,5)->text().toStdString();
+    props["Point Number"] = m_InletOutletBCsPage->item(row,6)->text().toStdString();
+    props["Fourier Modes"] = m_InletOutletBCsPage->item(row,7)->text().toStdString();
+    props["Flip Normal"] = m_InletOutletBCsPage->item(row,8)->text().toStdString();
+    props["Flow Rate"] = m_InletOutletBCsPage->item(row,9)->text().toStdString();
+    props["File"] = m_InletOutletBCsPage->item(row,10)->text().toStdString();
+    props["Original File"] = m_InletOutletBCsPage->item(row,10)->text().toStdString();
+
+    // Coronary maybe.
+    props["Timed Pressure"] = m_InletOutletBCsPage->item(row,11)->text().toStdString();
+    props["Pressure Period"] = m_InletOutletBCsPage->item(row,12)->text().toStdString();
+    props["Pressure Scaling"] = m_InletOutletBCsPage->item(row,13)->text().toStdString();
+    props["R Values"] = m_InletOutletBCsPage->item(row,14)->text().toStdString();
+    props["C Values"] = m_InletOutletBCsPage->item(row,15)->text().toStdString();
+
+    // Lumped parameter model BCs.
+    props["lpm_block_name"] = m_InletOutletBCsPage->item(row,2)->text().toStdString();
+
+    #ifdef debug_ShowCapBCWidget
+    std::cout << msg << "UpdateGUI ... " << std::endl;
+    #endif
+    m_CapBCWidget->UpdateGUI(capName, props);
+
+    #ifdef debug_ShowCapBCWidget
+    std::cout << msg << "Show ... " << std::endl;
+    #endif
     m_CapBCWidget->show();
 }
 
 //-------------------
 // SetDistalPressure
 //-------------------
+// [TODO] I'm not sure what this does.
 //
 void sv4guiSimulationView::SetDistalPressure(bool)
 {
     QModelIndexList indexesOfSelectedRows = ui->InletOutletBCs_page->selectionModel()->selectedRows();
 
-    if(indexesOfSelectedRows.size() < 1) {
+    if (indexesOfSelectedRows.size() < 1) {
         return;
     }
 
-    bool ok=false;
-    double pressure=QInputDialog::getDouble(m_Parent, "Set Distal Pressure", "Distal Pressure:", 0.0, 0, 1000000, 2, &ok);
-    QString str=QString::number(pressure);
+    bool ok = false;
+    double pressure = QInputDialog::getDouble(m_Parent, "Set Distal Pressure", "Distal Pressure:", 0.0, 0, 1000000, 2, &ok);
+    QString str = QString::number(pressure);
 
-    if(!ok) {
+    if (!ok) {
         return;
     }
 
     for (QModelIndexList::iterator it = indexesOfSelectedRows.begin(); 
          it != indexesOfSelectedRows.end(); it++) {
-        int row=(*it).row();
+        int row = (*it).row();
 
-        QStandardItem* itemBCType= m_InletOutletBCsPage->item(row,1);
-        if(itemBCType->text()!="" && itemBCType->text()!="Prescribed Velocities")
-        {
+        QStandardItem* itemBCType = m_InletOutletBCsPage->item(row,1);
+
+        if(itemBCType->text()!="" && itemBCType->text()!="Prescribed Velocities") {
             QStandardItem* itemPressure= m_InletOutletBCsPage->item(row,3);
             itemPressure->setText(str);
         }
@@ -1013,79 +1058,86 @@ void sv4guiSimulationView::SetDistalPressure(bool)
 //----------
 // SetCapBC
 //----------
+// Set the cap BC GUI values from the properties read from an .sjb file.
 //
 void  sv4guiSimulationView::SetCapBC()
 {
-    QModelIndexList indexesOfSelectedRows = ui->InletOutletBCs_page->selectionModel()->selectedRows();
+  #define n_debug_SetCapBC
+  #ifdef debug_SetCapBC
+  std::string msg("[sv4guiSimulationView::SetCapBC] ");
+  std::cout << msg << "========== SetCapBC ==========" << std::endl;
+  #endif
 
-    if(indexesOfSelectedRows.size() < 1) {
-        return;
+  QModelIndexList indexesOfSelectedRows = ui->InletOutletBCs_page->selectionModel()->selectedRows();
+
+  if (indexesOfSelectedRows.size() < 1) {
+    return;
+  }
+
+  std::map<std::string, std::string> props = m_CapBCWidget->GetProps();
+  auto bc_type = props["BC Type"];
+  #ifdef debug_SetCapBC
+  std::cout << msg << "BC Type: " << bc_type << std::endl;
+  #endif
+
+  for (auto it = indexesOfSelectedRows.begin(); it != indexesOfSelectedRows.end(); it++) {
+    int row = (*it).row();
+    m_InletOutletBCsPage->item(row,1)->setText(QString::fromStdString(bc_type));
+
+    if (bc_type == sv4guiSimJobBCType::resistance || 
+        bc_type == sv4guiSimJobBCType::rcr ) {
+      m_InletOutletBCsPage->item(row,2)->setText(QString::fromStdString(props["Values"]));
+
+    } else if (bc_type == sv4guiSimJobBCType::flow) {
+      if (props["Flow Rate"] != "") {
+        m_InletOutletBCsPage->item(row,2)->setText("Assigned");
+      }
+
+    } else if (bc_type == sv4guiSimJobBCType::lpm) {
+      m_InletOutletBCsPage->item(row,2)->setText(QString::fromStdString(props["lpm_block_name"]));
     }
 
-    std::map<std::string, std::string> props=m_CapBCWidget->GetProps();
+    m_InletOutletBCsPage->item(row,3)->setText(QString::fromStdString(props["Pressure"]));
+    m_InletOutletBCsPage->item(row,4)->setText(QString::fromStdString(props["Analytic Shape"]));
+    m_InletOutletBCsPage->item(row,5)->setText(QString::fromStdString(props["Period"]));
+    m_InletOutletBCsPage->item(row,6)->setText(QString::fromStdString(props["Point Number"]));
+    m_InletOutletBCsPage->item(row,7)->setText(QString::fromStdString(props["Fourier Modes"]));
+    m_InletOutletBCsPage->item(row,8)->setText(QString::fromStdString(props["Flip Normal"]));
+    m_InletOutletBCsPage->item(row,9)->setText(QString::fromStdString(props["Flow Rate"]));
+    m_InletOutletBCsPage->item(row,10)->setText(QString::fromStdString(props["Original File"]));
 
-    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-         ; it != indexesOfSelectedRows.end(); it++)
-    {
-        int row=(*it).row();
-
-        m_InletOutletBCsPage->item(row,1)->setText(QString::fromStdString(props["BC Type"]));
-        if(props["BC Type"]=="Resistance" || props["BC Type"]=="RCR" || props["BC Type"]=="Coronary")
-        {
-            m_InletOutletBCsPage->item(row,2)->setText(QString::fromStdString(props["Values"]));
-        }
-        else if(props["BC Type"]=="Prescribed Velocities")
-        {
-            if(props["Flow Rate"]!="")
-                m_InletOutletBCsPage->item(row,2)->setText("Assigned");
-        }
-        else
-        {
-            m_InletOutletBCsPage->item(row,2)->setText("");
-        }
-
-        m_InletOutletBCsPage->item(row,3)->setText(QString::fromStdString(props["Pressure"]));
-        m_InletOutletBCsPage->item(row,4)->setText(QString::fromStdString(props["Analytic Shape"]));
-        m_InletOutletBCsPage->item(row,5)->setText(QString::fromStdString(props["Period"]));
-        m_InletOutletBCsPage->item(row,6)->setText(QString::fromStdString(props["Point Number"]));
-        m_InletOutletBCsPage->item(row,7)->setText(QString::fromStdString(props["Fourier Modes"]));
-        m_InletOutletBCsPage->item(row,8)->setText(QString::fromStdString(props["Flip Normal"]));
-        m_InletOutletBCsPage->item(row,9)->setText(QString::fromStdString(props["Flow Rate"]));
-        m_InletOutletBCsPage->item(row,10)->setText(QString::fromStdString(props["Original File"]));
-
-        m_InletOutletBCsPage->item(row,11)->setText(QString::fromStdString(props["Timed Pressure"]));
-        m_InletOutletBCsPage->item(row,12)->setText(QString::fromStdString(props["Pressure Period"]));
-        m_InletOutletBCsPage->item(row,13)->setText(QString::fromStdString(props["Pressure Scaling"]));
-        m_InletOutletBCsPage->item(row,14)->setText(QString::fromStdString(props["R Values"]));
-        m_InletOutletBCsPage->item(row,15)->setText(QString::fromStdString(props["C Values"]));
-    }
+    m_InletOutletBCsPage->item(row,11)->setText(QString::fromStdString(props["Timed Pressure"]));
+    m_InletOutletBCsPage->item(row,12)->setText(QString::fromStdString(props["Pressure Period"]));
+    m_InletOutletBCsPage->item(row,13)->setText(QString::fromStdString(props["Pressure Scaling"]));
+    m_InletOutletBCsPage->item(row,14)->setText(QString::fromStdString(props["R Values"]));
+    m_InletOutletBCsPage->item(row,15)->setText(QString::fromStdString(props["C Values"]));
+  }
 }
 
 //-------------------
 // ShowSplitBCWidget
 //-------------------
+// [TODO] note sure what this is used for.
 //
 void sv4guiSimulationView::ShowSplitBCWidget(QString splitTarget)
 {
     QModelIndexList indexesOfSelectedRows = ui->InletOutletBCs_page->selectionModel()->selectedRows();
 
-    if(indexesOfSelectedRows.size() < 1) {
+    if (indexesOfSelectedRows.size() < 1) {
         return;
     }
 
-    QString lastBCType="";
-    for(int i=0;i<indexesOfSelectedRows.size();i++)
-    {
-        int row=indexesOfSelectedRows[i].row();
-        QString BCType=m_InletOutletBCsPage->item(row,1)->text().trimmed();
+    QString lastBCType = "";
 
-        if(BCType=="")
-        {
+    for (int i = 0; i < indexesOfSelectedRows.size(); i++) {
+        int row = indexesOfSelectedRows[i].row();
+        QString BCType = m_InletOutletBCsPage->item(row,1)->text().trimmed();
+
+        if(BCType == "") {
             QMessageBox::warning(m_Parent,"BC Type Missing","Please speficify BC type for the caps!");
             return;
-        }
-        else if(BCType!=lastBCType && lastBCType!="")
-        {
+
+        } else if(BCType!=lastBCType && lastBCType!="") {
             QMessageBox::warning(m_Parent,"BC Type Inconsistent","Please split BC for the caps of the same BC type!");
             return;
         }
@@ -1093,14 +1145,12 @@ void sv4guiSimulationView::ShowSplitBCWidget(QString splitTarget)
         lastBCType=BCType;
     }
 
-    if(lastBCType=="Resistance" && splitTarget=="Capacitance")
-    {
+    if(lastBCType=="Resistance" && splitTarget=="Capacitance") {
         QMessageBox::warning(m_Parent,"Warning","Can't split capacitance for BC type Resistance!");
         return;
     }
 
     m_SplitBCWidget->UpdateGUI(lastBCType,splitTarget);
-
     m_SplitBCWidget->show();
 }
 
@@ -1114,6 +1164,11 @@ void sv4guiSimulationView::ShowSplitBCWidgetC(bool)
     ShowSplitBCWidget("Capacitance");
 }
 
+//-------------
+// SplitCapBC
+//-------------
+// [TODO] I don't know what this is for.
+//
 void  sv4guiSimulationView::SplitCapBC()
 {
     if(!m_MitkJob) {
@@ -1246,127 +1301,157 @@ void  sv4guiSimulationView::SplitCapBC()
 //--------------
 // UpdateGUICap
 //--------------
+// Update the Inlet and Outlet BCs table with data from an sv4guiSimJob object.
 //
 void sv4guiSimulationView::UpdateGUICap()
 {
-    if(!m_MitkJob) {
+    #define n_debug_UpdateGUICap 
+    #ifdef debug_UpdateGUICap
+    std::string msg("[sv4guiSimulationView::UpdateGUICap] ");
+    std::cout << msg << "========== UpdateGUICap ==========" << std::endl;
+    #endif
+
+    if (!m_MitkJob) {
         return;
     }
 
-    if(!m_Model) {
+    if (!m_Model) {
         return;
     }
 
-    sv4guiModelElement* modelElement=m_Model->GetModelElement();
+    sv4guiModelElement* modelElement = m_Model->GetModelElement();
 
-    if(modelElement == nullptr) {
+    if (modelElement == nullptr) {
         return;
     }
 
     sv4guiSimJob* job = m_MitkJob->GetSimJob();
-    if(job==nullptr) {
-        job=new sv4guiSimJob();
+
+    if (job == nullptr) {
+        job = new sv4guiSimJob();
     }
 
     m_InletOutletBCsPage->clear();
 
+    // Create m_InletOutletBCsPage columns. 
+    //
+    // The column header names don't seem to matter.
+    //
     QStringList capHeaders;
-    capHeaders << "Name" << "BC Type" << "Values" << "Pressure"
-               << "Analytic Shape" << "Period" << "Point Number" << "Fourier Modes" << "Flip Normal" << "Flow Rate" << "Original File"
-               << "Timed Pressure" << "Pressure Period" << "Pressure Scaling"
-               << "R Values" << "C Values";
+
+    capHeaders << "Name"              // 0 
+               << "BC Type"           // 1
+               << "Values"            // 2
+               << "Pressure"          // 3
+               << "Analytic Shape"    // 4
+               << "Period"            // 5
+               << "Point Number"      // 6
+               << "Fourier Modes"     // 7
+               << "Flip Normal"       // 8
+               << "Flow Rate"         // 9
+               << "Original File"     // 10
+               << "Timed Pressure"    // 11
+               << "Pressure Period"   // 12
+               << "Pressure Scaling"  // 13
+               << "R Values"          // 14
+               << "C Values";         // 15
+
     m_InletOutletBCsPage->setHorizontalHeaderLabels(capHeaders);
     m_InletOutletBCsPage->setColumnCount(capHeaders.size());
 
-    std::vector<int> ids=modelElement->GetCapFaceIDs();
-    int rowIndex=-1;
-    for(int i=0;i<ids.size();i++)
-    {
-        sv4guiModelElement::svFace* face=modelElement->GetFace(ids[i]);
-        if(face==nullptr )
+    #ifdef debug_UpdateGUICap
+    std::cout << msg << "capHeaders.size(): " << capHeaders.size() << std::endl;
+    #endif
+
+    std::vector<int> ids = modelElement->GetCapFaceIDs();
+    int rowIndex = -1;
+
+    for (int i = 0; i < ids.size(); i++) {
+        sv4guiModelElement::svFace* face = modelElement->GetFace(ids[i]);
+
+        if (face == nullptr ) {
             continue;
+        }
 
         rowIndex++;
         m_InletOutletBCsPage->insertRow(rowIndex);
 
-        QStandardItem* item;
-
-        item= new QStandardItem(QString::fromStdString(face->name));
+        auto item = new QStandardItem(QString::fromStdString(face->name));
         item->setEditable(false);
         m_InletOutletBCsPage->setItem(rowIndex, 0, item);
 
-        std::string bcType=job->cap_props.Get(face->name,"BC Type");
-        item= new QStandardItem(QString::fromStdString(bcType));
+        std::string bcType = job->cap_props.Get(face->name,"BC Type");
+        item = new QStandardItem(QString::fromStdString(bcType));
         m_InletOutletBCsPage->setItem(rowIndex, 1, item);
 
-        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Values")));
+        #ifdef debug_UpdateGUICap
+        std::cout << msg << ">>>>> face->name: " << face->name << std::endl;
+        std::cout << msg << "bcType: " << bcType << std::endl;
+        #endif
+
+        item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Values")));
         m_InletOutletBCsPage->setItem(rowIndex, 2, item);
-        if(bcType=="Prescribed Velocities" && job->cap_props.Get(face->name,"Flow Rate")!="")
-        {
-            item= new QStandardItem(QString::fromStdString("Assigned"));
+
+        if (bcType == sv4guiSimJobBCType::flow && job->cap_props.Get(face->name,"Flow Rate") != "") {
+            item = new QStandardItem(QString::fromStdString("Assigned"));
             m_InletOutletBCsPage->setItem(rowIndex, 2, item);
         }
 
-        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Pressure")));
+        item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Pressure")));
         m_InletOutletBCsPage->setItem(rowIndex, 3, item);
 
-        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Analytic Shape")));
+        item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Analytic Shape")));
         m_InletOutletBCsPage->setItem(rowIndex, 4, item);
 
-        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Period")));
+        item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Period")));
         m_InletOutletBCsPage->setItem(rowIndex, 5, item);
 
-        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Point Number")));
+        item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Point Number")));
         m_InletOutletBCsPage->setItem(rowIndex, 6, item);
 
-        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Fourier Modes")));
+        item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Fourier Modes")));
         m_InletOutletBCsPage->setItem(rowIndex, 7, item);
 
-        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Flip Normal")));
+        item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Flip Normal")));
         m_InletOutletBCsPage->setItem(rowIndex, 8, item);
 
-        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Flow Rate")));
+        item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Flow Rate")));
         m_InletOutletBCsPage->setItem(rowIndex, 9, item);
 
-        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Original File")));
+        item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Original File")));
         m_InletOutletBCsPage->setItem(rowIndex, 10, item);
 
-        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Timed Pressure")));
+        item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Timed Pressure")));
         m_InletOutletBCsPage->setItem(rowIndex, 11, item);
 
-        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Pressure Period")));
+        item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Pressure Period")));
         m_InletOutletBCsPage->setItem(rowIndex, 12, item);
 
-        item= new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Pressure Scaling")));
+        item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name,"Pressure Scaling")));
         m_InletOutletBCsPage->setItem(rowIndex, 13, item);
 
-        QString RValues="";
-        QString CValues="";
+        QString RValues = "";
+        QString CValues = "";
         QStringList list = QString::fromStdString(job->cap_props.Get(face->name,"Values")).split(QRegularExpression("[(),{}\\s+]"), 
             Qt::SkipEmptyParts);
 
-        if(bcType=="RCR")
-        {
-            if(list.size()==3)
-            {
-                RValues=list[0]+" "+list[2];
-                CValues=list[1];
-            }
-        }
-        else if(bcType=="Coronary")
-        {
-            if(list.size()==5)
-            {
-                RValues=list[0]+" "+list[2]+" "+list[4];
-                CValues=list[1]+" "+list[3];
+        if (bcType == sv4guiSimJobBCType::rcr) { 
+            if (list.size() == 3) {
+                RValues = list[0] + " " + list[2];
+                CValues = list[1];
             }
         }
 
-        item= new QStandardItem(RValues);
+        item = new QStandardItem(RValues);
         m_InletOutletBCsPage->setItem(rowIndex, 14, item);
 
-        item= new QStandardItem(CValues);
+        item = new QStandardItem(CValues);
         m_InletOutletBCsPage->setItem(rowIndex, 15, item);
+
+        if (bcType == sv4guiSimJobBCType::lpm) {
+          item = new QStandardItem(QString::fromStdString(job->cap_props.Get(face->name, "lpm_block_name")));
+          m_InletOutletBCsPage->setItem(rowIndex, 2, item);
+        }
     }
 
     ui->InletOutletBCs_page->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
@@ -1374,10 +1459,10 @@ void sv4guiSimulationView::UpdateGUICap()
     ui->InletOutletBCs_page->horizontalHeader()->resizeSection(1,100);
     ui->InletOutletBCs_page->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
 
+    // Show only the cap name, bc type and value.
     for (int i = 3; i < capHeaders.size(); i++) {
         ui->InletOutletBCs_page->setColumnHidden(i,true);
     }
-
 }
 
 //--------------------------
@@ -1609,6 +1694,32 @@ void sv4guiSimulationView::UpdateGUIWall()
     }
 }
 
+//-------------------------------
+// UpdateGUIZeroDSolverInterface
+//-------------------------------
+// Update the GUI controls for the ZeroDSolver Interface data tab from a .sjb file.
+//      
+void sv4guiSimulationView::UpdateGUIZeroDSolverInterface()
+{
+    if (!m_MitkJob) {
+        return;
+    }
+ 
+    sv4guiSimJob* job = m_MitkJob->GetSimJob(); 
+ 
+    if (job == nullptr) { 
+        job = new sv4guiSimJob();
+    }
+ 
+    ui->ZeroDSolver_Interface_coupling_type->setCurrentText(QString::fromStdString(job->zerod_interface_props.Get("coupling_type")));
+
+    ui->ZeroDSolver_Interface_file_name->setText(QString::fromStdString(job->zerod_interface_props.Get("config_file_name")));
+    ui->ZeroDSolver_Interface_lib_name->setText(QString::fromStdString(job->zerod_interface_props.Get("library_name")));
+
+    ui->ZeroDSolver_Interface_pressure_value->setText(QString::fromStdString(job->zerod_interface_props.Get("initial_pressure_value")));
+    ui->ZeroDSolver_Interface_velocity_value->setText(QString::fromStdString(job->zerod_interface_props.Get("initial_velocity_value")));
+}
+
 //--------------
 // UpdateGUICmm
 //--------------
@@ -1681,7 +1792,7 @@ void sv4guiSimulationView::UpdateGUICmm()
 //
 void sv4guiSimulationView::CmmSim_Initialize_changed(bool checked)
 {
-  #define debug_CmmSim_Initialize_changed
+  #define n_debug_CmmSim_Initialize_changed
   #ifdef debug_CmmSim_Initialize_changed
   std::string msg("[sv4guiSimulationView::CmmSim_Initialize_changed] ");
   std::cout << msg << "==========  CmmSim_Initialize_changed ==========" << std::endl;
@@ -1930,10 +2041,15 @@ void sv4guiSimulationView::UpdateGUISolver()
   ui->SolverParameters_table->setColumnHidden(3,true);
 }
 
+//--------------
+// UpdateGUIJob
+//--------------
+//
 void sv4guiSimulationView::UpdateGUIJob()
 {
-    if(!m_MitkJob)
+    if(!m_MitkJob) {
         return;
+    }
 
     std::string modelName=m_MitkJob->GetModelName();
     std::vector<std::string> meshNames;
@@ -2431,6 +2547,8 @@ sv4guiSimJob* sv4guiSimulationView::CreateSimJob(std::string& msg, bool checkVal
     return nullptr;
   }
 
+  SetJobZeroDSolverInterfacProps(job, msg, checkValidity);
+
   SetJobWallProps(job, msg, checkValidity);
 
   SetJobCmmProps(job, msg, checkValidity);
@@ -2597,39 +2715,48 @@ bool sv4guiSimulationView::SetJobBasicProps(sv4guiSimJob* job, std::string& msg,
 //----------------
 // SetJobCapProps
 //----------------
+// Set the .sjb properties from gui values.
+//
+// Note that the gui values are stored in a table indexes defined in UpdateGUICap().
 //
 bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, bool checkValidity)
 {
+  #define n_debug_SetJobCapProps
   #ifdef debug_SetJobCapProps
   std::string pmsg("[sv4guiSimulationView::SetJobCapProps] ");
+  std::cout << pmsg << "========= SetJobCapProps ========== " << std::endl;
   std::cout << pmsg << "Set cap properties values ... " << std::endl;
   #endif
 
-  for(int i=0;i<m_InletOutletBCsPage->rowCount();i++) {
-    std::string capName=m_InletOutletBCsPage->item(i,0)->text().toStdString();
-    std::string bcType=m_InletOutletBCsPage->item(i,1)->text().trimmed().toStdString();
+  for (int i = 0; i < m_InletOutletBCsPage->rowCount();i++) {
+    std::string capName = m_InletOutletBCsPage->item(i,0)->text().toStdString();
+    std::string bcType = m_InletOutletBCsPage->item(i,1)->text().trimmed().toStdString();
+    #ifdef debug_SetJobCapProps
+    std::cout << pmsg << ">>>> capName: " << capName << std::endl;
+    std::cout << pmsg << ">bcType: " << bcType << std::endl;
+    #endif
 
-    if(bcType=="Prescribed Velocities") {
-      std::string flowrateContent=m_InletOutletBCsPage->item(i,9)->text().trimmed().toStdString();
-      std::string period=m_InletOutletBCsPage->item(i,5)->text().trimmed().toStdString();
+    if (bcType == sv4guiSimJobBCType::flow) {
+      std::string flowrateContent = m_InletOutletBCsPage->item(i,9)->text().trimmed().toStdString();
+      std::string period = m_InletOutletBCsPage->item(i,5)->text().trimmed().toStdString();
 
-      if(checkValidity) {
-        if(flowrateContent=="") {
+      if (checkValidity) {
+        if (flowrateContent=="") {
           msg = capName + ": no flowrate data";
           return false;
         }
 
-        if(period=="") {
+        if (period == "") {
           msg=capName + ": no period for flowrate data";
           return false;
         }
       }
 
-      std::string shape=m_InletOutletBCsPage->item(i,4)->text().trimmed().toStdString();
-      std::string pointNum=m_InletOutletBCsPage->item(i,6)->text().trimmed().toStdString();
-      std::string modeNum=m_InletOutletBCsPage->item(i,7)->text().trimmed().toStdString();
-      std::string flip=m_InletOutletBCsPage->item(i,8)->text().trimmed().toStdString();
-      std::string originalFile=m_InletOutletBCsPage->item(i,10)->text().trimmed().toStdString();
+      std::string shape = m_InletOutletBCsPage->item(i,4)->text().trimmed().toStdString();
+      std::string pointNum = m_InletOutletBCsPage->item(i,6)->text().trimmed().toStdString();
+      std::string modeNum = m_InletOutletBCsPage->item(i,7)->text().trimmed().toStdString();
+      std::string flip = m_InletOutletBCsPage->item(i,8)->text().trimmed().toStdString();
+      std::string originalFile = m_InletOutletBCsPage->item(i,10)->text().trimmed().toStdString();
 
       job->cap_props.Set(capName,"BC Type", bcType);
       job->cap_props.Set(capName,"Analytic Shape", shape);
@@ -2640,66 +2767,42 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
       job->cap_props.Set(capName,"Flow Rate", flowrateContent);
       job->cap_props.Set(capName,"Original File", originalFile);
 
-    } else if(bcType != "") {
-      std::string values=m_InletOutletBCsPage->item(i,2)->text().trimmed().toStdString();
-      std::string pressure=m_InletOutletBCsPage->item(i,3)->text().trimmed().toStdString();
-      std::string originalFile=m_InletOutletBCsPage->item(i,10)->text().trimmed().toStdString();
-      std::string timedPressure=m_InletOutletBCsPage->item(i,11)->text().trimmed().toStdString();
-      std::string pressurePeriod=m_InletOutletBCsPage->item(i,12)->text().trimmed().toStdString();
-      std::string pressureScaling=m_InletOutletBCsPage->item(i,13)->text().trimmed().toStdString();
-      std::string RValues=m_InletOutletBCsPage->item(i,14)->text().trimmed().toStdString();
-      std::string CValues=m_InletOutletBCsPage->item(i,15)->text().trimmed().toStdString();
+    // Lumped parameter model properties.
+    //
+    } else if (bcType == sv4guiSimJobBCType::lpm) {
+      job->cap_props.Set(capName, "BC Type", bcType);
 
-      if(checkValidity) {
-        if(bcType=="Resistance") {
-          if(!IsDouble(values)) {
-            msg=capName + " R value error: " + values;
+      auto lpm_block_name = m_InletOutletBCsPage->item(i,2)->text().trimmed().toStdString();
+      job->cap_props.Set(capName, "lpm_block_name", lpm_block_name);
+
+    // It seems that the other BC types share the same columns.
+    //
+    } else if (bcType != "") {
+      std::string values = m_InletOutletBCsPage->item(i,2)->text().trimmed().toStdString();
+      std::string pressure = m_InletOutletBCsPage->item(i,3)->text().trimmed().toStdString();
+      std::string originalFile = m_InletOutletBCsPage->item(i,10)->text().trimmed().toStdString();
+      std::string timedPressure = m_InletOutletBCsPage->item(i,11)->text().trimmed().toStdString();
+      std::string pressurePeriod = m_InletOutletBCsPage->item(i,12)->text().trimmed().toStdString();
+      std::string pressureScaling = m_InletOutletBCsPage->item(i,13)->text().trimmed().toStdString();
+      std::string RValues = m_InletOutletBCsPage->item(i,14)->text().trimmed().toStdString();
+      std::string CValues = m_InletOutletBCsPage->item(i,15)->text().trimmed().toStdString();
+
+      if (checkValidity) {
+        if (bcType == sv4guiSimJobBCType::resistance) {
+          if (!IsDouble(values)) {
+            msg = capName + " R value error: " + values;
             return false;
           }
 
-        } else if(bcType=="RCR") {
-          int count=0;
+        } else if (bcType == sv4guiSimJobBCType::rcr) {
+          int count = 0;
           QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
           values=list.join(" ").toStdString();
 
-          if(!AreDouble(values,&count)||count!=3) {
-            msg=capName + " RCR values error: " + values;
+          if (!AreDouble(values,&count)||count!=3) {
+            msg = capName + " RCR values error: " + values;
             return false;
           }
-
-        } else if(bcType=="Coronary") {
-          int count=0;
-          QStringList list = QString(values.c_str()).split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
-          values=list.join(" ").toStdString();
-
-          if(!AreDouble(values,&count)||count!=5) {
-            msg=capName + " Coronary values error: " + values;
-            return false;
-          }
-
-          if(timedPressure=="") {
-            msg=capName + ": no Pim data";
-            return false;
-          }
-
-          if(pressurePeriod=="" || !IsDouble(pressurePeriod)) {
-            msg=capName + " coronary period error: " + pressurePeriod;
-            return false;
-          }
-
-          if(pressureScaling=="" || !IsDouble(pressureScaling)) {
-            msg=capName + " coronary pressure scaling error: " + pressureScaling;
-            return false;
-          }
-        }
-
-        if(pressure!="") {
-          if(!IsDouble(pressure)) {
-            msg=capName + " pressure error: " + pressure;
-            return false;
-          }
-        } else {
-          pressure="0";
         }
       }
 
@@ -2707,17 +2810,11 @@ bool sv4guiSimulationView::SetJobCapProps(sv4guiSimJob* job, std::string& msg, b
       job->cap_props.Set(capName,"Values", values);
       job->cap_props.Set(capName,"Pressure",pressure);
 
-      if(bcType=="Coronary") {
-        job->cap_props.Set(capName,"Timed Pressure", timedPressure);
-        job->cap_props.Set(capName,"Pressure Period", pressurePeriod);
-        job->cap_props.Set(capName,"Pressure Scaling",pressureScaling);
-        job->cap_props.Set(capName,"Original File", originalFile);
-      }
-
-      if(bcType=="RCR" || bcType=="Coronary") {
+      if (bcType == sv4guiSimJobBCType::rcr) {
         job->cap_props.Set(capName,"R Values", RValues);
         job->cap_props.Set(capName,"C Values", CValues);
       }
+
     }
   }
 
@@ -2741,7 +2838,7 @@ void sv4guiSimulationView::SetJobWallProps(sv4guiSimJob* job, std::string& msg, 
   if (wallTypeIndex == 0) {
     job->wall_props.Set("Type", "rigid");
 
-  } else if(wallTypeIndex == 1) {
+  } else if (wallTypeIndex == 1) {
     std::string thickness = ui->WallProps_thickness->text().trimmed().toStdString();
     std::string modulus = ui->WallProps_elastic_modulus->text().trimmed().toStdString();
     std::string nu = ui->WallProps_poisson_ratio->text().trimmed().toStdString();
@@ -2767,6 +2864,31 @@ void sv4guiSimulationView::SetJobWallProps(sv4guiSimJob* job, std::string& msg, 
     #endif
   }
 
+}
+
+//--------------------------------
+// SetJobZeroDSolverInterfacProps
+//--------------------------------
+// Set the job ZeroDSolver Interface properties.
+//
+// This updates the values in the job zerod_interface_props map.
+//
+void sv4guiSimulationView::SetJobZeroDSolverInterfacProps(sv4guiSimJob* job, std::string& msg, bool checkValidity)
+{
+    auto coupling_type = ui->ZeroDSolver_Interface_coupling_type->currentText().toStdString();
+    job->zerod_interface_props.Set("coupling_type", coupling_type);
+
+    auto config_file_name = ui->ZeroDSolver_Interface_file_name->text().toStdString();
+    job->zerod_interface_props.Set("config_file_name", config_file_name);
+
+    auto library_name = ui->ZeroDSolver_Interface_lib_name->text().toStdString();
+    job->zerod_interface_props.Set("library_name", library_name);
+
+    auto initial_pressure_value = ui->ZeroDSolver_Interface_pressure_value->text().toStdString();
+    job->zerod_interface_props.Set("initial_pressure_value", initial_pressure_value);
+
+    auto initial_velocity_value = ui->ZeroDSolver_Interface_velocity_value->text().toStdString();
+    job->zerod_interface_props.Set("initial_velocity_value", initial_velocity_value);
 }
 
 //---------------
@@ -3034,5 +3156,68 @@ void sv4guiSimulationView::ShowModel(bool checked)
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
 }
+
+//--------------------------
+// SetZeroDSolverConfigFile 
+//--------------------------
+// Set the ZeroDSolver JSON configuration file.
+//      
+void sv4guiSimulationView::SetZeroDSolverConfigFile()
+{   
+  #define n_debug_SetZeroDSolverConfigFile
+  #ifdef debug_SetZeroDSolverConfigFile
+  std::string msg("[sv4guiSimulationView::SetZeroDSolverConfigFile] ");
+  std::cout << msg << "========== SetZeroDSolverConfigFile ==========" << std::endl;
+  #endif
+    
+  auto file_path = GetFilePath(ui->ZeroDSolver_Interface_file_select, "Set the svZeroDSolver JSON configuration file",
+      "JSON Files (*.json)");
+    
+  if (file_path.isEmpty()) {
+    return;
+  }
+
+  #ifdef debug_SetCmmSimWallFile
+  std::cout << msg << "file_path: " << file_path << std::endl;
+  #endif
+
+  ui->ZeroDSolver_Interface_file_name->setText(file_path);
+
+  UpdateSimJob();
+}
+
+//--------------------------
+// SetZeroDSolverLibraryFile
+//--------------------------
+// Set the ZeroDSolver share library file.
+//      
+void sv4guiSimulationView::SetZeroDSolverLibraryFile()
+{       
+  std::string file_type("The svZeroDSOlver shared library file ");
+  std::string lib_name;
+ 
+  #if defined(Q_OS_LINUX)
+    lib_name = "(libsvzero_interface.so)";
+  #elif defined(Q_OS_MAC)
+    lib_name = "(libsvzero_interface.dylib)"; 
+  #endif
+ 
+  file_type += lib_name;
+ 
+  auto file_path = GetFilePath(ui->ZeroDSolver_Interface_file_select, 
+      "Select the svZeroDSolver shared library.", file_type.c_str() );
+        
+  if (file_path.isEmpty()) {
+    return;
+  }
+        
+  #ifdef debug_SetCmmSimWallFile
+  std::cout << msg << "file_path: " << file_path << std::endl;
+  #endif
+
+  ui->ZeroDSolver_Interface_lib_name->setText(file_path);
+        
+  UpdateSimJob();
+}       
 
 

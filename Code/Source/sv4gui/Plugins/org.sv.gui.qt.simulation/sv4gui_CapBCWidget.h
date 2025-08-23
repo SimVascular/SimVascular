@@ -33,6 +33,7 @@
 #define SV4GUI_CAPBCWIDGET_H
 
 #include <QWidget>
+#include <QToolButton>
 
 namespace Ui {
 class sv4guiCapBCWidget;
@@ -52,10 +53,17 @@ public:
     std::map<std::string, std::string> GetProps();
 
     bool CreateProps();
+    bool AddFlowProps(std::map<std::string,std::string>& props);
+    bool AddLpmProps(std::map<std::string,std::string>& props);
+    bool AddPressueProps(std::map<std::string,std::string>& props);
+    bool AddResistanceProps(std::map<std::string,std::string>& props);
+    bool AddRcrProps(std::map<std::string,std::string>& props);
 
     bool IsDouble(QString value);
 
     bool AreDouble(QString values, int* count = nullptr);
+
+    QString GetFilePath(QToolButton* tool_button, const char* description, const char* file_type);
 
 public slots:
 

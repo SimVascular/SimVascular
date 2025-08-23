@@ -30,25 +30,36 @@
  */
 
 #include "sv4gui_TableCapDelegate.h"
+#include "sv4gui_SimJob.h"
 
 sv4guiTableCapDelegate::sv4guiTableCapDelegate(QObject *parent) :
     QItemDelegate(parent)
 {
 }
 
+//--------------
+// createEditor
+//--------------
+// This seems to just create the BC Type combo box used to display
+// bc types in the cap table.
+//
+// Note: these names need to match those set in sv4gui_CapBCWidget.ui 
+//
 QWidget* sv4guiTableCapDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    int column=index.column();
+    int column = index.column();
 
-    switch(column){
-    case 1:
-    {
-        QComboBox* cb=new QComboBox(parent);
-        cb->addItem("Prescribed Velocities");
-        cb->addItem("Resistance");
-        cb->addItem("RCR");
+    switch (column){
+
+      case 1: {
+        QComboBox* cb = new QComboBox(parent);
+        cb->addItem( QString::fromStdString(sv4guiSimJobBCType::flow) );
+        cb->addItem( QString::fromStdString(sv4guiSimJobBCType::resistance) );
+        cb->addItem( QString::fromStdString(sv4guiSimJobBCType::rcr) );
+        cb->addItem( QString::fromStdString(sv4guiSimJobBCType::lpm) );
         return cb;
-    }
+      }
+
     default:
         return new QWidget(parent);
     }
