@@ -271,6 +271,8 @@ bool sv4guiCapBCWidget::AddResistanceProps(std::map<std::string,std::string>& pr
   }
 
   props["Values"] = values.toStdString();
+
+  return true;
 }
 
 //------------
@@ -293,6 +295,8 @@ bool sv4guiCapBCWidget::AddRcrProps(std::map<std::string,std::string>& props)
   QStringList list = values.split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
   props["R Values"] = list[0].toStdString()+" "+list[2].toStdString();
   props["C Values"] = list[1].toStdString();
+
+  return true;
 }
 
 //------------
