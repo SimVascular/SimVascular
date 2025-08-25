@@ -170,7 +170,7 @@ sv4guiSimulationView::~sv4guiSimulationView()
         delete m_SolverParametersPage;
     }
 
-    if(m_CapBCWidget) {
+    if (m_CapBCWidget) {
         delete m_CapBCWidget;
     }
 }
@@ -306,7 +306,8 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
     //
     m_InletOutletBCsPage = new QStandardItemModel(this);
     ui->InletOutletBCs_page->setModel(m_InletOutletBCsPage);
-    sv4guiTableCapDelegate* itemDelegate=new sv4guiTableCapDelegate(this);
+    sv4guiTableCapDelegate* itemDelegate = new sv4guiTableCapDelegate(this);
+    // [TODO] what does this do ?
     ui->InletOutletBCs_page->setItemDelegateForColumn(1,itemDelegate);
 
     connect( ui->InletOutletBCs_page->selectionModel(), 
@@ -337,7 +338,7 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
     m_CapBCWidget->hide();
     m_CapBCWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
 
-    connect(m_CapBCWidget,SIGNAL(accepted()), this, SLOT(SetCapBC()));
+    connect(m_CapBCWidget, SIGNAL(accepted()), this, SLOT(SetCapBC()));
 
     m_SplitBCWidget=new sv4guiSplitBCWidget();
     m_SplitBCWidget->move(400,400);
@@ -939,7 +940,16 @@ void sv4guiSimulationView::TableCapSelectionChanged( const QItemSelection & /*se
 
 void sv4guiSimulationView::TableViewCapDoubleClicked(const QModelIndex& index)
 {
-    if(index.column()==0) {
+    #define n_debug_TableViewCapDoubleClicked
+    #ifdef debug_TableViewCapDoubleClicked
+    std::string msg("[sv4guiSimulationView::TableViewCapDoubleClicked] ");
+    std::cout << msg << "========== TableViewCapDoubleClicked ==========" << std::endl;
+    std::cout << msg << "index.column(): " << index.column() << std::endl;
+    #endif
+
+    QModelIndexList indexesOfSelectedRows = ui->InletOutletBCs_page->selectionModel()->selectedRows();
+
+    if (index.column() == 0) {
         ShowCapBCWidget();
     }
 }
@@ -975,7 +985,7 @@ void sv4guiSimulationView::ShowCapBCWidget(bool)
     if (indexesOfSelectedRows.size() == 1) {
         capName = m_InletOutletBCsPage->item(row,0)->text().toStdString();
     } else {
-        capName="multiple faces";
+        capName = "multiple faces";
     }
 
     // The cap popup widget values are set using 'props'.
@@ -2128,8 +2138,9 @@ QString sv4guiSimulationView::GetJobPath()
 
 void sv4guiSimulationView::CreateAllFiles()
 {
-    if(!m_MitkJob)
+    if (!m_MitkJob) {
         return;
+    }
 
     CreateDataFiles(GetJobPath(), true, true, false);
 }
@@ -2399,11 +2410,11 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
   std::cout << msg << "========== CreateDataFiles ==========" << std::endl;
   #endif
 
-  if(!m_MitkJob) {
+  if (!m_MitkJob) {
     return false;
   }
 
-  if(outputDir == "") {
+  if (outputDir == "") {
     return false;
   }
   #ifdef debug_CreateDataFiles
@@ -2421,6 +2432,7 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
     return false;
   }
 
+
   mitk::StatusBar::GetInstance()->DisplayText("Creating svMultiPhysics simulation files");
   std::string job_msg;
 
@@ -2431,8 +2443,20 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
     return false;
   }
 
+  auto num_time_steps = job->solver_time_props.Get("Number of Timesteps");
+  if (num_time_steps == "") { 
+    QMessageBox::warning(m_Parent, "Parameter Values Error", "The number of solver time steps has not been given.");
+    return false;
+  }
+
+  auto time_step = job->solver_time_props.Get("Time Step Size");
+  if (time_step == "") { 
+    QMessageBox::warning(m_Parent, "Parameter Values Error", "The solver time step has not been given.");
+    return false;
+  }
+
   if (createFolder) {
-    outputDir=outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+"-files";
+    outputDir = outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+"-files";
   }
 
   QDir dir(outputDir);

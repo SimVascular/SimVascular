@@ -65,9 +65,19 @@ QWidget* sv4guiTableCapDelegate::createEditor(QWidget *parent, const QStyleOptio
     }
 }
 
+//---------------
+// setEditorData
+//---------------
+//
 void sv4guiTableCapDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    int column=index.column();
+    #define n_debug_setEditorData
+    #ifdef debug_setEditorData
+    std::string msg("[sv4guiTableCapDelegate::setEditorData] ");
+    std::cout << msg << "========== setEditorData ==========" << std::endl;
+    #endif
+
+    int column = index.column();
 
     switch(column){
     case 1:
@@ -75,8 +85,11 @@ void sv4guiTableCapDelegate::setEditorData(QWidget *editor, const QModelIndex &i
         QComboBox* cb=dynamic_cast<QComboBox*>(editor);
         if(cb)
         {
-            QString type=index.model()->data(index, Qt::EditRole).toString();
+            QString type = index.model()->data(index, Qt::EditRole).toString();
             cb->setCurrentText(type);
+            #ifdef debug_setEditorData
+            std::cout << msg << "type: " << type.toStdString() << std::endl;
+            #endif
         }
     }
         break;
@@ -85,8 +98,18 @@ void sv4guiTableCapDelegate::setEditorData(QWidget *editor, const QModelIndex &i
     }
 }
 
+//--------------
+// setModelData
+//--------------
+//
 void sv4guiTableCapDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
+    #define n_debug_setModelData
+    #ifdef debug_setModelData 
+    std::string msg("[sv4guiTableCapDelegate::setModelData] ");
+    std::cout << msg << "========== setModelData ==========" << std::endl;
+    #endif
+
     int column=index.column();
 
     switch(column){
@@ -108,8 +131,18 @@ void sv4guiTableCapDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
     }
 }
 
+//----------------------
+// updateEditorGeometry
+//----------------------
+//
 void sv4guiTableCapDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    #define n_debug_updateEditorGeometry
+    #ifdef debug_updateEditorGeometry 
+    std::string msg("[sv4guiTableCapDelegate::updateEditorGeometry] ");
+    std::cout << msg << "========== updateEditorGeometry ==========" << std::endl;
+    #endif
+
     int column=index.column();
 
     switch(column){

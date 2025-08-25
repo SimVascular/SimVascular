@@ -473,6 +473,12 @@ void Sv4GuiSimXmlWriter::add_equation_output(sv4guiSimJob* job, tinyxml2::XMLEle
     add_child(output, "Displacement", true); 
     add_child(output, "Stress", true); 
   }
+
+  auto boundary_output = add_sub_child(equation, "Output");
+  boundary_output->SetAttribute("type", "Boundary_integral");
+  add_child(boundary_output, "Velocity", true); 
+  add_child(boundary_output, "Pressure", true); 
+  add_child(boundary_output, "WSS", true); 
 }
 
 //------------------------------
