@@ -119,12 +119,6 @@ void sv4guiMultiPhysicsView::CreateQtPartControl( QWidget *parent )
     m_IntVal = new QIntValidator;
     m_IntVal->setBottom(1);
 
-    // Top section of the FSI panel.
-    connect(ui->btnNewJob, SIGNAL(clicked()), this, SLOT(CreateNewJob()));
-    connect(ui->btnSave, SIGNAL(clicked()), this, SLOT(SaveJob()));
-    connect(ui->btnLoadJob, SIGNAL(clicked()), this, SLOT(LoadJob()));
-    connect(ui->loadMeshButton, SIGNAL(clicked()), this, SLOT(loadMesh()));
-
     // Setup Domains panel.
     SetupDomainsPanel();
 
@@ -141,7 +135,6 @@ void sv4guiMultiPhysicsView::CreateQtPartControl( QWidget *parent )
     SetupRunSimulationPanel();
 
     ui->Subpanel_Widget->setEnabled(false);
-    ui->btnSave->setEnabled(false);
 
     ui->comboBoxRemesher->setEnabled(false);
 
@@ -156,28 +149,50 @@ void sv4guiMultiPhysicsView::CreateQtPartControl( QWidget *parent )
 //
 void sv4guiMultiPhysicsView::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/, const QList<mitk::DataNode::Pointer>& nodes)
 {
-    if (!m_isVisible) return;
+    #define n_debug_OnSelectionChanged
+    #ifdef debug_OnSelectionChanged
+    std::string msg("[sv4guiMultiPhysicsView::OnSelectionChanged] ");
+    std::cout << msg << "========== OnSelectionChanged ==========" << std::endl;
+    std::cout << msg << "nodes.size(): " << nodes.size() << std::endl;
+    std::cout << msg << "m_isVisible: " << m_isVisible << std::endl;
+    #endif
 
-    if(nodes.size()==0) {
-        ui->Subpanel_Widget->setEnabled(false);
-        ui->btnSave->setEnabled(false);
+    if (!m_isVisible) {
         return;
     }
 
-    mitk::DataNode::Pointer jobNode=nodes.front();
-    sv4guiMitkMultiPhysicsJob* mitkJob=dynamic_cast<sv4guiMitkMultiPhysicsJob*>(jobNode->GetData());
+    if(nodes.size()==0) {
+        ui->Subpanel_Widget->setEnabled(false);
+        return;
+    }
+
+    mitk::DataNode::Pointer jobNode = nodes.front();
+    sv4guiMitkMultiPhysicsJob* mitkJob = dynamic_cast<sv4guiMitkMultiPhysicsJob*>(jobNode->GetData());
+
+    #ifdef debug_OnSelectionChanged
+    std::cout << msg << "mitkJob: " << mitkJob << std::endl;
+    std::cout << msg << "jobNode: " << jobNode << std::endl;
+    #endif
+
     if (!mitkJob) {
         ui->Subpanel_Widget->setEnabled(false);
-        ui->btnSave->setEnabled(false);
         return;
     }
 
     ui->Subpanel_Widget->setEnabled(true);
-    ui->btnSave->setEnabled(true);
 
-    m_JobNode=jobNode;
-    m_MitkJob=mitkJob;
-    m_Job=mitkJob->GetSimJob();
+    m_JobNode = jobNode;
+    m_MitkJob = mitkJob;
+    m_Job = mitkJob->GetSimJob();
+    #ifdef debug_OnSelectionChanged
+    std::cout << msg << "m_Job: " << m_Job << std::endl;
+    #endif
+
+    if (m_Job == nullptr) {
+      sv4guiMultiPhysicsJob* job = new sv4guiMultiPhysicsJob();
+      mitkJob->SetSimJob(job);
+      m_Job = job;
+    }
 
     // Setup the top of the FSI tool.
     ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
@@ -388,6 +403,13 @@ void sv4guiMultiPhysicsView::SetupSimulationParametersPanel()
 //
 void sv4guiMultiPhysicsView::SaveSimulationParameters()
 {
+    #define n_debug_SaveSimulationParameters
+    #ifdef debug_SaveSimulationParameters
+    std::string dmsg("[sv4guiMultiPhysicsView::SaveSimulationParameters] ");
+    std::cout << dmsg << "========== SaveSimulationParameters ===========" << std::endl;
+    std::cout << dmsg << "m_Job: " << m_Job << std::endl;
+    #endif
+    
     if (!m_Job) {
         return;
     }
@@ -1224,17 +1246,26 @@ void sv4guiMultiPhysicsView::ResetEquation()
     DataChanged();
 }
 
+//------------------
+// SaveLinearSolver
+//------------------
+// Save the linear solver gui values to the m_Job object.
+//
 void sv4guiMultiPhysicsView::SaveLinearSolver()
 {
-    if(!m_Job)
+    if(!m_Job) {
         return;
-
-    if(!m_EnableSave)
+    }
+   
+    if(!m_EnableSave) {
         return;
+    }
 
     QList<QListWidgetItem*> items = ui->listEqs->selectedItems();
-    if ( items.isEmpty() )
+
+    if ( items.isEmpty() ) {
         return;
+    }
 
     int row=ui->listEqs->row(items.first());
     sv4guiMultiPhysicseqClass& eq=m_Job->m_Eqs[row];
@@ -1572,126 +1603,6 @@ void sv4guiMultiPhysicsView::UpdateJobStatus()
         ui->btnStopSim->setEnabled(false);
     }
 
-}
-
-void sv4guiMultiPhysicsView::CreateNewJob()
-{
-    bool ok;
-    QString text = QInputDialog::getText(nullptr, tr("Create MultiPhysics Job"),
-                                         tr("Job Name:"), QLineEdit::Normal,
-                                         "", &ok);
-    if(!ok)
-        return;
-
-    std::string jobName=text.trimmed().toStdString();
-    if(jobName==""){
-        QMessageBox::warning(nullptr,"No name for job!","Please give a name for the job!");
-        return;
-    }
-
-    mitk::DataNode::Pointer exitingNode=GetDataStorage()->GetNamedNode(jobName.c_str());
-    if(exitingNode){
-        QMessageBox::warning(nullptr,"Job Already Created","Please use a different job name!");
-        return;
-    }
-
-    auto dir = sv4guiMultiPhysicsUtil.getsv4guiMultiPhysicsDir().absolutePath();
-
-    // QString dir = QFileDialog::getExistingDirectory(m_Parent
-    //                                                 , tr("Choose directory to save the job")
-    //                                                 , sv4guiMultiPhysics_dir.absolutePath());
-
-    dir=dir.trimmed();
-    if(dir.isEmpty())
-        return;
-
-    sv4guiMitkMultiPhysicsJob::Pointer mitkJob = sv4guiMitkMultiPhysicsJob::New();
-    sv4guiMultiPhysicsJob* job=new sv4guiMultiPhysicsJob();
-    mitkJob->SetSimJob(job);
-//    mitkJob->SetDataModified();
-
-    mitk::DataNode::Pointer jobNode = mitk::DataNode::New();
-    jobNode->SetData(mitkJob);
-    jobNode->SetName(jobName);
-    jobNode->SetStringProperty("path", dir.toStdString().c_str());
-
-    mitk::DataNode::Pointer sv4guiMultiPhysics_folder_node = GetDataStorage()->GetNamedNode(sv4guiMultiPhysics_NODE_NAME);
-    if (!sv4guiMultiPhysics_folder_node){
-      std::cout << "sv4guiMultiPhysics folder node null\n";
-    }else {
-      GetDataStorage()->Add(jobNode, sv4guiMultiPhysics_folder_node);
-      jobNode->SetSelected(true);
-      sv4guiMitkMultiPhysicsJob* mitkJob=dynamic_cast<sv4guiMitkMultiPhysicsJob*>(jobNode->GetData());
-
-      m_JobNode = jobNode;
-      m_MitkJob = mitkJob;
-      DataChanged();
-    }
-}
-
-void sv4guiMultiPhysicsView::SaveJob()
-{
-    if(m_JobNode.IsNull())
-        return;
-
-    std::string path="";
-    m_JobNode->GetStringProperty("path",path);
-
-    if(path=="")
-        return;
-
-    QDir dir(QString::fromStdString(path));
-    QString	filePath=dir.absoluteFilePath(QString::fromStdString(m_JobNode->GetName())+".multiphysicsjob");
-    mitk::IOUtil::Save(m_JobNode->GetData(),filePath.toStdString());
-}
-
-void sv4guiMultiPhysicsView::LoadJob()
-{
-    auto sv4guiMultiPhysics_dir = sv4guiMultiPhysicsUtil.getsv4guiMultiPhysicsDir();
-    QString dir = QFileDialog::getOpenFileName(nullptr
-                                                    , tr("Choose .multiphysicsjob file")
-                                                    , sv4guiMultiPhysics_dir.absolutePath()
-                                                    , tr("Job file (*.multiphysicsjob)"));
-
-    dir=dir.trimmed();
-    if(dir.isEmpty())
-        return;
-
-    auto node = mitk::IOUtil::Load(dir.toStdString().c_str(),
-      *GetDataStorage())->ElementAt(0);
-
-    GetDataStorage()->Remove(node);
-
-    mitk::DataNode::Pointer sv4guiMultiPhysics_folder_node = GetDataStorage()->GetNamedNode(sv4guiMultiPhysics_NODE_NAME);
-
-    if (!sv4guiMultiPhysics_folder_node){
-      std::cout << "MultiPhysics folder node doesnt exist\n";
-      return;
-    }
-    GetDataStorage()->Add(node,sv4guiMultiPhysics_folder_node);
-}
-
-void sv4guiMultiPhysicsView::LoadJob(std::string jobPath, std::string jobName)
-{
-    if (GetDataStorage()->Exists(GetDataStorage()->GetNamedNode(jobName))) return;
-
-    auto node = mitk::IOUtil::Load(jobPath.c_str(),
-      *GetDataStorage())->ElementAt(0);
-
-    if (!node){
-      std::cout << "MultiPhysics job with name " << jobPath << " doesn't exist\n";
-      return;
-    }
-
-    GetDataStorage()->Remove(node);
-
-    mitk::DataNode::Pointer sv4guiMultiPhysics_folder_node = GetDataStorage()->GetNamedNode(sv4guiMultiPhysics_NODE_NAME);
-
-    if (!sv4guiMultiPhysics_folder_node){
-      std::cout << "MultiPhysics folder node doesnt exist\n";
-      return;
-    }
-    GetDataStorage()->Add(node,sv4guiMultiPhysics_folder_node);
 }
 
 #if defined(Q_OS_WIN)

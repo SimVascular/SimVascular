@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Implements the popup shown when selecting the 'Create MultiPhysics job' from the SV Data Manager GUI.
+//
 #include "sv4gui_MultiPhysicsJobCreate.h"
 #include "ui_sv4gui_MultiPhysicsJobCreate.h"
 
@@ -72,15 +74,26 @@ sv4guiMultiPhysicsJobCreate::~sv4guiMultiPhysicsJobCreate()
     delete ui;
 }
 
+//-----------
+// Activated
+//-----------
+//
 void sv4guiMultiPhysicsJobCreate::Activated()
 {
+    #define n_debug_Activated
+    #ifdef debug_Activated
+    std::string dmsg("[sv4guiMultiPhysicsJobCreate::Activated] ");
+    std::cout << dmsg << "========== Activated ===========" << std::endl;
+    #endif
+
     ui->comboBox->clear();
 
     m_ModelFolderNode=nullptr;
     m_SimulationFolderNode=nullptr;
 
-    if(m_SelecteNode.IsNull())
+    if(m_SelecteNode.IsNull()) {
         return;
+    }
 
     mitk::DataNode::Pointer selectedNode=m_SelecteNode;
 
@@ -126,8 +139,18 @@ void sv4guiMultiPhysicsJobCreate::SetFocus( )
     ui->comboBox->setFocus();
 }
 
+//-----------
+// CreateJob
+//-----------
+//
 void sv4guiMultiPhysicsJobCreate::CreateJob()
 {
+    #define n_debug_CreateJob
+    #ifdef debug_CreateJob
+    std::string dmsg("[sv4guiMultiPhysicsJobCreate::CreateJob] ");
+    std::cout << dmsg << "========== CreateJob ===========" << std::endl;
+    #endif
+
     QString selectedModelName=ui->comboBox->currentText();
     if(selectedModelName=="")
     {
@@ -180,12 +203,16 @@ void sv4guiMultiPhysicsJobCreate::CreateJob()
     mitk::DataNode::Pointer jobNode = mitk::DataNode::New();
     jobNode->SetData(mitkJob);
     jobNode->SetName(jobName);
+    #ifdef debug_CreateJob
+    std::cout << dmsg << "Create jobNode: " << jobName << std::endl;
+    #endif
 
 //    m_DataStorage->Add(jobNode,m_SimulationFolderNode);
     mitk::OperationEvent::IncCurrObjectEventId();
 
     bool undoEnabled=true;
     sv4guiDataNodeOperation* doOp = new sv4guiDataNodeOperation(sv4guiDataNodeOperation::OpADDDATANODE,m_DataStorage,jobNode,m_SimulationFolderNode);
+
     if(undoEnabled)
     {
         sv4guiDataNodeOperation* undoOp = new sv4guiDataNodeOperation(sv4guiDataNodeOperation::OpREMOVEDATANODE,m_DataStorage,jobNode,m_SimulationFolderNode);
