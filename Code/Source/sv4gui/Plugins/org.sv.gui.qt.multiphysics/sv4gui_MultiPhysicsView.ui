@@ -25,54 +25,6 @@
      <property name="spacing">
       <number>5</number>
      </property>
-     <item row="2" column="2">
-      <widget class="QPushButton" name="btnLoadJob">
-       <property name="text">
-        <string>Load Job</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_25">
-       <property name="text">
-        <string>Job Status:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QPushButton" name="btnSave">
-       <property name="text">
-        <string>Save Job</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QPushButton" name="btnNewJob">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>New Job</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="labelJobName">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QPushButton" name="loadMeshButton">
-       <property name="text">
-        <string>Load Mesh</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label_14">
        <property name="sizePolicy">
@@ -83,6 +35,20 @@
        </property>
        <property name="text">
         <string>Job Name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_25">
+       <property name="text">
+        <string>Job Status:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="labelJobName">
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>
@@ -106,7 +72,7 @@
            <x>0</x>
            <y>0</y>
            <width>449</width>
-           <height>557</height>
+           <height>564</height>
           </rect>
          </property>
          <attribute name="label">
@@ -276,7 +242,7 @@
            <x>0</x>
            <y>0</y>
            <width>449</width>
-           <height>593</height>
+           <height>625</height>
           </rect>
          </property>
          <attribute name="label">
@@ -2399,7 +2365,7 @@
            <x>0</x>
            <y>0</y>
            <width>449</width>
-           <height>557</height>
+           <height>564</height>
           </rect>
          </property>
          <attribute name="label">
