@@ -270,7 +270,7 @@ public slots:
     // 1D Mesh slots.
     void Generate1DMesh();
     void Show1DMesh();
-    void SetElementSize(QString);
+    void SetElementSize(double);
     void ReadMesh();
 
     void UpdateCenterlinesSource();
