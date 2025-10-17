@@ -392,7 +392,7 @@ void sv4guiROMSimulationView::EnableConnection(bool able)
         connect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, slot);
         connect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, slot);
         connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, slot);
-        connect(ui->NumSegmentsLineEdit, SIGNAL(textChanged(QString)), this, slot);
+        connect(ui->NumSegmentsValue, SIGNAL(textChanged(int)), this, slot);
         connect(ui->AdaptiveMeshingCheckBox, SIGNAL(stateChanged(int)), this, slot);
 
         // Convert results.
@@ -753,17 +753,7 @@ void sv4guiROMSimulationView::Create1DMeshControls(QWidget *parent)
 
     // Generate Mesh.
     //
-    //connect(ui->generateMeshPushButton, SIGNAL(clicked()), this, SLOT(Generate1DMesh()));
-    //connect(ui->showMeshCheckBox, SIGNAL(clicked(bool)), this, SLOT(Show1DMesh(bool)) );
-    connect(ui->ElementSizeLineEdit, SIGNAL(textChanged(QString)), this, SLOT(SetElementSize(QString)));
-    // [DaveP] Hide these for now.
-    //ui->generateMeshPushButton->hide();
-    //ui->showMeshCheckBox->hide();
-
-    // Mesh segment parameters. 
-    auto numSegsValidator = new QIntValidator(this);
-    numSegsValidator->setBottom(1);
-    ui->NumSegmentsLineEdit->setValidator(numSegsValidator);
+    connect(ui->ElementSizeValue, SIGNAL(textChanged(double)), this, SLOT(SetElementSize(double)));
 
     // By default disable push buttons used to calculate centerlines, 
     // create simulation files and run a simulation.
@@ -1631,14 +1621,9 @@ void sv4guiROMSimulationView::Show1DMesh()
 // SetElementSize
 //----------------
 //
-void sv4guiROMSimulationView::SetElementSize(QString valueArg)
+void sv4guiROMSimulationView::SetElementSize(double value)
 {
-    std::string value = valueArg.toStdString();
-    if (!IsDouble(value)) {
-        QMessageBox::warning(m_Parent, MsgTitle, "The element size is not a float value."); 
-        return;
-    }
-    m_1DMeshElementSize = std::stod(value);
+    m_1DMeshElementSize = value;
 }
 
 //------------
@@ -2126,42 +2111,42 @@ void sv4guiROMSimulationView::UpdateGUIBasic()
 //
 void sv4guiROMSimulationView::TableViewBasicDoubleClicked(const QModelIndex& index)
 {
-    if(index.column()!=0)
-        return;
-
-    QModelIndexList indexesOfSelectedRows = ui->tableViewBasic->selectionModel()->selectedRows();
-    if(indexesOfSelectedRows.size() < 1) {
+    if (index.column() != 0) {
         return;
     }
 
-    int row=indexesOfSelectedRows[0].row();
-    QStandardItem* itemName= m_TableModelBasic->item(row,0);
-    if(itemName->text()!="IC File")
-        return;
+    QModelIndexList indexesOfSelectedRows = ui->tableViewBasic->selectionModel()->selectedRows();
 
-    QStandardItem* itemValue= m_TableModelBasic->item(row,1);
-    QString lastFileOpenPath=itemValue->text().trimmed();
+    if (indexesOfSelectedRows.size() < 1) {
+        return;
+    }
+
+    int row = indexesOfSelectedRows[0].row();
+    QStandardItem* itemName = m_TableModelBasic->item(row,0);
+
+    if (itemName->text() != "IC File") {
+        return;
+    }
+
+    QStandardItem* itemValue = m_TableModelBasic->item(row,1);
+    QString lastFileOpenPath = itemValue->text().trimmed();
 
     mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     mitk::IPreferences* prefs;
 
-    if (prefService)
-    {
+    if (prefService) {
         prefs = prefService->GetSystemPreferences()->Node("/General");
-    }
-    else
-    {
+    } else {
         prefs = nullptr;
     }
 
-    if(lastFileOpenPath=="" || !QFile(lastFileOpenPath).exists())
-    {
-        if(prefs != nullptr) 
-        {
+    if(lastFileOpenPath=="" || !QFile(lastFileOpenPath).exists()) {
+        if(prefs != nullptr) {
             lastFileOpenPath = QString::fromStdString(prefs->Get("LastFileOpenPath", ""));
         }
-        if(lastFileOpenPath=="")
+        if(lastFileOpenPath=="") {
             lastFileOpenPath=QDir::homePath();
+        }
     }
 
     QString icFilePath = QFileDialog::getOpenFileName(m_Parent, tr("Select IC File (Restart)")
@@ -2169,11 +2154,11 @@ void sv4guiROMSimulationView::TableViewBasicDoubleClicked(const QModelIndex& ind
                                                             , tr("All Files (*)"));
 
     icFilePath=icFilePath.trimmed();
-    if (icFilePath.isEmpty())
+    if (icFilePath.isEmpty()) {
         return;
+    }
 
-    if(prefs != nullptr) 
-     {
+    if(prefs != nullptr) {
          prefs->Put("LastFileOpenPath", icFilePath.toStdString());
          prefs->Flush();
      }
@@ -2932,7 +2917,7 @@ void sv4guiROMSimulationView::UpdateGUIMesh()
     if (numSegements == "") { 
         numSegements = "1";
     }
-    ui->NumSegmentsLineEdit->setText(QString::fromStdString(numSegements));
+    ui->NumSegmentsValue->setValue(std::stoi(numSegements));
 
     auto adaptMeshing = job->GetMeshProp("Adaptive Meshing"); 
     if (adaptMeshing == "1") { 
@@ -4135,8 +4120,8 @@ sv4guiROMSimJob* sv4guiROMSimulationView::CreateJob(std::string& msg, bool check
 //
 bool sv4guiROMSimulationView::SetMeshParameters(sv4guiROMSimJob* job, std::string& msg, bool checkValidity)
 {
-    auto numSegements = ui->NumSegmentsLineEdit->text().toStdString();
-    job->SetMeshProp("Number of segments per branch", numSegements); 
+    auto numSegements = ui->NumSegmentsValue->value();
+    job->SetMeshProp("Number of segments per branch", std::to_string(numSegements)); 
 
     if (ui->AdaptiveMeshingCheckBox->isChecked()) {
         job->SetMeshProp("Adaptive Meshing", "1"); 
