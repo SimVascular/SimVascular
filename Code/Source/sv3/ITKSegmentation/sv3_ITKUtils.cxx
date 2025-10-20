@@ -231,8 +231,7 @@ void vtkGenerateCircle(double radius,double center[3],
 
 	vtkSmartPointer<vtkTransform> translation =
 			vtkSmartPointer<vtkTransform>::New();
-	translation->Translate(center[0], center[1], center[3]);
-
+	translation->Translate(center);
 
 	vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter =
 			vtkSmartPointer<vtkTransformPolyDataFilter>::New();
