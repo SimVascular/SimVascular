@@ -67,9 +67,6 @@ sv4guiProjectAddImageAction::~sv4guiProjectAddImageAction()
 //
 void sv4guiProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
-  std::cout << std::endl;
-  std::cout << "========== sv4guiProjectAddImageAction::Run ========== " << std::endl;
-
   mitk::DataNode::Pointer selectedNode = selectedNodes[0];
   mitk::NodePredicateDataType::Pointer isImageFolder = mitk::NodePredicateDataType::New("sv4guiImageFolder");
   if (!isImageFolder->CheckNode(selectedNode)) {
@@ -158,8 +155,6 @@ void sv4guiProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &sele
 //
 void sv4guiProjectAddImageAction::ReadImage(QString& imageFilePath, mitk::DataNode::Pointer& imageNode)
 {
-  std::cout << std::endl;
-  std::cout << "========== sv4guiProjectAddImageAction::ReadImage ========== " << std::endl;
   mitk::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
   mitk::IPreferences* prefs;
 
@@ -180,7 +175,6 @@ void sv4guiProjectAddImageAction::ReadImage(QString& imageFilePath, mitk::DataNo
 
   imageFilePath = QFileDialog::getOpenFileName(nullptr, tr("Open Image File"), lastFileOpenPath, 
                     QmitkIOUtil::GetFileOpenFilterString() , nullptr);
-  std::cout << "[ReadImage] imageFilePath: " << imageFilePath.toStdString() << std::endl;
 
   // Create a data node with the file path. This reads in the image data.
   imageNode = sv4guiProjectManager::LoadDataNode(imageFilePath.toStdString());

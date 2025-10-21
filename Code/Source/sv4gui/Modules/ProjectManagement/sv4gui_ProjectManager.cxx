@@ -554,9 +554,21 @@ void sv4guiProjectManager::ReadImageInfoFromSvproj(const QString& projPath, QStr
 //   imageFileName: The name of the image file. 
 //   imageName: The name of the image. 
 //
-void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString& imageFilePath, const QString& imageFileName,
-					  const QString& imageHeaderFileName, const QString& imageName, bool copyIntoProject, double scaleFactor)
+void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString& imageFilePath, 
+    const QString& imageFileName, const QString& imageHeaderFileName, const QString& imageName, 
+    bool copyIntoProject, double scaleFactor)
 {
+    #define n_debug_WriteImageInfo
+    #ifdef debug_WriteImageInfo
+    std::string msg("[sv4guiProjectManager::WriteImageInfo] ");
+    std::cout << msg << "========== WriteImageInfo ==========" << std::endl;
+    std::cout << msg << "projPath: " << projPath.toStdString() << std::endl;
+    std::cout << msg << "imageFilePath: " << imageFilePath.toStdString() << std::endl;
+    std::cout << msg << "imageFileName: " << imageFileName.toStdString() << std::endl;
+    std::cout << msg << "imageHeaderFileName: " << imageHeaderFileName.toStdString() << std::endl;
+    std::cout << msg << "imageName: " << imageName.toStdString() << std::endl;
+    #endif
+
     using namespace sv4gui_project_manager;
 
     // Create XML doc.
@@ -730,10 +742,21 @@ QString sv4guiProjectManager::GetImageInfoFilePath(QDir project_dir)
 //
 // If 'copyIntoProject' is true then the image data is copied into the project as a .vti file.
 //
-void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageNode, 
-      mitk::DataNode::Pointer imageFolderNode, bool copyIntoProject, double scaleFactor, QString addImageName)
+void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, 
+    mitk::DataNode::Pointer imageNode, mitk::DataNode::Pointer imageFolderNode, bool copyIntoProject, 
+    double scaleFactor, QString addImageName)
 {
   using namespace sv4gui_project_manager;
+
+  #define n_debug_AddImage
+  #ifdef debug_AddImage
+  std::string msg("[sv4guiProjectManager::AddImage] ");
+  std::cout << msg << "========== AddImage ==========" << std::endl;
+  std::cout << msg << "imageFilePath: " << imageFilePath.toStdString() << std::endl;
+  std::cout << msg << "addImageName: " << addImageName.toStdString() << std::endl;
+  std::cout << msg << "copyIntoProject: " << copyIntoProject << std::endl;
+  #endif
+
   mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
 
   // Get the project path. 
@@ -751,7 +774,14 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
       newImageName = projectFolderNode->GetName();
     }
   }
-  imageNode->SetName(newImageName);
+
+  imageNode->SetStringProperty("name", newImageName.c_str());
+  // [davep] this seems to no longer work.
+  // imageNode->SetName(newImageName);
+
+  #ifdef debug_AddImage
+  std::cout << msg << "newImageName: " << newImageName << std::endl;
+  #endif
 
   // Read image path and name information from a file.
   QString imageFolderName = PluginNames::IMAGES; 
@@ -762,8 +792,13 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
 
   ReadImageInfo(QString(projPath.c_str()), oldImageFilePath, oldImageFileName, oldTransformFileName, oldImageName);
   auto imagePath = QString(projPath.c_str()) + "/" + PluginNames::IMAGES + "/" + oldImageName;
+  #ifdef debug_AddImage
+  std::cout << msg << "oldImageFilePath: " << oldImageFilePath.toStdString() << std::endl;
+  std::cout << msg << "oldImageFileName: " << oldImageFileName.toStdString() << std::endl;
+  #endif
 
   // If the old image is local then remove it and the transform file if it exists.
+  //
   if (oldImageFilePath == "") {
     QString oldImageAbsoluteFileName = QString::fromStdString(projPath+"/"+imageFolderNode->GetName()+"/"+oldImageFileName.toStdString());
     QFile oldImageAbsoluteFile(oldImageAbsoluteFileName);
@@ -772,6 +807,10 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
     QString oldTransformAbsoluteFileName = oldImageAbsoluteFileName+FileExtension::IMAGE_HEADER;
     QFile oldTransformAbsoluteFile(oldTransformAbsoluteFileName);
     oldTransformAbsoluteFile.remove();
+    #ifdef debug_AddImage
+    std::cout << msg << "oldImageAbsoluteFileName: " << oldImageAbsoluteFileName.toStdString() << std::endl;
+    std::cout << msg << "oldTransformAbsoluteFileName: " << oldTransformAbsoluteFileName.toStdString() << std::endl;
+    #endif
   }
 
   // Remove current Image data node if it exists.
@@ -785,6 +824,7 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
   QString newImageFileName;
   QString newImageFilePath;
   QString newTransformFileName;
+
   if (copyIntoProject) {
     CopyImageToProject(projPath, imageNode, imageFolderNode, scaleFactor, newImageFileName, newTransformFileName);
     newImageFilePath = "";
@@ -794,12 +834,18 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
     newImageFileName = fileInfo.fileName();
     newTransformFileName = fileInfo.fileName()+FileExtension::IMAGE_HEADER;
   }
+  #ifdef debug_AddImage
+  std::cout << msg << "newImageFileName: " << newImageFileName.toStdString() << std::endl;
+  std::cout << msg << "newTransformFileName: " << newTransformFileName.toStdString() << std::endl;
+  #endif
 
   // Write the image location file.
-  WriteImageInfo(QString(projPath.c_str()), newImageFilePath, newImageFileName, newTransformFileName, QString(newImageName.c_str()), copyIntoProject, scaleFactor);
+  WriteImageInfo(QString(projPath.c_str()), newImageFilePath, newImageFileName, newTransformFileName, 
+      QString(newImageName.c_str()), copyIntoProject, scaleFactor);
 
   dataStorage->Add(imageNode, imageFolderNode);
-  mitk::RenderingManager::GetInstance()->InitializeViews(imageNode->GetData()->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
+  mitk::RenderingManager::GetInstance()->InitializeViews(imageNode->GetData()->GetTimeGeometry(), 
+      mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
 
   // Set the imageNode's path to the image data; used in sv4guiSeg2DEdit::initialize().
   QString imageAbsoluteFileName;
@@ -819,18 +865,32 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
 //
 // This will optionally scale the image data.
 //
-void sv4guiProjectManager::CopyImageToProject(const std::string& projPath, mitk::DataNode::Pointer imageNode, 
-					      mitk::DataNode::Pointer imageFolderNode, double scaleFactor, QString& imageFileName,
-					      QString& imageHeaderFileName)
+void sv4guiProjectManager::CopyImageToProject(const std::string& projPath, 
+    mitk::DataNode::Pointer imageNode, mitk::DataNode::Pointer imageFolderNode, 
+    double scaleFactor, QString& imageFileName, QString& imageHeaderFileName)
 {
   using namespace sv4gui_project_manager;
   
-  // image data is hardcoded to be image name + .vti here
+  #define n_debug_CopyImageToProject
+  #ifdef debug_CopyImageToProject
+  std::string msg("[sv4guiProjectManager::CopyImageToProject] ");
+  std::cout << msg << "========== CopyImageToProject ==========" << std::endl;
+  std::cout << msg << "projPath: " << projPath << std::endl;
+  std::cout << msg << "imageFileName: " << imageFileName.toStdString() << std::endl;
+  std::cout << msg << "imageHeaderFileName: " << imageHeaderFileName.toStdString() << std::endl;
+  #endif
+
+  // Image data is hardcoded to be image name + .vti here.
+  //
   QString imageName = QString::fromStdString(imageNode->GetName());
   imageFileName = imageName + FileExtension::IMAGE_VTI;
   std::string imageParentPath = projPath + "/" + imageFolderNode->GetName();
   std::string imageAbsoluteFileName = imageParentPath + "/" + imageFileName.toStdString();
   imageHeaderFileName = imageFileName + FileExtension::IMAGE_HEADER;
+  #ifdef debug_CopyImageToProject
+  std::cout << msg << "imageName: " << imageName.toStdString() << std::endl;
+  std::cout << msg << "imageFileName: " << imageFileName.toStdString() << std::endl;
+  #endif
  
   // storing the path to the image dir in the image node
   imageNode->SetStringProperty("path", imageParentPath.c_str());
@@ -988,7 +1048,6 @@ void sv4guiProjectManager::writeImageHeaderFile(mitk::Image* image,
 				     bool scale_volume, double scaleFactor, std::string original_units, std::string scaled_units, 
 				     std::string imageHeaderAbsoluteFileName)
 {
-
     using namespace sv4gui_project_manager;
 
     auto transform = image->GetGeometry()->GetVtkMatrix();
