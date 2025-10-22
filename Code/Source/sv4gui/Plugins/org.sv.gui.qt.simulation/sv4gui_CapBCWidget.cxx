@@ -43,6 +43,8 @@
 #include <QRegularExpression>
 
 #include <sstream>
+#include <fstream>
+#include <regex>
 
 sv4guiCapBCWidget::sv4guiCapBCWidget(QWidget *parent)
     : QWidget(parent)
@@ -186,6 +188,8 @@ bool sv4guiCapBCWidget::CreateProps()
 //--------------
 // AddFlowProps
 //--------------
+// Add GUI values to the 'props' map which will be used write
+// the kay/value pairs in the .sjb file.
 //
 bool sv4guiCapBCWidget::AddFlowProps(std::map<std::string,std::string>& props)
 {
@@ -193,44 +197,34 @@ bool sv4guiCapBCWidget::AddFlowProps(std::map<std::string,std::string>& props)
   props["Analytic Shape"] = ui->comboBoxShape->currentText().toStdString();
 
   QString pointNum = ui->lineEditPointNumber->text().trimmed();
-
   if (!IsDouble(pointNum)) {
     QMessageBox::warning(this,"Point Number Error","Please provide value in a correct format!");
     return false;
   }
-
   props["Point Number"] = pointNum.toStdString();
 
-
   QString modeNum = ui->lineEditModeNumber->text().trimmed();
-
   if (!IsDouble(modeNum)) {
-    QMessageBox::warning(this,"Fourier Modes Error","Please provide value in a correct format!");
+    QMessageBox::warning(this,"The Fourier Modes value entered is not a float.", "Please provide value using a float format!");
     return false;
   }
-
   props["Fourier Modes"] = modeNum.toStdString();
 
-
   QString period = ui->lineEditPeriod->text().trimmed();
-
   if (period == "" || !IsDouble(period)) {
     QMessageBox::warning(this,"Period Error","Please provide value in a correct format!");
     return false;
   }
-
   props["Period"] = period.toStdString();
 
-
-  props["Flip Normal"]=ui->checkBoxFlip->isChecked()?"True":"False";
+  props["Flip Normal"] = ui->checkBoxFlip->isChecked()?"True":"False";
 
   if (m_FlowrateContent == "") {
-    QMessageBox::warning(this,"No Flowrate Info","Please provide flow rate data!");
+    QMessageBox::warning(this,"No flow information", "No flow information was found in the input file.");
     return false;
   }
 
   props["Original File"] = ui->labelLoadFile->text().toStdString();
-
   props["Flow Rate"] = m_FlowrateContent;
 
   return true;
@@ -358,58 +352,112 @@ void sv4guiCapBCWidget::SelectionChanged(const QString &text)
 //----------------------
 // LoadFlowrateFromFile
 //----------------------
+// Read flow rate values from a text file and store them into
+// the 'm_FlowrateContent' string variable.
 //
 void sv4guiCapBCWidget::LoadFlowrateFromFile()
 {
-    auto flowrateFilePath = GetFilePath(ui->toolButtonBrowse, "Load Flow File", "All Files (*)");
+   #define n_debug_LoadFlowrateFromFile
+   #ifdef debug_LoadFlowrateFromFile
+   std::string msg("[LoadFlowrateFromFile] ");
+   std::cout << msg << "========== LoadFlowrateFromFile ==========" << std::endl;
+   #endif
 
-    if (flowrateFilePath.isEmpty()) {
+   auto flowrateFilePath = GetFilePath(ui->toolButtonBrowse, "Load Flow File", "All Files (*)");
+
+   if (flowrateFilePath.isEmpty()) {
+     return;
+   }
+
+  std::ifstream flow_file;
+  flow_file.open(flowrateFilePath.toStdString());
+
+  if (!flow_file.is_open()) {
+    QMessageBox::warning(this,"The flow file can't be opened.", "The flow file '" + flowrateFilePath + "' can't be opened.");
+    return;
+  }
+
+  // Parse the first line.
+  int num_values;
+  int num_modes;
+  flow_file >> num_values >> num_modes;
+  #ifdef debug_LoadFlowrateFromFile
+  std::cout << msg << "num_values: " << num_values << std::endl;
+  std::cout << msg << "num_modes: " << num_modes << std::endl;
+  #endif
+
+  if ((num_values == 0) || (num_modes == 0) || (num_values < 2)) {
+    QMessageBox::warning(this,"Flow file format error", "The first line of the flow file '" + flowrateFilePath + "' is not in the correct format. The first line should be NumberOfTimePoints  NumberOfFourierModes.");
+    return;
+  }
+
+  // Read time/value pairs.
+  //
+  std::vector<std::vector<double>> flow_values;
+  double time, value;
+  std::string line;
+  int line_number = 1;
+  int num_values_per_line = 2;
+
+  while (std::getline(flow_file, line)) {
+    line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
+    if (line == "") {
+      continue;
+    }
+    // Remove leading and trailing spaces.
+    auto cleaned_line = std::regex_replace(line, std::regex("^ +| +$|( ) +"), "$1");
+    std::istringstream line_input(cleaned_line);
+    std::vector<double> values;
+
+    while (!line_input.eof()) {
+      line_input >> value;
+
+      if (line_input.fail()) {
+        QMessageBox::warning(this, "Error reading inlet flow file values", "Error reading values for the inlet flow values file '" + 
+            flowrateFilePath + "' for line " + QString::number(line_number) + ": '" + QString::fromStdString(line) + "'; value number " + 
+            QString::number(values.size()+1) + " is not a double.");
         return;
+      }
+      values.push_back(value);
     }
 
-    QFile inputFile(flowrateFilePath);
-
-    if (inputFile.open(QIODevice::ReadOnly)) {
-        QTextStream in(&inputFile);
-
-        QFileInfo fi(flowrateFilePath);
-        ui->labelLoadFile->setText(fi.fileName());
-        m_FlowrateContent=in.readAll().toStdString();
-
-        inputFile.close();
+    if (values.size() != num_values_per_line) {
+      QMessageBox::warning(this, "Error reading inlet flow file values", "Error reading values for the inlet flow values file '" + 
+          flowrateFilePath + "' for line " + QString::number(line_number) + QString::number(line_number) + ": '" + 
+          QString::fromStdString(line) + "'; expected " + QString::number(num_values_per_line) + " values per line.");
+      return;
     }
 
-    QString inflowPeriod="";
-    QFile inputFile2(flowrateFilePath);
+    flow_values.push_back(values);
+    line_number += 1;
+  }
 
-    if (inputFile2.open(QIODevice::ReadOnly)) {
-        QTextStream in(&inputFile2);
-        QString line;
+  #ifdef debug_LoadFlowrateFromFile
+  std::cout << msg << "----- Flow values -----" << std::endl;
+  int n = 1;
+  for (auto& value : flow_values) {
+    std::cout << msg << n << " " << value[0] << " " << value[1] << std::endl;
+    n += 1;
+  }
+  #endif
 
-        while(1) {
-            line = in.readLine();
+  // Convert flow data to a string.
+  //
+  m_FlowrateContent = "";
+  for (auto& value : flow_values) {
+    m_FlowrateContent += std::to_string(value[0]) + " " + std::to_string(value[1]) + "\n"; 
+  }
+  #ifdef debug_LoadFlowrateFromFile
+  std::cout << msg << "m_FlowrateContent: " << m_FlowrateContent << std::endl;
+  #endif
 
-            if (line.isNull()) {
-                break;
-            }
+  double inflowPeriod = flow_values.back()[0];
+  ui->lineEditPeriod->setText( QString::number(inflowPeriod) );
+  ui->lineEditModeNumber->setText( QString::number(num_modes) );
 
-            if (line.contains("#")) {
-                continue;
-            }
-
-            QStringList list = line.split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
-
-            if(list.size()!=2) {
-                continue;
-            }
-
-            inflowPeriod=list[0];
-        }
-
-        inputFile2.close();
-    }
-
-    ui->lineEditPeriod->setText(inflowPeriod);
+  #ifdef debug_LoadFlowrateFromFile
+  std::cout << msg << "inflowPeriod: " << inflowPeriod << std::endl;
+  #endif
 }
 
 void sv4guiCapBCWidget::LoadTimedPressureFromFile()

@@ -339,6 +339,14 @@ void sv4guiMitkSimJobIO::WriteProperties(tinyxml2::XMLDocument& document, tinyxm
 void sv4guiMitkSimJobIO::WriteCapProperties(tinyxml2::XMLDocument& document, tinyxml2::XMLElement* job_element, 
     sv4guiSimJobCapProperties& properties)
 {
+  #define n_debug_WriteCapProperties
+  #ifdef debug_WriteCapProperties
+  std::string dmsg("[sv4guiMitkSimJobIO::WriteCapProperties] ");
+  std::cout << dmsg << std::endl;
+  std::cout << dmsg << "========== WriteCapProperties ==========" << std::endl;
+  #endif
+
+  ValidateOutputLocation();
   auto cpElement = document.NewElement("cap_props");
   job_element->LinkEndChild(cpElement);
   auto capProps = properties.GetAll();
@@ -357,6 +365,9 @@ void sv4guiMitkSimJobIO::WriteCapProperties(tinyxml2::XMLDocument& document, tin
       celement->LinkEndChild(element);
       element->SetAttribute("key", it->first.c_str());
       element->SetAttribute("value", it->second.c_str());
+      #ifdef debug_WriteCapProperties
+      std::cout << dmsg << "prop: " << it->first << std::endl;
+      #endif
       it++;
     }
 
