@@ -264,8 +264,12 @@ void Sv4GuiSimXmlWriter::add_velocity_bc(GuiProperties& props, sv4guiSimJob*
   // Write flow file.
   //
   std::string file_name = face_name + ".flow";
+  std::string num_modes = props["Fourier Modes"];
   std::string flow_values = props["Flow Rate"];
+  int num_values = std::count(flow_values.begin(), flow_values.end(), '\n') + 1;
+
   std::ofstream out(output_dir_ + "/" + file_name);
+  out << num_values << " " << num_modes << '\n';
   out << flow_values;
   out.close();
 
