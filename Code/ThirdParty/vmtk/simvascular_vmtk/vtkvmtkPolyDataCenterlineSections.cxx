@@ -201,7 +201,7 @@ int vtkvmtkPolyDataCenterlineSections::RequestData( vtkInformation *vtkNotUsed(r
     #ifdef debug_RequestData
     std::string msg("[vtkvmtkPolyDataCenterlineSections::RequestData] ");
     std::cout << msg << "========== RequestData ==========" << std::endl;
-    write_vtp(Centerlines, "RequestData_Centerlines_initial.vtp");
+    write_vtp(this->Centerlines, "RequestData_Centerlines_initial.vtp");
     #endif
 
     vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
@@ -215,6 +215,7 @@ int vtkvmtkPolyDataCenterlineSections::RequestData( vtkInformation *vtkNotUsed(r
       return SV_ERROR;
     }
 
+    // Initialize the many VTK data array names and types.
     initialize_data_arrays();
 
     // Create objects to store the output centerline geometry.
@@ -229,16 +230,23 @@ int vtkvmtkPolyDataCenterlineSections::RequestData( vtkInformation *vtkNotUsed(r
     //
     // Note that there are both centerlineSection* and centerline* arrays.
     //
-    output->GetCellData()->AddArray(section_area.data);
-    output->GetCellData()->AddArray(section_bifurcation.data);
-    output->GetCellData()->AddArray(section_closed.data);
-    output->GetCellData()->AddArray(section_max_size.data);
-    output->GetCellData()->AddArray(section_min_size.data);
-    output->GetCellData()->AddArray(section_shape.data);
-    output->GetCellData()->AddArray(section_global_node_ids.data);
+    #ifdef debug_RequestData
+    std::cout << msg << "Create VTK data arrays ... " << std::endl;
+    #endif
+
+    output->GetCellData()->AddArray(section_area.create());
+    output->GetCellData()->AddArray(section_bifurcation.create());
+    output->GetCellData()->AddArray(section_closed.create());
+    output->GetCellData()->AddArray(section_max_size.create());
+    output->GetCellData()->AddArray(section_min_size.create());
+    output->GetCellData()->AddArray(section_shape.create());
+    output->GetCellData()->AddArray(section_global_node_ids.create());
 
     // Generate surface normals for the input surface.
     //
+    #ifdef debug_RequestData
+    std::cout << msg << "Generate surface normals ... " << std::endl;
+    #endif
     vtkNew(vtkPolyDataNormals, surfaceNormals);
     surfaceNormals->SetInputData(input);
     surfaceNormals->SplittingOff();
@@ -246,7 +254,6 @@ int vtkvmtkPolyDataCenterlineSections::RequestData( vtkInformation *vtkNotUsed(r
     surfaceNormals->ComputePointNormalsOn();
     surfaceNormals->ConsistencyOn();
     surfaceNormals->Update();
-
     this->Surface->DeepCopy(surfaceNormals->GetOutput());
 
     // Create a clean and simply connected centerline geometry
@@ -266,9 +273,8 @@ int vtkvmtkPolyDataCenterlineSections::RequestData( vtkInformation *vtkNotUsed(r
 
     // Initialize array used to store tangents at centerline points.
     //
-    this->Centerlines->GetPointData()->AddArray(centerline_normal.data);
     int numberOfCenterlinePoints = this->Centerlines->GetNumberOfPoints();
-    centerline_normal.data->SetNumberOfTuples(numberOfCenterlinePoints);
+    this->Centerlines->GetPointData()->AddArray(centerline_normal.create(numberOfCenterlinePoints));
 
     // Calculate centerline tangent vectors (= section normal vectors).
     //
@@ -294,23 +300,12 @@ int vtkvmtkPolyDataCenterlineSections::RequestData( vtkInformation *vtkNotUsed(r
     // at each centerline point.
     //
     numberOfCenterlinePoints = this->Centerlines->GetNumberOfPoints();
-    this->Centerlines->GetPointData()->AddArray(centerline_area.data);
-    centerline_area.initialize(numberOfCenterlinePoints, 0);
-
-    this->Centerlines->GetPointData()->AddArray(centerline_min_size.data);
-    centerline_min_size.initialize(numberOfCenterlinePoints, 0);
-
-    this->Centerlines->GetPointData()->AddArray(centerline_max_size.data);
-    centerline_max_size.initialize(numberOfCenterlinePoints, 0);
-
-    this->Centerlines->GetPointData()->AddArray(centerline_shape.data);
-    centerline_shape.initialize(numberOfCenterlinePoints, 0);
-
-    this->Centerlines->GetPointData()->AddArray(centerline_closed.data);
-    centerline_closed.initialize(numberOfCenterlinePoints, 0);
-
-    this->Centerlines->GetPointData()->AddArray(centerline_bifurcation.data);
-    centerline_bifurcation.initialize(numberOfCenterlinePoints, PointType::bifurcation);
+    this->Centerlines->GetPointData()->AddArray(centerline_area.create(numberOfCenterlinePoints));
+    this->Centerlines->GetPointData()->AddArray(centerline_min_size.create(numberOfCenterlinePoints));
+    this->Centerlines->GetPointData()->AddArray(centerline_max_size.create(numberOfCenterlinePoints));
+    this->Centerlines->GetPointData()->AddArray(centerline_shape.create(numberOfCenterlinePoints));
+    this->Centerlines->GetPointData()->AddArray(centerline_closed.create(numberOfCenterlinePoints));
+    this->Centerlines->GetPointData()->AddArray(centerline_bifurcation.create(numberOfCenterlinePoints,1));
 
     // Preliminary classify surface according to centerline BranchIdTmp to
     // for allowing bifurcation identification.
@@ -338,15 +333,6 @@ int vtkvmtkPolyDataCenterlineSections::RequestData( vtkInformation *vtkNotUsed(r
       return SV_ERROR;
     }
 
-    // Clean up centerlines for bifurcation identification.
-    //
-    auto clean_filter = vtkCleanPolyData::New();
-    clean_filter->SetPointMerging(true);
-    clean_filter->SetInputData(Centerlines);
-    clean_filter->Update();
-    Centerlines = clean_filter->GetOutput();
-    Centerlines->BuildLinks();
-
     #ifdef debug_RequestData
     std::cout << msg << "CleanBifurcation: cleaning centerline bifurcations" << std::endl;
     #endif
@@ -370,8 +356,7 @@ int vtkvmtkPolyDataCenterlineSections::RequestData( vtkInformation *vtkNotUsed(r
     #ifdef debug_RequestData
     std::cout<<"  Coloring surface branches"<<endl;
     #endif
-    if (this->BranchSurface(array_name.BranchId, array_name.BifurcationId) == SV_ERROR)
-    {
+    if (this->BranchSurface(array_name.BranchId, array_name.BifurcationId) == SV_ERROR) {
         fprintf(stderr,"BranchSurface failed\n");
         return SV_ERROR;
     }
@@ -379,8 +364,7 @@ int vtkvmtkPolyDataCenterlineSections::RequestData( vtkInformation *vtkNotUsed(r
     #ifdef debug_RequestData
     std::cout<<"  Coloring surface bifurcations"<<endl;
     #endif
-    if (this->BranchSurface(array_name.BifurcationId, array_name.BranchId) == SV_ERROR)
-    {
+    if (this->BranchSurface(array_name.BifurcationId, array_name.BranchId) == SV_ERROR) {
         fprintf(stderr,"BranchSurface failed\n");
         return SV_ERROR;
     }
@@ -415,7 +399,7 @@ int vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
 
     // Get CenterlineSectionBifurcation array to later modify to correctly identify bifurcations.
     auto isBifurcation = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->
-      GetArray(section_bifurcation.get_name()));
+      GetArray(section_bifurcation.name()));
 
     // Create array to store which centerline points to remove.
     std::string removeArrayName = "CenterlineSectionRemove";
@@ -763,7 +747,7 @@ int vtkvmtkPolyDataCenterlineSections::SplitCenterline(vtkPolyData* bifurcations
     vtkNew(vtkThreshold, thresh);
     thresh->SetInputData(Centerlines);
     thresh->SetThresholdFunction(vtkThreshold::THRESHOLD_BETWEEN);
-    thresh->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, section_bifurcation.get_name());
+    thresh->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, section_bifurcation.name());
 
     for (int i : point_types) {
         #ifdef debug_SplitCenterline
@@ -812,7 +796,7 @@ int vtkvmtkPolyDataCenterlineSections::SplitCenterline(vtkPolyData* bifurcations
 //
 void vtkvmtkPolyDataCenterlineSections::AddBifurcationCellArray()
 {
-    auto bifurcation_data_name = section_bifurcation.get_name();
+    auto bifurcation_data_name = section_bifurcation.name();
     vtkIntArray* bifurcation_data = vtkIntArray::SafeDownCast(Centerlines->GetPointData()->GetArray(bifurcation_data_name));
 
     vtkIntArray* cellDataArray = vtkIntArray::New();
@@ -965,29 +949,40 @@ int vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* ou
     #ifdef debug_ComputeCenterlineSections
     std::string msg("[vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections] ");
     std::cout << msg << "========== ComputeCenterlineSections ==========" << std::endl;
+    write_vtp(this->Centerlines, "ComputeCenterlineSections_Centerlines.vtp");
     #endif
 
     // Used to store cross section geometry.
-    auto centerlineSectionPoints = output->GetPoints();
-    auto centerlineSectionPolys = output->GetPolys();
+    auto sectionPoints = output->GetPoints();
+    auto sectionPolys = output->GetPolys();
 
     // Arrays used to store cross section properties.
-    auto centerlineSectionAreaArray = section_area.data;
-    auto centerlineSectionBifurcationArray = section_bifurcation.data;
-    auto centerlineSectionClosedArray = section_closed.data;
-    auto centerlineSectionGlobalNodeIdArray = section_global_node_ids.data;
-    auto centerlineSectionMinSizeArray = section_min_size.data;
-    auto centerlineSectionMaxSizeArray = section_max_size.data;
-    auto centerlineSectionShapeArray = section_shape.data;
+    #ifdef debug_ComputeCenterlineSections
+    std::cout << msg << "Arrays used to store cross section properties .. " << std::endl;
+    #endif
 
-    auto centerlineAreaArray = centerline_area.data;
-    auto centerlineMinSizeArray = centerline_min_size.data;
-    auto centerlineMaxSizeArray = centerline_max_size.data;
+    auto sectionArea = section_area.cell_data(output);
+    auto sectionBifurcation = section_bifurcation.cell_data(output);
+    auto sectionClosed = section_closed.cell_data(output);
+    auto sectionGlobalNodeId = section_global_node_ids.cell_data(output);
+    auto sectionMinSize = section_min_size.cell_data(output);
+    auto sectionMaxSize = section_max_size.cell_data(output);
+    auto sectionShape = section_shape.cell_data(output);
 
-    auto centerlineBifurcationArray = centerline_bifurcation.data;
-    auto centerlineClosedArray = centerline_closed.data;
-    auto centerlineNormalArray = centerline_normal.data;
-    auto centerlineShapeArray = centerline_shape.data;
+    auto centerlineArea = centerline_area.point_data(this->Centerlines);
+    auto centerlineMinSize = centerline_min_size.point_data(this->Centerlines);
+    auto centerlineMaxSize = centerline_max_size.point_data(this->Centerlines);
+    auto centerlineBifurcation = centerline_bifurcation.point_data(this->Centerlines);
+    auto centerlineClosed = centerline_closed.point_data(this->Centerlines);
+    auto centerlineNormal = centerline_normal.point_data(this->Centerlines);
+    auto centerlineShape = centerline_shape.point_data(this->Centerlines);
+
+    #ifdef debug_ComputeCenterlineSections
+    std::cout << msg << "this->Centerlines->GetNumberOfPoints(): " << this->Centerlines->GetNumberOfPoints() << std::endl;
+    std::cout << msg << "centerlineNormal: " << centerlineNormal << std::endl;
+    std::cout << msg << "centerlineNormal->GetNumberOfTuples(): " << centerlineNormal->GetNumberOfTuples() << std::endl;
+    std::cout << msg << "centerlineClosed->GetNumberOfTuples(): " << centerlineClosed->GetNumberOfTuples() << std::endl;
+    #endif
 
     vtkNew(vtkIdList, cellIds);
     double point[3], tangent[3];
@@ -1007,8 +1002,13 @@ int vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* ou
       #endif
 
       this->Centerlines->GetPoint(p, point);
-      centerlineNormalArray->GetTuple(p, tangent);
+      centerlineNormal->GetTuple(p, tangent);
       this->Centerlines->GetPointCells(p, cellIds);
+      #ifdef debug_ComputeCenterlineSections
+      std::cout << msg << "point: " << point[0] << " " << point[1] << " " << point[2] << std::endl;
+      std::cout << msg << "tangent: " << tangent[0] << " " << tangent[1] << " " << tangent[2] << std::endl;
+      std::cout << msg << "cellIds->GetNumberOfIds(): " << cellIds->GetNumberOfIds() << std::endl; 
+      #endif
 
       // If the point is a cap then move the slice location a bit inward.
       //
@@ -1047,14 +1047,14 @@ int vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* ou
       //
       auto sectionCellPoints = section->GetCell(0)->GetPoints();
       int numberOfSectionCellPoints = sectionCellPoints->GetNumberOfPoints();
-      centerlineSectionPolys->InsertNextCell(numberOfSectionCellPoints);
+      sectionPolys->InsertNextCell(numberOfSectionCellPoints);
       #ifdef debug_ComputeCenterlineSections
       std::cout << msg << "  numberOfSectionCellPoints: " << numberOfSectionCellPoints << std::endl;
       #endif
 
       for (int k = 0; k < numberOfSectionCellPoints; k++) {
-        vtkIdType branchPointId = centerlineSectionPoints->InsertNextPoint(sectionCellPoints->GetPoint(k));
-        centerlineSectionPolys->InsertCellPoint(branchPointId);
+        vtkIdType branchPointId = sectionPoints->InsertNextPoint(sectionCellPoints->GetPoint(k));
+        sectionPolys->InsertCellPoint(branchPointId);
       }
 
       // Compute geometrical properties of the section slice.
@@ -1069,7 +1069,7 @@ int vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* ou
       area = vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(section);
       shape = vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(section,point,sizeRange);
       intersectCenterline = vtkvmtkPolyDataBranchSections::ComputeBranchCenterlineIntersections(section,
-          this->Centerlines,point,tangent);
+          this->Centerlines, point, tangent);
       intersectSurface = vtkvmtkPolyDataBranchSections::ComputeBranchSurfaceIntersections(section,array_name.BranchIdTmp);
 
       if ((intersectCenterline == 1) && (intersectSurface == 1)) {
@@ -1083,20 +1083,20 @@ int vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* ou
       std::cout << msg << "  bifurcation: " << bifurcation << std::endl;
       #endif
  
-      centerlineSectionAreaArray->InsertNextValue(area);
-      centerlineSectionMinSizeArray->InsertNextValue(sizeRange[0]);
-      centerlineSectionMaxSizeArray->InsertNextValue(sizeRange[1]);
-      centerlineSectionShapeArray->InsertNextValue(shape);
-      centerlineSectionClosedArray->InsertNextValue(closed);
-      centerlineSectionBifurcationArray->InsertNextValue(bifurcation);
-      centerlineSectionGlobalNodeIdArray->InsertNextValue(p);
+      sectionArea->InsertNextValue(area);
+      sectionMinSize->InsertNextValue(sizeRange[0]);
+      sectionMaxSize->InsertNextValue(sizeRange[1]);
+      sectionShape->InsertNextValue(shape);
+      sectionClosed->InsertNextValue(closed);
+      sectionBifurcation->InsertNextValue(bifurcation);
+      sectionGlobalNodeId->InsertNextValue(p);
  
-      centerlineAreaArray->InsertValue(p,area);
-      centerlineMinSizeArray->InsertValue(p,sizeRange[0]);
-      centerlineMaxSizeArray->InsertValue(p,sizeRange[1]);
-      centerlineShapeArray->InsertValue(p,shape);
-      centerlineClosedArray->InsertValue(p,closed);
-      centerlineBifurcationArray->InsertValue(p,bifurcation);
+      centerlineArea->InsertValue(p,area);
+      centerlineMinSize->InsertValue(p,sizeRange[0]);
+      centerlineMaxSize->InsertValue(p,sizeRange[1]);
+      centerlineShape->InsertValue(p,shape);
+      centerlineClosed->InsertValue(p,closed);
+      centerlineBifurcation->InsertValue(p,bifurcation);
     }
 
     return SV_OK;
@@ -1118,6 +1118,7 @@ int vtkvmtkPolyDataCenterlineSections::BranchSurface(const char* nameThis, const
     std::cout << msg << "========== BranchSurface ==========" << std::endl;
     std::cout << msg << "nameThis: " << nameThis << std::endl;
     std::cout << msg << "nameOther: " << nameOther << std::endl;
+    write_vtp(this->Centerlines, "BranchSurface_Centerlines.vtp");
     #endif
 
     if (!(this->Centerlines->GetPointData()->HasArray(nameThis))) {
@@ -1166,6 +1167,12 @@ int vtkvmtkPolyDataCenterlineSections::BranchSurface(const char* nameThis, const
       thisId = thisCent->GetTuple1(i);
       otherId = otherCent->GetTuple1(i);
 
+      #ifdef debug_BranchSurface
+      std::cout << msg << "---------- i " << i << " ----------" << std::endl;
+      std::cout << msg << "thisId: " << thisId << std::endl;
+      std::cout << msg << "otherId: " << otherId << std::endl;
+      #endif
+
       // skip bifurcation points
       if (otherId != -1) {
         continue;
@@ -1175,6 +1182,12 @@ int vtkvmtkPolyDataCenterlineSections::BranchSurface(const char* nameThis, const
       this->Centerlines->GetPoint(i, p_cent);
       radius = centRadius->GetValue(i);
       locator->FindPointsWithinRadius(10.0 * radius, p_cent, surfPointIds);
+
+      #ifdef debug_BranchSurface
+      std::cout << msg << "p_cent: " << p_cent[0] << " " << p_cent[1] << " " << p_cent[2] << std::endl;
+      std::cout << msg << "radius: " << radius << std::endl;
+      std::cout << msg << "surfPointIds->GetNumberOfIds(): " << surfPointIds->GetNumberOfIds() << std::endl;
+      #endif
 
       for (int j = 0; j < surfPointIds->GetNumberOfIds(); j++) {
         this->Surface->GetPoint(surfPointIds->GetId(j), p_surf);
@@ -1198,6 +1211,11 @@ int vtkvmtkPolyDataCenterlineSections::BranchSurface(const char* nameThis, const
           // set BranchId and distance
           thisSurf->SetValue(surfPointIds->GetId(j), thisId);
           surfDist->SetValue(surfPointIds->GetId(j), dist);
+          #ifdef debug_BranchSurface
+          std::cout << msg << "----- j " << j << " -----" << std::endl;
+          std::cout << msg << "thisSurf->surfPointIds->GetId(j): " << thisId << std::endl;
+          std::cout << msg << "surfDist->SetValue(surfPointIds->GetId(j): " << dist << std::endl;
+          #endif
         }
       }
     }
@@ -1300,10 +1318,16 @@ int vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
     // Each Cell will be a VTK Line consisting of a series of connected points.
     //
     for (int c = 0; c < this->n_centerlines; c++) {
+      #ifdef debug_GenerateCleanCenterline
+      std::cout << msg << "---------- c " << c << " ----------" << std::endl;
+      #endif
       vtkCell* cell = centerlines->GetCell(c);
 
       for (int p = 0; p < cell->GetNumberOfPoints(); p++) {
         int id = cell->GetPointId(p);
+        #ifdef debug_GenerateCleanCenterline
+        std::cout << msg << ">>>> id: " << id << std::endl;
+        #endif
 
         if ((pointIds->IsId(id) == -1) && (id > 0)) {
           points->InsertNextPoint(centerlines->GetPoint(id));
@@ -1442,6 +1466,7 @@ int vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
         int branchIdUpstream = branchIds->GetValue(i);
         #ifdef debug_GenerateCleanCenterline
         std::cout << msg << "  branchIdUpstream: " << branchIdUpstream << std::endl;
+        std::cout << msg << "  pointCells->GetNumberOfIds(): " << pointCells->GetNumberOfIds() << std::endl;
         #endif
 
         // Get downstream Branch Ids.
@@ -1450,14 +1475,18 @@ int vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
 
         for (int j = 0; j < pointCells->GetNumberOfIds(); j++) {
           polydata->GetCellPoints(pointCells->GetId(j), cellPoints);
+          #ifdef debug_GenerateCleanCenterline
+          std::cout << msg << "  cellPoints->GetNumberOfIds(): " << cellPoints->GetNumberOfIds() << std::endl;
+          #endif
 
           for (int k = 0; k < cellPoints->GetNumberOfIds(); k++) {
             int branchId = branchIds->GetValue(cellPoints->GetId(k));
-            if (branchId != branchIdUpstream)
+            if (branchId != branchIdUpstream) {
               branchIdsDownstream->InsertUniqueId(branchId);
               #ifdef debug_GenerateCleanCenterline
               std::cout << msg << "  add branch Id: " << branchId << std::endl;
               #endif
+            }
           }
         }
 
@@ -1480,6 +1509,10 @@ int vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
 
     // Mark points within two 2*radius of caps for smoothing.
     //
+    #ifdef debug_GenerateCleanCenterline
+    std::cout << msg << "   " << std::endl;
+    std::cout << msg << "mark points within two 2 * sphere radius of caps for smoothing ...   " << std::endl;
+    #endif
     vtkNew(vtkIntArray, smoothing);
     smoothing->SetNumberOfValues(polydata->GetNumberOfPoints());
     smoothing->Fill(0);
@@ -1498,6 +1531,9 @@ int vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
         for (int k = 0; k < polydata->GetNumberOfPoints(); k++) {
           if ((branchIds->GetValue(k) == branchIdCap) && (closePoints->IsId(k) > -1)) {
             smoothing->SetValue(k, 1);
+            #ifdef debug_GenerateCleanCenterline
+            std::cout << msg << "smoothing->SetValue(k, 1): " << i << " " << k << std::endl;
+            #endif
           }
         }
       }
@@ -1505,6 +1541,10 @@ int vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
 
     // Apply moving average filter to individual branches.
     //
+    #ifdef debug_GenerateCleanCenterline
+    std::cout << msg << "   " << std::endl;
+    std::cout << msg << "Apply moving average filter to individual branches ...   " << std::endl;
+    #endif
     const int numberOfIterations = 200;
     const double relaxation_caps = 1.0;
     const double relaxation_rest = 0.01;
@@ -1571,6 +1611,12 @@ int vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
 //
 int vtkvmtkPolyDataCenterlineSections::CalculateTangent()
 {
+    #define n_debug_CalculateTangent
+    #ifdef debug_CalculateTangent
+    std::string msg("[vtkvmtkPolyDataCenterlineSections::CalculateTangent] ");
+    std::cout << msg << "========== CalculateTangent ==========" << std::endl;
+    #endif
+
     vtkNew(vtkPolyData, dataset);
     dataset->SetPoints(this->Surface->GetPoints());
 
@@ -1584,13 +1630,17 @@ int vtkvmtkPolyDataCenterlineSections::CalculateTangent()
     double distance;
     int id;
 
-    auto centerlineNormalArray = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->
-        GetArray(section_normal.get_name()));
+    auto centerlineNormal = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->
+        GetArray(section_normal.name()));
 
     for (int p = 0; p < this->Centerlines->GetNumberOfPoints(); p++) {
       this->Centerlines->GetPointCells(p, cellIds);
       this->Centerlines->GetPoint(p, point);
-      double tangent[3] = {0.0, 0.0, 0.0};
+      double tangent[3] = {};
+      #ifdef debug_CalculateTangent
+      std::cout << msg << "--------------- p: " << p << " ----------" << std::endl;
+      std::cout << msg << "point: " << point[0] << " " << point[1] << " " << point[2] << std::endl;
+      #endif
 
       // If the point is a cap then use the normal from the surface.
       //
@@ -1600,7 +1650,7 @@ int vtkvmtkPolyDataCenterlineSections::CalculateTangent()
 
         // move point eps_norm inward to nicely cut the geometry
         const double eps_norm = 1.0e-3;
-        for (int j=0; j<3; j++) {
+        for (int j = 0; j < 3; j++) {
           point[j] -= eps_norm * tangent[j];
         }
 
@@ -1621,12 +1671,18 @@ int vtkvmtkPolyDataCenterlineSections::CalculateTangent()
           for (int j = 0; j < 3; j++) {
             tangent[j] += (point1[j] - point0[j]) / distance;
           }
+          #ifdef debug_CalculateTangent
+          std::cout << msg << "point0: " << point0[0] << " " << point0[1] << " " << point0[2] << std::endl;
+          std::cout << msg << "point1: " << point1[0] << " " << point1[1] << " " << point1[2] << std::endl;
+          std::cout << msg << "distance: " << distance << std::endl;
+          std::cout << msg << "tangent: " << tangent[0] << " " << tangent[1] << " " << tangent[2] << std::endl;
+          #endif
         }
 
         vtkMath::Normalize(tangent);
       }
 
-     centerlineNormalArray->InsertTuple(p, tangent);
+     centerlineNormal->InsertTuple(p, tangent);
     }
 
     return SV_OK;
@@ -1641,6 +1697,12 @@ int vtkvmtkPolyDataCenterlineSections::CalculateTangent()
 //
 int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
 {
+    #define n_debug_RefineCapPoints 
+    #ifdef debug_RefineCapPoints 
+    std::string msg("[vtkvmtkPolyDataCenterlineSections::RefineCapPoints] ");
+    std::cout << msg << "========== RefineCapPoints ==========" << std::endl;
+    #endif
+
     vtkPolyData* polydata = this->Centerlines;
     vtkNew(vtkIdList, cellIds);
     int n_cap = 0;
@@ -1651,6 +1713,9 @@ int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
         n_cap += 1;
       }
     }
+    #ifdef debug_RefineCapPoints 
+    std::cout << msg << "n_cap: " << n_cap << std::endl;
+    #endif
 
     // Create new arrays to store modifed centerline geometry.
     //
@@ -1660,9 +1725,9 @@ int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
     radius_new->SetNumberOfValues(polydata->GetNumberOfPoints() + n_cap);
     radius_new->Fill(0.0);
 
-    auto normals = vtkDoubleArray::SafeDownCast(polydata->GetPointData()->GetArray(section_normal.get_name()));
+    auto normals = vtkDoubleArray::SafeDownCast(polydata->GetPointData()->GetArray(section_normal.name()));
     vtkNew(vtkDoubleArray, normals_new);
-    normals_new->SetName(section_normal.get_name());
+    normals_new->SetName(section_normal.name());
     normals_new->SetNumberOfValues(polydata->GetNumberOfPoints() + n_cap);
     normals_new->SetNumberOfComponents(3);
 
@@ -1706,6 +1771,11 @@ int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
       polydata->GetPointCells(i, cellIds);
       polydata->GetPoint(i, point_c);
       normals->GetTuple(i, tangent_c);
+      #ifdef debug_RefineCapPoints
+      std::cout << msg << "--------------- i: " << i << " ----------" << std::endl;
+      std::cout << msg << "point_c: " << point_c[0] << "  " << point_c[1] << " " << point_c[2] << std::endl;
+      std::cout << msg << "tangent_c: " << tangent_c[0] << " " << tangent_c[1] << " " << tangent_c[2] << std::endl;
+      #endif
 
       // If a cap point then insert new point and cell.
       if (cellIds->GetNumberOfIds() == 1) {
@@ -1733,6 +1803,13 @@ int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
         }
         vtkMath::Normalize(tangent_new);
 
+        #ifdef debug_RefineCapPoints
+        std::cout << msg << "point_new: " << point_new[0] << "  " << point_new[1] << " " << point_new[2] << std::endl;
+        std::cout << msg << "tangent_new: " << tangent_new[0] << " " << tangent_new[1] << " " << tangent_new[2] << std::endl;
+        std::cout << msg << "i_cap: " << i_cap << std::endl; 
+        std::cout << msg << "i_new: " << i_new << std::endl; 
+        #endif
+
         // insert array values
         points->InsertPoint(i_cap, point_c);
         points->InsertPoint(i_new, point_new);
@@ -1745,11 +1822,12 @@ int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
 
         // insert new element
         vtkNew(vtkLine, line);
+
         if (i == 0) {
           line->GetPointIds()->SetId(0, 0);
           line->GetPointIds()->SetId(1, 1);
         } else {
-          for (int j=0; j<2; j++) {
+          for (int j = 0; j < 2; j++) {
             line->GetPointIds()->SetId(j, polydata->GetCell(i - 1)->GetPointId(j) + n_cap);
           }
 
@@ -1802,7 +1880,19 @@ int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
     polydata_new->GetPointData()->AddArray(nodeId_new);
     polydata_new->GetPointData()->AddArray(normals_new);
 
+    //centerline_normal.data = normals_new;
+
+    #ifdef debug_RefineCapPoints
+    std::cout << msg << "points->GetNumberOfPoints(): " << points->GetNumberOfPoints() << std::endl;
+    std::cout << msg << "nodeId_new->GetSize(): " << nodeId_new->GetSize() << std::endl;
+    std::cout << msg << "normals_new->GetNumberOfTuples(): " << normals_new->GetNumberOfTuples() << std::endl;
+    #endif
+
     polydata->DeepCopy(polydata_new);
+
+    #ifdef debug_RefineCapPoints
+    std::cout << msg << "polydata->GetNumberOfPoints(): " << polydata->GetNumberOfPoints() << std::endl; 
+    #endif
 
     return SV_OK;
 }

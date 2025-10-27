@@ -32,6 +32,8 @@ Version:   $Revision: 1.1 $
 //#include "vtkvmtkComputationalGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 #include "vtkPolyData.h"
+#include "vtkCellData.h"
+#include "vtkPointData.h"
 
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineSections : public vtkPolyDataAlgorithm
 {
@@ -40,29 +42,57 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineSections :
     //-----------
     // DataArray
     //-----------
-    // This class provides an interface to store and access VTK data arrays.
+    // This class provides an interface to access VTK data arrays.
     //
     template<class T>
     class DataArray {
       public:
         DataArray() {
-          data = vtkSmartPointer<T>::New();
         }
-        std::string name;
-        vtkSmartPointer<T> data;
-        void initialize(const int size, const double value) {
-          data->SetNumberOfTuples(size);
-          data->Fill(value);
+        std::string name_;
+        int num_values_ = 0;
+        int num_comp_ = 1;
+        double value_ = 0.0;
+
+        T* cell_data(vtkPolyData* polydata) {
+          //std::cout << "[DataArray:cell_data] name: " << name_ << std::endl; 
+          //std::cout << "[DataArray:cell_data] num_comp: " << num_comp_ << std::endl; 
+          return T::SafeDownCast(polydata->GetCellData()->GetArray(name_.c_str()));
         }
+
+        T* point_data(vtkPolyData* polydata) {
+          //std::cout << "[DataArray:point_data] name: " << name_ << std::endl; 
+          //std::cout << "[DataArray:point_data] num_comp: " << num_comp_ << std::endl; 
+          return T::SafeDownCast(polydata->GetPointData()->GetArray(name_.c_str()));
+        }
+
+        vtkSmartPointer<T> create(int num_values = 0, double value={} ) { 
+          //std::cout << "[DataArray:create] name: " << name_ << std::endl; 
+          //std::cout << "[DataArray:create] num_comp: " << num_comp_ << std::endl; 
+          //std::cout << "[DataArray:create] num_values: " << num_values << std::endl; 
+          //std::cout << "[DataArray:create] value: " << value << std::endl; 
+          //std::cout << "[DataArray:create] type: " << typeid(T).name() << std::endl; 
+          auto array = vtkSmartPointer<T>::New();
+          //std::cout << "[DataArray:create] array: " << array << std::endl; 
+          array->SetName(name_.c_str());
+          array->SetNumberOfComponents(num_comp_);
+          if (num_values != 0) {
+            array->SetNumberOfTuples(num_values);
+            array->Fill(value);
+          }
+          return array;
+        }
+
         void set_name(const std::string& array_name) {
-          name = array_name;
-          data->SetName(name.c_str());
+          name_ = array_name;
         }
-        const char* get_name() {
-          return name.c_str();
+
+        const char* name() {
+          return name_.c_str();
         }
+
         void set_component_size(const int size) {
-          data->SetNumberOfComponents(size);
+          num_comp_ = size;
         }
     };
 
@@ -136,7 +166,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineSections :
 
     ArrayName array_name;
 
-    // Objects used to store VTK data arrays.
+    // Objects used to interface to VTK data arrays.
     DataArray<vtkDoubleArray> section_area;
     DataArray<vtkIntArray>    section_bifurcation;
     DataArray<vtkIntArray>    section_closed;
