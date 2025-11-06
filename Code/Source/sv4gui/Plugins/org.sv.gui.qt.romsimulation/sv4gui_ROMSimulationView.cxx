@@ -392,7 +392,7 @@ void sv4guiROMSimulationView::EnableConnection(bool able)
         connect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, slot);
         connect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, slot);
         connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, slot);
-        connect(ui->NumSegmentsValue, SIGNAL(textChanged(int)), this, slot);
+        connect(ui->NumSegmentsValue, SIGNAL(valueChanged(int)), this, slot);
         connect(ui->AdaptiveMeshingCheckBox, SIGNAL(stateChanged(int)), this, slot);
 
         // Convert results.
@@ -426,8 +426,6 @@ void sv4guiROMSimulationView::EnableConnection(bool able)
 //
 void sv4guiROMSimulationView::CreateQtPartControl( QWidget *parent )
 {
-    auto msg = "[sv4guiROMSimulationView::CreateQtPartControl] ";
-    //MITK_INFO << msg << "--------- CreateQtPartControl ----------"; 
     m_Parent = parent;
     ui->setupUi(parent);
 
@@ -753,7 +751,7 @@ void sv4guiROMSimulationView::Create1DMeshControls(QWidget *parent)
 
     // Generate Mesh.
     //
-    connect(ui->ElementSizeValue, SIGNAL(textChanged(double)), this, SLOT(SetElementSize(double)));
+    connect(ui->ElementSizeValue, SIGNAL(valueChanged(double)), this, SLOT(SetElementSize(double)));
 
     // By default disable push buttons used to calculate centerlines, 
     // create simulation files and run a simulation.
@@ -2890,6 +2888,24 @@ void sv4guiROMSimulationView::UpdateGUIConvertResults()
         int foundIndex = ui->SimName_ComboBox->findText(QString(simNames[0].c_str()));
         ui->SimName_ComboBox->setCurrentIndex(foundIndex);
     }
+
+    EnableConvertResultsWidgets();
+}
+
+//-----------------------------
+// EnableConvertResultsWidgets
+//-----------------------------
+// If a 0D model is active then hide widgets that only
+// apply to converting a 1d model.
+//
+void sv4guiROMSimulationView::EnableConvertResultsWidgets()
+{
+    bool enable = true;
+    if (ui->ModelOrderZero_RadioButton->isChecked()) { 
+        ui->frame_15->hide();
+    } else {
+        ui->frame_15->show();
+    }
 }
 
 //---------------
@@ -4160,6 +4176,8 @@ bool sv4guiROMSimulationView::SetConvertResultsParameters(sv4guiROMSimJob* job, 
     auto simName = ui->SimName_ComboBox->currentText();
     job->SetConvertResultsProp("Simulation Name", simName.toStdString());
 
+    EnableConvertResultsWidgets();
+
     return true;
 }
 
@@ -4768,16 +4786,12 @@ void sv4guiROMSimulationView::SetConvertDir()
 
 //-------------------------
 // SelectSegmentExportType
-//-------------------------
-//
+//------------------------- 
+//      
 void sv4guiROMSimulationView::SelectSegmentExportType(int index)
-{
-    auto msg = "sv4guiROMSimulationView::SelectSegmentExportType";
-    MITK_INFO << msg << "--------- SelectSegmentExportType ----------"; 
-    //auto type = SegmentExportType::types[index]; 
+{   
     auto type = ui->SegmentExportComboBox->currentText();
-    MITK_INFO << msg << "Export type: " << type; 
-}
+}       
 
 //---------------
 // ExportResults
@@ -4790,10 +4804,6 @@ void sv4guiROMSimulationView::SelectSegmentExportType(int index)
 //
 void sv4guiROMSimulationView::ExportResults()
 {
-    auto msg = "sv4guiROMSimulationView::ExportResults";
-    MITK_INFO << msg; 
-    MITK_INFO << msg << "--------- ExportResults ----------"; 
-
     QString resultDir = ui->lineEditResultDir->text();
     if (resultDir.isEmpty()) { 
         QMessageBox::warning(m_Parent, "ROM Simultation", "No results directory has been set.");
@@ -4811,7 +4821,7 @@ void sv4guiROMSimulationView::ExportResults()
     auto startTime = std::stod(startTimeStr.toStdString());
     QString stopTimeStr = ui->lineEditStop->text().trimmed();
     auto stopTime = std::stod(stopTimeStr.toStdString());
-    if (stopTime < stopTime) { 
+    if (stopTime < startTime) { 
         QMessageBox::warning(m_Parent,"ROM Simulation", "The stop time must be larger than the start time.");
         return;
     }
@@ -4840,17 +4850,29 @@ void sv4guiROMSimulationView::ExportResults()
    //
    std::string dataNames;
    auto selectedItems = ui->DataExportListWidget->selectedItems();
-   if (selectedItems.size() == 0) { 
-       QMessageBox::warning(m_Parent,"1D Simulation", "No data names are selected to convert.");
-       return;
+   if (modelOrder == "1") {
+       if (selectedItems.size() == 0) { 
+           QMessageBox::warning(m_Parent,"ROM Simulation", "No data names are selected to convert.");
+           return;
+       }
+
+       for (auto const& item : selectedItems) {
+           auto dataName = item->text().toStdString();
+           dataNames += dataName + ",";
+       }
+       dataNames.pop_back();
+
+   } else {
+       if (!ui->ProjectTo3DMesh_CheckBox->isChecked() && 
+           !ui->ProjectCenterlines_CheckBox->isChecked() && 
+           !ui->ExportNumpy_CheckBox->isChecked()) { 
+           QMessageBox::warning(m_Parent,"ROM Simulation", "No convert options have been selected: nothing to convert.");
+           return;
+       }
+
+       dataNames = "flow,pressure";
    }
 
-   for (auto const& item : selectedItems) {
-       auto dataName = item->text().toStdString();
-       MITK_INFO << msg << "Selected data name: " << dataName; 
-       dataNames += dataName + ",";
-   }
-   dataNames.pop_back();
    pythonInterface.AddParameter(params.DATA_NAMES, dataNames); 
 
    // Set time range of data to export.
@@ -4865,11 +4887,6 @@ void sv4guiROMSimulationView::ExportResults()
        pythonInterface.AddParameter(params.OUTLET_SEGMENTS, "true"); 
    }
 
-   // Export results as numpy arrays.
-   if (ui->ExportNumpy_CheckBox->isChecked()) {
-       MITK_INFO << msg << "exportNumpy "; 
-   }
-
    // Set parameters to project results to a 3D simulation mesh.
    //
    if (ui->ProjectTo3DMesh_CheckBox->isChecked()) {
@@ -4878,8 +4895,6 @@ void sv4guiROMSimulationView::ExportResults()
            std::string volumeMeshPath; 
            std::string wallsMeshPath; 
            GetSimulationMeshPaths(simName, volumeMeshPath, wallsMeshPath); 
-           MITK_INFO << msg << "volumeMeshPath: " << volumeMeshPath; 
-           MITK_INFO << msg << "wallsMeshPath: " << wallsMeshPath; 
            pythonInterface.AddParameter(params.VOLUME_MESH_FILE, volumeMeshPath); 
            pythonInterface.AddParameter(params.WALLS_MESH_FILE, wallsMeshPath); 
 
@@ -4895,7 +4910,6 @@ void sv4guiROMSimulationView::ExportResults()
    //
    if (ui->ProjectCenterlines_CheckBox->isChecked() || ui->ProjectTo3DMesh_CheckBox->isChecked()) {
        auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
-       MITK_INFO << msg << "inputCenterlinesFile: " << inputCenterlinesFile; 
        pythonInterface.AddParameter(params.CENTERLINES_FILE, inputCenterlinesFile); 
    }
 
@@ -4903,10 +4917,8 @@ void sv4guiROMSimulationView::ExportResults()
    if (m_JobNode.IsNotNull()) {
        jobName = QString::fromStdString(m_JobNode->GetName());
    }
-   MITK_INFO << msg << "jobName: " << jobName; 
 
    QString modelOrderStr = QString::fromStdString(modelOrder);
-
    convertDir = convertDir + "/" + jobName + "-converted-results_" + modelOrderStr + "d";
    QDir exdir(convertDir);
    exdir.mkpath(convertDir);
@@ -5055,8 +5067,6 @@ void sv4guiROMSimulationView::EnableTool(bool able)
 //
 void sv4guiROMSimulationView::UpdateSimJob()
 {
-    auto msg = "[sv4guiROMSimulationView::UpdateSimJob] ";
-    MITK_INFO << msg << "---------- UpdateSimJob ---------"; 
     if (!m_MitkJob) {
         return;
     }
