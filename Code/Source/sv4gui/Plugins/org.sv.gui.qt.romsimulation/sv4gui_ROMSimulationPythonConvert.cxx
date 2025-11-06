@@ -73,7 +73,6 @@ sv4guiROMSimulationPythonConvert::~sv4guiROMSimulationPythonConvert()
 //
 bool sv4guiROMSimulationPythonConvert::ConvertResults(const std::string outputDirectory)
 {
-  std::string msg = "[sv4guiROMSimulationPythonConvert::ConvertResults] ";
   sv4guiROMSimulationPythonConvertParamNames paramNames;
 
   // Import the convert 1D solver results module.
@@ -112,19 +111,14 @@ bool sv4guiROMSimulationPythonConvert::ConvertResults(const std::string outputDi
 
   // Create the **kwarg arguments that are the input arguments to the module.
   //
-  MITK_INFO << msg << "Add arguments ... ";
   auto kwargs = PyDict_New();
   for (auto const& param : m_ParameterValues) {
-      MITK_INFO << msg << param.first << "   " << "'" << param.second << "'"; 
       PyDict_SetItemString(kwargs, param.first.c_str(), PyUnicode_DecodeFSDefault(param.second.c_str()));
   }
-  MITK_INFO << msg << "Done.";
 
   // Execute the Python script.
   //
-  MITK_INFO << msg << "Execute script ...";
   auto result = PyObject_Call(pyFunc, dummyArgs, kwargs);
-  MITK_INFO << msg << "Done.";
 
   // Check for errors.
   PyErr_Print();
@@ -151,7 +145,6 @@ bool sv4guiROMSimulationPythonConvert::ConvertResults(const std::string outputDi
           mb.exec();
       } else {
           QString rmsg = "Reduced-order solver files have been successfully converted.\n";
-          MITK_INFO << msg << rmsg;
           QMessageBox::information(nullptr, sv4guiROMSimulationView::MsgTitle, rmsg);
       }
   }

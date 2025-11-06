@@ -289,7 +289,6 @@ public slots:
     void RunJob();
 
     // Convert Results slots.
-    void SelectSegmentExportType(int index);
     void ExportResults();
     void SetResultDir();
     void SetConvertDir();
@@ -474,6 +473,7 @@ private:
     bool CheckInputState(DataInputStateType type = DataInputStateType::ALL);
     bool CheckSolverInputState(bool checkValidity=true);
     void SetInputState(DataInputStateType checkType, bool value);
+    void EnableConvertResultsWidgets();
 
     QString GetExportResultsDir();
 
