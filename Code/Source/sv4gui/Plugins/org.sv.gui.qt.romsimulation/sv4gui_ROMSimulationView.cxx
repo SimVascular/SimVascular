@@ -4784,6 +4784,15 @@ void sv4guiROMSimulationView::SetConvertDir()
     ui->lineEditConvertDir->setText(dir);
 }
 
+//-------------------------
+// SelectSegmentExportType
+//------------------------- 
+//      
+void sv4guiROMSimulationView::SelectSegmentExportType(int index)
+{   
+    auto type = ui->SegmentExportComboBox->currentText();
+}       
+
 //---------------
 // ExportResults
 //---------------
@@ -4812,7 +4821,7 @@ void sv4guiROMSimulationView::ExportResults()
     auto startTime = std::stod(startTimeStr.toStdString());
     QString stopTimeStr = ui->lineEditStop->text().trimmed();
     auto stopTime = std::stod(stopTimeStr.toStdString());
-    if (stopTime < stopTime) { 
+    if (stopTime < startTime) { 
         QMessageBox::warning(m_Parent,"ROM Simulation", "The stop time must be larger than the start time.");
         return;
     }

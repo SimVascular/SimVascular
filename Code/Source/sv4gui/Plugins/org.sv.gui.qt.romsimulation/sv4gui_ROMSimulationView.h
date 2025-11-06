@@ -289,6 +289,7 @@ public slots:
     void RunJob();
 
     // Convert Results slots.
+    void SelectSegmentExportType(int index);
     void ExportResults();
     void SetResultDir();
     void SetConvertDir();
