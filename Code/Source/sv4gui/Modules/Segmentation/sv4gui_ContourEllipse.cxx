@@ -318,8 +318,8 @@ sv4guiContour* sv4guiContourEllipse::CreateByFitting(sv4guiContour* contour)
     newContour->SetMethod(contour->GetMethod());
     newContour->SetControlPoints(controlPoints);
 
-    newContour->SetSubdivisionType(contour->GetSubdivisionType());
     newContour->SetSubdivisionSpacing(contour->GetSubdivisionSpacing());
+    newContour->SetSubdivisionType(contour->GetSubdivisionType());
     newContour->SetSubdivisionNumber(contour->GetSubdivisionNumber());
 
     return newContour;

@@ -68,19 +68,23 @@ std::string sv4guiContourSplinePolygon::GetClassName()
 
 void sv4guiContourSplinePolygon::CreateContourPoints()
 {
-    int controlNumber=GetControlPointNumber();
+    #ifdef debug_CreateContourPoints
+    std::string msg("[sv4guiContourSplinePolygon::CreateContourPoints] ");
+    std::cout << msg << "========== CreateContourPoints ========== " << std::endl;
+    std::cout << msg << "m_SubdivisionNumber: " << m_SubdivisionNumber << std::endl;
+    std::cout << msg << "m_SubdivisionSpacing: " << m_SubdivisionSpacing << std::endl;
+    #endif
+    int controlNumber = GetControlPointNumber();
 
-    if(controlNumber<=2)
-    {
+    if (controlNumber <= 2) {
         return;
-    }
-    else if(controlNumber==3)
-    {
+
+    } else if (controlNumber == 3) {
         m_ContourPoints.push_back(sv3::Contour::GetControlPoint(2));
         return;
     }
 
-    sv3::Spline* spline=new sv3::Spline();
+    sv3::Spline* spline = new sv3::Spline();
     spline->SetClosed(m_Closed);
 
     switch(m_SubdivisionType)
@@ -103,10 +107,9 @@ void sv4guiContourSplinePolygon::CreateContourPoints()
 
     std::vector<std::array<double,3> > controlPoints;
     controlPoints.insert(controlPoints.begin(),m_ControlPoints.begin()+2,m_ControlPoints.end());
-
     spline->SetInputPoints(controlPoints);
-    spline->Update();//remember Update() before fetching spline points
-    m_ContourPoints=spline->GetSplinePosPoints();
+    spline->Update();
+    m_ContourPoints = spline->GetSplinePosPoints();
 }
 
 sv4guiContour* sv4guiContourSplinePolygon::CreateByFitting(sv4guiContour* contour, int divisionNumber)
@@ -159,8 +162,8 @@ sv4guiContour* sv4guiContourSplinePolygon::CreateByFitting(sv4guiContour* contou
     newContour->SetClosed(contour->IsClosed());
     newContour->SetControlPoints(controlPoints);
 
-    newContour->SetSubdivisionType(contour->GetSubdivisionType());
     newContour->SetSubdivisionSpacing(contour->GetSubdivisionSpacing());
+    newContour->SetSubdivisionType(contour->GetSubdivisionType());
     newContour->SetSubdivisionNumber(contour->GetSubdivisionNumber());
 
     return newContour;

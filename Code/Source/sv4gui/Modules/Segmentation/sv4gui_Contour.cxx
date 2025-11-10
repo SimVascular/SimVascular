@@ -93,8 +93,8 @@ void sv4guiContour::CopyContourData(sv3::Contour* contour)
   contour->SetFinished(this->IsFinished());
 
   contour->SetSubdivisionNumber(this->GetSubdivisionNumber());
-  contour->SetSubdivisionType(this->GetSubdivisionType());
   contour->SetSubdivisionSpacing(this->GetSubdivisionSpacing());
+  contour->SetSubdivisionType(this->GetSubdivisionType());
 
   contour->SetControlPoints(this->GetControlPoints());
 

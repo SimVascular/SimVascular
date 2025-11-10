@@ -767,8 +767,8 @@ sv4guiContour* sv4guiSeg2DEdit::PostprocessContour(sv4guiContour* contour)
     if(splineControlNumber>1)
     {
         contourNew=sv4guiContourSplinePolygon::CreateByFitting(contourNew,splineControlNumber);
-        contourNew->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
         contourNew->SetSubdivisionSpacing(GetVolumeImageSpacing());
+        contourNew->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
     }
 
     return contourNew;
@@ -1026,8 +1026,8 @@ void sv4guiSeg2DEdit::CreateEllipse()
         contour=sv4guiContourEllipse::CreateByFitting(existingContour);
         if(contour)
         {
-            contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
             contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+            contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
             mitk::OperationEvent::IncCurrObjectEventId();
 
             InsertContourByPathPosPoint(contour);
@@ -1040,29 +1040,28 @@ void sv4guiSeg2DEdit::CreateEllipse()
     m_DataInteractor->SetMethod("Ellipse");
 }
 
+//--------------
+// CreateCircle
+//--------------
+//
 void sv4guiSeg2DEdit::CreateCircle()
 {
-    if(m_CurrentSegButton!=ui->btnCircle)
-    {
+    if (m_CurrentSegButton != ui->btnCircle) {
         ResetGUI();
-
         SetSecondaryWidgetsVisible(false);
     }
 
-    int index=m_ContourGroup->GetContourIndexByPathPosPoint(ui->resliceSlider->getCurrentPathPoint().pos);
+    int index = m_ContourGroup->GetContourIndexByPathPosPoint(ui->resliceSlider->getCurrentPathPoint().pos);
+    sv4guiContour* existingContour = m_ContourGroup->GetContour(index);
+    sv4guiContour* contour = nullptr;
 
-    sv4guiContour* existingContour=m_ContourGroup->GetContour(index);
-
-    sv4guiContour* contour=nullptr;
-    if(existingContour && existingContour->GetContourPointNumber()>2)
-    {
+    if (existingContour && existingContour->GetContourPointNumber() > 2) {
         contour=sv4guiContourCircle::CreateByFitting(existingContour);
-        if(contour)
-        {
-            contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
-            contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
-            mitk::OperationEvent::IncCurrObjectEventId();
 
+        if (contour) {
+            contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+            contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
+            mitk::OperationEvent::IncCurrObjectEventId();
             InsertContourByPathPosPoint(contour);
         }
     }
@@ -1072,40 +1071,48 @@ void sv4guiSeg2DEdit::CreateCircle()
     m_DataInteractor->SetMethod("Circle");
 }
 
+//------------------
+// CreateSplinePoly
+//------------------
+//
 void sv4guiSeg2DEdit::CreateSplinePoly()
 {
-    if(m_CurrentSegButton!=ui->btnSplinePoly)
-    {
-        ResetGUI();
+    #ifdef debug_CreateSplinePoly
+    std::string msg("[sv4guiSeg2DEdit::CreateSplinePoly] ");
+    std::cout << msg << "========= CreateSplinePoly ==========" << std::endl;
+    #endif
 
+    if(m_CurrentSegButton!=ui->btnSplinePoly) {
+        ResetGUI();
         SetSecondaryWidgetsVisible(false);
     }
 
-    int index=m_ContourGroup->GetContourIndexByPathPosPoint(ui->resliceSlider->getCurrentPathPoint().pos);
+    int index = m_ContourGroup->GetContourIndexByPathPosPoint(ui->resliceSlider->getCurrentPathPoint().pos);
+    #ifdef debug_CreateSplinePoly
+    std::cout << msg << "index: " << index << std::endl;
+    #endif
 
-    sv4guiContour* existingContour=m_ContourGroup->GetContour(index);
+    sv4guiContour* existingContour = m_ContourGroup->GetContour(index);
+    sv4guiContour* contour = nullptr;
 
-    sv4guiContour* contour=nullptr;
-    if(existingContour && existingContour->GetContourPointNumber()>2)
-    {
-        int splineControlNumber=ui->spinBoxControlNumber->value();
-        if(splineControlNumber<3)
-            splineControlNumber=3;
+    if (existingContour && existingContour->GetContourPointNumber() > 2) {
+        int splineControlNumber = ui->spinBoxControlNumber->value();
+        if (splineControlNumber < 3) {
+            splineControlNumber = 3;
+        }
 
-        contour=sv4guiContourSplinePolygon::CreateByFitting(existingContour,splineControlNumber);
-        if(contour)
-        {
-            contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
+        contour = sv4guiContourSplinePolygon::CreateByFitting(existingContour,splineControlNumber);
+
+        if (contour) {
             contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+            contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
             mitk::OperationEvent::IncCurrObjectEventId();
-
             InsertContourByPathPosPoint(contour);
         }
     }
 
     m_CurrentSegButton=ui->btnSplinePoly;
     m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
-
     m_DataInteractor->SetMethod("SplinePolygon");
 }
 
@@ -1553,9 +1560,8 @@ void sv4guiSeg2DEdit::CreateManualCircle(bool)
     controlPoints.push_back(pt1);
     controlPoints.push_back(pt2);
     contour->SetControlPoints(controlPoints);
-    contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
     contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
-
+    contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
 
     mitk::OperationEvent::IncCurrObjectEventId();
 
@@ -1652,8 +1658,8 @@ void sv4guiSeg2DEdit::CreateManualEllipse(bool)
     contour->SetControlPoints(controlPoints,false);
     contour->SetControlPoint(2,pt2);
 
-    contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
     contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+    contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
 
     mitk::OperationEvent::IncCurrObjectEventId();
 
@@ -1730,8 +1736,8 @@ void sv4guiSeg2DEdit::CreateManualPolygonType(bool spline)
 
     contour->SetControlPoints(controlPoints);
 
-    contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
     contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+    contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
 
     mitk::OperationEvent::IncCurrObjectEventId();
 
@@ -1830,8 +1836,6 @@ void sv4guiSeg2DEdit::ShowPath(bool checked)
 //
 void sv4guiSeg2DEdit::PreparePreviewInteraction(QString method)
 {
-    std::cout << "========== sv4guiSeg2DEdit::PreparePreviewInteraction ========== " << std::endl;
-
     // Create Data Node to show threshold contour.
     m_PreviewContourModel = sv4guiContourModel::New();
     m_PreviewDataNode = mitk::DataNode::New();
