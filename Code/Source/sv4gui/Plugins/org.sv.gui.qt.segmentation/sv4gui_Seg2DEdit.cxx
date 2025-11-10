@@ -169,6 +169,8 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
         return;
     }
 
+    ui->tabWidget->setCurrentIndex(0);
+
     ui->resliceSlider->SetRenderWindow(m_renderWindow);
     ui->resliceSlider->setCheckBoxVisible(false);
     ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_CUBIC);
@@ -366,7 +368,7 @@ void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
 
     m_Parent->setEnabled(true);
     ui->SinglePathTab->setEnabled(true);
-    int  groupPathID = m_ContourGroup->GetPathID();
+    int groupPathID = m_ContourGroup->GetPathID();
 
     mitk::DataNode::Pointer imageNode=nullptr;
     m_Image=nullptr;
@@ -1056,7 +1058,7 @@ void sv4guiSeg2DEdit::CreateCircle()
     sv4guiContour* contour = nullptr;
 
     if (existingContour && existingContour->GetContourPointNumber() > 2) {
-        contour=sv4guiContourCircle::CreateByFitting(existingContour);
+        contour = sv4guiContourCircle::CreateByFitting(existingContour);
 
         if (contour) {
             contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
