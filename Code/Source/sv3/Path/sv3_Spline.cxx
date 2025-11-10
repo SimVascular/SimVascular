@@ -173,27 +173,36 @@ double Spline::GetLength(VtkParametricSpline* svpp, double t1, double t2)
 
 void Spline::Update()
 {
+    #ifdef debug_Update
+    std::string msg("[Spline::Update] ");
+    std::cout << msg << "========== Update ==========" << std::endl;
+    std::cout << msg << "m_InputPoints.size(): " <<  m_InputPoints.size() << std::endl;
+    std::cout << msg << "m_Closed: " <<  m_Closed << std::endl;
+    std::cout << msg << "m_Spacing: " << m_Spacing << std::endl;
+    #endif
+
     double length;
     m_SplinePoints.clear();
 
-    VtkParametricSpline* svpp= new VtkParametricSpline();
+    VtkParametricSpline* svpp = new VtkParametricSpline();
     svpp->ParameterizeByLengthOff();
 
-    if(m_Closed)
+    if (m_Closed) {
         svpp->ClosedOn();
-    else
+    } else {
         svpp->ClosedOff();
+    }
 
-    int inputPointNumber=m_InputPoints.size();
+    int inputPointNumber = m_InputPoints.size();
     svpp->SetNumberOfPoints(inputPointNumber);
 
-    for(int i=0;i<inputPointNumber;i++)
+    for (int i = 0; i < inputPointNumber; i++) {
         svpp->SetPoint(i,m_InputPoints[i][0],m_InputPoints[i][1],m_InputPoints[i][2]);
-
+    }
 
     SplinePoint splinePoint;
     std::array<double,3>  pt1,ptx;
-    int interNumber;
+    int interNumber = 0;
 
     switch(m_Method)
     {
@@ -203,31 +212,37 @@ void Spline::Update()
         else
             interNumber=std::ceil((m_CalculationNumber-1.0)/(inputPointNumber-1.0));
         break;
+
     case CONSTANT_SUBDIVISION_NUMBER:
         interNumber=m_CalculationNumber;
         break;
+
     default:
         break;
     }
-    int splinePointID=0;
-    for(int i=0;i<inputPointNumber;i++)
-    {
+    #ifdef debug_Update
+    std::cout << msg << "interNumber: " <<  interNumber << std::endl;
+    #endif
 
-        pt1=m_InputPoints[i];
+    int splinePointID = 0;
 
-        if(m_Method==CONSTANT_SPACING)
-        {
-            if(i<inputPointNumber-1||m_Closed)
-            {
-                interNumber=std::ceil(GetLength(svpp,i,i+1)/m_Spacing);
-                if(interNumber<5) interNumber=5;//make sure not too small
-            }//otherwise interNumber not changes.It means using the previous value
+    for (int i = 0; i < inputPointNumber;i++) {
+        pt1 = m_InputPoints[i];
+
+        if (m_Method == CONSTANT_SPACING) {
+            if (i < inputPointNumber-1 || m_Closed) {
+                auto length = GetLength(svpp,i,i+1);
+                interNumber = std::ceil(GetLength(svpp,i,i+1)/m_Spacing);
+                if (interNumber < 5) interNumber = 5;
+            }
         }
 
-        splinePoint.pos=pt1;
+        #ifdef debug_Update
+        std::cout << msg << "interNumber: " <<  interNumber << std::endl;
+        #endif
+        splinePoint.pos = pt1;
        
-        if(i==inputPointNumber-1 &&!m_Closed)
-        {
+        if (i == inputPointNumber-1 && !m_Closed) {
             double tx=i-1.0/interNumber/m_FurtherSubdivisionNumber;
             ptx=GetPoint(svpp,tx);
             splinePoint.id=splinePointID;
@@ -246,20 +261,24 @@ void Spline::Update()
         double txx=i+1.0/interNumber/m_FurtherSubdivisionNumber;
         ptx=GetPoint(svpp,txx);
 
-        splinePoint.id=splinePointID;
+        splinePoint.id = splinePointID;
         splinePointID++;
-        for (int i=0;i<3;i++)
-            splinePoint.tangent[i]=ptx[i]-pt1[i];
+
+        for (int i = 0; i < 3; i++) {
+            splinePoint.tangent[i] = ptx[i]-pt1[i];
+        }
+
         length = sqrt(pow(splinePoint.tangent[0],2)+pow(splinePoint.tangent[1],2)+pow(splinePoint.tangent[2],2));
-        for (int i = 0;i<3;i++)
+
+        for (int i = 0;i<3;i++) {
             splinePoint.tangent[i]/=length;
+        }
         cvMath *cMath = new cvMath();
         splinePoint.rotation= cMath->GetPerpendicularNormalVector(splinePoint.tangent);
         delete cMath;
         m_SplinePoints.push_back(splinePoint);
 
-        for(int j=1;j<interNumber;j++)
-        {
+        for(int j=1;j<interNumber;j++) {
             double tnew=i+j*1.0/interNumber;
             double tx=tnew+1.0/interNumber/m_FurtherSubdivisionNumber;
 
@@ -269,8 +288,11 @@ void Spline::Update()
             splinePoint.id=splinePointID;
             splinePointID++;
             splinePoint.pos=pt1;
-            for (int i=0;i<3;i++)
+
+            for (int i=0;i<3;i++) {
                 splinePoint.tangent[i]=ptx[i]-pt1[i];
+            }
+
             length = sqrt(pow(splinePoint.tangent[0],2)+pow(splinePoint.tangent[1],2)+pow(splinePoint.tangent[2],2));
             for (int i = 0;i<3;i++)
                 splinePoint.tangent[i]/=length;
@@ -279,9 +301,5 @@ void Spline::Update()
             delete cMath;
             m_SplinePoints.push_back(splinePoint);
         }
-        
-
-
     }
-
 }

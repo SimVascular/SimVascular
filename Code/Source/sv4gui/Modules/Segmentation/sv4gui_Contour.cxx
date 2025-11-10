@@ -54,6 +54,7 @@ sv4guiContour::sv4guiContour(const sv4guiContour &other)
     , m_Selected(other.m_Selected)
 {
   SetKernel(cKernelType::cKERNEL_CONTOUR);
+  m_PlaneGeometry = other.m_PlaneGeometry->Clone();
 }
 
 sv4guiContour::~sv4guiContour()
@@ -74,6 +75,7 @@ sv4guiContour* sv4guiContour::Clone()
 //
 void sv4guiContour::CopyContourData(sv3::Contour* contour)
 {
+  #define n_dbg_CopyContourData
   #ifdef dbg_CopyContourData
   std::cout << "[CopyContourData] ========== sv4guiContour::CopyContourData ========== " << std::endl;
   std::cout << "[CopyContourData] sv3::Contour class name: " << contour->GetClassName() << std::endl;
@@ -93,8 +95,8 @@ void sv4guiContour::CopyContourData(sv3::Contour* contour)
   contour->SetFinished(this->IsFinished());
 
   contour->SetSubdivisionNumber(this->GetSubdivisionNumber());
-  contour->SetSubdivisionType(this->GetSubdivisionType());
   contour->SetSubdivisionSpacing(this->GetSubdivisionSpacing());
+  contour->SetSubdivisionType(this->GetSubdivisionType());
 
   contour->SetControlPoints(this->GetControlPoints());
 

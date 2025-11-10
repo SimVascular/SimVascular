@@ -246,8 +246,8 @@ circleContour* circleContour::CreateByFitting(Contour* contour)
 //    newContour->SetClosed(contour->IsClosed());
     newContour->SetControlPoints(controlPoints);
 
-    newContour->SetSubdivisionType(contour->GetSubdivisionType());
     newContour->SetSubdivisionSpacing(contour->GetSubdivisionSpacing());
+    newContour->SetSubdivisionType(contour->GetSubdivisionType());
     newContour->SetSubdivisionNumber(contour->GetSubdivisionNumber());
 
     return newContour;
