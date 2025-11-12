@@ -412,20 +412,6 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
 
     auto threshold_pd = VtkUtils_ThresholdSurface(1.0, 1.0, "WallID", pd);
     pd->DeepCopy(threshold_pd);
-
-    /* dp
-    vtkSmartPointer<vtkThreshold> thresholder = vtkSmartPointer<vtkThreshold>::New();
-    thresholder->SetInputData(pd);
-    thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
-    thresholder->ThresholdBetween(1,1);
-    thresholder->Update();
-
-    vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-    surfacer->SetInputData(thresholder->GetOutput());
-    surfacer->Update();
-
-    pd->DeepCopy(surfacer->GetOutput());
-    */
   }
 
   cleaner->SetInputData(pd);

@@ -529,26 +529,6 @@ int vtkSVGeneralUtils::ThresholdPd(vtkPolyData *pd, int minVal,
 
   pd->DeepCopy(threshold_surface);
 
-  /* dp 
-  vtkNew(vtkThreshold, thresholder);
-  thresholder->SetInputData(pd);
-  thresholder->SetInputArrayToProcess(0, 0, 0, dataType, arrayName.c_str());
-  thresholder->ThresholdBetween(minVal, maxVal);
-  thresholder->Update();
-
-  // Check to see if the result has points, don't run surface filter
-  if (thresholder->GetOutput()->GetNumberOfPoints() == 0)
-    return SV_ERROR;
-
-  // Convert unstructured grid to polydata
-  vtkNew(vtkDataSetSurfaceFilter, surfacer);
-  surfacer->SetInputData(thresholder->GetOutput());
-  surfacer->Update();
-
-  // Set the final pd
-  pd->DeepCopy(surfacer->GetOutput());
-  */
-
   return SV_OK;
 }
 
@@ -580,19 +560,6 @@ int vtkSVGeneralUtils::ThresholdUg(vtkUnstructuredGrid *ug, int minVal,
   }
 
   ug->DeepCopy(threshold_volume);
-
-  /* dp
-  vtkNew(vtkThreshold, thresholder);
-  thresholder->SetInputData(ug);
-  thresholder->SetInputArrayToProcess(0, 0, 0, dataType, arrayName.c_str());
-  thresholder->ThresholdBetween(minVal, maxVal);
-  thresholder->Update();
-
-  if (thresholder->GetOutput()->GetNumberOfPoints() == 0)
-    return SV_ERROR;
-
-  ug->DeepCopy(thresholder->GetOutput());
-  */
 
   return SV_OK;
 }

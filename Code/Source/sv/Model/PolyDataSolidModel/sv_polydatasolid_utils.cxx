@@ -213,21 +213,10 @@ int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *fac
   vtkSmartPointer<vtkDataSetSurfaceFilter> getPoly = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
 
   double facenum;
-
   facenum = (double) *faceid;
-
-  // [DaveP] idThreshold->ThresholdBetween(facenum,facenum) is no longer supported.
-  //
   tempGrid = VtkUtils_ThresholdUgrid(facenum, facenum, "ModelFaceID", geom); 
-  //idThreshold->SetInputData(geom);
-  //idThreshold->SetInputArrayToProcess(0,0,0,1,"ModelFaceID");
-  //idThreshold->ThresholdBetween(facenum,facenum);
-  //idThreshold->Update();
-  //tempGrid = idThreshold->GetOutput();
-
   getPoly->SetInputData(tempGrid);
   getPoly->Update();
-
   facepd->DeepCopy(getPoly->GetOutput());
 
   if (facepd->GetNumberOfPoints() != tempGrid->GetNumberOfPoints())

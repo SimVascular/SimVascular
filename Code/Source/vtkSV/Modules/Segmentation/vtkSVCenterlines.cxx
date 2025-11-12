@@ -457,30 +457,13 @@ int vtkSVCenterlines::RequestData(
   double mAbsRange[2];
   newEdgePd->GetCellData()->GetArray("MAbs")->GetRange(mAbsRange);
   auto mAbs_threshold = VtkUtils_ThresholdUgrid(mAbsThr, mAbsRange[1], "MAbs", newEdgePd);
-  /*dp 
-  vtkNew(vtkThreshold, mAbsThresholder);
-  mAbsThresholder->SetInputData(newEdgePd);
-  mAbsThresholder->SetInputArrayToProcess(0, 0, 0, 1, "MAbs");
-  mAbsThresholder->ThresholdBetween(mAbsThr, mAbsRange[1]);
-  mAbsThresholder->Update();
-  vtkDebugMacro("Thresholded MAbs: " << mAbsThresholder->GetOutput()->GetNumberOfCells());
-  */
 
   // ------------------------------------------------------------------------
   // Threshold based on relative retention
   double mRelThr = this->RelativeThreshold;
   double mRelRange[2];
   newEdgePd->GetCellData()->GetArray("MRel")->GetRange(mRelRange);
-
-  auto MRel_threshold = VtkUtils_ThresholdUgrid(mAbsThr, mAbsRange[1], "MRel", mAbs_threshold);
-  /*dp
-  vtkNew(vtkThreshold, mRelThresholder);
-  mRelThresholder->SetInputData(mAbs_threshold);
-  mRelThresholder->SetInputArrayToProcess(0, 0, 0, 1, "MRel");
-  mRelThresholder->ThresholdBetween(mRelThr, mRelRange[1]);
-  mRelThresholder->Update();
-  vtkDebugMacro("Thresholded MRel: " << mRelThresholder->GetOutput()->GetNumberOfCells());
-  */
+  auto MRel_threshold = VtkUtils_ThresholdUgrid(mRelThr, mRelRange[1], "MRel", mAbs_threshold);
 
   // ------------------------------------------------------------------------
 
@@ -489,7 +472,6 @@ int vtkSVCenterlines::RequestData(
   // Get all separated regions from the thresholded polydata
   vtkNew(vtkConnectivityFilter, connector);
   connector->SetInputData(MRel_threshold);
-  //dp connector->SetInputData(mRelThresholder->GetOutput());
   connector->SetExtractionModeToAllRegions();
   connector->ColorRegionsOn();
   connector->Update();
@@ -519,7 +501,8 @@ int vtkSVCenterlines::RequestData(
   // Loop through
   for (int i=0; i<connector->GetNumberOfExtractedRegions(); i++)
   {
-    //dp regionThresholder->ThresholdBetween(i, i);
+    regionThresholder->SetLowerThreshold(i);
+    regionThresholder->SetUpperThreshold(i);
     regionThresholder->Update();
 
     vtkDebugMacro("Thresholded region " << i << " " << regionThresholder->GetOutput()->GetNumberOfCells());
@@ -576,7 +559,8 @@ int vtkSVCenterlines::RequestData(
   vtkNew(vtkThreshold, finalThreshold);
   finalThreshold->SetInputData(nextEdgePd);
   finalThreshold->SetInputArrayToProcess(0, 0, 0, 1, "RemovalIteration");
-  //dp finalThreshold->ThresholdBetween(finalRange[1], finalRange[1]);
+  finalThreshold->SetLowerThreshold(finalRange[1]);
+  finalThreshold->SetUpperThreshold(finalRange[1]);
   finalThreshold->Update();
 
   // Surface
