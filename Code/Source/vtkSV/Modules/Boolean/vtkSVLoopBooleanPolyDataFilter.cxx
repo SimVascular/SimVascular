@@ -1524,60 +1524,18 @@ void vtkSVLoopBooleanPolyDataFilter::Impl::PerformBoolean( vtkPolyData *output, 
   auto threshold_surface_a = VtkUtils_ThresholdSurface(-1.0, -1.0, "BooleanRegion", this->Mesh[0]); 
   vtkSmartPointer<vtkPolyData> surface1_A = vtkSmartPointer<vtkPolyData>::New();
   surface1_A->DeepCopy(threshold_surface_a);
-  /* dp
-  vtkSmartPointer<vtkThreshold> thresholder = vtkSmartPointer<vtkThreshold>::New();
-  thresholder->SetInputData(this->Mesh[0]);
-  thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
-  thresholder->ThresholdBetween(-1,-1);
-  thresholder->Update();
-
-  vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-  surfacer->SetInputData(thresholder->GetOutput());
-  surfacer->Update();
-  */
 
   auto threshold_surface_b = VtkUtils_ThresholdSurface(1.0, 1.0, "BooleanRegion", this->Mesh[0]); 
   auto surface1_B = vtkSmartPointer<vtkPolyData>::New();
   surface1_B->DeepCopy(threshold_surface_b);
-   /* dp
-  thresholder->SetInputData(this->Mesh[0]);
-  thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
-  thresholder->ThresholdBetween(1,1);
-  thresholder->Update();
-  surfacer->SetInputData(thresholder->GetOutput());
-  surfacer->Update();
-  */
 
   auto threshold_surface2_a = VtkUtils_ThresholdSurface(1.0, 1.0, "BooleanRegion", this->Mesh[1]); 
   auto surface2_A = vtkSmartPointer<vtkPolyData>::New();
   surface2_A->DeepCopy(threshold_surface2_a);
-  /* dp
-  thresholder->SetInputData(this->Mesh[1]);
-  thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
-  thresholder->ThresholdBetween(1,1);
-  thresholder->Update();
-  surfacer->SetInputData(thresholder->GetOutput());
-  surfacer->Update();
-  */
 
   auto threshold_surface2_b = VtkUtils_ThresholdSurface(-1.0, -1.0, "BooleanRegion", this->Mesh[1]); 
   auto surface2_B = vtkSmartPointer<vtkPolyData>::New();
   surface2_B->DeepCopy(threshold_surface2_b);
-  /* dp
-  thresholder->SetInputData(this->Mesh[1]);
-  thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
-  thresholder->ThresholdBetween(-1,-1);
-  thresholder->Update();
-  surfacer->SetInputData(thresholder->GetOutput());
-  surfacer->Update();
-  */
-
-  /* Keep this around for further testing.
-  writer->SetFileName("PerformBoolean_surface1_A.vtp");
-  writer->SetInputData(surface1_A);
-  writer->Update();
-  writer->Write();
-  */
 
   auto appender = vtkSmartPointer<vtkAppendPolyData>::New();
 

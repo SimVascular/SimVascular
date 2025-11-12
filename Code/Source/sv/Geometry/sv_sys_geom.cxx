@@ -4141,22 +4141,10 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
   {
     double facecaprange[2];
     auto threshold_surface = VtkUtils_ThresholdSurface(i+1.0, i+1.0, "ModelFaceID", geom);
-    /* dp
-    vtkNew(vtkThreshold, threshold1);
-    threshold1->SetInputData(geom);
-    threshold1->SetInputArrayToProcess(0,0,0,1,"ModelFaceID");
-    threshold1->ThresholdBetween(i+1,i+1);
-    threshold1->Update();
-
-    vtkNew(vtkDataSetSurfaceFilter,surfacer);
-    surfacer->SetInputData(threshold1->GetOutput());
-    surfacer->Update();
-    */
 
     vtkNew(vtkIntArray, modelfacecaps);
 
     if (VtkUtils_PDCheckArrayName(threshold_surface, 1, "CapID") != SV_OK)
-    //dp if (VtkUtils_PDCheckArrayName(surfacer->GetOutput(),1,"CapID") != SV_OK)
     {
       fprintf(stderr,"Second\n");
       fprintf(stderr,"CapID Array is not on the surface\n");
@@ -4166,7 +4154,6 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
     }
 
     modelfacecaps = vtkIntArray::SafeDownCast(threshold_surface->GetCellData()->GetArray("CapID"));
-    //dp modelfacecaps = vtkIntArray::SafeDownCast(surfacer->GetOutput()->GetCellData()->GetArray("CapID"));
 
     capone[i] = 0;
     captwo[i] = 0;
