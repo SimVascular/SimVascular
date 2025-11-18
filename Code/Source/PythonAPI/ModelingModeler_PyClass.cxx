@@ -1015,11 +1015,17 @@ ModelingModeler_union(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
   //
   // The 'simplification' argument is not used.
   //
-  SolidModel_SimplifyT simplification;
-  if (model->Union(model1, model2, simplification) != SV_OK) {
-      delete model;
-      api.error("Error performing the Boolean union.");
-      return nullptr;
+
+  try {
+      SolidModel_SimplifyT simplification;
+      if (model->Union(model1, model2, simplification) != SV_OK) {
+          delete model;
+          api.error("Error performing the Boolean union.");
+          return nullptr;
+      }
+  } catch (std::exception &e) {
+    api.error("Error performing the Boolean union.");
+    return nullptr;
   }
 
   return pyModelingModelObj;

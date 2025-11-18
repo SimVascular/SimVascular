@@ -68,6 +68,8 @@
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkUnstructuredGrid.h"
 
+#include "vtkXMLPolyDataWriter.h"
+
 #include <list>
 #include <map>
 
@@ -790,6 +792,9 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
     vtkIdType nLinePts;
     const vtkIdType *linePtIds;
     interLines->GetLines()->GetCell(3*lineId, nLinePts, linePtIds);
+    //std::cout << "------- " << std::endl;
+    //std::cout << "lineId: " << lineId << std::endl;
+    //std::cout << "nLinePts: " << nLinePts << std::endl;
 
     interceptlines->InsertNextCell(2);
     lines->InsertNextCell(2);
@@ -1495,7 +1500,7 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
         {
         delete [] ptBool;
         delete [] lineBool;
-        return SV_ERROR;
+        throw std::runtime_error("[GetSingleLoop] No cell with correct orientation found when splitting cells.");
         }
       //Add new loop
       loops->push_back(interloop);
