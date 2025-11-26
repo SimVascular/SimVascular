@@ -132,6 +132,26 @@ bool sv4guiModelElement::HasSeg(std::string segName)
 
 std::vector<sv4guiModelElement::svFace*> sv4guiModelElement::GetFaces() const
 {
+    #ifdef debug_GetFaces
+    std::string msg("[sv4guiModelElement::GetFaces] ");
+    std::cout << msg << std::endl;
+    std::cout << msg << "========== GetFaces ==========" << std::endl;
+    if (m_Faces.size() != 0) {
+      std::cout << msg << "#### sv4guiModelElement: " << this << " face0: " << m_Faces[0] << "  vpd: " << 
+          m_Faces[0]->vpd << "  #cells: " << m_Faces[0]->vpd->GetNumberOfCells() << std::endl;
+    }
+    #endif
+
+    #ifdef debug_GetFaces
+    for (auto face : m_Faces) {
+      std::cout << msg << "face->vpd: " <<  face->vpd << std::endl;
+      if (face->vpd) {
+        std::cout << msg << "face->vpd->GetNumberOfCells(): " <<  face->vpd->GetNumberOfCells() << std::endl;
+        break;
+      }
+    }
+    #endif
+
     return m_Faces;
 }
 
@@ -149,7 +169,20 @@ std::vector<std::string> sv4guiModelElement::GetFaceNames() const
 
 void sv4guiModelElement::SetFaces(std::vector<sv4guiModelElement::svFace*> faces)
 {
-    m_Faces=faces;
+    #ifdef debug_SetFaces
+    std::string msg("[sv4guiModelElement::SetFaces] ");
+    std::cout << msg << std::endl;
+    std::cout << msg << "========== SetFaces ==========" << std::endl;
+    std::cout << msg << "sv4guiModelElement: " << this << std::endl;
+    for (int i = 0; i < faces.size(); i++) {
+      auto face = faces[i];
+      std::cout << msg << "face: " <<  face << std::endl;
+      std::cout << msg << "face->vpd: " <<  face->vpd << std::endl;
+      std::cout << msg << "face->vpd->GetNumberOfCells(): " <<  face->vpd->GetNumberOfCells() << std::endl;
+    }
+    #endif
+
+    m_Faces = faces;
 }
 
 //---------

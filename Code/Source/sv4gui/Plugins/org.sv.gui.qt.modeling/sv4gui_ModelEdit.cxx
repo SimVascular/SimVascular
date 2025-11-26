@@ -53,7 +53,10 @@
 
 #include <usModuleRegistry.h>
 
+#include <vtkIdList.h>
+#include <vtkNew.h>
 #include <vtkProperty.h>
+#include <vtkVertexGlyphFilter.h>
 
 #include <QStandardItemModel>
 #include <QInputDialog>
@@ -122,11 +125,10 @@ void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
     m_Parent = parent;
     ui->setupUi(parent);
 
-
     m_RenderWindow = GetRenderWindowPart(mitk::WorkbenchUtil::OPEN);
     //std::cout << msg << "parent: " << parent << std::endl;
 
-    if (m_RenderWindow==nullptr) {
+    if (m_RenderWindow == nullptr) {
         parent->setEnabled(false);
         MITK_ERROR << "Plugin ModelEdit Init Error: No M_renderWindow!";
         return;
@@ -313,13 +315,28 @@ void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
 
     // Extract Centerlines sub-panel 
     //
-    m_CapSelectionWidget=new sv4guiCapSelectionWidget();
+    m_CapSelectionWidget = new sv4guiCapSelectionWidget();
     m_CapSelectionWidget->move(400,400);
     m_CapSelectionWidget->hide();
     m_CapSelectionWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
 
     connect(ui->btnExtractCenterlines, SIGNAL(clicked()), this, SLOT(ShowCapSelectionWidget()) );
     connect(m_CapSelectionWidget,SIGNAL(accepted()), this, SLOT(ExtractCenterlines()));
+
+    m_MarkersNode = mitk::DataNode::New();
+    m_MarkersNode->SetName("markers");
+    m_MarkersNode->SetVisibility(true);
+    m_MarkersContainer = sv4guiModelMarkerContainer::New();
+    m_MarkersNode->SetData(m_MarkersContainer);
+    GetDataStorage()->Add(m_MarkersNode, m_ModelNode);
+
+    if (m_MarkerMapper.IsNull()) { 
+      m_MarkerMapper = sv4guiModelMarkerMapper::New();
+      m_MarkerMapper->SetDataNode(m_MarkersNode);
+      m_MarkerMapper->SetColor(1.0, 0.0, 0.0);
+      m_MarkersNode->SetMapper(mitk::BaseRenderer::Standard3D, m_MarkerMapper);
+  }
+
 
 }
 
@@ -396,9 +413,9 @@ int sv4guiModelEdit::GetTimeStep()
 //
 void sv4guiModelEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part, const QList<mitk::DataNode::Pointer>& nodes)
 {
-  //std::string msg("[sv4guiModelEdit::OnSelectionChanged] ");
-  //std::cout << msg << "========== OnSelectionChanged ==========" << std::endl;
-  //std::cout << msg << "m_isVisible: " << m_isVisible << std::endl;
+  std::string msg("[sv4guiModelEdit::OnSelectionChanged] ");
+  std::cout << msg << "========== OnSelectionChanged ==========" << std::endl;
+  std::cout << msg << "m_isVisible: " << m_isVisible << std::endl;
 
   if (!m_isVisible) {
     return;
@@ -447,8 +464,16 @@ void sv4guiModelEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part, co
 
 void sv4guiModelEdit::UpdateGUI()
 {
-    //std::string msg("[sv4guiModelEdit::UpdateGUI] ");
-    //std::cout << msg << "========== UpdateGUI ==========" << std::endl;
+    std::string msg("[sv4guiModelEdit::UpdateGUI] ");
+    std::cout << msg << "========== UpdateGUI ==========" << std::endl;
+
+    auto modelElement = dynamic_cast<sv4guiModelElementPolyData*>(m_Model->GetModelElement(0));
+    std::cout << msg << "modelElement: " << modelElement << std::endl;
+
+    if (modelElement != nullptr) {
+      auto faces = modelElement->GetFaces();
+      std::cout << msg << "faces[0]->vpd->GetNumberOfCells(): " <<  faces[0]->vpd->GetNumberOfCells() << std::endl;
+    }
 
     //update top part
     //------------------------------------------------------------------------
@@ -686,8 +711,14 @@ void sv4guiModelEdit::UpdateBoxWidget(double idx)
 
 void sv4guiModelEdit::UpdateFaceListSelection()
 {
+    std::string msg("[sv4guiModelEdit::UpdateFaceListSelection] ");
+    std::cout << msg << "========== UpdateFaceListSelection ==========" << std::endl;
+    std::cout << msg << "m_Model: " << m_Model << std::endl;
+
     if(!m_Model) return;
-    sv4guiModelElement* modelElement=m_Model->GetModelElement();
+
+    sv4guiModelElement* modelElement = m_Model->GetModelElement();
+
     if(!modelElement) return;
 
     if(m_FaceListTableModel==nullptr)
@@ -811,6 +842,10 @@ void sv4guiModelEdit::SetupFaceListTable()
 
 void sv4guiModelEdit::UpdateFaceData(QStandardItem* item)
 {
+    std::string msg("[sv4guiModelEdit::UpdateFaceData] ");
+    std::cout << msg << "========== UpdateFaceData ==========" << std::endl;
+    std::cout << msg << "m_Model: " << m_Model << std::endl;
+
     if(!m_Model)
         return;
 
@@ -902,7 +937,11 @@ void sv4guiModelEdit::TableFaceListSelectionChanged( const QItemSelection & /*se
 }
 
 
-void sv4guiModelEdit::ToggleVisibility(const QModelIndex &index){
+void sv4guiModelEdit::ToggleVisibility(const QModelIndex &index)
+{
+    std::string msg("[sv4guiModelEdit::ToggleVisibility] ");
+    std::cout << msg << "========== ToggleVisibility ==========" << std::endl;
+    std::cout << msg << "m_Model: " << m_Model << std::endl;
 
     if(!m_Model)
         return;
@@ -1541,6 +1580,8 @@ void sv4guiModelEdit::RemoveObservers()
 
 void sv4guiModelEdit::ClearAll()
 {
+    std::string msg("[sv4guiModelEdit::ClearAll] ");
+    std::cout << msg << "========== ClearAll ==========" << std::endl;
     m_Model=nullptr;
     m_ModelNode=nullptr;
 
@@ -1624,7 +1665,7 @@ void sv4guiModelEdit::ShowCapSelectionWidget()
 //
 void sv4guiModelEdit::CreateModel()
 {
-    #define n_debug_CreateModel_
+    #define debug_CreateModel_
     #ifdef debug_CreateModel_
     std::string msg("[sv4guiModelEdit::CreateModel] ");
     std::cout << msg << std::endl;
@@ -1651,48 +1692,48 @@ void sv4guiModelEdit::CreateModel()
 
     std::vector<mitk::DataNode::Pointer> segNodes;
 
-    for(int i=0;i<segNames.size();i++)
-    {
-        mitk::DataNode::Pointer node=GetDataStorage()->GetNamedDerivedNode(segNames[i].c_str(),segFolderNode);
-        if(node.IsNotNull())
+    for (int i = 0; i < segNames.size(); i++) {
+        mitk::DataNode::Pointer node = GetDataStorage()->GetNamedDerivedNode(segNames[i].c_str(),segFolderNode);
+        if (node.IsNotNull()) {
             segNodes.push_back(node);
+        }
     }
 
-    //sanity check
-    int numSeg2D=0;
-    int numSeg3D=0;
+    // Sanity check
+    int numSeg2D = 0;
+    int numSeg3D = 0;
 
-    for(int i=0;i<segNodes.size();i++)
-    {
+    for(int i=0;i<segNodes.size();i++) {
         sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*>(segNodes[i]->GetData());
-        if(group!=nullptr)
-        {
+
+        if(group!=nullptr) {
             numSeg2D++;
             continue;
         }
+
         sv4guiMitkSeg3D* seg3D = dynamic_cast<sv4guiMitkSeg3D*>(segNodes[i]->GetData());
-        if(seg3D!=nullptr)
-        {
+
+        if(seg3D!=nullptr) {
             numSeg3D++;
             continue;
         }
-
     }
 
-    if(numSeg2D+numSeg3D==0)
-    {
+    if(numSeg2D+numSeg3D==0) {
         QMessageBox::warning(m_Parent,"Warning","No valid segmentations are used.");
         return;
     }
 
-    if(numSeg2D==0 && (m_ModelType=="OpenCASCADE" || m_ModelType=="Parasolid"))
-    {
+    if(numSeg2D==0 && (m_ModelType=="OpenCASCADE" || m_ModelType=="Parasolid")) {
         QMessageBox::warning(m_Parent,"Warning","No valid 2D segmentations are used.");
         return;
     }
 
-    sv4guiModelElement* newModelElement=nullptr;
-    sv4guiModelElement* modelElement=m_Model->GetModelElement();
+    sv4guiModelElement* newModelElement = nullptr;
+    sv4guiModelElement* modelElement = m_Model->GetModelElement();
+    #ifdef debug_CreateModel_
+    std::cout << msg << "modelElement: " << modelElement << std::endl;
+    #endif
 
     mitk::ProgressBar::GetInstance()->Reset();
     mitk::ProgressBar::GetInstance()->AddStepsToDo(3);
@@ -1701,82 +1742,79 @@ void sv4guiModelEdit::CreateModel()
     WaitCursorOn();
 
     svLoftingParam* param=nullptr;
-    int useUniform=m_SegSelectionWidget->IfUseUniform();
+    int useUniform = m_SegSelectionWidget->IfUseUniform();
     #ifdef debug_CreateModel_
     std::cout << msg << "useUniform: " << useUniform << std::endl;
     #endif
 
-    if(useUniform)
-        param=new svLoftingParam(m_SegSelectionWidget->GetLoftingParam());
+    if (useUniform) {
+        param = new svLoftingParam(m_SegSelectionWidget->GetLoftingParam());
+    }
 
-    int created = 1;
+    bool created = true;
     QString statusText="Model has been created.";
+    PolyDataSolidCheckResults check_results;
 
-    sv4guiModelElement* tempElement=sv4guiModelElementFactory::CreateModelElement(m_ModelType);
+    sv4guiModelElement* tempElement = sv4guiModelElementFactory::CreateModelElement(m_ModelType);
     #ifdef debug_CreateModel_
     std::cout << msg << "tempElement: " << tempElement << std::endl;
     #endif
 
-    if(tempElement)
-    {
+    if (tempElement) {
         #ifdef debug_CreateModel_
         std::cout << msg << "CreateModelElement ... " << std::endl;
+        std::cout << msg << "m_ModelType: " << m_ModelType << std::endl;
         #endif
         int stats[2]={0};
-        if(m_ModelType=="PolyData")
-        {
-            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,param,stats);
-        }
-        else if(m_ModelType=="OpenCASCADE")
-        {
-            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,param,nullptr,20.0);
-        }
-        else if(m_ModelType=="Parasolid")
-        {
-            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,nullptr,nullptr,1.0);
+
+        if (m_ModelType == "PolyData") {
+            newModelElement = tempElement->CreateModelElement(segNodes,numSampling,param,check_results,stats);
+
+        } else if (m_ModelType == "OpenCASCADE") {
+            newModelElement = tempElement->CreateModelElement(segNodes,numSampling,param,check_results,nullptr,20.0);
+
+        } else if (m_ModelType == "Parasolid") {
+            newModelElement = tempElement->CreateModelElement(segNodes,numSampling,nullptr,check_results,nullptr,1.0);
         }
 
         #ifdef debug_CreateModel_
         std::cout << msg << "newModelElement: " << newModelElement << std::endl;
         #endif
 
-        if(newModelElement==nullptr)
-        {
-            statusText="Failed to create model.";
-            created = 0;
-        }
-        else if(m_ModelType=="PolyData")
-        {
-            statusText=statusText+" Number of Free Edges: "+ QString::number(stats[0])+", Number of Bad Edges: "+ QString::number(stats[1]);
+        if (newModelElement == nullptr) {
+            statusText = "Failed to create model.";
+            created = false;
+
+        } else if (m_ModelType == "PolyData") {
+            statusText = statusText+" Number of Free Edges: "+ QString::number(stats[0])+", Number of Bad Edges: "+ QString::number(stats[1]);
+            #ifdef debug_CreateModel_
+            std::cout << msg << "Number of Free Edges: " << stats[0] << std::endl;
+            std::cout << msg << "Number of bad Edges: " << stats[1] << std::endl;
+            #endif
+
         }
 
-        if(newModelElement)
-        {
+        if (newModelElement) {
             newModelElement->SetUseUniform(useUniform);
-            if(useUniform)
+            if (useUniform) {
                 newModelElement->SetLoftingParam(param);
+            }
         }
     }
 
     delete tempElement;
 
-//    if(param)
-//        delete param;
-
     WaitCursorOff();
     mitk::ProgressBar::GetInstance()->Progress(2);
     mitk::StatusBar::GetInstance()->DisplayText(statusText.toStdString().c_str());
-    if (!created)
-    {
+
+    if (!created) {
       QMessageBox::warning(m_Parent,"Warning","Error creating model.");
       return;
     }
 
-    if(newModelElement!=nullptr)
-    {
-//        m_LocalOperationforBlendRegion=false;
-
-        int timeStep=GetTimeStep();
+    if (newModelElement != nullptr) {
+        int timeStep = GetTimeStep();
 
         mitk::OperationEvent::IncCurrObjectEventId();
         sv4guiModelOperation* doOp = new sv4guiModelOperation(sv4guiModelOperation::OpSETMODELELEMENT,timeStep,newModelElement);
@@ -1786,30 +1824,54 @@ void sv4guiModelEdit::CreateModel()
 
         m_Model->ExecuteOperation(doOp);
 
-//        UpdateGUI();
+        std::vector<std::string> segNames = newModelElement->GetSegNames();
+        std::vector<std::string> faceNames = newModelElement->GetFaceNames();
 
-        std::vector<std::string> segNames=newModelElement->GetSegNames();
-        std::vector<std::string> faceNames=newModelElement->GetFaceNames();
-        if(faceNames.size()<=2*segNames.size()+1)
+        // This seems to return if the model is valid, even if it 
+        // has free edges.
+        //
+        if (faceNames.size() <= 2*segNames.size()+1) {
+            #ifdef debug_CreateModel_
+            std::cout << msg << "#### Number of faceNames <= 2 * number of segment names " << std::endl;
+            std::cout << msg << "  faceNames.size(): " << faceNames.size() << std::endl;
+            std::cout << msg << "  2*segNames.size()+1: " << 2*segNames.size()+1 << std::endl;
+
+            std::cout << msg << "segNames ... " << std::endl;
+            for (auto name : segNames) {
+               std::cout << msg << "  name: " << name << std::endl;
+            }
+
+            std::cout << msg << "faceNames ... " << std::endl;
+            for (auto name : faceNames) {
+               std::cout << msg << "  name: " << name << std::endl;
+            }
+ 
+            std::cout << msg << "return " << std::endl;
+            #endif
+
+            ProcessResultsCheck(newModelElement, check_results);
+
             return;
+        }
 
-        //find possible extra faces
+        // Find possible extra faces.
+        //
         std::vector<std::string> faceNamesToCheck;
+        std::string wallPrefix = "wall_";
+        std::string capPrefix = "cap_";
 
-        std::string wallPrefix="wall_";
-        std::string capPrefix="cap_";
-        if(newModelElement->GetType()=="Parasolid")
-            capPrefix="";
+        if (newModelElement->GetType() == "Parasolid") {
+            capPrefix = "";
+        }
 
-        for(int i=0;i<segNames.size();++i)
-        {
+        for (int i = 0; i < segNames.size(); ++i) {
             #ifdef debug_CreateModel_
             std::cout << msg << "---------- seg " << i << " ----------" << std::endl;
             std::cout << msg << "segNames[i]: " << segNames[i] << std::endl;
             #endif
 
-            int capNumber=0;
-            int wallNumber=0;
+            int capNumber = 0;
+            int wallNumber = 0;
 
             QString wallName = QString::fromStdString(wallPrefix+segNames[i]);
             QString capName = QString::fromStdString(capPrefix+segNames[i]);
@@ -1917,6 +1979,118 @@ void sv4guiModelEdit::CreateModel()
         }
 
     }
+}
+
+//---------------------
+// ProcessResultsCheck 
+//---------------------
+//
+void sv4guiModelEdit::ProcessResultsCheck(sv4guiModelElement* newModelElement, PolyDataSolidCheckResults& check_results)
+{
+  
+  #define debug_ProcessResultsCheck
+  #ifdef debug_ProcessResultsCheck
+  std::string msg("[sv4guiModelEdit::ProcessResultsCheck] ");
+  std::cout << msg << "========== ProcessResultsCheck ==========" << std::endl;
+  #endif
+
+  if (check_results.invalid_cells.size() == 0) {
+    return;
+  }
+
+  auto model = newModelElement->GetWholeVtkPolyData();
+
+  auto model_faces = vtkIntArray::SafeDownCast(model->GetCellData()-> GetScalars("ModelFaceID"));
+  model->BuildLinks();
+  auto model_points = model->GetPoints();
+
+  int num_invalid_cells = check_results.invalid_cells.size();
+  auto cell_centers = vtkSmartPointer<vtkPoints>::New();
+
+  for (int cell_id : check_results.invalid_cells) {
+    int face_id = model_faces->GetValue(cell_id);
+
+    const vtkIdType *pts;
+    vtkIdType npts = 0;
+    model->GetCellPoints(cell_id, npts, pts);
+
+    auto cellNeighbors = vtkSmartPointer<vtkIdList>::New();
+    #ifdef debug_ProcessResultsCheck
+    std::cout << msg << ">>>> cell id: " << cell_id << "  face id: " << face_id << std::endl;
+    #endif
+    double cell_center[3] = {};
+    double point[3];
+
+    for (int j = 0; j < npts; j++) {
+      vtkIdType p0 = pts[j];
+      model_points->GetPoint(p0, point);
+      cell_center[0] += point[0];
+      cell_center[1] += point[1];
+      cell_center[2] += point[2];
+      cell_centers->InsertNextPoint(point);
+      #ifdef debug_ProcessResultsCheck
+      std::cout << msg << "  point: " << point[0] << "  " << point[1] << " " << point[2] << std::endl;
+      #endif
+    }
+
+    double point1[3], point2[3], point3[3];
+    model->GetPoint(pts[0],point1);
+    model->GetPoint(pts[1],point2);
+    model->GetPoint(pts[2],point3);
+    double area = vtkTriangle::TriangleArea(point1,point2,point3);
+
+    cell_center[0] /= npts;
+    cell_center[1] /= npts;
+    cell_center[2] /= npts;
+    //cell_centers->InsertNextPoint(cell_center);
+    #ifdef debug_ProcessResultsCheck
+    std::cout << msg << "  cell_center: " << cell_center[0] << "  " << cell_center[1] << " " << cell_center[2] << std::endl;
+    std::cout << msg << "  cell area: " << area << std::endl;
+    #endif
+
+    for (int j = 0; j < npts; j++) {
+      vtkIdType p0 = pts[j];
+      vtkIdType p1 = pts[(j+1) % npts];
+      model->GetCellEdgeNeighbors(cell_id, p0, p1, cellNeighbors);
+      int num_adj_cells = cellNeighbors->GetNumberOfIds();
+      #ifdef debug_ProcessResultsCheck
+      std::cout << msg << "     num_adj_cells: " << num_adj_cells << std::endl;
+      #endif
+
+      if (num_adj_cells == 1) {
+        #ifdef debug_ProcessResultsCheck
+        std::cout << msg << "  num_adj_cells: " << num_adj_cells << std::endl;
+        #endif
+        for (vtkIdType k = 0; k < num_adj_cells; k++) {
+          int adj_cell = cellNeighbors->GetId(k);
+          int adj_face_id = model_faces->GetValue(adj_cell);
+          #ifdef debug_ProcessResultsCheck
+          std::cout << msg << "  adj_cell: " << adj_cell << "  face id: " << adj_face_id << std::endl;
+          #endif
+        }
+      }
+    }
+  }
+
+  auto pointsPolydata = vtkSmartPointer<vtkPolyData>::New();
+  pointsPolydata->SetPoints(cell_centers);
+  auto vertexFilter = vtkSmartPointer<vtkVertexGlyphFilter>::New();
+  vertexFilter->SetInputData(pointsPolydata);
+  vertexFilter->Update();
+
+  auto polydata = vtkSmartPointer<vtkPolyData>::New();
+  polydata->ShallowCopy(vertexFilter->GetOutput());
+  #ifdef debug_ProcessResultsCheck
+  std::cout << msg << "polydata num points: " << polydata->GetNumberOfPoints() << std::endl;
+  #endif
+
+  m_MarkersContainer->SetMarkers(polydata);
+
+  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+
+  QMessageBox::warning(m_Parent, "Warning", 
+    QString::number(num_invalid_cells) + " invalid triangles have been identified for the model and are shown as read markers.\n" +
+    "The model is displayed only for reference and should not be used for meshing.\n"); 
 }
 
 //--------------------
@@ -2176,8 +2350,10 @@ bool sv4guiModelEdit::MarkCells(sv4guiModelElementPolyData* modelElement)
 //
 void sv4guiModelEdit::ModelOperate(int operationType)
 {
-    //std::string msg("[sv4guiModelEdit::ModelOperate] ");
-    //std::cout << msg << "========== ModelOperate ==========" << std::endl;
+    std::string msg("[sv4guiModelEdit::ModelOperate] ");
+    std::cout << msg << "========== ModelOperate ==========" << std::endl;
+    std::cout << msg << "m_Model: " << m_Model << std::endl;
+    std::cout << msg << "operationType: " << operationType << std::endl;
 
     if(m_Model==nullptr) return;
 

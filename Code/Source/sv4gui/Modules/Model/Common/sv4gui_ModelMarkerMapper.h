@@ -29,46 +29,65 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUI_MODELELEMENTOCCT_H
-#define SV4GUI_MODELELEMENTOCCT_H
+#ifndef SV4GUI_MODEL_MARKER_MAPPER_H
+#define SV4GUI_MODEL_MARKER_MAPPER_H
 
-#include <sv4guiModuleModelOCCTExports.h>
+#include "mitkVtkMapper.h"
+#include "mitkBaseRenderer.h"
+#include "mitkLocalStorageHandler.h"
 
-#include "sv4gui_ModelElement.h"
-#include "sv4gui_ModelElementAnalytic.h"
+#include <vtkAssembly.h>
+#include <vtkPropAssembly.h>
+#if VTK_MAJOR_VERSION == 6
+    #include <vtkPainterPolyDataMapper.h>
+#else
+    #include <vtkOpenGLPolyDataMapper.h>
+#endif
+#include <vtkActor.h>
+#include <vtkSmartPointer.h>
+#include <vtkActor.h>
+#include <string>
 
-#include "sv_OCCTSolidModel.h"
-
-class SV4GUIMODULEMODELOCCT_EXPORT sv4guiModelElementOCCT : public sv4guiModelElementAnalytic
+class sv4guiModelMarkerMapper : public mitk::VtkMapper
 {
 public:
 
-    sv4guiModelElementOCCT();
+    mitkClassMacro(sv4guiModelMarkerMapper, mitk::VtkMapper);
 
-    sv4guiModelElementOCCT(const sv4guiModelElementOCCT &other);
+    itkFactorylessNewMacro(Self)
+    itkCloneMacro(Self)
 
-    virtual ~sv4guiModelElementOCCT();
+    class LocalStorage : public mitk::Mapper::BaseLocalStorage
+    {
+    public:
+        vtkSmartPointer<vtkAssembly> m_PropAssembly;
+        LocalStorage() {
+            m_PropAssembly = vtkSmartPointer<vtkAssembly>::New();
+        }
+        ~LocalStorage() { }
+    };
 
-    virtual sv4guiModelElementOCCT* Clone() override;
+    virtual vtkProp *GetVtkProp(mitk::BaseRenderer *renderer) override;
 
-    static sv4guiModelElement* CreateModelElement();
+    void SetColor(const float red, const float green, const float blue);
 
-    virtual sv4guiModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
-                                    , int numSamplingPts
-                                    , svLoftingParam *param
-                                    , PolyDataSolidCheckResults& check_results
-                                    , int* stats = nullptr
-                                    , double maxDist = 20.0
-                                    , int noInterOut = 1
-                                    , double tol = 1e-6
-                                    , unsigned int t = 0) override;
+    mitk::LocalStorageHandler<LocalStorage> m_LSH;
 
-    virtual sv4guiModelElement* CreateModelElementByBlend(std::vector<sv4guiModelElement::svBlendParamRadius*> blendRadii
-                                                      , sv4guiModelElement::svBlendParam* param) override;
+    std::string mode;
 
-    virtual bool ReadFile(std::string filePath) override;
+    bool m_needsUpdate = true;
+    bool m_box = false;
+    double m_seedRadius = 0.5;
+    bool m_NewMesh = true;
+    float m_Color[3];
 
-    virtual bool WriteFile(std::string filePath) override;
+protected:
+
+    sv4guiModelMarkerMapper();
+
+    virtual ~sv4guiModelMarkerMapper();
+    virtual void GenerateDataForRenderer(mitk::BaseRenderer* renderer) override;
+    virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
 };
 
-#endif // SV4GUI_MODELELEMENTOCCT_H
+#endif 

@@ -64,6 +64,7 @@ sv4guiModelElement* sv4guiModelElementOCCT::CreateModelElement()
 sv4guiModelElement* sv4guiModelElementOCCT::CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
                                 , int numSamplingPts
                                 , svLoftingParam *param
+                                , PolyDataSolidCheckResults& check_results
                                 , int* stats
                                 , double maxDist
                                 , int noInterOut

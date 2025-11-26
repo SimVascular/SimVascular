@@ -38,6 +38,7 @@
 #include "sv_SolidModel.h"
 
 #include "sv4gui_ContourGroup.h"
+#include "sv_PolyDataSolid.h"
 
 #include <mitkDataNode.h>
 
@@ -278,14 +279,12 @@ public:
 
     int GetNumSampling();
 
-    virtual sv4guiModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
-                                               , int numSamplingPts
-                                               , svLoftingParam *param
-                                               , int* stats = nullptr
-                                               , double maxDist = 1.0
-                                               , int noInterOut = 1
-                                               , double tol = 1e-6
-                                               , unsigned int t = 0) {return nullptr;}
+    virtual sv4guiModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes, 
+        int numSamplingPts, svLoftingParam *param, PolyDataSolidCheckResults& check_results, 
+        int* stats = nullptr, double maxDist = 1.0, int noInterOut = 1, double tol = 1e-6, unsigned int t = 0)
+        {
+          return nullptr;
+        }
 
     virtual sv4guiModelElement* CreateModelElementByBlend(std::vector<sv4guiModelElement::svBlendParamRadius*> blendRadii
                                                       , sv4guiModelElement::svBlendParam* param) {return nullptr;}

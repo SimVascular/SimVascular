@@ -38,19 +38,26 @@
 #include "sv4gui_ContourGroup.h"
 #include "sv4gui_ModelElement.h"
 #include "sv4gui_ModelElementPolyData.h"
+#include "sv_PolyDataSolid.h"
 
 class SV4GUIMODULEMODEL_EXPORT sv4guiModelUtils
 {
 
 public:
 
-    static vtkPolyData* CreatePolyData(std::vector<sv4guiContourGroup*> groups, std::vector<vtkPolyData*> vtps, int numSamplingPts, svLoftingParam *param, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
+    static vtkPolyData* CreatePolyData(std::vector<sv4guiContourGroup*> groups, std::vector<vtkPolyData*> vtps, 
+        int numSamplingPts, svLoftingParam *param, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
 
-    static sv4guiModelElementPolyData* CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], svLoftingParam *param, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
+    static sv4guiModelElementPolyData* CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, 
+        int numSamplingPts, 
+        PolyDataSolidCheckResults& check_results,
+        int stats[], svLoftingParam *param, unsigned int t = 0, int noInterOut = 1, 
+        double tol = 1e-6);
 
     static vtkPolyData* CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, sv4guiModelElement::svBlendParam* param);
 
-    static sv4guiModelElementPolyData* CreateModelElementPolyDataByBlend(sv4guiModelElementPolyData* mepdsrc, std::vector<sv4guiModelElement::svBlendParamRadius*> blendRadii, sv4guiModelElement::svBlendParam* param);
+    static sv4guiModelElementPolyData* CreateModelElementPolyDataByBlend(sv4guiModelElementPolyData* mepdsrc, 
+        std::vector<sv4guiModelElement::svBlendParamRadius*> blendRadii, sv4guiModelElement::svBlendParam* param);
 
     static vtkPolyData* CreateLoftSurface(sv4guiContourGroup* contourGroup, int numSamplingPts, int addCaps, svLoftingParam* param = nullptr, unsigned int t = 0);
 

@@ -71,6 +71,8 @@
 
 #include "sv_polydatasolid_utils.h"
 
+#include "vtkXMLPolyDataWriter.h"
+
 #define vtkNew(type,name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
@@ -393,9 +395,15 @@ int sys_geom_all_union( cvPolyData **srcs,int numSrcs,int nointerbool,double tol
 
   vtkNew(vtkSVMultiplePolyDataIntersectionFilter,vesselInter);
 
-  for (int i=0;i<numSrcs;i++)
-  {
+  for (int i=0;i<numSrcs;i++) {
     vtkPolyData *newPd = srcs[i]->GetVtkPolyData();
+
+    std::string file_name = "sys_geom_all_union_pd_" + std::to_string(i) + ".vtp";
+    auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    writer->SetFileName(file_name.c_str());
+    writer->SetInputData(newPd);
+    writer->Write();
+
     vesselInter->AddInputData(newPd);
   }
 
@@ -415,6 +423,10 @@ int sys_geom_all_union( cvPolyData **srcs,int numSrcs,int nointerbool,double tol
     fflush(stderr);
     return SV_ERROR;
   }
+
+  #ifdef debug_CreatePolyData_
+  std::cout << msg << "vesselInter->GetStatus(): " << vesselInter->GetStatus() << std::endl;
+  #endif
 
   if (vesselInter->GetStatus() == 0)
   {
@@ -551,13 +563,43 @@ int sys_geom_subtract( cvPolyData *srcA, cvPolyData *srcB, double tolerance,cvPo
   return SV_OK;
 }
 
-int sys_geom_checksurface( cvPolyData *src, int stats[],double tolerance)
+//-----------------------
+// sys_geom_checksurface
+//-----------------------
+// Check that a surface is watertight.
+//
+int sys_geom_checksurface( cvPolyData *src, int stats[] ,double tolerance, PolyDataSolidCheckResults& check_results)
 {
+  #define debug_sys_geom_checksurface 
+  #ifdef debug_sys_geom_checksurface
+  std::string msg("[sys_geom_checksurface] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== sys_geom_checksurface =========" << std::endl;
+  std::cout << msg << "tolerance: " << tolerance << std::endl;
+  #endif
+
   vtkPolyData *pd = src->GetVtkPolyData();
 
   try {
     double surfstats[2];
-    vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckSurface(pd,surfstats,tolerance);
+    #ifdef debug_sys_geom_checksurface
+    std::cout << msg << "CleanAndCheckSurface ... " << std::endl;
+    #endif
+
+    std::string file_name = "sys_geom_checksurface_pd.vtp";
+    auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    writer->SetFileName(file_name.c_str());
+    writer->SetInputData(pd);
+    writer->Write();
+
+    vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckSurface(pd,surfstats,tolerance,check_results);
+
+    #ifdef debug_sys_geom_checksurface
+    std::cout << msg << "Done CleanAndCheckSurface " << std::endl;
+    std::cout << msg << "surfstats[0]: " << surfstats[0] << std::endl;
+    std::cout << msg << "surfstats[1]: " << surfstats[1] << std::endl;
+    #endif
+
     stats[0] = surfstats[0];
     stats[1] = surfstats[1];
 
@@ -3209,11 +3251,7 @@ int sys_geom_ReplacePointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math
 /* sys_geom_set_array_for_local_op_sphere */
 /* -------------- */
 
-/** @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- *
+/** 
  *  @brief Function to set a boolean array on the surface for local mesh operations.
  *  Points are set based on cells or points in spherical region. If based on cells,
  *  cell is determine to be in sphere if the centroid of the cell is within the sphere.
@@ -3315,11 +3353,7 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
 /* sys_geom_set_array_for_local_op_face */
 /* -------------- */
 
-/** @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- *
+/** 
  *  @brief Function to set a boolean array on the surface for local mesh operations.
  *  Points are set based on an id of a given array
  *  @param *pd The input polydata on which to set an array
@@ -3437,11 +3471,7 @@ int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char
 /* sys_geom_set_array_for_local_op_cells */
 /* -------------- */
 
-/** @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- *
+/** 
  *  @brief Function to set a boolean array on the surface for local mesh operations.
  *  Points are set based on an id of a given array
  *  @param *pd The input polydata on which to set an array
@@ -3839,9 +3869,18 @@ int sys_geom_local_constrain_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
  *  @return SV_OK if the function executes properly
  */
 
-int sys_geom_local_linear_subdivision( cvPolyData *pd,cvPolyData **outpd, int numiters,
+int sys_geom_local_linear_subdivision( cvPolyData *pd, cvPolyData **outpd, int numiters,
 		char *pointarrayname, char *cellarrayname)
 {
+  #define debug_sys_geom_local_linear_subdivision 
+  #ifdef debug_sys_geom_local_linear_subdivision
+  std::string msg("[sys_geom_local_linear_subdivision] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== sys_geom_local_linear_subdivision =========" << std::endl;
+  std::cout << msg << "pd: " << pd << std::endl;
+  std::cout << msg << "numiters: " << numiters << std::endl;
+  #endif
+
   vtkPolyData *geom = pd->GetVtkPolyData();
   cvPolyData *result = nullptr;
 
@@ -3852,28 +3891,36 @@ int sys_geom_local_linear_subdivision( cvPolyData *pd,cvPolyData **outpd, int nu
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
   */
 
+  #ifdef debug_sys_geom_local_linear_subdivision
+  std::cout << msg << "geom: " << geom << std::endl;
+  #endif
+
   try {
     vtkNew(vtkSVLocalLinearSubdivisionFilter,subdivider);
     subdivider->SetInputData(geom);
-    if (pointarrayname != 0)
-    {
+
+    if (pointarrayname != 0) {
       subdivider->SetSubdividePointArrayName(pointarrayname);
       subdivider->UsePointArrayOn();
     }
-    if (cellarrayname != 0)
-    {
+
+    if (cellarrayname != 0) {
       subdivider->SetSubdivideCellArrayName(cellarrayname);
       subdivider->UseCellArrayOn();
     }
+
     subdivider->SetNumberOfSubdivisions(numiters);
     subdivider->Update();
 
     result = new cvPolyData( subdivider->GetOutput());
     *outpd = result;
-  }
-  catch (...) {
+
+  } catch (...) {
     fprintf(stderr,"ERROR in local subdivision.\n");
     fflush(stderr);
+    #ifdef debug_sys_geom_local_linear_subdivision
+    std::cout << msg << "**** ERROR in local subdivision. " << std::endl;
+    #endif
     return SV_ERROR;
   }
 
@@ -4083,11 +4130,7 @@ int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numblenditers,
 /* sys_geom_set_ids_for_caps */
 /* -------------- */
 
-/** @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- *
+/** 
  *  @brief Function to set ids in order to retain face names from Boolean
  *  operation. Lots of sneaky tricks here
  *  @param *pd The polydata to set the ids on

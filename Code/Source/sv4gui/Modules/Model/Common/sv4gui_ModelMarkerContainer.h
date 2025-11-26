@@ -29,46 +29,46 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUI_MODELELEMENTOCCT_H
-#define SV4GUI_MODELELEMENTOCCT_H
+#ifndef SV4GUI_MODEL_MARKER_CONTAINER_H
+#define SV4GUI_MODEL_MARKER_CONTAINER_H 
 
-#include <sv4guiModuleModelOCCTExports.h>
+#include <iostream>
+#include <vector>
+#include "mitkBaseData.h"
+#include "vtkPolyData.h"
 
-#include "sv4gui_ModelElement.h"
-#include "sv4gui_ModelElementAnalytic.h"
+class sv4guiModelMarkerContainer : public mitk::BaseData {
 
-#include "sv_OCCTSolidModel.h"
+  public:
 
-class SV4GUIMODULEMODELOCCT_EXPORT sv4guiModelElementOCCT : public sv4guiModelElementAnalytic
-{
-public:
+    mitkClassMacro(sv4guiModelMarkerContainer, mitk::BaseData);
+    itkFactorylessNewMacro(Self)
+    itkCloneMacro(Self)
 
-    sv4guiModelElementOCCT();
+    virtual void UpdateOutputInformation() {};
+    virtual void SetRequestedRegionToLargestPossibleRegion() {};
+    virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() { return false;};
+    virtual bool VerifyRequestedRegion() { return true;};
+    virtual void SetRequestedRegion(const itk::DataObject *data) {};
 
-    sv4guiModelElementOCCT(const sv4guiModelElementOCCT &other);
+    vtkSmartPointer<vtkPolyData> GetMarkers();
+    void SetMarkers(vtkPolyData* markers);
 
-    virtual ~sv4guiModelElementOCCT();
+    void FindPointOnCenterline(double x, double y, double z, double tol, bool& found, double closestPoint[3], vtkIdType& cellID, int& subID);
 
-    virtual sv4guiModelElementOCCT* Clone() override;
+    void AddMarker(const double pt[3]);
 
-    static sv4guiModelElement* CreateModelElement();
+  protected:
 
-    virtual sv4guiModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
-                                    , int numSamplingPts
-                                    , svLoftingParam *param
-                                    , PolyDataSolidCheckResults& check_results
-                                    , int* stats = nullptr
-                                    , double maxDist = 20.0
-                                    , int noInterOut = 1
-                                    , double tol = 1e-6
-                                    , unsigned int t = 0) override;
+    mitkCloneMacro(Self);
+    sv4guiModelMarkerContainer();
+    sv4guiModelMarkerContainer(const sv4guiModelMarkerContainer& other);
+    virtual ~sv4guiModelMarkerContainer();
 
-    virtual sv4guiModelElement* CreateModelElementByBlend(std::vector<sv4guiModelElement::svBlendParamRadius*> blendRadii
-                                                      , sv4guiModelElement::svBlendParam* param) override;
+  private:
 
-    virtual bool ReadFile(std::string filePath) override;
+    vtkSmartPointer<vtkPolyData> m_Markers = nullptr;
 
-    virtual bool WriteFile(std::string filePath) override;
 };
 
-#endif // SV4GUI_MODELELEMENTOCCT_H
+#endif 
