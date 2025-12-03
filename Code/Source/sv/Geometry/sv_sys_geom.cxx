@@ -398,11 +398,13 @@ int sys_geom_all_union( cvPolyData **srcs,int numSrcs,int nointerbool,double tol
   for (int i=0;i<numSrcs;i++) {
     vtkPolyData *newPd = srcs[i]->GetVtkPolyData();
 
+    #ifdef debug_CreatePolyData_
     std::string file_name = "sys_geom_all_union_pd_" + std::to_string(i) + ".vtp";
     auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
     writer->SetFileName(file_name.c_str());
     writer->SetInputData(newPd);
     writer->Write();
+    #endif
 
     vesselInter->AddInputData(newPd);
   }
@@ -570,7 +572,7 @@ int sys_geom_subtract( cvPolyData *srcA, cvPolyData *srcB, double tolerance,cvPo
 //
 int sys_geom_checksurface( cvPolyData *src, int stats[] ,double tolerance, PolyDataSolidCheckResults& check_results)
 {
-  #define debug_sys_geom_checksurface 
+  #define n_debug_sys_geom_checksurface 
   #ifdef debug_sys_geom_checksurface
   std::string msg("[sys_geom_checksurface] ");
   std::cout << msg << std::endl;
@@ -3872,7 +3874,7 @@ int sys_geom_local_constrain_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
 int sys_geom_local_linear_subdivision( cvPolyData *pd, cvPolyData **outpd, int numiters,
 		char *pointarrayname, char *cellarrayname)
 {
-  #define debug_sys_geom_local_linear_subdivision 
+  #define n_debug_sys_geom_local_linear_subdivision 
   #ifdef debug_sys_geom_local_linear_subdivision
   std::string msg("[sys_geom_local_linear_subdivision] ");
   std::cout << msg << std::endl;

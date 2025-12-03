@@ -413,9 +413,9 @@ int sv4guiModelEdit::GetTimeStep()
 //
 void sv4guiModelEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part, const QList<mitk::DataNode::Pointer>& nodes)
 {
-  std::string msg("[sv4guiModelEdit::OnSelectionChanged] ");
-  std::cout << msg << "========== OnSelectionChanged ==========" << std::endl;
-  std::cout << msg << "m_isVisible: " << m_isVisible << std::endl;
+  //std::string msg("[sv4guiModelEdit::OnSelectionChanged] ");
+  //std::cout << msg << "========== OnSelectionChanged ==========" << std::endl;
+  //std::cout << msg << "m_isVisible: " << m_isVisible << std::endl;
 
   if (!m_isVisible) {
     return;
@@ -464,15 +464,15 @@ void sv4guiModelEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part, co
 
 void sv4guiModelEdit::UpdateGUI()
 {
-    std::string msg("[sv4guiModelEdit::UpdateGUI] ");
-    std::cout << msg << "========== UpdateGUI ==========" << std::endl;
+    //std::string msg("[sv4guiModelEdit::UpdateGUI] ");
+    //std::cout << msg << "========== UpdateGUI ==========" << std::endl;
 
     auto modelElement = dynamic_cast<sv4guiModelElementPolyData*>(m_Model->GetModelElement(0));
-    std::cout << msg << "modelElement: " << modelElement << std::endl;
+    //std::cout << msg << "modelElement: " << modelElement << std::endl;
 
     if (modelElement != nullptr) {
       auto faces = modelElement->GetFaces();
-      std::cout << msg << "faces[0]->vpd->GetNumberOfCells(): " <<  faces[0]->vpd->GetNumberOfCells() << std::endl;
+      //std::cout << msg << "faces[0]->vpd->GetNumberOfCells(): " <<  faces[0]->vpd->GetNumberOfCells() << std::endl;
     }
 
     //update top part
@@ -711,9 +711,9 @@ void sv4guiModelEdit::UpdateBoxWidget(double idx)
 
 void sv4guiModelEdit::UpdateFaceListSelection()
 {
-    std::string msg("[sv4guiModelEdit::UpdateFaceListSelection] ");
-    std::cout << msg << "========== UpdateFaceListSelection ==========" << std::endl;
-    std::cout << msg << "m_Model: " << m_Model << std::endl;
+    //std::string msg("[sv4guiModelEdit::UpdateFaceListSelection] ");
+    //std::cout << msg << "========== UpdateFaceListSelection ==========" << std::endl;
+    //std::cout << msg << "m_Model: " << m_Model << std::endl;
 
     if(!m_Model) return;
 
@@ -842,9 +842,9 @@ void sv4guiModelEdit::SetupFaceListTable()
 
 void sv4guiModelEdit::UpdateFaceData(QStandardItem* item)
 {
-    std::string msg("[sv4guiModelEdit::UpdateFaceData] ");
-    std::cout << msg << "========== UpdateFaceData ==========" << std::endl;
-    std::cout << msg << "m_Model: " << m_Model << std::endl;
+    //std::string msg("[sv4guiModelEdit::UpdateFaceData] ");
+    //std::cout << msg << "========== UpdateFaceData ==========" << std::endl;
+    //std::cout << msg << "m_Model: " << m_Model << std::endl;
 
     if(!m_Model)
         return;
@@ -939,9 +939,9 @@ void sv4guiModelEdit::TableFaceListSelectionChanged( const QItemSelection & /*se
 
 void sv4guiModelEdit::ToggleVisibility(const QModelIndex &index)
 {
-    std::string msg("[sv4guiModelEdit::ToggleVisibility] ");
-    std::cout << msg << "========== ToggleVisibility ==========" << std::endl;
-    std::cout << msg << "m_Model: " << m_Model << std::endl;
+    //std::string msg("[sv4guiModelEdit::ToggleVisibility] ");
+    //std::cout << msg << "========== ToggleVisibility ==========" << std::endl;
+    //std::cout << msg << "m_Model: " << m_Model << std::endl;
 
     if(!m_Model)
         return;
@@ -1580,8 +1580,8 @@ void sv4guiModelEdit::RemoveObservers()
 
 void sv4guiModelEdit::ClearAll()
 {
-    std::string msg("[sv4guiModelEdit::ClearAll] ");
-    std::cout << msg << "========== ClearAll ==========" << std::endl;
+    //std::string msg("[sv4guiModelEdit::ClearAll] ");
+    //std::cout << msg << "========== ClearAll ==========" << std::endl;
     m_Model=nullptr;
     m_ModelNode=nullptr;
 
@@ -1665,7 +1665,7 @@ void sv4guiModelEdit::ShowCapSelectionWidget()
 //
 void sv4guiModelEdit::CreateModel()
 {
-    #define debug_CreateModel_
+    #define n_debug_CreateModel_
     #ifdef debug_CreateModel_
     std::string msg("[sv4guiModelEdit::CreateModel] ");
     std::cout << msg << std::endl;
@@ -1987,8 +1987,7 @@ void sv4guiModelEdit::CreateModel()
 //
 void sv4guiModelEdit::ProcessResultsCheck(sv4guiModelElement* newModelElement, PolyDataSolidCheckResults& check_results)
 {
-  
-  #define debug_ProcessResultsCheck
+  #define n_debug_ProcessResultsCheck
   #ifdef debug_ProcessResultsCheck
   std::string msg("[sv4guiModelEdit::ProcessResultsCheck] ");
   std::cout << msg << "========== ProcessResultsCheck ==========" << std::endl;

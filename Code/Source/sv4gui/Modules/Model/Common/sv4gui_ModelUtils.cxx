@@ -160,7 +160,7 @@ sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer
     int numSamplingPts, PolyDataSolidCheckResults& check_results,
     int stats[], svLoftingParam *param, unsigned int t, int noInterOut, double tol)
 {
-  #define debug_CreateModelElementPolyData
+  #define n_debug_CreateModelElementPolyData
   #ifdef debug_CreateModelElementPolyData
   std::string msg("[sv4guiModelUtils::CreateModelElementPolyData] ");
   std::cout << msg << std::endl;

@@ -64,7 +64,7 @@ sv4guiModelMarkerContainer::GetMarkers()
 //
 void sv4guiModelMarkerContainer::SetMarkers(vtkPolyData* markers)
 {
-  #define debug_SetMarkers
+  #define n_debug_SetMarkers
   #ifdef debug_SetMarkers
   std::string msg("[sv4guiModelMarkerContainer::SetMarkers] ");
   std::cout << msg << "========== SetMarkers ==========" << std::endl;

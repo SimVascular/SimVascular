@@ -231,6 +231,8 @@ int vtkSVMultiplePolyDataIntersectionFilter::ExecuteIntersection(
   std::string msg("[vtkSVMultiplePolyDataIntersectionFilter::ExecuteIntersection] ");
   std::cout << msg << std::endl;
   std::cout << msg << "========== ExecuteIntersection ==========" << std::endl;
+  std::cout << msg << "numInputs: " << numInputs << std::endl;
+  std::cout << msg << "start: " << start << std::endl;
   #endif
 
   // get the info object
@@ -244,6 +246,9 @@ int vtkSVMultiplePolyDataIntersectionFilter::ExecuteIntersection(
   checkInputArray->InsertNextId(start);
 
   while ((numChecks = checkInputArray->GetNumberOfIds()) > 0) {
+    #ifdef debug_ExecuteIntersection
+    std::cout << msg << "---------------- numChecks " << numChecks << " ---------------" << std::endl;
+    #endif
 
     for(int c = 0;c < numChecks; c++) {
       int i = checkInputArray->GetId(c);

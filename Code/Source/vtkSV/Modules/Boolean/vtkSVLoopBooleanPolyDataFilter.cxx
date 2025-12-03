@@ -898,6 +898,13 @@ int vtkSVLoopBooleanPolyDataFilter::RequestData(
     vtkInformationVector** inputVector,
     vtkInformationVector*  outputVector)
 {
+  #define n_debug_vRequestData
+  #ifdef debug_RequestData 
+  std::string msg("[vtkSVLoopBooleanPolyDataFilter::RequestData] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== RequestData ==========" << std::endl;
+  #endif
+
   vtkInformation* inInfo0 = inputVector[0]->GetInformationObject(0);
   vtkInformation* inInfo1 = inputVector[1]->GetInformationObject(0);
   vtkInformation* outInfo0 = outputVector->GetInformationObject(0);
@@ -926,15 +933,23 @@ int vtkSVLoopBooleanPolyDataFilter::RequestData(
     }
 
   // Get intersected versions
+
+  #ifdef debug_RequestData 
+  std::cout << msg << "polydataIntersection ... " << std::endl;
+  #endif
+
   vtkNew(vtkSVLoopIntersectionPolyDataFilter, polydataIntersection);
-  polydataIntersection->SetInputConnection
-    (0, this->GetInputConnection(0, 0));
-  polydataIntersection->SetInputConnection
-    (1, this->GetInputConnection(1, 0));
+  polydataIntersection->SetInputConnection (0, this->GetInputConnection(0, 0));
+  polydataIntersection->SetInputConnection (1, this->GetInputConnection(1, 0));
   polydataIntersection->SplitFirstOutputOn();
   polydataIntersection->SplitSecondOutputOn();
   polydataIntersection->SetTolerance(this->Tolerance);
   polydataIntersection->Update();
+
+  #ifdef debug_RequestData 
+  std::cout << msg << "done polydataIntersection " << std::endl;
+  #endif
+
   if (polydataIntersection->GetStatus() != SV_OK)
     {
     this->Status = 0;
