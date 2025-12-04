@@ -1752,7 +1752,8 @@ void sv4guiModelEdit::CreateModel()
     }
 
     bool created = true;
-    QString statusText="Model has been created.";
+    QString statusText = "Model has been created.";
+    std::string exceptionText;
     PolyDataSolidCheckResults check_results;
 
     sv4guiModelElement* tempElement = sv4guiModelElementFactory::CreateModelElement(m_ModelType);
@@ -1786,6 +1787,7 @@ void sv4guiModelEdit::CreateModel()
         } catch (const PolyDataException& exception) {
           std::cout << "[CreateModel] ERROR: The Boolan union has failed." << std::endl;
           std::cout << "[CreateModel] ERROR: " << exception.what() << std::endl;
+          exceptionText = exception.what();
 
           auto points = exception.getPoints();
           DisplayPoints(points);
@@ -1798,11 +1800,16 @@ void sv4guiModelEdit::CreateModel()
         } catch (const std::exception& exception) {
           std::cout << "[CreateModel] ERROR: The Boolan union has failed." << std::endl;
           std::cout << "[CreateModel] ERROR: " << exception.what() << std::endl;
+          exceptionText = exception.what();
           newModelElement = nullptr; 
         }
 
         if (newModelElement == nullptr) {
-            statusText = "Failed to create model.";
+            if (exceptionText != "") {
+              statusText = QString::fromStdString(exceptionText);
+            } else {
+              statusText = "Failed to create model.";
+            }
             created = false;
 
         } else if (m_ModelType == "PolyData") {
@@ -1829,7 +1836,7 @@ void sv4guiModelEdit::CreateModel()
     mitk::StatusBar::GetInstance()->DisplayText(statusText.toStdString().c_str());
 
     if (!created) {
-      QMessageBox::warning(m_Parent,"Warning","Error creating model.");
+      QMessageBox::warning(m_Parent, "Warning", statusText);
       return;
     }
 

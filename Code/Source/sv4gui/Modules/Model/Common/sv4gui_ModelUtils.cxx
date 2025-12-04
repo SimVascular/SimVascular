@@ -472,6 +472,7 @@ sv4guiModelUtils::CreateLoftSurface(sv4guiContourGroup* contourGroup, int numSam
     std::cout << msg << std::endl;
     std::cout << msg << "========== CreateLoftSurface_1 ==========" << std::endl;
     std::cout << msg << "contourGroup: " << contourGroup << std::endl;
+    std::cout << msg << "contourGroup path name: " << contourGroup->GetPathName() << std::endl;
     std::cout << msg << "numSamplingPts: " << numSamplingPts << std::endl;
     std::cout << msg << "addCaps: " << addCaps << std::endl;
     std::cout << msg << "param: " << param << std::endl;
@@ -492,7 +493,17 @@ sv4guiModelUtils::CreateLoftSurface(sv4guiContourGroup* contourGroup, int numSam
 
     std::vector<sv4guiContour*> contourSet = contourGroup->GetValidContourSet(t);
 
-    return CreateLoftSurface(contourSet, numSamplingPts, usedParam, addCaps);
+    vtkPolyData* lofted_surface = nullptr;
+
+    try {
+        lofted_surface = CreateLoftSurface(contourSet, numSamplingPts, usedParam, addCaps);
+
+    } catch (std::exception &e) { 
+       throw std::runtime_error("An error building the model has occured: Creating a lofted surface for segmentation '" + contourGroup->GetPathName() +
+          "' has failed.");
+    }
+
+    return lofted_surface;
 }
 
 //-------------------
@@ -678,9 +689,12 @@ vtkPolyData* sv4guiModelUtils::CreateLoftSurface(std::vector<sv4guiContour*> con
       outpd=nullptr;
 
     } else {
+
       if (PlyDtaUtils_CheckLoftSurface(dst->GetVtkPolyData()) != SV_OK) {
         MITK_ERROR << "Error lofting surface";
+        throw std::runtime_error("Error creating a lofted surface.");
         outpd=nullptr;
+
       } else {
         if (addCaps == 1) {
           outpd = CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
