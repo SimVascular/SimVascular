@@ -278,18 +278,22 @@ int vtkSVMultiplePolyDataIntersectionFilter::ExecuteIntersection(
 	    this->PreSetGlobalArrays(inputs[j]);
           }
 
+          /*
           auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
           writer->SetFileName("ExecuteIntersection_BooleanObject.vtp");
           writer->SetInputData(this->BooleanObject);
           writer->Write();                    
+          */
 
 	  boolean->SetInputData(0,this->BooleanObject);
 	  boolean->SetInputData(1,inputs[j]);
 	  boolean->SetTolerance(this->Tolerance);
 
+          /*
           writer->SetFileName("ExecuteIntersection_input.vtp");
           writer->SetInputData(inputs[j]);
           writer->Write();                    
+          */
 
 	  //if (this->NoIntersectionOutput)
 	  //  boolean->SetNoIntersectionOutput(1);
@@ -331,9 +335,11 @@ int vtkSVMultiplePolyDataIntersectionFilter::ExecuteIntersection(
 		this->IntersectionTable[k][j] = -1;
 	      }
 
+              /*
               writer->SetFileName("ExecuteIntersection_new_BooleanObject.vtp");
               writer->SetInputData(this->BooleanObject);
               writer->Write();                    
+              */
 	    }
           }
         }
@@ -594,10 +600,12 @@ int vtkSVMultiplePolyDataIntersectionFilter::RequestData( vtkInformation *vtkNot
   #endif
   output->DeepCopy(this->BooleanObject);
 
+  /*
   auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
   writer->SetFileName("ExecuteIntersection_output.vtp");
   writer->SetInputData(this->BooleanObject);
   writer->Write();
+  */
 
   for (int idx = 0; idx < numInputs; ++idx) {
       delete [] this->IntersectionTable[idx];

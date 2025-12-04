@@ -54,6 +54,9 @@ class sv4guiModelMarkerContainer : public mitk::BaseData {
     vtkSmartPointer<vtkPolyData> GetMarkers();
     void SetMarkers(vtkPolyData* markers);
 
+    vtkSmartPointer<vtkPolyData> GetGeometry();
+    void SetGeometry(vtkPolyData* geometry);
+
     void FindPointOnCenterline(double x, double y, double z, double tol, bool& found, double closestPoint[3], vtkIdType& cellID, int& subID);
 
     void AddMarker(const double pt[3]);
@@ -68,6 +71,7 @@ class sv4guiModelMarkerContainer : public mitk::BaseData {
   private:
 
     vtkSmartPointer<vtkPolyData> m_Markers = nullptr;
+    vtkSmartPointer<vtkPolyData> m_Geometry = nullptr;
 
 };
 

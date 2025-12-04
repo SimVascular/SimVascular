@@ -366,8 +366,8 @@ int sys_geom_union( cvPolyData *srcA, cvPolyData *srcB, double tolerance, cvPoly
 
     result = new cvPolyData( booleanOperator->GetOutput() );
     *dst = result;
-  }
-  catch (...) {
+
+  } catch (...) {
     fprintf(stderr,"ERROR in boolean operation.\n");
     fflush(stderr);
     return SV_ERROR;
@@ -413,18 +413,10 @@ int sys_geom_all_union( cvPolyData **srcs,int numSrcs,int nointerbool,double tol
   vesselInter->SetAssignSurfaceIds(1);
   vesselInter->SetNoIntersectionOutput(nointerbool);
   vesselInter->SetTolerance(tolerance);
+  vesselInter->Update();
 
-  try {
-    vesselInter->Update();
-    result = new cvPolyData(vesselInter->GetOutput());
-    *dst = result;
-  }
-
-  catch (...) {
-    fprintf(stderr,"ERROR in boolean operation.\n");
-    fflush(stderr);
-    return SV_ERROR;
-  }
+  result = new cvPolyData(vesselInter->GetOutput());
+  *dst = result;
 
   #ifdef debug_CreatePolyData_
   std::cout << msg << "vesselInter->GetStatus(): " << vesselInter->GetStatus() << std::endl;
@@ -586,13 +578,14 @@ int sys_geom_checksurface( cvPolyData *src, int stats[] ,double tolerance, PolyD
     double surfstats[2];
     #ifdef debug_sys_geom_checksurface
     std::cout << msg << "CleanAndCheckSurface ... " << std::endl;
-    #endif
-
+    /*
     std::string file_name = "sys_geom_checksurface_pd.vtp";
     auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
     writer->SetFileName(file_name.c_str());
     writer->SetInputData(pd);
     writer->Write();
+    */
+    #endif
 
     vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckSurface(pd,surfstats,tolerance,check_results);
 

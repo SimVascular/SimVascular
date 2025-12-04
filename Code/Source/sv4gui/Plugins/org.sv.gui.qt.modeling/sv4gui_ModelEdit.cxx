@@ -1767,6 +1767,8 @@ void sv4guiModelEdit::CreateModel()
         #endif
         int stats[2]={0};
 
+        try {
+
         if (m_ModelType == "PolyData") {
             newModelElement = tempElement->CreateModelElement(segNodes,numSampling,param,check_results,stats);
 
@@ -1780,6 +1782,24 @@ void sv4guiModelEdit::CreateModel()
         #ifdef debug_CreateModel_
         std::cout << msg << "newModelElement: " << newModelElement << std::endl;
         #endif
+
+        } catch (const PolyDataException& exception) {
+          std::cout << "[CreateModel] ERROR: The Boolan union has failed." << std::endl;
+          std::cout << "[CreateModel] ERROR: " << exception.what() << std::endl;
+
+          auto points = exception.getPoints();
+          DisplayPoints(points);
+
+          auto geometry = exception.getGeometry();
+          DisplayGeometry(geometry);
+
+          newModelElement = nullptr; 
+
+        } catch (const std::exception& exception) {
+          std::cout << "[CreateModel] ERROR: The Boolan union has failed." << std::endl;
+          std::cout << "[CreateModel] ERROR: " << exception.what() << std::endl;
+          newModelElement = nullptr; 
+        }
 
         if (newModelElement == nullptr) {
             statusText = "Failed to create model.";
@@ -1979,6 +1999,52 @@ void sv4guiModelEdit::CreateModel()
         }
 
     }
+}
+
+//---------------
+// DisplayPoints
+//---------------
+// Display points showing where a union computation has possibly failed.
+//
+void sv4guiModelEdit::DisplayPoints(std::vector<std::array<double,3>>& points)
+{
+  if (points.size() == 0) {
+    return;
+  }
+
+  auto cell_points = vtkSmartPointer<vtkPoints>::New();
+
+  for (const auto& point : points) { 
+      cell_points->InsertNextPoint(point[0], point[1], point[2]);
+      std::cout << "[sv4guiModelEdit::DisplayPoints] point: " << point[0] << " " << point[1] << " " << point[2] << std::endl;
+  }
+
+  auto pointsPolydata = vtkSmartPointer<vtkPolyData>::New();
+  pointsPolydata->SetPoints(cell_points);
+  auto vertexFilter = vtkSmartPointer<vtkVertexGlyphFilter>::New();
+  vertexFilter->SetInputData(pointsPolydata);
+  vertexFilter->Update();
+
+  auto polydata = vtkSmartPointer<vtkPolyData>::New();
+  polydata->ShallowCopy(vertexFilter->GetOutput());
+
+  m_MarkersContainer->SetMarkers(polydata);
+
+  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
+//-----------------
+// DisplayGeometry
+//-----------------
+// Display a vtkPolyData object showing where a union computation has possibly failed.
+//
+void sv4guiModelEdit::DisplayGeometry(vtkSmartPointer<vtkPolyData> geometry)
+{
+  if (geometry == nullptr) {
+    return;
+  }
+
+  m_MarkersContainer->SetGeometry(geometry);
 }
 
 //---------------------

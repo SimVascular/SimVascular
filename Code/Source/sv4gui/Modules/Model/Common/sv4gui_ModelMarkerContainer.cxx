@@ -38,6 +38,7 @@
 sv4guiModelMarkerContainer::sv4guiModelMarkerContainer()
 {
   m_Markers = nullptr;
+  m_Geometry = nullptr;
 };
 
 sv4guiModelMarkerContainer::sv4guiModelMarkerContainer(const sv4guiModelMarkerContainer& other) :BaseData(other)
@@ -81,6 +82,32 @@ void sv4guiModelMarkerContainer::SetMarkers(vtkPolyData* markers)
   #ifdef debug_SetMarkers
   std::cout << msg << "m_Markers: " << m_Markers << std::endl;
   #endif
+}
+
+//-------------
+// GetGeometry
+//-------------
+// Get the general vtkPolyData geometry to be displayed.
+//
+vtkSmartPointer<vtkPolyData>
+sv4guiModelMarkerContainer::GetGeometry()
+{
+  return m_Geometry;
+}
+
+//--------------
+// SetGeometry
+//--------------
+// Set the general vtkPolyData geometry to be displayed.
+//
+void sv4guiModelMarkerContainer::SetGeometry(vtkPolyData* geometry)
+{
+  if (m_Geometry != nullptr) { 
+      m_Geometry->Delete();
+  }
+
+  m_Geometry = vtkSmartPointer<vtkPolyData>::New();
+  m_Geometry->DeepCopy(geometry);
 }
 
 void sv4guiModelMarkerContainer::AddMarker(const double pt[3])

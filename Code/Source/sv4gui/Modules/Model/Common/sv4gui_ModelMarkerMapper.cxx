@@ -38,9 +38,6 @@
 
 sv4guiModelMarkerMapper::sv4guiModelMarkerMapper()
 {
-  //std::string msg("[sv4guiModelMarkerMapper::sv4guiModelMarkerMapper] ");
-  //std::cout << msg << "========== sv4guiModelMarkerMapper ==========" << std::endl;
-  m_NewMesh = true;
   m_Color[0] = 1.0;
   m_Color[1] = 1.0;
   m_Color[2] = 1.0;
@@ -54,6 +51,8 @@ sv4guiModelMarkerMapper::~sv4guiModelMarkerMapper()
 // GenerateDataForRenderer
 //-------------------------
 // Generate the data needed for rendering into renderer.
+//
+// This is only called once with a failure.
 //
 void sv4guiModelMarkerMapper::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 {
@@ -91,17 +90,14 @@ void sv4guiModelMarkerMapper::GenerateDataForRenderer(mitk::BaseRenderer* render
   // [DaveP] Do we need to remove?
   // local_storage->m_PropAssembly->GetParts()->RemoveAllItems();
 
-  // Show centerlines.
-  //
   auto markers = container->GetMarkers();
 
-  if (markers != nullptr)  {
+  if ((markers != nullptr) && m_MarkersUpdate)  {
     #ifdef debug_GenerateDataForRenderer
     std::cout << msg << "markers: " << markers << std::endl;
     std::cout << msg << "markers num points: " << markers->GetNumberOfPoints() << std::endl;
     #endif
-    //MITK_INFO << msgPrefix << "###### Add mesh #######";
-    localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
+    // [davep] not sure about this localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
     auto mapper = vtkSmartPointer<vtkDataSetMapper>::New();
     mapper->SetInputData(markers);
     mapper->ScalarVisibilityOff();
@@ -110,13 +106,29 @@ void sv4guiModelMarkerMapper::GenerateDataForRenderer(mitk::BaseRenderer* render
     actor->GetProperty()->SetColor(m_Color[0], m_Color[1], m_Color[2]);
     actor->GetProperty()->SetPointSize(10.0);
     localStorage->m_PropAssembly->AddPart(actor);
+    m_MarkersUpdate = false;
   } 
 
-  if (markers == nullptr) {
+  auto geometry = container->GetGeometry();
+
+  if ((geometry != nullptr) && m_GeometryUpdate)  {
+    // [davep] not sure about this localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
+    auto mapper = vtkSmartPointer<vtkDataSetMapper>::New();
+    mapper->SetInputData(geometry);
+    mapper->ScalarVisibilityOff();
+    auto actor = vtkSmartPointer<vtkActor>::New();
+    actor->SetMapper(mapper);
+    actor->GetProperty()->SetColor(m_Color[0], m_Color[1], m_Color[2]);
+    actor->GetProperty()->SetRepresentationToWireframe();
+    actor->GetProperty()->SetLineWidth(4.0);
+    localStorage->m_PropAssembly->AddPart(actor);
+    m_GeometryUpdate = false;
+  } 
+
+  if ((markers == nullptr) && (geometry == nullptr)) {
     localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
   } else {
-      //container->SetNewMesh(false);
-      localStorage->m_PropAssembly->VisibilityOn();
+    localStorage->m_PropAssembly->VisibilityOn();
   }
 
 }

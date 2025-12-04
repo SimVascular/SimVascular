@@ -236,6 +236,8 @@ protected:
 private:
     void SetTimeModified();
     void ProcessResultsCheck(sv4guiModelElement* newModelElement, PolyDataSolidCheckResults& check_results);
+    void DisplayPoints(std::vector<std::array<double,3>>& points);
+    void DisplayGeometry(vtkSmartPointer<vtkPolyData> geometry);
 
 };
 

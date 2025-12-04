@@ -34,6 +34,7 @@
 #define CURRENT 2
 #include "vtkSVLoopIntersectionPolyDataFilter.h"
 #include "delaunay_options.h"
+#include "sv_polydatasolid_utils.h"
 
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
@@ -168,10 +169,10 @@ protected:
                        vtkPolyData *interLines,int numCurrCells);
 
   /// \brief Function inside SplitCell to get the smaller triangle loops
-  int GetLoops(vtkPolyData *pd, std::vector<simPolygon> *loops);
+  int GetLoops(vtkPolyData *fullpd, vtkPolyData *pd, std::vector<simPolygon> *loops);
 
   /// \brief Get individual polygon loop of splitting cell
-  int GetSingleLoop(vtkPolyData *pd,simPolygon *loop, vtkIdType nextCell,
+  int GetSingleLoop(vtkPolyData *fullpd, vtkPolyData *pd,simPolygon *loop, vtkIdType nextCell,
                     bool *interPtBool, bool *lineBool);
 
   /// \brief Follow a loop orienation to iterate around a split polygon
@@ -757,6 +758,13 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
   std::cout << msg << "inputIndex: " << inputIndex << std::endl;
   std::cout << msg << "numCurrCells: " << numCurrCells << std::endl;
   std::cout << msg << "this->Tolerance: " << this->Tolerance << std::endl;
+  /*
+  std::string file_name = "SplitCell_input.vtp";
+  auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  writer->SetFileName(file_name.c_str());
+  writer->SetInputData(input);
+  writer->Write();
+  */
   #endif
 
   // Copy down the SurfaceID array that tells which surface the point belongs
@@ -1126,7 +1134,8 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
     {
     //Get polygon loops of intersected triangle
     std::vector<simPolygon> loops;
-    if (this->GetLoops(transformedpd, &loops) != SV_OK)
+
+    if (this->GetLoops(fullpd, transformedpd, &loops) != SV_OK)
       {
       splitCells->Delete();
       splitCells = nullptr;
@@ -1476,7 +1485,7 @@ void vtkSVLoopIntersectionPolyDataFilter::Impl::AddToNewCellMap(
 // Impl::GetLoops
 // ----------------------
 int vtkSVLoopIntersectionPolyDataFilter::Impl
-::GetLoops(vtkPolyData *pd, std::vector<simPolygon> *loops)
+::GetLoops(vtkPolyData *fullpd, vtkPolyData *pd, std::vector<simPolygon> *loops)
 {
   #define n_debug_GetLoops 
   #ifdef debug_GetLoops
@@ -1500,6 +1509,11 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
   #ifdef debug_GetLoops
   std::cout << msg << "numPoints: " << numPoints << std::endl;
   std::cout << msg << "numCells: " << numCells << std::endl;
+  std::string file_name = "GetLoops_pd.vtp";
+  auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  writer->SetFileName(file_name.c_str());
+  writer->SetInputData(pd);
+  writer->Write();
   #endif
 
   for (vtkIdType ptId = 0; ptId < numPoints; ptId++)
@@ -1532,7 +1546,7 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
       lineBool[nextCell] = true;
 
       // Get one loop for untouched point
-      if (this->GetSingleLoop(pd, &interloop, nextCell, ptBool, lineBool) != SV_OK)
+      if (this->GetSingleLoop(fullpd, pd, &interloop, nextCell, ptBool, lineBool) != SV_OK)
         {
         delete [] ptBool;
         delete [] lineBool;
@@ -1566,7 +1580,7 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
       nextCell = lineId;
 
       //Get single loop if the line is still untouched
-      if (this->GetSingleLoop(pd, &interloop, nextCell, ptBool, lineBool) != SV_OK)
+      if (this->GetSingleLoop(fullpd, pd, &interloop, nextCell, ptBool, lineBool) != SV_OK)
         {
         delete [] ptBool;
         delete [] lineBool;
@@ -1587,7 +1601,7 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
 // ----------------------
 // Impl::GetSingleLoop
 // ----------------------
-int vtkSVLoopIntersectionPolyDataFilter::Impl::GetSingleLoop(vtkPolyData *pd, 
+int vtkSVLoopIntersectionPolyDataFilter::Impl::GetSingleLoop(vtkPolyData *fullpd, vtkPolyData *pd, 
     simPolygon *loop, vtkIdType nextCell, bool *interPtBool, bool *lineBool)
 {
   #define n_debug_GetSingleLoop
@@ -1710,9 +1724,13 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl::GetSingleLoop(vtkPolyData *pd,
       nextPt = cellPoints->GetId(0);
     }
   
+    // If a point has already been added then there
+    // is an internal error.
+    //
     if (visited_points.count(nextPt) != 0) {
         print_warning(__func__, "Infinite loop detected");
-        throw std::runtime_error("[GetSingleLoop] An error occured processing cell " + std::to_string(nextCell));
+        std::string msg("[GetSingleLoop] An error occured processing cell " + std::to_string(nextCell));
+        throw PolyDataException(msg, {}, fullpd); 
         return SV_ERROR;
     }
 
