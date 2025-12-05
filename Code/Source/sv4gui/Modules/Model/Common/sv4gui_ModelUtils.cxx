@@ -363,11 +363,12 @@ sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer
     return nullptr;
   }
 
-  // Write the file.
+  /*
   vtkSmartPointer<vtkXMLPolyDataWriter> writer  = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
   writer->SetFileName("CreateModelElementPolyData_solidvpd.vtp");
   writer->SetInputData(solidvpd);
   writer->Write();
+  */
 
   #ifdef debug_CreateModelElementPolyData
   std::cout << msg << "Done " << std::endl;

@@ -1857,7 +1857,7 @@ void sv4guiModelEdit::CreateModel()
         // This seems to return if the model is valid, even if it 
         // has free edges.
         //
-        if (faceNames.size() <= 2*segNames.size()+1) {
+        if ( faceNames.size() <= 2*segNames.size()+1 ) {
             #ifdef debug_CreateModel_
             std::cout << msg << "#### Number of faceNames <= 2 * number of segment names " << std::endl;
             std::cout << msg << "  faceNames.size(): " << faceNames.size() << std::endl;
@@ -1990,7 +1990,7 @@ void sv4guiModelEdit::CreateModel()
             UpdateFaceListSelection();
 
             // Display a warning message listing the problematic faces.
-            std::string info = "There may be vessels that only partially intersect.\n\n";
+            std::string info = "There may be vessels with an end not fully enclosed in an intersecting vessel. There may also be vessels that don't intersect any other vessels.\n\n";
             info += "Please check the faces listed under Details and highlighted in the Face List browser.";
             auto text = QString::fromStdString(info);
             QString title = "A problem was encountered when creating the model";
