@@ -51,6 +51,8 @@
 #include <QmitkStdMultiWidget.h>
 #include <QmitkRenderWindow.h>
 
+#include <utility>
+
 namespace Ui {
 class sv4guiModelEdit;
 }
@@ -238,7 +240,8 @@ private:
     void ProcessResultsCheck(sv4guiModelElement* newModelElement, PolyDataSolidCheckResults& check_results);
     void DisplayPoints(std::vector<std::array<double,3>>& points);
     void DisplayGeometry(vtkSmartPointer<vtkPolyData> geometry);
-
+    std::vector<std::pair<std::string,std::string>> CheckForNestedVessels(std::vector<std::string>& segNames, 
+        std::vector<mitk::DataNode::Pointer>& segNodes);
 };
 
 #endif // SV4GUI_MODELEDIT_H

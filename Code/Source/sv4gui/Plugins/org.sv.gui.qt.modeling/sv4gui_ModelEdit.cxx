@@ -69,6 +69,7 @@
 
 #include <iostream>
 #include <time.h> 
+#include <utility>
 
 using namespace std;
 
@@ -1659,6 +1660,115 @@ void sv4guiModelEdit::ShowCapSelectionWidget()
     m_CapSelectionWidget->show();
 }
 
+//-----------------------
+// CheckForNestedVessels
+//-----------------------
+// Check if there are segmentations defining nested vessels 
+// (i.e. if on vessel is enclosed in another).
+//
+// Return a list of segmentations that overlap.
+//
+std::vector<std::pair<std::string,std::string>>
+sv4guiModelEdit::CheckForNestedVessels(std::vector<std::string>& segNames, std::vector<mitk::DataNode::Pointer>& segNodes)
+{
+  #define n_debug_CheckForNestedVessels
+  #ifdef debug_CheckForNestedVessels
+  std::string msg("[sv4guiModelEdit::CheckForNestedVessels] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== CheckForNestedVessels ==========" << std::endl;
+  std::cout << msg << "segNodes.size(): " << segNodes.size() << std::endl;
+  #endif
+
+  // Create a list of segmentation IDs for each path.
+  //
+  std::map< std::string, std::vector<int> > path_seg_list;
+
+  for (int i = 0; i < segNodes.size(); i++) {
+    auto group = dynamic_cast<sv4guiContourGroup*>(segNodes[i]->GetData());
+    auto path_name = group->GetPathName();
+    path_seg_list[path_name].push_back(i);
+    #ifdef debug_CheckForNestedVessels
+    std::cout << msg << "========= i " << i << " ==========" << std::endl;
+    std::cout << msg << "path_name: " << path_name << std::endl;
+    std::cout << msg << "seg_name: " << segNames[i] << std::endl;
+    #endif
+  }
+
+  // Check for overlapping path IDs for paths with multiple segmentations.
+  //
+  std::vector< std::pair<std::string,std::string> > nested_segments;
+
+  for (const auto& entry : path_seg_list) {
+    auto path_name = entry.first;
+    auto seg_list = entry.second;
+    if (seg_list.size() == 1) { 
+      continue;
+    }
+
+    int t = 0;
+    int num_segs = seg_list.size();
+
+    #ifdef debug_CheckForNestedVessels
+    std::cout << msg << "========= path_name " << path_name << " ==========" << std::endl;
+    std::cout << msg << "num_segs: " << num_segs << std::endl;
+    #endif
+
+    for (int i = 0; i < num_segs; i++) { 
+      int seg_id1 = seg_list[i];
+      auto group = dynamic_cast<sv4guiContourGroup*>(segNodes[seg_id1]->GetData());
+      #ifdef debug_CheckForNestedVessels
+      std::cout << msg << "--------- i " << i << " ----------" << std::endl;
+      std::cout << msg << "seg_id1: " << seg_id1 << std::endl;
+      std::cout << msg << "seg name: " << segNames[seg_id1] << std::endl;
+      std::cout << msg << "path name: " <<  group->GetPathName() << std::endl;
+      #endif
+      auto contourSet = group->GetValidContourSet(t);
+      std::vector<int> path_ids;
+      for (const auto& contour : contourSet) {
+        auto path_point = contour->GetPathPoint();
+        path_ids.push_back(path_point.id);
+      }
+
+      std::sort(path_ids.begin(), path_ids.end());
+      int min_id = path_ids[0];
+      int max_id = path_ids.back();
+      #ifdef debug_CheckForNestedVessels
+      std::cout << msg << "min_id: " << min_id << std::endl;
+      std::cout << msg << "max_id: " << max_id << std::endl;
+      std::cout << msg << "        " << std::endl;
+      #endif
+
+      for (int j = i+1; j < num_segs; j++) { 
+        int seg_id2 = seg_list[j];
+        auto group = dynamic_cast<sv4guiContourGroup*>(segNodes[seg_id2]->GetData());
+        #ifdef debug_CheckForNestedVessels
+        std::cout << msg << "  ---- j " << j << " -----" << std::endl;
+        std::cout << msg << "  seg name: " << segNames[seg_id2] << std::endl;
+        std::cout << msg << "  path name: " <<  group->GetPathName() << std::endl;
+        #endif
+        auto contourSet = group->GetValidContourSet(t);
+
+        for (const auto& contour : contourSet) {
+          auto path_point = contour->GetPathPoint();
+          #ifdef debug_CheckForNestedVessels
+          std::cout << msg << "  path_point.id: " << path_point.id << std::endl;
+          #endif
+          if ((path_point.id >= min_id) && (path_point.id <= max_id)) {
+            auto seg_pair = std::make_pair(segNames[seg_id1], segNames[seg_id2]); 
+            nested_segments.push_back( seg_pair );
+            #ifdef debug_CheckForNestedVessels
+            std::cout << msg << "  #### segs " << segNames[seg_id1] << " and " << segNames[seg_id2] << " overlap at " << path_point.id << std::endl;
+            #endif
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  return nested_segments;
+}
+
 //-------------
 // CreateModel
 //-------------
@@ -1679,24 +1789,62 @@ void sv4guiModelEdit::CreateModel()
     #endif
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
-    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSubset(isProjFolder);
+    mitk::DataStorage::SetOfObjects::ConstPointer rs = GetDataStorage()->GetSubset(isProjFolder);
+    if (rs->size() < 1) {
+      return;
+    }
 
-    if(rs->size()<1) return;
-
-    mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
-
-    rs=GetDataStorage()->GetDerivations (projFolderNode,mitk::NodePredicateDataType::New("sv4guiSegmentationFolder"));
-    if(rs->size()<1) return;
+    mitk::DataNode::Pointer projFolderNode = rs->GetElement(0);
+    rs = GetDataStorage()->GetDerivations (projFolderNode,mitk::NodePredicateDataType::New("sv4guiSegmentationFolder"));
+    if (rs->size() < 1) {
+      return;
+    }
 
     mitk::DataNode::Pointer segFolderNode=rs->GetElement(0);
-
     std::vector<mitk::DataNode::Pointer> segNodes;
+    std::vector<std::string> validSegNames;
 
+    #ifdef debug_CreateModel_
+    std::cout << msg << "---- get seg names and nodes ----- " << std::endl;
+    #endif
     for (int i = 0; i < segNames.size(); i++) {
         mitk::DataNode::Pointer node = GetDataStorage()->GetNamedDerivedNode(segNames[i].c_str(),segFolderNode);
         if (node.IsNotNull()) {
+            auto group = dynamic_cast<sv4guiContourGroup*>(node->GetData());
+            auto path_name = group->GetPathName();
+            #ifdef debug_CreateModel_
+            std::cout << msg << "i: " << i << std::endl;
+            std::cout << msg << "segNames[i]: " << segNames[i] << std::endl;
+            std::cout << msg << "path_name: " << path_name << std::endl;
+            #endif
+            validSegNames.push_back(segNames[i]);
             segNodes.push_back(node);
         }
+    }
+
+    // Check for nested segmentations if found the display a warning message. 
+    //
+    auto nested_segments = CheckForNestedVessels(validSegNames, segNodes);
+
+    if (nested_segments.size() != 0) {
+        std::string info = "Nested vessels have been detected. \n\n";
+        info += "Please check the segmentations listed under Details.";
+        auto text = QString::fromStdString(info);
+        QString title = "A problem was encountered when creating the model";
+        QMessageBox::Icon icon = QMessageBox::Warning; 
+        QMessageBox mb(nullptr);
+        mb.setWindowTitle(title);
+        mb.setText(text+"                                                                                         ");
+        mb.setIcon(icon);
+
+        std::string segList = "";
+        for (const auto& segPair : nested_segments) {
+          segList += segPair.first + " " + segPair.second + "\n";
+        }
+
+        mb.setDetailedText(QString::fromStdString(segList));
+        mb.exec();
+        return;
     }
 
     // Sanity check
