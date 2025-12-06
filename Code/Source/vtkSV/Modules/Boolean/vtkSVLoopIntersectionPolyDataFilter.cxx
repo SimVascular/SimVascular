@@ -1550,8 +1550,11 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
         {
         delete [] ptBool;
         delete [] lineBool;
-        throw std::runtime_error("[GetSingleLoop] No cell with correct orientation found when splitting cells.");
+        std::string msg("[GetSingleLoop] No cell with correct orientation found processing cell " + 
+            std::to_string(nextCell));
+        throw PolyDataException(msg, {}, fullpd);
         }
+
       //Add new loop
       loops->push_back(interloop);
       }
