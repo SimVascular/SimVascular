@@ -136,9 +136,9 @@ int OCCTUtils_SetExtStringArrayFromChar(Handle(TDataStd_ExtStringArray) &array,
   int lower = 0;
   int upper = strlen(charstr);
   array->Init(lower,upper);
-  for (int i=lower;i<upper;i++)
-  {
-    array->SetValue(i,charstr[i]);
+
+  for (int i = lower; i < upper; i++) {
+    array->SetValue(i, charstr[i]);
   }
 
   return SV_OK;
@@ -258,8 +258,7 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
       char* checkid2;
       int intcheck1,intcheck2;
       filletEdge = TopoDS::Edge(anEFsMap.FindKey(i));
-      OCCTUtils_GetFaceAttribute(face1,shapetool,shapelabel,
-	  "gdscName",&name);
+      OCCTUtils_GetFaceAttribute(face1,shapetool,shapelabel, "gdscName",&name);
       strncpy(nameA,name,sizeof(nameA));
       OCCTUtils_GetFaceAttribute(face2,shapetool,shapelabel,
 	  "gdscName",&name);
@@ -367,88 +366,77 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
 
   return SV_OK;
 }
-// ---------------------
-// OCCTUtils_CreateEdgeBlend
-// ---------------------
-/**
- * @brief Procedure to create edge blend between two faces faceA and faceB
- * @param &shape shape containing faces and resultant shape with blend
- * @param shapetool the XDEDoc manager that contains attribute info
- * @param shapelabel the label for the shape registered in XDEDoc
- * @param filletmake the occt API to make a fillet
- * @param faceA first integer face to blend
- * @param faceB second integer face to blend
- * @param radius Maximum radius to set anywhere on the fillet.
- * @param minRadius Minimum radius to set anywhere on the fillet. A linear
- * interpolation is created between the minimum and maximum radius specified
- * based on the angle created bewteen the two faces at a set number of points
- * around the fillet edge. The new fillet radius value will be somehwere
- * between the maximum and minimum radius values given.
- * @param blendname Name to be given the new face created for the shape
- * @return SV_OK if function completes properly
- */
-int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
-    BRepBuilderAPI_Sewing &attacher,int &numFilled)
+
+//---------------------------
+// OCCTUtils_CapShapeToSolid 
+//---------------------------
+//
+int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape, TopoDS_Shape &geom,
+    BRepBuilderAPI_Sewing &attacher, int &numHoles)
 {
-  if (shape.Closed())
-  {
+  #define n_debug_OCCTUtils_CapShapeToSolid
+  #ifdef debug_OCCTUtils_CapShapeToSolid
+  std::string msg("[OCCTUtils_CapShapeToSolid] ");
+  std::cout << msg << "----------" << std::endl;
+  #endif
+  numHoles = 0;
+
+  if (shape.Closed()) {
     geom = shape;
     fprintf(stdout,"Shape is closed, nothing to be done\n");
     return SV_OK;
   }
 
-  //Attacher!
   attacher.Add(shape);
   Standard_Real sewtoler =  1.e-6;
   Standard_Real closetoler =  1.e-4;
-  ShapeFix_FreeBounds findFree(shape,sewtoler,closetoler,
-        	  Standard_False,Standard_False);
+  ShapeFix_FreeBounds findFree(shape,sewtoler,closetoler, Standard_False,Standard_False);
   TopoDS_Compound freeWires = findFree.GetClosedWires();
   TopExp_Explorer NewEdgeExp;
   NewEdgeExp.Init(freeWires,TopAbs_EDGE);
-  for (int i=0;NewEdgeExp.More();NewEdgeExp.Next(),i++)
-  {
-    TopoDS_Edge tmpEdge = TopoDS::Edge(NewEdgeExp.Current());
 
+  for (int i = 0; NewEdgeExp.More(); NewEdgeExp.Next(),i++) {
+    TopoDS_Edge tmpEdge = TopoDS::Edge(NewEdgeExp.Current());
     BRepBuilderAPI_MakeWire wiremaker(tmpEdge);
     wiremaker.Build();
 
-    int degOfCap=2;
+    int degOfCap = 2;
     int numPointsOnCurve = 20;
     BRepFill_Filling filler(degOfCap,numPointsOnCurve);
-    filler.Add(tmpEdge,GeomAbs_C0,Standard_True);
+    filler.Add(tmpEdge, GeomAbs_C0, Standard_True);
 
     try {
       filler.Build();
-    }
-    catch (Standard_Failure)
-    {
-      fprintf(stderr,"Failure when filling holes\n");
+
+    } catch (Standard_Failure) {
+      fprintf(stderr, "Failure when filling holes\n");
       return SV_ERROR;
     }
 
     TopoDS_Face newFace = filler.Face();
+
     //if (!OCCTUtils_IsSameOrientedWEdge(newFace,shape,tmpEdge))
     //{
     //  fprintf(stderr,"Reversing\n");
     //  newFace.Reversed();
     //}
     attacher.Add(newFace);
-    numFilled ++;
+    numHoles += 1;
   }
-  fprintf(stderr,"Number of holes found: %d\n",numFilled);
-  if (numFilled == 0)
-  {
+
+  if (numHoles == 0) {
     fprintf(stderr,"No holes found\n");
     return SV_OK;
   }
+
   attacher.Perform();
 
   TopoDS_Shell tmpShell;
+
   try {
     tmpShell = TopoDS::Shell(attacher.SewedShape());
-  }
-  catch (Standard_TypeMismatch) {
+
+  } catch (Standard_TypeMismatch) {
     fprintf(stderr,"No open boundaries found\n");
     return SV_ERROR;
   }
@@ -1147,9 +1135,10 @@ int OCCTUtils_GetFaceIds( const TopoDS_Shape &geom,
   return SV_OK;
 }
 
-// -----------------
+//------------------------
 // OCCTUtils_GetFaceLabel
-// -----------------
+//------------------------
+// 
 /**
  * @brief Procedure to get a singular face number
  * @param *geom input TopoDS_Shape on which to get the face ids
@@ -1157,28 +1146,55 @@ int OCCTUtils_GetFaceIds( const TopoDS_Shape &geom,
  * @param returns input value and an error if the face does not have id
  * @return SV_OK if function completes properly
  */
-int OCCTUtils_GetFaceLabel(const TopoDS_Shape &geom,
-		const Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
-	       	int &id)
+//
+// This returns the face ID 'id' if it exists ?
+//
+int OCCTUtils_GetFaceLabel(const TopoDS_Shape &geom, const Handle(XCAFDoc_ShapeTool) &shapetool,
+    TDF_Label &shapelabel, int &id)
 {
+  #define n_debug_OCCTUtils_GetFaceLabel
+  #ifdef debug_OCCTUtils_GetFaceLabel
+  std::string msg("[OCCTUtils_GetFaceLabel] ");
+  std::cout << msg << "----------" << std::endl;
+  //std::cout << msg << "shapelabel: " << shapelabel << std::endl;
+  #endif
+
   TDF_Label tmpLabel;
-  shapetool->FindSubShape(shapelabel,geom,tmpLabel);
-  if (tmpLabel.IsNull())
-  {
+  shapetool->FindSubShape(shapelabel, geom, tmpLabel);
+
+  // This is not an real error it seems.
+  if (tmpLabel.IsNull()) {
+    #ifdef debug_OCCTUtils_GetFaceLabel
+    std::cout << msg << "WARNING: Face does not have label " << std::endl;
+    #endif
     //fprintf(stderr,"Face does not have label\n");
     return SV_ERROR;
   }
+  #ifdef debug_OCCTUtils_GetFaceLabel
+  //std::cout << msg << "tmpLabel: " << tmpLabel << std::endl;
+  #endif
 
   TDF_Label idLabel = tmpLabel.FindChild(0);
-  if (idLabel.IsNull())
-  {
+
+  if (idLabel.IsNull()) {
     fprintf(stderr,"Face does not have id\n");
     return SV_ERROR;
   }
-  //Retrive attribute
+
+  #ifdef debug_OCCTUtils_GetFaceLabel
+  //std::cout << msg << "idLabel: " << idLabel << std::endl;
+  #endif
+
+  // Retrive attribute
   Handle(TDataStd_Integer) INT = new TDataStd_Integer();
-  idLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
+  idLabel.FindAttribute(TDataStd_Integer::GetID(), INT);
   id = INT->Get();
+
+  #ifdef debug_OCCTUtils_GetFaceLabel
+  std::cout << msg << "id: " << id << std::endl;
+  std::cout << msg << "Done " << std::endl;
+  std::cout << msg << "----------" << std::endl;
+  #endif
 
   return SV_OK;
 }
@@ -1317,38 +1333,40 @@ int OCCTUtils_SetOrientation(TopoDS_Shape &shape,TopoDS_Shape &face,int &orienta
   return SV_OK;
 }
 
-// -------------------
+//-----------------------
 // OCCTUtils_ReLabelFace
-// -------------------
+//-----------------------
+// Set the face ID to 'id'.
+//
 /**
  * @brief Procedure to relabel the face of a shape
  * @param shape input TopoDS_Shape face that needs to be relabled
  * @param id desired id for face
  * @return SV_OK if function completes properly
  */
-int OCCTUtils_ReLabelFace( TopoDS_Shape &shape,
-		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
-		int &id)
+//
+int OCCTUtils_ReLabelFace(TopoDS_Shape &shape, Handle(XCAFDoc_ShapeTool) &shapetool,
+    TDF_Label &shapelabel, int &id)
 {
-  if (shape.IsNull())
-  {
+  if (shape.IsNull()) {
     fprintf(stderr,"Face is nullptr, cannot add\n");
     return SV_ERROR;
   }
 
   TDF_Label tmpLabel;
   shapetool->FindSubShape(shapelabel,shape,tmpLabel);
-  if (tmpLabel.IsNull())
-  {
+
+  if (tmpLabel.IsNull()) {
     fprintf(stderr,"Face has not been given a label\n");
     return SV_ERROR;
   }
   TDF_Label idLabel = tmpLabel.FindChild(0);
-  if (idLabel.IsNull())
-  {
+
+  if (idLabel.IsNull()) {
     fprintf(stderr,"Face has not been given an id\n");
     return SV_ERROR;
   }
+
   Handle(TDataStd_Integer) INT = new TDataStd_Integer();
   idLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
   INT->Set(id);
@@ -1375,9 +1393,9 @@ int OCCTUtils_GetNumberOfFaces(const TopoDS_Shape &shape,int &num_faces)
   return SV_OK;
 }
 
-// -------------------
+//----------------------------
 // OCCTUtils_GetFaceAttribute
-// -------------------
+//----------------------------
 /**
  * @brief Procedure to get an attribute of the shape
  * @param shape input TopoDS_Shape to get attribute
@@ -1386,60 +1404,84 @@ int OCCTUtils_GetNumberOfFaces(const TopoDS_Shape &shape,int &num_faces)
  * @note attributes includ id, gdscName, and parent
  * @return SV_OK if function completes properly
  */
-int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
-		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
-    				char *attr, char **value)
+
+int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face, Handle(XCAFDoc_ShapeTool) &shapetool,
+    TDF_Label &shapelabel, char *attr, char **value)
 {
+  #define n_debug_OCCTUtils_GetFaceAttribute
+  #ifdef debug_OCCTUtils_GetFaceAttribute
+  std::cout << msg << "---------- " << std::endl;
+  std::cout << msg << "attr: " << attr << std::endl;
+  #endif
   static char returnString[255];
   TDF_Label tmpLabel;
-  shapetool->FindSubShape(shapelabel,face,tmpLabel);
-  if (tmpLabel.IsNull())
-  {
-    fprintf(stderr,"Face is not labelled and thus has no attribute\n");
+  shapetool->FindSubShape(shapelabel, face, tmpLabel);
+
+  if (tmpLabel.IsNull()) {
+    #ifdef debug_OCCTUtils_GetFaceAttribute
+    std::cout << msg << "WARNING: Face is not labeled and thus has no attribute" << std::endl;
+    #endif
+    fprintf(stderr,"[OCCTUtils_GetFaceAttribute] Face is not labeled and thus has no attribute\n");
     return SV_ERROR;
   }
-  if (!strncmp(attr,"gdscName",4))
-  {
-    TDF_Label nameLabel = tmpLabel.FindChild(1,Standard_False);
-    if (nameLabel.IsNull())
-    {
-      fprintf(stderr,"gdscName label doesn't exist, cannot retrive name\n");
+
+  #ifdef debug_OCCTUtils_GetFaceAttribute
+  std::cout << msg << "tmpLabel: " << tmpLabel << std::endl;
+  #endif
+
+  if (!strncmp(attr,"gdscName",4)) {
+    TDF_Label nameLabel = tmpLabel.FindChild(1, Standard_False);
+
+    if (nameLabel.IsNull()) {
+      #ifdef debug_OCCTUtils_GetFaceAttribute
+      std::cout << msg << "WARNING: gdscName attribute does not exist on face" << std::endl;
+      #endif
+      fprintf(stderr,"[OCCTUtils_GetFaceAttribute] gdscName label doesn't exist, cannot retrive name\n");
       return SV_ERROR;
     }
-    Handle(TDataStd_ExtStringArray) NSTRING = new
-      TDataStd_ExtStringArray();
+
+    Handle(TDataStd_ExtStringArray) NSTRING = new TDataStd_ExtStringArray();
     int isLabel = nameLabel.FindAttribute(TDataStd_ExtStringArray::GetID(),NSTRING);
-    if (isLabel == 0)
-    {
+
+    if (isLabel == 0) {
+      #ifdef debug_OCCTUtils_GetFaceAttribute
+      std::cout << msg << "WARNING: NSTRING attribute does not exist on face" << std::endl;
+      #endif
       fprintf(stderr,"gdscName attribute does not exist on face\n");
       return SV_ERROR;
     }
-    returnString[0]='\0';
+
+    returnString[0] = '\0';
     OCCTUtils_GetExtStringArrayAsChar(NSTRING,returnString);
     *value = returnString;
-  }
-  else if (!strncmp(attr,"parent",6))
-  {
+    #ifdef debug_OCCTUtils_GetFaceAttribute
+    std::cout << msg << "Found string " << returnString << std::endl;
+    #endif
+
+  } else if (!strncmp(attr,"parent",6)) {
+
     TDF_Label parentLabel = tmpLabel.FindChild(2,Standard_False);
-    if (parentLabel.IsNull())
-    {
-      fprintf(stderr,"gdscName label doesn't exist, cannot retrive name\n");
+
+    if (parentLabel.IsNull()) {
+      //std::cout << msg << "WARNING: parent does not exist on face" << std::endl;
+      //fprintf(stderr,"gdscName label doesn't exist, cannot retrive name\n");
       return SV_ERROR;
     }
-    Handle(TDataStd_ExtStringArray) PSTRING = new
-      TDataStd_ExtStringArray();
+
+    Handle(TDataStd_ExtStringArray) PSTRING = new TDataStd_ExtStringArray();
     int isLabel = parentLabel.FindAttribute(TDataStd_ExtStringArray::GetID(),PSTRING);
-    if (isLabel == 0)
-    {
-      fprintf(stderr,"parent attribute does not exist on face\n");
+
+    if (isLabel == 0) {
+      //std::cout << msg << "WARNING: parent attribute does not exist on face" << std::endl;
+      //fprintf(stderr,"parent attribute does not exist on face\n");
       return SV_ERROR;
     }
-    returnString[0]='\0';
+
+    returnString[0] = '\0';
     OCCTUtils_GetExtStringArrayAsChar(PSTRING,returnString);
     *value = returnString;
-  }
-  else if (!strncmp(attr,"id",2))
-  {
+
+  } else if (!strncmp(attr,"id",2)) {
     TDF_Label idLabel = tmpLabel.FindChild(0);
     Handle(TDataStd_Integer) INT = new TDataStd_Integer();
     int isLabel = idLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
@@ -1462,9 +1504,9 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
   return SV_OK;
 }
 
-// -------------------
+//----------------------------
 // OCCTUtils_SetFaceAttribute
-// -------------------
+//----------------------------
 /**
  * @brief Procedure to set an attribute of the shape
  * @param shape input TopoDS_Shape to set attribute
@@ -1473,96 +1515,113 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
  * @note attributes include id, name, and parent
  * @return SV_OK if function completes properly
  */
-int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &face,
-		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
-    				char *attr, char *value)
+int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &face, Handle(XCAFDoc_ShapeTool)&shapetool,
+    TDF_Label &shapelabel, char *attr, char *value)
 {
+  #define n_debug_OCCTUtils_SetFaceAttribute
+  #ifdef debug_OCCTUtils_SetFaceAttribute
+  std::string msg("[OCCTUtils_SetFaceAttribute] ");
+  std::cout << msg << "----------" << std::endl;
+  std::cout << msg << "attr: " << attr << std::endl;
+  std::cout << msg << "value: " << value << std::endl;
+  std::cout << msg << "shapelabel: " << shapelabel << std::endl;
+  #endif
   TDF_Label tmpLabel;
-  shapetool->FindSubShape(shapelabel,face,tmpLabel);
-  if (tmpLabel.IsNull())
-  {
-    fprintf(stderr,"Face is not labelled and thus has no attribute\n");
+  shapetool->FindSubShape(shapelabel, face, tmpLabel);
+
+  if (tmpLabel.IsNull()) {
+    #ifdef debug_OCCTUtils_SetFaceAttribute
+    std::cout << msg << "WARNING: Face is not labeled and thus has no attribute" << std::endl;
+    #endif
+    fprintf(stderr,"Face is not labeled and thus has no attribute\n");
     return SV_ERROR;
   }
-  if (!strncmp(attr,"gdscName",4))
-  {
+
+  if (!strncmp(attr,"gdscName",4)) {
     TDF_Label nameLabel = tmpLabel.FindChild(1,Standard_False);
-    Handle(TDataStd_ExtStringArray) NSTRING = new
-      TDataStd_ExtStringArray();
+    Handle(TDataStd_ExtStringArray) NSTRING = new TDataStd_ExtStringArray();
     int isLabel = nameLabel.FindAttribute(TDataStd_ExtStringArray::GetID(),NSTRING);
+    OCCTUtils_SetExtStringArrayFromChar(NSTRING, value);
+    //std::cout << msg << "NSTRING: " << NSTRING << std::endl;
 
-    OCCTUtils_SetExtStringArrayFromChar(NSTRING,value);
-  }
-  else if (!strncmp(attr,"parent",6))
-  {
+  } else if (!strncmp(attr,"parent",6)) {
     TDF_Label parentLabel = tmpLabel.FindChild(2,Standard_False);
-    Handle(TDataStd_ExtStringArray) PSTRING = new
-      TDataStd_ExtStringArray();
+    Handle(TDataStd_ExtStringArray) PSTRING = new TDataStd_ExtStringArray();
     int isLabel = parentLabel.FindAttribute(TDataStd_ExtStringArray::GetID(),PSTRING);
+    OCCTUtils_SetExtStringArrayFromChar(PSTRING, value);
+    //std::cout << msg << "PSTRING: " << PSTRING << std::endl;
 
-    OCCTUtils_SetExtStringArrayFromChar(PSTRING,value);
-  }
-  else if (!strncmp(attr,"id",2))
-  {
+  } else if (!strncmp(attr,"id",2)) {
     TDF_Label idLabel = tmpLabel.FindChild(0,Standard_False);
     Handle(TDataStd_Integer) INT = new TDataStd_Integer();
     int isLabel = idLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
-
     INT->Set(charToInt(value));
-  }
-  else
-  {
+
+  } else {
     fprintf(stderr,"Attribute %s is not attribute of shape. Options are gdscName, parent, id\n",attr);
     return SV_ERROR;
   }
 
+  #ifdef debug_OCCTUtils_SetFaceAttribute
+  std::cout << msg << "Done" << std::endl;
+  std::cout << msg << "----------" << std::endl;
+  #endif
+
   return SV_OK;
 }
 
-// -------------------
+//------------------------------
 // OCCTUtils_PassFaceAttributes
-// -------------------
-/**
- * @brief Procedure to get an attribute of the shape
- * @param shape input TopoDS_Shape to get attribute
- * @param shapetool the XDEDoc manager that contains attribute info
- * @param shapelabel the label for the shape registered in XDEDoc
- * @note attributes includ id, name, and parent
- * @return SV_OK if function completes properly
- */
+//------------------------------
+// Copy face attributes from 'faceSrc' to 'faceDst'.
+//
+// Attributes copied are "gdscName" and "parent".
+//
 int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
-		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &labelSrc,
-		TDF_Label &labelDst)
+    Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &labelSrc, TDF_Label &labelDst)
 {
-  //Pass the face names first
+  #define n_debug_OCCTUtils_PassFaceAttributes
+  #ifdef debug_OCCTUtils_PassFaceAttributes
+  std::string msg("[OCCTUtils_PassFaceAttributes] ");
+  std::cout << msg << "========== OCCTUtils_PassFaceAttributes ==========" << std::endl;
+  std::cout << msg << "labelSrc: " << labelSrc << std::endl;
+  std::cout << msg << "labelDst: " << labelDst << std::endl;
+  #endif
+
+  // Set face name. 
+  //
   char *name;
-  if (OCCTUtils_GetFaceAttribute(
-	faceSrc,shapetool,labelSrc,"gdscName",&name) != SV_OK)
-  {
+
+  if (OCCTUtils_GetFaceAttribute(faceSrc,shapetool,labelSrc,"gdscName",&name) != SV_OK) {
+    #ifdef debug_OCCTUtils_PassFaceAttributes
+    std::cout << msg << "WARNING: Failure in getting 'gdscName' for shape from faceSrc " << std::endl;
+    #endif
     fprintf(stderr,"Failure in getting gdscName for shape\n");
     return SV_ERROR;
   }
-  if (OCCTUtils_SetFaceAttribute(
-	faceDst,shapetool,labelDst,"gdscName",name) != SV_OK)
-  {
+
+  if (OCCTUtils_SetFaceAttribute( faceDst,shapetool,labelDst,"gdscName",name) != SV_OK) {
     fprintf(stderr,"Failure in setting gdscName for shape\n");
     return SV_ERROR;
   }
 
-  //Now parent name
+  // Set parent name. 
+  //
   char *parent;
-  if (OCCTUtils_GetFaceAttribute(
-	faceSrc,shapetool,labelSrc,"parent",&parent) != SV_OK)
-  {
+
+  if (OCCTUtils_GetFaceAttribute(faceSrc,shapetool,labelSrc,"parent",&parent) != SV_OK) {
+    #ifdef debug_OCCTUtils_PassFaceAttributes
+    std::cout << msg << "WARNING: Failure in getting 'parent' for shape from faceSrc " << std::endl;
+    #endif
     fprintf(stderr,"Failure in getting parent for shape\n");
     return SV_ERROR;
   }
-  if (OCCTUtils_SetFaceAttribute(
-	faceDst,shapetool,labelDst,"parent",parent) != SV_OK)
-  {
+
+  if (OCCTUtils_SetFaceAttribute(faceDst,shapetool,labelDst,"parent",parent) != SV_OK) {
     fprintf(stderr,"Failure in setting parent for shape\n");
     return SV_ERROR;
   }
+
   return SV_OK;
 }
 

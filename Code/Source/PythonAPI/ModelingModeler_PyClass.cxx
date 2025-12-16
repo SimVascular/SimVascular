@@ -391,6 +391,7 @@ PyDoc_STRVAR(ModelingModeler_cylinder_doc,
 static PyObject *
 ModelingModeler_cylinder(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
+  #define n_dbg_ModelingModeler_cylinder
   #ifdef dbg_ModelingModeler_cylinder
   std::cout << "[ModelingModeler_cylinder] ========== ModelingModeler_cylinder ==========" << std::endl;
   std::cout << "[ModelingModel_cylinder] Kernel: " << self->kernel << std::endl;
@@ -440,6 +441,7 @@ ModelingModeler_cylinder(PyModelingModeler* self, PyObject* args, PyObject* kwar
   }
 
   // Create the new solid.
+  std::cout << "[ModelingModel_cylinder] Create the new solid ... " << std::endl;
   auto pyModelingModelObj = CreatePyModelingModelObject(self->kernel);
   if (pyModelingModelObj == nullptr) {
       api.error("Error creating a Python solid model object.");
@@ -451,6 +453,7 @@ ModelingModeler_cylinder(PyModelingModeler* self, PyObject* args, PyObject* kwar
       return nullptr;
   }
 
+  std::cout << "[ModelingModel_cylinder] MakeCylinder ... " << std::endl;
   if (model->MakeCylinder(radius, length, center, axis) != SV_OK) {
       Py_DECREF(pyModelingModelObj);
       delete model;
@@ -1015,11 +1018,17 @@ ModelingModeler_union(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
   //
   // The 'simplification' argument is not used.
   //
-  SolidModel_SimplifyT simplification;
-  if (model->Union(model1, model2, simplification) != SV_OK) {
-      delete model;
-      api.error("Error performing the Boolean union.");
-      return nullptr;
+
+  try {
+      SolidModel_SimplifyT simplification;
+      if (model->Union(model1, model2, simplification) != SV_OK) {
+          delete model;
+          api.error("Error performing the Boolean union.");
+          return nullptr;
+      }
+  } catch (std::exception &e) {
+    api.error("Error performing the Boolean union.");
+    return nullptr;
   }
 
   return pyModelingModelObj;

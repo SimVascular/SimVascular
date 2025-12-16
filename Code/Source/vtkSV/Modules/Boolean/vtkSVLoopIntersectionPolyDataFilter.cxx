@@ -34,6 +34,7 @@
 #define CURRENT 2
 #include "vtkSVLoopIntersectionPolyDataFilter.h"
 #include "delaunay_options.h"
+#include "sv_polydatasolid_utils.h"
 
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
@@ -68,12 +69,22 @@
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkUnstructuredGrid.h"
 
+#include "vtkXMLPolyDataWriter.h"
+
+#include <set>
+
 #include <list>
 #include <map>
 
 //----------------------------------------------------------------------------
 // Helper typedefs and data structures.
 namespace {
+
+void print_warning(const char* function, const std::string& context)
+{
+  std::string msg = "[WARNING:" + std::string(function) + "] " + context;
+  std::cout << msg << std::endl;
+}
 
 // ----------------------
 // simPoint
@@ -158,10 +169,10 @@ protected:
                        vtkPolyData *interLines,int numCurrCells);
 
   /// \brief Function inside SplitCell to get the smaller triangle loops
-  int GetLoops(vtkPolyData *pd, std::vector<simPolygon> *loops);
+  int GetLoops(vtkPolyData *fullpd, vtkPolyData *pd, std::vector<simPolygon> *loops);
 
   /// \brief Get individual polygon loop of splitting cell
-  int GetSingleLoop(vtkPolyData *pd,simPolygon *loop, vtkIdType nextCell,
+  int GetSingleLoop(vtkPolyData *fullpd, vtkPolyData *pd,simPolygon *loop, vtkIdType nextCell,
                     bool *interPtBool, bool *lineBool);
 
   /// \brief Follow a loop orienation to iterate around a split polygon
@@ -736,6 +747,26 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
             vtkPolyData *interLines, int inputIndex,
             int numCurrCells)
 {
+  #define n_debug_SplitCell
+  #ifdef debug_SplitCell
+  std::string msg("[vtkSVLoopIntersectionPolyDataFilter::SplitCell] ");
+  std::cout << msg << std::endl; 
+  std::cout << msg << "========== SplitCell ==========" << std::endl; 
+  std::cout << msg << "cellId: " << cellId << std::endl;
+  std::cout << msg << "interLines: " << interLines << std::endl;
+  std::cout << msg << "interLines->GetLines()->GetNumberOfCells(): " << interLines->GetLines()->GetNumberOfCells() << std::endl;
+  std::cout << msg << "inputIndex: " << inputIndex << std::endl;
+  std::cout << msg << "numCurrCells: " << numCurrCells << std::endl;
+  std::cout << msg << "this->Tolerance: " << this->Tolerance << std::endl;
+  /*
+  std::string file_name = "SplitCell_input.vtp";
+  auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  writer->SetFileName(file_name.c_str());
+  writer->SetInputData(input);
+  writer->Write();
+  */
+  #endif
+
   // Copy down the SurfaceID array that tells which surface the point belongs
   // to
   vtkIdTypeArray *surfaceMapper;
@@ -790,6 +821,9 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
     vtkIdType nLinePts;
     const vtkIdType *linePtIds;
     interLines->GetLines()->GetCell(3*lineId, nLinePts, linePtIds);
+    //std::cout << "------- " << std::endl;
+    //std::cout << "lineId: " << lineId << std::endl;
+    //std::cout << "nLinePts: " << nLinePts << std::endl;
 
     interceptlines->InsertNextCell(2);
     lines->InsertNextCell(2);
@@ -1100,7 +1134,8 @@ vtkCellArray* vtkSVLoopIntersectionPolyDataFilter::Impl
     {
     //Get polygon loops of intersected triangle
     std::vector<simPolygon> loops;
-    if (this->GetLoops(transformedpd, &loops) != SV_OK)
+
+    if (this->GetLoops(fullpd, transformedpd, &loops) != SV_OK)
       {
       splitCells->Delete();
       splitCells = nullptr;
@@ -1450,8 +1485,15 @@ void vtkSVLoopIntersectionPolyDataFilter::Impl::AddToNewCellMap(
 // Impl::GetLoops
 // ----------------------
 int vtkSVLoopIntersectionPolyDataFilter::Impl
-::GetLoops(vtkPolyData *pd, std::vector<simPolygon> *loops)
+::GetLoops(vtkPolyData *fullpd, vtkPolyData *pd, std::vector<simPolygon> *loops)
 {
+  #define n_debug_GetLoops 
+  #ifdef debug_GetLoops
+  std::string msg("[vtkSVLoopIntersectionPolyDataFilter::GetLoops] ");
+  std::cout << msg << std::endl; 
+  std::cout << msg << "========== GetLoops ==========" << std::endl;
+  #endif
+
   vtkNew(vtkIdList, pointCells);
   vtkNew(vtkIdList, cellPoints);
   simPoint nextPt;
@@ -1463,6 +1505,16 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
 
   int numPoints = pd->GetNumberOfPoints();
   int numCells = pd->GetNumberOfCells();
+
+  #ifdef debug_GetLoops
+  std::cout << msg << "numPoints: " << numPoints << std::endl;
+  std::cout << msg << "numCells: " << numCells << std::endl;
+  std::string file_name = "GetLoops_pd.vtp";
+  auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  writer->SetFileName(file_name.c_str());
+  writer->SetInputData(pd);
+  writer->Write();
+  #endif
 
   for (vtkIdType ptId = 0; ptId < numPoints; ptId++)
     {
@@ -1477,6 +1529,9 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
   //For each point in triangle and additional lines
   for (vtkIdType ptId = 0; ptId < numPoints; ptId++)
     {
+    #ifdef debug_GetLoops
+    std::cout << msg << "---------- ptId " << ptId << " ----------" << std::endl;
+    #endif
     //if the point hasn't already been touch and put in a loop
     if (ptBool[ptId] == false)
       {
@@ -1490,20 +1545,31 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
       nextCell = pointCells->GetId(0);
       lineBool[nextCell] = true;
 
-      //Get one loop for untouched point
-      if (this->GetSingleLoop(pd, &interloop, nextCell, ptBool, lineBool) != SV_OK)
+      // Get one loop for untouched point
+      if (this->GetSingleLoop(fullpd, pd, &interloop, nextCell, ptBool, lineBool) != SV_OK)
         {
         delete [] ptBool;
         delete [] lineBool;
-        return SV_ERROR;
+        std::string msg("[GetSingleLoop] No cell with correct orientation found processing cell " + 
+            std::to_string(nextCell));
+        throw PolyDataException(msg, {}, fullpd);
         }
+
       //Add new loop
       loops->push_back(interloop);
       }
     }
-  //Check now for untouched lines, possible to still have
+
+  // Check now for untouched lines, possible to still have
+  #ifdef debug_GetLoops
+  std::cout << msg << "Check now for untouched lines ... " << std::endl;
+  #endif
+
   for (vtkIdType lineId = 0; lineId <pd->GetNumberOfCells(); lineId++)
     {
+    #ifdef debug_GetLoops
+    std::cout << msg << "---------- lineId " << lineId << " ----------" << std::endl;
+    #endif
     if (lineBool[lineId] == false)
       {
       vtkDebugWithObjectMacro(this->ParentFilter, <<"LINE FALSE: Find extra loop/s");
@@ -1517,10 +1583,11 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
       nextCell = lineId;
 
       //Get single loop if the line is still untouched
-      if (this->GetSingleLoop(pd, &interloop, nextCell, ptBool, lineBool) != SV_OK)
+      if (this->GetSingleLoop(fullpd, pd, &interloop, nextCell, ptBool, lineBool) != SV_OK)
         {
         delete [] ptBool;
         delete [] lineBool;
+        print_warning(__func__, "GetSingleLoop failed");
         return SV_ERROR;
         }
       //Add new loop to loops
@@ -1537,10 +1604,17 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
 // ----------------------
 // Impl::GetSingleLoop
 // ----------------------
-int vtkSVLoopIntersectionPolyDataFilter::Impl
-::GetSingleLoop(vtkPolyData *pd, simPolygon *loop, vtkIdType nextCell,
-    bool *interPtBool, bool *lineBool)
+int vtkSVLoopIntersectionPolyDataFilter::Impl::GetSingleLoop(vtkPolyData *fullpd, vtkPolyData *pd, 
+    simPolygon *loop, vtkIdType nextCell, bool *interPtBool, bool *lineBool)
 {
+  #define n_debug_GetSingleLoop
+  #ifdef debug_GetSingleLoop
+  std::string msg("[vtkSVLoopIntersectionPolyDataFilter::GetSingleLoop] ");
+  std::cout << msg << std::endl; 
+  std::cout << msg << "========== GetSingleLoop ==========" << std::endl; 
+  #endif
+
+  vtkNew(vtkCleanPolyData, cleaner);
   int intertype = 0;
   vtkNew(vtkIdList, pointCells);
   vtkNew(vtkIdList, cellPoints);
@@ -1555,46 +1629,60 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
   vtkIdType prevPt = nextPt;
   //Find next point by following line and choosing point that is not already
   //being used
-  if (cellPoints->GetId(0) == nextPt)
-    {
+
+  if (cellPoints->GetId(0) == nextPt) {
     newpoint.id = cellPoints->GetId(1);
     nextPt = cellPoints->GetId(1);
-    }
-  else
-    {
+  } else {
     newpoint.id = cellPoints->GetId(0);
     nextPt = cellPoints->GetId(0);
-    }
+  }
+
   pd->GetPoint(newpoint.id, newpoint.pt);
   loop->points.push_back(newpoint);
   interPtBool[nextPt] = true;
 
-  //Loop until we get back to the point we started at, completing the loop!
-  while (nextPt != startPt)
-    {
+  #ifdef debug_GetSingleLoop
+  std::cout << msg << "nextPt: " << nextPt << std::endl; 
+  std::cout << msg << "startPt: " << startPt << std::endl; 
+  std::cout << msg << "newpoint.id: " << newpoint.id << std::endl; 
+  std::cout << msg << "newpoint.pt: " << newpoint.pt[0] << " " << newpoint.pt[1] << " " << newpoint.pt[2] << std::endl; 
+  #endif
+
+  std::set<int> visited_points;
+  visited_points.insert(nextPt);
+
+  // Loop until we get back to the point we started at, completing the loop!
+  //
+  while (nextPt != startPt) {
+    #ifdef debug_GetSingleLoop
+    std::cout << msg << "----- nextPt " << nextPt << " ----" << std::endl; 
+    std::cout << msg << "startPt: " << startPt << std::endl; 
+    #endif
     pd->GetPointCells(nextPt, pointCells);
-    //There are multiple lines attached to this point; must figure out
-    //the correct way to go
-    if (pointCells->GetNumberOfIds() > 2)
-      {
-      //This is the first intersection. Find line of minimum angle and
-      //set the orientation of the loop (i.e. CW or CCW)
-      if (intertype == 0)
-        {
+    // There are multiple lines attached to this point; must figure out
+    // the correct way to go
+
+    if (pointCells->GetNumberOfIds() > 2) {
+      // This is the first intersection. Find line of minimum angle and
+      // set the orientation of the loop (i.e. CW or CCW)
+
+      if (intertype == 0) {
         this->SetLoopOrientation(pd, loop, &nextCell, nextPt, prevPt, pointCells);
         intertype = 1;
-        }
-      //This is not the first intersection. Follow line that continues along
-      //the set loop orientation
-      else
-        {
+
+      // This is not the first intersection. Follow line that continues along
+      // the set loop orientation
+
+      } else {
         if (this->FollowLoopOrientation(pd, loop, &nextCell, nextPt, prevPt,
-              pointCells) != SV_OK)
-          {
+              pointCells) != SV_OK) {
+          print_warning(__func__, "FollowLoopOrientation failed");
           return SV_ERROR;
-          }
         }
       }
+    }
+
     //There is one line attached to point. This means the intersection has
     //an open intersection loop (i.e. the surfaces are open and one does not
     //completeley intersect the other.
@@ -1630,20 +1718,32 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
     prevPt = nextPt;
     pd->GetCellPoints(nextCell, cellPoints);
     simPoint internewpoint;
-    if (cellPoints->GetId(0) == nextPt)
-      {
+
+    if (cellPoints->GetId(0) == nextPt) {
       internewpoint.id = cellPoints->GetId(1);
       nextPt = cellPoints->GetId(1);
-      }
-    else
-      {
+    } else {
       internewpoint.id = cellPoints->GetId(0);
       nextPt = cellPoints->GetId(0);
-      }
+    }
+  
+    // If a point has already been added then there
+    // is an internal error.
+    //
+    if (visited_points.count(nextPt) != 0) {
+        print_warning(__func__, "Infinite loop detected");
+        std::string msg("[GetSingleLoop] An error occured processing cell " + std::to_string(nextCell));
+        throw PolyDataException(msg, {}, fullpd); 
+        return SV_ERROR;
+    }
+
+    visited_points.insert(nextPt);
+
     pd->GetPoint(internewpoint.id, internewpoint.pt);
     loop->points.push_back(internewpoint);
     interPtBool[nextPt] = true;
-    }
+  }
+
   //Cell is boring; i.e. it only has boundary points. set the orientation
   if (intertype == 0)
     {
@@ -1727,6 +1827,7 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
   if (foundcell == 0)
     {
     vtkWarningWithObjectMacro(this->ParentFilter, << "No cell with correct orientation found");
+    print_warning(__func__, "No cell with correct orientation found");
     return SV_ERROR;
     }
 
@@ -2096,9 +2197,12 @@ int vtkSVLoopIntersectionPolyDataFilter::TriangleTriangleIntersection(
 
   // If signs of all points are the same, all the points lie on the
   // same side of the supporting plane, and we can exit early.
+  //
+  // [DaveP] this does not seem to be a fatal error, really a results.
   if ((dist1[0]*dist1[1] > tolerance) && (dist1[0]*dist1[2] > tolerance))
     {
     //vtkDebugMacro(<<"Same side supporting plane 1!");
+    //print_warning(__func__, "Same side supporting plane");
     return SV_ERROR;
     }
   // Do the same for p2, q2, r2 and supporting plane of first
@@ -2110,9 +2214,11 @@ int vtkSVLoopIntersectionPolyDataFilter::TriangleTriangleIntersection(
 
   // If signs of all points are the same, all the points lie on the
   // same side of the supporting plane, and we can exit early.
+  // [DaveP] this does not seem to be a fatal error, really a result.
   if ((dist2[0]*dist2[1] > tolerance) && (dist2[0]*dist2[2] > tolerance))
     {
     //vtkDebugMacro(<<"Same side supporting plane 2!");
+    //print_warning(__func__, "Same side supporting plane");
     return SV_ERROR;
     }
   // Check for coplanarity of the supporting planes.
@@ -2123,6 +2229,7 @@ int vtkSVLoopIntersectionPolyDataFilter::TriangleTriangleIntersection(
     {
     coplanar = 1;
     //vtkDebugMacro(<<"Coplanar!");
+    print_warning(__func__, "Coplanar triangles found");
     return SV_ERROR;
     }
 
@@ -2194,9 +2301,11 @@ int vtkSVLoopIntersectionPolyDataFilter::TriangleTriangleIntersection(
     }
   // Check if only one edge or all edges intersect the supporting
   // planes intersection.
+  // [DaveP] this does not seem to be a fatal error, really a result.
   if (index1 != 2 || index2 != 2)
     {
     //vtkDebugMacro(<<"Only one edge intersecting!");
+    //print_warning(__func__, "Only one edge intersecting");
     return SV_ERROR;
     }
 
@@ -2205,6 +2314,7 @@ int vtkSVLoopIntersectionPolyDataFilter::TriangleTriangleIntersection(
       vtkMath::IsNan(t2[0]) || vtkMath::IsNan(t2[1]))
     {
     //vtkWarningMacro(<<"NaNs!");
+    print_warning(__func__, "NaNs have been computed");
     return SV_ERROR;
     }
 
@@ -2218,9 +2328,12 @@ int vtkSVLoopIntersectionPolyDataFilter::TriangleTriangleIntersection(
     }
   // Handle the different interval configuration cases.
   double tt1, tt2;
+
+  // [DaveP] this does not seem to be a fatal error, really a result.
   if (t1[1] < t2[0] || t2[1] < t1[0])
     {
     //vtkDebugMacro(<<"No Overlap!");
+    //print_warning(__func__, "No overlap");
     return SV_ERROR; // No overlap
     }
   else if (t1[0] < t2[0])
@@ -2274,17 +2387,27 @@ int vtkSVLoopIntersectionPolyDataFilter::TriangleTriangleIntersection(
   return SV_OK;
 }
 
+//-----------------------
+// CleanAndCheckSurface
+//-----------------------
+// Clean the input surface by merging duplicate points, and/or removing unused points 
+// and/or degenerate cells from a surface. Then check that the surface is watertight.
+//
 void vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckSurface(vtkPolyData *pd,
-    double stats[2], double tolerance)
+    double stats[2], double tolerance, PolyDataSolidCheckResults& check_results)
 {
-  int badEdges = 0;
-  int freeEdges = 0;
-  vtkNew(vtkCleanPolyData, cleaner);
-  vtkNew(vtkIntArray, bad);
-  vtkNew(vtkIntArray, freeedge);
-  vtkNew(vtkIdList, edgeneighbors);
+  #define n_debug_CleanAndCheckSurface
+  #ifdef debug_CleanAndCheckSurface
+  std::string msg("[vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckSurface] ");
+  std::cout << msg << std::endl; 
+  std::cout << msg << "========== CleanAndCheckSurface ==========" << std::endl; 
+  std::cout << msg << "tolerance: " << tolerance << std::endl; 
+  #endif
 
-  //Clean the input surface
+  vtkNew(vtkCleanPolyData, cleaner);
+
+  // Clean the input surface.
+  //
   cleaner->SetInputData(pd);
   cleaner->ToleranceIsAbsoluteOn();
   cleaner->SetAbsoluteTolerance(tolerance);
@@ -2292,47 +2415,77 @@ void vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckSurface(vtkPolyData *pd,
   pd->DeepCopy(cleaner->GetOutput());
   pd->BuildLinks();
 
-  //Loop through the surface and find edges with cells that have either more
-  //than one neighbor or no neighbors. No neighbors can be okay,as this can
-  //indicate a free edge. However, for a polydata surface, multiple neighbors
-  //indicates a bad cell with possible intersecting facets!
-  for (int i = 0; i < pd->GetNumberOfCells(); i++)
-    {
+  // Check that the surface is watertight.
+  //
+  // Loop through the surface and find edges with cells that have either more
+  // than one neighbor or no neighbors. 
+  //
+  // A cell with no neighbors is okay as this can indicate a free edge. 
+  // A cell with multiple neighbors indicates a bad cell with possible intersecting facets.
+  //
+  vtkNew(vtkIntArray, bad);
+  vtkNew(vtkIntArray, freeEdges);
+  vtkNew(vtkIdList, edgeNeighbors);
+
+  int numBadEdges = 0;
+  int numFreeEdges = 0;
+
+  for (int i = 0; i < pd->GetNumberOfCells(); i++) {
+    #ifdef debug_CleanAndCheckSurface
+    //std::cout << msg << "----- i " << i << " -----" << std::endl; 
+    #endif
     const vtkIdType *pts;
     vtkIdType npts = 0;
     pd->GetCellPoints(i, npts, pts);
-    int badcell = 0;
-    int freeedgecell = 0;
-    for (int j = 0; j < npts; j++)
-      {
+    int badCell = 0;
+    int freeEdgeCell = 0;
+    #ifdef debug_CleanAndCheckSurface
+    //std::cout << msg << "npts: " << npts << " -----" << std::endl; 
+    #endif
+
+    for (int j = 0; j < npts; j++) {
       vtkIdType p0 = pts[j];
-      vtkIdType p1 = pts[(j+1)%npts];
+      vtkIdType p1 = pts[(j+1) % npts];
+      pd->GetCellEdgeNeighbors(i, p0, p1, edgeNeighbors);
 
-      pd->GetCellEdgeNeighbors(i, p0, p1, edgeneighbors);
-      if (edgeneighbors->GetNumberOfIds() > 1)
-        {
-        badEdges++;
-        badcell++;
-        }
-      else if (edgeneighbors->GetNumberOfIds() < 1)
-        {
-        freeEdges++;
-        freeedgecell++;
-        }
+      if (edgeNeighbors->GetNumberOfIds() > 1) {
+        numBadEdges += 1;
+        badCell += 1;
 
+      } else if (edgeNeighbors->GetNumberOfIds() < 1) {
+        numFreeEdges += 1;
+        freeEdgeCell += 1;
+        #ifdef debug_CleanAndCheckSurface
+        std::cout << msg << "cell: " << i << "  num adj cells: " << edgeNeighbors->GetNumberOfIds() << std::endl; 
+        #endif
       }
-    bad->InsertValue(i, badcell);
-    freeedge->InsertValue(i, freeedgecell);
     }
+
+    if (badCell != 0) {
+      #ifdef debug_CleanAndCheckSurface
+      std::cout << msg << "Bad cell: " << i << std::endl; 
+      std::cout << msg << "  numBadEdges: " << numBadEdges << std::endl; 
+      #endif
+      check_results.invalid_cells.push_back(i);
+    }
+
+    bad->InsertValue(i, badCell);
+    freeEdges->InsertValue(i, freeEdgeCell);
+  }
+
+  #ifdef debug_CleanAndCheckSurface
+  std::cout << msg << "numFreeEdges: " << numFreeEdges << std::endl; 
+  std::cout << msg << "numBadEdges: " << numBadEdges << std::endl; 
+  #endif
 
   bad->SetName("BadTriangle");
   pd->GetCellData()->AddArray(bad);
 
-  freeedge->SetName("FreeEdge");
-  pd->GetCellData()->AddArray(freeedge);
+  freeEdges->SetName("FreeEdge");
+  pd->GetCellData()->AddArray(freeEdges);
 
-  stats[0] = freeEdges;
-  stats[1] = badEdges;
+  stats[0] = numFreeEdges;
+  stats[1] = numBadEdges;
 }
 
 void vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckInput(vtkPolyData *pd,
@@ -2385,6 +2538,13 @@ int vtkSVLoopIntersectionPolyDataFilter::RequestData(
                                         vtkInformationVector** inputVector,
                                         vtkInformationVector*  outputVector)
 {
+  #define n_debug_RequestData
+  #ifdef debug_RequestData
+  std::string msg("[vtkSVLoopIntersectionPolyDataFilter::RequestData] ");
+  std::cout << msg << std::endl; 
+  std::cout << msg << "========== RequestData ==========" << std::endl; 
+  #endif
+
   vtkInformation* inInfo0 = inputVector[0]->GetInformationObject(0);
   vtkInformation* inInfo1 = inputVector[1]->GetInformationObject(0);
   vtkInformation* outIntersectionInfo =
@@ -2595,7 +2755,8 @@ int vtkSVLoopIntersectionPolyDataFilter::RequestData(
     if (this->CheckMesh)
       {
       double dummy[2];
-      CleanAndCheckSurface(outputPolyData0, dummy, this->Tolerance);
+      PolyDataSolidCheckResults check_results;
+      CleanAndCheckSurface(outputPolyData0, dummy, this->Tolerance, check_results);
       }
 
     outputPolyData0->BuildLinks();
@@ -2635,7 +2796,8 @@ int vtkSVLoopIntersectionPolyDataFilter::RequestData(
     if (this->CheckMesh)
       {
       double dummy[2];
-      CleanAndCheckSurface(outputPolyData1, dummy, this->Tolerance);
+      PolyDataSolidCheckResults check_results;
+      CleanAndCheckSurface(outputPolyData1, dummy, this->Tolerance, check_results);
       }
 
     outputPolyData1->BuildLinks();

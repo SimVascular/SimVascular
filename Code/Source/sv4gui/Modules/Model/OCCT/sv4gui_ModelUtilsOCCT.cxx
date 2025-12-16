@@ -38,32 +38,52 @@
 
 #include "vtkSVGlobals.h"
 
-cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4guiContour*> contourSet, std::string groupName, int numSamplingPts, svLoftingParam *param, int vecFlag, int addCaps)
+//-----------------------
+// CreateLoftSurfaceOCCT
+//-----------------------
+//
+cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4guiContour*> contourSet, 
+    std::string groupName, int numSamplingPts, svLoftingParam *param, int vecFlag, int addCaps)
 {
-    int contourNumber=contourSet.size();
+    #define n_debug_CreateLoftSurfaceOCCT
+    #ifdef debug_CreateLoftSurfaceOCCT
+    std::string msg("[sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT] ");
+    std::cout << msg << "  " << std::endl;
+    std::cout << msg << "========== CreateLoftSurfaceOCCT =========" << std::endl;
+    std::cout << msg << "groupName: " << groupName << std::endl;
+    #endif
+    int contourNumber = contourSet.size();
 
-    if(contourNumber==0 || numSamplingPts==0)
+    if (contourNumber==0 || numSamplingPts==0) {
         return nullptr;
-
-    if(param==nullptr)
-        return nullptr;
-
-    int numSuperPts=0;
-    for(int i=0;i<contourNumber;i++)
-    {
-        int pointNunumber=contourSet[i]->GetContourPointNumber();
-        if(pointNunumber>numSuperPts)
-            numSuperPts=pointNunumber;
     }
 
-    if(numSamplingPts>numSuperPts)
+    if (param == nullptr) {
+        return nullptr;
+    }
+
+    #ifdef debug_CreateLoftSurfaceOCCT
+    std::cout << msg << "number of contours: " << contourNumber << std::endl;
+    std::cout << msg << "param->method: " << param->method << std::endl;
+    #endif
+
+    int numSuperPts = 0;
+
+    for(int i=0;i<contourNumber;i++) {
+        int pointNunumber=contourSet[i]->GetContourPointNumber();
+        if(pointNunumber>numSuperPts) {
+            numSuperPts=pointNunumber;
+        }
+    }
+
+    if(numSamplingPts>numSuperPts) {
         numSuperPts=numSamplingPts;
+    }
 
     int newNumSamplingPts=numSamplingPts;
-
     std::vector<cvPolyData*> superSampledContours;
-    for(int i=0;i<contourNumber;i++)
-    {
+
+    for(int i=0;i<contourNumber;i++) {
         vtkPolyData* vtkpd=vtkPolyData::New();
 
         vtkpd->DeepCopy(contourSet[i]->CreateVtkPolyDataFromContour(false));
@@ -71,36 +91,28 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
         vtkpd->Delete();
         cvPolyData* cvpd2=sys_geom_sampleLoop(cvpd,numSuperPts);
 
-        //        delete cvpd;
-
-        if(cvpd2==nullptr)
-        {
+        if(cvpd2==nullptr) {
             MITK_ERROR << "Supersampling error ";
             return nullptr;
         }
+
         superSampledContours.push_back(cvpd2);
     }
 
     std::vector<cvPolyData*> alignedContours;
-    for(int i=0;i<contourNumber;i++)
-    {
-        if(i==0)
-        {
+
+    for(int i=0;i<contourNumber;i++) {
+        if(i==0) {
             alignedContours.push_back(superSampledContours[0]);
-        }
-        else
-        {
+        } else {
             cvPolyData* cvpd3;
-            if(vecFlag==1)
+            if(vecFlag==1) {
                 cvpd3=sys_geom_Align(alignedContours[i-1],superSampledContours[i]);
-            else
+            } else {
                 cvpd3=sys_geom_AlignByDist(alignedContours[i-1],superSampledContours[i]);
+            }
 
-
-            //            delete superSampledContours[i];
-
-            if(cvpd3==nullptr)
-            {
+            if(cvpd3==nullptr) {
                 MITK_ERROR << "aligning error ";
                 return nullptr;
             }
@@ -109,15 +121,12 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
         }
     }
 
-    cvPolyData **sampledContours=new cvPolyData*[contourNumber];
-    for(int i=0;i<contourNumber;i++)
-    {
-        cvPolyData * cvpd4=sys_geom_sampleLoop(alignedContours[i],newNumSamplingPts);
+    cvPolyData **sampledContours = new cvPolyData*[contourNumber];
 
-        //        delete alignedContours[i];
+    for(int i=0;i<contourNumber;i++) {
+        cvPolyData * cvpd4 = sys_geom_sampleLoop(alignedContours[i],newNumSamplingPts);
 
-        if(cvpd4==nullptr)
-        {
+        if(cvpd4==nullptr) {
             MITK_ERROR << "sampling error ";
             for (int j=0; j<i; j++)
               delete sampledContours[j];
@@ -129,17 +138,14 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
 
     cvSolidModel **curveList=new cvSolidModel*[contourNumber];
     int closed=1;
-    for(int i=0;i<contourNumber;i++)
-    {
-        cvOCCTSolidModel* curve=new cvOCCTSolidModel();
 
-        int status=curve->MakeInterpCurveLoop(sampledContours[i],closed);
+    // Create a cvOCCTSolidModel for each contour.
+    //
+    for(int i=0;i<contourNumber;i++) {
+        cvOCCTSolidModel* curve = new cvOCCTSolidModel();
+        int status = curve->MakeInterpCurveLoop(sampledContours[i],closed);
 
-        //        delete sampledContours[i];
-
-        if ( status != SV_OK )
-        {
-            //            delete curve;
+        if ( status != SV_OK ) {
             MITK_ERROR << "error in curve loop construction ";
             for (int j=0; j<i; j++)
               delete curveList[j];
@@ -150,23 +156,24 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
             return nullptr;
         }
 
-        curveList[i]=curve;
+        curveList[i] = curve;
     }
 
-    cvOCCTSolidModel* surfFinal=nullptr;
+    cvOCCTSolidModel* surfFinal = nullptr;
+    cvOCCTSolidModel* surf = new cvOCCTSolidModel();
 
-    cvOCCTSolidModel* surf=new cvOCCTSolidModel();
-    if(param->method=="spline")
-    {
+    // Created a lofted spline surface.
+    //
+    if (param->method == "spline") {
       int continuity=2;
       int partype=0;
       int smoothing=0;
       double w1=1.0,w2=1.0,w3=1.0;
-      if ( surf->MakeLoftedSurf(curveList,contourNumber,"dummy_name",continuity,partype,w1,w2,w3,smoothing) != SV_OK )
-      {
+
+      if ( surf->MakeLoftedSurf(curveList, contourNumber, "dummy_name", continuity,
+               partype,w1,w2,w3,smoothing) != SV_OK ) {
           MITK_ERROR << "error in lofting surface. ";
-          for (int j=0; j<contourNumber; j++)
-          {
+          for (int j=0; j<contourNumber; j++) {
             delete curveList[j];
             delete sampledContours[j];
           }
@@ -175,17 +182,15 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
           delete surf;
           return nullptr;
       }
-      //delete curveList;
-    }
-    else if (param->method=="nurbs")
-    {
-      // Set degrees
+
+    // Created a lofted NURBS surface.
+    //
+    } else if (param->method == "nurbs") {
+
       int uDegree = param->uDegree;
       int vDegree = param->vDegree;
 
-      // Need to return if contourNumber is too low
-      if (contourNumber < 3)
-      {
+      if (contourNumber < 3) {
         MITK_ERROR << "Not enough segmentations provided in group. Need at least 3";
         return nullptr;
       }
@@ -214,19 +219,12 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
       vtkNew(vtkSVNURBSSurface, NURBSSurface);
 
       cvPolyData *dst;
-      if ( sys_geom_loft_solid_with_nurbs(sampledContours, contourNumber,
-                                          uDegree, vDegree, uSpacing,
-                                          vSpacing, uKnotSpanType,
-                                          vKnotSpanType,
-                                          uParametricSpanType,
-                                          vParametricSpanType,
-                                          NURBSSurface,
-                                          &dst )
-           != SV_OK )
-      {
+
+      if ( sys_geom_loft_solid_with_nurbs(sampledContours, contourNumber, uDegree, vDegree, uSpacing,
+              vSpacing, uKnotSpanType, vKnotSpanType, uParametricSpanType, vParametricSpanType,
+              NURBSSurface, &dst ) != SV_OK ) {
           MITK_ERROR << "poly manipulation error ";
-          for (int j=0; j<contourNumber; j++)
-          {
+          for (int j=0; j<contourNumber; j++) {
             delete curveList[j];
             delete sampledContours[j];
           }
@@ -253,13 +251,13 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
       double **Xarr = new double*[Xlen1];
       double **Yarr = new double*[Xlen1];
       double **Zarr = new double*[Xlen1];
-      for (int i=0; i<Xlen1; i++)
-      {
+
+      for (int i=0; i<Xlen1; i++) {
         Xarr[i] = new double[Xlen2];
         Yarr[i] = new double[Xlen2];
         Zarr[i] = new double[Xlen2];
-        for (int j=0; j<Xlen2; j++)
-        {
+
+        for (int j=0; j<Xlen2; j++) {
           double pt[3];
           double w;
           controlPointGrid->GetControlPoint(i, j, 0, pt, w);
@@ -290,18 +288,14 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
       for (int i=0; i<vMlen; i++)
         vMarr[i] = VMultArray->GetTuple1(i);
 
-      // Flipping order!
-      if (surf->CreateBSplineSurface(Xarr, Yarr, Zarr,
-                                     Xlen1, Xlen2,
-                                     vKarr, vKlen,
-                                     uKarr, uKlen,
-                                     vMarr, vMlen,
-                                     uMarr, uMlen,
-                                     vDegree, uDegree) != SV_OK )
-      {
+      // Create a NURBS cvOCCTSolidModel object.
+      if (surf->CreateBSplineSurface(Xarr, Yarr, Zarr, Xlen1, Xlen2, vKarr, vKlen, uKarr, uKlen,
+              vMarr, vMlen, uMarr, uMlen, vDegree, uDegree) != SV_OK ) {
           MITK_ERROR << "poly manipulation error ";
-          for (int j=0; j<contourNumber; j++)
-          {
+          #ifdef debug_CreateLoftSurfaceOCCT
+          std::cout << msg << "ERROR: poly manipulation error" << std::endl;
+          #endif
+          for (int j=0; j<contourNumber; j++) {
             delete curveList[j];
             delete sampledContours[j];
           }
@@ -309,8 +303,7 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
           delete sampledContours;
           delete surf;
           //Clean up
-          for (int i=0;i<Xlen1;i++)
-          {
+          for (int i=0;i<Xlen1;i++) {
             delete [] Xarr[i];
             delete [] Yarr[i];
             delete [] Zarr[i];
@@ -325,9 +318,9 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
           delete [] vMarr;
           return nullptr;
       }
+
       //Clean up
-      for (int i=0;i<Xlen1;i++)
-      {
+      for (int i=0;i<Xlen1;i++) {
         delete [] Xarr[i];
         delete [] Yarr[i];
         delete [] Zarr[i];
@@ -340,124 +333,208 @@ cvOCCTSolidModel* sv4guiModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<sv4gui
       delete [] vKarr;
       delete [] uMarr;
       delete [] vMarr;
-
     }
-    surfFinal=surf;
 
-    for (int j=0; j<contourNumber; j++)
-    {
+    surfFinal = surf;
+
+    for (int j=0; j<contourNumber; j++) {
       delete curveList[j];
       delete sampledContours[j];
     }
+
     delete [] curveList;
     delete sampledContours;
 
-    if(addCaps)
+    // Check surf properties.
     {
-        cvOCCTSolidModel* surfCapped=new cvOCCTSolidModel();
-        if ( surfCapped->CapSurfToSolid(surf) != SV_OK )
-        {
+    #ifdef debug_CreateLoftSurfaceOCCT
+    //std::cout << msg << "##### CreateLoftSurfaceOCCT - surf #####" << std::endl;
+    //surf->Print();
+    #endif
+    }
+
+    // Cap the lofted surface.
+    //
+    if (addCaps) {  
+        #ifdef debug_CreateLoftSurfaceOCCT
+        std::cout << msg << "Add caps ... " << std::endl;
+        #endif
+        cvOCCTSolidModel* surfCapped = new cvOCCTSolidModel();
+
+        if ( surfCapped->CapSurfToSolid(surf) != SV_OK ) {
+            #ifdef debug_CreateLoftSurfaceOCCT
+            std::cout << msg << "ERROR: cap operation failed " << std::endl;
+            #endif
             MITK_ERROR << "error in cap / bound operation ";
             delete surf;
             return nullptr;
         }
-        //delete surf
-        surfFinal=surfCapped;
+
+        #ifdef debug_CreateLoftSurfaceOCCT
+        //std::cout << msg << "##### surfCapped #####" << std::endl;
+        //surfCapped->Print();
+        //exit(0);
+        #endif
+
+        surfFinal = surfCapped;
     }
 
     int numFaces;
     int *faces;
-    if(surfFinal->GetFaceIds( &numFaces, &faces) != SV_OK )
-    {
+
+    if (surfFinal->GetFaceIds(&numFaces, &faces) != SV_OK) {
         MITK_ERROR << "GetFaceIds: error on object";
         delete surf;
         return nullptr;
     }
 
-    for(int i=0;i<numFaces;i++)
-    {
-        char* gn=const_cast<char*>(groupName.c_str());
+    #ifdef debug_CreateLoftSurfaceOCCT
+    std::cout << msg << "SetFaceAttribute for 'parent' ... " << std::endl;
+    std::cout << msg << "numFaces: " << numFaces << std::endl;
+    #endif
 
-        surfFinal->SetFaceAttribute("parent",faces[i],gn);
+    for (int i = 0; i < numFaces;i++) {
+        #ifdef debug_CreateLoftSurfaceOCCT
+        std::cout << msg << "SetFaceAttribute for face id " << faces[i] << std::endl;
+        #endif
+        char* gn = const_cast<char*>(groupName.c_str());
+        surfFinal->SetFaceAttribute("parent", faces[i], gn);
     }
+
+    #ifdef debug_CreateLoftSurfaceOCCT
+    std::cout << msg << "Done " << std::endl;
+    std::cout << msg << "----------" << std::endl;
+    #endif
 
     return surfFinal;
 }
 
-sv4guiModelElementOCCT* sv4guiModelUtilsOCCT::CreateModelElementOCCT(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts,svLoftingParam *param, double maxDist, unsigned int t)
+//------------------------
+// CreateModelElementOCCT
+//------------------------
+//
+sv4guiModelElementOCCT* 
+sv4guiModelUtilsOCCT::CreateModelElementOCCT(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts,
+    svLoftingParam *param, double maxDist, unsigned int t)
 {
+    #define n_debug_CreateModelElementOCCT
+    #ifdef debug_CreateModelElementOCCT
+    std::string msg("[sv4guiModelUtilsOCCT::CreateModelElementOCCT] ");
+    std::cout << msg << "----------" << std::endl;
+    #endif
     std::vector<cvOCCTSolidModel*> loftedSolids;
     std::vector<std::string> segNames;
 
-    for(int i=0;i<segNodes.size();i++)
-    {
+    for(int i = 0; i <segNodes.size(); i++) {
         mitk::DataNode::Pointer segNode=segNodes[i];
         sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*>(segNode->GetData());
-        if(group!=nullptr)
-        {
+
+        if (group != nullptr) {
             std::vector<sv4guiContour*> contourSet=group->GetValidContourSet(t);
-            std::string groupName=segNode->GetName();
+            std::string groupName = segNode->GetName();
             segNames.push_back(groupName);
 
-            svLoftingParam* usedParam= group->GetLoftingParam();
-            if(param!=nullptr) usedParam=param;
+            svLoftingParam* usedParam = group->GetLoftingParam();
+            if (param != nullptr) {
+                usedParam = param;
+            }
+            #ifdef debug_CreateModelElementOCCT
+            std::cout << msg << ">>>> groupName: " << groupName << std::endl;
+            #endif
 
-            cvOCCTSolidModel* solid=CreateLoftSurfaceOCCT(contourSet,groupName,numSamplingPts,usedParam,0,1);
+            cvOCCTSolidModel* solid = CreateLoftSurfaceOCCT(contourSet, groupName, numSamplingPts, usedParam, 0, 1);
+            #ifdef debug_CreateModelElementOCCT
+            std::cout << msg << "     solid: " << solid << std::endl;
+            #endif
+
             loftedSolids.push_back(solid);
-            if (solid == nullptr)
+
+            if (solid == nullptr) {
               return nullptr;
+            }
         }
     }
 
-    if(loftedSolids.size()==0)
+    if (loftedSolids.size() == 0) {
         return nullptr;
-
-    cvOCCTSolidModel* unionSolid=loftedSolids[0];
-
-    cvOCCTSolidModel* previousUnionSolid=nullptr;
-    //    SolidModel_SimplifyT smp = SM_Simplify_All;
-    for(int i=1;i<loftedSolids.size();i++)
-    {
-        previousUnionSolid=unionSolid;
-        unionSolid=new cvOCCTSolidModel();
-        unionSolid->Union(loftedSolids[i],previousUnionSolid);
-        //        delete previousUnionSolid;
-        //        delete loftedSolids[i];
     }
 
+    #ifdef debug_CreateModelElementOCCT
+    std::cout << msg << "Union lofted surfaces ..." << std::endl;
+    #endif
+    cvOCCTSolidModel* unionSolid = loftedSolids[0];
+    cvOCCTSolidModel* previousUnionSolid = nullptr;
 
-    //setup face names
+    for (int i = 1; i < loftedSolids.size(); i++) {
+        #ifdef debug_CreateModelElementOCCT
+        std::cout << msg << "----- Union i " << i << " -----" << std::endl;
+        #endif
+        previousUnionSolid = unionSolid;
+        unionSolid = new cvOCCTSolidModel();
+        unionSolid->Union(loftedSolids[i],previousUnionSolid);
+        // delete previousUnionSolid;
+        // delete loftedSolids[i];
+    }
+
+    // Set face names.
+    //
     int numFaces;
     int *ids;
-    int status=unionSolid->GetFaceIds( &numFaces, &ids);
-    if(status != SV_OK )
-    {
-        //        delete unionSolid;
+    int status = unionSolid->GetFaceIds( &numFaces, &ids);
+
+    if (status != SV_OK ) {
+        // delete unionSolid;
         MITK_ERROR << "GetFaceIds: error on object";
+        #ifdef debug_CreateModelElementOCCT
+        std::cout << msg << "**** Error: GetFaceIds: error on object" << std::endl;
+        #endif
         return nullptr;
     }
+
+    #ifdef debug_CreateModelElementOCCT
+    std::cout << msg << "--------------------" << std::endl;
+    std::cout << msg << " Set face names ... " << std::endl;
+    std::cout << msg << "--------------------" << std::endl;
+    std::cout << msg << "numFaces: " << numFaces << std::endl;
+    #endif
 
     std::vector<int> faceIDs;
     std::vector<std::string> faceNames;
-    for(int i=0;i<numFaces;i++)
-    {
+
+    for (int i = 0; i < numFaces; i++) {
+        #ifdef debug_CreateModelElementOCCT
+        std::cout << msg << "---------- face i " << i << " ----------" << std::endl;
+        std::cout << msg << "ids[i]: " << ids[i] << std::endl;
+        #endif
         faceIDs.push_back(ids[i]);
-        char *value=nullptr;
-        char *parent=nullptr;
-        unionSolid->GetFaceAttribute("gdscName",ids[i],&value);
+
+        #ifdef debug_CreateModelElementOCCT
+        std::cout << msg << "GetFaceAttribute gdscName ... " << std::endl;
+        #endif
+        char *value = nullptr;
+        unionSolid->GetFaceAttribute("gdscName", ids[i], &value);
         std::string type(value);
-        unionSolid->GetFaceAttribute("parent",ids[i],&parent);
+
+        #ifdef debug_CreateModelElementOCCT
+        std::cout << msg << "GetFaceAttribute parent ... " << std::endl;
+        #endif
+        char *parent = nullptr;
+        unionSolid->GetFaceAttribute("parent", ids[i], &parent);
         std::string groupName(parent);
+
+        #ifdef debug_CreateModelElementOCCT
+        std::cout << msg << "type (gdscName):    " << type << std::endl;
+        std::cout << msg << "groupName (parent): " << groupName << std::endl;
+        #endif
+
         faceNames.push_back(type+"_"+groupName);
     }
 
-    for(int i=0;i<faceNames.size()-1;i++)
-    {
-        int idx=1;
-        for(int j=i+1;j<faceNames.size();j++)
-        {
-            if(faceNames[i]==faceNames[j])
-            {
+    for (int i = 0; i < faceNames.size()-1; i++) {
+        int idx = 1;
+
+        for (int j = i+1; j < faceNames.size(); j++) {
+            if (faceNames[i] == faceNames[j]) {
                 idx++;
                 std::stringstream ss;
                 ss << idx;
@@ -467,10 +544,8 @@ sv4guiModelElementOCCT* sv4guiModelUtilsOCCT::CreateModelElementOCCT(std::vector
         }
     }
 
-    for(int i=0;i<numFaces;i++)
-    {
+    for(int i=0;i<numFaces;i++) {
         char* fn=const_cast<char*>(faceNames[i].c_str());
-
         unionSolid->SetFaceAttribute("gdscName",ids[i],fn);
     }
 

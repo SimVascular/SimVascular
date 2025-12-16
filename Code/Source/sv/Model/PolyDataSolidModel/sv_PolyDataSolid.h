@@ -41,6 +41,12 @@
 #include "sv_VTK.h"
 #include "sv_misc_utils.h"
 
+class SV_EXPORT_POLYDATASOLID PolyDataSolidCheckResults { 
+  public: 
+    std::vector<int> invalid_cells;
+    
+};
+
 //-----------------
 // cvPolyDataSolid
 //-----------------

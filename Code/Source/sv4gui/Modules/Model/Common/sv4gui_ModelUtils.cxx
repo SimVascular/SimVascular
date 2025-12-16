@@ -82,8 +82,7 @@ sv4guiModelUtils::CreatePolyData(std::vector<sv4guiContourGroup*> groups, std::v
     std::cout << msg << "Create lofted surfaces ... " << std::endl;
     #endif
 
-    for(int i=0;i<groupNumber;i++)
-    {
+    for (int i = 0; i < groupNumber; i++) {
       #ifdef debug_CreatePolyData_
       std::cout << msg << "----- i " << i << " -----" << std::endl;
       #endif
@@ -93,31 +92,31 @@ sv4guiModelUtils::CreatePolyData(std::vector<sv4guiContourGroup*> groups, std::v
       std::cout << msg << "vtkpd: " << vtkpd << std::endl;
       #endif
 
-      if (vtkpd == nullptr)
-      {
-        for (int j=0; j< i-1; j++)
+      if (vtkpd == nullptr) {
+        for (int j=0; j< i-1; j++) {
           delete srcs[j];
+        }
         delete [] srcs;
         return nullptr;
       }
+
       srcs[i] = new cvPolyData(vtkpd);
       vtkpd->Delete();
     }
 
-    for(int i=0;i<vtpNumber;i++)
-    {
-        if(vtps[i]==nullptr)
-        {
-            for(int j=0;j<i+groupNumber-1;j++)
+    for (int i = 0; i < vtpNumber; i++) {
+        if(vtps[i]==nullptr) {
+            for(int j=0;j<i+groupNumber-1;j++) {
                 delete srcs[j];
+            }
             delete [] srcs;
             return nullptr;
         }
-        vtkPolyData* newvtp=vtkPolyData::New();
+
+        vtkPolyData* newvtp = vtkPolyData::New();
         newvtp->DeepCopy(vtps[i]);
 
-        if(!newvtp->GetCellData()->HasArray("CapID"))
-        {
+        if(!newvtp->GetCellData()->HasArray("CapID")) {
             vtkIntArray* capArray=vtkIntArray::New();
             capArray->SetName("CapID");
             for(int i=0;i<newvtp->GetNumberOfCells();i++)
@@ -137,9 +136,11 @@ sv4guiModelUtils::CreatePolyData(std::vector<sv4guiContourGroup*> groups, std::v
     std::cout << msg << "sys_geom_all_union ... " << std::endl;
     #endif
     int status = sys_geom_all_union(srcs, groupNumber+vtpNumber, noInterOut, tol, &dst);
+    #ifdef debug_CreatePolyData_
+    std::cout << msg << "sys_geom_all_union status: " << status << std::endl;
+    #endif
 
-    for(int i=0;i<groupNumber+vtpNumber;i++)
-    {
+    for(int i=0;i<groupNumber+vtpNumber;i++) {
         delete srcs[i];
     }
     delete [] srcs;
@@ -156,13 +157,19 @@ sv4guiModelUtils::CreatePolyData(std::vector<sv4guiContourGroup*> groups, std::v
 //
 sv4guiModelElementPolyData* 
 sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, 
-    int numSamplingPts, int stats[], svLoftingParam *param, unsigned int t, int noInterOut, double tol)
+    int numSamplingPts, PolyDataSolidCheckResults& check_results,
+    int stats[], svLoftingParam *param, unsigned int t, int noInterOut, double tol)
 {
   #define n_debug_CreateModelElementPolyData
   #ifdef debug_CreateModelElementPolyData
   std::string msg("[sv4guiModelUtils::CreateModelElementPolyData] ");
   std::cout << msg << std::endl;
   std::cout << msg << "========== CreateModelElementPolyData ==========" << std::endl;
+  std::cout << msg << "numSamplingPts: " << numSamplingPts << std::endl;
+  std::cout << msg << "stats: " << stats << std::endl;
+  std::cout << msg << "t: " << t << std::endl;
+  std::cout << msg << "noInterOut: " << noInterOut << std::endl;
+  std::cout << msg << "tol: " << tol << std::endl;
   #endif
 
   std::vector<sv4guiContourGroup*> groups;
@@ -194,27 +201,46 @@ sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer
     }
   }
 
-  vtkPolyData* solidvpd=CreatePolyData(groups,vtps,numSamplingPts,param,t,noInterOut,tol);
-  if(solidvpd==nullptr) {
+  #ifdef debug_CreateModelElementPolyData
+  std::cout << msg << "CreatePolyData ... " << std::endl;
+  #endif
+  vtkPolyData* solidvpd = CreatePolyData(groups,vtps,numSamplingPts,param,t,noInterOut,tol);
+
+  if (solidvpd==nullptr) {
     return nullptr;
   }
 
-
-  cvPolyData *src=new cvPolyData(solidvpd);
+  #ifdef debug_CreateModelElementPolyData
+  std::cout << msg << "solidvpd num cells: " << solidvpd->GetNumberOfCells() << std::endl;
+  #endif
+  cvPolyData *src = new cvPolyData(solidvpd);
   cvPolyData *dst = nullptr;
 
-  if(stats&&sys_geom_checksurface(src,stats,tol)!=SV_OK) {
+  if (stats && sys_geom_checksurface(src,stats,tol,check_results) != SV_OK) {
+    #ifdef debug_CreateModelElementPolyData
+    std::cout << msg << "**** ERROR: sys_geom_checksurface has failed. " << std::endl;
+    #endif
     solidvpd->Delete();
     return nullptr;
   }
+
+  #ifdef debug_CreateModelElementPolyData
+  std::cout << msg << "check_results.invalid_cells.size(): " << check_results.invalid_cells.size() << std::endl;
+  std::cout << msg << "stats[0]: " << stats[0] << std::endl;
+  std::cout << msg << "stats[1]: " << stats[1] << std::endl;
+  #endif
 
   int *doublecaps;
   int numfaces=0;
 
   if (sys_geom_set_ids_for_caps(src, &dst,  &doublecaps,&numfaces) != SV_OK) {
+    #ifdef debug_CreateModelElementPolyData
+    std::cout << msg << "**** ERROR: sys_geom_set_ids_for_caps has failed. " << std::endl;
+    #endif
     solidvpd->Delete();
     return nullptr;
   }
+
   #ifdef debug_CreateModelElementPolyData
   std::cout << msg << "numfaces: " << numfaces << std::endl;
   #endif
@@ -225,61 +251,74 @@ sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer
   nowClean = sv4guiModelUtils::OrientVtkPolyData(forClean);
 
   solidvpd->DeepCopy(nowClean);;
+  #ifdef debug_CreateModelElementPolyData
+  std::cout << msg << "nowClean: " << nowClean << std::endl;
+  #endif
 
-  // Write the file.
-  /* Keep around for debugging.
-  vtkSmartPointer<vtkXMLPolyDataWriter> writer  = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-  writer->SetFileName("CreateModelElementPolyData_solidvpd.vtp");
-  writer->SetInputData(solidvpd);
-  writer->Write();
-  */
-
-  int numSeg=segNames.size();
-  int numCap2=0;
+  int numSeg = segNames.size();
+  int numCap2 = 0;
 
   for(int i=numSeg-1;i>-1;i--) {
+    #ifdef debug_CreateModelElementPolyData
+    std::cout << msg << "doublecaps[i]: " << doublecaps[i] << std::endl;
+    #endif
     if(doublecaps[i]!=0) {
-      numCap2=doublecaps[i];
+      numCap2 = doublecaps[i];
       break;
     }
   }
 
-  std::string *allNames=new std::string[2*numSeg+numCap2];
+  #ifdef debug_CreateModelElementPolyData
+  std::cout << msg << "numCap2: " << numCap2 << std::endl;
+  std::cout << msg << "numSeg: " << numSeg << std::endl;
+  #endif
 
-  for(int i=0;i<numSeg;i++) {
-    allNames[i]="wall_"+segNames[i];
-    allNames[numSeg+i]="cap_"+segNames[i];
-    if(doublecaps[i]!=0) {
-            allNames[2*numSeg+doublecaps[i]-1]="cap_"+segNames[i]+"_2";
+  std::string *allNames = new std::string[2*numSeg+numCap2];
+
+  for (int i = 0; i < numSeg; i++) {
+    allNames[i]= "wall_" + segNames[i];
+    allNames[numSeg+i] = "cap_" + segNames[i];
+
+    if (doublecaps[i] != 0) {
+      allNames[2*numSeg+doublecaps[i]-1] = "cap_"+segNames[i] + "_2";
     }
   }
 
+  #ifdef debug_CreateModelElementPolyData
+  std::cout << msg << "PlyDtaUtils_GetFacePolyData ... " << std::endl;
+  #endif
   std::vector<sv4guiModelElement::svFace*> faces;
 
-  for(int i=0;i<2*numSeg+numCap2;i++) {
+  for (int i = 0; i < 2*numSeg+numCap2; i++) {
     vtkPolyData *facepd = vtkPolyData::New();
     int faceid = i+1;
     PlyDtaUtils_GetFacePolyData(solidvpd, &faceid, facepd);
-    //std::cout << msg << ">>> faceid " << faceid << std::endl;
-    //std::cout << msg << "    Num nodes: " << facepd->GetNumberOfPoints() << std::endl;
 
     if (facepd == nullptr || facepd->GetNumberOfPoints() == 0) {
       continue;
     }
 
-    sv4guiModelElement::svFace* face =new sv4guiModelElement::svFace;
+    sv4guiModelElement::svFace* face = new sv4guiModelElement::svFace;
     face->id = faceid;
     face->name = allNames[i];
     face->vpd = facepd;
+    #ifdef debug_CreateModelElementPolyData
+    std::cout << msg << "----- faceid " << faceid << " -----" << std::endl;
+    std::cout << msg << "face: " << face << std::endl;
+    std::cout << msg << "facepd: " << facepd << std::endl;
+    std::cout << msg << "facepd->GetNumberOfPoints(): " << facepd->GetNumberOfPoints() << std::endl;
+    std::cout << msg << "facepd->GetNumberOfCells(): " << facepd->GetNumberOfCells() << std::endl;
+    #endif
 
-    if(face->name.substr(0,5)=="wall_")
-            face->type="wall";
-    else if(face->name.substr(0,4)=="cap_")
-            face->type="cap";
+    if(face->name.substr(0,5)=="wall_") {
+      face->type="wall";
+
+    } else if(face->name.substr(0,4)=="cap_") {
+      face->type="cap";
+    }
 
     #ifdef debug_CreateModelElementPolyData
-    std::cout << msg << "    Name: " << face->name << std::endl;
-    std::cout << msg << "    Type: " << face->type << std::endl;
+    std::cout << msg << "face->type: " << face->type << std::endl;
     #endif
     faces.push_back(face);
   }
@@ -287,6 +326,12 @@ sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer
   delete[] allNames;
 
   sv4guiModelElementPolyData* modelElement = new sv4guiModelElementPolyData();
+  #ifdef debug_CreateModelElementPolyData
+  std::cout << msg << "New modelElement: " << modelElement << std::endl;
+  std::cout << msg << "  solidvpd: " << solidvpd << std::endl;
+  std::cout << msg << "  solidvpd num cells: " << solidvpd->GetNumberOfCells() << std::endl;
+  std::cout << msg << "  faces[0]: " << faces[0] << std::endl;
+  #endif
   modelElement->SetSegNames(segNames);
   modelElement->SetFaces(faces);
   modelElement->SetWholeVtkPolyData(solidvpd);
@@ -294,15 +339,40 @@ sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer
 
   bool ok = false;
 
+  // If there are invalid cells then LinearSubdivideLocal() will
+  // fail and no model geometry will be displayed.
+  //
+  // Therefore set ok=true so the modelElement geometry can be
+  // displayed with the invalid cells identified.
+  //
   if (modelElement->MarkCellsByFaces(modelElement->GetCapFaceIDs())) {
     int numDivs = 1;
-    ok = modelElement->LinearSubdivideLocal(numDivs);
+
+    if (check_results.invalid_cells.size() != 0) {
+      ok = true;
+    } else {
+     ok = modelElement->LinearSubdivideLocal(numDivs);
+    }
   }
 
-  if(!ok) {
+  if (!ok) {
+    #ifdef debug_CreateModelElementPolyData
+    std::cout << msg << "**** ERROR: Failed to subdivide caps of created PolyData" << std::endl;
+    #endif
     MITK_ERROR << "Failed to subdivide caps of created PolyData";
     return nullptr;
   }
+
+  /*
+  vtkSmartPointer<vtkXMLPolyDataWriter> writer  = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  writer->SetFileName("CreateModelElementPolyData_solidvpd.vtp");
+  writer->SetInputData(solidvpd);
+  writer->Write();
+  */
+
+  #ifdef debug_CreateModelElementPolyData
+  std::cout << msg << "Done " << std::endl;
+  #endif
 
   return modelElement;
 }
@@ -403,6 +473,7 @@ sv4guiModelUtils::CreateLoftSurface(sv4guiContourGroup* contourGroup, int numSam
     std::cout << msg << std::endl;
     std::cout << msg << "========== CreateLoftSurface_1 ==========" << std::endl;
     std::cout << msg << "contourGroup: " << contourGroup << std::endl;
+    std::cout << msg << "contourGroup path name: " << contourGroup->GetPathName() << std::endl;
     std::cout << msg << "numSamplingPts: " << numSamplingPts << std::endl;
     std::cout << msg << "addCaps: " << addCaps << std::endl;
     std::cout << msg << "param: " << param << std::endl;
@@ -423,7 +494,17 @@ sv4guiModelUtils::CreateLoftSurface(sv4guiContourGroup* contourGroup, int numSam
 
     std::vector<sv4guiContour*> contourSet = contourGroup->GetValidContourSet(t);
 
-    return CreateLoftSurface(contourSet, numSamplingPts, usedParam, addCaps);
+    vtkPolyData* lofted_surface = nullptr;
+
+    try {
+        lofted_surface = CreateLoftSurface(contourSet, numSamplingPts, usedParam, addCaps);
+
+    } catch (std::exception &e) { 
+       throw std::runtime_error("An error building the model has occured: Creating a lofted surface for segmentation '" + contourGroup->GetPathName() +
+          "' has failed.");
+    }
+
+    return lofted_surface;
 }
 
 //-------------------
@@ -609,9 +690,12 @@ vtkPolyData* sv4guiModelUtils::CreateLoftSurface(std::vector<sv4guiContour*> con
       outpd=nullptr;
 
     } else {
+
       if (PlyDtaUtils_CheckLoftSurface(dst->GetVtkPolyData()) != SV_OK) {
         MITK_ERROR << "Error lofting surface";
+        throw std::runtime_error("Error creating a lofted surface.");
         outpd=nullptr;
+
       } else {
         if (addCaps == 1) {
           outpd = CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
@@ -869,6 +953,15 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::MarkCellsBySphere(vtkSmartPointer
 
 vtkSmartPointer<vtkPolyData> sv4guiModelUtils::MarkCellsByFaces(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> faceIDs)
 {
+    #define n_debug_MarkCellsByFaces
+    #ifdef debug_MarkCellsByFaces 
+    std::string msg("[sv4guiModelUtils::MarkCellsByFaces] ");
+    std::cout << msg << std::endl;
+    std::cout << msg << "========== MarkCellsByFaces ==========" << std::endl;
+    std::cout << msg << "inpd: " << inpd << std::endl;
+    std::cout << msg << "faceIDs.size(): " << faceIDs.size() << std::endl;
+    #endif
+
     if(inpd==nullptr)
         return nullptr;
 
@@ -958,17 +1051,38 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::ConstrainSmoothLocal(vtkSmartPoin
 
 vtkSmartPointer<vtkPolyData> sv4guiModelUtils::LinearSubdivideLocal(vtkSmartPointer<vtkPolyData> inpd, int numDivs)
 {
+    #define n_debug_LinearSubdivideLocal
+    #ifdef debug_LinearSubdivideLocal 
+    std::string msg("[sv4guiModelUtils::LinearSubdivideLocal] ");
+    std::cout << msg << std::endl;
+    std::cout << msg << "========== LinearSubdivideLocal ==========" << std::endl;
+    std::cout << msg << "inpd: " << inpd << std::endl;
+    std::cout << msg << "numDivs: " << numDivs << std::endl;
+    #endif
+
     if(inpd==nullptr)
         return nullptr;
 
-    cvPolyData *src=new cvPolyData(inpd);
+    #ifdef debug_LinearSubdivideLocal 
+    std::cout << msg << "inpd #cells: " << inpd->GetNumberOfCells() << std::endl;
+    #endif
+
+    cvPolyData *src = new cvPolyData(inpd);
     cvPolyData *dst = nullptr;
 
-    if ( sys_geom_local_linear_subdivision(src, &dst, numDivs, nullptr, "ActiveCells") != SV_OK )
-    {
+    if ( sys_geom_local_linear_subdivision(src, &dst, numDivs, nullptr, "ActiveCells") != SV_OK ) {
+        #ifdef debug_LinearSubdivideLocal 
+        std::cout << msg << "**** ERROR: poly local linear subdivision error " << std::endl;
+        #endif
         MITK_ERROR << "poly local linear subdivision error ";
         return nullptr;
     }
+
+    #ifdef debug_LinearSubdivideLocal 
+    auto result = dst->GetVtkPolyData();
+    std::cout << msg << "result: " << result << std::endl;
+    std::cout << msg << "result #cells: " << result->GetNumberOfCells() << std::endl;
+    #endif
 
     return dst->GetVtkPolyData();
 }

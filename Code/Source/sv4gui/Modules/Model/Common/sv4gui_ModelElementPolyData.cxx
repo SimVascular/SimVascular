@@ -81,18 +81,31 @@ sv4guiModelElementPolyData* sv4guiModelElementPolyData::Clone()
 
 vtkSmartPointer<vtkPolyData> sv4guiModelElementPolyData::CreateFaceVtkPolyData(int id)
 {
-    vtkPolyData* facepd=nullptr;
+    #ifdef debug_CreateFaceVtkPolyData
+    std::string msg("[sv4guiModelElementPolyData::CreateFaceVtkPolyData] ");
+    std::cout << msg << "========== CreateFaceVtkPolyData ==========" << std::endl;
+    std::cout << msg << "id: " << id << std::endl;
+    std::cout << msg << "m_WholeVtkPolyData: " << m_WholeVtkPolyData << std::endl;
+    #endif
 
-    if(m_WholeVtkPolyData)
-    {
+    vtkPolyData* facepd = nullptr;
+
+    if (m_WholeVtkPolyData) {
+        #ifdef debug_CreateFaceVtkPolyData
+        std::cout << msg << "m_WholeVtkPolyData num cells: " << m_WholeVtkPolyData->GetNumberOfCells() << std::endl;
+        #endif
         facepd = vtkPolyData::New();
-//        PlyDtaUtils_GetFacePolyData(m_SolidModel, &id, facepd);
         PlyDtaUtils_GetFacePolyData(m_WholeVtkPolyData.GetPointer(), &id, facepd);
     }
 
-    vtkSmartPointer<vtkPolyData> fpd
-      = vtkSmartPointer<vtkPolyData>::Take(facepd);
+    #ifdef debug_CreateFaceVtkPolyData
+    std::cout << msg << "facepd: " << facepd << std::endl;
+    if (facepd != nullptr) {
+      std::cout << msg << "facepd num cells: " << facepd->GetNumberOfCells() << std::endl;
+    }
+    #endif
 
+    vtkSmartPointer<vtkPolyData> fpd = vtkSmartPointer<vtkPolyData>::Take(facepd);
     return fpd;
 }
 
@@ -202,12 +215,13 @@ bool sv4guiModelElementPolyData::CombineFaces(std::vector<int> faceIDs)
 
 bool sv4guiModelElementPolyData::RemeshFaces(std::vector<int> faceIDs, double size)
 {
-    if(m_WholeVtkPolyData==nullptr)
+    if (m_WholeVtkPolyData==nullptr) {
         return false;
+    }
 
     vtkSmartPointer<vtkIdList> excluded = vtkSmartPointer<vtkIdList>::New();
-    for(int i=0;i<m_Faces.size();i++)
-    {
+
+    for(int i=0;i<m_Faces.size();i++) {
         bool found=false;
         for(int j=0;j<faceIDs.size();j++)
         {
@@ -218,8 +232,8 @@ bool sv4guiModelElementPolyData::RemeshFaces(std::vector<int> faceIDs, double si
             }
 
         }
-        if(!found)
-        {
+
+        if(!found) {
             excluded->InsertNextId(m_Faces[i]->id);
         }
     }
@@ -661,7 +675,7 @@ bool sv4guiModelElementPolyData::MarkCells(std::vector<int> cellIDs)
     if(m_WholeVtkPolyData==nullptr)
         return false;
 
-    vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::MarkCells(m_WholeVtkPolyData, cellIDs);
+    vtkSmartPointer<vtkPolyData> newvpd = sv4guiModelUtils::MarkCells(m_WholeVtkPolyData, cellIDs);
 
     if(newvpd==nullptr)
         return false;
@@ -688,15 +702,17 @@ bool sv4guiModelElementPolyData::MarkCellsBySphere(double radius, double center[
 
 bool sv4guiModelElementPolyData::MarkCellsByFaces(std::vector<int> faceIDs)
 {
-    if(m_WholeVtkPolyData==nullptr)
+    if (m_WholeVtkPolyData == nullptr) {
         return false;
+    }
 
-    vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::MarkCellsByFaces(m_WholeVtkPolyData, faceIDs);
+    vtkSmartPointer<vtkPolyData> newvpd = sv4guiModelUtils::MarkCellsByFaces(m_WholeVtkPolyData, faceIDs);
 
-    if(newvpd==nullptr)
+    if (newvpd == nullptr) {
         return false;
+    }
 
-    m_WholeVtkPolyData=newvpd;
+    m_WholeVtkPolyData = newvpd;
 
     return true;
 }
@@ -781,14 +797,30 @@ bool sv4guiModelElementPolyData::ConstrainSmoothLocal(int numIters, double const
 
 bool sv4guiModelElementPolyData::LinearSubdivideLocal(int numDivs)
 {
-    if(m_WholeVtkPolyData==nullptr)
-        return false;
+    #ifdef debug_LinearSubdivideLocal
+    std::string msg("[sv4guiModelElementPolyData::LinearSubdivideLocal] ");
+    std::cout << msg << "========== LinearSubdivideLocal ==========" << std::endl;
+    std::cout << msg << "numDivs: " << numDivs << std::endl;
+    std::cout << msg << "m_WholeVtkPolyData: " << m_WholeVtkPolyData << std::endl;
+    #endif
 
-    vtkSmartPointer<vtkPolyData> newvpd=sv4guiModelUtils::LinearSubdivideLocal(m_WholeVtkPolyData, numDivs);
-    if(newvpd==nullptr)
+    if(m_WholeVtkPolyData==nullptr) {
         return false;
+    }
 
-    m_WholeVtkPolyData=newvpd;
+    vtkSmartPointer<vtkPolyData> newvpd = sv4guiModelUtils::LinearSubdivideLocal(m_WholeVtkPolyData, numDivs);
+
+    if (newvpd == nullptr) {
+        return false;
+    }
+
+    #ifdef debug_LinearSubdivideLocal
+    std::cout << msg << "m_WholeVtkPolyData #cells: " << m_WholeVtkPolyData->GetNumberOfCells() << std::endl;
+    std::cout << msg << "newvpd: " << newvpd << std::endl;
+    std::cout << msg << "newvpd #cells: " << newvpd->GetNumberOfCells() << std::endl;
+    #endif
+
+    m_WholeVtkPolyData = newvpd;
 
     for(int i=0;i<m_Faces.size();i++)
     {
@@ -802,6 +834,11 @@ bool sv4guiModelElementPolyData::LinearSubdivideLocal(int numDivs)
 
 bool sv4guiModelElementPolyData::LoopSubdivideLocal(int numDivs)
 {
+    #ifdef debug_LoopSubdivideLocal
+    std::string msg("[sv4guiModelElementPolyData::LoopSubdivideLocal] ");
+    std::cout << msg << "========== LoopSubdivideLocal ==========" << std::endl;
+    #endif
+
     if(m_WholeVtkPolyData==nullptr)
         return false;
 
@@ -875,16 +912,11 @@ sv4guiModelElement* sv4guiModelElementPolyData::CreateModelElement()
     return new sv4guiModelElementPolyData();
 }
 
-sv4guiModelElement* sv4guiModelElementPolyData::CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
-                                , int numSamplingPts
-                                , svLoftingParam *param
-                                , int* stats
-                                , double maxDist
-                                , int noInterOut
-                                , double tol
-                                , unsigned int t)
+sv4guiModelElement* sv4guiModelElementPolyData::CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes, 
+    int numSamplingPts, svLoftingParam *param, PolyDataSolidCheckResults& check_results, int* stats, 
+    double maxDist, int noInterOut, double tol, unsigned int t)
 {
-    return sv4guiModelUtils::CreateModelElementPolyData(segNodes,numSamplingPts,stats,param,t,noInterOut,tol);
+    return sv4guiModelUtils::CreateModelElementPolyData(segNodes,numSamplingPts,check_results,stats,param,t,noInterOut,tol);
 }
 
 sv4guiModelElement* sv4guiModelElementPolyData::CreateModelElementByBlend(std::vector<sv4guiModelElement::svBlendParamRadius*> blendRadii

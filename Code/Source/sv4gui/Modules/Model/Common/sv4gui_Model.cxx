@@ -119,8 +119,17 @@ unsigned int sv4guiModel::GetTimeSize() const
 
 sv4guiModelElement* sv4guiModel::GetModelElement(unsigned int t) const
 {
+    #define n_debug_GetModelElement
+    #ifdef debug_GetModelElement
+    std::string msg("[sv4guiModel::GetModelElement] ");
+    std::cout << msg << "========== GetModelElement ==========" << std::endl;
+    std::cout << msg << "t: " << t << std::endl;
+    std::cout << msg << "m_ModelElementSet.size(): " << m_ModelElementSet.size() << std::endl;
+    #endif
+
     if ( t < m_ModelElementSet.size() )
     {
+        //std::cout << msg << "m_ModelElementSet[t]: " << m_ModelElementSet[t] << std::endl;
         return m_ModelElementSet[t];
     }
     else
@@ -131,49 +140,79 @@ sv4guiModelElement* sv4guiModel::GetModelElement(unsigned int t) const
 
 void sv4guiModel::SetModelElement(sv4guiModelElement* modelElement, unsigned int t)
 {
-    if(t<m_ModelElementSet.size())
-    {
-        m_ModelElementSet[t]=modelElement;
+    #define n_debug_SetModelElement
+    #ifdef debug_SetModelElement
+    std::string msg("[sv4guiModel::SetModelElement] ");
+    std::cout << msg << "========== SetModelElement ==========" << std::endl;
+    std::cout << msg << "modelElement: " << modelElement << std::endl;
+    std::cout << msg << "t: " << t << std::endl;
+    std::cout << msg << "m_ModelElementSet.size(): " << m_ModelElementSet.size() << std::endl;
+    auto faces = modelElement->GetFaces();
+    #endif
 
+    if (t < m_ModelElementSet.size()) {
+        #ifdef debug_SetModelElement
+        std::cout << msg << "m_ModelElementSet[t] is set" << std::endl;
+        #endif
+
+        m_ModelElementSet[t] = modelElement;
         m_CalculateBoundingBox = true;
 
         this->Modified();
         this->UpdateOutputInformation();
         this->InvokeEvent( sv4guiModelSetEvent() );
+
+    } else {
+        #ifdef debug_SetModelElement
+        std::cout << msg << "**** m_ModelElementSet[t] is not set" << std::endl;
+        #endif
     }
 }
 
 void sv4guiModel::ExecuteOperation( mitk::Operation* operation )
 {
+    #ifdef debug_ExecuteOperation
+    std::string msg("[sv4guiModel::ExecuteOperation] ");
+    std::cout << msg << "========== ExecuteOperation ==========" << std::endl;
+    #endif
     int timeStep = -1;
 
     sv4guiModelOperation* modelOperation = dynamic_cast<sv4guiModelOperation*>(operation);
 
-    if ( modelOperation )
-    {
+    if ( modelOperation ) {
         timeStep = modelOperation->GetTimeStep();
 
-    }else{
+    } else {
         MITK_ERROR << "No valid Model Operation for sv4guiModel" << std::endl;
         return;
     }
 
-    if ( timeStep < 0 )
-    {
+    #ifdef debug_ExecuteOperation
+    std::cout << msg << "timeStep: " << timeStep << std::endl;
+    #endif
+
+    if ( timeStep < 0 ) {
         MITK_ERROR << "Time step (" << timeStep << ") outside of sv4guiModel time bounds" << std::endl;
         return;
     }
 
     //sv4guiModelElement* originalModelElement=m_ModelElementSet[timeStep];
 
-    sv4guiModelElement* newModelElement=modelOperation->GetModelElement();
-    vtkSmartPointer<vtkPolyData> newVpd=modelOperation->GetVtkPolyData();
+    sv4guiModelElement* newModelElement = modelOperation->GetModelElement();
+    vtkSmartPointer<vtkPolyData> newVpd = modelOperation->GetVtkPolyData();
+    #ifdef debug_ExecuteOperation
+    std::cout << msg << "newModelElement: " << newModelElement << std::endl;
+    std::cout << msg << "newVpd: " << newVpd << std::endl;
+    #endif
 
     switch (operation->GetOperationType())
     {
 
     case sv4guiModelOperation::OpSETMODELELEMENT:
     {
+        #ifdef debug_ExecuteOperation
+        std::cout << msg << "OpSETMODELELEMENT " << std::endl;
+        #endif
         SetModelElement(newModelElement,timeStep);
         m_DataModified=true;
     }

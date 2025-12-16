@@ -90,6 +90,11 @@ void sv4guiModelCreate::SetFocus( )
 //
 void sv4guiModelCreate::CreateModel()
 {
+    #ifdef debug_CreateModel
+    std::string msg("[sv4guiModelCreate::CreateModel] ");
+    std::cout << msg << "========== CreateModel ==========" << std::endl;
+    #endif
+
     mitk::NodePredicateDataType::Pointer isModelFolder = mitk::NodePredicateDataType::New("sv4guiModelFolder");
     mitk::NodePredicateDataType::Pointer isModelNode = mitk::NodePredicateDataType::New("sv4guiModel");
     mitk::DataNode::Pointer modelNode=nullptr;
@@ -114,7 +119,9 @@ void sv4guiModelCreate::CreateModel()
     }
 
     std::string modelName=ui->lineEditModelName->text().trimmed().toStdString();
-
+    #ifdef debug_CreateModel
+    std::cout << msg << "modelName: " << modelName << std::endl;
+    #endif
 
     if(modelName==""){
         QMessageBox::warning(nullptr,"Model Empty","Please give a model name!");

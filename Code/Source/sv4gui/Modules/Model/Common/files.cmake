@@ -43,6 +43,8 @@ set(H_FILES
     sv4gui_ModelLegacyIO.h
     sv4gui_ModelObjectFactory.h
     sv4gui_RegisterPolyDataFunction.h
+    sv4gui_ModelMarkerContainer.h
+    sv4gui_ModelMarkerMapper.h
 )
 
 set(CPP_FILES
@@ -60,6 +62,8 @@ set(CPP_FILES
     sv4gui_ModelLegacyIO.cxx
     sv4gui_ModelObjectFactory.cxx
     sv4gui_RegisterPolyDataFunction.cxx
+    sv4gui_ModelMarkerContainer.cxx
+    sv4gui_ModelMarkerMapper.cxx
 )
 
 set(RESOURCE_FILES

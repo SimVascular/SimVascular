@@ -50,6 +50,8 @@
 #include "vtkIntArray.h"
 #include "vtkAppendPolyData.h"
 
+#include "vtkXMLPolyDataWriter.h"
+
 // ----------------------
 // StandardNewMacro
 // ----------------------
@@ -224,6 +226,16 @@ int vtkSVMultiplePolyDataIntersectionFilter::BuildIntersectionTable(
 int vtkSVMultiplePolyDataIntersectionFilter::ExecuteIntersection(
     vtkPolyData* inputs[], int numInputs,int start)
 {
+  #define n_debug_ExecuteIntersection
+  #ifdef debug_ExecuteIntersection
+  std::string msg("[vtkSVMultiplePolyDataIntersectionFilter::ExecuteIntersection] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== ExecuteIntersection ==========" << std::endl;
+  std::cout << msg << "numInputs: " << numInputs << std::endl;
+  std::cout << msg << "start: " << start << std::endl;
+  #endif
+
+  // get the info object
   int numChecks = 0;
   int totalIntersections = 0;
   vtkNew(vtkIdList, checkInputArray);
@@ -232,48 +244,85 @@ int vtkSVMultiplePolyDataIntersectionFilter::ExecuteIntersection(
 
   this->inResult[start] = 1;
   checkInputArray->InsertNextId(start);
-  while ((numChecks = checkInputArray->GetNumberOfIds()) > 0)
-    {
-    for(int c = 0;c < numChecks; c++)
-      {
+
+  while ((numChecks = checkInputArray->GetNumberOfIds()) > 0) {
+    #ifdef debug_ExecuteIntersection
+    std::cout << msg << "---------------- numChecks " << numChecks << " ---------------" << std::endl;
+    #endif
+
+    for(int c = 0;c < numChecks; c++) {
       int i = checkInputArray->GetId(c);
-      for (int j = 0;j < numInputs; j++)
-        {
-	//Bounding boxes intersect!
-        if (this->IntersectionTable[i][j] == 1)
-          {
-	    //std::cout<<"UNIONING "<<i<<" and "<<j<<endl;
+      #ifdef debug_ExecuteIntersection
+      std::cout << msg << "---------- c " << c << " ----------" << std::endl;
+      std::cout << msg << "i: " << i << std::endl;
+      #endif
+
+      for (int j = 0;j < numInputs; j++) {
+        #ifdef debug_ExecuteIntersection
+        std::cout << msg << "----- j " << j << " -----" << std::endl;
+        #endif
+
+	// Bounding boxes intersect!
+
+        if (this->IntersectionTable[i][j] == 1) {
 	    this->IntersectionTable[i][j] = -1;
 	    this->IntersectionTable[j][i] = -1;
 
+          #ifdef debug_ExecuteIntersection
+          std::cout << msg << "Bounding boxes intersect  " << std::endl;
+          #endif
+
 	  vtkNew(vtkSVLoopBooleanPolyDataFilter, boolean);
-	  if (this->PassInfoAsGlobal && totalIntersections != 0)
+
+	  if (this->PassInfoAsGlobal && totalIntersections != 0) {
 	    this->PreSetGlobalArrays(inputs[j]);
+          }
+
+          /*
+          auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+          writer->SetFileName("ExecuteIntersection_BooleanObject.vtp");
+          writer->SetInputData(this->BooleanObject);
+          writer->Write();                    
+          */
 
 	  boolean->SetInputData(0,this->BooleanObject);
 	  boolean->SetInputData(1,inputs[j]);
 	  boolean->SetTolerance(this->Tolerance);
+
+          /*
+          writer->SetFileName("ExecuteIntersection_input.vtp");
+          writer->SetInputData(inputs[j]);
+          writer->Write();                    
+          */
+
 	  //if (this->NoIntersectionOutput)
 	  //  boolean->SetNoIntersectionOutput(1);
 	  //else
 	  //  boolean->SetNoIntersectionOutput(0);
+
 	  boolean->SetOperationToUnion();
 	  boolean->Update();
-	  if (boolean->GetStatus() != 1)
-	  {
+
+	  if (boolean->GetStatus() != 1) {
+            #ifdef debug_ExecuteIntersection
+            std::cout << msg << "**** Boolean union has failed. " << std::endl;
+            #endif
 	    return SV_ERROR;
 	  }
 
 	  int numPts = boolean->GetNumberOfIntersectionPoints();
 	  int numLines = boolean->GetNumberOfIntersectionLines();
+          #ifdef debug_ExecuteIntersection
+          std::cout << msg << "numPts: " << numPts << std::endl;
+          std::cout << msg << "numLines: " << numLines << std::endl;
+          #endif
 
-	  //Objects actually don't intersect
-	  if ((numPts == 0 || numLines == 0))
-	    {
+	  // Objects actually don't intersect
+
+	  if ((numPts == 0 || numLines == 0)) {
 	      std::cout<<"NO INTERSECTION FOR OBJECTS "<<i<<" AND "<<j<<endl;
-	    }
-	  else
-	    {
+
+	  } else {
 	      this->inResult[i] = 1;
 	      this->inResult[j] = 1;
 	      totalIntersections++;
@@ -282,20 +331,30 @@ int vtkSVMultiplePolyDataIntersectionFilter::ExecuteIntersection(
 		this->PostSetGlobalArrays(totalIntersections);
 
 	      checkInputArray2->InsertNextId(j);
-	      for (int k = 0;k < numInputs; k++)
-		{
+	      for (int k = 0;k < numInputs; k++) {
 		this->IntersectionTable[k][j] = -1;
-		}
+	      }
+
+              /*
+              writer->SetFileName("ExecuteIntersection_new_BooleanObject.vtp");
+              writer->SetInputData(this->BooleanObject);
+              writer->Write();                    
+              */
 	    }
           }
         }
         //this->PrintTable(numInputs);
       }
+
       tmp = checkInputArray;
       checkInputArray = checkInputArray2;
       checkInputArray2 = tmp;
       tmp->Reset();
     }
+
+  #ifdef debug_ExecuteIntersection
+  std::cout << msg << "Done " << std::endl;
+  #endif
   return SV_OK;
 }
 
@@ -427,16 +486,25 @@ void vtkSVMultiplePolyDataIntersectionFilter::PrintTable(int numInputs)
 // ----------------------
 /// \details This method is much too long, and has to be broken up!
 /// Append data sets into single polygonal data set.
-int vtkSVMultiplePolyDataIntersectionFilter::RequestData(
-    vtkInformation *vtkNotUsed(request),
-    vtkInformationVector **inputVector,
+int vtkSVMultiplePolyDataIntersectionFilter::RequestData( vtkInformation *vtkNotUsed(request), vtkInformationVector **inputVector,
     vtkInformationVector *outputVector)
 {
+  #define n_debug_RequestData
+  #ifdef debug_RequestData
+  std::string msg("[vtkSVMultiplePolyDataIntersectionFilter::RequestData] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== RequestData ==========" << std::endl;
+  #endif
+
   // get the info object
   // get the ouptut
   vtkPolyData *output = vtkPolyData::GetData(outputVector, 0);
 
   int numInputs = inputVector[0]->GetNumberOfInformationObjects();
+  #ifdef debug_RequestData
+  std::cout << msg << "numInputs: " << numInputs << std::endl;
+  #endif
+
   if (numInputs == 1)
     {
     vtkWarningMacro("Only one input, returning input");
@@ -448,24 +516,37 @@ int vtkSVMultiplePolyDataIntersectionFilter::RequestData(
   this->inResult = new int[numInputs];
   this->IntersectionTable = new int*[numInputs];
   vtkPolyData** inputs = new vtkPolyData*[numInputs];
+
   for (int idx = 0; idx < numInputs; ++idx)
     {
     this->inResult[idx] = 0;
     inputs[idx] = vtkPolyData::GetData(inputVector[0], idx);
     this->IntersectionTable[idx] = new int[numInputs];
+
     for (int idy = 0; idy < numInputs; ++idy)
       {
 	this->IntersectionTable[idx][idy] = -1;
       }
     }
 
+  #ifdef debug_RequestData
+  std::cout << msg << "BuildIntersectionTable ... " << std::endl;
+  #endif
   int intersections = this->BuildIntersectionTable(inputs, numInputs);
   if (intersections == 0)
     vtkGenericWarningMacro( << "No intersections!");
   //this->PrintTable(numInputs);
 
   this->BooleanObject->DeepCopy(inputs[0]);
+  #ifdef debug_RequestData
+  std::cout << msg << "ExecuteIntersection ... " << std::endl;
+  #endif
   int retVal = this->ExecuteIntersection(inputs,numInputs,0);
+  #ifdef debug_RequestData
+  std::cout << msg << "retVal: " << retVal << std::endl;
+  std::cout << msg << "this->NoIntersectionOutput: " << this->NoIntersectionOutput << std::endl;
+  #endif
+
   if (retVal == 0)
   {
     this->Status = 0;
@@ -478,8 +559,10 @@ int vtkSVMultiplePolyDataIntersectionFilter::RequestData(
     delete [] inputs;
     return SV_ERROR;
   }
+
   vtkNew(vtkAppendPolyData, appender);
   vtkNew(vtkPolyData, tmp);
+
   if (this->NoIntersectionOutput)
   {
     tmp->DeepCopy(this->BooleanObject);
@@ -512,15 +595,26 @@ int vtkSVMultiplePolyDataIntersectionFilter::RequestData(
     this->BooleanObject->DeepCopy(appender->GetOutput());
   }
 
+  #ifdef debug_RequestData
+  std::cout << msg << "output->DeepCopy(this->BooleanObject) " << std::endl;
+  #endif
   output->DeepCopy(this->BooleanObject);
 
-  for (int idx = 0; idx < numInputs; ++idx)
-    {
+  /*
+  auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  writer->SetFileName("ExecuteIntersection_output.vtp");
+  writer->SetInputData(this->BooleanObject);
+  writer->Write();
+  */
+
+  for (int idx = 0; idx < numInputs; ++idx) {
       delete [] this->IntersectionTable[idx];
-    }
+  }
+
   delete [] this->inResult;
   delete [] this->IntersectionTable;
   delete [] inputs;
+
   return retVal;
 }
 

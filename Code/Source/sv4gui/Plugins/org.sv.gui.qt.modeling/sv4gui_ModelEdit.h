@@ -39,6 +39,9 @@
 #include "sv4gui_ModelElementPolyData.h"
 #include "sv4gui_QmitkFunctionality.h"
 
+#include "sv4gui_ModelMarkerContainer.h"
+#include "sv4gui_ModelMarkerMapper.h"
+
 #include <vtkSphereWidget.h>
 #include <vtkPlaneWidget.h>
 #include <vtkBoxWidget.h>
@@ -47,6 +50,8 @@
 #include <QItemSelection>
 #include <QmitkStdMultiWidget.h>
 #include <QmitkRenderWindow.h>
+
+#include <utility>
 
 namespace Ui {
 class sv4guiModelEdit;
@@ -226,11 +231,17 @@ protected:
 
     mitk::IRenderWindowPart* m_RenderWindow;
 
+    mitk::DataNode::Pointer m_MarkersNode;
+    sv4guiModelMarkerContainer::Pointer m_MarkersContainer;
+    sv4guiModelMarkerMapper::Pointer m_MarkerMapper;
+
 private:
     void SetTimeModified();
-
-
-
+    void ProcessResultsCheck(sv4guiModelElement* newModelElement, PolyDataSolidCheckResults& check_results);
+    void DisplayPoints(std::vector<std::array<double,3>>& points);
+    void DisplayGeometry(vtkSmartPointer<vtkPolyData> geometry);
+    std::vector<std::pair<std::string,std::string>> CheckForNestedVessels(std::vector<std::string>& segNames, 
+        std::vector<mitk::DataNode::Pointer>& segNodes);
 };
 
 #endif // SV4GUI_MODELEDIT_H

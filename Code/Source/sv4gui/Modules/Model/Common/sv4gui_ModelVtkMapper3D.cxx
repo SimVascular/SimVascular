@@ -100,6 +100,7 @@ sv4guiModelVtkMapper3D::~sv4guiModelVtkMapper3D()
 //
 void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 {
+  #define n_debug_GenerateDataForRenderer
   #ifdef debug_GenerateDataForRenderer
   std::string msg("[sv4guiModelVtkMapper3D::GenerateDataForRenderer] ");
   std::cout << msg << std::endl;

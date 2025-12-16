@@ -60,6 +60,18 @@
 #include "XCAFDoc_ShapeTool.hxx"
 
 
+// Some elementary notes on abstract base classes (ABC's)
+// ------------------------------------------------------
+// ABC's provide a means for defining an *interface*.  Since (by
+// definition) they contain pure  methods, objects of these
+// classes can not be instantiated.  Clients of ABC's are interested
+// in using the abstract interface, but can not work with the objects
+// themselves.  Instead, clients instantiate concrete classes derived
+// from the ABC.  And then, to use the abstraction, clients use
+// *pointers* or *references* to the ABC.  See Meyers' Effective C++,
+// Item 34.
+//
+
 class SV_EXPORT_OPENCASCADE cvOCCTSolidModel : public cvSolidModel {
 
 public:
@@ -138,6 +150,7 @@ public:
   int Distance( double pos[], double upperLimit,
        		double *dist ) { return SV_ERROR; }
   int GetFaceNormal (int faceid, double u, double v, double normal[]) { return SV_ERROR; }
+  vtkSmartPointer<vtkPolyData> OrientSurfaceGemetry(vtkPolyData* geom) const;
 
   // Attribute related & required methods:
   void MakeSurf() { return; }
@@ -167,7 +180,8 @@ public:
 
   //OCCT Model specific function related to OCAF
   int RegisterShapeFaces();
-  int AddFaceLabel(TopoDS_Shape &shape, int &id);
+  int AddFaceLabel(TopoDS_Shape &shape, const int id);
+  //int AddFaceLabel(TopoDS_Shape &shape, int &id);
 
   int NewShape();
   int AddShape();
@@ -182,7 +196,10 @@ public:
 protected:
 
   TopoDS_Shape *geom_;
+
   TDF_Label *shapelabel_;
+
+  // A tool to store shapes in an XDE document in the form of assembly structure.
   Handle(XCAFDoc_ShapeTool) shapetool_;
 
   int numFaces_;
