@@ -33,6 +33,8 @@
 
 #include <sv4guiModuleModelOCCTExports.h>
 
+// davep #include "sv2_globals.h"
+
 #include "sv4gui_ModelElementFactory.h"
 #include "sv4gui_ModelElementOCCT.h"
 

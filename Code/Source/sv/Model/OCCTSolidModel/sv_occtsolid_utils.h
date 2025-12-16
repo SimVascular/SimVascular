@@ -87,7 +87,7 @@ SV_EXPORT_OPENCASCADE int OCCTUtils_GetNumberOfFaces( const TopoDS_Shape &geom,i
 
 SV_EXPORT_OPENCASCADE int OCCTUtils_ReLabelFace( TopoDS_Shape &geom,
 	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
-	       int &id);
+	       const int id);
 
 SV_EXPORT_OPENCASCADE int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &geom,
 	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,

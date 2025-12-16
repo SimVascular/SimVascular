@@ -132,6 +132,7 @@ bool sv4guiModelElement::HasSeg(std::string segName)
 
 std::vector<sv4guiModelElement::svFace*> sv4guiModelElement::GetFaces() const
 {
+    #define n_debug_GetFaces
     #ifdef debug_GetFaces
     std::string msg("[sv4guiModelElement::GetFaces] ");
     std::cout << msg << std::endl;
@@ -160,15 +161,18 @@ std::vector<std::string> sv4guiModelElement::GetFaceNames() const
     std::vector<std::string> names;
     std::vector<sv4guiModelElement::svFace*> faces=GetFaces();
 
-    for(int i=0;i<faces.size();i++)
-        if(faces[i])
+    for(int i=0;i<faces.size();i++) {
+        if(faces[i]) {
             names.push_back(faces[i]->name);
+        }
+    }
 
     return names;
 }
 
 void sv4guiModelElement::SetFaces(std::vector<sv4guiModelElement::svFace*> faces)
 {
+    #define n_debug_SetFaces
     #ifdef debug_SetFaces
     std::string msg("[sv4guiModelElement::SetFaces] ");
     std::cout << msg << std::endl;
@@ -176,7 +180,9 @@ void sv4guiModelElement::SetFaces(std::vector<sv4guiModelElement::svFace*> faces
     std::cout << msg << "sv4guiModelElement: " << this << std::endl;
     for (int i = 0; i < faces.size(); i++) {
       auto face = faces[i];
+      std::cout << msg << "----- i " << i << " -----" << std::endl;
       std::cout << msg << "face: " <<  face << std::endl;
+      std::cout << msg << "faces->name: " <<  face->name << std::endl;
       std::cout << msg << "face->vpd: " <<  face->vpd << std::endl;
       std::cout << msg << "face->vpd->GetNumberOfCells(): " <<  face->vpd->GetNumberOfCells() << std::endl;
     }
@@ -191,6 +197,13 @@ void sv4guiModelElement::SetFaces(std::vector<sv4guiModelElement::svFace*> faces
 //
 sv4guiModelElement::svFace* sv4guiModelElement::GetFace(int id) const
 {
+  #define n_debug_GetFace_1
+  #ifdef debug_GetFace_1
+  std::string msg("[sv4guiModelElement::GetFace] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== GetFace ==========" << std::endl;
+  std::cout << msg << "id: " << id << std::endl;
+  #endif
   int idx = GetFaceIndex(id);
 
   if(idx<0) {
@@ -202,11 +215,27 @@ sv4guiModelElement::svFace* sv4guiModelElement::GetFace(int id) const
 
 sv4guiModelElement::svFace* sv4guiModelElement::GetFace(std::string name) const
 {
-    return GetFace(GetFaceID(name));
+  #define n_debug_GetFace_2
+  #ifdef debug_GetFace_2
+  std::string msg("[sv4guiModelElement::GetFace] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== GetFace ==========" << std::endl;
+  std::cout << msg << "name: " << name << std::endl;
+  #endif
+
+  return GetFace(GetFaceID(name));
 }
 
 int sv4guiModelElement::GetFaceIndex(int id) const
 {
+  #define n_debug_GetFace_3
+  #ifdef debug_GetFace_3
+  std::string msg("[sv4guiModelElement::GetFace] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== GetFace ==========" << std::endl;
+  std::cout << msg << "id: " << id << std::endl;
+  #endif
+
     for(int i=0;i<m_Faces.size();i++)
     {
         if(m_Faces[i]&&m_Faces[i]->id==id)
@@ -227,13 +256,20 @@ std::string sv4guiModelElement::GetFaceName(int id) const
 
 void sv4guiModelElement::SetFaceName(std::string name, int id)
 {
-    int index=GetFaceIndex(id);
-    if(index>-1)
-    {
-        m_Faces[index]->name=name;
-        if(m_InnerSolid)
-        {
-            char* nc=const_cast<char*>(name.c_str());
+    #define n_debug_SetFaceName
+    #ifdef debug_SetFaceName
+    std::string msg("[sv4guiModelElement::SetFaceName] ");
+    std::cout << msg << "========== SetFaceName ==========" << std::endl;
+    std::cout << msg << "name: " << name << std::endl;
+    std::cout << msg << "id: " << id << std::endl;
+    #endif
+    int index = GetFaceIndex(id);
+
+    if (index > -1) {
+        m_Faces[index]->name = name;
+
+        if (m_InnerSolid) {
+            char* nc = const_cast<char*>(name.c_str());
             m_InnerSolid->SetFaceAttribute("gdscName",id,nc);
         }
     }
