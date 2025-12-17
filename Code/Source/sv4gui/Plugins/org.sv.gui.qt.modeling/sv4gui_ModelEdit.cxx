@@ -324,18 +324,21 @@ void sv4guiModelEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->btnExtractCenterlines, SIGNAL(clicked()), this, SLOT(ShowCapSelectionWidget()) );
     connect(m_CapSelectionWidget,SIGNAL(accepted()), this, SLOT(ExtractCenterlines()));
 
-    m_MarkersNode = mitk::DataNode::New();
-    m_MarkersNode->SetName("markers");
-    m_MarkersNode->SetVisibility(true);
-    m_MarkersContainer = sv4guiModelMarkerContainer::New();
-    m_MarkersNode->SetData(m_MarkersContainer);
-    GetDataStorage()->Add(m_MarkersNode, m_ModelNode);
+    if (m_ModelNode != nullptr) { 
+      m_MarkersNode = GetDataStorage()->GetNamedDerivedNode("markers", m_ModelNode);
+      m_MarkersNode = mitk::DataNode::New();
+      m_MarkersNode->SetName("markers");
+      m_MarkersNode->SetVisibility(true);
+      m_MarkersContainer = sv4guiModelMarkerContainer::New();
+      m_MarkersNode->SetData(m_MarkersContainer);
+      GetDataStorage()->Add(m_MarkersNode, m_ModelNode);
 
-    if (m_MarkerMapper.IsNull()) { 
-      m_MarkerMapper = sv4guiModelMarkerMapper::New();
-      m_MarkerMapper->SetDataNode(m_MarkersNode);
-      m_MarkerMapper->SetColor(1.0, 0.0, 0.0);
-      m_MarkersNode->SetMapper(mitk::BaseRenderer::Standard3D, m_MarkerMapper);
+      if (m_MarkerMapper.IsNull()) { 
+        m_MarkerMapper = sv4guiModelMarkerMapper::New();
+        m_MarkerMapper->SetDataNode(m_MarkersNode);
+        m_MarkerMapper->SetColor(1.0, 0.0, 0.0);
+        m_MarkersNode->SetMapper(mitk::BaseRenderer::Standard3D, m_MarkerMapper);
+    }
   }
 
 
