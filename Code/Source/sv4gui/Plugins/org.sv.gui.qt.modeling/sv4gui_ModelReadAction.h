@@ -57,7 +57,6 @@ public:
 
 private:
   std::string GetModelFileName();
-  std::string GetProjectPath(mitk::DataNode::Pointer& selectedNode);
 
   sv4guiModelReadAction(const sv4guiModelReadAction &);
   sv4guiModelReadAction & operator=(const sv4guiModelReadAction &);

@@ -43,6 +43,7 @@
 #include <berryPlatform.h>
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 sv4guiModelReadAction::sv4guiModelReadAction()
 {
@@ -55,35 +56,19 @@ sv4guiModelReadAction::~sv4guiModelReadAction()
 //-----
 // Run
 //-----
-// Execute the read solid model action.
+// Execute the read solid model action to replace the current 
+// model geometry with that read in from a VTK VTP file.
 //
 void sv4guiModelReadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
-    #define debug_Run
+    #define n_debug_Run
     #ifdef debug_Run
     std::string msg("[sv4guiModelReadAction::Run] ");
     std::cout << msg << "========== Run ==========" << std::endl;
     #endif
 
-    // Get information about the SV Project Model data.
-    //
+    // Get the pointer to the current Models Data Node.
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
-    mitk::DataStorage::SetOfObjects::ConstPointer model_rs = m_DataStorage->GetSources(selectedNode);
-    if (model_rs->size() == 0) {
-        std::cout << msg << "model_rs->size() == 0" << std::endl;
-        return;
-    }
-
-    auto modelFolderNode = model_rs->GetElement(0);
-    auto modeFolderName = modelFolderNode->GetName();
-    std::string modelName = selectedNode->GetName();
-    auto projPath = GetProjectPath(selectedNode);
-
-    #ifdef debug_Run
-    std::cout << msg << "projPath: " << projPath << std::endl;
-    std::cout << msg << "modeFolderName: " << modeFolderName << std::endl;
-    std::cout << msg << "modelName: " << modelName << std::endl;
-    #endif
 
     // Get the sv4guiModel object that stores model information.
     sv4guiModel* model = dynamic_cast<sv4guiModel*>(selectedNode->GetData());
@@ -96,75 +81,58 @@ void sv4guiModelReadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNo
     if (modelElement == nullptr) {
       return;
     }
-    std::cout << msg << "modelElement: " << modelElement << std::endl;
 
-    // Read in the model file.
+    // Create a new sv4guiModelElement object from the geometry 
+    // read in from a VTP file.
     //
     auto fileName = GetModelFileName();
-    std::cout << msg << "fileName: " << fileName << std::endl;
-    sv4guiModelElement* newModelElement= sv4guiModelLegacyIO::CreateModelElementFromFile(fileName);
-    std::cout << msg << "newModelElement: " << newModelElement << std::endl;
+    if (fileName == "") { 
+      return;
+    }
 
-    std::vector<int> faceIDs = newModelElement->GetFaceIDsFromInnerSolid();
-    std::cout << msg << "number of faces: " << faceIDs.size() << std::endl;
+    sv4guiModelElement* newModelElement= sv4guiModelLegacyIO::CreateModelElementFromFile(fileName);
+    std::vector<int> newFaceIDs = newModelElement->GetFaceIDsFromInnerSolid();
     auto faces = modelElement->GetFaces();
+
+    if (faces.size() != newFaceIDs.size()) {
+      std::string info = "The number of the faces (" + std::to_string(newFaceIDs.size()) + 
+          ") read in from the VTP file '" + fileName + "' does not equal the number of the faces (" + 
+          std::to_string(faces.size()) + ") of this model.\n\n" + 
+          "The VTP file for the new model must contain a 'ModelFaceID' DataArray storing face IDs.";
+      auto text = QString::fromStdString(info);
+      QString title = "Problem Reading Model File";
+      QMessageBox::Icon icon = QMessageBox::Warning;
+      QMessageBox mb(nullptr);
+      mb.setWindowTitle(title);
+      mb.setText(text);
+      mb.setIcon(icon);
+      mb.exec();
+      return;
+    }
+
+    // Copy the face information from the old model and
+    // set the face geometry from the new model geometry.
+    //
     std::vector<sv4guiModelElement::svFace*> newFaces;
 
-    std::cout << msg << "Set face data ... " << std::endl;
     for (auto& face : faces) { 
-      std::cout << msg << "----- face->id: " << face->id << std::endl;
-      std::cout << msg << "      face->name: " << face->name << std::endl;
       auto newFace = face;
-      /*
-      auto newFace = new sv4guiModelElement::svFace;
-      newFace->id = face->id;
-      newFace->name = face->name;
-      newFace->type = face->type;
-      newFace->visible = face->visible;
-      newFace->color[0] = face->color[0];
-      newFace->color[1] = face->color[1];
-      newFace->color[2] = face->color[2];
-      newFace->selected = face->selected;
-      */
       face->vpd = newModelElement->CreateFaceVtkPolyData(face->id);
       newFaces.push_back(newFace);
     }
 
     newModelElement->SetFaces(newFaces);
 
-    //sv4guiModel::Pointer model = sv4guiModel::New();
     model->SetType(newModelElement->GetType());
     model->SetModelElement(newModelElement);
     model->SetDataModified();
-
-}
-
-//----------------
-// GetProjectPath
-//----------------
-//
-std::string
-sv4guiModelReadAction::GetProjectPath(mitk::DataNode::Pointer& selectedNode)
-{
-    std::cout << "======= GetProjectPath ========" << std::endl;
-    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
-    mitk::DataStorage::SetOfObjects::ConstPointer proj_rs = m_DataStorage->GetSources(selectedNode,isProjFolder,false);
-    std::string projPath;
-
-    if (proj_rs->size() == 0) {
-        std::cout << "[GetProjectPath] proj_rs->size() == 0" << std::endl;
-        return projPath;
-    }
-
-    auto projectFolderNode = proj_rs->GetElement(0);
-    projectFolderNode->GetStringProperty("project path", projPath);
-
-    return projPath;
 }
 
 //------------------
 // GetModelFileName
 //------------------
+// Get the file name of the VTK VTP file containing 
+// new model geometry.
 //
 std::string 
 sv4guiModelReadAction::GetModelFileName()
@@ -197,7 +165,7 @@ sv4guiModelReadAction::GetModelFileName()
     fileName = fileName.trimmed();
 
     if (!fileName.isEmpty() && (prefs != nullptr)) {
-        prefs->Put("LastFileSavePath", fileName.toStdString());
+        prefs->Put("LastFileOpenPath", fileName.toStdString());
         prefs->Flush();
     }
 
@@ -206,7 +174,5 @@ sv4guiModelReadAction::GetModelFileName()
 
 void sv4guiModelReadAction::SetDataStorage(mitk::DataStorage *dataStorage)
 {
-    std::cout << "[sv4guiModelReadAction::SetDataStorage] ##### SetDataStorage ##### " << std::endl;
-    std::cout << "[sv4guiModelReadAction::SetDataStorage] dataStorage: " << dataStorage << std::endl;
     m_DataStorage = dataStorage;
 }

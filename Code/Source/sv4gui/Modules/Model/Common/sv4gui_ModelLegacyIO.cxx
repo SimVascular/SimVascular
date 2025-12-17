@@ -54,28 +54,17 @@ static QString qt_endl = "\n";
 //---------------------------
 // CreateModelElementFromFile
 //----------------------------
-// Create a sv4guiModelElement from VTK VTP file representing an SV model.
+// Create a sv4guiModelElement from a VTK VTP file representing an SV model.
 //
 sv4guiModelElement* 
 sv4guiModelLegacyIO::CreateModelElementFromFile(std::string& filePath)
 {
-  #define debug_ReadFile
-  #ifdef debug_ReadFile
-  std::string msg("[sv4guiModelLegacyIO::CreateModelElementFromFile] ");
-  std::cout << msg << "========== CreateModelElementFromFile ==========" << std::endl;
-  std::cout << msg << "filePath: " << filePath << std::endl;
-  #endif
-
   std::string modelType = "PolyData";
   sv4guiModelElement* model_element = sv4guiModelElementFactory::CreateModelElement(modelType);
 
   if (!model_element->ReadFile(filePath)) {
     return nullptr;
   }
-
-  #ifdef debug_ReadFile
-  std::cout << msg << "sv4guiModelElement created: " << std::endl;
-  #endif
 
   return model_element;
 }
