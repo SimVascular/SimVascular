@@ -41,6 +41,7 @@ set(CPP_FILES
     sv4gui_ModelingPluginActivator.cxx
     sv4gui_LoftingPreferencePage.cxx
     sv4gui_CapSelectionWidget.cxx
+    sv4gui_ModelReadAction.cxx
 )
 
 set(MOC_H_FILES
@@ -56,6 +57,7 @@ set(MOC_H_FILES
     sv4gui_ModelingPluginActivator.h
     sv4gui_LoftingPreferencePage.h
     sv4gui_CapSelectionWidget.h
+    sv4gui_ModelReadAction.h
 )
 
 set(UI_FILES
