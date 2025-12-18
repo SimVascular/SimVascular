@@ -51,14 +51,39 @@
 
 static QString qt_endl = "\n";
 
+//---------------------------
+// CreateModelElementFromFile
+//----------------------------
+// Create a sv4guiModelElement from a VTK VTP file representing an SV model.
+//
+sv4guiModelElement* 
+sv4guiModelLegacyIO::CreateModelElementFromFile(std::string& filePath)
+{
+  std::string modelType = "PolyData";
+  sv4guiModelElement* model_element = sv4guiModelElementFactory::CreateModelElement(modelType);
+
+  if (!model_element->ReadFile(filePath)) {
+    return nullptr;
+  }
+
+  return model_element;
+}
+
 //-------------------------------
 // sv4guiModelLegacyIO::ReadFile
 //-------------------------------
-// Read in a solid model file.
+// Read in a solid model .mdl file.
 //
 mitk::DataNode::Pointer sv4guiModelLegacyIO::ReadFile(QString filePath, QString preferredType)
 {
-    mitk::DataNode::Pointer modelNode=nullptr;
+    #define debug_ReadFile
+    #ifdef debug_ReadFile
+    std::string msg("[sv4guiModelLegacyIO::ReadFile] ");
+    std::cout << msg << "========== ReadFile ==========" << std::endl;
+    std::cout << msg << "filePath: " << filePath.toStdString() << std::endl;
+    #endif
+
+    mitk::DataNode::Pointer modelNode = nullptr;
 
     QFileInfo fileInfo(filePath);
     QString baseName = fileInfo.baseName();
@@ -66,18 +91,17 @@ mitk::DataNode::Pointer sv4guiModelLegacyIO::ReadFile(QString filePath, QString 
     QString filePath2=filePath+".facenames";
 
     std::vector<sv4guiModelElement::svFace*> faces;
-    std::string modelType="";
+    std::string modelType = "";
 
-    QString handlerPolyData="set gPolyDataFaceNames(";
-    QString handlerOCCT="set gOCCTFaceNames(";
+    QString handlerPolyData = "set gPolyDataFaceNames(";
+    QString handlerOCCT = "set gOCCTFaceNames(";
 
     QFile inputFile(filePath2);
-    if (inputFile.open(QIODevice::ReadOnly))
-    {
+
+    if (inputFile.open(QIODevice::ReadOnly)) {
         QTextStream in(&inputFile);
 
-        while (!in.atEnd())
-        {
+        while (!in.atEnd()) {
             QString line = in.readLine();
 
             if(line.contains(handlerPolyData))

@@ -29,34 +29,40 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUI_MODELLEGACYIO_H
-#define SV4GUI_MODELLEGACYIO_H
+#ifndef SV4GUI_MODEL_READ_ACTION_H
+#define SV4GUI_MODEL_READ_ACTION_H
 
-#include "sv4gui_ModelElementFactory.h"
+#include <org_sv_gui_qt_modeling_Export.h>
 
-#include <sv4guiModuleModelExports.h>
+#include <sv4gui_mitkIContextMenuAction.h>
+#include <mitkDataNode.h>
 
-#include "mitkDataNode.h"
-#include "mitkDataStorage.h"
-#include <QString>
+#include <QObject>
 
-class SV4GUIMODULEMODEL_EXPORT sv4guiModelLegacyIO
+class SV_QT_MODELING sv4guiModelReadAction : public QObject, public svmitk::IContextMenuAction
 {
+  Q_OBJECT
+  Q_INTERFACES(svmitk::IContextMenuAction)
+
 public:
+  sv4guiModelReadAction();
+  ~sv4guiModelReadAction();
 
-  sv4guiModelLegacyIO(){}
-  virtual ~sv4guiModelLegacyIO(){}
+  // IContextMenuAction
+  void Run(const QList<mitk::DataNode::Pointer> &selectedNodes) override;
+  void SetDataStorage(mitk::DataStorage *dataStorage) override;
+  void SetSmoothed(bool smoothed) override {}
+  void SetDecimated(bool decimated) override {}
+  void SetFunctionality(berry::QtViewPart *functionality) override {}
 
-  static sv4guiModelElement* CreateModelElementFromFile(std::string& filePath);
+private:
+  std::string GetModelFileName();
 
-  static mitk::DataNode::Pointer ReadFile(QString filePath, QString preferredType="") ;
+  sv4guiModelReadAction(const sv4guiModelReadAction &);
+  sv4guiModelReadAction & operator=(const sv4guiModelReadAction &);
 
-  static std::vector<mitk::DataNode::Pointer> ReadFiles(QString modelDir);
-
-  static void WriteFile(mitk::DataNode::Pointer node, QString filePath);
-
-  static void WriteFiles(mitk::DataStorage::SetOfObjects::ConstPointer modelNodes, QString modelDir);
+  mitk::DataStorage::Pointer m_DataStorage;
 
 };
 
-#endif // SV4GUI_MODELLEGACYIO_H
+#endif

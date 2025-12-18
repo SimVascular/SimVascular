@@ -33,6 +33,7 @@
 #include "sv4gui_ModelCreateAction.h"
 #include "sv4gui_LoftingPreferencePage.h"
 #include "sv4gui_ModelLoadAction.h"
+#include "sv4gui_ModelReadAction.h"
 #include "sv4gui_ModelLegacySaveAction.h"
 #include "sv4gui_ModelExtractPathsAction.h"
 #include "sv4gui_ModelFaceInfoExportAction.h"
@@ -49,6 +50,7 @@ void sv4guiModelingPluginActivator::start(ctkPluginContext* context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiModelCreateAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiLoftingPreferencePage, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiModelLoadAction, context)
+    BERRY_REGISTER_EXTENSION_CLASS(sv4guiModelReadAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiModelLegacySaveAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiModelExtractPathsAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiModelFaceInfoExportAction, context)
