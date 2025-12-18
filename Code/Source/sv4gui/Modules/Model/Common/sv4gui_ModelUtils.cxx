@@ -1223,9 +1223,11 @@ bool sv4guiModelUtils::DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vec
 vtkPolyData* 
 sv4guiModelUtils::CreateCenterlines(sv4guiModelElement* modelElement, vtkIdList *sourceCapIds, bool getSections)
 {
+  #ifdef debug_CreateCenterlines
   std::string msg("[sv4guiModelUtils::CreateCenterlines] ");
   std::cout << msg << "========== CreateCenterlines ==========" << std::endl;
   std::cout << msg << "getSections: " << getSections << std::endl;
+  #endif
 
   if (modelElement==nullptr || modelElement->GetWholeVtkPolyData()==nullptr) {
     return nullptr;
@@ -1262,7 +1264,9 @@ sv4guiModelUtils::CreateCenterlines(sv4guiModelElement* modelElement, vtkIdList 
     return nullptr;
   }
 
+  #ifdef debug_CreateCenterlines
   std::cout << msg << "numCapCenterIds: " << numCapCenterIds << std::endl;
+  #endif
 
   if (numCapCenterIds < 2) {
     delete cleaned;
@@ -1277,7 +1281,6 @@ sv4guiModelUtils::CreateCenterlines(sv4guiModelElement* modelElement, vtkIdList 
   if ((sourceCapIds != nullptr) && (sourceCapIds->GetNumberOfIds() > 0)) {
       capIdsGiven = true;
   }
-  std::cout << msg << "capIdsGiven: " << capIdsGiven << std::endl;
 
   // Define the source and target cap node IDs used to compute the centerline.
   //
@@ -1305,8 +1308,10 @@ sv4guiModelUtils::CreateCenterlines(sv4guiModelElement* modelElement, vtkIdList 
       int ptId = capCenterIds[i];
       double capPt[3];
       capped->GetVtkPolyData()->GetPoint(ptId, capPt);
+      #ifdef debug_CreateCenterlines
       std::cout << msg << "--- ptId: " << ptId << std::endl;
       std::cout << msg << "    capPt: " << capPt[0] << " " << capPt[1] << " " << capPt[2]<< std::endl;
+      #endif
 
       int subId;
       double closestPt[3];
@@ -1316,9 +1321,11 @@ sv4guiModelUtils::CreateCenterlines(sv4guiModelElement* modelElement, vtkIdList 
 
       int capFaceId = fullpd->GetCellData()->GetArray("ModelFaceID")->GetTuple1(closestCellId);
       facePtIdMap[capFaceId] = ptId;
+      #ifdef debug_CreateCenterlines
       std::cout << msg << "    capFaceId: " << capFaceId << std::endl;
       std::cout << msg << "    distance: " << distance << std::endl;
       std::cout << msg << "    closestCellId: " << closestCellId << std::endl;
+      #endif
     }
 
     // Add point IDs to the source and target lists.
@@ -1327,10 +1334,14 @@ sv4guiModelUtils::CreateCenterlines(sv4guiModelElement* modelElement, vtkIdList 
       int ptId = face.second;
       if (sourceCapIds->IsId(capFaceId) != -1) {
         sourcePtIds->InsertNextId(ptId);
+        #ifdef debug_CreateCenterlines
         std::cout << msg << "Add source ptId " << ptId << std::endl;
+        #endif
       } else {
         targetPtIds->InsertNextId(ptId);
+        #ifdef debug_CreateCenterlines
         std::cout << msg << "Add target ptId " << ptId << std::endl;
+        #endif
       }
     }
   }

@@ -72,11 +72,13 @@ sv4guiROMSimulationExtractCenterlines::~sv4guiROMSimulationExtractCenterlines()
 //
 void sv4guiROMSimulationExtractCenterlines::UpdateStatus()
 {
+    #ifdef debug_UpdateStatus
     auto msg = "[sv4guiROMSimulationExtractCenterlines::UpdateStatus]";
     MITK_INFO << msg;
     MITK_INFO << msg << "---------- UpdateStatus ----------";
     MITK_INFO << msg << "Write centerlines to '" << m_CenterlinesFileName << "'"; 
- 
+    #endif
+
     mitk::OperationEvent::IncCurrObjectEventId();
 
     // Write the centerline geometry to a file.
@@ -124,9 +126,12 @@ void sv4guiROMSimulationExtractCenterlines::SetSourceCapIds(std::vector<int> sou
 //
 void sv4guiROMSimulationExtractCenterlines::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
+
+    #ifdef debug_Run
     auto msg = "[sv4guiROMSimulationExtractCenterlines::Run]";
     MITK_INFO << msg;
     MITK_INFO << msg << "---------- Run ----------";
+    #endif
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
 
     sv4guiModel* model = dynamic_cast<sv4guiModel*>(selectedNode->GetData());
@@ -160,7 +165,6 @@ void sv4guiROMSimulationExtractCenterlines::Run(const QList<mitk::DataNode::Poin
         return;
     }
 
-    MITK_INFO << msg << "Extracting centerlines"; 
     mitk::StatusBar::GetInstance()->DisplayText("Extracting centerlines from the surface model.");
 
     m_Thread = new WorkThread(m_DataStorage, selectedNode, m_SourceCapIds);
