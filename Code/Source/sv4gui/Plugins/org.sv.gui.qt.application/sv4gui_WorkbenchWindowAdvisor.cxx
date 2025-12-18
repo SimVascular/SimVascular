@@ -1054,7 +1054,7 @@ void sv4guiWorkbenchWindowAdvisor::PreWindowOpen()
 
 void sv4guiWorkbenchWindowAdvisor::PostWindowOpen()
 {
-    std::cout << "sv4guiWorkbenchWindowAdvisor::PostWindowOpen()" << std::endl << std::flush;
+    //std::cout << "sv4guiWorkbenchWindowAdvisor::PostWindowOpen()" << std::endl << std::flush;
     berry::WorkbenchWindowAdvisor::PostWindowOpen();
     // Force Rendering Window Creation on startup.
     berry::IWorkbenchWindowConfigurer::Pointer configurer = GetWindowConfigurer();
@@ -1202,17 +1202,17 @@ void sv4guiWorkbenchWindowAdvisor::ShowSVView()
     {
       if( dynamic_cast<mitk::Image*>(selectedNode->GetData())->GetDimension()>=3 )
       {
-          std::cout << "+++++Adding Image" << std::endl << std::flush;
+          //std::cout << "+++++Adding Image" << std::endl << std::flush;
           page->ShowView("org.mitk.views.volumevisualization");
       }
     }else if(isPath->CheckNode(selectedNode))
     {
-       std::cout << "+++++Adding Path" << std::endl << std::flush;
+       //std::cout << "+++++Adding Path" << std::endl << std::flush;
        page->ShowView("org.sv.views.pathplanning");
     }
     else if(isContourGroup->CheckNode(selectedNode))
     {
-       std::cout << "+++++Adding Contour" << std::endl << std::flush;
+       //std::cout << "+++++Adding Contour" << std::endl << std::flush;
        page->ShowView("org.sv.views.segmentation2d");
     }
     else if(isSeg3D->CheckNode(selectedNode))
