@@ -103,6 +103,9 @@ sv4guiModelEdit::sv4guiModelEdit() : ui(new Ui::sv4guiModelEdit)
     m_OperatingWholeTableModel=false;
 
     m_LocalOperationforBlendRegion=false;
+
+    m_MarkersNode = nullptr;
+    m_MarkersContainer = nullptr;
 }
 
 sv4guiModelEdit::~sv4guiModelEdit()
@@ -1510,8 +1513,9 @@ void sv4guiModelEdit::NotUseSelectedBlend(bool)
 
 void sv4guiModelEdit::NodeChanged(const mitk::DataNode* node)
 {
-    if(m_ModelNode==node)
+    if (m_ModelNode == node) {
         ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
+    }
 }
 
 void sv4guiModelEdit::NodeAdded(const mitk::DataNode* node)
@@ -1520,6 +1524,15 @@ void sv4guiModelEdit::NodeAdded(const mitk::DataNode* node)
 
 void sv4guiModelEdit::NodeRemoved(const mitk::DataNode* node)
 {
+  if (node == m_ModelNode) {
+
+    if (m_MarkersNode != nullptr)  {
+      GetDataStorage()->Remove(m_MarkersNode);
+      m_MarkersNode = nullptr;
+    }
+
+    m_MarkersContainer = nullptr;
+  }
 }
 
 void sv4guiModelEdit::AddObservers()

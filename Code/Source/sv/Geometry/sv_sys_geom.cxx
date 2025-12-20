@@ -76,6 +76,19 @@
 #define vtkNew(type,name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
+void sys_geom_write_vtp(std::string& file_name, vtkPolyData* pd)
+{
+    auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    writer->SetFileName(file_name.c_str());
+    writer->SetInputData(pd);
+    writer->Write();
+}
+
+void sys_geom_write_vtp(std::string& file_name, cvPolyData *src)
+{
+    auto pd = src->GetVtkPolyData();
+    sys_geom_write_vtp(file_name, pd);
+}
 
 /* ----------------- */
 /* sys_geom_DeepCopy */
@@ -429,12 +442,20 @@ int sys_geom_all_union( cvPolyData **srcs,int numSrcs,int nointerbool,double tol
   return SV_OK;
 }
 
-/* -------------- */
-/* sys_geom_assign_ids_based_on_faces */
-/* -------------- */
-
-int sys_geom_assign_ids_based_on_faces( cvPolyData *model, cvPolyData **faces,int numFaces,int *ids,cvPolyData **dst )
+//------------------------------------
+// sys_geom_assign_ids_based_on_faces
+//------------------------------------
+//
+int sys_geom_assign_ids_based_on_faces( cvPolyData *model, cvPolyData **faces, int numFaces, int *ids, cvPolyData **dst )
 {
+  #define n_debug_sys_geom_assign_ids_based_on_faces
+  #ifdef debug_sys_geom_assign_ids_based_on_faces
+  std::string msg("[sys_geom_assign_ids_based_on_faces] ");
+  std::cout << msg << std::endl;
+  std::cout << msg << "========== sys_geom_assign_ids_based_on_faces =========" << std::endl;
+  std::cout << msg << "numFaces: " << numFaces << std::endl;
+  #endif
+
   cvPolyData *result = nullptr;
   *dst = nullptr;
   vtkIdType cellId = 0;
@@ -451,16 +472,24 @@ int sys_geom_assign_ids_based_on_faces( cvPolyData *model, cvPolyData **faces,in
   fullPd->BuildLinks();
   vtkNew(vtkAppendPolyData,appender);
   vtkNew(vtkPolyData,facePd);
-  for (int i=0;i<numFaces;i++)
-  {
+
+  for (int i=0;i<numFaces;i++) {
+    #ifdef debug_sys_geom_assign_ids_based_on_faces
+    std::cout << msg << "----- i " << i << " -----" << std::endl;
+    std::cout << msg << "ids[i]: " << ids[i] << std::endl;
+    #endif
     vtkPolyData *newPd = faces[i]->GetVtkPolyData();
     vtkNew(vtkIntArray,scalarArray);
     scalarArray->SetName("ModelFaceID");
-    for (vtkIdType cellId=0;cellId<newPd->GetNumberOfCells();cellId++)
+
+    for (vtkIdType cellId=0;cellId<newPd->GetNumberOfCells();cellId++) {
       scalarArray->InsertNextValue(ids[i]);
+    }
+
     newPd->GetCellData()->AddArray(scalarArray);
     appender->AddInputData(newPd);
   }
+
   appender->Update();
   facePd->DeepCopy(appender->GetOutput());
 
@@ -472,24 +501,32 @@ int sys_geom_assign_ids_based_on_faces( cvPolyData *model, cvPolyData **faces,in
   vtkNew(vtkIntArray,oldIdArray);
   oldIdArray = vtkIntArray::SafeDownCast(facePd->GetCellData()->GetArray("ModelFaceID"));
 
-  for (vtkIdType cellId=0;cellId<fullPd->GetNumberOfCells();cellId++)
-  {
+  #ifdef debug_sys_geom_assign_ids_based_on_faces
+  std::cout << msg << "Set new face data ..." << std::endl;
+  std::cout << msg << "oldIdArray: " << oldIdArray << std::endl;
+  #endif
+
+  for (vtkIdType cellId=0;cellId<fullPd->GetNumberOfCells();cellId++) {
     fullPd->GetCellPoints(cellId,npts,pts);
+    #ifdef debug_sys_geom_assign_ids_based_on_faces
+    std::cout << msg << "----- cellId " << cellId << " -----" << std::endl;
+    #endif
 
     vtkNew(vtkPoints,polyPts);
     vtkNew(vtkIdTypeArray,polyPtIds);
-    for (int i=0;i<npts;i++)
-    {
+
+    for (int i=0;i<npts;i++) {
       polyPtIds->InsertValue(i,i);
       polyPts->InsertNextPoint(fullPd->GetPoint(pts[i]));
     }
+
     vtkPolygon::ComputeCentroid(polyPtIds,polyPts,centroid);
 
-    cellLocator->FindClosestPoint(centroid,closestPt,genericCell,closestCell,
-	  subId,distance);
+    cellLocator->FindClosestPoint(centroid,closestPt,genericCell,closestCell, subId,distance);
     vtkIdType faceValue = oldIdArray->GetValue(closestCell);
     newIdArray->InsertValue(cellId,faceValue);
   }
+
   fullPd->GetCellData()->AddArray(newIdArray);
   result = new cvPolyData( fullPd);
   *dst = result;
