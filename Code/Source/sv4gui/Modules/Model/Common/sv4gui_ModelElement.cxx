@@ -130,25 +130,23 @@ bool sv4guiModelElement::HasSeg(std::string segName)
     return false;
 }
 
-std::vector<sv4guiModelElement::svFace*> sv4guiModelElement::GetFaces() const
+//----------
+// GetFaces
+//----------
+//
+std::vector<sv4guiModelElement::svFace*> 
+sv4guiModelElement::GetFaces() const
 {
     #define n_debug_GetFaces
     #ifdef debug_GetFaces
     std::string msg("[sv4guiModelElement::GetFaces] ");
     std::cout << msg << std::endl;
     std::cout << msg << "========== GetFaces ==========" << std::endl;
-    if (m_Faces.size() != 0) {
-      std::cout << msg << "#### sv4guiModelElement: " << this << " face0: " << m_Faces[0] << "  vpd: " << 
-          m_Faces[0]->vpd << "  #cells: " << m_Faces[0]->vpd->GetNumberOfCells() << std::endl;
-    }
-    #endif
-
-    #ifdef debug_GetFaces
+    std::cout << msg << "m_Faces.size(): " << m_Faces.size() << std::endl;
     for (auto face : m_Faces) {
       std::cout << msg << "face->vpd: " <<  face->vpd << std::endl;
       if (face->vpd) {
         std::cout << msg << "face->vpd->GetNumberOfCells(): " <<  face->vpd->GetNumberOfCells() << std::endl;
-        break;
       }
     }
     #endif

@@ -1034,11 +1034,18 @@ int cvOCCTSolidModel::Subtract( cvSolidModel *a, cvSolidModel *b,
   return SV_OK;
 }
 
-// ------------
+//-------------
 // GetPolyData
-// ------------
+//-------------
+//
 cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
 {
+  #define n_debug_GetPolyData 
+  #ifdef debug_GetPolyData
+  std::string msg("[cvOCCTSolidModel::GetPolyData] ");
+  std::cout << msg << "========== GetPolyData ==========" << std::endl;
+  #endif
+
   //In OpenCASCADE case, max_dist corresponds to angle in degrees for which
   //faceted normals are allowed
   if (geom_ == NULL)
@@ -1066,9 +1073,40 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
 
   pd = vtkPolyData::New();
   pd->DeepCopy(aDataImpl->getVtkPolyData());
+  pd->BuildLinks();
+
+  // The vtkPolyData returned from getVtkPolyData() can have
+  // vertices and lines it that seems to outline the
+  // NURBS patches. 
+  //
+  // Remove the vertices and lines from the vtkPolyData
+  // which can cause problems when converting the BREP
+  // model to vtkPolyData. 
+  //
+  int num_cells = pd->GetNumberOfCells();
+  vtkIdType npts;
+  const vtkIdType *pts;
+
+  for (vtkIdType i = 0; i < num_cells; i++) {
+    pd->GetCellPoints(i, npts, pts);
+    if (npts != 3) {
+      //std::cout << msg << "cell: " << i << std::endl;
+      //std::cout << msg << "npts: " << npts << std::endl;
+      pd->DeleteCell(i);
+    }
+  }
+  pd->RemoveDeletedCells();
 
   pd = OrientSurfaceGemetry(pd);
   result = new cvPolyData(pd);
+  #ifdef debug_GetPolyData
+  std::cout << msg << "result: " << result << std::endl;
+  std::cout << msg << "GetVtkPolyData: " << result->GetVtkPolyData() << std::endl;
+  std::cout << msg << "Number of cells: " << result->GetVtkPolyData()->GetNumberOfCells() << std::endl;
+  std::string file_name("GetPolyData.vtp");
+  sys_geom_write_vtp(file_name, result);
+  #endif
+
   pd->Delete();
   return result;
 }
@@ -1084,21 +1122,32 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
 vtkSmartPointer<vtkPolyData>
 cvOCCTSolidModel::OrientSurfaceGemetry(vtkPolyData* geom) const
 { 
+  #define n_debug_OrientSurfaceGemetry
+  #ifdef debug_OrientSurfaceGemetry
+  std::string msg("[cvOCCTSolidModel::OrientSurfaceGemetry] ");
+  std::cout << msg << "========== OrientSurfaceGemetry ==========" << std::endl;
+  #endif
+
+  vtkSmartPointer<vtkCleanPolyData> cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+  cleaner->PointMergingOn();
+  cleaner->ConvertLinesToPointsOff();
+  cleaner->ConvertPolysToLinesOff();
+  cleaner->SetInputData(geom);
+  cleaner->Update();
+  auto cleaned_geom = cleaner->GetOutput();
+
   auto surfaceNormals = vtkPolyDataNormals::New();
-  surfaceNormals->SetInputData(geom);
-  surfaceNormals->ComputeCellNormalsOn();
-  surfaceNormals->ComputePointNormalsOn();
+  surfaceNormals->SetInputData(cleaned_geom);
+  surfaceNormals->SplittingOff();
   surfaceNormals->ConsistencyOn();
   surfaceNormals->AutoOrientNormalsOn();
-  surfaceNormals->SplittingOn();
+  surfaceNormals->ComputeCellNormalsOn();
+  surfaceNormals->ComputePointNormalsOff();
   surfaceNormals->Update();
-  
+    
   vtkSmartPointer<vtkPolyData> oriented_geom = surfaceNormals->GetOutput();
-  oriented_geom->BuildLinks();
-  
   return oriented_geom;
 } 
-
 
 // ------------
 // GetFaceIds
@@ -1223,16 +1272,23 @@ int cvOCCTSolidModel::SetFaceAttribute(char *attr, int faceid, char *value)
   return SV_OK;
 }
 
-// ---------------
+//-----------------
 // GetFacePolyData
-// ---------------
+//-----------------
+//
 cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double max_dist) const
 {
-  if (geom_ == NULL)
-  {
+  #define n_debug_GetFacePolyData 
+  #ifdef debug_GetFacePolyData
+  std::string msg("[cvOCCTSolidModel::GetFacePolyData] ");
+  std::cout << msg << "========== GetFacePolyData ==========" << std::endl;
+  #endif
+
+  if (geom_ == NULL) {
     fprintf(stderr,"Solid is null\n");
     return SV_ERROR;
   }
+
   cvPolyData *result;
   vtkPolyData *pd;
 
@@ -1269,6 +1325,7 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
   //IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher();
   //Deviation Coefficient is 0.0001,Deviation Angle = 5rad,default is 12rad,
   //Do not generate u isoline and do not generate v isoline
+
   double devcoeff = 0.0001;
   double angcoeff = max_dist * M_PI/180.0;
   int uIsoLine= 0;
@@ -1283,6 +1340,13 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
 
   pd = OrientSurfaceGemetry(pd);
   result = new cvPolyData(pd);
+
+  #ifdef debug_GetFacePolyData
+  std::cout << msg << "result: " << result << std::endl;
+  std::cout << msg << "GetVtkPolyData: " << result->GetVtkPolyData() << std::endl;
+  std::cout << msg << "Number of cells: " << result->GetVtkPolyData()->GetNumberOfCells() << std::endl;
+  #endif
+
   pd->Delete();
   return result;
 }

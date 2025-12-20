@@ -39,6 +39,9 @@
 #include "sv_PolyDataSolid.h"
 #include "vtkSVNURBSSurface.h"
 
+SV_EXPORT_SYSGEOM void sys_geom_write_vtp(std::string& file_name, cvPolyData* src);
+SV_EXPORT_SYSGEOM void sys_geom_write_vtp(std::string& file_name, vtkPolyData* src);
+
 SV_EXPORT_SYSGEOM cvPolyData *sys_geom_DeepCopy( cvPolyData *src );
 
 SV_EXPORT_SYSGEOM cvPolyData *sys_geom_MergePts( cvPolyData *src );

@@ -118,53 +118,84 @@ void sv4guiModelElementAnalytic::AddBlendRadii(std::vector<svBlendParamRadius*> 
 
 }
 
-sv4guiModelElementPolyData* sv4guiModelElementAnalytic::ConverToPolyDataModel()
+//-----------------------
+// ConverToPolyDataModel
+//-----------------------
+//
+sv4guiModelElementPolyData* 
+sv4guiModelElementAnalytic::ConverToPolyDataModel()
 {
-    sv4guiModelElementPolyData* mepd=new sv4guiModelElementPolyData();
-    mepd->SetSegNames(GetSegNames());
+    #define n_debug_ConverToPolyDataModel
+    #ifdef debug_ConverToPolyDataModel
+    std::string msg("[sv4guiModelElementAnalytic::ConverToPolyDataModel] ");
+    std::cout << msg << "========== ConverToPolyDataModel ==========" << std::endl;
+    #endif                
 
-    vtkSmartPointer<vtkPolyData> wholevpd=nullptr;
-    if(GetWholeVtkPolyData())
-    {
-        wholevpd=vtkSmartPointer<vtkPolyData>::New();
+    sv4guiModelElementPolyData* mepd = new sv4guiModelElementPolyData();
+    mepd->SetSegNames(GetSegNames());
+    vtkSmartPointer<vtkPolyData> wholevpd = nullptr;
+
+    if (GetWholeVtkPolyData()) {
+        #ifdef debug_ConverToPolyDataModel
+        std::cout << msg << "GetWholeVtkPolyData: " << GetWholeVtkPolyData() << std::endl;
+        #endif                
+        wholevpd = vtkSmartPointer<vtkPolyData>::New();
         wholevpd->DeepCopy(GetWholeVtkPolyData());
     }
 
-    if(wholevpd==nullptr)
+    if (wholevpd == nullptr) {
         return nullptr;
+    }
 
-    cvPolyData* src=new cvPolyData(wholevpd);
+    cvPolyData* src = new cvPolyData(wholevpd);
 
-    std::vector<sv4guiModelElement::svFace*> oldFaces=GetFaces();
+    std::vector<sv4guiModelElement::svFace*> oldFaces = GetFaces();
     std::vector<sv4guiModelElement::svFace*> faces;
-    int numFaces=oldFaces.size();
-    int* ids=new int[numFaces];
-    cvPolyData **facevpds=new cvPolyData*[numFaces];
+    int numFaces = oldFaces.size();
+    int* ids = new int[numFaces];
+    cvPolyData **facevpds = new cvPolyData*[numFaces];
 
-    for(int i=0;i<numFaces;i++)
-    {
-        ids[i]=oldFaces[i]->id;
-        facevpds[i]=new cvPolyData(oldFaces[i]->vpd);
+    #ifdef debug_ConverToPolyDataModel
+    std::cout << msg << "numFaces: " << numFaces << std::endl;
+    #endif                
 
-        sv4guiModelElement::svFace* face=new sv4guiModelElement::svFace(*(oldFaces[i]),false);
-
+    for (int i = 0; i < numFaces; i++) {
+        #ifdef debug_ConverToPolyDataModel
+        std::cout << msg << "----- i " << i << " -----" << std::endl;
+        std::cout << msg << "oldFaces[i]->id: " << oldFaces[i]->id << std::endl;
+        std::cout << msg << "oldFaces[i]->vpd: " << oldFaces[i]->vpd << std::endl;
+        std::cout << msg << "oldFaces[i]->vpd->GetNumberOfCells(): " << oldFaces[i]->vpd->GetNumberOfCells() << std::endl;
+        std::string file_name("oldFaces_" + std::to_string(i) + ".vtp");
+        sys_geom_write_vtp(file_name, oldFaces[i]->vpd);
+        #endif                
+        ids[i] = oldFaces[i]->id;
+        facevpds[i] = new cvPolyData(oldFaces[i]->vpd);
+        sv4guiModelElement::svFace* face = new sv4guiModelElement::svFace(*(oldFaces[i]),false);
         faces.push_back(face);
     }
 
-    cvPolyData *dst=nullptr;
-    if ( sys_geom_assign_ids_based_on_faces(src,facevpds,numFaces,ids,&dst ) != SV_OK ) {
-        if(dst!=nullptr)
-            delete dst;
+    cvPolyData *dst = nullptr;
 
+    if ( sys_geom_assign_ids_based_on_faces(src, facevpds, numFaces, ids, &dst ) != SV_OK ) {
+        if (dst != nullptr) {
+            delete dst;
+        }
         delete [] ids;
         return nullptr;
     }
 
     mepd->SetWholeVtkPolyData(dst->GetVtkPolyData());
 
-    for(int i=0;i<numFaces;i++)
-    {
-        faces[i]->vpd=mepd->CreateFaceVtkPolyData(faces[i]->id);
+    #ifdef debug_ConverToPolyDataModel
+    std::cout << msg << "call CreateFaceVtkPolyData ... " << std::endl;
+    #endif                
+
+    for(int i=0;i<numFaces;i++) {
+        #ifdef debug_ConverToPolyDataModel
+        std::cout << msg << "--- face i " << i << " ---" << std::endl;
+        std::cout << msg << "faces[i]->id: " << faces[i]->id << std::endl;
+        #endif                
+        faces[i]->vpd = mepd->CreateFaceVtkPolyData(faces[i]->id);
     }
 
     mepd->SetFaces(faces);
