@@ -636,14 +636,30 @@ void sv4guiMultiPhysicsView::DataChanged()
 //
 QString sv4guiMultiPhysicsView::GetJobPath()
 {
-    QString jobPath="";
+    QString jobPath = "";
 
-    if(m_JobNode.IsNull())
+    if(m_JobNode.IsNull()) {
         return jobPath;
+    }  
 
-    std::string path="";
-    m_JobNode->GetStringProperty("path",path);
-    jobPath=QString::fromStdString(path+"/"+m_JobNode->GetName());
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs = GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+
+    std::string projPath = "";
+    std::string simFolderName = "";
+
+    if (rs->size() > 0) {
+      mitk::DataNode::Pointer projFolderNode = rs->GetElement(0);
+      projFolderNode->GetStringProperty("project path", projPath);
+      rs = GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiMultiPhysicsFolder"));
+
+      if (rs->size() > 0) {
+        mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
+        simFolderName = simFolderNode->GetName();
+        jobPath = QString::fromStdString(projPath + "/" + simFolderName + "/" + m_JobNode->GetName());
+      }
+    }
+
     return jobPath;
 }
 
@@ -680,7 +696,6 @@ void sv4guiMultiPhysicsView::AddMeshComplete()
     //     lastFileOpenPath=QDir::homePath();
 
     auto sv4guiMultiPhysics_dir = sv4guiMultiPhysicsUtil.getsv4guiMultiPhysicsDir();
-
     sv4guiMultiPhysics_dir.cdUp();
     sv4guiMultiPhysics_dir.cd("Meshes");
 
@@ -699,15 +714,15 @@ void sv4guiMultiPhysicsView::AddMeshComplete()
     }
 
     QDir meshDir(dirPath);
-    QString domainName=meshDir.dirName();
-    auto search=m_Job->m_Domains.find(domainName.toStdString());
-    if(search!=m_Job->m_Domains.end()) {
+    QString domainName = meshDir.dirName();
+    auto search = m_Job->m_Domains.find(domainName.toStdString());
+    if(search != m_Job->m_Domains.end()) {
         QMessageBox::warning(m_Parent,"Already exists", "A domain with the same name was already added.");
         return;
     }
 
     sv4guiMultiPhysicsDomain domain;
-    QString faceFolderName=QString::fromStdString(domain.faceFolderName); //use the default name
+    QString faceFolderName = QString::fromStdString(domain.faceFolderName); //use the default name
 
     QFileInfoList meshList=meshDir.entryInfoList(QStringList("*.vtu"));
     if(meshList.size()==0) {
@@ -733,7 +748,7 @@ void sv4guiMultiPhysicsView::AddMeshComplete()
     domain.fileName=meshList[0].fileName().toStdString();
     domain.surfaceName=vtpList[0].fileName().toStdString();
 
-    QString jobPath=GetJobPath();
+    QString jobPath = GetJobPath();
     QDir newDir;
     newDir.mkpath(jobPath+"/"+QString::fromStdString(domain.folderName)+"/"+faceFolderName);
 
@@ -1457,7 +1472,8 @@ void sv4guiMultiPhysicsView::CreateInputFile()
       return;
     }
 
-    QString jobPath=GetJobPath();
+    QString jobPath = GetJobPath();
+
     if (jobPath == "" || !QDir(jobPath).exists()) {
       QMessageBox::warning(m_Parent,"Unable to run","Please make sure mesh files have been added!");
       return;
