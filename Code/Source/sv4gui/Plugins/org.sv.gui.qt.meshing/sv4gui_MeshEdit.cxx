@@ -475,14 +475,10 @@ void sv4guiMeshEdit::TableDomainsListSelectionChanged( const QItemSelection & /*
     if(plist.size()==3)
     {
         mitk::Point3D point;
-        point[0]= plist[0].toDouble();
-        point[1]= plist[1].toDouble();
-        point[2]= plist[2].toDouble();
-
-        // [DaveP] what's going on here ?
-        std::cout << "MoveCrossToPosition does not exist" << std::endl << std::flush;
-        exit(1);
-        // m_DisplayWidget->MoveCrossToPosition(point);
+        point[0] = plist[0].toDouble();
+        point[1] = plist[1].toDouble();
+        point[2] = plist[2].toDouble();
+        m_RenderWindow->SetSelectedPosition(point);
     }
 }
 
@@ -2034,23 +2030,19 @@ void sv4guiMeshEdit::AddHole()
 
     QStandardItem* item;
 
-    item= new QStandardItem("Hole");
+    item = new QStandardItem("Hole");
     item->setEditable(false);
     m_TableModelDomains->setItem(regionRowIndex, 0, item);
 
-    item= new QStandardItem("N/A");
+    item = new QStandardItem("N/A");
     item->setEditable(false);
     m_TableModelDomains->setItem(regionRowIndex, 1, item);
 
-    // [DaveP] what's going on here ?
-    std::cout << "GetCrossPosition does not exist" << std::endl << std::flush;
-    exit(1);
+    mitk::Point3D point = m_RenderWindow->GetSelectedPosition();
+    QString coordinates=QString::number(point[0])+" "+QString::number(point[1])+" "+QString::number(point[2]);
 
-    // mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
-    // QString coordinates=QString::number(point[0])+" "+QString::number(point[1])+" "+QString::number(point[2]);
-
-    // item= new QStandardItem(coordinates);
-    // m_TableModelDomains->setItem(regionRowIndex, 2, item);
+    item = new QStandardItem(coordinates);
+    m_TableModelDomains->setItem(regionRowIndex, 2, item);
 }
 
 void sv4guiMeshEdit::AddSubDomain()
@@ -2066,14 +2058,11 @@ void sv4guiMeshEdit::AddSubDomain()
     item= new QStandardItem("");
     m_TableModelDomains->setItem(regionRowIndex, 1, item);
 
-    // [DaveP] what's going on here ?
-    std::cout << "GetCrossPosition does not exist" << std::endl << std::flush;
-    exit(1);
-    // mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
-    // QString coordinates=QString::number(point[0])+" "+QString::number(point[1])+" "+QString::number(point[2]);
+    mitk::Point3D point = m_RenderWindow->GetSelectedPosition();
+    QString coordinates=QString::number(point[0])+" "+QString::number(point[1])+" "+QString::number(point[2]);
 
-    // item= new QStandardItem(coordinates);
-    // m_TableModelDomains->setItem(regionRowIndex, 2, item);
+    item = new QStandardItem(coordinates);
+    m_TableModelDomains->setItem(regionRowIndex, 2, item);
 }
 
 void sv4guiMeshEdit::ShowSphereInteractor(bool checked)
