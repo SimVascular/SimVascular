@@ -97,9 +97,9 @@ if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
   simvascular_add_new_external(TINYXML2 ${TINYXML2_VERSION} ON ON tinyxml2 tinyxml2)
 endif()
 
-# # PYTHON
-# message(STATUS "${msg} Add PYTHON external ...") 
-# simvascular_add_new_external(PYTHON ${PYTHON_VERSION} ON ON python)
+# PYTHON
+message(STATUS "${msg} Add PYTHON external ...") 
+simvascular_add_new_external(PYTHON ${PYTHON_VERSION} ON ON python)
 
 # # FREETYPE
 # message(STATUS "${msg} Add FREETYPE external ...") 
@@ -117,9 +117,9 @@ simvascular_add_new_external(VTK ${VTK_VERSION} ON ON vtk)
 # message(STATUS "${msg} Add GDCM external ...") 
 # simvascular_add_new_external(GDCM ${GDCM_VERSION} ON ON gdcm)
 
-# # ITK
-# message(STATUS "${msg} Add ITK external ...") 
-# simvascular_add_new_external(ITK ${ITK_VERSION} ON ON itk)
+# ITK
+message(STATUS "${msg} Add ITK external ...") 
+simvascular_add_new_external(ITK ${ITK_VERSION} ON ON itk)
 
 # OpenCASCADE
 message(STATUS "${msg} Add OpenCASCADE external ...") 

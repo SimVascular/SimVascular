@@ -44,7 +44,7 @@ message(STATUS "${msg} HDF5_DIR: ${HDF5_DIR}")
 message(STATUS "${msg} HDF5_LIB_DIR: ${HDF5_LIB_DIR}")
 
 if(SV_USE_${proj})
-
+  set(ITK_DIR "/home/vboxuser/work/svExternals/install/itk-5.4.0/lib/cmake/ITK-5.4")
   # ITK resets the vtk dir and variables (very annoying), must set temp vars
   # vtk dir to reset at the end
   #
