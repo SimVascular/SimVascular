@@ -63,10 +63,10 @@ include(SimVascularFunctionCheckCompilerFlags)
 option(SV_GIT_PULL_SUBMODULES "Check submodules during build" OFF)
 
 # Optionally build the 1D solver plugin.
-option(SV_USE_ONEDSOLVER "Enable building the 1D solver plugin" ON)
+option(SV_USE_ONEDSOLVER "Enable building the 1D solver plugin" OFF)
 
 # Optionally build the MITK segmentation plugin
-option(SV_USE_MITK_SEGMENTATION "Enable building the MITK segmentation plugin" ON)
+option(SV_USE_MITK_SEGMENTATION "Enable building the MITK segmentation plugin" OFF)
 
 # Define varaibles storing external paths.
 #
@@ -74,12 +74,12 @@ option(SV_USE_MITK_SEGMENTATION "Enable building the MITK segmentation plugin" O
 #
 # Note that these names must match those given in Code/CMake/Externals/*.cmake files.
 #
-set(SV_EXTERNALS_DIR "" CACHE STRING "SimVascular externals directory")
+set(SV_EXTERNALS_DIR "/home/vboxuser/work/svExternals/install" CACHE STRING "SimVascular externals directory")
 mark_as_advanced(SV_EXTERNALS_DIR)
 
 set(SV_FREETYPE_DIR "" CACHE PATH "FREETYPE install directory containing a configuration file")
 set(SV_GDCM_DIR "" CACHE PATH "GDCM install directory containing a configuration file")
-set(SV_HDF5_DIR "" CACHE PATH "hdf5 install directory containing a configuration file")
+set(SV_HDF5_DIR "/home/vboxuser/work/svExternals/install/hdf5-1.14.3/cmake" CACHE PATH "hdf5 install directory containing a configuration file")
 set(SV_ITK_DIR "" CACHE PATH "ITK install directory containing a configuration file")
 set(SV_ML_DIR "" CACHE PATH "ML install directory containing machine learning weights")
 set(SV_MMG_DIR "" CACHE PATH "MMG install directory containing a configuration file")
@@ -96,7 +96,7 @@ mark_as_advanced(SV_EXTERNALS_VERSION_NUMBER)
 option(SV_ENABLE_DISTRIBUTION "Enable Installer Build for SimVascular" OFF)
 
 # sv4gui
-option(SV_USE_SV4_GUI "Enable SV MITK/Qt Based GUI" ON)
+option(SV_USE_SV4_GUI "Enable SV MITK/Qt Based GUI" OFF)
 
 if(APPLE)
   option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt6" OFF)

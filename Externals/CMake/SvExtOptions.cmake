@@ -82,7 +82,7 @@ message(STATUS "[SvExtOptions] QT sv_externals_add_new_external ")
 #option(SV_QT_DIR "The location of the Qt package install directory" "")
 #option(SV_EXTERNALS_USE_PREBUILT_QT "Instead of downloading or building, use a specified QT" OFF)
 
-sv_externals_add_new_external(QT ${SV_EXTERNALS_QT_VERSION} ON ON qt qt)
+# sv_externals_add_new_external(QT ${SV_EXTERNALS_QT_VERSION} ON ON qt qt)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

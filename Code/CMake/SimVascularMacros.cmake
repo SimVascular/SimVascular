@@ -1525,7 +1525,7 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
   #
   # [davep] disable downloads.
   #
-  set(SV_EXTERNALS_DOWNLOAD_${proj} FALSE)
+  # set(SV_EXTERNALS_DOWNLOAD_${proj} FALSE)
 
   if(NOT "${install_dirname}" STREQUAL "none")
 

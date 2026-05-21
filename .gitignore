@@ -76,6 +76,9 @@ Code/FlowSolvers/.cproject
 */CMakeLists.txt.user
 *DS_Store
 
+Externals/Build
+CLAUDE.md
+headless-refactor-plan.md
 !Code/ThirdParty/vmtk/.project
 !Code/Source/ImageProcessing/.project
 !Code/Source/PostProcessing/.project

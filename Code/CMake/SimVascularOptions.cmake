@@ -76,9 +76,9 @@ option(SV_EXTERNALS_INSTALL_HEADERS "If ON, The externals headers will be includ
 # Add exernal packages.
 #
 # Qt
-message(STATUS "${msg} Add Qt external ...") 
-message(STATUS "${msg} Qt6_VERSION: ${Qt6_VERSION}") 
-simvascular_add_new_external(Qt6 ${Qt6_VERSION} ON ON qt)
+# message(STATUS "${msg} Add Qt external ...") 
+# message(STATUS "${msg} Qt6_VERSION: ${Qt6_VERSION}") 
+# simvascular_add_new_external(Qt6 ${Qt6_VERSION} ON ON qt)
 
 # ML
 message(STATUS "${msg} Add ML external ...") 
@@ -125,9 +125,9 @@ simvascular_add_new_external(ITK ${ITK_VERSION} ON ON itk)
 message(STATUS "${msg} Add OpenCASCADE external ...") 
 simvascular_add_new_external(OpenCASCADE ${OpenCASCADE_VERSION} ON ON opencascade)
 
-# MITK
-message(STATUS "${msg} Add MITK external ...") 
-simvascular_add_new_external(MITK ${MITK_VERSION} ON ON mitk)
+# # MITK
+# message(STATUS "${msg} Add MITK external ...") 
+# simvascular_add_new_external(MITK ${MITK_VERSION} ON ON mitk)
 
 # ThirdParty
 #
@@ -154,11 +154,11 @@ option(SV_USE_MODULES_SHARED_LIBRARIES "Option to build the thirdparty libs as s
 
 #-----------------------------------------------------------------------------
 # Option to build qt GUI
-option(SV_USE_SV4_GUI "Option to build the SimVascular QT GUI" ON)
+option(SV_USE_SV4_GUI "Option to build the SimVascular QT GUI" OFF)
 
-option(SV_USE_QT "Option to build the SimVascular QT" ON)
+option(SV_USE_QT "Option to build the SimVascular QT" OFF)
 
-option(SV_NO_PYTHONQT_ALL "Option to use PythonQt_all" ON)
+option(SV_NO_PYTHONQT_ALL "Option to use PythonQt_all" OFF)
 
 option(SV_USE_MITK_CONFIG "Option to use MITKConfig.cmake" OFF)
 
