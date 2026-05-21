@@ -81,49 +81,49 @@ option(SV_EXTERNALS_INSTALL_HEADERS "If ON, The externals headers will be includ
 # simvascular_add_new_external(Qt6 ${Qt6_VERSION} ON ON qt)
 
 # ML
-message(STATUS "${msg} Add ML external ...") 
-if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.02")
-  simvascular_add_new_external(ML ${ML_VERSION} ON ON ml)
-endif()
+# message(STATUS "${msg} Add ML external ...") 
+# if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.02")
+#   simvascular_add_new_external(ML ${ML_VERSION} ON ON ml)
+# endif()
 
-# HDF5
-message(STATUS "${msg} Add HDF5 external ...") 
-if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
-  simvascular_add_new_external(HDF5 ${HDF5_VERSION} ON ON hdf5 hdf5)
-endif()
+# # HDF5
+# message(STATUS "${msg} Add HDF5 external ...") 
+# if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
+#   simvascular_add_new_external(HDF5 ${HDF5_VERSION} ON ON hdf5 hdf5)
+# endif()
 
-# TINYXML2
-if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
-  simvascular_add_new_external(TINYXML2 ${TINYXML2_VERSION} ON ON tinyxml2 tinyxml2)
-endif()
+# # TINYXML2
+# if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
+#   simvascular_add_new_external(TINYXML2 ${TINYXML2_VERSION} ON ON tinyxml2 tinyxml2)
+# endif()
 
-# PYTHON
-message(STATUS "${msg} Add PYTHON external ...") 
-simvascular_add_new_external(PYTHON ${PYTHON_VERSION} ON ON python)
+# # PYTHON
+# message(STATUS "${msg} Add PYTHON external ...") 
+# simvascular_add_new_external(PYTHON ${PYTHON_VERSION} ON ON python)
 
-# FREETYPE
-message(STATUS "${msg} Add FREETYPE external ...") 
-simvascular_add_new_external(FREETYPE ${FREETYPE_VERSION} ON ON freetype)
+# # FREETYPE
+# message(STATUS "${msg} Add FREETYPE external ...") 
+# simvascular_add_new_external(FREETYPE ${FREETYPE_VERSION} ON ON freetype)
 
-# MMG
-message(STATUS "${msg} Add MMG external ...") 
-simvascular_add_new_external(MMG ${MMG_VERSION} ON OFF mmg)
+# # MMG
+# message(STATUS "${msg} Add MMG external ...") 
+# simvascular_add_new_external(MMG ${MMG_VERSION} ON OFF mmg)
 
 # VTK
 message(STATUS "${msg} Add VTK external ...") 
 simvascular_add_new_external(VTK ${VTK_VERSION} ON ON vtk)
 
-# GDCM
-message(STATUS "${msg} Add GDCM external ...") 
-simvascular_add_new_external(GDCM ${GDCM_VERSION} ON ON gdcm)
+# # GDCM
+# message(STATUS "${msg} Add GDCM external ...") 
+# simvascular_add_new_external(GDCM ${GDCM_VERSION} ON ON gdcm)
 
-# ITK
-message(STATUS "${msg} Add ITK external ...") 
-simvascular_add_new_external(ITK ${ITK_VERSION} ON ON itk)
+# # ITK
+# message(STATUS "${msg} Add ITK external ...") 
+# simvascular_add_new_external(ITK ${ITK_VERSION} ON ON itk)
 
-# OpenCASCADE
-message(STATUS "${msg} Add OpenCASCADE external ...") 
-simvascular_add_new_external(OpenCASCADE ${OpenCASCADE_VERSION} ON ON opencascade)
+# # OpenCASCADE
+# message(STATUS "${msg} Add OpenCASCADE external ...") 
+# simvascular_add_new_external(OpenCASCADE ${OpenCASCADE_VERSION} ON ON opencascade)
 
 # # MITK
 # message(STATUS "${msg} Add MITK external ...") 

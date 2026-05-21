@@ -55,6 +55,8 @@ if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
   endif()
 endif()
 
+set(VTK_DIR "/home/vboxuser/work/svExternals/install/vtk-9.3.0/lib/cmake/vtk-9.3")
+
 # Find VTK, specific components
 #
 # [NOTE:DaveP] Commenting out vtkWrappingTcl and vtkRenderingTk causes
@@ -129,9 +131,9 @@ if(SV_USE_PYTHON)
   #get_filename_component(tmp_replace_python_lib_name ${PYTHON_LIBRARY} NAME)
 endif()
 
-if(SV_USE_FREETYPE)
-  get_filename_component(tmp_replace_freetype_lib_name ${FREETYPE_LIBRARY} NAME)
-endif()
+# if(SV_USE_FREETYPE)
+#   get_filename_component(tmp_replace_freetype_lib_name ${FREETYPE_LIBRARY} NAME)
+# endif()
 
 get_cmake_property(_variableNames VARIABLES)
 list(FILTER _variableNames INCLUDE REGEX "vtk")
