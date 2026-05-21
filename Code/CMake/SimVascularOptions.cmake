@@ -105,9 +105,9 @@ simvascular_add_new_external(PYTHON ${PYTHON_VERSION} ON ON python)
 # message(STATUS "${msg} Add FREETYPE external ...") 
 # simvascular_add_new_external(FREETYPE ${FREETYPE_VERSION} ON ON freetype)
 
-# # MMG
-# message(STATUS "${msg} Add MMG external ...") 
-# simvascular_add_new_external(MMG ${MMG_VERSION} ON OFF mmg)
+# MMG
+message(STATUS "${msg} Add MMG external ...") 
+simvascular_add_new_external(MMG ${MMG_VERSION} ON OFF mmg)
 
 # VTK
 message(STATUS "${msg} Add VTK external ...") 

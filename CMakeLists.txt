@@ -96,7 +96,7 @@ mark_as_advanced(SV_EXTERNALS_VERSION_NUMBER)
 option(SV_ENABLE_DISTRIBUTION "Enable Installer Build for SimVascular" OFF)
 
 # sv4gui
-option(SV_USE_SV4_GUI "Enable SV MITK/Qt Based GUI" OFF)
+option(SV_USE_SV4_GUI "Enable SV MITK/Qt Based GUI" ON)
 
 if(APPLE)
   option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt6" OFF)

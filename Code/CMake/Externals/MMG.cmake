@@ -39,7 +39,7 @@ message(STATUS "${msg} MMG_VERISON: ${${proj}_VERSION}")
 message(STATUS "${msg} SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR: ${SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR}")
 
 if(SV_USE_${proj})
-
+  set(${proj}_DIR "/home/vboxuser/work/svExternals/install/mmg-5.3.9")
   # If using toplevel dir, foce MMG_DIR to be the SV_MMG_DIR set by the
   # simvascular_add_new_external macro
   #
