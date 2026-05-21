@@ -32,6 +32,8 @@
 # TINYXML2
 set(proj TINYXML2)
 
+set(${proj}_DIR "/home/vboxuser/work/svExternals/install/tinyxml2-6.2.0/lib/cmake/tinyxml2")
+
 set(msg "[Code/CMake/Externals/TINYXML2.cmake] ")
 message(STATUS "${msg} =============== Code/CMake/Externals    TINYXML2.cmake ===============")
 message(STATUS "${msg} proj: ${proj}")

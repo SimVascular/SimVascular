@@ -92,10 +92,10 @@ option(SV_EXTERNALS_INSTALL_HEADERS "If ON, The externals headers will be includ
 #   simvascular_add_new_external(HDF5 ${HDF5_VERSION} ON ON hdf5 hdf5)
 # endif()
 
-# # TINYXML2
-# if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
-#   simvascular_add_new_external(TINYXML2 ${TINYXML2_VERSION} ON ON tinyxml2 tinyxml2)
-# endif()
+# TINYXML2
+if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
+  simvascular_add_new_external(TINYXML2 ${TINYXML2_VERSION} ON ON tinyxml2 tinyxml2)
+endif()
 
 # # PYTHON
 # message(STATUS "${msg} Add PYTHON external ...") 
