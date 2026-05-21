@@ -57,6 +57,9 @@ endif()
 
 set(VTK_DIR "/home/vboxuser/work/svExternals/install/vtk-9.3.0/lib/cmake/vtk-9.3")
 
+find_package(OpenGL REQUIRED)
+find_package(X11 REQUIRED)
+
 # Find VTK, specific components
 #
 # [NOTE:DaveP] Commenting out vtkWrappingTcl and vtkRenderingTk causes
