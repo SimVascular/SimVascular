@@ -121,9 +121,9 @@ simvascular_add_new_external(VTK ${VTK_VERSION} ON ON vtk)
 # message(STATUS "${msg} Add ITK external ...") 
 # simvascular_add_new_external(ITK ${ITK_VERSION} ON ON itk)
 
-# # OpenCASCADE
-# message(STATUS "${msg} Add OpenCASCADE external ...") 
-# simvascular_add_new_external(OpenCASCADE ${OpenCASCADE_VERSION} ON ON opencascade)
+# OpenCASCADE
+message(STATUS "${msg} Add OpenCASCADE external ...") 
+simvascular_add_new_external(OpenCASCADE ${OpenCASCADE_VERSION} ON ON opencascade)
 
 # # MITK
 # message(STATUS "${msg} Add MITK external ...") 
